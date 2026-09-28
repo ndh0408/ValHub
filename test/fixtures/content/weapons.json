@@ -1,0 +1,218 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "9c82e19d-4575-0200-1a81-3eacf00cf872",
+   "displayName": "Vandal",
+   "category": "EEquippableCategory::Rifle",
+   "defaultSkinUuid": "27f21d97-4c4b-bd1c-1f08-31830ab0be84",
+   "displayIcon": "https://media.valorant-api.com/weapons/9c82e19d-4575-0200-1a81-3eacf00cf872/displayicon.png",
+   "killStreamIcon": "https://media.valorant-api.com/weapons/9c82e19d-4575-0200-1a81-3eacf00cf872/killstreamicon.png",
+   "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/AKPrimaryAsset",
+   "shopData": {
+    "cost": 2900,
+    "category": "Rifles",
+    "shopOrderPriority": 0,
+    "categoryText": "Súng Trường",
+    "gridPosition": {
+     "row": 2,
+     "column": 3
+    },
+    "canBeTrashed": true,
+    "image": null,
+    "newImage": "https://media.valorant-api.com/weapons/9c82e19d-4575-0200-1a81-3eacf00cf872/shop/newimage.png",
+    "newImage2": null,
+    "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/AK47WeaponPurchase"
+   },
+   "skins": [
+    {
+     "uuid": "27f21d97-4c4b-bd1c-1f08-31830ab0be84",
+     "displayName": "Vandal Thông Thường",
+     "themeUuid": "5a629df4-4765-0214-bd40-fbb96542941f",
+     "contentTierUuid": null,
+     "contentEditionUuid": null,
+     "displayIcon": "https://media.valorant-api.com/weaponskins/27f21d97-4c4b-bd1c-1f08-31830ab0be84/displayicon.png",
+     "wallpaper": null,
+     "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/Standard/AssaultRifle_AK_Standard_PrimaryAsset",
+     "chromas": [
+      {
+       "uuid": "19629ae1-4996-ae98-7742-24a240d41f99",
+       "displayName": "Vandal",
+       "displayIcon": "https://media.valorant-api.com/weaponskinchromas/19629ae1-4996-ae98-7742-24a240d41f99/displayicon.png",
+       "fullRender": "https://media.valorant-api.com/weaponskinchromas/19629ae1-4996-ae98-7742-24a240d41f99/fullrender.png",
+       "swatch": null,
+       "streamedVideo": null,
+       "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/Standard/Chromas/Standard/AssaultRifle_AK_Standard_Standard_PrimaryAsset"
+      }
+     ],
+     "levels": [
+      {
+       "uuid": "1ab72e66-4da3-33a0-164f-908113e075a4",
+       "displayName": "Vandal",
+       "levelItem": null,
+       "displayIcon": "https://media.valorant-api.com/weaponskinlevels/1ab72e66-4da3-33a0-164f-908113e075a4/displayicon.png",
+       "streamedVideo": null,
+       "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/Standard/AssaultRifle_AK_Standard_Lv1_PrimaryAsset"
+      }
+     ]
+    },
+    {
+     "uuid": "30388628-42f0-606c-82c0-73ad43de997f",
+     "displayName": "Vandal Reaver",
+     "themeUuid": "4479eea8-4820-c69b-3912-f5ac678fcedc",
+     "contentTierUuid": "60bca009-4182-7998-dee7-b8a2558dc369",
+     "contentEditionUuid": null,
+     "displayIcon": "https://media.valorant-api.com/weaponskins/30388628-42f0-606c-82c0-73ad43de997f/displayicon.png",
+     "wallpaper": null,
+     "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/SoulStealer/AK_Soulstealer_PrimaryAsset",
+     "chromas": [
+      {
+       "uuid": "2bd28382-48c6-8579-83e8-e9b64b783de3",
+       "displayName": "Vandal Reaver",
+       "displayIcon": "https://media.valorant-api.com/weaponskinchromas/2bd28382-48c6-8579-83e8-e9b64b783de3/displayicon.png",
+       "fullRender": "https://media.valorant-api.com/weaponskinchromas/2bd28382-48c6-8579-83e8-e9b64b783de3/fullrender.png",
+       "swatch": "https://media.valorant-api.com/weaponskinchromas/2bd28382-48c6-8579-83e8-e9b64b783de3/swatch.png",
+       "streamedVideo": null,
+       "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/SoulStealer/Chromas/Standard/AK_Soulstealer_Standard_PrimaryAsset"
+      },
+      {
+       "uuid": "b2a065c0-4632-ccaa-f496-7681dc2a6185",
+       "displayName": "Vandal Reaver Cấp 4\n(Dạng 1 Ánh Đỏ)",
+       "displayIcon": "https://media.valorant-api.com/weaponskinchromas/b2a065c0-4632-ccaa-f496-7681dc2a6185/displayicon.png",
+       "fullRender": "https://media.valorant-api.com/weaponskinchromas/b2a065c0-4632-ccaa-f496-7681dc2a6185/fullrender.png",
+       "swatch": "https://media.valorant-api.com/weaponskinchromas/b2a065c0-4632-ccaa-f496-7681dc2a6185/swatch.png",
+       "streamedVideo": null,
+       "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/SoulStealer/Chromas/Red/AK_Soulstealer_Red_PrimaryAsset"
+      },
+      {
+       "uuid": "db4461e5-40dd-1173-3b64-e5836f92f4dd",
+       "displayName": "Vandal Reaver Cấp 4\n(Dạng 2 Ánh Đen)",
+       "displayIcon": "https://media.valorant-api.com/weaponskinchromas/db4461e5-40dd-1173-3b64-e5836f92f4dd/displayicon.png",
+       "fullRender": "https://media.valorant-api.com/weaponskinchromas/db4461e5-40dd-1173-3b64-e5836f92f4dd/fullrender.png",
+       "swatch": "https://media.valorant-api.com/weaponskinchromas/db4461e5-40dd-1173-3b64-e5836f92f4dd/swatch.png",
+       "streamedVideo": null,
+       "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/SoulStealer/Chromas/Black/AK_Soulstealer_Black_PrimaryAsset"
+      },
+      {
+       "uuid": "b2619c1c-4974-4f06-f37b-c68b1d6d7bd1",
+       "displayName": "Vandal Reaver Cấp 4\n(Dạng 3 Ánh Trắng)",
+       "displayIcon": "https://media.valorant-api.com/weaponskinchromas/b2619c1c-4974-4f06-f37b-c68b1d6d7bd1/displayicon.png",
+       "fullRender": "https://media.valorant-api.com/weaponskinchromas/b2619c1c-4974-4f06-f37b-c68b1d6d7bd1/fullrender.png",
+       "swatch": "https://media.valorant-api.com/weaponskinchromas/b2619c1c-4974-4f06-f37b-c68b1d6d7bd1/swatch.png",
+       "streamedVideo": null,
+       "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/SoulStealer/Chromas/White/AK_Soulstealer_White_PrimaryAsset"
+      }
+     ],
+     "levels": [
+      {
+       "uuid": "ba42fe63-457a-78ce-4499-47950a698129",
+       "displayName": "Vandal Reaver",
+       "levelItem": null,
+       "displayIcon": "https://media.valorant-api.com/weaponskinlevels/ba42fe63-457a-78ce-4499-47950a698129/displayicon.png",
+       "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/a6ee2555-4e3a-049e-916a-7ca853dd4568_default_universal.mp4",
+       "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/SoulStealer/Levels/AK_Soulstealer_Lv1_PrimaryAsset"
+      },
+      {
+       "uuid": "6f9ba692-4618-d0e6-3099-42b4dc5fce89",
+       "displayName": "Vandal Reaver Cấp 2",
+       "levelItem": "EEquippableSkinLevelItem::VFX",
+       "displayIcon": null,
+       "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/78146b6e-49fc-115d-995e-309c5f18e3fd_default_universal.mp4",
+       "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/SoulStealer/Levels/AK_Soulstealer_Lv2_PrimaryAsset"
+      },
+      {
+       "uuid": "98597b95-451c-70cf-46fb-31b4c5a54394",
+       "displayName": "Vandal Reaver Cấp 3",
+       "levelItem": "EEquippableSkinLevelItem::Animation",
+       "displayIcon": null,
+       "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/b21243ec-4cf0-37c0-43b4-15bf84de9d1d_default_universal.mp4",
+       "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/SoulStealer/Levels/AK_Soulstealer_Lv3_PrimaryAsset"
+      },
+      {
+       "uuid": "8c282914-446a-3e99-095a-cd97df201c8b",
+       "displayName": "Vandal Reaver Cấp 4",
+       "levelItem": "EEquippableSkinLevelItem::Finisher",
+       "displayIcon": null,
+       "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/d262fccc-465a-2da6-74ac-049ef3b3f759_default_universal.mp4",
+       "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/SoulStealer/Levels/AK_Soulstealer_Lv4_PrimaryAsset"
+      }
+     ]
+    },
+    {
+     "uuid": "9c808029-48f5-ce89-21c5-88bf4228d2ed",
+     "displayName": "Skin Yêu Thích Ngẫu Nhiên",
+     "themeUuid": "0d7a5bfb-4850-098e-1821-d989bbfd58a8",
+     "contentTierUuid": null,
+     "contentEditionUuid": null,
+     "displayIcon": "https://media.valorant-api.com/weaponskins/9c808029-48f5-ce89-21c5-88bf4228d2ed/displayicon.png",
+     "wallpaper": null,
+     "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/Random/AK_Random_PrimaryAsset",
+     "chromas": [
+      {
+       "uuid": "f68018d5-44ff-4ccf-3957-75af660abc12",
+       "displayName": "Standard",
+       "displayIcon": null,
+       "fullRender": "https://media.valorant-api.com/weaponskinchromas/f68018d5-44ff-4ccf-3957-75af660abc12/fullrender.png",
+       "swatch": null,
+       "streamedVideo": null,
+       "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/Random/Chromas/Standard/AK_Random_Standard_PrimaryAsset"
+      }
+     ],
+     "levels": [
+      {
+       "uuid": "b5f4ed55-4e7f-f561-b365-5397f9e5890b",
+       "displayName": "Skin Yêu Thích Ngẫu Nhiên",
+       "levelItem": null,
+       "displayIcon": "https://media.valorant-api.com/weaponskinlevels/b5f4ed55-4e7f-f561-b365-5397f9e5890b/displayicon.png",
+       "streamedVideo": null,
+       "assetPath": "ShooterGame/Content/Equippables/Guns/Rifles/AK/Random/Levels/AK_Random_Lv1_PrimaryAsset"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "uuid": "2f59173c-4bed-b6c3-2191-dea9b58be9c7",
+   "displayName": "Cận Chiến",
+   "category": "EEquippableCategory::Melee",
+   "defaultSkinUuid": "12cc9ed2-4430-d2fe-3064-f7a19b1ba7c7",
+   "displayIcon": "https://media.valorant-api.com/weapons/2f59173c-4bed-b6c3-2191-dea9b58be9c7/displayicon.png",
+   "killStreamIcon": "https://media.valorant-api.com/weapons/2f59173c-4bed-b6c3-2191-dea9b58be9c7/killstreamicon.png",
+   "assetPath": "ShooterGame/Content/Equippables/Melee/Melee_PrimaryAsset",
+   "shopData": null,
+   "skins": [
+    {
+     "uuid": "58442f45-4783-42a2-f4cb-789a27555889",
+     "displayName": "Dao Đặc Nhiệm 809",
+     "themeUuid": "fdfe356c-40c4-ac6a-864e-16998fc784ef",
+     "contentTierUuid": "e046854e-406c-37f4-6607-19a9ba8426fc",
+     "contentEditionUuid": null,
+     "displayIcon": "https://media.valorant-api.com/weaponskins/58442f45-4783-42a2-f4cb-789a27555889/displayicon.png",
+     "wallpaper": null,
+     "assetPath": "ShooterGame/Content/Equippables/Melee/809/Melee_809_PrimaryAsset",
+     "chromas": [
+      {
+       "uuid": "5d5b1d55-4047-a5c6-b1d2-23a940d55fb0",
+       "displayName": "Dao Đặc Nhiệm 809",
+       "displayIcon": "https://media.valorant-api.com/weaponskinchromas/5d5b1d55-4047-a5c6-b1d2-23a940d55fb0/displayicon.png",
+       "fullRender": "https://media.valorant-api.com/weaponskinchromas/5d5b1d55-4047-a5c6-b1d2-23a940d55fb0/fullrender.png",
+       "swatch": null,
+       "streamedVideo": null,
+       "assetPath": "ShooterGame/Content/Equippables/Melee/809/Chromas/Standard/Melee_809_Standard_PrimaryAsset"
+      }
+     ],
+     "levels": [
+      {
+       "uuid": "a2a5860a-4a34-8510-e067-93abc9f18e12",
+       "displayName": "Dao Đặc Nhiệm 809",
+       "levelItem": null,
+       "displayIcon": "https://media.valorant-api.com/weaponskinlevels/a2a5860a-4a34-8510-e067-93abc9f18e12/displayicon.png",
+       "streamedVideo": null,
+       "assetPath": "ShooterGame/Content/Equippables/Melee/809/Levels/Melee_809_Lv1_PrimaryAsset"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

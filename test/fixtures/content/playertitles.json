@@ -1,0 +1,19 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "d13e579c-435e-44d4-cec2-6eae5a3c5ed4",
+   "displayName": null,
+   "titleText": null,
+   "isHiddenIfNotOwned": false,
+   "assetPath": "ShooterGame/Content/Personalization/Titles/PlayerTitle_Default_PrimaryAsset"
+  },
+  {
+   "uuid": "48d870a2-4493-ebf8-7d6f-979be914dc43",
+   "displayName": "Danh Hiệu Tài Lộc",
+   "titleText": "Tài Lộc",
+   "isHiddenIfNotOwned": true,
+   "assetPath": "ShooterGame/Content/Personalization/Titles/2022LNY/PlayerTitle_Fortune_PrimaryAsset"
+  }
+ ]
+}

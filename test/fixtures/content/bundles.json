@@ -1,0 +1,21 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "2116a38e-4b71-f169-0d16-ce9289af4bfa",
+   "contentEditionUuid": null,
+   "displayName": "Hoàng Gia",
+   "displayNameSubText": null,
+   "description": "Hoàng Gia",
+   "extraDescription": null,
+   "promoDescription": null,
+   "useAdditionalContext": false,
+   "displayIcon": "https://media.valorant-api.com/bundles/2116a38e-4b71-f169-0d16-ce9289af4bfa/displayicon.png",
+   "displayIcon2": "https://media.valorant-api.com/bundles/2116a38e-4b71-f169-0d16-ce9289af4bfa/displayicon2.png",
+   "displayIcon3": null,
+   "logoIcon": null,
+   "verticalPromoImage": "https://media.valorant-api.com/bundles/2116a38e-4b71-f169-0d16-ce9289af4bfa/verticalpromoimage.png",
+   "assetPath": "ShooterGame/Content/UI/OutOfGame/MainMenu/Store/Bundles/StorefrontItem_HypebeastThemeBundle_DataAsset"
+  }
+ ]
+}

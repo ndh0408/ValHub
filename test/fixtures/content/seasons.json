@@ -1,0 +1,55 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+   "displayName": "PHẦN V",
+   "title": "V26 // PHẦN V",
+   "type": "EAresSeasonType::Act",
+   "startTime": "2026-08-19T00:00:00Z",
+   "endTime": "2026-10-14T00:00:00Z",
+   "parentUuid": "3737c391-497a-6e82-aeb5-cc9f701f72e2",
+   "assetPath": "ShooterGame/Content/Seasons/Season_EpisodeV26-2_Act5_DataAsset"
+  },
+  {
+   "uuid": "d816f426-48ea-f052-117f-9697a155b319",
+   "displayName": "PHẦN VI",
+   "title": "V26 // PHẦN VI",
+   "type": "EAresSeasonType::Act",
+   "startTime": "2026-10-14T00:00:00Z",
+   "endTime": "2027-01-06T00:00:00Z",
+   "parentUuid": "3737c391-497a-6e82-aeb5-cc9f701f72e2",
+   "assetPath": "ShooterGame/Content/Seasons/Season_EpisodeV26-2_Act6_DataAsset"
+  },
+  {
+   "uuid": "3737c391-497a-6e82-aeb5-cc9f701f72e2",
+   "displayName": "V26",
+   "title": null,
+   "type": null,
+   "startTime": "2026-06-24T00:00:00Z",
+   "endTime": "2027-01-06T00:00:00Z",
+   "parentUuid": null,
+   "assetPath": "ShooterGame/Content/Seasons/Season_EpisodeV26-2_DataAsset"
+  },
+  {
+   "uuid": "3f61c772-4560-cd3f-5d3f-a7ab5abda6b3",
+   "displayName": "PHẦN I",
+   "title": null,
+   "type": "EAresSeasonType::Act",
+   "startTime": "2020-06-01T07:00:00Z",
+   "endTime": "2020-08-04T00:00:00Z",
+   "parentUuid": "fcf2c8f4-4324-e50b-2e23-718e4a3ab046",
+   "assetPath": "ShooterGame/Content/Seasons/Season_Episode1_Act1_DataAsset"
+  },
+  {
+   "uuid": "fcf2c8f4-4324-e50b-2e23-718e4a3ab046",
+   "displayName": "HỒI 1",
+   "title": null,
+   "type": null,
+   "startTime": "2020-06-01T07:00:00Z",
+   "endTime": "2021-01-12T00:00:00Z",
+   "parentUuid": null,
+   "assetPath": "ShooterGame/Content/Seasons/Season_Episode1_DataAsset"
+  }
+ ]
+}

@@ -1,0 +1,163 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "564d8e28-c226-3180-6285-e48a390db8b1",
+   "assetObjectName": "Episode1_CompetitiveTierDataTable",
+   "tiers": [
+    {
+     "tier": 0,
+     "tierName": "CHƯA XẾP HẠNG",
+     "division": "ECompetitiveDivision::UNRANKED",
+     "divisionName": "CHƯA XẾP HẠNG",
+     "color": "ffffffff",
+     "backgroundColor": "00000000",
+     "smallIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/0/smallicon.png",
+     "largeIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/0/largeicon.png",
+     "rankTriangleDownIcon": null,
+     "rankTriangleUpIcon": null
+    },
+    {
+     "tier": 1,
+     "tierName": "Chưa sử dụng",
+     "division": "ECompetitiveDivision::INVALID",
+     "divisionName": "Chưa sử dụng",
+     "color": "ffffffff",
+     "backgroundColor": "00000000",
+     "smallIcon": null,
+     "largeIcon": null,
+     "rankTriangleDownIcon": null,
+     "rankTriangleUpIcon": null
+    },
+    {
+     "tier": 18,
+     "tierName": "KIM CƯƠNG 1",
+     "division": "ECompetitiveDivision::DIAMOND",
+     "divisionName": "KIM CƯƠNG",
+     "color": "b489c4ff",
+     "backgroundColor": "763bafff",
+     "smallIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/18/smallicon.png",
+     "largeIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/18/largeicon.png",
+     "rankTriangleDownIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/18/ranktriangledownicon.png",
+     "rankTriangleUpIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/18/ranktriangleupicon.png"
+    },
+    {
+     "tier": 21,
+     "tierName": "BẤT TỬ 1",
+     "division": "ECompetitiveDivision::IMMORTAL",
+     "divisionName": "BẤT TỬ",
+     "color": "bb3d65ff",
+     "backgroundColor": "ff5551ff",
+     "smallIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/21/smallicon.png",
+     "largeIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/21/largeicon.png",
+     "rankTriangleDownIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/21/ranktriangledownicon.png",
+     "rankTriangleUpIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/21/ranktriangleupicon.png"
+    },
+    {
+     "tier": 24,
+     "tierName": "RADIANT",
+     "division": "ECompetitiveDivision::RADIANT",
+     "divisionName": "RADIANT",
+     "color": "ffffaaff",
+     "backgroundColor": "ffedaaff",
+     "smallIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/24/smallicon.png",
+     "largeIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/24/largeicon.png",
+     "rankTriangleDownIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/24/ranktriangledownicon.png",
+     "rankTriangleUpIcon": "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/24/ranktriangleupicon.png"
+    }
+   ],
+   "assetPath": "ShooterGame/Content/UI/Screens/Shared/Competitive/Episode1_CompetitiveTierDataTable"
+  },
+  {
+   "uuid": "03621f52-342b-cf4e-4f86-9350a49c6d04",
+   "assetObjectName": "Episode5_CompetitiveTierDataTable",
+   "tiers": [
+    {
+     "tier": 0,
+     "tierName": "CHƯA XẾP HẠNG",
+     "division": "ECompetitiveDivision::UNRANKED",
+     "divisionName": "CHƯA XẾP HẠNG",
+     "color": "ffffffff",
+     "backgroundColor": "00000000",
+     "smallIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/0/smallicon.png",
+     "largeIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/0/largeicon.png",
+     "rankTriangleDownIcon": null,
+     "rankTriangleUpIcon": null
+    },
+    {
+     "tier": 1,
+     "tierName": "Chưa sử dụng",
+     "division": "ECompetitiveDivision::INVALID",
+     "divisionName": "Chưa sử dụng",
+     "color": "ffffffff",
+     "backgroundColor": "00000000",
+     "smallIcon": null,
+     "largeIcon": null,
+     "rankTriangleDownIcon": null,
+     "rankTriangleUpIcon": null
+    },
+    {
+     "tier": 3,
+     "tierName": "SẮT 1",
+     "division": "ECompetitiveDivision::IRON",
+     "divisionName": "SẮT",
+     "color": "868986ff",
+     "backgroundColor": "828282ff",
+     "smallIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/3/smallicon.png",
+     "largeIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/3/largeicon.png",
+     "rankTriangleDownIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/3/ranktriangledownicon.png",
+     "rankTriangleUpIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/3/ranktriangleupicon.png"
+    },
+    {
+     "tier": 18,
+     "tierName": "KIM CƯƠNG 1",
+     "division": "ECompetitiveDivision::DIAMOND",
+     "divisionName": "KIM CƯƠNG",
+     "color": "b489c4ff",
+     "backgroundColor": "763bafff",
+     "smallIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/18/smallicon.png",
+     "largeIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/18/largeicon.png",
+     "rankTriangleDownIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/18/ranktriangledownicon.png",
+     "rankTriangleUpIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/18/ranktriangleupicon.png"
+    },
+    {
+     "tier": 21,
+     "tierName": "THƯỢNG NHÂN 1",
+     "division": "ECompetitiveDivision::ASCENDANT",
+     "divisionName": "THƯỢNG NHÂN",
+     "color": "6ae2afff",
+     "backgroundColor": "1c7245ff",
+     "smallIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/21/smallicon.png",
+     "largeIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/21/largeicon.png",
+     "rankTriangleDownIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/21/ranktriangledownicon.png",
+     "rankTriangleUpIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/21/ranktriangleupicon.png"
+    },
+    {
+     "tier": 24,
+     "tierName": "BẤT TỬ 1",
+     "division": "ECompetitiveDivision::IMMORTAL",
+     "divisionName": "BẤT TỬ",
+     "color": "bb3d65ff",
+     "backgroundColor": "ff5551ff",
+     "smallIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/24/smallicon.png",
+     "largeIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/24/largeicon.png",
+     "rankTriangleDownIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/24/ranktriangledownicon.png",
+     "rankTriangleUpIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/24/ranktriangleupicon.png"
+    },
+    {
+     "tier": 27,
+     "tierName": "RADIANT",
+     "division": "ECompetitiveDivision::RADIANT",
+     "divisionName": "RADIANT",
+     "color": "ffffaaff",
+     "backgroundColor": "ffedaaff",
+     "smallIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/27/smallicon.png",
+     "largeIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/27/largeicon.png",
+     "rankTriangleDownIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/27/ranktriangledownicon.png",
+     "rankTriangleUpIcon": "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/27/ranktriangleupicon.png"
+    }
+   ],
+   "assetPath": "ShooterGame/Content/UI/Screens/Shared/Competitive/Episode5_CompetitiveTierDataTable"
+  }
+ ]
+}

@@ -1,0 +1,51 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "7e2ba2e8-4597-060a-b41e-81acedca414e",
+   "displayName": "Hình Phun Sơn Kỹ Năng Không Làm Khó Được Tôi",
+   "category": "EAresSprayCategory::Contextual",
+   "themeUuid": null,
+   "isNullSpray": false,
+   "hideIfNotOwned": true,
+   "displayIcon": "https://media.valorant-api.com/sprays/7e2ba2e8-4597-060a-b41e-81acedca414e/displayicon.png",
+   "fullIcon": "https://media.valorant-api.com/sprays/7e2ba2e8-4597-060a-b41e-81acedca414e/fullicon.png",
+   "fullTransparentIcon": "https://media.valorant-api.com/sprays/7e2ba2e8-4597-060a-b41e-81acedca414e/fulltransparenticon.png",
+   "animationPng": null,
+   "animationGif": null,
+   "assetPath": "ShooterGame/Content/Personalization/Sprays/2025EOY_EventPass/AbilitiesDontKill/Spray_AbilitiesDontKill_PrimaryAsset",
+   "levels": [
+    {
+     "uuid": "1a2d5672-4d65-de65-9b7f-75b61b379def",
+     "sprayLevel": 1,
+     "displayName": "AbilitiesDontKill",
+     "displayIcon": "https://media.valorant-api.com/spraylevels/1a2d5672-4d65-de65-9b7f-75b61b379def/displayicon.png",
+     "assetPath": "ShooterGame/Content/Personalization/Sprays/2025EOY_EventPass/AbilitiesDontKill/Spray_AbilitiesDontKill_Level1_PrimaryAsset"
+    }
+   ]
+  },
+  {
+   "uuid": "fe86a4c5-4e92-324b-4c0d-a7a837d0d548",
+   "displayName": "Hình Phun Sơn Đắm Chìm Vào Âm Nhạc",
+   "category": "EAresSprayCategory::Contextual",
+   "themeUuid": null,
+   "isNullSpray": false,
+   "hideIfNotOwned": true,
+   "displayIcon": "https://media.valorant-api.com/sprays/fe86a4c5-4e92-324b-4c0d-a7a837d0d548/displayicon.png",
+   "fullIcon": "https://media.valorant-api.com/sprays/fe86a4c5-4e92-324b-4c0d-a7a837d0d548/fullicon.png",
+   "fullTransparentIcon": "https://media.valorant-api.com/sprays/fe86a4c5-4e92-324b-4c0d-a7a837d0d548/fulltransparenticon.png",
+   "animationPng": null,
+   "animationGif": null,
+   "assetPath": "ShooterGame/Content/Personalization/Sprays/2025EOY_EventPass/MarySinging/Spray_MarySinging_PrimaryAsset",
+   "levels": [
+    {
+     "uuid": "70c3366a-44a8-1840-192d-55badf2440d5",
+     "sprayLevel": 1,
+     "displayName": "MarySinging",
+     "displayIcon": "https://media.valorant-api.com/spraylevels/70c3366a-44a8-1840-192d-55badf2440d5/displayicon.png",
+     "assetPath": "ShooterGame/Content/Personalization/Sprays/2025EOY_EventPass/MarySinging/Spray_MarySinging_Level1_PrimaryAsset"
+    }
+   ]
+  }
+ ]
+}

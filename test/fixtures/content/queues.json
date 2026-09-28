@@ -1,0 +1,29 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "d2faff85-4964-f52e-b6b5-73a5d66ccad6",
+   "queueId": "competitive",
+   "displayName": "Thi đấu xếp hạng",
+   "description": "Chế độ đặt/gỡ Spike. Trận đấu xếp hạng, danh sách bản đồ giới hạn, chứng minh bản lĩnh, giành lấy vinh quang. Thắng 13 vòng trước để giành chiến thắng.",
+   "dropdownText": "Thi đấu xếp hạng",
+   "selectedText": "THI ĐẤU XẾP HẠNG",
+   "isBeta": false,
+   "displayIcon": "https://media.valorant-api.com/gamemodequeues/d2faff85-4964-f52e-b6b5-73a5d66ccad6/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodequeues/d2faff85-4964-f52e-b6b5-73a5d66ccad6/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/Queues/CompetitiveQueue_DataAsset"
+  },
+  {
+   "uuid": "494b69f1-4e3a-1b03-c2cd-a4875d6e9cb6",
+   "queueId": "unrated",
+   "displayName": "Đấu thường",
+   "description": "Chế độ đặt/gỡ Spike. Trận đấu thường, tất cả bản đồ, tấn công và phòng thủ, lối chơi cổ điển. Thắng 13 vòng trước để giành chiến thắng.",
+   "dropdownText": "Đấu thường",
+   "selectedText": "ĐẤU THƯỜNG",
+   "isBeta": false,
+   "displayIcon": null,
+   "listViewIconTall": "https://media.valorant-api.com/gamemodequeues/494b69f1-4e3a-1b03-c2cd-a4875d6e9cb6/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/Queues/UnratedQueue_DataAsset"
+  }
+ ]
+}

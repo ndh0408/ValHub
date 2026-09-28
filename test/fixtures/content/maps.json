@@ -1,0 +1,73 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "7eaecc1b-4337-bbf6-6ab9-04b8f06b3319",
+   "displayName": "Ascent",
+   "narrativeDescription": null,
+   "tacticalDescription": "Khu A/B",
+   "coordinates": "45°26'BF'N,12°20'Q'E",
+   "displayIcon": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/Ascent/Ascent_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Ascent/Ascent",
+   "xMultiplier": 7e-05,
+   "yMultiplier": -7e-05,
+   "xScalarToAdd": 0.813895,
+   "yScalarToAdd": 0.573242,
+   "callouts": [
+    {
+     "regionName": "Cây",
+     "superRegion": "ECalloutSuperRegion::A",
+     "superRegionName": "A",
+     "location": {
+      "x": 3980.9062,
+      "y": -5938.758,
+      "z": 400.00003
+     },
+     "scale3D": null,
+     "rotation": null
+    }
+   ]
+  },
+  {
+   "uuid": "690b3ed2-4dff-945b-8223-6da834e30d24",
+   "displayName": "District",
+   "narrativeDescription": null,
+   "tacticalDescription": null,
+   "coordinates": null,
+   "displayIcon": "https://media.valorant-api.com/maps/690b3ed2-4dff-945b-8223-6da834e30d24/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/690b3ed2-4dff-945b-8223-6da834e30d24/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/690b3ed2-4dff-945b-8223-6da834e30d24/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/690b3ed2-4dff-945b-8223-6da834e30d24/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/690b3ed2-4dff-945b-8223-6da834e30d24/stylizedbackgroundimage.png",
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/HURM/HURM_Alley/HURM_Alley_PrimaryAsset",
+   "mapUrl": "/Game/Maps/HURM/HURM_Alley/HURM_Alley",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0,
+   "callouts": [
+    {
+     "regionName": "Thùng",
+     "superRegion": "ECalloutSuperRegion::AttackerSide",
+     "superRegionName": "Bên Tấn Công",
+     "location": {
+      "x": -2225,
+      "y": 1700,
+      "z": -200
+     },
+     "scale3D": null,
+     "rotation": null
+    }
+   ]
+  }
+ ]
+}

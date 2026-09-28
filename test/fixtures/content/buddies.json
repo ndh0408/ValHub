@@ -1,0 +1,41 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "f2f07eae-4518-15eb-546b-018961e0dd60",
+   "displayName": "Phụ Kiện Đặc Nhiệm 809",
+   "isHiddenIfNotOwned": false,
+   "themeUuid": null,
+   "displayIcon": "https://media.valorant-api.com/buddies/f2f07eae-4518-15eb-546b-018961e0dd60/displayicon.png",
+   "assetPath": "ShooterGame/Content/Equippables/Buddies/809/GunBuddy_809_PrimaryAsset",
+   "levels": [
+    {
+     "uuid": "6c3b1a9e-4067-7ed6-fc6c-fea61e0a057c",
+     "charmLevel": 1,
+     "hideIfNotOwned": false,
+     "displayName": "809",
+     "displayIcon": "https://media.valorant-api.com/buddylevels/6c3b1a9e-4067-7ed6-fc6c-fea61e0a057c/displayicon.png",
+     "assetPath": "ShooterGame/Content/Equippables/Buddies/809/GunBuddy_809_Lv1_PrimaryAsset"
+    }
+   ]
+  },
+  {
+   "uuid": "bf997358-4a99-c1f8-37b0-5fa64200cdce",
+   "displayName": "Phụ Kiện Người Dẫn Lối",
+   "isHiddenIfNotOwned": false,
+   "themeUuid": null,
+   "displayIcon": "https://media.valorant-api.com/buddies/bf997358-4a99-c1f8-37b0-5fa64200cdce/displayicon.png",
+   "assetPath": "ShooterGame/Content/Equippables/Buddies/A21/GunBuddy_A21_PrimaryAsset",
+   "levels": [
+    {
+     "uuid": "b1fa66b4-4401-415a-03fd-d2862fae97ab",
+     "charmLevel": 1,
+     "hideIfNotOwned": false,
+     "displayName": "A21",
+     "displayIcon": "https://media.valorant-api.com/buddylevels/b1fa66b4-4401-415a-03fd-d2862fae97ab/displayicon.png",
+     "assetPath": "ShooterGame/Content/Equippables/Buddies/A21/GunBuddy_A21_Lv1_PrimaryAsset"
+    }
+   ]
+  }
+ ]
+}

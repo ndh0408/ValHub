@@ -1,0 +1,179 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "6b0f1bc6-4555-2405-9034-c9af64cf1cb1",
+   "startTime": "2020-06-01T07:00:00Z",
+   "endTime": "2020-08-04T00:00:00Z",
+   "seasonUuid": "3f61c772-4560-cd3f-5d3f-a7ab5abda6b3",
+   "competitiveTiersUuid": "564d8e28-c226-3180-6285-e48a390db8b1",
+   "borders": [
+    {
+     "uuid": "06289abe-489d-690b-edf1-51b9c063f3da",
+     "level": 0,
+     "winsRequired": 0,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/06289abe-489d-690b-edf1-51b9c063f3da/displayicon.png",
+     "smallIcon": null,
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level0_DataAsset"
+    },
+    {
+     "uuid": "d3b30fbf-445e-0bce-bf98-b2b58e5807c6",
+     "level": 1,
+     "winsRequired": 9,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/d3b30fbf-445e-0bce-bf98-b2b58e5807c6/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/d3b30fbf-445e-0bce-bf98-b2b58e5807c6/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level1_DataAsset"
+    },
+    {
+     "uuid": "48bfd197-49c0-59bd-5833-ad9feff49516",
+     "level": 2,
+     "winsRequired": 25,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/48bfd197-49c0-59bd-5833-ad9feff49516/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/48bfd197-49c0-59bd-5833-ad9feff49516/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level2_DataAsset"
+    },
+    {
+     "uuid": "dc20c281-4086-c7aa-8420-9f851d0e44ed",
+     "level": 3,
+     "winsRequired": 50,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/dc20c281-4086-c7aa-8420-9f851d0e44ed/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/dc20c281-4086-c7aa-8420-9f851d0e44ed/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level3_DataAsset"
+    },
+    {
+     "uuid": "19165f95-4367-9123-d52b-bc8b05b47247",
+     "level": 4,
+     "winsRequired": 75,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/19165f95-4367-9123-d52b-bc8b05b47247/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/19165f95-4367-9123-d52b-bc8b05b47247/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level4_DataAsset"
+    },
+    {
+     "uuid": "ba974f74-4131-a4ba-378a-c9993b9edef0",
+     "level": 5,
+     "winsRequired": 100,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/ba974f74-4131-a4ba-378a-c9993b9edef0/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/ba974f74-4131-a4ba-378a-c9993b9edef0/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level5_DataAsset"
+    }
+   ],
+   "assetPath": "ShooterGame/Content/Seasons/Competitive/CompetitiveSeason_Episode1_Act1_DataAsset"
+  },
+  {
+   "uuid": "5567c17f-41aa-71fe-9097-1ea50c14134f",
+   "startTime": "2026-08-19T00:00:00Z",
+   "endTime": "2026-10-14T00:00:00Z",
+   "seasonUuid": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+   "competitiveTiersUuid": "03621f52-342b-cf4e-4f86-9350a49c6d04",
+   "borders": [
+    {
+     "uuid": "06289abe-489d-690b-edf1-51b9c063f3da",
+     "level": 0,
+     "winsRequired": 0,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/06289abe-489d-690b-edf1-51b9c063f3da/displayicon.png",
+     "smallIcon": null,
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level0_DataAsset"
+    },
+    {
+     "uuid": "d3b30fbf-445e-0bce-bf98-b2b58e5807c6",
+     "level": 1,
+     "winsRequired": 9,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/d3b30fbf-445e-0bce-bf98-b2b58e5807c6/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/d3b30fbf-445e-0bce-bf98-b2b58e5807c6/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level1_DataAsset"
+    },
+    {
+     "uuid": "48bfd197-49c0-59bd-5833-ad9feff49516",
+     "level": 2,
+     "winsRequired": 25,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/48bfd197-49c0-59bd-5833-ad9feff49516/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/48bfd197-49c0-59bd-5833-ad9feff49516/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level2_DataAsset"
+    },
+    {
+     "uuid": "dc20c281-4086-c7aa-8420-9f851d0e44ed",
+     "level": 3,
+     "winsRequired": 50,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/dc20c281-4086-c7aa-8420-9f851d0e44ed/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/dc20c281-4086-c7aa-8420-9f851d0e44ed/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level3_DataAsset"
+    },
+    {
+     "uuid": "19165f95-4367-9123-d52b-bc8b05b47247",
+     "level": 4,
+     "winsRequired": 75,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/19165f95-4367-9123-d52b-bc8b05b47247/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/19165f95-4367-9123-d52b-bc8b05b47247/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level4_DataAsset"
+    },
+    {
+     "uuid": "ba974f74-4131-a4ba-378a-c9993b9edef0",
+     "level": 5,
+     "winsRequired": 100,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/ba974f74-4131-a4ba-378a-c9993b9edef0/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/ba974f74-4131-a4ba-378a-c9993b9edef0/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level5_DataAsset"
+    }
+   ],
+   "assetPath": "ShooterGame/Content/Seasons/Competitive/CompetitiveSeason_EpisodeV26-2_Act5_DataAsset"
+  },
+  {
+   "uuid": "88f20863-4da0-4cda-4733-d393893e4031",
+   "startTime": "2026-10-14T00:00:00Z",
+   "endTime": "2027-01-06T00:00:00Z",
+   "seasonUuid": "d816f426-48ea-f052-117f-9697a155b319",
+   "competitiveTiersUuid": "03621f52-342b-cf4e-4f86-9350a49c6d04",
+   "borders": [
+    {
+     "uuid": "06289abe-489d-690b-edf1-51b9c063f3da",
+     "level": 0,
+     "winsRequired": 0,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/06289abe-489d-690b-edf1-51b9c063f3da/displayicon.png",
+     "smallIcon": null,
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level0_DataAsset"
+    },
+    {
+     "uuid": "d3b30fbf-445e-0bce-bf98-b2b58e5807c6",
+     "level": 1,
+     "winsRequired": 9,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/d3b30fbf-445e-0bce-bf98-b2b58e5807c6/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/d3b30fbf-445e-0bce-bf98-b2b58e5807c6/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level1_DataAsset"
+    },
+    {
+     "uuid": "48bfd197-49c0-59bd-5833-ad9feff49516",
+     "level": 2,
+     "winsRequired": 25,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/48bfd197-49c0-59bd-5833-ad9feff49516/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/48bfd197-49c0-59bd-5833-ad9feff49516/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level2_DataAsset"
+    },
+    {
+     "uuid": "dc20c281-4086-c7aa-8420-9f851d0e44ed",
+     "level": 3,
+     "winsRequired": 50,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/dc20c281-4086-c7aa-8420-9f851d0e44ed/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/dc20c281-4086-c7aa-8420-9f851d0e44ed/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level3_DataAsset"
+    },
+    {
+     "uuid": "19165f95-4367-9123-d52b-bc8b05b47247",
+     "level": 4,
+     "winsRequired": 75,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/19165f95-4367-9123-d52b-bc8b05b47247/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/19165f95-4367-9123-d52b-bc8b05b47247/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level4_DataAsset"
+    },
+    {
+     "uuid": "ba974f74-4131-a4ba-378a-c9993b9edef0",
+     "level": 5,
+     "winsRequired": 100,
+     "displayIcon": "https://media.valorant-api.com/seasonborders/ba974f74-4131-a4ba-378a-c9993b9edef0/displayicon.png",
+     "smallIcon": "https://media.valorant-api.com/seasonborders/ba974f74-4131-a4ba-378a-c9993b9edef0/smallicon.png",
+     "assetPath": "ShooterGame/Content/Seasons/Borders/Border_Level5_DataAsset"
+    }
+   ],
+   "assetPath": "ShooterGame/Content/Seasons/Competitive/CompetitiveSeason_EpisodeV26-2_Act6_DataAsset"
+  }
+ ]
+}

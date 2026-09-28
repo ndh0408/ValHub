@@ -1,0 +1,12 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "fc33f376-4a58-687c-6961-bd8a7e529346",
+   "displayName": "Flex ORA by OneTap",
+   "displayNameAllCaps": "FLEX ORA BY ONETAP",
+   "displayIcon": "https://media.valorant-api.com/flex/fc33f376-4a58-687c-6961-bd8a7e529346/displayicon.png",
+   "assetPath": "ShooterGame/Content/Equippables/Totems/Airhorn/Totem_Airhorn_PrimaryAsset"
+  }
+ ]
+}

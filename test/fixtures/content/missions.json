@@ -1,0 +1,23 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "c88f4400-4d61-896d-810b-5aacd6812076",
+   "displayName": null,
+   "title": "Gây sát thương",
+   "type": "EAresMissionType::Weekly",
+   "xpGrant": 10080,
+   "progressToComplete": 18000,
+   "activationDate": "2021-01-13T00:00:00Z",
+   "expirationDate": "2021-03-03T00:00:00Z",
+   "tags": null,
+   "objectives": [
+    {
+     "objectiveUuid": "974cb6ff-4aef-0217-1813-73a28ddfcdc6",
+     "value": 18000
+    }
+   ],
+   "assetPath": "ShooterGame/Content/Missions/Contracts/Episode-2-1_Weeklies/Week1/Episode2-1_Week1_DealDamage_PrimaryAsset"
+  }
+ ]
+}

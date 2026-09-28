@@ -1,0 +1,15 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "1e71c55c-476e-24ac-0687-e48b547dbb35",
+   "displayName": "QUÉT SẠCH",
+   "assetPath": "ShooterGame/Content/Ceremonies/AceCeremony_PrimaryAsset"
+  },
+  {
+   "uuid": "b41f4d69-4f9d-ffa9-2be8-e2878cf7f03b",
+   "displayName": "NGƯỜI HẠ MÀN",
+   "assetPath": "ShooterGame/Content/Ceremonies/CloserCeremony_PrimaryAsset"
+  }
+ ]
+}

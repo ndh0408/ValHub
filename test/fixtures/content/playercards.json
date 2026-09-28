@@ -1,0 +1,27 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "1711d20d-4b1c-c64a-14be-d4ae58a457c6",
+   "displayName": "Thẻ Bộ Đôi Ngời Sáng",
+   "isHiddenIfNotOwned": true,
+   "themeUuid": null,
+   "displayIcon": "https://media.valorant-api.com/playercards/1711d20d-4b1c-c64a-14be-d4ae58a457c6/displayicon.png",
+   "smallArt": "https://media.valorant-api.com/playercards/1711d20d-4b1c-c64a-14be-d4ae58a457c6/smallart.png",
+   "wideArt": "https://media.valorant-api.com/playercards/1711d20d-4b1c-c64a-14be-d4ae58a457c6/wideart.png",
+   "largeArt": "https://media.valorant-api.com/playercards/1711d20d-4b1c-c64a-14be-d4ae58a457c6/largeart.png",
+   "assetPath": "ShooterGame/Content/Personalization/PlayerCards/2024EOY_EventPass/Concert/Playercard_Concert_PrimaryAsset"
+  },
+  {
+   "uuid": "c8b2f5fd-4331-b172-f3b7-c8a26f356a1f",
+   "displayName": "Thẻ Thịt Nướng Chiều",
+   "isHiddenIfNotOwned": true,
+   "themeUuid": null,
+   "displayIcon": "https://media.valorant-api.com/playercards/c8b2f5fd-4331-b172-f3b7-c8a26f356a1f/displayicon.png",
+   "smallArt": "https://media.valorant-api.com/playercards/c8b2f5fd-4331-b172-f3b7-c8a26f356a1f/smallart.png",
+   "wideArt": "https://media.valorant-api.com/playercards/c8b2f5fd-4331-b172-f3b7-c8a26f356a1f/wideart.png",
+   "largeArt": "https://media.valorant-api.com/playercards/c8b2f5fd-4331-b172-f3b7-c8a26f356a1f/largeart.png",
+   "assetPath": "ShooterGame/Content/Personalization/PlayerCards/2024EOY_EventPass/GekkoHoliday/Playercard_GekkoHoliday_PrimaryAsset"
+  }
+ ]
+}

@@ -1,0 +1,32 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "96bd3920-4f36-d026-2b28-c683eb0bcac5",
+   "displayName": "Thông thường",
+   "description": "Chế độ đặt/gỡ Spike. Trận đấu thường, tất cả bản đồ, tấn công và phòng thủ, lối chơi cổ điển. Thắng 13 vòng trước để giành chiến thắng.",
+   "duration": "30-40 PHÚT",
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": null,
+   "allowsMatchTimeouts": true,
+   "allowsCustomGameReplays": true,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": -1,
+   "teamRoles": null,
+   "gameFeatureOverrides": null,
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::AccoladesEnabled",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/96bd3920-4f36-d026-2b28-c683eb0bcac5/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/96bd3920-4f36-d026-2b28-c683eb0bcac5/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/Bomb/BombGameMode_PrimaryAsset"
+  }
+ ]
+}

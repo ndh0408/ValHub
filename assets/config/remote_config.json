@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "flags": {
+    "social_login_hint": true,
+    "reauth_post_first": false,
+    "use_offers_endpoint": false,
+    "nm_next_date_source": false,
+    "live_score": true,
+    "party_accept_invite": false,
+    "console_support": false
+  },
+  "webViewUserAgent": null,
+  "apiUserAgent": null,
+  "clientVersionOverride": null
+}
