@@ -1,0 +1,107 @@
+{
+  "Version": 1790000000000,
+  "Subject": "aaaaaaaa-0000-4000-8000-000000000001",
+  "NewPlayerExperienceFinished": true,
+  "QueueSkills": {
+    "competitive": {
+      "TotalGamesNeededForRating": 0,
+      "TotalGamesNeededForLeaderboard": 0,
+      "CurrentSeasonGamesNeededForRating": 0,
+      "SeasonalInfoBySeasonID": {
+        "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b": {
+          "SeasonID": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+          "NumberOfWins": 20,
+          "NumberOfWinsWithPlacements": 21,
+          "NumberOfGames": 38,
+          "Rank": 18,
+          "CapstoneWins": 0,
+          "LeaderboardRank": 0,
+          "CompetitiveTier": 18,
+          "RankedRating": 6,
+          "WinsByTier": {
+            "0": 1,
+            "17": 12,
+            "18": 7
+          },
+          "GamesNeededForRating": 0,
+          "TotalWinsNeededForRank": 0
+        },
+        "3f61c772-4560-cd3f-5d3f-a7ab5abda6b3": {
+          "SeasonID": "3f61c772-4560-cd3f-5d3f-a7ab5abda6b3",
+          "NumberOfWins": 30,
+          "NumberOfWinsWithPlacements": 30,
+          "NumberOfGames": 55,
+          "Rank": 21,
+          "CapstoneWins": 0,
+          "LeaderboardRank": 0,
+          "CompetitiveTier": 21,
+          "RankedRating": 40,
+          "WinsByTier": {
+            "18": 10,
+            "20": 8,
+            "21": 12
+          },
+          "GamesNeededForRating": 0,
+          "TotalWinsNeededForRank": 0
+        },
+        "9999aaaa-0000-4000-8000-00000000abcd": {
+          "NumberOfWins": 3,
+          "NumberOfWinsWithPlacements": 3,
+          "NumberOfGames": 5,
+          "Rank": 23,
+          "CompetitiveTier": "23",
+          "RankedRating": 55,
+          "WinsByTier": null,
+          "GamesNeededForRating": 0
+        }
+      }
+    },
+    "console_competitive": {
+      "TotalGamesNeededForRating": 0,
+      "CurrentSeasonGamesNeededForRating": 0,
+      "SeasonalInfoBySeasonID": {
+        "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b": {
+          "SeasonID": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+          "NumberOfWins": 2,
+          "NumberOfGames": 4,
+          "Rank": 9,
+          "CompetitiveTier": 9,
+          "RankedRating": 44,
+          "WinsByTier": {
+            "9": 2
+          }
+        }
+      }
+    },
+    "unrated": {
+      "TotalGamesNeededForRating": 0,
+      "CurrentSeasonGamesNeededForRating": 0,
+      "SeasonalInfoBySeasonID": null
+    },
+    "deathmatch": {
+      "SeasonalInfoBySeasonID": {
+        "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b": {
+          "SeasonID": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+          "NumberOfWins": 4,
+          "NumberOfGames": 9
+        }
+      }
+    }
+  },
+  "LatestCompetitiveUpdate": {
+    "MatchID": "e5000000-0000-4000-8000-000000000005",
+    "MapID": "/Game/Maps/Ascent/Ascent",
+    "SeasonID": "8102CD81-43A0-D0D7-BD59-47B8FE9BED1B",
+    "MatchStartTime": 1790568000000,
+    "TierAfterUpdate": 18,
+    "TierBeforeUpdate": 17,
+    "RankedRatingAfterUpdate": 6,
+    "RankedRatingBeforeUpdate": 74,
+    "RankedRatingEarned": 32,
+    "RankedRatingPerformanceBonus": 0,
+    "CompetitiveMovement": "PROMOTED",
+    "AFKPenalty": 0
+  },
+  "IsLeaderboardAnonymized": false,
+  "IsActRankBadgeHidden": false
+}

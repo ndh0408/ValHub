@@ -1,0 +1,41 @@
+{
+  "FeaturedBundle": {
+    "Bundle": {
+      "ID": "4AC0CF99-0A6F-41A7-BD94-9A58FE7EC106",
+      "DataAssetID": "550D9D34-4942-A605-BA3C-B09452E52F83",
+      "CurrencyID": "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741",
+      "Items": [
+        {
+          "Item": { "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433", "ItemID": "6F60B3CE-4CBF-91EA-2CA7-59BBF1923751", "Amount": "1" },
+          "BasePrice": "2175", "CurrencyID": "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741",
+          "DiscountPercent": 0.33, "DiscountedPrice": 1457.0, "IsPromoItem": false
+        },
+        {
+          "Item": { "ItemTypeID": "dd3bf334-87f3-40bd-b043-682a57a8dc3a", "ItemID": "fc35c2a0-4028-f217-faac-79a02aeeef90", "Amount": 2 },
+          "BasePrice": 475, "CurrencyID": "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741",
+          "DiscountPercent": 1, "DiscountedPrice": null, "IsPromoItem": false
+        },
+        "not-an-item",
+        { "Item": null, "BasePrice": 100 }
+      ],
+      "ItemOffers": null,
+      "TotalBaseCost": null,
+      "TotalDiscountedCost": null,
+      "TotalDiscountPercent": 0,
+      "DurationRemainingInSeconds": "3600.5",
+      "WholesaleOnly": "false"
+    },
+    "Bundles": null,
+    "BundleRemainingDurationInSeconds": 3600
+  },
+  "SkinsPanelLayout": {
+    "SingleItemOffers": ["0DDBDF8C-43B0-E2F1-94F8-D6BE9D2A2110", "", null, "29be6d9e-48b2-1229-4f7d-4da1c20deda9"],
+    "SingleItemStoreOffers": null,
+    "SingleItemOffersRemainingDurationInSeconds": "7200"
+  },
+  "AccessoryStore": {
+    "AccessoryStoreOffers": null,
+    "AccessoryStoreRemainingDurationInSeconds": 86400,
+    "StorefrontID": "27ce4bc3-81b1-575c-bcdf-572df8e8ce84"
+  }
+}

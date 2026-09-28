@@ -1,0 +1,58 @@
+{
+  "EntitlementsByTypes": [
+    {
+      "ItemTypeID": "3ad1b2b2-acdb-4524-852f-954a76ddae0a",
+      "Entitlements": [
+        { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "b2a065c0-4632-ccaa-f496-7681dc2a6185" }
+      ]
+    },
+    {
+      "ItemTypeID": "dd3bf334-87f3-40bd-b043-682a57a8dc3a",
+      "Entitlements": [
+        { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "fc35c2a0-4028-f217-faac-79a02aeeef90", "InstanceID": "90431b40-a439-410f-8c51-765452353200" },
+        { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "fc35c2a0-4028-f217-faac-79a02aeeef90", "InstanceID": "A1B2C3D4-0000-4000-8000-000000000002" },
+        { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "86cc0f4b-4549-22b0-cce8-1cb5ec9c6845" }
+      ]
+    },
+    {
+      "ItemTypeID": "d5f120f8-ff8c-4aac-92ea-f2b5acbe9475",
+      "Entitlements": [
+        { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "b4b684bd-40bd-15b2-86b5-3b827a636090" }
+      ]
+    },
+    {
+      "ItemTypeID": "03a572de-4234-31ed-d344-ababa488f981",
+      "Entitlements": [
+        { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "fc33f376-4a58-687c-6961-bd8a7e529346" }
+      ]
+    },
+    {
+      "ItemTypeID": "3f296c07-64c3-494c-923b-fe692a4fa1bd",
+      "Entitlements": [
+        { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "1711d20d-4b1c-c64a-14be-d4ae58a457c6" }
+      ]
+    },
+    {
+      "ItemTypeID": "de7caa6b-adf7-4588-bbd1-143831e786c6",
+      "Entitlements": [
+        { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "48d870a2-4493-ebf8-7d6f-979be914dc43" }
+      ]
+    },
+    {
+      "ItemTypeID": "01bb38e1-da47-4e6a-9b3d-945fe4655707",
+      "Entitlements": [
+        { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "e370fa57-4757-3604-3648-499e1f642d3f" }
+      ]
+    },
+    {
+      "ItemTypeID": "f85cb6f7-33e5-4dc8-b609-ec7212301948",
+      "Entitlements": [
+        { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "3f04583c-4c7a-6bdf-65ce-d4b6ff53c5e9" }
+      ]
+    },
+    {
+      "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433",
+      "Entitlements": null
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "Offers": [
+    {
+      "OfferID": "ba42fe63-457a-78ce-4499-47950a698129",
+      "IsDirectPurchase": true,
+      "StartDate": "2022-09-28T03:53:13.268732Z",
+      "Cost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 1775 },
+      "Rewards": [ { "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433", "ItemID": "ba42fe63-457a-78ce-4499-47950a698129", "Quantity": 1 } ]
+    },
+    {
+      "OfferID": "d39a4263-49d3-f2e0-2c13-c299f8644518",
+      "IsDirectPurchase": true,
+      "StartDate": "2026-09-24T00:00:00Z",
+      "Cost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 875 },
+      "Rewards": [ { "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433", "ItemID": "d39a4263-49d3-f2e0-2c13-c299f8644518", "Quantity": 1 } ]
+    },
+    {
+      "OfferID": "fc35c2a0-4028-f217-faac-79a02aeeef90",
+      "IsDirectPurchase": true,
+      "StartDate": "2021-01-01T00:00:00Z",
+      "Cost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 475 },
+      "Rewards": [ { "ItemTypeID": "dd3bf334-87f3-40bd-b043-682a57a8dc3a", "ItemID": "fc35c2a0-4028-f217-faac-79a02aeeef90", "Quantity": 1 } ]
+    },
+    {
+      "OfferID": "0ddbdf8c-43b0-e2f1-94f8-d6be9d2a2110",
+      "IsDirectPurchase": true,
+      "StartDate": "2023-06-27T19:09:58Z",
+      "Cost": { "85ca954a-41f2-ce94-9b45-8ca3dd39a00d": 9999 },
+      "Rewards": [ { "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433", "ItemID": "0ddbdf8c-43b0-e2f1-94f8-d6be9d2a2110", "Quantity": 1 } ]
+    }
+  ],
+  "UpgradeCurrencyOffers": []
+}

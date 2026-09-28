@@ -1,0 +1,82 @@
+{
+  "Version": 0,
+  "Subject": "aaaaaaaa-0000-4000-8000-000000000001",
+  "Matches": [
+    {
+      "MatchID": "e5000000-0000-4000-8000-000000000005",
+      "MapID": "/Game/Maps/Ascent/Ascent",
+      "SeasonID": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+      "MatchStartTime": 1790568000000,
+      "TierAfterUpdate": 18,
+      "TierBeforeUpdate": 17,
+      "RankedRatingAfterUpdate": 6,
+      "RankedRatingBeforeUpdate": 74,
+      "RankedRatingEarned": 32,
+      "RankedRatingPerformanceBonus": 0,
+      "CompetitiveMovement": "MOVEMENT_UNKNOWN",
+      "AFKPenalty": 0
+    },
+    {
+      "MatchID": "e4000000-0000-4000-8000-000000000004",
+      "MapID": "/Game/Maps/HURM/HURM_Alley/HURM_Alley",
+      "SeasonID": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+      "MatchStartTime": 1790564400000,
+      "TierAfterUpdate": 17,
+      "TierBeforeUpdate": 17,
+      "RankedRatingAfterUpdate": 74,
+      "RankedRatingBeforeUpdate": 52,
+      "RankedRatingEarned": "22",
+      "RankedRatingPerformanceBonus": 0,
+      "CompetitiveMovement": "MOVEMENT_UNKNOWN",
+      "AFKPenalty": 0
+    },
+    {
+      "MatchID": "e3000000-0000-4000-8000-000000000003",
+      "MapID": "/Game/Maps/Ascent/Ascent",
+      "SeasonID": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+      "MatchStartTime": 1790533800000,
+      "TierAfterUpdate": 17,
+      "TierBeforeUpdate": 17,
+      "RankedRatingAfterUpdate": 52,
+      "RankedRatingBeforeUpdate": 52,
+      "RankedRatingEarned": 0,
+      "RankedRatingPerformanceBonus": 0,
+      "CompetitiveMovement": "MOVEMENT_UNKNOWN",
+      "AFKPenalty": 0
+    },
+    {
+      "MatchID": "e2000000-0000-4000-8000-000000000002",
+      "MapID": "/Game/Maps/Ascent/Ascent",
+      "SeasonID": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+      "MatchStartTime": 1790514000000,
+      "TierAfterUpdate": 17,
+      "TierBeforeUpdate": 17,
+      "RankedRatingAfterUpdate": 52,
+      "RankedRatingBeforeUpdate": 70,
+      "RankedRatingEarned": -18,
+      "RankedRatingPerformanceBonus": 0,
+      "CompetitiveMovement": "MOVEMENT_UNKNOWN",
+      "AFKPenalty": 0
+    },
+    {
+      "MatchID": "e1000000-0000-4000-8000-000000000001",
+      "MapID": "/Game/Maps/Ascent/Ascent",
+      "SeasonID": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+      "MatchStartTime": 1790510400000,
+      "TierAfterUpdate": 17,
+      "TierBeforeUpdate": 17,
+      "RankedRatingAfterUpdate": 70,
+      "RankedRatingBeforeUpdate": 50,
+      "RankedRatingEarned": 20,
+      "RankedRatingPerformanceBonus": 0,
+      "CompetitiveMovement": "MOVEMENT_UNKNOWN",
+      "AFKPenalty": 0
+    },
+    {
+      "MatchID": "",
+      "MatchStartTime": 1789862400000,
+      "RankedRatingEarned": 99
+    },
+    null
+  ]
+}

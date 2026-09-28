@@ -1,0 +1,2905 @@
+{
+ "weapons": {
+  "status": 200,
+  "data": [
+   {
+    "uuid": "63e6c2b6-4a8e-869c-3d4c-e38355226584",
+    "displayName": "Odin",
+    "category": "EEquippableCategory::Heavy",
+    "defaultSkinUuid": "f454efd1-49cb-372f-7096-d394df615308",
+    "displayIcon": "https://media.valorant-api.com/weapons/63e6c2b6-4a8e-869c-3d4c-e38355226584/displayicon.png",
+    "shopData": {
+     "cost": 3200
+    },
+    "skins": [
+     {
+      "uuid": "bd647d56-4542-19cd-e1ed-4fb429c78cf9",
+      "displayName": "Odin Neo Frontier",
+      "themeUuid": "3e8c23b5-47f3-fc77-788a-94852f7a111e",
+      "contentTierUuid": "e046854e-406c-37f4-6607-19a9ba8426fc",
+      "displayIcon": "https://media.valorant-api.com/weaponskins/bd647d56-4542-19cd-e1ed-4fb429c78cf9/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "6f60b3ce-4cbf-91ea-2ca7-59bbf1923751",
+        "displayName": "Odin Neo Frontier",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/6f60b3ce-4cbf-91ea-2ca7-59bbf1923751/displayicon.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/729c9e7f-43be-dce4-b532-b99995902188_default_universal.mp4"
+       },
+       {
+        "uuid": "8c531daf-4b31-06f7-0cbe-f989029245d1",
+        "displayName": "Odin Neo Frontier Cấp 2",
+        "levelItem": "EEquippableSkinLevelItem::Animation",
+        "displayIcon": null,
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/8a2d9288-4dd7-c902-d482-6c9684ceffc7_default_universal.mp4"
+       },
+       {
+        "uuid": "c5175815-41da-879b-c547-429ce4d7a191",
+        "displayName": "Odin Neo Frontier Cấp 3",
+        "levelItem": "EEquippableSkinLevelItem::Transformation",
+        "displayIcon": null,
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/fe5acf44-4820-c780-b635-8587a6282432_default_universal.mp4"
+       },
+       {
+        "uuid": "220bfeea-44f4-51ee-c903-1dbfb1021ec4",
+        "displayName": "Odin Neo Frontier Cấp 4",
+        "levelItem": "EEquippableSkinLevelItem::Finisher",
+        "displayIcon": null,
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/bfe74105-40b6-b9e9-d614-00adfa9f53ce_default_universal.mp4"
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "e20c028f-4e3e-0df7-551d-8c9eb51d08e7",
+        "displayName": "Odin Neo Frontier",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/e20c028f-4e3e-0df7-551d-8c9eb51d08e7/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/e20c028f-4e3e-0df7-551d-8c9eb51d08e7/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/e20c028f-4e3e-0df7-551d-8c9eb51d08e7/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "10be56f0-48eb-9293-3888-84ba8249cf46",
+        "displayName": "Odin Neo Frontier Cấp 4\n(Dạng 1 Ánh Vàng)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/10be56f0-48eb-9293-3888-84ba8249cf46/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/10be56f0-48eb-9293-3888-84ba8249cf46/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/10be56f0-48eb-9293-3888-84ba8249cf46/swatch.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/9cc445f4-4446-1e1b-1a15-a3acdf74d52e_default_universal.mp4"
+       },
+       {
+        "uuid": "ce250c6a-4873-b305-4872-7392d0d84c1b",
+        "displayName": "Odin Neo Frontier Cấp 4\n(Dạng 2 Ánh Bạc)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/ce250c6a-4873-b305-4872-7392d0d84c1b/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/ce250c6a-4873-b305-4872-7392d0d84c1b/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/ce250c6a-4873-b305-4872-7392d0d84c1b/swatch.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/9520c794-4614-636d-8b87-0d94cd5af43a_default_universal.mp4"
+       },
+       {
+        "uuid": "6de72b14-4680-8a4e-92bc-dd85a0aa67d7",
+        "displayName": "Odin Neo Frontier Cấp 4\n(Dạng 3 Ánh Đồng)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/6de72b14-4680-8a4e-92bc-dd85a0aa67d7/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/6de72b14-4680-8a4e-92bc-dd85a0aa67d7/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/6de72b14-4680-8a4e-92bc-dd85a0aa67d7/swatch.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/5d99e67a-46b1-d041-e119-dfbf4b4ad1ac_default_universal.mp4"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uuid": "55d8a0f4-4274-ca67-fe2c-06ab45efdf58",
+    "displayName": "Ares",
+    "category": "EEquippableCategory::Heavy",
+    "defaultSkinUuid": "5305d9c4-4f46-fbf4-9e9a-dea772c263b5",
+    "displayIcon": "https://media.valorant-api.com/weapons/55d8a0f4-4274-ca67-fe2c-06ab45efdf58/displayicon.png",
+    "shopData": {
+     "cost": 1600
+    },
+    "skins": [
+     {
+      "uuid": "841c9aab-4005-f7fd-3b67-24b335100fb4",
+      "displayName": "Ares Prism",
+      "themeUuid": "7e94d78a-498e-67cb-de3d-80a36cee46cf",
+      "contentTierUuid": "0cebb8be-46d7-c12a-d306-e9907bfc5a25",
+      "displayIcon": "https://media.valorant-api.com/weaponskins/841c9aab-4005-f7fd-3b67-24b335100fb4/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "29be6d9e-48b2-1229-4f7d-4da1c20deda9",
+        "displayName": "Ares Prism",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/29be6d9e-48b2-1229-4f7d-4da1c20deda9/displayicon.png",
+        "streamedVideo": null
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "8c464ead-4b0d-1590-9880-57a5b6407d4e",
+        "displayName": "Ares Prism",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/8c464ead-4b0d-1590-9880-57a5b6407d4e/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/8c464ead-4b0d-1590-9880-57a5b6407d4e/fullrender.png",
+        "swatch": null,
+        "streamedVideo": null
+       }
+      ]
+     },
+     {
+      "uuid": "9f3e2ba6-428f-c635-67e0-b8b7d9e3c2fc",
+      "displayName": "Ares Sentinels of Light",
+      "themeUuid": "0c187570-4eff-2924-5e98-8bbb96b0216a",
+      "contentTierUuid": "e046854e-406c-37f4-6607-19a9ba8426fc",
+      "displayIcon": "https://media.valorant-api.com/weaponskins/9f3e2ba6-428f-c635-67e0-b8b7d9e3c2fc/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "0ddbdf8c-43b0-e2f1-94f8-d6be9d2a2110",
+        "displayName": "Ares Sentinels of Light",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/0ddbdf8c-43b0-e2f1-94f8-d6be9d2a2110/displayicon.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/8f8dc86f-4e93-8499-addf-75867750e397_default_universal.mp4"
+       },
+       {
+        "uuid": "ba3ee5c5-478f-6a30-aa0c-85942ba2a7c0",
+        "displayName": "Ares Sentinels of Light Cấp 2",
+        "levelItem": "EEquippableSkinLevelItem::VFX",
+        "displayIcon": null,
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/684aace3-4f49-0658-d003-0caeeef28f95_default_universal.mp4"
+       },
+       {
+        "uuid": "a92fc69d-4be1-74f5-938b-e0b27b2bb929",
+        "displayName": "Ares Sentinels of Light Cấp 3",
+        "levelItem": "EEquippableSkinLevelItem::Animation",
+        "displayIcon": null,
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/3bf2a87b-4382-5c71-5c21-cb9cc0cd1826_default_universal.mp4"
+       },
+       {
+        "uuid": "0725b4f4-44eb-5297-9ea2-18a333a95087",
+        "displayName": "Ares Sentinels of Light Cấp 4",
+        "levelItem": "EEquippableSkinLevelItem::Finisher",
+        "displayIcon": null,
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/9744862e-4779-60df-a8d1-31914ba691b4_default_universal.mp4"
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "53abc8af-4233-f1fe-7653-6ba26f9eaefa",
+        "displayName": "Ares Sentinels of Light",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/53abc8af-4233-f1fe-7653-6ba26f9eaefa/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/53abc8af-4233-f1fe-7653-6ba26f9eaefa/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/53abc8af-4233-f1fe-7653-6ba26f9eaefa/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "b4b0d84e-4947-6078-abcb-82b354549fc7",
+        "displayName": "Ares Sentinels of Light Cấp 4\n(Dạng 1 Ánh Hồng)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/b4b0d84e-4947-6078-abcb-82b354549fc7/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/b4b0d84e-4947-6078-abcb-82b354549fc7/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/b4b0d84e-4947-6078-abcb-82b354549fc7/swatch.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/a3459330-494d-0add-8e33-f5b32236f4fc_default_universal.mp4"
+       },
+       {
+        "uuid": "39ed0f62-4d30-6fae-b8d7-9c943d6984cb",
+        "displayName": "Ares Sentinels of Light Cấp 4\n(Dạng 2 Ánh Đỏ/Lục)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/39ed0f62-4d30-6fae-b8d7-9c943d6984cb/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/39ed0f62-4d30-6fae-b8d7-9c943d6984cb/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/39ed0f62-4d30-6fae-b8d7-9c943d6984cb/swatch.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/091737cb-48af-3486-c830-828fef1a8f18_default_universal.mp4"
+       },
+       {
+        "uuid": "ab9a4b7b-4037-c491-093d-e99e8070031f",
+        "displayName": "Ares Sentinels of Light Cấp 4\n(Dạng 3 Ánh Lam/Tím)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/ab9a4b7b-4037-c491-093d-e99e8070031f/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/ab9a4b7b-4037-c491-093d-e99e8070031f/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/ab9a4b7b-4037-c491-093d-e99e8070031f/swatch.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/4f345ed4-485f-803b-08d8-0eb5c935601b_default_universal.mp4"
+       }
+      ]
+     },
+     {
+      "uuid": "5305d9c4-4f46-fbf4-9e9a-dea772c263b5",
+      "displayName": "Ares Thông Thường",
+      "themeUuid": "5a629df4-4765-0214-bd40-fbb96542941f",
+      "contentTierUuid": null,
+      "displayIcon": "https://media.valorant-api.com/weaponskins/5305d9c4-4f46-fbf4-9e9a-dea772c263b5/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "0f5f60f4-4c94-e4b2-ceab-e2b4e8b41784",
+        "displayName": "Ares",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/0f5f60f4-4c94-e4b2-ceab-e2b4e8b41784/displayicon.png",
+        "streamedVideo": null
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "b33de820-4061-8b85-31ce-808f1a2c58f5",
+        "displayName": "Ares",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/b33de820-4061-8b85-31ce-808f1a2c58f5/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/b33de820-4061-8b85-31ce-808f1a2c58f5/fullrender.png",
+        "swatch": null,
+        "streamedVideo": null
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uuid": "9c82e19d-4575-0200-1a81-3eacf00cf872",
+    "displayName": "Vandal",
+    "category": "EEquippableCategory::Rifle",
+    "defaultSkinUuid": "27f21d97-4c4b-bd1c-1f08-31830ab0be84",
+    "displayIcon": "https://media.valorant-api.com/weapons/9c82e19d-4575-0200-1a81-3eacf00cf872/displayicon.png",
+    "shopData": {
+     "cost": 2900
+    },
+    "skins": [
+     {
+      "uuid": "7f26d04c-44fb-1d65-16f0-4f827686d72b",
+      "displayName": "Vandal Cafe Xanh Mát",
+      "themeUuid": "de91d827-4df2-8f1f-3d93-0e83432738cd",
+      "contentTierUuid": "0cebb8be-46d7-c12a-d306-e9907bfc5a25",
+      "displayIcon": "https://media.valorant-api.com/weaponskins/7f26d04c-44fb-1d65-16f0-4f827686d72b/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "bc465bdb-4a85-7981-3e31-409d093e9c12",
+        "displayName": "Vandal Cafe Xanh Mát",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/bc465bdb-4a85-7981-3e31-409d093e9c12/displayicon.png",
+        "streamedVideo": null
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "fea30a69-4b86-2a75-a97b-d1949cfc4d41",
+        "displayName": "Vandal Cafe Xanh Mát",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/fea30a69-4b86-2a75-a97b-d1949cfc4d41/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/fea30a69-4b86-2a75-a97b-d1949cfc4d41/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/fea30a69-4b86-2a75-a97b-d1949cfc4d41/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "c9bd169c-466d-52fe-12e8-7f989c0def0b",
+        "displayName": "Vandal Cafe Xanh Mát\n(Dạng 1 Ánh Lam)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/c9bd169c-466d-52fe-12e8-7f989c0def0b/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/c9bd169c-466d-52fe-12e8-7f989c0def0b/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/c9bd169c-466d-52fe-12e8-7f989c0def0b/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "a7236b7d-471b-3a4b-e51c-e5b531d513c3",
+        "displayName": "Vandal Cafe Xanh Mát\n(Dạng 2 Ánh Hồng)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/a7236b7d-471b-3a4b-e51c-e5b531d513c3/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/a7236b7d-471b-3a4b-e51c-e5b531d513c3/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/a7236b7d-471b-3a4b-e51c-e5b531d513c3/swatch.png",
+        "streamedVideo": null
+       }
+      ]
+     },
+     {
+      "uuid": "9c808029-48f5-ce89-21c5-88bf4228d2ed",
+      "displayName": "Skin Yêu Thích Ngẫu Nhiên",
+      "themeUuid": "0d7a5bfb-4850-098e-1821-d989bbfd58a8",
+      "contentTierUuid": null,
+      "displayIcon": "https://media.valorant-api.com/weaponskins/9c808029-48f5-ce89-21c5-88bf4228d2ed/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "b5f4ed55-4e7f-f561-b365-5397f9e5890b",
+        "displayName": "Skin Yêu Thích Ngẫu Nhiên",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/b5f4ed55-4e7f-f561-b365-5397f9e5890b/displayicon.png",
+        "streamedVideo": null
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "f68018d5-44ff-4ccf-3957-75af660abc12",
+        "displayName": "Standard",
+        "displayIcon": null,
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/f68018d5-44ff-4ccf-3957-75af660abc12/fullrender.png",
+        "swatch": null,
+        "streamedVideo": null
+       }
+      ]
+     },
+     {
+      "uuid": "30388628-42f0-606c-82c0-73ad43de997f",
+      "displayName": "Vandal Reaver",
+      "themeUuid": "4479eea8-4820-c69b-3912-f5ac678fcedc",
+      "contentTierUuid": "60bca009-4182-7998-dee7-b8a2558dc369",
+      "displayIcon": "https://media.valorant-api.com/weaponskins/30388628-42f0-606c-82c0-73ad43de997f/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "ba42fe63-457a-78ce-4499-47950a698129",
+        "displayName": "Vandal Reaver",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/ba42fe63-457a-78ce-4499-47950a698129/displayicon.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/a6ee2555-4e3a-049e-916a-7ca853dd4568_default_universal.mp4"
+       },
+       {
+        "uuid": "6f9ba692-4618-d0e6-3099-42b4dc5fce89",
+        "displayName": "Vandal Reaver Cấp 2",
+        "levelItem": "EEquippableSkinLevelItem::VFX",
+        "displayIcon": null,
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/78146b6e-49fc-115d-995e-309c5f18e3fd_default_universal.mp4"
+       },
+       {
+        "uuid": "98597b95-451c-70cf-46fb-31b4c5a54394",
+        "displayName": "Vandal Reaver Cấp 3",
+        "levelItem": "EEquippableSkinLevelItem::Animation",
+        "displayIcon": null,
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/b21243ec-4cf0-37c0-43b4-15bf84de9d1d_default_universal.mp4"
+       },
+       {
+        "uuid": "8c282914-446a-3e99-095a-cd97df201c8b",
+        "displayName": "Vandal Reaver Cấp 4",
+        "levelItem": "EEquippableSkinLevelItem::Finisher",
+        "displayIcon": null,
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/d262fccc-465a-2da6-74ac-049ef3b3f759_default_universal.mp4"
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "2bd28382-48c6-8579-83e8-e9b64b783de3",
+        "displayName": "Vandal Reaver",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/2bd28382-48c6-8579-83e8-e9b64b783de3/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/2bd28382-48c6-8579-83e8-e9b64b783de3/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/2bd28382-48c6-8579-83e8-e9b64b783de3/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "b2a065c0-4632-ccaa-f496-7681dc2a6185",
+        "displayName": "Vandal Reaver Cấp 4\n(Dạng 1 Ánh Đỏ)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/b2a065c0-4632-ccaa-f496-7681dc2a6185/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/b2a065c0-4632-ccaa-f496-7681dc2a6185/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/b2a065c0-4632-ccaa-f496-7681dc2a6185/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "db4461e5-40dd-1173-3b64-e5836f92f4dd",
+        "displayName": "Vandal Reaver Cấp 4\n(Dạng 2 Ánh Đen)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/db4461e5-40dd-1173-3b64-e5836f92f4dd/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/db4461e5-40dd-1173-3b64-e5836f92f4dd/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/db4461e5-40dd-1173-3b64-e5836f92f4dd/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "b2619c1c-4974-4f06-f37b-c68b1d6d7bd1",
+        "displayName": "Vandal Reaver Cấp 4\n(Dạng 3 Ánh Trắng)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/b2619c1c-4974-4f06-f37b-c68b1d6d7bd1/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/b2619c1c-4974-4f06-f37b-c68b1d6d7bd1/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/b2619c1c-4974-4f06-f37b-c68b1d6d7bd1/swatch.png",
+        "streamedVideo": null
+       }
+      ]
+     },
+     {
+      "uuid": "27f21d97-4c4b-bd1c-1f08-31830ab0be84",
+      "displayName": "Vandal Thông Thường",
+      "themeUuid": "5a629df4-4765-0214-bd40-fbb96542941f",
+      "contentTierUuid": null,
+      "displayIcon": "https://media.valorant-api.com/weaponskins/27f21d97-4c4b-bd1c-1f08-31830ab0be84/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "1ab72e66-4da3-33a0-164f-908113e075a4",
+        "displayName": "Vandal",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/1ab72e66-4da3-33a0-164f-908113e075a4/displayicon.png",
+        "streamedVideo": null
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "19629ae1-4996-ae98-7742-24a240d41f99",
+        "displayName": "Vandal",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/19629ae1-4996-ae98-7742-24a240d41f99/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/19629ae1-4996-ae98-7742-24a240d41f99/fullrender.png",
+        "swatch": null,
+        "streamedVideo": null
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uuid": "ae3de142-4d85-2547-dd26-4e90bed35cf7",
+    "displayName": "Bulldog",
+    "category": "EEquippableCategory::Rifle",
+    "defaultSkinUuid": "724a7f42-4315-eccf-0e76-77bdd3ec2e09",
+    "displayIcon": "https://media.valorant-api.com/weapons/ae3de142-4d85-2547-dd26-4e90bed35cf7/displayicon.png",
+    "shopData": {
+     "cost": 2050
+    },
+    "skins": [
+     {
+      "uuid": "decd0962-453a-1551-47e1-1287aafb5a27",
+      "displayName": "Bulldog Vô Cực",
+      "themeUuid": "6fd2d0f4-44ca-c131-5049-5ba91a0e8303",
+      "contentTierUuid": "0cebb8be-46d7-c12a-d306-e9907bfc5a25",
+      "displayIcon": "https://media.valorant-api.com/weaponskins/decd0962-453a-1551-47e1-1287aafb5a27/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "5fc3c5e8-470e-7683-b594-6580d5e3d624",
+        "displayName": "Bulldog Vô Cực",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/5fc3c5e8-470e-7683-b594-6580d5e3d624/displayicon.png",
+        "streamedVideo": null
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "01f3fffe-4306-7b4b-9cb8-afb0027f4cf9",
+        "displayName": "Bulldog Vô Cực",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/01f3fffe-4306-7b4b-9cb8-afb0027f4cf9/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/01f3fffe-4306-7b4b-9cb8-afb0027f4cf9/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/01f3fffe-4306-7b4b-9cb8-afb0027f4cf9/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "ffcc04b1-43c6-29c7-9a16-3692dd0a763a",
+        "displayName": "Bulldog Vô Cực\n(Dạng 1 Ánh Trắng)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/ffcc04b1-43c6-29c7-9a16-3692dd0a763a/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/ffcc04b1-43c6-29c7-9a16-3692dd0a763a/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/ffcc04b1-43c6-29c7-9a16-3692dd0a763a/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "8c22fb0f-443b-ec18-62f0-dfb36d024b30",
+        "displayName": "Bulldog Vô Cực\n(Dạng 2 Ánh Vàng)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/8c22fb0f-443b-ec18-62f0-dfb36d024b30/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/8c22fb0f-443b-ec18-62f0-dfb36d024b30/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/8c22fb0f-443b-ec18-62f0-dfb36d024b30/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "3722b38e-49ec-e9da-fe96-3ba099630a27",
+        "displayName": "Bulldog Vô Cực\n(Dạng 3 Ánh Hồng)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/3722b38e-49ec-e9da-fe96-3ba099630a27/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/3722b38e-49ec-e9da-fe96-3ba099630a27/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/3722b38e-49ec-e9da-fe96-3ba099630a27/swatch.png",
+        "streamedVideo": null
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uuid": "ee8e8d15-496b-07ac-e5f6-8fae5d4c7b1a",
+    "displayName": "Phantom",
+    "category": "EEquippableCategory::Rifle",
+    "defaultSkinUuid": "337cb216-4a6e-d85d-88c2-f29ab317784c",
+    "displayIcon": "https://media.valorant-api.com/weapons/ee8e8d15-496b-07ac-e5f6-8fae5d4c7b1a/displayicon.png",
+    "shopData": {
+     "cost": 2900
+    },
+    "skins": [
+     {
+      "uuid": "8db507b5-4d57-96e0-000e-2d8c8af79550",
+      "displayName": "Phantom Tốc Chiến",
+      "themeUuid": "00347950-4139-2bc2-b594-bc8293ce9342",
+      "contentTierUuid": "12683d76-48d7-84a3-4e09-6985794f0445",
+      "displayIcon": null,
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "d39a4263-49d3-f2e0-2c13-c299f8644518",
+        "displayName": "Phantom Tốc Chiến",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/d39a4263-49d3-f2e0-2c13-c299f8644518/displayicon.png",
+        "streamedVideo": null
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "2e3b98b6-46e9-e233-1e1b-269ebd84598a",
+        "displayName": "Phantom Tốc Chiến",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/2e3b98b6-46e9-e233-1e1b-269ebd84598a/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/2e3b98b6-46e9-e233-1e1b-269ebd84598a/fullrender.png",
+        "swatch": null,
+        "streamedVideo": null
+       }
+      ]
+     },
+     {
+      "uuid": "337cb216-4a6e-d85d-88c2-f29ab317784c",
+      "displayName": "Phantom Thông Thường",
+      "themeUuid": "5a629df4-4765-0214-bd40-fbb96542941f",
+      "contentTierUuid": null,
+      "displayIcon": "https://media.valorant-api.com/weaponskins/337cb216-4a6e-d85d-88c2-f29ab317784c/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "871e73ed-452d-eb5a-3d6b-1d87060f35ce",
+        "displayName": "Phantom",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/871e73ed-452d-eb5a-3d6b-1d87060f35ce/displayicon.png",
+        "streamedVideo": null
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "52221ba2-4e4c-ec76-8c81-3483506d5242",
+        "displayName": "Phantom",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/52221ba2-4e4c-ec76-8c81-3483506d5242/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/52221ba2-4e4c-ec76-8c81-3483506d5242/fullrender.png",
+        "swatch": null,
+        "streamedVideo": null
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uuid": "1baa85b4-4c70-1284-64bb-6481dfc3bb4e",
+    "displayName": "Ghost",
+    "category": "EEquippableCategory::Sidearm",
+    "defaultSkinUuid": "1c63b43b-43c4-04e4-01c9-7aa1bffa5ac1",
+    "displayIcon": "https://media.valorant-api.com/weapons/1baa85b4-4c70-1284-64bb-6481dfc3bb4e/displayicon.png",
+    "shopData": {
+     "cost": 500
+    },
+    "skins": [
+     {
+      "uuid": "a1d3a9e2-4f61-b1f7-3a01-cf867264d1cb",
+      "displayName": "Ghost Thinh Lặng",
+      "themeUuid": "ca77e082-4c08-bf86-2d62-6a8628398615",
+      "contentTierUuid": "12683d76-48d7-84a3-4e09-6985794f0445",
+      "displayIcon": null,
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "afcb2528-4415-0178-98b1-c0a751092762",
+        "displayName": "Ghost Thinh Lặng",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/afcb2528-4415-0178-98b1-c0a751092762/displayicon.png",
+        "streamedVideo": null
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "b412e61c-4001-8fab-c5e9-6eb7caa41e88",
+        "displayName": "Ghost Thinh Lặng",
+        "displayIcon": null,
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/b412e61c-4001-8fab-c5e9-6eb7caa41e88/fullrender.png",
+        "swatch": null,
+        "streamedVideo": null
+       }
+      ]
+     },
+     {
+      "uuid": "33824a13-453b-0636-4ec4-e19708aa934e",
+      "displayName": "Ghost Magepunk",
+      "themeUuid": "eb650d49-4117-e959-6116-e5918a8c04a6",
+      "contentTierUuid": "60bca009-4182-7998-dee7-b8a2558dc369",
+      "displayIcon": "https://media.valorant-api.com/weaponskins/33824a13-453b-0636-4ec4-e19708aa934e/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "003e0991-4370-8837-f8fc-6ab3acec2dbf",
+        "displayName": "Ghost Magepunk",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/003e0991-4370-8837-f8fc-6ab3acec2dbf/displayicon.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/b8eef80e-45c8-d612-91cb-1ba5b8025ba8_default_universal.mp4"
+       },
+       {
+        "uuid": "b5ced653-45ca-9cd4-e6d5-8db020c6881d",
+        "displayName": "Ghost Magepunk Cấp 2",
+        "levelItem": "EEquippableSkinLevelItem::VFX",
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/b5ced653-45ca-9cd4-e6d5-8db020c6881d/displayicon.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/befc87ef-40ab-7360-e828-7f8159697d10_default_universal.mp4"
+       },
+       {
+        "uuid": "aa704280-43ff-991e-c3d7-63abf43c8bd0",
+        "displayName": "Ghost Magepunk Cấp 3",
+        "levelItem": "EEquippableSkinLevelItem::Animation",
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/aa704280-43ff-991e-c3d7-63abf43c8bd0/displayicon.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/2259b458-466b-7313-bb2a-0fb7025716f9_default_universal.mp4"
+       },
+       {
+        "uuid": "abf6805e-4def-f0f0-92cf-28bb67c46fed",
+        "displayName": "Ghost Magepunk Cấp 4",
+        "levelItem": "EEquippableSkinLevelItem::Finisher",
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/abf6805e-4def-f0f0-92cf-28bb67c46fed/displayicon.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/be0160a8-40c2-4542-e47c-ee9e7461a59c_default_universal.mp4"
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "74f79cb4-4c46-200d-0a4f-838908f1970a",
+        "displayName": "Ghost Magepunk",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/74f79cb4-4c46-200d-0a4f-838908f1970a/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/74f79cb4-4c46-200d-0a4f-838908f1970a/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/74f79cb4-4c46-200d-0a4f-838908f1970a/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "1bbfda5b-480d-9c61-9549-fe9a62b05ffc",
+        "displayName": "Ghost Magepunk Cấp 4\n(Dạng 1 Ánh Lục)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/1bbfda5b-480d-9c61-9549-fe9a62b05ffc/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/1bbfda5b-480d-9c61-9549-fe9a62b05ffc/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/1bbfda5b-480d-9c61-9549-fe9a62b05ffc/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "7d6f96cf-4e06-0a9e-c60f-bd8fa679fbe6",
+        "displayName": "Ghost Magepunk Cấp 4\n(Dạng 2 Ánh Tím)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/7d6f96cf-4e06-0a9e-c60f-bd8fa679fbe6/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/7d6f96cf-4e06-0a9e-c60f-bd8fa679fbe6/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/7d6f96cf-4e06-0a9e-c60f-bd8fa679fbe6/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "5a4ed6de-4dd6-3d53-c469-1d9f0188273d",
+        "displayName": "Ghost Magepunk Cấp 4\n(Dạng 3 Ánh Cam)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/5a4ed6de-4dd6-3d53-c469-1d9f0188273d/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/5a4ed6de-4dd6-3d53-c469-1d9f0188273d/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/5a4ed6de-4dd6-3d53-c469-1d9f0188273d/swatch.png",
+        "streamedVideo": null
+       }
+      ]
+     },
+     {
+      "uuid": "1c63b43b-43c4-04e4-01c9-7aa1bffa5ac1",
+      "displayName": "Ghost Thông Thường",
+      "themeUuid": "5a629df4-4765-0214-bd40-fbb96542941f",
+      "contentTierUuid": null,
+      "displayIcon": "https://media.valorant-api.com/weaponskins/1c63b43b-43c4-04e4-01c9-7aa1bffa5ac1/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "0a7e786c-444e-6a80-8bda-e2b714d68332",
+        "displayName": "Ghost",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/0a7e786c-444e-6a80-8bda-e2b714d68332/displayicon.png",
+        "streamedVideo": null
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "947a28b6-4e0f-61fb-e795-bc9a5e7b7129",
+        "displayName": "Ghost",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/947a28b6-4e0f-61fb-e795-bc9a5e7b7129/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/947a28b6-4e0f-61fb-e795-bc9a5e7b7129/fullrender.png",
+        "swatch": null,
+        "streamedVideo": null
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uuid": "a03b24d3-4319-996d-0f8c-94bbfba1dfc7",
+    "displayName": "Operator",
+    "category": "EEquippableCategory::Sniper",
+    "defaultSkinUuid": "d1f2920f-469a-3431-ad96-96afbd0017f2",
+    "displayIcon": "https://media.valorant-api.com/weapons/a03b24d3-4319-996d-0f8c-94bbfba1dfc7/displayicon.png",
+    "shopData": {
+     "cost": 4700
+    },
+    "skins": [
+     {
+      "uuid": "83b49f36-4085-8179-6896-1a99f2d2d1d8",
+      "displayName": "Operator Thần Rừng",
+      "themeUuid": "9091d9fb-4eae-3808-70e8-51b9feb82274",
+      "contentTierUuid": "0cebb8be-46d7-c12a-d306-e9907bfc5a25",
+      "displayIcon": "https://media.valorant-api.com/weaponskins/83b49f36-4085-8179-6896-1a99f2d2d1d8/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "49b00063-4a7e-6c73-b8c9-68a8d5727757",
+        "displayName": "Operator Thần Rừng",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/49b00063-4a7e-6c73-b8c9-68a8d5727757/displayicon.png",
+        "streamedVideo": null
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "bca7cfc5-4e73-0cb8-180c-af85c2376d9a",
+        "displayName": "Operator Thần Rừng",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/bca7cfc5-4e73-0cb8-180c-af85c2376d9a/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/bca7cfc5-4e73-0cb8-180c-af85c2376d9a/fullrender.png",
+        "swatch": null,
+        "streamedVideo": null
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uuid": "2f59173c-4bed-b6c3-2191-dea9b58be9c7",
+    "displayName": "Cận Chiến",
+    "category": "EEquippableCategory::Melee",
+    "defaultSkinUuid": "12cc9ed2-4430-d2fe-3064-f7a19b1ba7c7",
+    "displayIcon": "https://media.valorant-api.com/weapons/2f59173c-4bed-b6c3-2191-dea9b58be9c7/displayicon.png",
+    "shopData": null,
+    "skins": [
+     {
+      "uuid": "25f7a66f-41a3-13da-53d9-ff94be3ace42",
+      "displayName": "Dao Đầu Bếp Cafe Xanh Mát",
+      "themeUuid": "de91d827-4df2-8f1f-3d93-0e83432738cd",
+      "contentTierUuid": "e046854e-406c-37f4-6607-19a9ba8426fc",
+      "displayIcon": "https://media.valorant-api.com/weaponskins/25f7a66f-41a3-13da-53d9-ff94be3ace42/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "c92dedcb-4461-5a6e-8740-bcba900a19a2",
+        "displayName": "Dao Đầu Bếp Cafe Xanh Mát",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/c92dedcb-4461-5a6e-8740-bcba900a19a2/displayicon.png",
+        "streamedVideo": null
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "0c12c2f9-47e0-698d-f091-4398c43b4ace",
+        "displayName": "Dao Đầu Bếp Cafe Xanh Mát",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/0c12c2f9-47e0-698d-f091-4398c43b4ace/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/0c12c2f9-47e0-698d-f091-4398c43b4ace/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/0c12c2f9-47e0-698d-f091-4398c43b4ace/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "81df4207-4220-b509-c0b1-1ab5d6618584",
+        "displayName": "Dao Đầu Bếp Cafe Xanh Mát\n(Dạng 1 Ánh Lam)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/81df4207-4220-b509-c0b1-1ab5d6618584/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/81df4207-4220-b509-c0b1-1ab5d6618584/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/81df4207-4220-b509-c0b1-1ab5d6618584/swatch.png",
+        "streamedVideo": null
+       },
+       {
+        "uuid": "5de1aab0-4918-a607-f6d1-36bd9b59e610",
+        "displayName": "Dao Đầu Bếp Cafe Xanh Mát\n(Dạng 2 Ánh Hồng)",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/5de1aab0-4918-a607-f6d1-36bd9b59e610/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/5de1aab0-4918-a607-f6d1-36bd9b59e610/fullrender.png",
+        "swatch": "https://media.valorant-api.com/weaponskinchromas/5de1aab0-4918-a607-f6d1-36bd9b59e610/swatch.png",
+        "streamedVideo": null
+       }
+      ]
+     },
+     {
+      "uuid": "0aecb2b8-49cc-560e-42c7-6cbce44f05cf",
+      "displayName": "Dao Reaver",
+      "themeUuid": "4479eea8-4820-c69b-3912-f5ac678fcedc",
+      "contentTierUuid": "e046854e-406c-37f4-6607-19a9ba8426fc",
+      "displayIcon": "https://media.valorant-api.com/weaponskins/0aecb2b8-49cc-560e-42c7-6cbce44f05cf/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "d7a02a43-47a5-556c-a69f-ec9cf6ede66d",
+        "displayName": "Dao Reaver",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/d7a02a43-47a5-556c-a69f-ec9cf6ede66d/displayicon.png",
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/f0f9b1cf-4686-0c4d-f45b-14a428832ae4_default_universal.mp4"
+       },
+       {
+        "uuid": "20f6764c-4561-0152-e8a1-e2a75deb1872",
+        "displayName": "Dao Reaver Cấp 2",
+        "levelItem": "EEquippableSkinLevelItem::VFX",
+        "displayIcon": null,
+        "streamedVideo": "https://valorant.dyn.riotcdn.net/x/videos/release-13.06/6cbc9c94-41f1-aed0-7be6-5ebde7ab54fc_default_universal.mp4"
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "71241f8e-4689-a110-0b22-8eac0aa512aa",
+        "displayName": "Dao Reaver",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/71241f8e-4689-a110-0b22-8eac0aa512aa/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/71241f8e-4689-a110-0b22-8eac0aa512aa/fullrender.png",
+        "swatch": null,
+        "streamedVideo": null
+       }
+      ]
+     },
+     {
+      "uuid": "12cc9ed2-4430-d2fe-3064-f7a19b1ba7c7",
+      "displayName": "Cận Chiến",
+      "themeUuid": "5a629df4-4765-0214-bd40-fbb96542941f",
+      "contentTierUuid": null,
+      "displayIcon": "https://media.valorant-api.com/weaponskins/12cc9ed2-4430-d2fe-3064-f7a19b1ba7c7/displayicon.png",
+      "wallpaper": null,
+      "levels": [
+       {
+        "uuid": "854938f3-4532-b300-d9a2-379d987d7469",
+        "displayName": "Cận Chiến Thông Thường",
+        "levelItem": null,
+        "displayIcon": "https://media.valorant-api.com/weaponskinlevels/854938f3-4532-b300-d9a2-379d987d7469/displayicon.png",
+        "streamedVideo": null
+       }
+      ],
+      "chromas": [
+       {
+        "uuid": "cac83e5c-47a1-3519-5420-1db1fdbc4892",
+        "displayName": "Cận Chiến Thông Thường",
+        "displayIcon": "https://media.valorant-api.com/weaponskinchromas/cac83e5c-47a1-3519-5420-1db1fdbc4892/displayicon.png",
+        "fullRender": "https://media.valorant-api.com/weaponskinchromas/cac83e5c-47a1-3519-5420-1db1fdbc4892/fullrender.png",
+        "swatch": null,
+        "streamedVideo": null
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "contracts": {
+  "status": 200,
+  "data": [
+   {
+    "uuid": "2195e89f-20ad-4e37-b46c-cf46a6715dfd",
+    "displayName": "Trang Bị Cypher",
+    "displayIcon": "https://media.valorant-api.com/contracts/2195e89f-20ad-4e37-b46c-cf46a6715dfd/displayicon.png",
+    "content": {
+     "relationType": "Agent",
+     "relationUuid": "117ed9e3-49f3-6512-3ccf-0cada7e3823b",
+     "premiumVPCost": -1,
+     "chapters": [
+      {
+       "isEpilogue": false,
+       "levels": [
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "26df3792-4540-ce9b-6048-11ab72bc4f94",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 20000,
+         "vpCost": 200,
+         "isPurchasableWithVP": false,
+         "doughCost": 2000,
+         "isPurchasableWithDough": true
+        },
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "58314922-434e-6ed6-0625-cc9e137f7ea0",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 30000,
+         "vpCost": 200,
+         "isPurchasableWithVP": false,
+         "doughCost": 2500,
+         "isPurchasableWithDough": true
+        },
+        {
+         "reward": {
+          "type": "Title",
+          "uuid": "bec998ee-416d-ba4a-8afb-a4ba38c9e228",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 40000,
+         "vpCost": 200,
+         "isPurchasableWithVP": false,
+         "doughCost": 3000,
+         "isPurchasableWithDough": true
+        },
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "db1dcdc0-4473-5598-05e4-d4859fa9d340",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 50000,
+         "vpCost": 200,
+         "isPurchasableWithVP": false,
+         "doughCost": 3500,
+         "isPurchasableWithDough": true
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "85ca954a-41f2-ce94-9b45-8ca3dd39a00d",
+          "amount": 2000,
+          "isHighlighted": false
+         },
+         "xp": 60000,
+         "vpCost": 200,
+         "isPurchasableWithVP": false,
+         "doughCost": 0,
+         "isPurchasableWithDough": true
+        },
+        {
+         "reward": {
+          "type": "EquippableCharmLevel",
+          "uuid": "abd3d1c7-42b6-46fc-35d2-ac9cf1f33607",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 75000,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 4500,
+         "isPurchasableWithDough": true
+        },
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "e8754a6e-4ec5-3d1c-2ed9-e0a5ff9f1271",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 100000,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 5500,
+         "isPurchasableWithDough": true
+        },
+        {
+         "reward": {
+          "type": "Title",
+          "uuid": "32087e8b-4260-37af-f865-5aa64d79f916",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 150000,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 6500,
+         "isPurchasableWithDough": true
+        },
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "87a0d13a-40e8-78fa-096e-06b41bceef2a",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 200000,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 7500,
+         "isPurchasableWithDough": true
+        },
+        {
+         "reward": {
+          "type": "EquippableSkinLevel",
+          "uuid": "afcb2528-4415-0178-98b1-c0a751092762",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 250000,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 8000,
+         "isPurchasableWithDough": true
+        }
+       ],
+       "freeRewards": null
+      }
+     ]
+    }
+   },
+   {
+    "uuid": "d70f2a95-4682-5216-984f-ddaaa14436a7",
+    "displayName": "Champions 2026: Shanghai",
+    "displayIcon": null,
+    "content": {
+     "relationType": "Event",
+     "relationUuid": "e7049ebc-491a-454d-3ed6-12beca2aa0ec",
+     "premiumVPCost": -1,
+     "chapters": [
+      {
+       "isEpilogue": false,
+       "levels": [
+        {
+         "reward": {
+          "type": "Title",
+          "uuid": "a5e81233-48ec-1b1c-c6b7-6b9da508c12a",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 500,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "7b0f9b3f-4ebf-c3b2-8cbe-e2afb79fc5be",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 13500,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 17600,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableCharmLevel",
+          "uuid": "cbf85422-4f1a-99dc-5af2-0883d12a2433",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 22800,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 29700,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "2e5243e4-49d1-861b-afce-ae84a6b0791b",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 38600,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        }
+       ],
+       "freeRewards": null
+      }
+     ]
+    }
+   },
+   {
+    "uuid": "3f04583c-4c7a-6bdf-65ce-d4b6ff53c5e9",
+    "displayName": "Mùa 2026 // Phần V",
+    "displayIcon": null,
+    "content": {
+     "relationType": "Season",
+     "relationUuid": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+     "premiumVPCost": 1000,
+     "chapters": [
+      {
+       "isEpilogue": false,
+       "levels": [
+        {
+         "reward": {
+          "type": "EquippableSkinLevel",
+          "uuid": "d538eac0-4990-f84d-93bf-4d9ce09bf75a",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 0,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableCharmLevel",
+          "uuid": "86cc0f4b-4549-22b0-cce8-1cb5ec9c6845",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 2000,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 2750,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "9d3842fc-4e2f-cac6-ec31-95ba7fb8c8bc",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 3500,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableSkinLevel",
+          "uuid": "9c6b2900-4ecf-d5c9-fa1e-9da6d02ebc6d",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 4250,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        }
+       ],
+       "freeRewards": [
+        {
+         "type": "PlayerCard",
+         "uuid": "3b8a10d9-489b-77a4-a93c-7eaf6b970ce0",
+         "amount": 1,
+         "isHighlighted": false
+        },
+        {
+         "type": "Title",
+         "uuid": "6b20e6b1-455d-c733-568f-dfbe9c2b2ed2",
+         "amount": 1,
+         "isHighlighted": false
+        }
+       ]
+      },
+      {
+       "isEpilogue": false,
+       "levels": [
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "f2f84f9d-40b1-7fca-e0fb-a8a45d8925b8",
+          "amount": 1,
+          "isHighlighted": true
+         },
+         "xp": 5000,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "39e1dbc3-46e4-1c5a-6345-44bec07c727a",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 5750,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 6500,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "4ce870d3-46b9-fa4c-19cf-cdb13a3e8f52",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 7250,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableSkinLevel",
+          "uuid": "40cb3c28-4a20-e942-d210-87b029409b88",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 8000,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        }
+       ],
+       "freeRewards": [
+        {
+         "type": "EquippableCharmLevel",
+         "uuid": "2f3f4ae4-4760-bade-e4f9-018e011c0dcf",
+         "amount": 1,
+         "isHighlighted": false
+        }
+       ]
+      },
+      {
+       "isEpilogue": false,
+       "levels": [
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "1433f361-4aa5-927a-5923-2abd84e639c0",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 8750,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "8ae6f65f-4752-16f3-b013-658f21f8cb4e",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 9500,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 10250,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableCharmLevel",
+          "uuid": "c6490839-4820-d135-4edf-24af823d23e3",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 11000,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableSkinLevel",
+          "uuid": "d642b410-40f1-dc0d-175c-3bb0a85a2b86",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 11750,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        }
+       ],
+       "freeRewards": [
+        {
+         "type": "Currency",
+         "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+         "amount": 1,
+         "isHighlighted": false
+        },
+        {
+         "type": "Title",
+         "uuid": "8e757bd9-4a56-7b66-314f-97a99bf6dd01",
+         "amount": 1,
+         "isHighlighted": false
+        }
+       ]
+      },
+      {
+       "isEpilogue": false,
+       "levels": [
+        {
+         "reward": {
+          "type": "EquippableSkinLevel",
+          "uuid": "0757adde-438c-91e5-f755-44801b371250",
+          "amount": 1,
+          "isHighlighted": true
+         },
+         "xp": 12500,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "7c00e96c-48fa-e79a-8bf7-de9edb529e54",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 13250,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "42ff0452-4d22-9c86-e2f6-9f84ca6217a2",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 14000,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 14750,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableSkinLevel",
+          "uuid": "4f1719ae-4399-2530-81d5-42837ed0ddb5",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 15500,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        }
+       ],
+       "freeRewards": [
+        {
+         "type": "Spray",
+         "uuid": "6416bf6c-4417-daf5-2fa0-60a73f594ee7",
+         "amount": 1,
+         "isHighlighted": false
+        }
+       ]
+      },
+      {
+       "isEpilogue": false,
+       "levels": [
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "42232068-43fb-bef4-7ce4-d8a19ba94b45",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 16250,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 17000,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableCharmLevel",
+          "uuid": "81c906cb-4eff-fcf4-7a01-01bdce3757e7",
+          "amount": 1,
+          "isHighlighted": true
+         },
+         "xp": 17750,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "19323ad8-4fbd-0cdc-1785-21a6ca9d4947",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 18500,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableSkinLevel",
+          "uuid": "bc465bdb-4a85-7981-3e31-409d093e9c12",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 19250,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        }
+       ],
+       "freeRewards": [
+        {
+         "type": "PlayerCard",
+         "uuid": "f2e6241d-4c6f-5b6d-f871-10952e6e085c",
+         "amount": 1,
+         "isHighlighted": false
+        },
+        {
+         "type": "Currency",
+         "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+         "amount": 1,
+         "isHighlighted": false
+        }
+       ]
+      },
+      {
+       "isEpilogue": false,
+       "levels": [
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "aa2c316b-4017-0576-c8bb-398407df94fa",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 20000,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 20750,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "72e09720-4984-8e85-6fc8-b39c600d4c62",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 21500,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "da0c1560-4a9d-99cb-f27c-fbb1a1fb65d9",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 22250,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableSkinLevel",
+          "uuid": "5bcca3ad-4b89-cb2f-44b3-13bcfd886ab5",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 23000,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        }
+       ],
+       "freeRewards": [
+        {
+         "type": "EquippableCharmLevel",
+         "uuid": "d7de9b74-4c5f-004b-7052-5180c597cb96",
+         "amount": 1,
+         "isHighlighted": false
+        }
+       ]
+      },
+      {
+       "isEpilogue": false,
+       "levels": [
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "4d9b68dd-4676-10df-0455-ae8d82dca206",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 23750,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 24500,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableCharmLevel",
+          "uuid": "6923d4cf-4943-5797-ec95-c1a5001fe927",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 25250,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "22f04e02-42b4-314c-ce56-5ba9b5cf6ae4",
+          "amount": 1,
+          "isHighlighted": true
+         },
+         "xp": 26000,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableSkinLevel",
+          "uuid": "cdb8a4e8-499f-9419-5c38-97a3c10105de",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 26750,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        }
+       ],
+       "freeRewards": [
+        {
+         "type": "Currency",
+         "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+         "amount": 1,
+         "isHighlighted": false
+        },
+        {
+         "type": "Title",
+         "uuid": "a1dcbb64-4c9c-2ccd-e4c9-8e85a33f97f3",
+         "amount": 1,
+         "isHighlighted": false
+        }
+       ]
+      },
+      {
+       "isEpilogue": false,
+       "levels": [
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "eb367935-4110-6c7f-f798-d68705fb8e62",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 27500,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableCharmLevel",
+          "uuid": "6eda86e6-4e6c-3ec8-492d-9dbdf042700a",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 28250,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "d010298a-48e7-5eb9-528e-569c44644084",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 29000,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 29750,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableSkinLevel",
+          "uuid": "006d217f-4c9e-67cc-8fd2-488bd5ad3d48",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 30500,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        }
+       ],
+       "freeRewards": [
+        {
+         "type": "Spray",
+         "uuid": "d5004efd-41c7-29db-5547-8a924a9762d2",
+         "amount": 1,
+         "isHighlighted": false
+        }
+       ]
+      },
+      {
+       "isEpilogue": false,
+       "levels": [
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 31250,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "09051d24-41c2-966a-447e-c09dc4e9d5c2",
+          "amount": 1,
+          "isHighlighted": true
+         },
+         "xp": 32000,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "7f32d80e-4c1a-773e-63a8-2592e4361bd6",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 32750,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "7fd64a03-493b-1d23-c9c0-d6854849e988",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 33500,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableSkinLevel",
+          "uuid": "c7fe18c4-47ef-be69-b172-a68ddb7f1615",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 34250,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        }
+       ],
+       "freeRewards": [
+        {
+         "type": "EquippableCharmLevel",
+         "uuid": "1aa15bbf-418e-5f6e-97fd-5eb3b420dbdb",
+         "amount": 1,
+         "isHighlighted": false
+        }
+       ]
+      },
+      {
+       "isEpilogue": false,
+       "levels": [
+        {
+         "reward": {
+          "type": "Spray",
+          "uuid": "16168a83-4c8f-145e-b9d4-0fb316f109f3",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 35000,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableCharmLevel",
+          "uuid": "010cfee6-43bf-2a2e-caa9-cfbe3a67d1cf",
+          "amount": 1,
+          "isHighlighted": true
+         },
+         "xp": 35750,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "99bbbb50-438c-8348-b071-ccac8b7e8d9b",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 36500,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 37250,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "EquippableSkinLevel",
+          "uuid": "c92dedcb-4461-5a6e-8740-bcba900a19a2",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 38000,
+         "vpCost": 0,
+         "isPurchasableWithVP": true,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        }
+       ],
+       "freeRewards": [
+        {
+         "type": "EquippableSkinLevel",
+         "uuid": "cad66677-4340-742c-b737-99b706b5af93",
+         "amount": 1,
+         "isHighlighted": false
+        },
+        {
+         "type": "PlayerCard",
+         "uuid": "5f766078-4c91-dedd-6302-e3b7a11e0374",
+         "amount": 1,
+         "isHighlighted": false
+        }
+       ]
+      },
+      {
+       "isEpilogue": true,
+       "levels": [
+        {
+         "reward": {
+          "type": "EquippableCharmLevel",
+          "uuid": "b6c1af29-4f7d-8a73-9353-c1a42fb8c4f1",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 36500,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 36500,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 36500,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "Currency",
+          "uuid": "e59aa87c-4cbf-517a-5983-6e81511be9b7",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 36500,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        },
+        {
+         "reward": {
+          "type": "PlayerCard",
+          "uuid": "efa04383-442e-0db8-b195-be9375794956",
+          "amount": 1,
+          "isHighlighted": false
+         },
+         "xp": 36500,
+         "vpCost": 0,
+         "isPurchasableWithVP": false,
+         "doughCost": 0,
+         "isPurchasableWithDough": false
+        }
+       ],
+       "freeRewards": null
+      }
+     ]
+    }
+   }
+  ]
+ },
+ "buddies": {
+  "status": 200,
+  "data": [
+   {
+    "uuid": "42bbf7d4-41e1-85d4-f743-439ee4fe4443",
+    "displayName": "Phụ Kiện Cháy Đen",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/buddies/42bbf7d4-41e1-85d4-f743-439ee4fe4443/displayicon.png",
+    "levels": [
+     {
+      "uuid": "1aa15bbf-418e-5f6e-97fd-5eb3b420dbdb",
+      "charmLevel": 1,
+      "displayIcon": "https://media.valorant-api.com/buddylevels/1aa15bbf-418e-5f6e-97fd-5eb3b420dbdb/displayicon.png"
+     }
+    ]
+   },
+   {
+    "uuid": "0e26667d-4ca1-93ad-28f4-948bb5149b3b",
+    "displayName": "Phụ Kiện Bếp Trưởng",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/buddies/0e26667d-4ca1-93ad-28f4-948bb5149b3b/displayicon.png",
+    "levels": [
+     {
+      "uuid": "c6490839-4820-d135-4edf-24af823d23e3",
+      "charmLevel": 1,
+      "displayIcon": "https://media.valorant-api.com/buddylevels/c6490839-4820-d135-4edf-24af823d23e3/displayicon.png"
+     }
+    ]
+   },
+   {
+    "uuid": "683a56b8-46f8-9b0d-251a-2db015cf1083",
+    "displayName": "Phụ Kiện Xu V26 PHẦN V",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/buddies/683a56b8-46f8-9b0d-251a-2db015cf1083/displayicon.png",
+    "levels": [
+     {
+      "uuid": "2f3f4ae4-4760-bade-e4f9-018e011c0dcf",
+      "charmLevel": 1,
+      "displayIcon": "https://media.valorant-api.com/buddylevels/2f3f4ae4-4760-bade-e4f9-018e011c0dcf/displayicon.png"
+     }
+    ]
+   },
+   {
+    "uuid": "c609f6da-4ec4-8da7-53dd-85b420addce8",
+    "displayName": "Phụ Kiện Cafe Xanh Mát",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/buddies/c609f6da-4ec4-8da7-53dd-85b420addce8/displayicon.png",
+    "levels": [
+     {
+      "uuid": "6923d4cf-4943-5797-ec95-c1a5001fe927",
+      "charmLevel": 1,
+      "displayIcon": "https://media.valorant-api.com/buddylevels/6923d4cf-4943-5797-ec95-c1a5001fe927/displayicon.png"
+     }
+    ]
+   },
+   {
+    "uuid": "e225176e-4bac-fcb9-2370-f69f1d76b8a8",
+    "displayName": "Phụ Kiện Tách Trà Chiều",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/buddies/e225176e-4bac-fcb9-2370-f69f1d76b8a8/displayicon.png",
+    "levels": [
+     {
+      "uuid": "d7de9b74-4c5f-004b-7052-5180c597cb96",
+      "charmLevel": 1,
+      "displayIcon": "https://media.valorant-api.com/buddylevels/d7de9b74-4c5f-004b-7052-5180c597cb96/displayicon.png"
+     }
+    ]
+   },
+   {
+    "uuid": "55b4c32b-41b7-e99b-d4b3-1b84756d21fe",
+    "displayName": "Phụ Kiện Nuggetman",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/buddies/55b4c32b-41b7-e99b-d4b3-1b84756d21fe/displayicon.png",
+    "levels": [
+     {
+      "uuid": "010cfee6-43bf-2a2e-caa9-cfbe3a67d1cf",
+      "charmLevel": 1,
+      "displayIcon": "https://media.valorant-api.com/buddylevels/010cfee6-43bf-2a2e-caa9-cfbe3a67d1cf/displayicon.png"
+     }
+    ]
+   },
+   {
+    "uuid": "9a2463f9-4e7a-f967-bcc5-8c89fa44bde0",
+    "displayName": "Phụ Kiện Sữa Ăn Kiêng",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/buddies/9a2463f9-4e7a-f967-bcc5-8c89fa44bde0/displayicon.png",
+    "levels": [
+     {
+      "uuid": "81c906cb-4eff-fcf4-7a01-01bdce3757e7",
+      "charmLevel": 1,
+      "displayIcon": "https://media.valorant-api.com/buddylevels/81c906cb-4eff-fcf4-7a01-01bdce3757e7/displayicon.png"
+     }
+    ]
+   },
+   {
+    "uuid": "8b6be2ef-4aae-e921-ff92-229b77c12900",
+    "displayName": "Hồi Kết: Phụ Kiện Sữa Ăn Kiêng",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/buddies/8b6be2ef-4aae-e921-ff92-229b77c12900/displayicon.png",
+    "levels": [
+     {
+      "uuid": "b6c1af29-4f7d-8a73-9353-c1a42fb8c4f1",
+      "charmLevel": 1,
+      "displayIcon": "https://media.valorant-api.com/buddylevels/b6c1af29-4f7d-8a73-9353-c1a42fb8c4f1/displayicon.png"
+     }
+    ]
+   },
+   {
+    "uuid": "800d2a6c-4605-1378-85aa-7898cb180ef5",
+    "displayName": "Phụ Kiện Gourmand",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/buddies/800d2a6c-4605-1378-85aa-7898cb180ef5/displayicon.png",
+    "levels": [
+     {
+      "uuid": "86cc0f4b-4549-22b0-cce8-1cb5ec9c6845",
+      "charmLevel": 1,
+      "displayIcon": "https://media.valorant-api.com/buddylevels/86cc0f4b-4549-22b0-cce8-1cb5ec9c6845/displayicon.png"
+     }
+    ]
+   },
+   {
+    "uuid": "786a1c3f-4d16-7ab7-d7b3-36bec100f459",
+    "displayName": "Phụ Kiện Trạm Dừng Cuối",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/buddies/786a1c3f-4d16-7ab7-d7b3-36bec100f459/displayicon.png",
+    "levels": [
+     {
+      "uuid": "6eda86e6-4e6c-3ec8-492d-9dbdf042700a",
+      "charmLevel": 1,
+      "displayIcon": "https://media.valorant-api.com/buddylevels/6eda86e6-4e6c-3ec8-492d-9dbdf042700a/displayicon.png"
+     }
+    ]
+   },
+   {
+    "uuid": "e058e4f5-40c4-a26a-e6c7-33a4baf2e21f",
+    "displayName": "Phụ Kiện Mũ Trắng",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": "ca77e082-4c08-bf86-2d62-6a8628398615",
+    "displayIcon": "https://media.valorant-api.com/buddies/e058e4f5-40c4-a26a-e6c7-33a4baf2e21f/displayicon.png",
+    "levels": [
+     {
+      "uuid": "abd3d1c7-42b6-46fc-35d2-ac9cf1f33607",
+      "charmLevel": 1,
+      "displayIcon": "https://media.valorant-api.com/buddylevels/abd3d1c7-42b6-46fc-35d2-ac9cf1f33607/displayicon.png"
+     }
+    ]
+   },
+   {
+    "uuid": "0e5aac9d-419a-3767-a154-4c9abfe8c72f",
+    "displayName": "Phụ Kiện Neo Frontier",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/buddies/0e5aac9d-419a-3767-a154-4c9abfe8c72f/displayicon.png",
+    "levels": [
+     {
+      "uuid": "fc35c2a0-4028-f217-faac-79a02aeeef90",
+      "charmLevel": 1,
+      "displayIcon": "https://media.valorant-api.com/buddylevels/fc35c2a0-4028-f217-faac-79a02aeeef90/displayicon.png"
+     }
+    ]
+   },
+   {
+    "uuid": "e7c5747f-49cd-50b2-141c-7f8ef1e9eb7c",
+    "displayName": "Phụ Kiện Đạn Phân Mảnh",
+    "isHiddenIfNotOwned": true,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/buddies/e7c5747f-49cd-50b2-141c-7f8ef1e9eb7c/displayicon.png",
+    "levels": [
+     {
+      "uuid": "cbf85422-4f1a-99dc-5af2-0883d12a2433",
+      "charmLevel": 1,
+      "displayIcon": "https://media.valorant-api.com/buddylevels/cbf85422-4f1a-99dc-5af2-0883d12a2433/displayicon.png"
+     }
+    ]
+   }
+  ]
+ },
+ "sprays": {
+  "status": 200,
+  "data": [
+   {
+    "uuid": "0a6db78c-48b9-a32d-c47a-82be597584c1",
+    "displayName": "Hình Phun Sơn VALORANT",
+    "category": null,
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/0a6db78c-48b9-a32d-c47a-82be597584c1/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/0a6db78c-48b9-a32d-c47a-82be597584c1/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/0a6db78c-48b9-a32d-c47a-82be597584c1/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "af3a4261-4c81-266d-7963-82ad714b190f"
+     }
+    ]
+   },
+   {
+    "uuid": "b4b684bd-40bd-15b2-86b5-3b827a636090",
+    "displayName": "Hình Phun Sơn Tình Nguyện",
+    "category": "EAresSprayCategory::Contextual",
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/b4b684bd-40bd-15b2-86b5-3b827a636090/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/b4b684bd-40bd-15b2-86b5-3b827a636090/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/b4b684bd-40bd-15b2-86b5-3b827a636090/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "2ecb9e9b-4a10-a9f3-d8cf-13abe4c97061"
+     }
+    ]
+   },
+   {
+    "uuid": "e8754a6e-4ec5-3d1c-2ed9-e0a5ff9f1271",
+    "displayName": "Hình Phun Sơn Cypher",
+    "category": null,
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/e8754a6e-4ec5-3d1c-2ed9-e0a5ff9f1271/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/e8754a6e-4ec5-3d1c-2ed9-e0a5ff9f1271/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/e8754a6e-4ec5-3d1c-2ed9-e0a5ff9f1271/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "067e3a7d-4bac-788e-6569-09ac8a7457fe"
+     }
+    ]
+   },
+   {
+    "uuid": "26df3792-4540-ce9b-6048-11ab72bc4f94",
+    "displayName": "Hình Phun Sơn Thợ Săn",
+    "category": "EAresSprayCategory::Contextual",
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/26df3792-4540-ce9b-6048-11ab72bc4f94/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/26df3792-4540-ce9b-6048-11ab72bc4f94/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/26df3792-4540-ce9b-6048-11ab72bc4f94/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "1eda98d2-46d4-5d6a-eb88-e19db8e7815c"
+     }
+    ]
+   },
+   {
+    "uuid": "db1dcdc0-4473-5598-05e4-d4859fa9d340",
+    "displayName": "Hình Phun Sơn Thấy Rồi Nhé",
+    "category": "EAresSprayCategory::Contextual",
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/db1dcdc0-4473-5598-05e4-d4859fa9d340/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/db1dcdc0-4473-5598-05e4-d4859fa9d340/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/db1dcdc0-4473-5598-05e4-d4859fa9d340/fulltransparenticon.png",
+    "animationGif": "https://media.valorant-api.com/sprays/db1dcdc0-4473-5598-05e4-d4859fa9d340/animation.gif",
+    "animationPng": "https://media.valorant-api.com/sprays/db1dcdc0-4473-5598-05e4-d4859fa9d340/animation.png",
+    "levels": [
+     {
+      "uuid": "266d3c0a-47d8-3b9f-597f-6dafc7a02f97"
+     }
+    ]
+   },
+   {
+    "uuid": "d7efbdd5-4a77-f858-a133-cfb8956ca1fe",
+    "displayName": "Không có",
+    "category": null,
+    "themeUuid": null,
+    "isNullSpray": true,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/d7efbdd5-4a77-f858-a133-cfb8956ca1fe/displayicon.png",
+    "fullIcon": null,
+    "fullTransparentIcon": null,
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "d1537344-4fe7-79bb-2689-a293e49dd094"
+     }
+    ]
+   },
+   {
+    "uuid": "aa2c316b-4017-0576-c8bb-398407df94fa",
+    "displayName": "Hình Phun Sơn Bí Mật Giữa Hai Ta",
+    "category": "EAresSprayCategory::Contextual",
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/aa2c316b-4017-0576-c8bb-398407df94fa/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/aa2c316b-4017-0576-c8bb-398407df94fa/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/aa2c316b-4017-0576-c8bb-398407df94fa/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "850ecd7c-43cb-7401-3dfa-e68e77b52eac"
+     }
+    ]
+   },
+   {
+    "uuid": "19323ad8-4fbd-0cdc-1785-21a6ca9d4947",
+    "displayName": "Hình Phun Sơn Cafe Xanh Mát",
+    "category": null,
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/19323ad8-4fbd-0cdc-1785-21a6ca9d4947/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/19323ad8-4fbd-0cdc-1785-21a6ca9d4947/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/19323ad8-4fbd-0cdc-1785-21a6ca9d4947/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "a3828279-4520-b38d-4c2f-e2af547b5bf2"
+     }
+    ]
+   },
+   {
+    "uuid": "eb367935-4110-6c7f-f798-d68705fb8e62",
+    "displayName": "Hình Phun Sơn Trong Giờ Làm",
+    "category": null,
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/eb367935-4110-6c7f-f798-d68705fb8e62/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/eb367935-4110-6c7f-f798-d68705fb8e62/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/eb367935-4110-6c7f-f798-d68705fb8e62/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "13722812-4493-b839-c906-5a94d20ac5d0"
+     }
+    ]
+   },
+   {
+    "uuid": "8ae6f65f-4752-16f3-b013-658f21f8cb4e",
+    "displayName": "Hình Phun Sơn Gourmand",
+    "category": "EAresSprayCategory::Contextual",
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/8ae6f65f-4752-16f3-b013-658f21f8cb4e/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/8ae6f65f-4752-16f3-b013-658f21f8cb4e/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/8ae6f65f-4752-16f3-b013-658f21f8cb4e/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "16a7af05-4918-27c5-18a2-1886191d389c"
+     }
+    ]
+   },
+   {
+    "uuid": "39e1dbc3-46e4-1c5a-6345-44bec07c727a",
+    "displayName": "Hình Phun Sơn Trạm Dừng Cuối",
+    "category": null,
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/39e1dbc3-46e4-1c5a-6345-44bec07c727a/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/39e1dbc3-46e4-1c5a-6345-44bec07c727a/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/39e1dbc3-46e4-1c5a-6345-44bec07c727a/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "41726b79-4a85-edc8-b629-a19da97a2bc6"
+     }
+    ]
+   },
+   {
+    "uuid": "42232068-43fb-bef4-7ce4-d8a19ba94b45",
+    "displayName": "Hình Phun Sơn Chút Xíu Thôi",
+    "category": "EAresSprayCategory::Contextual",
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/42232068-43fb-bef4-7ce4-d8a19ba94b45/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/42232068-43fb-bef4-7ce4-d8a19ba94b45/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/42232068-43fb-bef4-7ce4-d8a19ba94b45/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "caa53641-49d5-a87e-277b-6197035c0934"
+     }
+    ]
+   },
+   {
+    "uuid": "16168a83-4c8f-145e-b9d4-0fb316f109f3",
+    "displayName": "Hình Phun Sơn Không Thể Chứng Minh",
+    "category": "EAresSprayCategory::Contextual",
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/16168a83-4c8f-145e-b9d4-0fb316f109f3/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/16168a83-4c8f-145e-b9d4-0fb316f109f3/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/16168a83-4c8f-145e-b9d4-0fb316f109f3/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "4cd14115-4e6c-377f-4ae9-ae8e846996b6"
+     }
+    ]
+   },
+   {
+    "uuid": "42ff0452-4d22-9c86-e2f6-9f84ca6217a2",
+    "displayName": "Hình Phun Sơn Bánh Mì Nguyên Chất",
+    "category": null,
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/42ff0452-4d22-9c86-e2f6-9f84ca6217a2/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/42ff0452-4d22-9c86-e2f6-9f84ca6217a2/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/42ff0452-4d22-9c86-e2f6-9f84ca6217a2/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "a29c1fda-4b6a-3d62-054a-9bb232609faf"
+     }
+    ]
+   },
+   {
+    "uuid": "72e09720-4984-8e85-6fc8-b39c600d4c62",
+    "displayName": "Hình Phun Sơn Chọn Nhân Vật // Breach",
+    "category": "EAresSprayCategory::Contextual",
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/72e09720-4984-8e85-6fc8-b39c600d4c62/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/72e09720-4984-8e85-6fc8-b39c600d4c62/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/72e09720-4984-8e85-6fc8-b39c600d4c62/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "c978af5b-494b-2521-3ffc-46a7dcf01cf1"
+     }
+    ]
+   },
+   {
+    "uuid": "7fd64a03-493b-1d23-c9c0-d6854849e988",
+    "displayName": "Hình Phun Sơn Tung Chiêu Xung Lực",
+    "category": "EAresSprayCategory::Contextual",
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/7fd64a03-493b-1d23-c9c0-d6854849e988/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/7fd64a03-493b-1d23-c9c0-d6854849e988/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/7fd64a03-493b-1d23-c9c0-d6854849e988/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "1d94c680-4125-d079-07bc-e59a54dabace"
+     }
+    ]
+   },
+   {
+    "uuid": "22f04e02-42b4-314c-ce56-5ba9b5cf6ae4",
+    "displayName": "Hình Phun Sơn Liếc Mắt",
+    "category": "EAresSprayCategory::Contextual",
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/22f04e02-42b4-314c-ce56-5ba9b5cf6ae4/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/22f04e02-42b4-314c-ce56-5ba9b5cf6ae4/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/22f04e02-42b4-314c-ce56-5ba9b5cf6ae4/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "b40d3866-4d0b-9d43-3e8d-6bbff62e054b"
+     }
+    ]
+   },
+   {
+    "uuid": "6416bf6c-4417-daf5-2fa0-60a73f594ee7",
+    "displayName": "Hình Phun Sơn Dò Góc",
+    "category": null,
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/6416bf6c-4417-daf5-2fa0-60a73f594ee7/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/6416bf6c-4417-daf5-2fa0-60a73f594ee7/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/6416bf6c-4417-daf5-2fa0-60a73f594ee7/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "81938b72-47c5-99dd-4e5b-da8cd151996d"
+     }
+    ]
+   },
+   {
+    "uuid": "f2f84f9d-40b1-7fca-e0fb-a8a45d8925b8",
+    "displayName": "Hình Phun Sơn Dáng Hình Diva",
+    "category": null,
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/f2f84f9d-40b1-7fca-e0fb-a8a45d8925b8/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/f2f84f9d-40b1-7fca-e0fb-a8a45d8925b8/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/f2f84f9d-40b1-7fca-e0fb-a8a45d8925b8/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "0ddb5391-494a-1e74-fb48-f7922ea48509"
+     }
+    ]
+   },
+   {
+    "uuid": "d5004efd-41c7-29db-5547-8a924a9762d2",
+    "displayName": "Hình Phun Sơn Nóng Quá Đi",
+    "category": null,
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/d5004efd-41c7-29db-5547-8a924a9762d2/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/d5004efd-41c7-29db-5547-8a924a9762d2/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/d5004efd-41c7-29db-5547-8a924a9762d2/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "d94f6090-4268-425d-189d-8d956bf81366"
+     }
+    ]
+   },
+   {
+    "uuid": "7f32d80e-4c1a-773e-63a8-2592e4361bd6",
+    "displayName": "Hình Phun Sơn Giải Lao Trà Sữa",
+    "category": "EAresSprayCategory::Contextual",
+    "themeUuid": null,
+    "isNullSpray": false,
+    "hideIfNotOwned": false,
+    "displayIcon": "https://media.valorant-api.com/sprays/7f32d80e-4c1a-773e-63a8-2592e4361bd6/displayicon.png",
+    "fullIcon": "https://media.valorant-api.com/sprays/7f32d80e-4c1a-773e-63a8-2592e4361bd6/fullicon.png",
+    "fullTransparentIcon": "https://media.valorant-api.com/sprays/7f32d80e-4c1a-773e-63a8-2592e4361bd6/fulltransparenticon.png",
+    "animationGif": null,
+    "animationPng": null,
+    "levels": [
+     {
+      "uuid": "27fcca13-4fda-5333-9eba-a4be43ec44e1"
+     }
+    ]
+   }
+  ]
+ },
+ "playercards": {
+  "status": 200,
+  "data": [
+   {
+    "uuid": "1711d20d-4b1c-c64a-14be-d4ae58a457c6",
+    "displayName": "Thẻ Bộ Đôi Ngời Sáng",
+    "isHiddenIfNotOwned": true,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/1711d20d-4b1c-c64a-14be-d4ae58a457c6/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/1711d20d-4b1c-c64a-14be-d4ae58a457c6/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/1711d20d-4b1c-c64a-14be-d4ae58a457c6/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/1711d20d-4b1c-c64a-14be-d4ae58a457c6/largeart.png"
+   },
+   {
+    "uuid": "9fb348bc-41a0-91ad-8a3e-818035c4e561",
+    "displayName": "Thẻ VALORANT",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/9fb348bc-41a0-91ad-8a3e-818035c4e561/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/9fb348bc-41a0-91ad-8a3e-818035c4e561/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/9fb348bc-41a0-91ad-8a3e-818035c4e561/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/9fb348bc-41a0-91ad-8a3e-818035c4e561/largeart.png"
+   },
+   {
+    "uuid": "7b0f9b3f-4ebf-c3b2-8cbe-e2afb79fc5be",
+    "displayName": "Thẻ Hạ Gục Hay Bị Hạ: Summit",
+    "isHiddenIfNotOwned": true,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/7b0f9b3f-4ebf-c3b2-8cbe-e2afb79fc5be/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/7b0f9b3f-4ebf-c3b2-8cbe-e2afb79fc5be/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/7b0f9b3f-4ebf-c3b2-8cbe-e2afb79fc5be/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/7b0f9b3f-4ebf-c3b2-8cbe-e2afb79fc5be/largeart.png"
+   },
+   {
+    "uuid": "2e5243e4-49d1-861b-afce-ae84a6b0791b",
+    "displayName": "Thẻ Hạ Gục Hay Bị Hạ: Last Strike",
+    "isHiddenIfNotOwned": true,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/2e5243e4-49d1-861b-afce-ae84a6b0791b/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/2e5243e4-49d1-861b-afce-ae84a6b0791b/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/2e5243e4-49d1-861b-afce-ae84a6b0791b/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/2e5243e4-49d1-861b-afce-ae84a6b0791b/largeart.png"
+   },
+   {
+    "uuid": "58314922-434e-6ed6-0625-cc9e137f7ea0",
+    "displayName": "Thẻ Cypher VALORANT",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/58314922-434e-6ed6-0625-cc9e137f7ea0/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/58314922-434e-6ed6-0625-cc9e137f7ea0/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/58314922-434e-6ed6-0625-cc9e137f7ea0/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/58314922-434e-6ed6-0625-cc9e137f7ea0/largeart.png"
+   },
+   {
+    "uuid": "87a0d13a-40e8-78fa-096e-06b41bceef2a",
+    "displayName": "Thẻ Kẻ Chuộc Lỗi Điên Rồ",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/87a0d13a-40e8-78fa-096e-06b41bceef2a/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/87a0d13a-40e8-78fa-096e-06b41bceef2a/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/87a0d13a-40e8-78fa-096e-06b41bceef2a/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/87a0d13a-40e8-78fa-096e-06b41bceef2a/largeart.png"
+   },
+   {
+    "uuid": "da0c1560-4a9d-99cb-f27c-fbb1a1fb65d9",
+    "displayName": "Thẻ Nốt Miếng Thôi Mà",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/da0c1560-4a9d-99cb-f27c-fbb1a1fb65d9/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/da0c1560-4a9d-99cb-f27c-fbb1a1fb65d9/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/da0c1560-4a9d-99cb-f27c-fbb1a1fb65d9/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/da0c1560-4a9d-99cb-f27c-fbb1a1fb65d9/largeart.png"
+   },
+   {
+    "uuid": "09051d24-41c2-966a-447e-c09dc4e9d5c2",
+    "displayName": "Thẻ Bàn Cá Nhân // Clove",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/09051d24-41c2-966a-447e-c09dc4e9d5c2/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/09051d24-41c2-966a-447e-c09dc4e9d5c2/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/09051d24-41c2-966a-447e-c09dc4e9d5c2/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/09051d24-41c2-966a-447e-c09dc4e9d5c2/largeart.png"
+   },
+   {
+    "uuid": "3b8a10d9-489b-77a4-a93c-7eaf6b970ce0",
+    "displayName": "Thẻ Vẽ Cọ // Corrode",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/3b8a10d9-489b-77a4-a93c-7eaf6b970ce0/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/3b8a10d9-489b-77a4-a93c-7eaf6b970ce0/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/3b8a10d9-489b-77a4-a93c-7eaf6b970ce0/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/3b8a10d9-489b-77a4-a93c-7eaf6b970ce0/largeart.png"
+   },
+   {
+    "uuid": "4d9b68dd-4676-10df-0455-ae8d82dca206",
+    "displayName": "Thẻ Cafe Xanh Mát",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/4d9b68dd-4676-10df-0455-ae8d82dca206/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/4d9b68dd-4676-10df-0455-ae8d82dca206/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/4d9b68dd-4676-10df-0455-ae8d82dca206/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/4d9b68dd-4676-10df-0455-ae8d82dca206/largeart.png"
+   },
+   {
+    "uuid": "7c00e96c-48fa-e79a-8bf7-de9edb529e54",
+    "displayName": "Thẻ Bếp Trưởng Tuyển Chọn",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/7c00e96c-48fa-e79a-8bf7-de9edb529e54/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/7c00e96c-48fa-e79a-8bf7-de9edb529e54/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/7c00e96c-48fa-e79a-8bf7-de9edb529e54/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/7c00e96c-48fa-e79a-8bf7-de9edb529e54/largeart.png"
+   },
+   {
+    "uuid": "efa04383-442e-0db8-b195-be9375794956",
+    "displayName": "Hồi Kết: Thẻ Bếp Trưởng Tuyển Chọn",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/efa04383-442e-0db8-b195-be9375794956/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/efa04383-442e-0db8-b195-be9375794956/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/efa04383-442e-0db8-b195-be9375794956/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/efa04383-442e-0db8-b195-be9375794956/largeart.png"
+   },
+   {
+    "uuid": "1433f361-4aa5-927a-5923-2abd84e639c0",
+    "displayName": "Thẻ Gourmand",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/1433f361-4aa5-927a-5923-2abd84e639c0/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/1433f361-4aa5-927a-5923-2abd84e639c0/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/1433f361-4aa5-927a-5923-2abd84e639c0/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/1433f361-4aa5-927a-5923-2abd84e639c0/largeart.png"
+   },
+   {
+    "uuid": "9d3842fc-4e2f-cac6-ec31-95ba7fb8c8bc",
+    "displayName": "Thẻ Tiểu Đội Kết Hợp",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/9d3842fc-4e2f-cac6-ec31-95ba7fb8c8bc/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/9d3842fc-4e2f-cac6-ec31-95ba7fb8c8bc/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/9d3842fc-4e2f-cac6-ec31-95ba7fb8c8bc/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/9d3842fc-4e2f-cac6-ec31-95ba7fb8c8bc/largeart.png"
+   },
+   {
+    "uuid": "4ce870d3-46b9-fa4c-19cf-cdb13a3e8f52",
+    "displayName": "Thẻ Trạm Dừng Cuối",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/4ce870d3-46b9-fa4c-19cf-cdb13a3e8f52/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/4ce870d3-46b9-fa4c-19cf-cdb13a3e8f52/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/4ce870d3-46b9-fa4c-19cf-cdb13a3e8f52/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/4ce870d3-46b9-fa4c-19cf-cdb13a3e8f52/largeart.png"
+   },
+   {
+    "uuid": "f2e6241d-4c6f-5b6d-f871-10952e6e085c",
+    "displayName": "Thẻ Lắm Thầy Nhiều Ma",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/f2e6241d-4c6f-5b6d-f871-10952e6e085c/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/f2e6241d-4c6f-5b6d-f871-10952e6e085c/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/f2e6241d-4c6f-5b6d-f871-10952e6e085c/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/f2e6241d-4c6f-5b6d-f871-10952e6e085c/largeart.png"
+   },
+   {
+    "uuid": "99bbbb50-438c-8348-b071-ccac8b7e8d9b",
+    "displayName": "Thẻ Bữa Tối Đối Đầu",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/99bbbb50-438c-8348-b071-ccac8b7e8d9b/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/99bbbb50-438c-8348-b071-ccac8b7e8d9b/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/99bbbb50-438c-8348-b071-ccac8b7e8d9b/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/99bbbb50-438c-8348-b071-ccac8b7e8d9b/largeart.png"
+   },
+   {
+    "uuid": "5f766078-4c91-dedd-6302-e3b7a11e0374",
+    "displayName": "Thẻ ĐỐI ĐẦU // Viper + Sage",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/5f766078-4c91-dedd-6302-e3b7a11e0374/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/5f766078-4c91-dedd-6302-e3b7a11e0374/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/5f766078-4c91-dedd-6302-e3b7a11e0374/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/5f766078-4c91-dedd-6302-e3b7a11e0374/largeart.png"
+   },
+   {
+    "uuid": "d010298a-48e7-5eb9-528e-569c44644084",
+    "displayName": "Thẻ Món Tủ Hôm Nay",
+    "isHiddenIfNotOwned": false,
+    "themeUuid": null,
+    "displayIcon": "https://media.valorant-api.com/playercards/d010298a-48e7-5eb9-528e-569c44644084/displayicon.png",
+    "smallArt": "https://media.valorant-api.com/playercards/d010298a-48e7-5eb9-528e-569c44644084/smallart.png",
+    "wideArt": "https://media.valorant-api.com/playercards/d010298a-48e7-5eb9-528e-569c44644084/wideart.png",
+    "largeArt": "https://media.valorant-api.com/playercards/d010298a-48e7-5eb9-528e-569c44644084/largeart.png"
+   }
+  ]
+ },
+ "playertitles": {
+  "status": 200,
+  "data": [
+   {
+    "uuid": "48d870a2-4493-ebf8-7d6f-979be914dc43",
+    "displayName": "Danh Hiệu Tài Lộc",
+    "titleText": "Tài Lộc",
+    "isHiddenIfNotOwned": true
+   },
+   {
+    "uuid": "a5e81233-48ec-1b1c-c6b7-6b9da508c12a",
+    "displayName": "Danh Hiệu Bản Năng",
+    "titleText": "Bản Năng",
+    "isHiddenIfNotOwned": true
+   },
+   {
+    "uuid": "d13e579c-435e-44d4-cec2-6eae5a3c5ed4",
+    "displayName": null,
+    "titleText": null,
+    "isHiddenIfNotOwned": false
+   },
+   {
+    "uuid": "32087e8b-4260-37af-f865-5aa64d79f916",
+    "displayName": "Danh hiệu Đánh Cắp Tâm Trí",
+    "titleText": "Đánh Cắp Tâm Trí",
+    "isHiddenIfNotOwned": false
+   },
+   {
+    "uuid": "bec998ee-416d-ba4a-8afb-a4ba38c9e228",
+    "displayName": "Danh hiệu Canh Nhà Giữ Cửa",
+    "titleText": "Canh Nhà Giữ Cửa",
+    "isHiddenIfNotOwned": false
+   },
+   {
+    "uuid": "8e757bd9-4a56-7b66-314f-97a99bf6dd01",
+    "displayName": "Danh Hiệu Cháy Khét",
+    "titleText": "Cháy Khét",
+    "isHiddenIfNotOwned": false
+   },
+   {
+    "uuid": "6b20e6b1-455d-c733-568f-dfbe9c2b2ed2",
+    "displayName": "Danh Hiệu Không Chừa Lại Gì",
+    "titleText": "Không Chừa Lại Gì",
+    "isHiddenIfNotOwned": false
+   },
+   {
+    "uuid": "a1dcbb64-4c9c-2ccd-e4c9-8e85a33f97f3",
+    "displayName": "Danh Hiệu Phục Vụ Trà",
+    "titleText": "Phục Vụ Trà",
+    "isHiddenIfNotOwned": false
+   }
+  ]
+ },
+ "flex": {
+  "status": 200,
+  "data": [
+   {
+    "uuid": "fc33f376-4a58-687c-6961-bd8a7e529346",
+    "displayName": "Flex ORA by OneTap",
+    "displayNameAllCaps": "FLEX ORA BY ONETAP",
+    "displayIcon": "https://media.valorant-api.com/flex/fc33f376-4a58-687c-6961-bd8a7e529346/displayicon.png"
+   },
+   {
+    "uuid": "af52b5a0-4a4c-03b2-c9d7-8187a08a2675",
+    "displayName": "Flex STAT-COM",
+    "displayNameAllCaps": "FLEX STAT-COM",
+    "displayIcon": "https://media.valorant-api.com/flex/af52b5a0-4a4c-03b2-c9d7-8187a08a2675/displayicon.png"
+   }
+  ]
+ },
+ "agents": {
+  "status": 200,
+  "data": [
+   {
+    "uuid": "e370fa57-4757-3604-3648-499e1f642d3f",
+    "displayName": "Gekko",
+    "isBaseContent": false,
+    "isPlayableCharacter": true,
+    "displayIcon": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/displayicon.png"
+   },
+   {
+    "uuid": "117ed9e3-49f3-6512-3ccf-0cada7e3823b",
+    "displayName": "Cypher",
+    "isBaseContent": false,
+    "isPlayableCharacter": true,
+    "displayIcon": "https://media.valorant-api.com/agents/117ed9e3-49f3-6512-3ccf-0cada7e3823b/displayicon.png"
+   },
+   {
+    "uuid": "add6443a-41bd-e414-f6ad-e58d267f4e95",
+    "displayName": "Jett",
+    "isBaseContent": true,
+    "isPlayableCharacter": true,
+    "displayIcon": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/displayicon.png"
+   }
+  ]
+ },
+ "contenttiers": {
+  "status": 200,
+  "data": [
+   {
+    "uuid": "0cebb8be-46d7-c12a-d306-e9907bfc5a25",
+    "displayName": "Phiên Bản Sang Chảnh",
+    "devName": "Deluxe",
+    "rank": 1,
+    "juiceValue": 20,
+    "juiceCost": 60,
+    "highlightColor": "00958733",
+    "displayIcon": "https://media.valorant-api.com/contenttiers/0cebb8be-46d7-c12a-d306-e9907bfc5a25/displayicon.png"
+   },
+   {
+    "uuid": "e046854e-406c-37f4-6607-19a9ba8426fc",
+    "displayName": "Phiên Bản Độc Quyền",
+    "devName": "Exclusive",
+    "rank": 3,
+    "juiceValue": 40,
+    "juiceCost": 140,
+    "highlightColor": "f5955b33",
+    "displayIcon": "https://media.valorant-api.com/contenttiers/e046854e-406c-37f4-6607-19a9ba8426fc/displayicon.png"
+   },
+   {
+    "uuid": "60bca009-4182-7998-dee7-b8a2558dc369",
+    "displayName": "Phiên Bản Cao Cấp",
+    "devName": "Premium",
+    "rank": 2,
+    "juiceValue": 30,
+    "juiceCost": 100,
+    "highlightColor": "d1548d33",
+    "displayIcon": "https://media.valorant-api.com/contenttiers/60bca009-4182-7998-dee7-b8a2558dc369/displayicon.png"
+   },
+   {
+    "uuid": "12683d76-48d7-84a3-4e09-6985794f0445",
+    "displayName": "Phiên Bản Tuyển Chọn",
+    "devName": "Select",
+    "rank": 0,
+    "juiceValue": 10,
+    "juiceCost": 30,
+    "highlightColor": "5a9fe233",
+    "displayIcon": "https://media.valorant-api.com/contenttiers/12683d76-48d7-84a3-4e09-6985794f0445/displayicon.png"
+   },
+   {
+    "uuid": "411e4a55-4e59-7757-41f0-86a53f101bb5",
+    "displayName": "Phiên Bản Siêu Cấp",
+    "devName": "Ultra",
+    "rank": 4,
+    "juiceValue": 50,
+    "juiceCost": 160,
+    "highlightColor": "fad66333",
+    "displayIcon": "https://media.valorant-api.com/contenttiers/411e4a55-4e59-7757-41f0-86a53f101bb5/displayicon.png"
+   }
+  ]
+ },
+ "bundles": {
+  "status": 200,
+  "data": [
+   {
+    "uuid": "550d9d34-4942-a605-ba3c-b09452e52f83",
+    "displayName": "Neo Frontier",
+    "displayNameSubText": null,
+    "description": "Neo Frontier",
+    "extraDescription": null,
+    "promoDescription": null,
+    "displayIcon": "https://media.valorant-api.com/bundles/550d9d34-4942-a605-ba3c-b09452e52f83/displayicon.png",
+    "displayIcon2": "https://media.valorant-api.com/bundles/550d9d34-4942-a605-ba3c-b09452e52f83/displayicon2.png",
+    "verticalPromoImage": "https://media.valorant-api.com/bundles/550d9d34-4942-a605-ba3c-b09452e52f83/verticalpromoimage.png",
+    "logoIcon": null
+   }
+  ]
+ }
+}

@@ -1,0 +1,111 @@
+{
+  "matchInfo": {
+    "matchId": "d4000000-0000-4000-8000-000000000004",
+    "mapId": "/Game/Maps/HURM/HURM_Alley/HURM_Alley",
+    "gameLengthMillis": 560000,
+    "gameStartMillis": 1790416800000,
+    "provisioningFlowID": "Matchmaking",
+    "isCompleted": true,
+    "queueID": "hurm",
+    "gameMode": "/Game/GameModes/HURM/HURMGameMode.HURMGameMode_C",
+    "isRanked": false,
+    "seasonId": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+    "completionState": "Completed"
+  },
+  "players": [
+    {
+      "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+      "gameName": "",
+      "tagLine": "",
+      "teamId": "Blue",
+      "characterId": "320b2a48-4d9b-a075-30f1-1f93a9b638fa",
+      "stats": {
+        "score": 5200,
+        "roundsPlayed": 1,
+        "kills": 30,
+        "deaths": 25,
+        "assists": 2
+      },
+      "competitiveTier": 0,
+      "isObserver": false,
+      "accountLevel": 60
+    },
+    {
+      "subject": "aaaaaaaa-0000-4000-8000-000000000002",
+      "gameName": "",
+      "tagLine": "",
+      "teamId": "Blue",
+      "characterId": "320b2a48-4d9b-a075-30f1-1f93a9b638fa",
+      "stats": {
+        "score": 4100,
+        "roundsPlayed": 1,
+        "kills": 22,
+        "deaths": 28,
+        "assists": 2
+      },
+      "competitiveTier": 0,
+      "isObserver": false,
+      "accountLevel": 60
+    },
+    {
+      "subject": "bbbbbbbb-0000-4000-8000-000000000003",
+      "gameName": "",
+      "tagLine": "",
+      "teamId": "Red",
+      "characterId": "320b2a48-4d9b-a075-30f1-1f93a9b638fa",
+      "stats": {
+        "score": 6000,
+        "roundsPlayed": 1,
+        "kills": 35,
+        "deaths": 20,
+        "assists": 2
+      },
+      "competitiveTier": 0,
+      "isObserver": false,
+      "accountLevel": 60
+    },
+    {
+      "subject": "bbbbbbbb-0000-4000-8000-000000000004",
+      "gameName": "",
+      "tagLine": "",
+      "teamId": "Red",
+      "characterId": "320b2a48-4d9b-a075-30f1-1f93a9b638fa",
+      "stats": {
+        "score": 5500,
+        "roundsPlayed": 1,
+        "kills": 33,
+        "deaths": 24,
+        "assists": 2
+      },
+      "competitiveTier": 0,
+      "isObserver": false,
+      "accountLevel": 60
+    }
+  ],
+  "teams": [
+    {
+      "teamId": "Red",
+      "won": true,
+      "roundsPlayed": 1,
+      "roundsWon": 1,
+      "numPoints": 100
+    },
+    {
+      "teamId": "Blue",
+      "won": false,
+      "roundsPlayed": 1,
+      "roundsWon": 0,
+      "numPoints": 87
+    }
+  ],
+  "roundResults": [
+    {
+      "roundNum": 0,
+      "roundResult": "",
+      "roundResultCode": "",
+      "winningTeam": "Red",
+      "playerStats": null
+    }
+  ],
+  "kills": null
+}

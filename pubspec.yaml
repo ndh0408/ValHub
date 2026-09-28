@@ -71,6 +71,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/config/
+    - assets/data/
   fonts:
     - family: BeVietnamPro
       fonts:

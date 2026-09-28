@@ -1,0 +1,39 @@
+{
+  "Version": 1545,
+  "Subject": "aaaaaaaa-0000-4000-8000-000000000001",
+  "Progress": {
+    "Level": 222,
+    "XP": 184
+  },
+  "History": [
+    {
+      "ID": "912B5E54-C923-4C10-A216-2A77720CD98A",
+      "MatchStart": "2026-09-28T03:38:03Z",
+      "StartProgress": {
+        "Level": 221,
+        "XP": 4900
+      },
+      "EndProgress": {
+        "Level": 222,
+        "XP": 184
+      },
+      "XPDelta": 284,
+      "XPSources": [
+        {
+          "ID": "time-played",
+          "Amount": 184
+        },
+        {
+          "ID": "match-win",
+          "Amount": 100
+        }
+      ],
+      "XPMultipliers": []
+    },
+    {
+      "ID": null
+    }
+  ],
+  "LastTimeGrantedFirstWin": "2026-09-28T03:46:37.647412992Z",
+  "NextTimeFirstWinAvailable": "2026-09-29T03:46:37.647412992Z"
+}

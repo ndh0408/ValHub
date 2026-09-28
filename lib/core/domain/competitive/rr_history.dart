@@ -1,0 +1,242 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../storage/json_file_cache.dart';
+import '../../util/json.dart';
+import 'match_models.dart' show MatchOutcome;
+import 'rank_models.dart';
+
+/// Every competitive update seen on this device for one player, plus known
+/// match outcomes (R3 true peak, R4 RR per match, R5 Daily RR).
+@immutable
+class RrHistory {
+  RrHistory({
+    required this.puuid,
+    List<CompetitiveUpdate> rows = const [],
+    Map<String, MatchOutcome> outcomes = const {},
+  }) : rows = List.unmodifiable(rows),
+       outcomes = Map.unmodifiable(outcomes),
+       _byMatch = {for (final r in rows) r.matchId: r};
+
+  final String puuid;
+
+  /// Newest first, unique by match id.
+  final List<CompetitiveUpdate> rows;
+
+  /// Match id → outcome from P-14 (`teams[].won`), when details were seen.
+  final Map<String, MatchOutcome> outcomes;
+  final Map<String, CompetitiveUpdate> _byMatch;
+
+  bool get isEmpty => rows.isEmpty;
+
+  /// The RR row of a match ("+24 RR" on match cards).
+  CompetitiveUpdate? forMatch(String? matchId) =>
+      matchId == null ? null : _byMatch[matchId.trim().toLowerCase()];
+}
+
+/// Persists [RrHistory] per PUUID as JSON files.
+///
+/// Stored under `keep/<puuid>/rr_history` in its own `history` namespace, so
+/// neither "Xóa bộ nhớ đệm" nor signing out erases it (like the wishlist,
+/// VF W6); call [delete] / [clear] to erase it explicitly. Rows are
+/// de-duplicated by `MatchID` and capped at [maxRows] (newest kept). Writes
+/// for one PUUID are serialised; storage failures degrade to in-memory data.
+class RrHistoryStore {
+  RrHistoryStore(this._files, {this.maxRows = 5000});
+
+  final JsonFileCache _files;
+  final int maxRows;
+
+  final Map<String, RrHistory> _memory = {};
+  final Map<String, Future<void>> _locks = {};
+  final StreamController<String> _changes = StreamController.broadcast();
+
+  static const _schema = 1;
+
+  static String key(String puuid) =>
+      'keep/${puuid.trim().toLowerCase()}/rr_history';
+
+  /// Emits the PUUID whose history changed.
+  Stream<String> get changes => _changes.stream;
+
+  /// Stored history of [puuid] (empty when nothing was stored).
+  Future<RrHistory> read(String puuid) {
+    final id = puuid.trim().toLowerCase();
+    return _locked(id, () => _load(id));
+  }
+
+  /// Adds [rows] (dedup by match id; a newer copy of a known row replaces
+  /// it). Returns how many match ids were new.
+  Future<int> merge(String puuid, Iterable<CompetitiveUpdate> rows) {
+    final id = puuid.trim().toLowerCase();
+    final incoming = rows.toList();
+    if (id.isEmpty || incoming.isEmpty) return Future.value(0);
+    return _locked(id, () async {
+      final current = await _load(id);
+      final byId = {for (final r in current.rows) r.matchId: r};
+      var added = 0;
+      var changed = false;
+      for (final r in incoming) {
+        final old = byId[r.matchId];
+        if (old == null) added++;
+        if (old != r) {
+          byId[r.matchId] = r;
+          changed = true;
+        }
+      }
+      if (!changed) return 0;
+      final merged = byId.values.toList()..sort(compareUpdatesNewestFirst);
+      final kept = merged.length > maxRows
+          ? merged.sublist(0, maxRows)
+          : merged;
+      final keptIds = {for (final r in kept) r.matchId};
+      await _save(
+        RrHistory(
+          puuid: id,
+          rows: kept,
+          outcomes: {
+            for (final MapEntry(:key, :value) in current.outcomes.entries)
+              if (keptIds.contains(key)) key: value,
+          },
+        ),
+      );
+      return added;
+    });
+  }
+
+  /// Records match outcomes for [puuid] (only for matches already in the
+  /// history, or [force] to keep them for rows that may arrive later).
+  Future<void> recordOutcomes(
+    String puuid,
+    Map<String, MatchOutcome> outcomes, {
+    bool force = false,
+  }) {
+    final id = puuid.trim().toLowerCase();
+    if (id.isEmpty || outcomes.isEmpty) return Future.value();
+    return _locked(id, () async {
+      final current = await _load(id);
+      final next = {...current.outcomes};
+      var changed = false;
+      for (final MapEntry(:key, :value) in outcomes.entries) {
+        final match = key.trim().toLowerCase();
+        if (value == MatchOutcome.unknown) continue;
+        if (!force && current.forMatch(match) == null) continue;
+        if (next[match] != value) {
+          next[match] = value;
+          changed = true;
+        }
+      }
+      if (!changed) return;
+      await _save(RrHistory(puuid: id, rows: current.rows, outcomes: next));
+    });
+  }
+
+  /// Erases the history of [puuid].
+  Future<void> delete(String puuid) {
+    final id = puuid.trim().toLowerCase();
+    return _locked(id, () async {
+      _memory.remove(id);
+      try {
+        await _files.delete(key(id));
+      } on Object {
+        // Nothing stored or storage unavailable.
+      }
+      _emit(id);
+    });
+  }
+
+  /// Erases every stored history.
+  Future<void> clear() async {
+    final ids = _memory.keys.toList();
+    _memory.clear();
+    try {
+      await _files.deletePrefix('keep');
+    } on Object {
+      // Storage unavailable.
+    }
+    ids.forEach(_emit);
+  }
+
+  void dispose() => unawaited(_changes.close());
+
+  // ---------------------------------------------------------------- internals
+
+  /// Runs [body] after every earlier operation on [id] finished.
+  Future<T> _locked<T>(String id, Future<T> Function() body) async {
+    final previous = _locks[id];
+    final done = Completer<void>();
+    _locks[id] = done.future;
+    try {
+      if (previous != null) await previous;
+      return await body();
+    } finally {
+      done.complete();
+      _locks.removeWhere((k, f) => k == id && identical(f, done.future));
+    }
+  }
+
+  Future<RrHistory> _load(String id) async {
+    final cached = _memory[id];
+    if (cached != null) return cached;
+    RrHistory history;
+    try {
+      history = decode(id, (await _files.read(key(id)))?.data);
+    } on Object {
+      history = RrHistory(puuid: id);
+    }
+    return _memory[id] = history;
+  }
+
+  Future<void> _save(RrHistory history) async {
+    _memory[history.puuid] = history;
+    try {
+      await _files.write(key(history.puuid), encode(history));
+    } on Object {
+      // Keep the in-memory copy; the next write retries.
+    }
+    _emit(history.puuid);
+  }
+
+  void _emit(String id) {
+    if (!_changes.isClosed) _changes.add(id);
+  }
+
+  /// Serialised form: `{"v":1,"rows":[<P-12 rows>],"outcomes":{id:"win"}}`.
+  @visibleForTesting
+  static JsonMap encode(RrHistory h) => {
+    'v': _schema,
+    'rows': [for (final r in h.rows) r.toJson()],
+    'outcomes': {
+      for (final MapEntry(:key, :value) in h.outcomes.entries) key: value.name,
+    },
+  };
+
+  /// Parses [encode]'s output (corrupt input → empty history).
+  @visibleForTesting
+  static RrHistory decode(String puuid, Object? json) {
+    final m = asMap(json);
+    final seen = <String>{};
+    final rows = [
+      for (final r in asList(m?['rows']))
+        if (CompetitiveUpdate.fromJson(r) case final u?
+            when seen.add(u.matchId))
+          u,
+    ]..sort(compareUpdatesNewestFirst);
+    final outcomes = <String, MatchOutcome>{};
+    for (final MapEntry(:key, :value)
+        in (asMap(m?['outcomes']) ?? {}).entries) {
+      final o = MatchOutcome.fromName(asString(value));
+      if (o != null) outcomes[key.toLowerCase()] = o;
+    }
+    return RrHistory(puuid: puuid, rows: rows, outcomes: outcomes);
+  }
+}
+
+/// The app-wide [RrHistoryStore] (`<appSupport>/history`).
+final rrHistoryStoreProvider = Provider<RrHistoryStore>((ref) {
+  final store = RrHistoryStore(JsonFileCache.appSupport('history'));
+  ref.onDispose(store.dispose);
+  return store;
+});

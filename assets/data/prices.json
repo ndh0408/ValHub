@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "updatedAt": "2026-09-28",
+  "_readme": "ValVN skin price table (SUMMARY B9 / X-4). 'prices' maps a skin's level-1 uuid (preferred) or skin uuid to its VP price and is treated as exact. It ships empty: Riot publishes no public price list (P-5 store/v1/offers needs a signed-in session and is UNVERIFIED in 2026; HenrikDev store-offers now requires an API key), so exact prices come from storefronts the user has seen, and everything else falls back to the edition price below, shown as an estimate. Fill 'prices' from verified sources only, e.g. per-bundle Exclusive/Ultra prices such as 2375 / 2675. 'tierPrices' overrides the edition fallback (content tier uuid -> VP, SUMMARY 7.3). Melee skins use the edition price x meleeMultiplier. The 'prices' block of the hosted remote config overrides this file entry by entry.",
+  "prices": {},
+  "tierPrices": {
+    "12683d76-48d7-84a3-4e09-6985794f0445": 875,
+    "0cebb8be-46d7-c12a-d306-e9907bfc5a25": 1275,
+    "60bca009-4182-7998-dee7-b8a2558dc369": 1775,
+    "e046854e-406c-37f4-6607-19a9ba8426fc": 2175,
+    "411e4a55-4e59-7757-41f0-86a53f101bb5": 2475
+  },
+  "meleeMultiplier": 2
+}

@@ -1,0 +1,244 @@
+{
+  "FeaturedBundle": {
+    "Bundle": {
+      "ID": "4ac0cf99-0a6f-41a7-bd94-9a58fe7ec106",
+      "DataAssetID": "550d9d34-4942-a605-ba3c-b09452e52f83",
+      "CurrencyID": "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741",
+      "Items": [
+        {
+          "Item": { "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433", "ItemID": "6f60b3ce-4cbf-91ea-2ca7-59bbf1923751", "Amount": 1 },
+          "BasePrice": 2175, "CurrencyID": "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741",
+          "DiscountPercent": 0.33, "DiscountedPrice": 1457, "IsPromoItem": false
+        }
+      ],
+      "ItemOffers": null,
+      "TotalBaseCost": null,
+      "TotalDiscountedCost": null,
+      "TotalDiscountPercent": 0,
+      "DurationRemainingInSeconds": 1821001,
+      "WholesaleOnly": false
+    },
+    "Bundles": [
+      {
+        "ID": "4ac0cf99-0a6f-41a7-bd94-9a58fe7ec106",
+        "DataAssetID": "550d9d34-4942-a605-ba3c-b09452e52f83",
+        "CurrencyID": "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741",
+        "Items": [
+          {
+            "Item": { "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433", "ItemID": "6f60b3ce-4cbf-91ea-2ca7-59bbf1923751", "Amount": 1 },
+            "BasePrice": 2175, "CurrencyID": "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741",
+            "DiscountPercent": 0.33, "DiscountedPrice": 1457, "IsPromoItem": false
+          },
+          {
+            "Item": { "ItemTypeID": "dd3bf334-87f3-40bd-b043-682a57a8dc3a", "ItemID": "fc35c2a0-4028-f217-faac-79a02aeeef90", "Amount": 2 },
+            "BasePrice": 475, "CurrencyID": "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741",
+            "DiscountPercent": 1, "DiscountedPrice": 0, "IsPromoItem": false
+          },
+          {
+            "Item": { "ItemTypeID": "3f296c07-64c3-494c-923b-fe692a4fa1bd", "ItemID": "1711d20d-4b1c-c64a-14be-d4ae58a457c6", "Amount": 1 },
+            "BasePrice": 375, "CurrencyID": "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741",
+            "DiscountPercent": 1, "DiscountedPrice": 0, "IsPromoItem": false
+          },
+          {
+            "Item": { "ItemTypeID": "d5f120f8-ff8c-4aac-92ea-f2b5acbe9475", "ItemID": "b4b684bd-40bd-15b2-86b5-3b827a636090", "Amount": 1 },
+            "BasePrice": 325, "CurrencyID": "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741",
+            "DiscountPercent": 1, "DiscountedPrice": 0, "IsPromoItem": false
+          }
+        ],
+        "ItemOffers": [
+          {
+            "BundleItemOfferID": "fc35c2a0-4028-f217-faac-79a02aeeef90",
+            "Offer": {
+              "OfferID": "fc35c2a0-4028-f217-faac-79a02aeeef90",
+              "IsDirectPurchase": true,
+              "StartDate": "0001-01-01T00:00:00Z",
+              "Cost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 475 },
+              "Rewards": [ { "ItemTypeID": "dd3bf334-87f3-40bd-b043-682a57a8dc3a", "ItemID": "fc35c2a0-4028-f217-faac-79a02aeeef90", "Quantity": 2 } ]
+            },
+            "DiscountPercent": 1,
+            "DiscountedCost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 0 }
+          }
+        ],
+        "TotalBaseCost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 3350 },
+        "TotalDiscountedCost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 1457 },
+        "TotalDiscountPercent": 0.565,
+        "DurationRemainingInSeconds": 1821001,
+        "WholesaleOnly": false
+      },
+      {
+        "ID": "B7E1C0DE-1111-4A2B-9C3D-000000000002",
+        "DataAssetID": "2116A38E-4B71-F169-0D16-CE9289AF4BFA",
+        "CurrencyID": "85AD13F7-3D1B-5128-9EB2-7CD8EE0B5741",
+        "Items": null,
+        "ItemOffers": [
+          {
+            "BundleItemOfferID": "d39a4263-49d3-f2e0-2c13-c299f8644518",
+            "Offer": {
+              "OfferID": "d39a4263-49d3-f2e0-2c13-c299f8644518",
+              "IsDirectPurchase": true,
+              "StartDate": "2026-09-24T00:00:00Z",
+              "Cost": { "85AD13F7-3D1B-5128-9EB2-7CD8EE0B5741": 875 },
+              "Rewards": [ { "ItemTypeID": "E7C63390-EDA7-46E0-BB7A-A6ABDACD2433", "ItemID": "D39A4263-49D3-F2E0-2C13-C299F8644518", "Quantity": 1 } ]
+            },
+            "DiscountPercent": 0.2,
+            "DiscountedCost": { "85AD13F7-3D1B-5128-9EB2-7CD8EE0B5741": 700 }
+          }
+        ],
+        "TotalBaseCost": null,
+        "TotalDiscountedCost": null,
+        "TotalDiscountPercent": null,
+        "DurationRemainingInSeconds": 604800,
+        "WholesaleOnly": true
+      }
+    ],
+    "BundleRemainingDurationInSeconds": 1821001
+  },
+  "SkinsPanelLayout": {
+    "SingleItemOffers": [
+      "0ddbdf8c-43b0-e2f1-94f8-d6be9d2a2110",
+      "29be6d9e-48b2-1229-4f7d-4da1c20deda9",
+      "003e0991-4370-8837-f8fc-6ab3acec2dbf",
+      "49b00063-4a7e-6c73-b8c9-68a8d5727757"
+    ],
+    "SingleItemStoreOffers": [
+      {
+        "OfferID": "0ddbdf8c-43b0-e2f1-94f8-d6be9d2a2110",
+        "IsDirectPurchase": true,
+        "StartDate": "2023-06-27T19:09:58.407604254Z",
+        "Cost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 2175 },
+        "Rewards": [ { "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433", "ItemID": "0ddbdf8c-43b0-e2f1-94f8-d6be9d2a2110", "Quantity": 1 } ]
+      },
+      {
+        "OfferID": "29be6d9e-48b2-1229-4f7d-4da1c20deda9",
+        "IsDirectPurchase": true,
+        "StartDate": "2021-03-02T00:00:00Z",
+        "Cost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 1275 },
+        "Rewards": [ { "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433", "ItemID": "29be6d9e-48b2-1229-4f7d-4da1c20deda9", "Quantity": 1 } ]
+      },
+      {
+        "OfferID": "003e0991-4370-8837-f8fc-6ab3acec2dbf",
+        "IsDirectPurchase": true,
+        "StartDate": "2022-02-15T00:00:00Z",
+        "Cost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 1775 },
+        "Rewards": [ { "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433", "ItemID": "003e0991-4370-8837-f8fc-6ab3acec2dbf", "Quantity": 1 } ]
+      },
+      {
+        "OfferID": "49b00063-4a7e-6c73-b8c9-68a8d5727757",
+        "IsDirectPurchase": true,
+        "StartDate": "2021-06-22T00:00:00Z",
+        "Cost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 1275 },
+        "Rewards": [ { "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433", "ItemID": "49b00063-4a7e-6c73-b8c9-68a8d5727757", "Quantity": 1 } ]
+      }
+    ],
+    "SingleItemOffersRemainingDurationInSeconds": 17401
+  },
+  "UpgradeCurrencyStore": {
+    "UpgradeCurrencyOffers": [
+      {
+        "OfferID": "f9cfa034-c7e1-4995-904c-1a296e7b1760",
+        "StorefrontItemID": "187c8a5e-47de-f4ca-b02b-7697611cff5b",
+        "Offer": {
+          "OfferID": "f9cfa034-c7e1-4995-904c-1a296e7b1760",
+          "IsDirectPurchase": true,
+          "StartDate": "2020-01-01T00:00:00Z",
+          "Cost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 1600 },
+          "Rewards": [ { "ItemTypeID": "ea6fcd2e-8373-4137-b1c0-b458947aa86d", "ItemID": "e59aa87c-4cbf-517a-5983-6e81511be9b7", "Quantity": 20 } ]
+        },
+        "DiscountedPercent": 0.2
+      }
+    ]
+  },
+  "AccessoryStore": {
+    "AccessoryStoreOffers": [
+      {
+        "Offer": {
+          "OfferID": "7294e647-bede-52b6-a128-2d4d46140949",
+          "IsDirectPurchase": true,
+          "StartDate": "2012-01-01T00:00:00Z",
+          "Cost": { "85ca954a-41f2-ce94-9b45-8ca3dd39a00d": 4000 },
+          "Rewards": [ { "ItemTypeID": "d5f120f8-ff8c-4aac-92ea-f2b5acbe9475", "ItemID": "b4b684bd-40bd-15b2-86b5-3b827a636090", "Quantity": 1 } ]
+        },
+        "ContractID": "be540721-4d60-0675-a586-ecb14adcb5f7"
+      },
+      {
+        "Offer": {
+          "OfferID": "2d5b6c0a-4f9e-4bd9-a6ad-3a0b7d1e4c11",
+          "IsDirectPurchase": true,
+          "StartDate": "2012-01-01T00:00:00Z",
+          "Cost": { "85ca954a-41f2-ce94-9b45-8ca3dd39a00d": 4000 },
+          "Rewards": [ { "ItemTypeID": "3f296c07-64c3-494c-923b-fe692a4fa1bd", "ItemID": "1711d20d-4b1c-c64a-14be-d4ae58a457c6", "Quantity": 1 } ]
+        },
+        "ContractID": "3f04583c-4c7a-6bdf-65ce-d4b6ff53c5e9"
+      },
+      {
+        "Offer": {
+          "OfferID": "8c9d1e2f-0a1b-4c2d-8e3f-4a5b6c7d8e9f",
+          "IsDirectPurchase": true,
+          "StartDate": "2012-01-01T00:00:00Z",
+          "Cost": { "85ca954a-41f2-ce94-9b45-8ca3dd39a00d": 3000 },
+          "Rewards": [ { "ItemTypeID": "de7caa6b-adf7-4588-bbd1-143831e786c6", "ItemID": "48d870a2-4493-ebf8-7d6f-979be914dc43", "Quantity": 1 } ]
+        },
+        "ContractID": "00000000-0000-0000-0000-000000000000"
+      },
+      {
+        "Offer": {
+          "OfferID": "5e6f7a8b-9c0d-4e1f-a2b3-c4d5e6f7a8b9",
+          "IsDirectPurchase": true,
+          "StartDate": "2012-01-01T00:00:00Z",
+          "Cost": { "85ca954a-41f2-ce94-9b45-8ca3dd39a00d": 4500 },
+          "Rewards": [ { "ItemTypeID": "dd3bf334-87f3-40bd-b043-682a57a8dc3a", "ItemID": "6923d4cf-4943-5797-ec95-c1a5001fe927", "Quantity": 1 } ]
+        },
+        "ContractID": "3f04583c-4c7a-6bdf-65ce-d4b6ff53c5e9"
+      }
+    ],
+    "AccessoryStoreRemainingDurationInSeconds": 535801,
+    "StorefrontID": "27ce4bc3-81b1-575c-bcdf-572df8e8ce84"
+  },
+  "BonusStore": {
+    "BonusStoreOffers": [
+      {
+        "BonusOfferID": "e0c08290-92d1-4437-ac01-83257a08b8e2",
+        "Offer": {
+          "OfferID": "ba42fe63-457a-78ce-4499-47950a698129",
+          "IsDirectPurchase": true,
+          "StartDate": "2022-09-28T03:53:13.268732Z",
+          "Cost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 1775 },
+          "Rewards": [ { "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433", "ItemID": "ba42fe63-457a-78ce-4499-47950a698129", "Quantity": 1 } ]
+        },
+        "DiscountPercent": 22,
+        "DiscountCosts": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 1385 },
+        "IsSeen": false
+      },
+      {
+        "BonusOfferID": "5b2e2d7a-6f3c-4a61-9d0e-3c1f2a9b8e71",
+        "Offer": {
+          "OfferID": "d7a02a43-47a5-556c-a69f-ec9cf6ede66d",
+          "IsDirectPurchase": true,
+          "StartDate": "2021-07-14T00:00:00Z",
+          "Cost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 3550 },
+          "Rewards": [ { "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433", "ItemID": "d7a02a43-47a5-556c-a69f-ec9cf6ede66d", "Quantity": 1 } ]
+        },
+        "DiscountPercent": 41,
+        "DiscountCosts": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 2094 },
+        "IsSeen": true
+      },
+      {
+        "BonusOfferID": "a3f4c5d6-7e8f-4901-b2c3-d4e5f6a7b8c9",
+        "Offer": {
+          "OfferID": "5fc3c5e8-470e-7683-b594-6580d5e3d624",
+          "IsDirectPurchase": true,
+          "StartDate": "2020-10-13T00:00:00Z",
+          "Cost": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 1275 },
+          "Rewards": [ { "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433", "ItemID": "5fc3c5e8-470e-7683-b594-6580d5e3d624", "Quantity": 1 } ]
+        },
+        "DiscountPercent": 38,
+        "DiscountCosts": { "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741": 790 },
+        "IsSeen": true
+      }
+    ],
+    "BonusStoreRemainingDurationInSeconds": 1109206
+  },
+  "PluginStores": [
+    { "PluginID": "3e1b3cb5-5a3b-4d6b-8f9c-1b2c3d4e5f60", "PluginOffers": { "StoreOffers": [], "RemainingDurationInSeconds": 1000 } }
+  ]
+}

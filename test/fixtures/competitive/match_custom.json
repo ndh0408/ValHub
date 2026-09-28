@@ -1,0 +1,277 @@
+{
+  "matchInfo": {
+    "matchId": "D3000000-0000-4000-8000-000000000003",
+    "mapId": "/Game/Maps/Ascent/Ascent",
+    "gameLengthMillis": 900000,
+    "gameStartMillis": 1790452800000,
+    "provisioningFlowID": "CustomGame",
+    "customGameName": "",
+    "queueID": "",
+    "gameMode": "/Game/GameModes/Bomb/BombGameMode.BombGameMode_C",
+    "isRanked": false,
+    "seasonId": "",
+    "completionState": "Completed"
+  },
+  "players": [
+    {
+      "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+      "gameName": "Tôi",
+      "tagLine": "VN1",
+      "teamId": "Blue",
+      "characterId": "ADD6443A-41BD-E414-F6AD-E58D267F4E95",
+      "stats": {
+        "score": 500,
+        "roundsPlayed": 3,
+        "kills": 2,
+        "deaths": 1,
+        "assists": 0
+      },
+      "competitiveTier": 0,
+      "isObserver": false
+    },
+    {
+      "subject": "bbbbbbbb-0000-4000-8000-000000000003",
+      "gameName": "",
+      "tagLine": "",
+      "teamId": "Red",
+      "characterId": "320b2a48-4d9b-a075-30f1-1f93a9b638fa",
+      "stats": {
+        "score": 300,
+        "roundsPlayed": 3,
+        "kills": 1,
+        "deaths": 2,
+        "assists": 0
+      },
+      "competitiveTier": 0,
+      "isObserver": false
+    },
+    {
+      "subject": "cccccccc-0000-4000-8000-000000000005",
+      "gameName": "",
+      "tagLine": "",
+      "teamId": "Neutral",
+      "stats": null,
+      "isObserver": true
+    }
+  ],
+  "teams": null,
+  "roundResults": [
+    {
+      "roundNum": 0,
+      "roundResultCode": "Elimination",
+      "winningTeam": "Blue",
+      "playerStats": [
+        {
+          "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+          "kills": [
+            {
+              "gameTime": 63000,
+              "roundTime": 3000,
+              "killer": "aaaaaaaa-0000-4000-8000-000000000001",
+              "victim": "bbbbbbbb-0000-4000-8000-000000000003",
+              "victimLocation": {
+                "x": 1,
+                "y": 2
+              },
+              "assistants": [],
+              "playerLocations": [
+                {
+                  "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+                  "viewRadians": 1.2,
+                  "location": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              ],
+              "finishingDamage": {
+                "damageType": "Weapon",
+                "damageItem": "5F0AAF7A-4289-3998-D5FF-EB9A5CF7EF5C",
+                "isSecondaryFireMode": false
+              }
+            }
+          ],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 0,
+            "weapon": "",
+            "armor": "",
+            "remaining": 0,
+            "spent": 0
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        },
+        {
+          "subject": "bbbbbbbb-0000-4000-8000-000000000003",
+          "kills": [],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        }
+      ]
+    },
+    {
+      "roundNum": 2,
+      "roundResultCode": "",
+      "roundResult": "Round timer expired",
+      "winningTeam": "Red",
+      "playerStats": [
+        {
+          "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+          "kills": [],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        },
+        {
+          "subject": "bbbbbbbb-0000-4000-8000-000000000003",
+          "kills": [],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        }
+      ]
+    },
+    {
+      "roundNum": 1,
+      "roundResultCode": "Elimination",
+      "winningTeam": "Blue",
+      "playerStats": [
+        {
+          "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+          "kills": [
+            {
+              "gameTime": 64000,
+              "roundTime": 4000,
+              "killer": "aaaaaaaa-0000-4000-8000-000000000001",
+              "victim": "bbbbbbbb-0000-4000-8000-000000000003",
+              "victimLocation": {
+                "x": 1,
+                "y": 2
+              },
+              "assistants": [],
+              "playerLocations": [
+                {
+                  "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+                  "viewRadians": 1.2,
+                  "location": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              ],
+              "finishingDamage": {
+                "damageType": "Weapon",
+                "damageItem": "9C82E19D-4575-0200-1A81-3EACF00CF872",
+                "isSecondaryFireMode": false
+              }
+            }
+          ],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        },
+        {
+          "subject": "bbbbbbbb-0000-4000-8000-000000000003",
+          "kills": [
+            {
+              "gameTime": 62000,
+              "roundTime": 2000,
+              "killer": "bbbbbbbb-0000-4000-8000-000000000003",
+              "victim": "aaaaaaaa-0000-4000-8000-000000000001",
+              "victimLocation": {
+                "x": 1,
+                "y": 2
+              },
+              "assistants": [],
+              "playerLocations": [
+                {
+                  "subject": "bbbbbbbb-0000-4000-8000-000000000003",
+                  "viewRadians": 1.2,
+                  "location": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              ],
+              "finishingDamage": {
+                "damageType": "Weapon",
+                "damageItem": "9C82E19D-4575-0200-1A81-3EACF00CF872",
+                "isSecondaryFireMode": false
+              }
+            }
+          ],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        }
+      ]
+    }
+  ]
+}

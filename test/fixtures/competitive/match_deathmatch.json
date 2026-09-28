@@ -1,0 +1,215 @@
+{
+  "matchInfo": {
+    "matchId": "d2000000-0000-4000-8000-000000000002",
+    "mapId": "/Game/Maps/Ascent/Ascent",
+    "gameLengthMillis": 540000,
+    "gameStartMillis": 1790539200000,
+    "provisioningFlowID": "Matchmaking",
+    "isCompleted": true,
+    "queueID": "deathmatch",
+    "gameMode": "/Game/GameModes/Deathmatch/DeathmatchGameMode.DeathmatchGameMode_C",
+    "isRanked": false,
+    "seasonId": "8102cd81-43a0-d0d7-bd59-47b8fe9bed1b",
+    "completionState": "Completed"
+  },
+  "players": [
+    {
+      "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+      "gameName": "",
+      "tagLine": "",
+      "teamId": "AAAAAAAA-0000-4000-8000-000000000001",
+      "partyId": "aaaaaaaa-0000-4000-8000-000000000001",
+      "characterId": "add6443a-41bd-e414-f6ad-e58d267f4e95",
+      "stats": {
+        "score": 6000,
+        "roundsPlayed": 1,
+        "kills": 25,
+        "deaths": 20,
+        "assists": 0,
+        "playtimeMillis": 540000
+      },
+      "competitiveTier": 0,
+      "isObserver": false,
+      "accountLevel": 50
+    },
+    {
+      "subject": "dddddddd-0000-4000-8000-000000000002",
+      "gameName": "",
+      "tagLine": "",
+      "teamId": "dddddddd-0000-4000-8000-000000000002",
+      "partyId": "dddddddd-0000-4000-8000-000000000002",
+      "characterId": "add6443a-41bd-e414-f6ad-e58d267f4e95",
+      "stats": {
+        "score": 9000,
+        "roundsPlayed": 1,
+        "kills": 40,
+        "deaths": 12,
+        "assists": 0,
+        "playtimeMillis": 540000
+      },
+      "competitiveTier": 0,
+      "isObserver": false,
+      "accountLevel": 50
+    },
+    {
+      "subject": "dddddddd-0000-4000-8000-000000000003",
+      "gameName": "",
+      "tagLine": "",
+      "teamId": "dddddddd-0000-4000-8000-000000000003",
+      "partyId": "dddddddd-0000-4000-8000-000000000003",
+      "characterId": "add6443a-41bd-e414-f6ad-e58d267f4e95",
+      "stats": {
+        "score": 2500,
+        "roundsPlayed": 1,
+        "kills": 10,
+        "deaths": 30,
+        "assists": 0,
+        "playtimeMillis": 540000
+      },
+      "competitiveTier": 0,
+      "isObserver": false,
+      "accountLevel": 50
+    },
+    {
+      "subject": "dddddddd-0000-4000-8000-000000000004",
+      "gameName": "",
+      "tagLine": "",
+      "teamId": "dddddddd-0000-4000-8000-000000000004",
+      "partyId": "dddddddd-0000-4000-8000-000000000004",
+      "characterId": "add6443a-41bd-e414-f6ad-e58d267f4e95",
+      "stats": {
+        "score": 800,
+        "roundsPlayed": 1,
+        "kills": 3,
+        "deaths": 12,
+        "assists": 0,
+        "playtimeMillis": 540000
+      },
+      "competitiveTier": 0,
+      "isObserver": false,
+      "accountLevel": 50
+    }
+  ],
+  "teams": [
+    {
+      "teamId": "AAAAAAAA-0000-4000-8000-000000000001",
+      "won": false,
+      "roundsPlayed": 1,
+      "roundsWon": 0,
+      "numPoints": 25
+    },
+    {
+      "teamId": "dddddddd-0000-4000-8000-000000000002",
+      "won": true,
+      "roundsPlayed": 1,
+      "roundsWon": 1,
+      "numPoints": 40
+    },
+    {
+      "teamId": "dddddddd-0000-4000-8000-000000000003",
+      "won": false,
+      "roundsPlayed": 1,
+      "roundsWon": 0,
+      "numPoints": 10
+    },
+    {
+      "teamId": "dddddddd-0000-4000-8000-000000000004",
+      "won": false,
+      "roundsPlayed": 1,
+      "roundsWon": 0,
+      "numPoints": 3
+    }
+  ],
+  "roundResults": [
+    {
+      "roundNum": 0,
+      "roundResult": "Eliminated",
+      "roundCeremony": "",
+      "winningTeam": "dddddddd-0000-4000-8000-000000000002",
+      "roundResultCode": "Elimination",
+      "playerStats": [
+        {
+          "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+          "kills": [],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 0,
+            "weapon": "",
+            "armor": "",
+            "remaining": 0,
+            "spent": 0
+          }
+        },
+        {
+          "subject": "dddddddd-0000-4000-8000-000000000002",
+          "kills": [],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 0,
+            "weapon": "",
+            "armor": "",
+            "remaining": 0,
+            "spent": 0
+          }
+        },
+        {
+          "subject": "dddddddd-0000-4000-8000-000000000003",
+          "kills": [],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 0,
+            "weapon": "",
+            "armor": "",
+            "remaining": 0,
+            "spent": 0
+          }
+        },
+        {
+          "subject": "dddddddd-0000-4000-8000-000000000004",
+          "kills": [],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 0,
+            "weapon": "",
+            "armor": "",
+            "remaining": 0,
+            "spent": 0
+          }
+        }
+      ],
+      "playerEconomies": null
+    }
+  ],
+  "kills": [
+    {
+      "gameTime": 1000,
+      "roundTime": 1000,
+      "round": 0,
+      "killer": "dddddddd-0000-4000-8000-000000000002",
+      "victim": "aaaaaaaa-0000-4000-8000-000000000001",
+      "assistants": [],
+      "finishingDamage": {
+        "damageType": "Weapon",
+        "damageItem": "9C82E19D-4575-0200-1A81-3EACF00CF872",
+        "isSecondaryFireMode": false
+      }
+    },
+    {
+      "gameTime": 2000,
+      "roundTime": 2000,
+      "round": 0,
+      "killer": "AAAAAAAA-0000-4000-8000-000000000001",
+      "victim": "dddddddd-0000-4000-8000-000000000003",
+      "assistants": null,
+      "finishingDamage": {
+        "damageType": "Weapon",
+        "damageItem": "9C82E19D-4575-0200-1A81-3EACF00CF872",
+        "isSecondaryFireMode": true
+      }
+    }
+  ]
+}

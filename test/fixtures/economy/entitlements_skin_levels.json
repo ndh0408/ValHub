@@ -1,0 +1,14 @@
+{
+  "ItemTypeID": "e7c63390-eda7-46e0-bb7a-a6abdacd2433",
+  "Entitlements": [
+    { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "ba42fe63-457a-78ce-4499-47950a698129" },
+    { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "98597B95-451C-70CF-46FB-31B4C5A54394" },
+    { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "5fc3c5e8-470e-7683-b594-6580d5e3d624" },
+    { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "bc465bdb-4a85-7981-3e31-409d093e9c12" },
+    { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "d7a02a43-47a5-556c-a69f-ec9cf6ede66d" },
+    { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "afcb2528-4415-0178-98b1-c0a751092762" },
+    { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": "ffffffff-0000-4000-8000-00000000abcd" },
+    { "TypeID": "4e60e748-bce6-4faa-9327-ebbe6089d5fe", "ItemID": null },
+    "garbage"
+  ]
+}

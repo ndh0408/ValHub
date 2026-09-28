@@ -1,0 +1,787 @@
+{
+  "matchInfo": {
+    "matchId": "D1000000-0000-4000-8000-000000000001",
+    "mapId": "/Game/Maps/Ascent/Ascent",
+    "gamePodId": "aresriot.aws-ap-southeast-1",
+    "gameLoopZone": "aresriot.aws-ap",
+    "gameServerAddress": "",
+    "gameVersion": "release-13.06-shipping-13-5435758",
+    "gameLengthMillis": 1260000,
+    "gameStartMillis": 1790568000000,
+    "provisioningFlowID": "Matchmaking",
+    "isCompleted": true,
+    "customGameName": "",
+    "forcePostProcessing": false,
+    "queueID": "competitive",
+    "gameMode": "/Game/GameModes/Bomb/BombGameMode.BombGameMode_C",
+    "isRanked": true,
+    "isMatchSampled": false,
+    "seasonId": "8102CD81-43A0-D0D7-BD59-47B8FE9BED1B",
+    "completionState": "Completed",
+    "platformType": "PC",
+    "premierMatchInfo": {},
+    "partyRRPenalties": {},
+    "shouldMatchDisablePenalties": false
+  },
+  "players": [
+    {
+      "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+      "gameName": "",
+      "tagLine": "",
+      "platformInfo": {
+        "platformType": "PC",
+        "platformOS": "Windows"
+      },
+      "teamId": "Blue",
+      "partyId": "f0000000-0000-4000-8000-000000000001",
+      "characterId": "add6443a-41bd-e414-f6ad-e58d267f4e95",
+      "stats": {
+        "score": 600,
+        "roundsPlayed": 3,
+        "kills": 3,
+        "deaths": 1,
+        "assists": 0,
+        "playtimeMillis": 1200000,
+        "abilityCasts": {
+          "grenadeCasts": 2,
+          "ability1Casts": 1,
+          "ability2Casts": 3,
+          "ultimateCasts": 1
+        }
+      },
+      "roundDamage": null,
+      "competitiveTier": 18,
+      "isObserver": false,
+      "playerCard": "9FB348BC-41A0-91AD-8A3E-818035C4E561",
+      "playerTitle": "",
+      "preferredLevelBorder": "",
+      "accountLevel": 222,
+      "sessionPlaytimeMinutes": 40,
+      "behaviorFactors": {
+        "afkRounds": 0
+      }
+    },
+    {
+      "subject": "aaaaaaaa-0000-4000-8000-000000000002",
+      "gameName": "",
+      "tagLine": "",
+      "platformInfo": {
+        "platformType": "PC",
+        "platformOS": "Windows"
+      },
+      "teamId": "Blue",
+      "partyId": "f0000000-0000-4000-8000-000000000001",
+      "characterId": "320b2a48-4d9b-a075-30f1-1f93a9b638fa",
+      "stats": {
+        "score": 300,
+        "roundsPlayed": 3,
+        "kills": 1,
+        "deaths": 2,
+        "assists": 1,
+        "playtimeMillis": 1200000,
+        "abilityCasts": {
+          "grenadeCasts": 2,
+          "ability1Casts": 1,
+          "ability2Casts": 3,
+          "ultimateCasts": 1
+        }
+      },
+      "roundDamage": null,
+      "competitiveTier": 17,
+      "isObserver": false,
+      "playerCard": "9FB348BC-41A0-91AD-8A3E-818035C4E561",
+      "playerTitle": "",
+      "preferredLevelBorder": "",
+      "accountLevel": 222,
+      "sessionPlaytimeMinutes": 40,
+      "behaviorFactors": {
+        "afkRounds": 0
+      }
+    },
+    {
+      "subject": "bbbbbbbb-0000-4000-8000-000000000003",
+      "gameName": "",
+      "tagLine": "",
+      "platformInfo": {
+        "platformType": "PC",
+        "platformOS": "Windows"
+      },
+      "teamId": "Red",
+      "partyId": "f0000000-0000-4000-8000-000000000002",
+      "characterId": "320b2a48-4d9b-a075-30f1-1f93a9b638fa",
+      "stats": {
+        "score": 400,
+        "roundsPlayed": 3,
+        "kills": 1,
+        "deaths": 3,
+        "assists": 0,
+        "playtimeMillis": 1200000,
+        "abilityCasts": {
+          "grenadeCasts": 2,
+          "ability1Casts": 1,
+          "ability2Casts": 3,
+          "ultimateCasts": 1
+        }
+      },
+      "roundDamage": null,
+      "competitiveTier": 18,
+      "isObserver": false,
+      "playerCard": "9FB348BC-41A0-91AD-8A3E-818035C4E561",
+      "playerTitle": "",
+      "preferredLevelBorder": "",
+      "accountLevel": 222,
+      "sessionPlaytimeMinutes": 40,
+      "behaviorFactors": {
+        "afkRounds": 0
+      }
+    },
+    {
+      "subject": "bbbbbbbb-0000-4000-8000-000000000004",
+      "gameName": "Kẻ Thù",
+      "tagLine": "VN2",
+      "platformInfo": {
+        "platformType": "PC",
+        "platformOS": "Windows"
+      },
+      "teamId": "Red",
+      "partyId": "f0000000-0000-4000-8000-000000000002",
+      "characterId": "add6443a-41bd-e414-f6ad-e58d267f4e95",
+      "stats": {
+        "score": 200,
+        "roundsPlayed": 3,
+        "kills": 2,
+        "deaths": 1,
+        "assists": 0,
+        "playtimeMillis": 1200000,
+        "abilityCasts": {
+          "grenadeCasts": 2,
+          "ability1Casts": 1,
+          "ability2Casts": 3,
+          "ultimateCasts": 1
+        }
+      },
+      "roundDamage": null,
+      "competitiveTier": 19,
+      "isObserver": false,
+      "playerCard": "9FB348BC-41A0-91AD-8A3E-818035C4E561",
+      "playerTitle": "",
+      "preferredLevelBorder": "",
+      "accountLevel": 222,
+      "sessionPlaytimeMinutes": 40,
+      "behaviorFactors": {
+        "afkRounds": 0
+      }
+    },
+    {
+      "subject": "cccccccc-0000-4000-8000-000000000005",
+      "gameName": "",
+      "tagLine": "",
+      "teamId": "Neutral",
+      "characterId": "",
+      "stats": null,
+      "competitiveTier": 0,
+      "isObserver": true,
+      "accountLevel": 10
+    }
+  ],
+  "bots": [],
+  "coaches": [],
+  "teams": [
+    {
+      "teamId": "Blue",
+      "won": true,
+      "roundsPlayed": 3,
+      "roundsWon": 2,
+      "numPoints": 2,
+      "mvp": "",
+      "TempValue1": 0
+    },
+    {
+      "teamId": "Red",
+      "won": false,
+      "roundsPlayed": 3,
+      "roundsWon": 1,
+      "numPoints": 1,
+      "mvp": ""
+    }
+  ],
+  "roundResults": [
+    {
+      "roundNum": 0,
+      "roundResult": "Eliminated",
+      "roundCeremony": "CeremonyDefault",
+      "winningTeam": "Blue",
+      "winningTeamRole": "Defender",
+      "firstBloodPlayer": "aaaaaaaa-0000-4000-8000-000000000001",
+      "plantRoundTime": 0,
+      "plantSite": "",
+      "defuseRoundTime": 0,
+      "plantPlayerLocations": null,
+      "defusePlayerLocations": null,
+      "roundResultCode": "Elimination",
+      "playerStats": [
+        {
+          "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+          "kills": [
+            {
+              "gameTime": 70000,
+              "roundTime": 10000,
+              "killer": "aaaaaaaa-0000-4000-8000-000000000001",
+              "victim": "bbbbbbbb-0000-4000-8000-000000000003",
+              "victimLocation": {
+                "x": 1,
+                "y": 2
+              },
+              "assistants": [],
+              "playerLocations": [
+                {
+                  "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+                  "viewRadians": 1.2,
+                  "location": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              ],
+              "finishingDamage": {
+                "damageType": "Weapon",
+                "damageItem": "9C82E19D-4575-0200-1A81-3EACF00CF872",
+                "isSecondaryFireMode": false
+              }
+            },
+            {
+              "gameTime": 80000,
+              "roundTime": 20000,
+              "killer": "aaaaaaaa-0000-4000-8000-000000000001",
+              "victim": "bbbbbbbb-0000-4000-8000-000000000004",
+              "victimLocation": {
+                "x": 1,
+                "y": 2
+              },
+              "assistants": [
+                "aaaaaaaa-0000-4000-8000-000000000002"
+              ],
+              "playerLocations": [
+                {
+                  "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+                  "viewRadians": 1.2,
+                  "location": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              ],
+              "finishingDamage": {
+                "damageType": "Weapon",
+                "damageItem": "9C82E19D-4575-0200-1A81-3EACF00CF872",
+                "isSecondaryFireMode": false
+              }
+            }
+          ],
+          "damage": [
+            {
+              "receiver": "bbbbbbbb-0000-4000-8000-000000000003",
+              "damage": 150,
+              "legshots": 0,
+              "bodyshots": 2,
+              "headshots": 1
+            },
+            {
+              "receiver": "bbbbbbbb-0000-4000-8000-000000000004",
+              "damage": 150,
+              "legshots": 1,
+              "bodyshots": 3,
+              "headshots": 0
+            }
+          ],
+          "score": 400,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        },
+        {
+          "subject": "aaaaaaaa-0000-4000-8000-000000000002",
+          "kills": [],
+          "damage": [
+            {
+              "receiver": "aaaaaaaa-0000-4000-8000-000000000001",
+              "damage": 20,
+              "legshots": 0,
+              "bodyshots": 1,
+              "headshots": 0
+            },
+            {
+              "receiver": "bbbbbbbb-0000-4000-8000-000000000004",
+              "damage": 30,
+              "legshots": 0,
+              "bodyshots": 1,
+              "headshots": 0
+            }
+          ],
+          "score": 50,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        },
+        {
+          "subject": "bbbbbbbb-0000-4000-8000-000000000003",
+          "kills": [],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        },
+        {
+          "subject": "bbbbbbbb-0000-4000-8000-000000000004",
+          "kills": [],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        }
+      ],
+      "playerEconomies": [
+        {
+          "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+          "loadoutValue": 3900,
+          "weapon": "9C82E19D-4575-0200-1A81-3EACF00CF872",
+          "armor": "822BCAB2-40A2-324E-C137-E09195AD7692",
+          "remaining": 200,
+          "spent": 3900
+        },
+        {
+          "subject": "aaaaaaaa-0000-4000-8000-000000000002",
+          "loadoutValue": 3100,
+          "weapon": "9C82E19D-4575-0200-1A81-3EACF00CF872",
+          "armor": "822BCAB2-40A2-324E-C137-E09195AD7692",
+          "remaining": 200,
+          "spent": 3100
+        },
+        {
+          "subject": "bbbbbbbb-0000-4000-8000-000000000003",
+          "loadoutValue": 800,
+          "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+          "armor": "",
+          "remaining": 200,
+          "spent": 800
+        },
+        {
+          "subject": "bbbbbbbb-0000-4000-8000-000000000004",
+          "loadoutValue": 900,
+          "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+          "armor": "",
+          "remaining": 200,
+          "spent": 900
+        }
+      ],
+      "playerScores": null
+    },
+    {
+      "roundNum": 1,
+      "roundResult": "Bomb detonated",
+      "roundCeremony": "CeremonyDefault",
+      "winningTeam": "Red",
+      "winningTeamRole": "Attacker",
+      "bombPlanter": "bbbbbbbb-0000-4000-8000-000000000003",
+      "plantRoundTime": 60000,
+      "plantSite": "A",
+      "defuseRoundTime": 0,
+      "roundResultCode": "Detonate",
+      "playerStats": [
+        {
+          "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+          "kills": [],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        },
+        {
+          "subject": "aaaaaaaa-0000-4000-8000-000000000002",
+          "kills": [
+            {
+              "gameTime": 68000,
+              "roundTime": 8000,
+              "killer": "aaaaaaaa-0000-4000-8000-000000000002",
+              "victim": "bbbbbbbb-0000-4000-8000-000000000003",
+              "victimLocation": {
+                "x": 1,
+                "y": 2
+              },
+              "assistants": [],
+              "playerLocations": [
+                {
+                  "subject": "aaaaaaaa-0000-4000-8000-000000000002",
+                  "viewRadians": 1.2,
+                  "location": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              ],
+              "finishingDamage": {
+                "damageType": "Weapon",
+                "damageItem": "9C82E19D-4575-0200-1A81-3EACF00CF872",
+                "isSecondaryFireMode": false
+              }
+            }
+          ],
+          "damage": [
+            {
+              "receiver": "bbbbbbbb-0000-4000-8000-000000000003",
+              "damage": 150,
+              "legshots": 1,
+              "bodyshots": 1,
+              "headshots": 1
+            }
+          ],
+          "score": 150,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        },
+        {
+          "subject": "bbbbbbbb-0000-4000-8000-000000000003",
+          "kills": [
+            {
+              "gameTime": 65000,
+              "roundTime": 5000,
+              "killer": "bbbbbbbb-0000-4000-8000-000000000003",
+              "victim": "aaaaaaaa-0000-4000-8000-000000000001",
+              "victimLocation": {
+                "x": 1,
+                "y": 2
+              },
+              "assistants": [],
+              "playerLocations": [
+                {
+                  "subject": "bbbbbbbb-0000-4000-8000-000000000003",
+                  "viewRadians": 1.2,
+                  "location": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              ],
+              "finishingDamage": {
+                "damageType": "Weapon",
+                "damageItem": "9C82E19D-4575-0200-1A81-3EACF00CF872",
+                "isSecondaryFireMode": false
+              }
+            }
+          ],
+          "damage": [
+            {
+              "receiver": "aaaaaaaa-0000-4000-8000-000000000001",
+              "damage": 140,
+              "legshots": 0,
+              "bodyshots": 1,
+              "headshots": 1
+            }
+          ],
+          "score": 200,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        },
+        {
+          "subject": "bbbbbbbb-0000-4000-8000-000000000004",
+          "kills": [
+            {
+              "gameTime": 90000,
+              "roundTime": 30000,
+              "killer": "bbbbbbbb-0000-4000-8000-000000000004",
+              "victim": "aaaaaaaa-0000-4000-8000-000000000002",
+              "victimLocation": {
+                "x": 1,
+                "y": 2
+              },
+              "assistants": [],
+              "playerLocations": [
+                {
+                  "subject": "bbbbbbbb-0000-4000-8000-000000000004",
+                  "viewRadians": 1.2,
+                  "location": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              ],
+              "finishingDamage": {
+                "damageType": "Weapon",
+                "damageItem": "9C82E19D-4575-0200-1A81-3EACF00CF872",
+                "isSecondaryFireMode": false
+              }
+            }
+          ],
+          "damage": [
+            {
+              "receiver": "aaaaaaaa-0000-4000-8000-000000000002",
+              "damage": 150,
+              "legshots": 0,
+              "bodyshots": 3,
+              "headshots": 0
+            }
+          ],
+          "score": 150,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        }
+      ],
+      "playerEconomies": null
+    },
+    {
+      "roundNum": 2,
+      "roundResult": "Bomb defused",
+      "roundCeremony": "CeremonyCloser",
+      "winningTeam": "Blue",
+      "bombPlanter": "bbbbbbbb-0000-4000-8000-000000000004",
+      "bombDefuser": "aaaaaaaa-0000-4000-8000-000000000001",
+      "plantRoundTime": 45000,
+      "plantSite": "B",
+      "defuseRoundTime": 90000,
+      "roundResultCode": "Defuse",
+      "playerStats": [
+        {
+          "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+          "kills": [
+            {
+              "gameTime": 61000,
+              "roundTime": 1000,
+              "killer": "aaaaaaaa-0000-4000-8000-000000000001",
+              "victim": "bbbbbbbb-0000-4000-8000-000000000003",
+              "victimLocation": {
+                "x": 1,
+                "y": 2
+              },
+              "assistants": [],
+              "playerLocations": [
+                {
+                  "subject": "aaaaaaaa-0000-4000-8000-000000000001",
+                  "viewRadians": 1.2,
+                  "location": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              ],
+              "finishingDamage": {
+                "damageType": "Ability",
+                "damageItem": "Ultimate",
+                "isSecondaryFireMode": false
+              }
+            }
+          ],
+          "damage": [
+            {
+              "receiver": "bbbbbbbb-0000-4000-8000-000000000003",
+              "damage": 150,
+              "legshots": 0,
+              "bodyshots": 0,
+              "headshots": 0
+            },
+            {
+              "receiver": "bbbbbbbb-0000-4000-8000-000000000004",
+              "damage": 60,
+              "legshots": 0,
+              "bodyshots": 0,
+              "headshots": 1
+            }
+          ],
+          "score": 200,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        },
+        {
+          "subject": "aaaaaaaa-0000-4000-8000-000000000002",
+          "kills": [],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        },
+        {
+          "subject": "bbbbbbbb-0000-4000-8000-000000000003",
+          "kills": [],
+          "damage": [],
+          "score": 0,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        },
+        {
+          "subject": "bbbbbbbb-0000-4000-8000-000000000004",
+          "kills": [
+            {
+              "gameTime": 62000,
+              "roundTime": 2000,
+              "killer": "bbbbbbbb-0000-4000-8000-000000000004",
+              "victim": "aaaaaaaa-0000-4000-8000-000000000002",
+              "victimLocation": {
+                "x": 1,
+                "y": 2
+              },
+              "assistants": [],
+              "playerLocations": [
+                {
+                  "subject": "bbbbbbbb-0000-4000-8000-000000000004",
+                  "viewRadians": 1.2,
+                  "location": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              ],
+              "finishingDamage": {
+                "damageType": "Ability",
+                "damageItem": "GrenadeAbility",
+                "isSecondaryFireMode": false
+              }
+            }
+          ],
+          "damage": [
+            {
+              "receiver": "aaaaaaaa-0000-4000-8000-000000000002",
+              "damage": 150,
+              "legshots": 0,
+              "bodyshots": 2,
+              "headshots": 1
+            }
+          ],
+          "score": 50,
+          "economy": {
+            "loadoutValue": 1000,
+            "weapon": "29A0CFAB-485B-F5D5-779A-B59F85E204A8",
+            "armor": "",
+            "remaining": 0,
+            "spent": 1000
+          },
+          "ability": {
+            "grenadeEffects": null
+          },
+          "wasAfk": false,
+          "wasPenalized": false,
+          "stayedInSpawn": false
+        }
+      ]
+    }
+  ],
+  "kills": [],
+  "matchMvp": "aaaaaaaa-0000-4000-8000-000000000001"
+}
