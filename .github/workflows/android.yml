@@ -1,0 +1,112 @@
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write          # needed to create a GitHub Release on tags
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: '3.47.5'
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Android SDK components
+        if: github.event_name != 'pull_request'
+        run: |
+          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses > /dev/null || true
+          "$SDKM" --install "platforms;android-36" "build-tools;36.0.0" \
+                            "ndk;28.2.13676358" "cmake;3.22.1" > /dev/null
+
+      - name: Version info
+        id: ver
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then NAME="${GITHUB_REF_NAME#v}"; else NAME="$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')"; fi
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "number=${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+
+      # android/app/build.gradle.kts reads android/key.properties when present
+      # (storeFile is resolved relative to android/app/) and otherwise falls
+      # back to debug signing, so this step is entirely optional.
+      - name: Decode release keystore
+        if: github.event_name != 'pull_request' && env.HAS_KEYSTORE == 'true'
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "$KS_B64" | base64 --decode > android/app/upload-keystore.jks
+          cat > android/key.properties <<EOF
+          storePassword=$KS_PASS
+          keyPassword=$KEY_PASS
+          keyAlias=$KEY_ALIAS
+          storeFile=upload-keystore.jks
+          EOF
+
+      - name: Build APKs (universal + per-ABI)
+        if: github.event_name != 'pull_request'
+        run: |
+          flutter build apk --release \
+            --build-name=${{ steps.ver.outputs.name }} --build-number=${{ steps.ver.outputs.number }}
+          mkdir -p dist
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/ValVN-${{ steps.ver.outputs.name }}-universal.apk"
+          flutter build apk --release --split-per-abi \
+            --build-name=${{ steps.ver.outputs.name }} --build-number=${{ steps.ver.outputs.number }}
+          for abi in arm64-v8a armeabi-v7a x86_64; do
+            cp "build/app/outputs/flutter-apk/app-$abi-release.apk" "dist/ValVN-${{ steps.ver.outputs.name }}-$abi.apk"
+          done
+          (cd dist && sha256sum *.apk > SHA256SUMS.txt)
+          if [ "$HAS_KEYSTORE" != "true" ]; then echo "::warning::APK được ký bằng DEBUG key (chưa cấu hình secret ANDROID_KEYSTORE_BASE64)"; fi
+
+      - uses: actions/upload-artifact@v7
+        if: github.event_name != 'pull_request'
+        with:
+          name: ValVN-android-${{ steps.ver.outputs.name }}+${{ steps.ver.outputs.number }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v3
+        with:
+          files: dist/*
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, '-') }}
+
+      - name: Clean secrets
+        if: always()
+        run: rm -f android/key.properties android/app/upload-keystore.jks
