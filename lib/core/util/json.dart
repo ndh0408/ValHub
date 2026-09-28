@@ -168,7 +168,7 @@ Object? vapiData(Object? envelope) => asMap(envelope)?['data'];
 
 /// Ergonomic typed accessors on [JsonMap].
 extension JsonMapX on JsonMap {
-  JsonMap? map(String key) => asMap(this[key]);
+  JsonMap? obj(String key) => asMap(this[key]);
   List<Object?> list(String key) => asList(this[key]);
   List<JsonMap> maps(String key) => asMapList(this[key]);
   List<String> strings(String key) => asStringList(this[key]);

@@ -529,7 +529,10 @@ class PvpApi {
         );
         return res.data;
       } on Object catch (e) {
-        final error = classifyError(e);
+        var error = classifyError(e);
+        if (error is NeedsLoginException && error.puuid == null) {
+          error = NeedsLoginException(puuid: id, reason: error.reason);
+        }
         if (error is TransientException && error.status == 429) {
           _limiter.cooldown(
             uri.host,

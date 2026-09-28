@@ -88,9 +88,10 @@ class AccountsNotifier extends Notifier<List<Account>> {
               needsLogin: false,
             );
     await _repo.upsert(account);
-    if (!ref.mounted) return account;
-    state = _repo.loadAll();
-    ref.read(activePuuidProvider.notifier).select(account.puuid);
+    // Written before the state change so activePuuidProvider (which watches
+    // this provider) picks it up when it rebuilds.
+    await _repo.setActivePuuid(account.puuid);
+    if (ref.mounted) state = _repo.loadAll();
     return account;
   }
 
@@ -112,12 +113,11 @@ class AccountsNotifier extends Notifier<List<Account>> {
     await ref.read(sessionManagerProvider).forget(id);
     await _repo.wipeAccountData(id);
     await _repo.removeMetadata(id);
-    if (!ref.mounted) return;
-    state = _repo.loadAll();
-    final active = ref.read(activePuuidProvider);
-    if (active == id) {
-      ref.read(activePuuidProvider.notifier).select(state.firstOrNull?.puuid);
+    final remaining = _repo.loadAll();
+    if (_repo.activePuuid == id) {
+      await _repo.setActivePuuid(remaining.firstOrNull?.puuid);
     }
+    if (ref.mounted) state = remaining;
   }
 
   /// "Đăng xuất tất cả tài khoản".
@@ -164,6 +164,20 @@ final activeAccountProvider = Provider<Account?>((ref) {
   if (puuid == null) return null;
   for (final a in ref.watch(accountsProvider)) {
     if (a.puuid == puuid) return a;
+  }
+  return null;
+});
+
+/// One account by PUUID (`null` when signed out). Data providers watch
+/// its `needsLogin` flag so they refetch automatically after a re-login:
+///
+/// ```dart
+/// ref.watch(accountProvider(puuid).select((a) => a?.needsLogin));
+/// ```
+final accountProvider = Provider.family<Account?, String>((ref, puuid) {
+  final id = puuid.toLowerCase();
+  for (final a in ref.watch(accountsProvider)) {
+    if (a.puuid == id) return a;
   }
   return null;
 });

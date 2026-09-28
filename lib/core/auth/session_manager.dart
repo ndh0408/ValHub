@@ -186,7 +186,9 @@ class SessionManager {
     if (existing != null) return existing;
     final future = _lock
         .run(id, () => _refresh(id, failedAccessToken: failedAccessToken))
-        .whenComplete(() => _inFlight.remove(id));
+        // removeWhere returns void: returning the removed future itself
+        // would make whenComplete wait on itself (deadlock).
+        .whenComplete(() => _inFlight.removeWhere((key, _) => key == id));
     _inFlight[id] = future;
     return future;
   }

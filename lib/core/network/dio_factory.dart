@@ -106,7 +106,10 @@ class RiotAuthInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final puuid = options.extra[RequestExtras.puuid];
-    if (puuid is! String) return handler.next(options);
+    // The retry after a re-auth already carries the refreshed headers.
+    if (puuid is! String || options.extra[RequestExtras.authRetried] == true) {
+      return handler.next(options);
+    }
     try {
       final session = await _sessions.session(puuid);
       options.headers.addAll(session.gameHeaders);

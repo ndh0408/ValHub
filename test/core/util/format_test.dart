@@ -33,13 +33,18 @@ void main() {
 
   group('countdowns', () {
     test('under a day: HH:MM:SS', () {
-      expect(formatCountdown(const Duration(hours: 11, minutes: 54, seconds: 37)), '11:54:37');
+      expect(
+        formatCountdown(const Duration(hours: 11, minutes: 54, seconds: 37)),
+        '11:54:37',
+      );
       expect(formatCountdown(const Duration(seconds: 5)), '00:00:05');
     });
 
     test('a day or more: "N ngày HH:MM:SS"', () {
       expect(
-        formatCountdown(const Duration(days: 2, hours: 15, minutes: 9, seconds: 24)),
+        formatCountdown(
+          const Duration(days: 2, hours: 15, minutes: 9, seconds: 24),
+        ),
         '2 ngày 15:09:24',
       );
     });
@@ -49,13 +54,22 @@ void main() {
     });
 
     test('short timers', () {
-      expect(formatMinutesSeconds(const Duration(minutes: 1, seconds: 32)), '01:32');
-      expect(formatMinutesSeconds(const Duration(seconds: 42), padMinutes: false), '0:42');
+      expect(
+        formatMinutesSeconds(const Duration(minutes: 1, seconds: 32)),
+        '01:32',
+      );
+      expect(
+        formatMinutesSeconds(const Duration(seconds: 42), padMinutes: false),
+        '0:42',
+      );
     });
 
     test('coarse durations', () {
       expect(formatDurationCoarse(const Duration(minutes: 38)), '38 phút');
-      expect(formatDurationCoarse(const Duration(hours: 5, minutes: 2)), '5 giờ');
+      expect(
+        formatDurationCoarse(const Duration(hours: 5, minutes: 2)),
+        '5 giờ',
+      );
       expect(formatDurationCoarse(const Duration(days: 16)), '16 ngày');
     });
   });
@@ -64,9 +78,18 @@ void main() {
     final now = DateTime(2026, 9, 28, 14);
 
     test('recent', () {
-      expect(formatRelative(now.subtract(const Duration(seconds: 20)), now), 'vừa xong');
-      expect(formatRelative(now.subtract(const Duration(minutes: 5)), now), '5 phút trước');
-      expect(formatRelative(now.subtract(const Duration(hours: 18)), now), '18 giờ trước');
+      expect(
+        formatRelative(now.subtract(const Duration(seconds: 20)), now),
+        'vừa xong',
+      );
+      expect(
+        formatRelative(now.subtract(const Duration(minutes: 5)), now),
+        '5 phút trước',
+      );
+      expect(
+        formatRelative(now.subtract(const Duration(hours: 18)), now),
+        '18 giờ trước',
+      );
     });
 
     test('days', () {
@@ -76,7 +99,10 @@ void main() {
     });
 
     test('future instants read as just now', () {
-      expect(formatRelative(now.add(const Duration(minutes: 3)), now), 'vừa xong');
+      expect(
+        formatRelative(now.add(const Duration(minutes: 3)), now),
+        'vừa xong',
+      );
     });
   });
 
@@ -103,8 +129,14 @@ void main() {
 
     test('updated at', () {
       final now = DateTime(2026, 9, 28, 16);
-      expect(formatUpdatedAt(DateTime(2026, 9, 28, 14, 5), now), 'Cập nhật lúc 14:05');
-      expect(formatUpdatedAt(DateTime(2026, 9, 27, 14, 5), now), 'Cập nhật lúc 14:05, 27/09');
+      expect(
+        formatUpdatedAt(DateTime(2026, 9, 28, 14, 5), now),
+        'Cập nhật lúc 14:05',
+      );
+      expect(
+        formatUpdatedAt(DateTime(2026, 9, 27, 14, 5), now),
+        'Cập nhật lúc 14:05, 27/09',
+      );
     });
   });
 

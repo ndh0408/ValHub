@@ -20,7 +20,19 @@ void main() {
     });
 
     test('asMapList keeps only objects', () {
-      expect(asMapList([{'a': 1}, 2, null, 'x', {'b': 2}]), [{'a': 1}, {'b': 2}]);
+      expect(
+        asMapList([
+          {'a': 1},
+          2,
+          null,
+          'x',
+          {'b': 2},
+        ]),
+        [
+          {'a': 1},
+          {'b': 2},
+        ],
+      );
       expect(asMapList(null), isEmpty);
     });
 
@@ -66,14 +78,20 @@ void main() {
     });
 
     test('lowerUuid lowercases and trims', () {
-      expect(lowerUuid(' 9C82E19D-4575-0200-1A81-3EACF00CF872 '), '9c82e19d-4575-0200-1a81-3eacf00cf872');
+      expect(
+        lowerUuid(' 9C82E19D-4575-0200-1A81-3EACF00CF872 '),
+        '9c82e19d-4575-0200-1a81-3eacf00cf872',
+      );
       expect(lowerUuid(''), isNull);
       expect(lowerUuid(null), isNull);
     });
 
     test('asDateTime handles ISO strings, epoch ms and the zero date', () {
       expect(asDateTime('2026-08-19T00:00:00Z'), DateTime.utc(2026, 8, 19));
-      expect(asDateTime(1660075851445), DateTime.fromMillisecondsSinceEpoch(1660075851445, isUtc: true));
+      expect(
+        asDateTime(1660075851445),
+        DateTime.fromMillisecondsSinceEpoch(1660075851445, isUtc: true),
+      );
       expect(asDateTime('1660075851445'), isNotNull);
       expect(asDateTime('0001-01-01T00:00:00Z'), isNull);
       expect(asDateTime('garbage'), isNull);
@@ -96,14 +114,23 @@ void main() {
   test('tryDecodeJson rejects HTML error pages and bad JSON', () {
     expect(tryDecodeJson('{"a":1}'), {'a': 1});
     expect(tryDecodeJson('[1]'), [1]);
-    expect(tryDecodeJson('<!DOCTYPE html><title>Just a moment...</title>'), isNull);
+    expect(
+      tryDecodeJson('<!DOCTYPE html><title>Just a moment...</title>'),
+      isNull,
+    );
     expect(tryDecodeJson('{broken'), isNull);
     expect(tryDecodeJson(''), isNull);
     expect(tryDecodeJson(null), isNull);
   });
 
   test('vapiData unwraps the envelope', () {
-    expect(vapiData({'status': 200, 'data': [1]}), [1]);
+    expect(
+      vapiData({
+        'status': 200,
+        'data': [1],
+      }),
+      [1],
+    );
     expect(vapiData('x'), isNull);
   });
 
@@ -118,7 +145,7 @@ void main() {
     expect(m.integer('n'), 5);
     expect(m.uuid('u'), 'abc');
     expect(m.list('l'), isEmpty);
-    expect(m.map('m'), {'k': 1});
+    expect(m.obj('m'), {'k': 1});
     expect(m.boolean('b'), isTrue);
     expect(m.str('missing'), isNull);
   });

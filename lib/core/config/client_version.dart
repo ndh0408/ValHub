@@ -107,7 +107,9 @@ class ClientVersionRepository {
         fetchedAt != null &&
         _clock.now().difference(fetchedAt) < AppConstants.versionCheckInterval;
     if (fresh && !force) return Future.value(current);
-    return _inFlight ??= _fetch().whenComplete(() => _inFlight = null);
+    return _inFlight ??= _fetch().whenComplete(() {
+      _inFlight = null;
+    });
   }
 
   Future<ClientVersionInfo> _fetch() async {

@@ -4,8 +4,7 @@ import 'package:valvn/core/storage/prefs.dart';
 
 /// [Prefs] backed by an in-memory platform (no plugins needed).
 Future<Prefs> createTestPrefs([Map<String, Object> values = const {}]) async {
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.withData(
-    Map.of(values),
-  );
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.withData(Map.of(values));
   return Prefs.create();
 }

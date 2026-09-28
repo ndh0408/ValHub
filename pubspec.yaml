@@ -55,6 +55,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   mocktail: ^1.0.5
+  shared_preferences_platform_interface: ^2.4.2   # in-memory prefs in tests
 
 # flutter_inappwebview 6.2.0-beta.3 depends on the 1.1.x platform packages via caret
 # ranges that don't select prereleases; pin the whole family to the self-consistent beta line.
