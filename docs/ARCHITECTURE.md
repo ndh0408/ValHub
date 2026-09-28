@@ -155,7 +155,7 @@ Redirect (`appRedirect`, unit-tested): no accounts → everything except `/welco
 `/login` goes to `/welcome`; with accounts `/welcome` and `/` go to `/store`.
 
 Sheets (not routes): `showSkinDetailSheet(context, skinOrLevelUuid: id, mode:
-SkinDetailMode.store|owned|catalog)`, `showLiveGameSheet(context)`,
+SkinDetailMode.store|owned|catalog)`, `openSkinVideo(context, videoUrl:)` (S16), `showLiveGameSheet(context)`,
 `showPlayerLoadoutSheet(context, matchId:, playerPuuid:)`, `showBuddyPickerSheet(context,
 weaponId:)`, `showNotificationPrimingSheet(context) → Future<bool>`,
 `showAccountSwitcherSheet(context)`.

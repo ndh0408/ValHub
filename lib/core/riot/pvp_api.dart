@@ -509,6 +509,7 @@ class PvpApi {
     final canRetry = idempotent ?? method == 'GET';
     for (var attempt = 0; ; attempt++) {
       await _limiter.acquire(uri.host);
+      Duration wait;
       try {
         final res = await _dio.requestUri<Object?>(
           query == null || query.isEmpty
@@ -533,18 +534,23 @@ class PvpApi {
         if (error is NeedsLoginException && error.puuid == null) {
           error = NeedsLoginException(puuid: id, reason: error.reason);
         }
+        final rateLimited = error is TransientException && error.status == 429;
         if (error is TransientException && error.status == 429) {
+          // Every caller of this host waits (honours Retry-After).
           _limiter.cooldown(
             uri.host,
             error.retryAfter ?? const Duration(seconds: 10),
           );
         }
-        final wait = _inlineRetryDelay(error, attempt);
-        if (!canRetry || wait == null) throw error;
-        await _delay(wait);
+        final retryDelay = _inlineRetryDelay(error, attempt);
+        if (!canRetry || retryDelay == null) throw error;
+        // After a 429 the limiter's cooldown already enforces the wait.
+        wait = rateLimited ? Duration.zero : retryDelay;
       } finally {
         _limiter.release(uri.host);
       }
+      // Sleep outside the limiter slot.
+      if (wait > Duration.zero) await _delay(wait);
     }
   }
 
