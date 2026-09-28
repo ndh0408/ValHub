@@ -15,6 +15,20 @@ Cập nhật: 2026-09-28. Nhánh: `claude/jolly-hawking-23o2j8`.
    - `lib/core/domain/competitive/`: name-service, MMR/rank/peak, lịch sử RR, RR theo ngày,
      tính số trận lên hạng, lịch sử trận + chi tiết trận + chỉ số, account XP.
 
+4. **CI** — `.github/workflows/android.yml` (APK) và `ios.yml` (IPA chưa ký), hướng dẫn `docs/BUILD.md`.
+
+## Đang dở (lưu dạng patch, CHƯA vào code)
+
+`docs/wip/store-settings-wip.patch` — giao diện **Cửa hàng + chi tiết skin** và **Cài đặt** do agent viết dở
+(khoảng 4.000 dòng). Tình trạng khi dừng: `flutter analyze` còn 4 cảnh báo import thừa trong test,
+vài test `test/features/skin_detail/` còn fail. Áp lại bằng:
+
+```bash
+git apply docs/wip/store-settings-wip.patch
+```
+
+rồi sửa cho analyze 0 lỗi + test pass, commit, sau đó xóa file patch.
+
 ## Chưa làm (theo thứ tự)
 
 1. **Lớp dữ liệu loadout + XMPP** — `lib/core/domain/loadout/` và `lib/core/xmpp/`
@@ -30,8 +44,6 @@ Cập nhật: 2026-09-28. Nhánh: `claude/jolly-hawking-23o2j8`.
    profile (rank, lịch sử trận, chi tiết trận, RR theo ngày, tính lên hạng), live_game,
    social (tổ đội, bạn bè, chat), settings (+ welcome, nhật ký phiên).
 5. **Review + sửa lỗi**, icon app, build APK release.
-6. **CI**: `.github/workflows/android.yml` (APK) và `ios.yml` (IPA chưa ký trên macOS),
-   YAML mẫu có sẵn trong `docs/research/flutter-stack.md` §19.
 
 ## Cách làm tiếp
 

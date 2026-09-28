@@ -1,0 +1,4088 @@
+diff --git a/lib/core/ui/skeleton.dart b/lib/core/ui/skeleton.dart
+index 43365d7..2a29aab 100644
+--- a/lib/core/ui/skeleton.dart
++++ b/lib/core/ui/skeleton.dart
+@@ -103,6 +103,7 @@ class SkeletonList extends StatelessWidget {
+       child: ListView.separated(
+         padding: padding,
+         physics: const NeverScrollableScrollPhysics(),
++        shrinkWrap: true,
+         itemCount: itemCount,
+         separatorBuilder: (_, _) => SizedBox(height: spacing),
+         itemBuilder: (_, _) => Skeleton(height: itemHeight, shimmer: false),
+diff --git a/lib/features/settings/data/cache_stats.dart b/lib/features/settings/data/cache_stats.dart
+new file mode 100644
+index 0000000..852283e
+--- /dev/null
++++ b/lib/features/settings/data/cache_stats.dart
+@@ -0,0 +1,41 @@
++import 'dart:io';
++
++import 'package:path_provider/path_provider.dart';
++
++/// Total size, in bytes, of every file under [dir] (`0` when it does not
++/// exist). Files that disappear mid-scan are skipped rather than failing the
++/// whole count.
++Future<int> dirSizeBytes(Directory dir) async {
++  if (!dir.existsSync()) return 0;
++  var total = 0;
++  await for (final entity in dir.list(recursive: true)) {
++    if (entity is File) {
++      try {
++        total += await entity.length();
++      } on FileSystemException {
++        // Deleted mid-scan: not worth failing the whole count for.
++      }
++    }
++  }
++  return total;
++}
++
++/// Size of the cached-image store: `flutter_cache_manager` keeps `valMedia`
++/// (`core/ui/net_image.dart`) under `<temporaryDirectory>/valMedia`.
++Future<int> mediaCacheSizeBytes() async {
++  final base = await getTemporaryDirectory();
++  return dirSizeBytes(Directory('${base.path}/valMedia'));
++}
++
++/// `512 B`, `48 KB`, `3,2 MB`, `1,1 GB` (VF §8.12 "Xóa bộ nhớ đệm ({size})").
++String formatBytes(int bytes) {
++  if (bytes < 1024) return '$bytes B';
++  final kb = bytes / 1024;
++  if (kb < 1024) return '${kb.round()} KB';
++  final mb = kb / 1024;
++  if (mb < 1024) return '${_oneDecimal(mb)} MB';
++  final gb = mb / 1024;
++  return '${_oneDecimal(gb)} GB';
++}
++
++String _oneDecimal(double value) => value.toStringAsFixed(1).replaceAll('.', ',');
+diff --git a/lib/features/settings/providers/settings_providers.dart b/lib/features/settings/providers/settings_providers.dart
+new file mode 100644
+index 0000000..bbb40a5
+--- /dev/null
++++ b/lib/features/settings/providers/settings_providers.dart
+@@ -0,0 +1,26 @@
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:package_info_plus/package_info_plus.dart';
++
++import '../../../core/storage/json_file_cache.dart';
++import '../../../core/ui/net_image.dart' show clearMediaCache;
++import '../data/cache_stats.dart';
++
++/// App package info (version, build number) for "Phiên bản" (S70, S72).
++final packageInfoProvider = FutureProvider<PackageInfo>(
++  (ref) => PackageInfo.fromPlatform(),
++);
++
++/// Clears the media (image) cache. Wrapped as a provider so widget tests can
++/// fake it without exercising `path_provider` (no platform channel in
++/// tests).
++final clearMediaCacheProvider = Provider<Future<void> Function()>(
++  (ref) => clearMediaCache,
++);
++
++/// Combined size of the offline-response cache and the media cache
++/// ("Xóa bộ nhớ đệm ({size})", S70). Invalidate after clearing.
++final cacheSizeBytesProvider = FutureProvider.autoDispose<int>((ref) async {
++  final generic = await ref.watch(jsonFileCacheProvider).sizeBytes();
++  final media = await mediaCacheSizeBytes();
++  return generic + media;
++});
+diff --git a/lib/features/settings/settings_strings.dart b/lib/features/settings/settings_strings.dart
+index d678d4d..53514f5 100644
+--- a/lib/features/settings/settings_strings.dart
++++ b/lib/features/settings/settings_strings.dart
+@@ -18,4 +18,75 @@ abstract final class SettingsStrings {
+       'Bật thông báo để biết khi cửa hàng làm mới và khi skin trong wishlist xuất hiện.';
+   static const primingEnable = 'Bật thông báo';
+   static const primingLater = 'Để sau';
++
++  // Section headers (S70)
++  static const optionsHeader = 'TÙY CHỌN';
++  static const notificationsHeader = 'THÔNG BÁO';
++  static const appearanceHeader = 'GIAO DIỆN';
++  static const appHeader = 'ỨNG DỤNG';
++  static const aboutHeader = 'THÔNG TIN';
++
++  // TÙY CHỌN
++  static const optionAutoOpenLiveGame = 'Tự động mở chi tiết trận';
++  static const optionShowPeakRank = 'Hiện rank cao nhất trong chi tiết trận';
++  static const optionShowLiveScore = 'Hiện tỉ số trực tiếp';
++  static const optionPlatform = 'Nền tảng';
++  static const platformPickerTitle = 'Chọn nền tảng';
++
++  // THÔNG BÁO
++  static const notifStoreReset = 'Khi cửa hàng làm mới';
++  static const notifStoreResetSubtitle = '07:00 hằng ngày';
++  static const notifWishlist = 'Wishlist (kiểm tra nền cho tất cả tài khoản)';
++  static const notifNightMarket = 'Khi Chợ Đêm mở';
++
++  // GIAO DIỆN
++  static const themeLabel = 'Chủ đề';
++  static const themePickerTitle = 'Chọn chủ đề';
++  static const themeDark = 'Tối';
++  static const themeLight = 'Sáng';
++  static const themeSystem = 'Theo hệ thống';
++  static const itemLanguageLabel = 'Tên vật phẩm';
++  static const itemLanguagePickerTitle = 'Chọn ngôn ngữ tên vật phẩm';
++  static const itemLanguageVi = 'Tiếng Việt';
++  static const itemLanguageEn = 'Tiếng Anh';
++
++  // ỨNG DỤNG
++  static String version(String version) => 'Phiên bản $version';
++  static String buildNumber(String build) => 'Bản dựng $build';
++  static const clearCache = 'Xóa bộ nhớ đệm';
++  static String cacheCleared(String size) => 'Đã xóa $size';
++  static const exportLog = 'Xuất nhật ký phiên';
++  static const exportLogNote =
++      'Nhật ký không chứa mật khẩu, token hay ID tài khoản.';
++  static const exportLogEmpty = 'Chưa có nhật ký nào.';
++
++  // THÔNG TIN
++  static const privacyPolicy = 'Chính sách quyền riêng tư';
++  static const privacyPolicyBody =
++      'ValVN lưu token đăng nhập Riot và dữ liệu tài khoản chỉ trên thiết bị '
++      'của bạn — không có máy chủ ValVN nào khác lưu trữ chúng. Nhật ký '
++      'phiên chỉ ghi tên yêu cầu, mã trạng thái và thời gian, không bao giờ '
++      'chứa mật khẩu, token hay ID tài khoản. Dữ liệu vật phẩm (skin, đặc '
++      'vụ, bản đồ…) được tải công khai từ valorant-api.com. ValVN không thu '
++      'thập hay chia sẻ dữ liệu cá nhân của bạn với bên thứ ba.';
++  static const terms = 'Điều khoản sử dụng';
++  static const termsBody =
++      'ValVN là ứng dụng không chính thức của cộng đồng, không liên kết hay '
++      'được Riot Games xác nhận, tài trợ hoặc giám sát. Bạn tự chịu trách '
++      'nhiệm khi đăng nhập bằng tài khoản Riot của mình và cần tuân thủ Điều '
++      'khoản dịch vụ của Riot Games. Ứng dụng được cung cấp nguyên trạng, '
++      'không kèm bảo hành dưới bất kỳ hình thức nào.';
++  static const feedback = 'Góp ý / Discord';
++  static const licenses = 'Giấy phép mã nguồn mở';
++
++  // About screen (S72)
++  static const aboutCreditsHeader = 'Nguồn dữ liệu';
++  static const aboutCreditContent = 'valorant-api.com';
++  static const aboutCreditContentBody =
++      'Tên, hình ảnh và dữ liệu vật phẩm, đặc vụ, bản đồ, rank (tiếng Việt).';
++  static const aboutCreditRiot = 'Riot Games';
++  static const aboutCreditRiotBody =
++      'Cửa hàng, ví, bộ sưu tập, trận đấu và xếp hạng lấy trực tiếp từ tài '
++      'khoản Riot bạn đăng nhập.';
++  static const aboutLegalHeader = 'Pháp lý';
+ }
+diff --git a/lib/features/settings/ui/about_screen.dart b/lib/features/settings/ui/about_screen.dart
+index c34366a..99a3018 100644
+--- a/lib/features/settings/ui/about_screen.dart
++++ b/lib/features/settings/ui/about_screen.dart
+@@ -1,17 +1,67 @@
++import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import 'package:material_ui/material_ui.dart';
+ 
+-import '../../../core/ui/empty_view.dart';
++import '../../../core/l10n/common_strings.dart';
++import '../../../core/ui/section_header.dart';
++import '../../../core/ui/skeleton.dart';
++import '../providers/settings_providers.dart';
+ import '../settings_strings.dart';
+ 
+-/// S72 "Giới thiệu & pháp lý". Route `/settings/about`.
+-class AboutScreen extends StatelessWidget {
++/// S72 "Giới thiệu & pháp lý": version, credits, legal notice. Route
++/// `/settings/about`.
++class AboutScreen extends ConsumerWidget {
+   const AboutScreen({super.key});
+ 
+   @override
+-  Widget build(BuildContext context) {
++  Widget build(BuildContext context, WidgetRef ref) {
++    final packageInfo = ref.watch(packageInfoProvider);
++    final theme = Theme.of(context);
+     return Scaffold(
+       appBar: AppBar(title: const Text(SettingsStrings.aboutTitle)),
+-      body: const FeaturePlaceholder(),
++      body: ListView(
++        padding: const EdgeInsets.only(bottom: 32),
++        children: [
++          const SizedBox(height: 24),
++          Center(
++            child: Column(
++              children: [
++                Text(
++                  CommonStrings.appName.toUpperCase(),
++                  style: theme.textTheme.displaySmall?.copyWith(color: theme.colorScheme.primary),
++                ),
++                const SizedBox(height: 4),
++                Text(CommonStrings.tagline, style: theme.textTheme.bodyMedium),
++                const SizedBox(height: 8),
++                packageInfo.when(
++                  data: (p) => Text(SettingsStrings.version(p.version), style: theme.textTheme.bodySmall),
++                  loading: () => const Skeleton(width: 80, height: 12),
++                  error: (_, _) =>
++                      Text(SettingsStrings.version(CommonStrings.dash), style: theme.textTheme.bodySmall),
++                ),
++              ],
++            ),
++          ),
++          const SectionHeader(SettingsStrings.aboutCreditsHeader, uppercase: true),
++          const ListTile(
++            leading: Icon(Icons.data_object_outlined),
++            title: Text(SettingsStrings.aboutCreditContent),
++            subtitle: Text(SettingsStrings.aboutCreditContentBody),
++          ),
++          const ListTile(
++            leading: Icon(Icons.videogame_asset_outlined),
++            title: Text(SettingsStrings.aboutCreditRiot),
++            subtitle: Text(SettingsStrings.aboutCreditRiotBody),
++          ),
++          const SectionHeader(SettingsStrings.aboutLegalHeader, uppercase: true),
++          Padding(
++            padding: const EdgeInsets.symmetric(horizontal: 16),
++            child: Text(
++              CommonStrings.riotDisclaimer,
++              style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
++            ),
++          ),
++        ],
++      ),
+     );
+   }
+ }
+diff --git a/lib/features/settings/ui/session_log_screen.dart b/lib/features/settings/ui/session_log_screen.dart
+index cccf673..146f8fa 100644
+--- a/lib/features/settings/ui/session_log_screen.dart
++++ b/lib/features/settings/ui/session_log_screen.dart
+@@ -1,17 +1,103 @@
++import 'dart:async';
++
++import 'package:flutter/services.dart' show Clipboard, ClipboardData;
++import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import 'package:material_ui/material_ui.dart';
++import 'package:share_plus/share_plus.dart';
+ 
++import '../../../core/l10n/common_strings.dart';
++import '../../../core/logging/session_log.dart';
+ import '../../../core/ui/empty_view.dart';
++import '../../../core/ui/error_view.dart';
+ import '../settings_strings.dart';
+ 
+ /// S71 "Nhật ký phiên" (export via share_plus; no tokens). Route `/settings/log`.
+-class SessionLogScreen extends StatelessWidget {
++class SessionLogScreen extends ConsumerWidget {
+   const SessionLogScreen({super.key});
+ 
++  String _exportText(SessionLog log) =>
++      log.exportText(header: '${CommonStrings.appName} — ${SettingsStrings.sessionLogTitle}');
++
++  Future<void> _copy(BuildContext context, SessionLog log) async {
++    await Clipboard.setData(ClipboardData(text: _exportText(log)));
++    if (!context.mounted) return;
++    showAppSnackBar(context, CommonStrings.copied);
++  }
++
++  Future<void> _share(SessionLog log) => SharePlus.instance.share(
++    ShareParams(text: _exportText(log), subject: SettingsStrings.sessionLogTitle),
++  );
++
+   @override
+-  Widget build(BuildContext context) {
++  Widget build(BuildContext context, WidgetRef ref) {
++    final log = ref.watch(sessionLogProvider);
+     return Scaffold(
+-      appBar: AppBar(title: const Text(SettingsStrings.sessionLogTitle)),
+-      body: const FeaturePlaceholder(),
++      appBar: AppBar(
++        title: const Text(SettingsStrings.sessionLogTitle),
++        actions: [
++          IconButton(
++            icon: const Icon(Icons.copy_outlined),
++            tooltip: CommonStrings.copy,
++            onPressed: () => unawaited(_copy(context, log)),
++          ),
++          IconButton(
++            icon: const Icon(Icons.share_outlined),
++            tooltip: CommonStrings.share,
++            onPressed: () => unawaited(_share(log)),
++          ),
++        ],
++      ),
++      body: ListenableBuilder(
++        listenable: log,
++        builder: (context, _) {
++          final entries = log.entries;
++          if (entries.isEmpty) {
++            return const EmptyView(
++              message: SettingsStrings.exportLogEmpty,
++              icon: Icons.history_outlined,
++            );
++          }
++          return Column(
++            children: [
++              const _NoteBanner(),
++              const Divider(height: 1),
++              Expanded(
++                child: ListView.separated(
++                  padding: const EdgeInsets.symmetric(vertical: 4),
++                  itemCount: entries.length,
++                  separatorBuilder: (_, _) => const Divider(height: 1),
++                  itemBuilder: (context, i) {
++                    // Newest first.
++                    final e = entries[entries.length - 1 - i];
++                    return ListTile(
++                      dense: true,
++                      title: Text(
++                        e.toLine(),
++                        style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
++                      ),
++                    );
++                  },
++                ),
++              ),
++            ],
++          );
++        },
++      ),
+     );
+   }
+ }
++
++class _NoteBanner extends StatelessWidget {
++  const _NoteBanner();
++
++  @override
++  Widget build(BuildContext context) => Padding(
++    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
++    child: Text(
++      SettingsStrings.exportLogNote,
++      style: Theme.of(
++        context,
++      ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
++    ),
++  );
++}
+diff --git a/lib/features/settings/ui/settings_screen.dart b/lib/features/settings/ui/settings_screen.dart
+index 5a7dcc0..24d98fb 100644
+--- a/lib/features/settings/ui/settings_screen.dart
++++ b/lib/features/settings/ui/settings_screen.dart
+@@ -1,8 +1,29 @@
++import 'dart:async';
++
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:go_router/go_router.dart';
+ import 'package:material_ui/material_ui.dart';
+ 
++import '../../../core/accounts/account.dart';
++import '../../../core/accounts/account_providers.dart';
++import '../../../core/accounts/account_widgets.dart';
++import '../../../core/auth/auth_routes.dart';
++import '../../../core/config/app_constants.dart';
++import '../../../core/l10n/account_strings.dart';
++import '../../../core/l10n/common_strings.dart';
++import '../../../core/notifications/notification_service.dart';
++import '../../../core/settings/app_settings.dart';
++import '../../../core/storage/json_file_cache.dart';
+ import '../../../core/ui/empty_view.dart';
++import '../../../core/ui/error_view.dart';
++import '../../../core/ui/section_header.dart';
++import '../../../core/ui/skeleton.dart';
+ import '../../../core/ui/tab_page_scaffold.dart';
++import '../data/cache_stats.dart';
++import '../providers/settings_providers.dart';
++import '../settings_routes.dart';
+ import '../settings_strings.dart';
++import 'notification_priming_sheet.dart';
+ 
+ /// TAB 5 "Cài đặt" (S70). Route `/settings`.
+ class SettingsScreen extends StatelessWidget {
+@@ -10,9 +31,573 @@ class SettingsScreen extends StatelessWidget {
+ 
+   @override
+   Widget build(BuildContext context) {
+-    return const TabPageScaffold(
++    return TabPageScaffold(
+       title: SettingsStrings.title,
+-      body: FeaturePlaceholder(),
++      slivers: const [
++        SliverList(
++          delegate: SliverChildListDelegate.fixed([
++            _AccountsSection(),
++            Divider(height: 32),
++            _OptionsSection(),
++            Divider(height: 32),
++            _NotificationsSection(),
++            Divider(height: 32),
++            _AppearanceSection(),
++            Divider(height: 32),
++            _AppSection(),
++            Divider(height: 32),
++            _AboutSection(),
++            SizedBox(height: 24),
++            _SignOutAllButton(),
++            SizedBox(height: 40),
++          ]),
++        ),
++      ],
++    );
++  }
++}
++
++/// A "Hủy" / destructive-or-plain confirm dialog. Returns `false` on
++/// dismiss.
++Future<bool> _confirm(
++  BuildContext context, {
++  required String title,
++  required String message,
++  required String confirmLabel,
++  bool destructive = false,
++}) async {
++  final theme = Theme.of(context);
++  return await showDialog<bool>(
++        context: context,
++        builder: (dialogContext) => AlertDialog(
++          title: Text(title),
++          content: Text(message),
++          actions: [
++            TextButton(
++              onPressed: () => Navigator.of(dialogContext).pop(false),
++              child: const Text(CommonStrings.cancel),
++            ),
++            FilledButton(
++              style: destructive
++                  ? FilledButton.styleFrom(
++                      backgroundColor: theme.colorScheme.error,
++                      foregroundColor: theme.colorScheme.onError,
++                    )
++                  : null,
++              onPressed: () => Navigator.of(dialogContext).pop(true),
++              child: Text(confirmLabel),
++            ),
++          ],
++        ),
++      ) ??
++      false;
++}
++
++class _SheetTitle extends StatelessWidget {
++  const _SheetTitle(this.text);
++
++  final String text;
++
++  @override
++  Widget build(BuildContext context) => Padding(
++    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
++    child: Text(text, style: Theme.of(context).textTheme.titleMedium),
++  );
++}
++
++// ---------------------------------------------------------------- TÀI KHOẢN
++
++class _AccountsSection extends ConsumerWidget {
++  const _AccountsSection();
++
++  Future<void> _handleTap(WidgetRef ref, BuildContext context, Account a, String? active) async {
++    if (a.needsLogin) {
++      await context.push(AuthRoutes.loginPath(reauthPuuid: a.puuid));
++      return;
++    }
++    if (a.puuid != active) {
++      ref.read(activePuuidProvider.notifier).select(a.puuid);
++    }
++  }
++
++  Future<void> _handleDelete(BuildContext context, WidgetRef ref, Account a) async {
++    final ok = await _confirm(
++      context,
++      title: AccountStrings.removeAccount,
++      message: AccountStrings.removeAccountConfirm(a.riotId),
++      confirmLabel: CommonStrings.delete,
++      destructive: true,
++    );
++    if (ok) await ref.read(accountsProvider.notifier).remove(a.puuid);
++  }
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final accounts = ref.watch(accountsProvider);
++    final active = ref.watch(activePuuidProvider);
++    final full = accounts.length >= AppConstants.maxAccounts;
++    final theme = Theme.of(context);
++    return Column(
++      crossAxisAlignment: CrossAxisAlignment.stretch,
++      children: [
++        SectionHeader(
++          AccountStrings.accountsHeader(accounts.length, AppConstants.maxAccounts),
++          uppercase: true,
++        ),
++        if (accounts.isEmpty)
++          const EmptyView(
++            message: CommonStrings.errorNoAccount,
++            icon: Icons.person_off_outlined,
++          )
++        else
++          for (final a in accounts)
++            AccountTile(
++              key: ValueKey(a.puuid),
++              account: a,
++              selected: a.puuid == active,
++              onTap: () => unawaited(_handleTap(ref, context, a, active)),
++              trailing: Row(
++                mainAxisSize: MainAxisSize.min,
++                children: [
++                  if (a.needsLogin)
++                    Padding(
++                      padding: const EdgeInsets.only(right: 4),
++                      child: Tooltip(
++                        message: AccountStrings.needsLogin,
++                        child: Icon(
++                          Icons.login,
++                          color: theme.colorScheme.error,
++                          size: 20,
++                        ),
++                      ),
++                    )
++                  else if (a.puuid == active)
++                    Padding(
++                      padding: const EdgeInsets.only(right: 4),
++                      child: Icon(
++                        Icons.check_circle,
++                        color: theme.colorScheme.primary,
++                        semanticLabel: AccountStrings.active,
++                      ),
++                    ),
++                  IconButton(
++                    icon: const Icon(Icons.delete_outline),
++                    tooltip: AccountStrings.removeAccount,
++                    onPressed: () => unawaited(_handleDelete(context, ref, a)),
++                  ),
++                ],
++              ),
++            ),
++        ListTile(
++          enabled: !full,
++          leading: const Icon(Icons.person_add_alt_1_outlined),
++          title: Text(AccountStrings.addAccount(accounts.length, AppConstants.maxAccounts)),
++          subtitle: full ? Text(AccountStrings.maxAccounts(AppConstants.maxAccounts)) : null,
++          onTap: full
++              ? () => showAppSnackBar(context, AccountStrings.maxAccounts(AppConstants.maxAccounts))
++              : () => unawaited(context.push(AuthRoutes.login)),
++        ),
++      ],
++    );
++  }
++}
++
++// ----------------------------------------------------------------- TÙY CHỌN
++
++class _OptionsSection extends ConsumerWidget {
++  const _OptionsSection();
++
++  Future<void> _pickPlatform(BuildContext context, WidgetRef ref, Account account) async {
++    final chosen = await showModalBottomSheet<GamePlatform>(
++      context: context,
++      useSafeArea: true,
++      builder: (sheetContext) => RadioGroup<GamePlatform>(
++        groupValue: account.platform,
++        onChanged: (v) {
++          if (v != null) Navigator.of(sheetContext).pop(v);
++        },
++        child: Column(
++          mainAxisSize: MainAxisSize.min,
++          children: [
++            const _SheetTitle(SettingsStrings.platformPickerTitle),
++            for (final p in GamePlatform.values)
++              RadioListTile<GamePlatform>(value: p, title: Text(p.label)),
++            const SizedBox(height: 8),
++          ],
++        ),
++      ),
++    );
++    if (chosen != null && chosen != account.platform) {
++      await ref
++          .read(accountsProvider.notifier)
++          .updateAccount(account.puuid, (a) => a.copyWith(platform: chosen));
++    }
++  }
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final settings = ref.watch(appSettingsProvider);
++    final account = ref.watch(activeAccountProvider);
++    final notifier = ref.read(appSettingsProvider.notifier);
++    return Column(
++      crossAxisAlignment: CrossAxisAlignment.stretch,
++      children: [
++        const SectionHeader(SettingsStrings.optionsHeader, uppercase: true),
++        SwitchListTile(
++          title: const Text(SettingsStrings.optionAutoOpenLiveGame),
++          value: settings.autoOpenLiveGame,
++          onChanged: (v) => unawaited(notifier.update((s) => s.copyWith(autoOpenLiveGame: v))),
++        ),
++        SwitchListTile(
++          title: const Text(SettingsStrings.optionShowPeakRank),
++          value: settings.showPeakRankInGame,
++          onChanged: (v) => unawaited(notifier.update((s) => s.copyWith(showPeakRankInGame: v))),
++        ),
++        SwitchListTile(
++          title: const Text(SettingsStrings.optionShowLiveScore),
++          value: settings.showLiveScore,
++          onChanged: (v) => unawaited(notifier.update((s) => s.copyWith(showLiveScore: v))),
++        ),
++        ListTile(
++          title: const Text(SettingsStrings.optionPlatform),
++          subtitle: Text(account?.platform.label ?? AccountStrings.platformPc),
++          trailing: const Icon(Icons.expand_more),
++          enabled: account != null,
++          onTap: account == null ? null : () => unawaited(_pickPlatform(context, ref, account)),
++        ),
++      ],
++    );
++  }
++}
++
++// ---------------------------------------------------------------- THÔNG BÁO
++
++class _NotificationsSection extends ConsumerWidget {
++  const _NotificationsSection();
++
++  /// Turning a notification toggle on primes the OS permission the first
++  /// time it is needed (S04), then persists the preference either way.
++  Future<void> _toggle(
++    BuildContext context,
++    WidgetRef ref,
++    bool enable,
++    AppSettings Function(AppSettings, bool) apply,
++  ) async {
++    if (enable) {
++      final alreadyEnabled = await ref.read(notificationServiceProvider).areEnabled();
++      if (!alreadyEnabled) {
++        if (!context.mounted) return;
++        final wantsToEnable = await showNotificationPrimingSheet(context);
++        if (wantsToEnable) {
++          await ref.read(notificationServiceProvider).requestPermission();
++        }
++      }
++    }
++    await ref.read(appSettingsProvider.notifier).update((s) => apply(s, enable));
++  }
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final settings = ref.watch(appSettingsProvider);
++    return Column(
++      crossAxisAlignment: CrossAxisAlignment.stretch,
++      children: [
++        const SectionHeader(SettingsStrings.notificationsHeader, uppercase: true),
++        SwitchListTile(
++          title: const Text(SettingsStrings.notifStoreReset),
++          subtitle: const Text(SettingsStrings.notifStoreResetSubtitle),
++          value: settings.storeResetNotifications,
++          onChanged: (v) => unawaited(
++            _toggle(context, ref, v, (s, v) => s.copyWith(storeResetNotifications: v)),
++          ),
++        ),
++        SwitchListTile(
++          title: const Text(SettingsStrings.notifWishlist),
++          value: settings.wishlistNotifications,
++          onChanged: (v) => unawaited(
++            _toggle(context, ref, v, (s, v) => s.copyWith(wishlistNotifications: v)),
++          ),
++        ),
++        SwitchListTile(
++          title: const Text(SettingsStrings.notifNightMarket),
++          value: settings.nightMarketNotifications,
++          onChanged: (v) => unawaited(
++            _toggle(context, ref, v, (s, v) => s.copyWith(nightMarketNotifications: v)),
++          ),
++        ),
++      ],
++    );
++  }
++}
++
++// ---------------------------------------------------------------- GIAO DIỆN
++
++class _AppearanceSection extends ConsumerWidget {
++  const _AppearanceSection();
++
++  static String _themeLabel(ThemeMode mode) => switch (mode) {
++    ThemeMode.dark => SettingsStrings.themeDark,
++    ThemeMode.light => SettingsStrings.themeLight,
++    ThemeMode.system => SettingsStrings.themeSystem,
++  };
++
++  static String _languageLabel(ItemLanguage lang) => switch (lang) {
++    ItemLanguage.vi => SettingsStrings.itemLanguageVi,
++    ItemLanguage.en => SettingsStrings.itemLanguageEn,
++  };
++
++  Future<void> _pickTheme(BuildContext context, WidgetRef ref, ThemeMode current) async {
++    final chosen = await showModalBottomSheet<ThemeMode>(
++      context: context,
++      useSafeArea: true,
++      builder: (sheetContext) => RadioGroup<ThemeMode>(
++        groupValue: current,
++        onChanged: (v) {
++          if (v != null) Navigator.of(sheetContext).pop(v);
++        },
++        child: Column(
++          mainAxisSize: MainAxisSize.min,
++          children: const [
++            _SheetTitle(SettingsStrings.themePickerTitle),
++            RadioListTile<ThemeMode>(value: ThemeMode.dark, title: Text(SettingsStrings.themeDark)),
++            RadioListTile<ThemeMode>(value: ThemeMode.light, title: Text(SettingsStrings.themeLight)),
++            RadioListTile<ThemeMode>(
++              value: ThemeMode.system,
++              title: Text(SettingsStrings.themeSystem),
++            ),
++            SizedBox(height: 8),
++          ],
++        ),
++      ),
++    );
++    if (chosen != null) await ref.read(appSettingsProvider.notifier).setThemeMode(chosen);
++  }
++
++  Future<void> _pickLanguage(BuildContext context, WidgetRef ref, ItemLanguage current) async {
++    final chosen = await showModalBottomSheet<ItemLanguage>(
++      context: context,
++      useSafeArea: true,
++      builder: (sheetContext) => RadioGroup<ItemLanguage>(
++        groupValue: current,
++        onChanged: (v) {
++          if (v != null) Navigator.of(sheetContext).pop(v);
++        },
++        child: Column(
++          mainAxisSize: MainAxisSize.min,
++          children: const [
++            _SheetTitle(SettingsStrings.itemLanguagePickerTitle),
++            RadioListTile<ItemLanguage>(
++              value: ItemLanguage.vi,
++              title: Text(SettingsStrings.itemLanguageVi),
++            ),
++            RadioListTile<ItemLanguage>(
++              value: ItemLanguage.en,
++              title: Text(SettingsStrings.itemLanguageEn),
++            ),
++            SizedBox(height: 8),
++          ],
++        ),
++      ),
++    );
++    if (chosen != null) await ref.read(appSettingsProvider.notifier).setItemLanguage(chosen);
++  }
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final settings = ref.watch(appSettingsProvider);
++    return Column(
++      crossAxisAlignment: CrossAxisAlignment.stretch,
++      children: [
++        const SectionHeader(SettingsStrings.appearanceHeader, uppercase: true),
++        ListTile(
++          title: const Text(SettingsStrings.themeLabel),
++          subtitle: Text(_themeLabel(settings.themeMode)),
++          trailing: const Icon(Icons.chevron_right),
++          onTap: () => unawaited(_pickTheme(context, ref, settings.themeMode)),
++        ),
++        ListTile(
++          title: const Text(SettingsStrings.itemLanguageLabel),
++          subtitle: Text(_languageLabel(settings.itemLanguage)),
++          trailing: const Icon(Icons.chevron_right),
++          onTap: () => unawaited(_pickLanguage(context, ref, settings.itemLanguage)),
++        ),
++      ],
++    );
++  }
++}
++
++// ---------------------------------------------------------------- ỨNG DỤNG
++
++class _AppSection extends ConsumerWidget {
++  const _AppSection();
++
++  Future<void> _clearCache(BuildContext context, WidgetRef ref, int? sizeBefore) async {
++    await ref.read(jsonFileCacheProvider).clear();
++    await ref.read(clearMediaCacheProvider)();
++    ref.invalidate(cacheSizeBytesProvider);
++    if (!context.mounted) return;
++    showAppSnackBar(context, SettingsStrings.cacheCleared(formatBytes(sizeBefore ?? 0)));
++  }
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final packageInfo = ref.watch(packageInfoProvider);
++    final cacheSize = ref.watch(cacheSizeBytesProvider);
++    return Column(
++      crossAxisAlignment: CrossAxisAlignment.stretch,
++      children: [
++        const SectionHeader(SettingsStrings.appHeader, uppercase: true),
++        ListTile(
++          leading: const Icon(Icons.info_outline),
++          title: packageInfo.when(
++            data: (p) => Text(SettingsStrings.version(p.version)),
++            loading: () => const Skeleton(width: 120),
++            error: (_, _) => Text(SettingsStrings.version(CommonStrings.dash)),
++          ),
++          subtitle: packageInfo.maybeWhen(
++            data: (p) => Text(SettingsStrings.buildNumber(p.buildNumber)),
++            orElse: () => null,
++          ),
++        ),
++        ListTile(
++          leading: const Icon(Icons.cleaning_services_outlined),
++          title: const Text(SettingsStrings.clearCache),
++          subtitle: cacheSize.when(
++            data: (b) => Text(formatBytes(b)),
++            loading: () => const Skeleton(width: 60, height: 12),
++            error: (_, _) => const Text(CommonStrings.dash),
++          ),
++          onTap: () => unawaited(_clearCache(context, ref, cacheSize.value)),
++        ),
++        ListTile(
++          leading: const Icon(Icons.description_outlined),
++          title: const Text(SettingsStrings.exportLog),
++          trailing: const Icon(Icons.chevron_right),
++          onTap: () => unawaited(context.push(SettingsRoutes.log)),
++        ),
++      ],
++    );
++  }
++}
++
++// ---------------------------------------------------------------- THÔNG TIN
++
++class _AboutSection extends ConsumerWidget {
++  const _AboutSection();
++
++  Future<void> _showLegalSheet(
++    BuildContext context, {
++    required String title,
++    required String body,
++  }) => showModalBottomSheet<void>(
++    context: context,
++    useSafeArea: true,
++    isScrollControlled: true,
++    builder: (sheetContext) => DraggableScrollableSheet(
++      expand: false,
++      initialChildSize: 0.6,
++      minChildSize: 0.3,
++      builder: (sheetContext2, controller) => ListView(
++        controller: controller,
++        padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
++        children: [
++          Text(title, style: Theme.of(sheetContext2).textTheme.titleLarge),
++          const SizedBox(height: 12),
++          Text(body, style: Theme.of(sheetContext2).textTheme.bodyMedium),
++        ],
++      ),
++    ),
++  );
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final packageInfo = ref.watch(packageInfoProvider);
++    final theme = Theme.of(context);
++    return Column(
++      crossAxisAlignment: CrossAxisAlignment.stretch,
++      children: [
++        const SectionHeader(SettingsStrings.aboutHeader, uppercase: true),
++        ListTile(
++          title: const Text(SettingsStrings.privacyPolicy),
++          trailing: const Icon(Icons.chevron_right),
++          onTap: () => unawaited(
++            _showLegalSheet(
++              context,
++              title: SettingsStrings.privacyPolicy,
++              body: SettingsStrings.privacyPolicyBody,
++            ),
++          ),
++        ),
++        ListTile(
++          title: const Text(SettingsStrings.terms),
++          trailing: const Icon(Icons.chevron_right),
++          onTap: () => unawaited(
++            _showLegalSheet(context, title: SettingsStrings.terms, body: SettingsStrings.termsBody),
++          ),
++        ),
++        ListTile(
++          title: const Text(SettingsStrings.feedback),
++          trailing: const Icon(Icons.open_in_new),
++          onTap: () => showAppSnackBar(context, CommonStrings.featureInProgress),
++        ),
++        ListTile(
++          title: const Text(SettingsStrings.licenses),
++          trailing: const Icon(Icons.chevron_right),
++          onTap: () => showLicensePage(
++            context: context,
++            applicationName: CommonStrings.appName,
++            applicationVersion: packageInfo.value?.version,
++          ),
++        ),
++        ListTile(
++          title: const Text(SettingsStrings.aboutTitle),
++          trailing: const Icon(Icons.chevron_right),
++          onTap: () => unawaited(context.push(SettingsRoutes.about)),
++        ),
++        Padding(
++          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
++          child: Text(
++            CommonStrings.riotDisclaimer,
++            style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
++          ),
++        ),
++      ],
++    );
++  }
++}
++
++// ---------------------------------------------------------- sign out button
++
++class _SignOutAllButton extends ConsumerWidget {
++  const _SignOutAllButton();
++
++  Future<void> _confirmSignOutAll(BuildContext context, WidgetRef ref) async {
++    final ok = await _confirm(
++      context,
++      title: AccountStrings.signOutAll,
++      message: AccountStrings.signOutAllConfirm,
++      confirmLabel: AccountStrings.signOutAll,
++      destructive: true,
++    );
++    if (ok) await ref.read(accountsProvider.notifier).signOutAll();
++  }
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final hasAccounts = ref.watch(hasAccountsProvider);
++    if (!hasAccounts) return const SizedBox.shrink();
++    final theme = Theme.of(context);
++    return Padding(
++      padding: const EdgeInsets.symmetric(horizontal: 16),
++      child: OutlinedButton.icon(
++        style: OutlinedButton.styleFrom(
++          foregroundColor: theme.colorScheme.error,
++          side: BorderSide(color: theme.colorScheme.error),
++        ),
++        icon: const Icon(Icons.logout),
++        label: const Text(AccountStrings.signOutAll),
++        onPressed: () => unawaited(_confirmSignOutAll(context, ref)),
++      ),
+     );
+   }
+ }
+diff --git a/lib/features/skin_detail/skin_detail_sheet.dart b/lib/features/skin_detail/skin_detail_sheet.dart
+index 690f177..dc86023 100644
+--- a/lib/features/skin_detail/skin_detail_sheet.dart
++++ b/lib/features/skin_detail/skin_detail_sheet.dart
+@@ -1,6 +1,23 @@
++import 'dart:async';
++
++import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import 'package:material_ui/material_ui.dart';
+ 
++import '../../core/accounts/account_providers.dart';
++import '../../core/content/content_db.dart';
++import '../../core/content/content_repository.dart';
++import '../../core/domain/economy/economy.dart';
++import '../../core/l10n/common_strings.dart';
++import '../../core/l10n/content_strings.dart';
++import '../../core/theme/app_theme.dart';
++import '../../core/ui/content_tier_badge.dart';
++import '../../core/ui/currency_amount.dart';
+ import '../../core/ui/empty_view.dart';
++import '../../core/ui/net_image.dart';
++import '../../core/ui/skeleton.dart';
++import '../store/ui/widgets/store_ui_bits.dart';
++import 'skin_detail_strings.dart';
++import 'skin_video_view.dart';
+ 
+ /// Context the sheet is opened from.
+ enum SkinDetailMode {
+@@ -26,11 +43,12 @@ Future<void> showSkinDetailSheet(
+   context: context,
+   isScrollControlled: true,
+   useSafeArea: true,
++  backgroundColor: Colors.transparent,
+   builder: (_) => SkinDetailSheet(skinOrLevelUuid: skinOrLevelUuid, mode: mode),
+ );
+ 
+ /// S15 body (render / video, variants, upgrades, wishlist button).
+-class SkinDetailSheet extends StatelessWidget {
++class SkinDetailSheet extends ConsumerStatefulWidget {
+   const SkinDetailSheet({
+     super.key,
+     required this.skinOrLevelUuid,
+@@ -40,8 +58,422 @@ class SkinDetailSheet extends StatelessWidget {
+   final String skinOrLevelUuid;
+   final SkinDetailMode mode;
+ 
++  @override
++  ConsumerState<SkinDetailSheet> createState() => _SkinDetailSheetState();
++}
++
++class _SkinDetailSheetState extends ConsumerState<SkinDetailSheet> {
++  int _chromaIndex = 0;
++
++  @override
++  Widget build(BuildContext context) {
++    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
++    final skin = db.skinByAnyUuid(widget.skinOrLevelUuid);
++    final theme = Theme.of(context);
++    final maxChromaIndex = (skin?.chromas.length ?? 1) - 1;
++    final safeChromaIndex = _chromaIndex > maxChromaIndex
++        ? (maxChromaIndex < 0 ? 0 : maxChromaIndex)
++        : _chromaIndex;
++
++    return FractionallySizedBox(
++      heightFactor: 0.92,
++      child: DecoratedBox(
++        decoration: BoxDecoration(
++          color: theme.colorScheme.surface,
++          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
++        ),
++        child: ClipRRect(
++          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
++          child: Column(
++            children: [
++              _SheetHeader(
++                title: skin?.displayName ?? CommonStrings.unknownItem,
++              ),
++              Expanded(
++                child: db.isEmpty
++                    ? const _LoadingBody()
++                    : skin == null
++                    ? const EmptyView(message: SkinDetailStrings.notFound)
++                    : _SkinBody(
++                        skin: skin,
++                        mode: widget.mode,
++                        chromaIndex: safeChromaIndex,
++                        onChromaSelected: (i) =>
++                            setState(() => _chromaIndex = i),
++                      ),
++              ),
++            ],
++          ),
++        ),
++      ),
++    );
++  }
++}
++
++class _SheetHeader extends StatelessWidget {
++  const _SheetHeader({required this.title});
++
++  final String title;
++
+   @override
+   Widget build(BuildContext context) {
+-    return const SizedBox(height: 480, child: FeaturePlaceholder());
++    return Padding(
++      padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
++      child: Row(
++        children: [
++          Container(
++            width: 36,
++            height: 4,
++            margin: const EdgeInsets.only(right: 12),
++            decoration: BoxDecoration(
++              color: Theme.of(context).colorScheme.outlineVariant,
++              borderRadius: BorderRadius.circular(2),
++            ),
++          ),
++          Expanded(
++            child: Text(
++              title,
++              maxLines: 1,
++              overflow: TextOverflow.ellipsis,
++              style: Theme.of(context).textTheme.titleLarge,
++            ),
++          ),
++          IconButton(
++            icon: const Icon(Icons.close),
++            tooltip: CommonStrings.close,
++            onPressed: () => Navigator.of(context).maybePop(),
++          ),
++        ],
++      ),
++    );
++  }
++}
++
++class _LoadingBody extends StatelessWidget {
++  const _LoadingBody();
++
++  @override
++  Widget build(BuildContext context) {
++    return const Padding(
++      padding: EdgeInsets.all(16),
++      child: Column(
++        children: [
++          Skeleton(height: 220, radius: 12),
++          SizedBox(height: 16),
++          Skeleton(width: 180, height: 20),
++          SizedBox(height: 12),
++          Skeleton(width: 120, height: 16),
++        ],
++      ),
++    );
++  }
++}
++
++class _SkinBody extends ConsumerWidget {
++  const _SkinBody({
++    required this.skin,
++    required this.mode,
++    required this.chromaIndex,
++    required this.onChromaSelected,
++  });
++
++  final WeaponSkin skin;
++  final SkinDetailMode mode;
++  final int chromaIndex;
++  final ValueChanged<int> onChromaSelected;
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
++    final theme = Theme.of(context);
++    final puuid = ref.watch(activeAccountProvider)?.puuid;
++    final chroma = skin.chromas.isEmpty ? null : skin.chromas[chromaIndex];
++    final render = chroma?.fullRender ?? skin.render;
++    final video = chroma?.streamedVideo ?? skin.previewVideo;
++    final quote = ref.watch(priceServiceProvider).priceForSkin(skin.uuid);
++    final owned = puuid == null
++        ? false
++        : ref.watch(ownedItemsProvider(puuid)).value?.isSkinOwned(skin.uuid) ??
++              false;
++    final wishlist = puuid == null
++        ? const <String>{}
++        : ref.watch(wishlistProvider(puuid));
++    final inWishlist = wishlistContains(wishlist, skin.uuid, db);
++
++    return ListView(
++      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
++      children: [
++        Semantics(
++          button: video != null,
++          label: video == null ? null : SkinDetailStrings.playVideo,
++          child: InkWell(
++            borderRadius: BorderRadius.circular(12),
++            onTap: video == null
++                ? null
++                : () => openSkinVideo(context, videoUrl: video),
++            child: AspectRatio(
++              aspectRatio: 16 / 10,
++              child: Stack(
++                fit: StackFit.expand,
++                children: [
++                  ClipRRect(
++                    borderRadius: BorderRadius.circular(12),
++                    child: ColoredBox(
++                      color: theme.colorScheme.surfaceContainerHigh,
++                      child: NetImage(render, fit: BoxFit.contain),
++                    ),
++                  ),
++                  if (video != null)
++                    const Center(
++                      child: CircleAvatar(
++                        radius: 24,
++                        backgroundColor: Colors.black45,
++                        child: Icon(
++                          Icons.play_arrow,
++                          color: Colors.white,
++                          size: 28,
++                        ),
++                      ),
++                    ),
++                ],
++              ),
++            ),
++          ),
++        ),
++        const SizedBox(height: 16),
++        Row(
++          children: [
++            ContentTierBadge(
++              contentTierUuid: skin.contentTierUuid,
++              showName: true,
++              fullName: true,
++              style: theme.textTheme.titleSmall,
++            ),
++            const Spacer(),
++            if (quote.caption != null)
++              Text(quote.caption!, style: theme.textTheme.titleSmall)
++            else if (quote.vp != null)
++              CurrencyAmount.vp(
++                quote.vp!,
++                estimate: quote.isEstimate,
++                style: theme.textTheme.titleSmall,
++              )
++            else
++              Text(CommonStrings.dash, style: theme.textTheme.titleSmall),
++          ],
++        ),
++        if (owned) ...[
++          const SizedBox(height: 8),
++          Align(
++            alignment: Alignment.centerLeft,
++            child: StoreBadge(
++              SkinDetailStrings.owned,
++              color: theme.colorScheme.primary,
++            ),
++          ),
++        ],
++        if (skin.chromas.length > 1) ...[
++          const SizedBox(height: 20),
++          Text(SkinDetailStrings.variants, style: theme.textTheme.titleSmall),
++          const SizedBox(height: 8),
++          SizedBox(
++            height: 56,
++            child: ListView.separated(
++              scrollDirection: Axis.horizontal,
++              itemCount: skin.chromas.length,
++              separatorBuilder: (_, _) => const SizedBox(width: 10),
++              itemBuilder: (context, i) => _ChromaSwatch(
++                chroma: skin.chromas[i],
++                selected: i == chromaIndex,
++                onTap: () => onChromaSelected(i),
++              ),
++            ),
++          ),
++        ],
++        if (skin.levels.length > 1) ...[
++          const SizedBox(height: 20),
++          Text(SkinDetailStrings.upgrades, style: theme.textTheme.titleSmall),
++          const SizedBox(height: 8),
++          SizedBox(
++            height: 64,
++            child: ListView.separated(
++              scrollDirection: Axis.horizontal,
++              itemCount: skin.levels.length,
++              separatorBuilder: (_, _) => const SizedBox(width: 10),
++              itemBuilder: (context, i) => _LevelChip(level: skin.levels[i]),
++            ),
++          ),
++        ],
++        const SizedBox(height: 24),
++        if (puuid != null)
++          OutlinedButton.icon(
++            onPressed: () => unawaited(
++              ref
++                  .read(wishlistProvider(puuid).notifier)
++                  .toggleSkin(skin.uuid, db),
++            ),
++            icon: Icon(
++              inWishlist ? Icons.favorite : Icons.favorite_border,
++              color: inWishlist ? ValColors.red : null,
++            ),
++            label: Text(
++              inWishlist
++                  ? SkinDetailStrings.inWishlist
++                  : SkinDetailStrings.addToWishlist,
++            ),
++          ),
++        if (mode != SkinDetailMode.store && puuid != null)
++          _AvailableElsewhere(skin: skin, currentPuuid: puuid),
++      ],
++    );
++  }
++}
++
++class _ChromaSwatch extends StatelessWidget {
++  const _ChromaSwatch({
++    required this.chroma,
++    required this.selected,
++    required this.onTap,
++  });
++
++  final SkinChroma chroma;
++  final bool selected;
++  final VoidCallback onTap;
++
++  @override
++  Widget build(BuildContext context) {
++    final scheme = Theme.of(context).colorScheme;
++    return Semantics(
++      button: true,
++      selected: selected,
++      label: chroma.label,
++      child: InkWell(
++        borderRadius: BorderRadius.circular(28),
++        onTap: onTap,
++        child: Container(
++          width: 56,
++          height: 56,
++          padding: const EdgeInsets.all(2),
++          decoration: BoxDecoration(
++            shape: BoxShape.circle,
++            border: Border.all(
++              color: selected ? scheme.primary : scheme.outlineVariant,
++              width: selected ? 2 : 1,
++            ),
++          ),
++          child: ClipOval(
++            child: NetImage(
++              chroma.swatch ?? chroma.displayIcon,
++              fit: BoxFit.cover,
++              showSkeleton: false,
++            ),
++          ),
++        ),
++      ),
++    );
++  }
++}
++
++class _LevelChip extends StatelessWidget {
++  const _LevelChip({required this.level});
++
++  final SkinLevel level;
++
++  @override
++  Widget build(BuildContext context) {
++    final theme = Theme.of(context);
++    final hasVideo = level.streamedVideo != null;
++    return Semantics(
++      button: hasVideo,
++      label: level.levelItemLabel,
++      child: InkWell(
++        borderRadius: BorderRadius.circular(10),
++        onTap: hasVideo
++            ? () => openSkinVideo(context, videoUrl: level.streamedVideo!)
++            : null,
++        child: Container(
++          width: 92,
++          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
++          decoration: BoxDecoration(
++            color: theme.colorScheme.surfaceContainerHigh,
++            borderRadius: BorderRadius.circular(10),
++          ),
++          child: Column(
++            mainAxisAlignment: MainAxisAlignment.center,
++            children: [
++              Row(
++                mainAxisAlignment: MainAxisAlignment.center,
++                children: [
++                  Text(
++                    ContentStrings.level(level.levelNumber),
++                    style: theme.textTheme.labelLarge,
++                  ),
++                  if (hasVideo) ...[
++                    const SizedBox(width: 4),
++                    Icon(
++                      Icons.play_circle_fill,
++                      size: 14,
++                      color: theme.colorScheme.primary,
++                    ),
++                  ],
++                ],
++              ),
++              if (level.index > 0) ...[
++                const SizedBox(height: 2),
++                Text(
++                  level.levelItemLabel,
++                  maxLines: 1,
++                  overflow: TextOverflow.ellipsis,
++                  style: theme.textTheme.labelSmall?.copyWith(
++                    color: theme.colorScheme.onSurfaceVariant,
++                  ),
++                ),
++              ],
++            ],
++          ),
++        ),
++      ),
++    );
++  }
++}
++
++/// Optional "Có trong cửa hàng của: `<account>`" hint (only checked from the
++/// collection / wishlist / catalog, not from inside the store itself).
++class _AvailableElsewhere extends ConsumerWidget {
++  const _AvailableElsewhere({required this.skin, required this.currentPuuid});
++
++  final WeaponSkin skin;
++  final String currentPuuid;
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final others = ref
++        .watch(accountsProvider)
++        .where((a) => a.puuid != currentPuuid)
++        .toList();
++    if (others.isEmpty) return const SizedBox.shrink();
++    final level = skin.level1Uuid;
++    if (level == null) return const SizedBox.shrink();
++    for (final account in others) {
++      final store = ref.watch(storefrontProvider(account.puuid)).value;
++      if (store == null) continue;
++      final found =
++          store.daily.offers.any((o) => o.skinLevelUuid == level) ||
++          (store.nightMarket?.offers.any((o) => o.skinLevelUuid == level) ??
++              false) ||
++          store.bundles.any((b) => b.items.any((i) => i.item.itemId == level));
++      if (found) {
++        return Padding(
++          padding: const EdgeInsets.only(top: 12),
++          child: Text(
++            SkinDetailStrings.availableInStoreOf(account.riotId),
++            style: Theme.of(context).textTheme.bodySmall?.copyWith(
++              color: Theme.of(context).colorScheme.onSurfaceVariant,
++            ),
++          ),
++        );
++      }
++    }
++    return const SizedBox.shrink();
+   }
+ }
+diff --git a/lib/features/skin_detail/skin_detail_strings.dart b/lib/features/skin_detail/skin_detail_strings.dart
+index 731cfac..397e027 100644
+--- a/lib/features/skin_detail/skin_detail_strings.dart
++++ b/lib/features/skin_detail/skin_detail_strings.dart
+@@ -1,4 +1,4 @@
+-/// Vietnamese strings of the skin-detail sheet (VF §6.2 S15, §8.4).
++/// Vietnamese strings of the skin-detail sheet (VF §6.2 S15–S16, §8.4).
+ abstract final class SkinDetailStrings {
+   static const variants = 'Biến thể';
+   static const upgrades = 'Nâng cấp';
+@@ -6,4 +6,11 @@ abstract final class SkinDetailStrings {
+   static const addToWishlist = 'Thêm vào wishlist';
+   static const inWishlist = 'Đã có trong wishlist';
+   static const owned = 'Đã sở hữu';
++  static const mute = 'Tắt tiếng';
++  static const unmute = 'Bật tiếng';
++  static const notFound = 'Không tìm thấy skin này.';
++
++  /// "Có trong cửa hàng của: Tài khoản 2".
++  static String availableInStoreOf(String account) =>
++      'Có trong cửa hàng của: $account';
+ }
+diff --git a/lib/features/skin_detail/skin_video_view.dart b/lib/features/skin_detail/skin_video_view.dart
+index d387340..6a4306c 100644
+--- a/lib/features/skin_detail/skin_video_view.dart
++++ b/lib/features/skin_detail/skin_video_view.dart
+@@ -1,6 +1,9 @@
++import 'dart:async';
++
+ import 'package:material_ui/material_ui.dart';
++import 'package:video_player/video_player.dart';
+ 
+-import '../../core/ui/empty_view.dart';
++import '../../core/ui/error_view.dart';
+ import 'skin_detail_strings.dart';
+ 
+ /// Opens S16 (full-screen looping skin video with a mute toggle) above
+@@ -14,16 +17,95 @@ Future<void> openSkinVideo(BuildContext context, {required String videoUrl}) =>
+     );
+ 
+ /// S16 full-screen player (stream the Riot CDN mp4; never pre-download).
+-class SkinVideoView extends StatelessWidget {
++class SkinVideoView extends StatefulWidget {
+   const SkinVideoView({super.key, required this.videoUrl});
+ 
+   final String videoUrl;
+ 
++  @override
++  State<SkinVideoView> createState() => _SkinVideoViewState();
++}
++
++class _SkinVideoViewState extends State<SkinVideoView> {
++  late final VideoPlayerController _controller;
++  late Future<void> _initFuture;
++  bool _muted = false;
++
++  @override
++  void initState() {
++    super.initState();
++    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
++    _initFuture = _initialize();
++  }
++
++  Future<void> _initialize() async {
++    await _controller.initialize();
++    await _controller.setLooping(true);
++    await _controller.play();
++  }
++
++  @override
++  void dispose() {
++    unawaited(_controller.dispose());
++    super.dispose();
++  }
++
++  void _toggleMute() {
++    final next = !_muted;
++    setState(() => _muted = next);
++    unawaited(_controller.setVolume(next ? 0 : 1));
++  }
++
++  void _togglePlay() {
++    if (_controller.value.isPlaying) {
++      unawaited(_controller.pause());
++    } else {
++      unawaited(_controller.play());
++    }
++    setState(() {});
++  }
++
+   @override
+   Widget build(BuildContext context) {
+     return Scaffold(
+-      appBar: AppBar(title: const Text(SkinDetailStrings.playVideo)),
+-      body: const FeaturePlaceholder(),
++      backgroundColor: Colors.black,
++      appBar: AppBar(
++        backgroundColor: Colors.transparent,
++        foregroundColor: Colors.white,
++        title: const Text(SkinDetailStrings.playVideo),
++        actions: [
++          IconButton(
++            icon: Icon(_muted ? Icons.volume_off : Icons.volume_up),
++            tooltip: _muted ? SkinDetailStrings.unmute : SkinDetailStrings.mute,
++            onPressed: _toggleMute,
++          ),
++        ],
++      ),
++      body: Center(
++        child: FutureBuilder<void>(
++          future: _initFuture,
++          builder: (context, snapshot) {
++            if (snapshot.connectionState != ConnectionState.done) {
++              return const CircularProgressIndicator(color: Colors.white);
++            }
++            if (snapshot.hasError) {
++              return ErrorView(
++                error: snapshot.error!,
++                onRetry: () => setState(() => _initFuture = _initialize()),
++              );
++            }
++            return GestureDetector(
++              onTap: _togglePlay,
++              child: AspectRatio(
++                aspectRatio: _controller.value.aspectRatio == 0
++                    ? 16 / 9
++                    : _controller.value.aspectRatio,
++                child: VideoPlayer(_controller),
++              ),
++            );
++          },
++        ),
++      ),
+     );
+   }
+ }
+diff --git a/lib/features/store/providers/night_market_seen.dart b/lib/features/store/providers/night_market_seen.dart
+new file mode 100644
+index 0000000..417ac49
+--- /dev/null
++++ b/lib/features/store/providers/night_market_seen.dart
+@@ -0,0 +1,61 @@
++/// Local "seen" tracking for the Night Market segment (VF §6.2 common
++/// header: red dot on the segment until the user has opened it in ValVN,
++/// per account; not the Riot `IsSeen` flag, which reflects the game client).
++library;
++
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++
++import '../../../core/storage/prefs.dart';
++
++/// Persists which Night Market `BonusOfferID`s the user has already opened
++/// the segment for, per account.
++class NightMarketSeenStore {
++  NightMarketSeenStore(this._prefs);
++
++  final Prefs _prefs;
++
++  static String _key(String puuid) =>
++      PrefKeys.account(puuid.toLowerCase(), 'nightMarketSeen');
++
++  Set<String> read(String puuid) => {
++    for (final id in _prefs.getStringList(_key(puuid)) ?? const <String>[])
++      if (id.trim().isNotEmpty) id.trim().toLowerCase(),
++  };
++
++  Future<void> write(String puuid, Set<String> bonusOfferIds) =>
++      _prefs.setStringList(_key(puuid), bonusOfferIds.toList()..sort());
++}
++
++final nightMarketSeenStoreProvider = Provider<NightMarketSeenStore>(
++  (ref) => NightMarketSeenStore(ref.watch(prefsProvider)),
++);
++
++/// Bonus-offer ids already seen locally for one account's current (or past)
++/// Night Market rotations.
++///
++/// ```dart
++/// final seen = ref.watch(nightMarketSeenProvider(puuid));
++/// final hasUnseen = nm.offers.any((o) => !seen.contains(o.bonusOfferId));
++/// await ref.read(nightMarketSeenProvider(puuid).notifier)
++///     .markSeen(nm.offers.map((o) => o.bonusOfferId));
++/// ```
++final nightMarketSeenProvider =
++    NotifierProvider.family<NightMarketSeenNotifier, Set<String>, String>(
++      NightMarketSeenNotifier.new,
++    );
++
++class NightMarketSeenNotifier extends Notifier<Set<String>> {
++  NightMarketSeenNotifier(this.puuid);
++
++  final String puuid;
++
++  @override
++  Set<String> build() => ref.watch(nightMarketSeenStoreProvider).read(puuid);
++
++  Future<void> markSeen(Iterable<String> bonusOfferIds) async {
++    final next = {...state, ...bonusOfferIds.map((e) => e.toLowerCase())};
++    if (next.length == state.length) return;
++    state = next;
++    await ref.read(nightMarketSeenStoreProvider).write(puuid, next);
++  }
++}
+diff --git a/lib/features/store/store_strings.dart b/lib/features/store/store_strings.dart
+index 18d112b..dfecfb4 100644
+--- a/lib/features/store/store_strings.dart
++++ b/lib/features/store/store_strings.dart
+@@ -1,4 +1,4 @@
+-/// Vietnamese strings of the store feature (VF §6.2, §8.2).
++/// Vietnamese strings of the store feature (VF §6.2 S10–S14, §6.9, §8.2).
+ abstract final class StoreStrings {
+   static const title = 'Cửa hàng';
+   static const segmentDaily = 'Hằng ngày';
+@@ -6,4 +6,42 @@ abstract final class StoreStrings {
+   static const segmentAccessories = 'Phụ kiện';
+   static const segmentBundles = 'Bundle';
+   static const bundleDetailTitle = 'Chi tiết bundle';
++
++  // Daily shop (S10).
++  static String resetsIn(String t) => 'Làm mới sau $t';
++  static const dailyTotalLabel = 'Tổng';
++  static const dailyEmpty = 'Không có skin nào trong cửa hàng hôm nay.';
++
++  // Night Market (S11).
++  static String nightMarketEndsIn(String t) => 'Kết thúc sau $t';
++  static String nightMarketTotalSavings(String amount) =>
++      'Tiết kiệm tổng cộng $amount';
++  static const nightMarketNote =
++      'Ưu đãi Chợ Đêm là riêng cho tài khoản của bạn và không thể làm mới.';
++  static const nightMarketEmpty = 'Chợ Đêm hiện không mở cho tài khoản này.';
++
++  // Accessories (S12).
++  static String accessoryRefreshIn(String t) => 'Làm mới sau $t';
++  static String accessoryFrom(String contract) => 'Từ: $contract';
++  static const accessoryEmpty = 'Không có phụ kiện nào trong cửa hàng.';
++
++  // Bundles (S13 / S14).
++  static String bundleEndsIn(String t) => 'Còn $t';
++  static const bundlesEmpty = 'Không có bundle nào đang mở bán.';
++  static const bundlePriceLabel = 'Giá bundle';
++  static const bundleBuySeparateLabel = 'Mua lẻ';
++  static const bundleSavingsLabel = 'Tiết kiệm';
++  static const bundleWholesaleOnly = 'Chỉ bán trọn bộ, không mua lẻ.';
++  static const bundleNotFound =
++      'Không tìm thấy bundle này (có thể đã hết hạn).';
++  static const bundleItemFree = 'Miễn phí';
++
++  // Shared badges.
++  static const ownedBadge = 'Đã sở hữu';
++  static const walletUnavailable = '—';
++
++  // Store-reset local notification (B8, VF §6.9).
++  static const resetNotificationTitle = 'Cửa hàng đã làm mới';
++  static String resetNotificationBody(int skinCount, String account) =>
++      'Xem $skinCount skin mới hôm nay của $account.';
+ }
+diff --git a/lib/features/store/ui/bundle_detail_screen.dart b/lib/features/store/ui/bundle_detail_screen.dart
+index c0c15df..313945e 100644
+--- a/lib/features/store/ui/bundle_detail_screen.dart
++++ b/lib/features/store/ui/bundle_detail_screen.dart
+@@ -1,20 +1,286 @@
++import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import 'package:material_ui/material_ui.dart';
+ 
++import '../../../core/accounts/account_providers.dart';
++import '../../../core/content/content_db.dart';
++import '../../../core/content/content_repository.dart';
++import '../../../core/domain/economy/economy.dart';
++import '../../../core/l10n/common_strings.dart';
++import '../../../core/theme/app_theme.dart';
++import '../../../core/ui/async_value_view.dart';
++import '../../../core/ui/content_tier_badge.dart';
++import '../../../core/ui/countdown_text.dart';
++import '../../../core/ui/currency_amount.dart';
+ import '../../../core/ui/empty_view.dart';
++import '../../../core/ui/net_image.dart';
++import '../../skin_detail/skin_detail_sheet.dart';
+ import '../store_strings.dart';
+ 
+ /// S14 "Chi tiết bundle". Route `/store/bundle/:id` where `id` is the
+ /// storefront `DataAssetID` (= valorant-api bundle uuid).
+-class BundleDetailScreen extends StatelessWidget {
++class BundleDetailScreen extends ConsumerWidget {
+   const BundleDetailScreen({super.key, required this.bundleId});
+ 
+   final String bundleId;
+ 
+   @override
+-  Widget build(BuildContext context) {
++  Widget build(BuildContext context, WidgetRef ref) {
++    final account = ref.watch(activeAccountProvider);
++    if (account == null) {
++      return Scaffold(
++        appBar: AppBar(title: const Text(StoreStrings.bundleDetailTitle)),
++        body: const EmptyView(message: CommonStrings.errorNoAccount),
++      );
++    }
++    final puuid = account.puuid;
++    final storeAsync = ref.watch(storefrontProvider(puuid));
++    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
++    final bundle = storeAsync.value?.bundleById(bundleId);
++    final title = bundle == null
++        ? null
++        : db.bundleByUuid(bundle.dataAssetId)?.displayName;
++
+     return Scaffold(
+-      appBar: AppBar(title: const Text(StoreStrings.bundleDetailTitle)),
+-      body: const FeaturePlaceholder(),
++      appBar: AppBar(title: Text(title ?? StoreStrings.bundleDetailTitle)),
++      body: RefreshIndicator(
++        onRefresh: () => ref.refresh(storefrontProvider(puuid).future),
++        child: AsyncValueView<Storefront>(
++          value: storeAsync,
++          puuid: puuid,
++          onRetry: () => ref.invalidate(storefrontProvider(puuid)),
++          isEmpty: (s) => s.bundleById(bundleId) == null,
++          empty: const EmptyView(message: StoreStrings.bundleNotFound),
++          data: (s) => _BundleBody(bundle: s.bundleById(bundleId)!),
++        ),
++      ),
++    );
++  }
++}
++
++class _BundleBody extends ConsumerWidget {
++  const _BundleBody({required this.bundle});
++
++  final StoreBundle bundle;
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
++    final content = db.bundleByUuid(bundle.dataAssetId);
++    final theme = Theme.of(context);
++
++    return ListView(
++      physics: const AlwaysScrollableScrollPhysics(),
++      children: [
++        AspectRatio(
++          aspectRatio: 16 / 9,
++          child: NetImage(content?.cardImage, fit: BoxFit.cover),
++        ),
++        Padding(
++          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
++          child: Column(
++            crossAxisAlignment: CrossAxisAlignment.start,
++            children: [
++              Text(
++                content?.displayName ?? CommonStrings.unknownItem,
++                style: theme.textTheme.headlineSmall,
++              ),
++              if (content?.description case final desc?
++                  when desc.isNotEmpty) ...[
++                const SizedBox(height: 8),
++                Text(desc, style: theme.textTheme.bodyMedium),
++              ],
++              const SizedBox(height: 12),
++              if (bundle.expiresAt != null)
++                Row(
++                  children: [
++                    Icon(
++                      Icons.schedule,
++                      size: 16,
++                      color: theme.colorScheme.onSurfaceVariant,
++                    ),
++                    const SizedBox(width: 6),
++                    CountdownText(
++                      expiresAt: bundle.expiresAt!,
++                      builder: StoreStrings.bundleEndsIn,
++                      style: theme.textTheme.bodyMedium,
++                    ),
++                  ],
++                ),
++              if (bundle.wholesaleOnly) ...[
++                const SizedBox(height: 8),
++                Text(
++                  StoreStrings.bundleWholesaleOnly,
++                  style: theme.textTheme.bodySmall?.copyWith(
++                    color: theme.colorScheme.onSurfaceVariant,
++                  ),
++                ),
++              ],
++            ],
++          ),
++        ),
++        Padding(
++          padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
++          child: _Summary(bundle: bundle),
++        ),
++        GridView.builder(
++          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
++          physics: const NeverScrollableScrollPhysics(),
++          shrinkWrap: true,
++          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
++            crossAxisCount: 2,
++            mainAxisSpacing: 12,
++            crossAxisSpacing: 12,
++            childAspectRatio: 0.85,
++          ),
++          itemCount: bundle.items.length,
++          itemBuilder: (context, i) => _BundleItemTile(
++            item: bundle.items[i],
++            currencyId: bundle.currencyId,
++          ),
++        ),
++      ],
++    );
++  }
++}
++
++class _Summary extends StatelessWidget {
++  const _Summary({required this.bundle});
++
++  final StoreBundle bundle;
++
++  @override
++  Widget build(BuildContext context) {
++    final theme = Theme.of(context);
++    return Container(
++      padding: const EdgeInsets.all(12),
++      decoration: BoxDecoration(
++        color: theme.colorScheme.surfaceContainerHigh,
++        borderRadius: BorderRadius.circular(12),
++      ),
++      child: Column(
++        children: [
++          _row(
++            theme,
++            StoreStrings.bundlePriceLabel,
++            bundle.currencyId,
++            bundle.price,
++          ),
++          const SizedBox(height: 8),
++          _row(
++            theme,
++            StoreStrings.bundleBuySeparateLabel,
++            bundle.currencyId,
++            bundle.itemsTotal,
++          ),
++          const SizedBox(height: 8),
++          _row(
++            theme,
++            StoreStrings.bundleSavingsLabel,
++            bundle.currencyId,
++            bundle.savings,
++          ),
++        ],
++      ),
++    );
++  }
++
++  Widget _row(ThemeData theme, String label, String currencyId, int amount) {
++    return Row(
++      mainAxisAlignment: MainAxisAlignment.spaceBetween,
++      children: [
++        Text(label, style: theme.textTheme.bodyMedium),
++        CurrencyAmount(currencyId: currencyId, amount: amount),
++      ],
++    );
++  }
++}
++
++class _BundleItemTile extends ConsumerWidget {
++  const _BundleItemTile({required this.item, required this.currencyId});
++
++  final BundleItem item;
++  final String currencyId;
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
++    final itemRef = db.item(item.item.itemTypeId, item.item.itemId);
++    final tint = contentTierTint(
++      ref,
++      itemRef?.contentTierUuid,
++      fallback: valColorsOf(context).muted,
++    );
++    final theme = Theme.of(context);
++
++    return InkWell(
++      borderRadius: BorderRadius.circular(10),
++      onTap: item.item.isSkinLevel
++          ? () => showSkinDetailSheet(
++              context,
++              skinOrLevelUuid: item.item.itemId,
++              mode: SkinDetailMode.store,
++            )
++          : null,
++      child: Ink(
++        decoration: BoxDecoration(
++          borderRadius: BorderRadius.circular(10),
++          gradient: LinearGradient(
++            begin: Alignment.topCenter,
++            end: Alignment.bottomCenter,
++            colors: [tint.withValues(alpha: 0.3), tint.withValues(alpha: 0.06)],
++          ),
++        ),
++        child: Column(
++          crossAxisAlignment: CrossAxisAlignment.stretch,
++          children: [
++            Expanded(
++              child: Padding(
++                padding: const EdgeInsets.all(8),
++                child: NetImage(itemRef?.image, fit: BoxFit.contain),
++              ),
++            ),
++            Padding(
++              padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
++              child: Column(
++                crossAxisAlignment: CrossAxisAlignment.start,
++                children: [
++                  Text(
++                    itemRef?.name ?? CommonStrings.unknownItem,
++                    maxLines: 1,
++                    overflow: TextOverflow.ellipsis,
++                    style: theme.textTheme.labelMedium,
++                  ),
++                  const SizedBox(height: 2),
++                  Row(
++                    children: [
++                      if (item.isDiscounted)
++                        Padding(
++                          padding: const EdgeInsets.only(right: 4),
++                          child: CurrencyAmount(
++                            currencyId: currencyId,
++                            amount: item.basePrice,
++                            iconSize: 12,
++                            strikethrough: true,
++                          ),
++                        ),
++                      item.isFree
++                          ? Text(
++                              StoreStrings.bundleItemFree,
++                              style: theme.textTheme.labelSmall,
++                            )
++                          : CurrencyAmount(
++                              currencyId: currencyId,
++                              amount: item.discountedPrice,
++                              iconSize: 12,
++                            ),
++                    ],
++                  ),
++                ],
++              ),
++            ),
++          ],
++        ),
++      ),
+     );
+   }
+ }
+diff --git a/lib/features/store/ui/store_screen.dart b/lib/features/store/ui/store_screen.dart
+index c1a29fb..75c9568 100644
+--- a/lib/features/store/ui/store_screen.dart
++++ b/lib/features/store/ui/store_screen.dart
+@@ -1,8 +1,26 @@
++import 'dart:async';
++
++import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import 'package:material_ui/material_ui.dart';
+ 
++import '../../../core/accounts/account.dart';
++import '../../../core/accounts/account_providers.dart';
++import '../../../core/domain/economy/economy.dart';
++import '../../../core/l10n/common_strings.dart';
++import '../../../core/notifications/notification_service.dart';
++import '../../../core/settings/app_settings.dart';
++import '../../../core/ui/async_value_view.dart';
+ import '../../../core/ui/empty_view.dart';
++import '../../../core/ui/segmented_tabs.dart';
+ import '../../../core/ui/tab_page_scaffold.dart';
++import '../providers/night_market_seen.dart';
++import '../store_routes.dart';
+ import '../store_strings.dart';
++import 'widgets/accessory_section.dart';
++import 'widgets/bundle_section.dart';
++import 'widgets/daily_section.dart';
++import 'widgets/night_market_section.dart';
++import 'widgets/wallet_pill.dart';
+ 
+ /// Store segments (VF §6.2). The Night Market segment appears only while
+ /// `BonusStore` exists.
+@@ -30,16 +48,180 @@ enum StoreSegment {
+ }
+ 
+ /// TAB 1 "Cửa hàng" (S10–S13). Route `/store[?segment=…]`.
+-class StoreScreen extends StatelessWidget {
++class StoreScreen extends ConsumerStatefulWidget {
+   const StoreScreen({super.key, this.initialSegment = StoreSegment.daily});
+ 
+   final StoreSegment initialSegment;
+ 
++  @override
++  ConsumerState<StoreScreen> createState() => _StoreScreenState();
++}
++
++class _StoreScreenState extends ConsumerState<StoreScreen> {
++  late StoreSegment _segment = widget.initialSegment;
++
+   @override
+   Widget build(BuildContext context) {
+-    return const TabPageScaffold(
++    final account = ref.watch(activeAccountProvider);
++    if (account == null) {
++      return const TabPageScaffold(
++        title: StoreStrings.title,
++        body: EmptyView(message: CommonStrings.errorNoAccount),
++      );
++    }
++    final puuid = account.puuid;
++    final storeAsync = ref.watch(storefrontProvider(puuid));
++
++    ref.listen<AsyncValue<Storefront>>(storefrontProvider(puuid), (
++      previous,
++      next,
++    ) {
++      final store = next.value;
++      if (store == null || identical(store, previous?.value)) return;
++      unawaited(_scheduleResetNotification(account: account, store: store));
++    });
++
++    final nightMarket = storeAsync.value?.nightMarket;
++    final seen = nightMarket == null
++        ? const <String>{}
++        : ref.watch(nightMarketSeenProvider(puuid));
++    final hasUnseen =
++        nightMarket != null &&
++        nightMarket.offers.any((o) => !seen.contains(o.bonusOfferId));
++
++    var segment = _segment;
++    if (segment == StoreSegment.nightMarket && nightMarket == null) {
++      segment = StoreSegment.daily;
++    }
++
++    final tabs = <SegmentedTab<StoreSegment>>[
++      const SegmentedTab(
++        value: StoreSegment.daily,
++        label: StoreStrings.segmentDaily,
++      ),
++      if (nightMarket != null)
++        SegmentedTab(
++          value: StoreSegment.nightMarket,
++          label: StoreStrings.segmentNightMarket,
++          showDot: hasUnseen,
++        ),
++      const SegmentedTab(
++        value: StoreSegment.accessories,
++        label: StoreStrings.segmentAccessories,
++      ),
++      const SegmentedTab(
++        value: StoreSegment.bundles,
++        label: StoreStrings.segmentBundles,
++      ),
++    ];
++
++    return TabPageScaffold(
+       title: StoreStrings.title,
+-      body: FeaturePlaceholder(),
++      onRefresh: () => ref.refresh(storefrontProvider(puuid).future),
++      header: SegmentedTabs<StoreSegment>(
++        tabs: tabs,
++        selected: segment,
++        onChanged: (next) => _selectSegment(next, puuid),
++      ),
++      slivers: [
++        SliverToBoxAdapter(child: WalletPill(puuid: puuid)),
++        ..._segmentSlivers(segment, puuid, storeAsync),
++      ],
++    );
++  }
++
++  void _selectSegment(StoreSegment next, String puuid) {
++    setState(() => _segment = next);
++    if (next != StoreSegment.nightMarket) return;
++    final nm = ref.read(storefrontProvider(puuid)).value?.nightMarket;
++    if (nm == null) return;
++    unawaited(
++      ref
++          .read(nightMarketSeenProvider(puuid).notifier)
++          .markSeen(nm.offers.map((o) => o.bonusOfferId)),
+     );
+   }
++
++  List<Widget> _segmentSlivers(
++    StoreSegment segment,
++    String puuid,
++    AsyncValue<Storefront> storeAsync,
++  ) {
++    switch (segment) {
++      case StoreSegment.daily:
++        return [
++          SliverToBoxAdapter(
++            child: AsyncValueView<Storefront>(
++              value: storeAsync,
++              puuid: puuid,
++              onRetry: () => ref.invalidate(storefrontProvider(puuid)),
++              isEmpty: (s) => s.daily.isEmpty,
++              data: (s) => DailySection(daily: s.daily, puuid: puuid),
++            ),
++          ),
++        ];
++      case StoreSegment.nightMarket:
++        return [
++          SliverToBoxAdapter(
++            child: AsyncValueView<Storefront>(
++              value: storeAsync,
++              puuid: puuid,
++              onRetry: () => ref.invalidate(storefrontProvider(puuid)),
++              isEmpty: (s) => s.nightMarket?.offers.isEmpty ?? true,
++              data: (s) =>
++                  NightMarketSection(nightMarket: s.nightMarket, puuid: puuid),
++            ),
++          ),
++        ];
++      case StoreSegment.accessories:
++        return [
++          SliverToBoxAdapter(
++            child: AsyncValueView<Storefront>(
++              value: storeAsync,
++              puuid: puuid,
++              onRetry: () => ref.invalidate(storefrontProvider(puuid)),
++              isEmpty: (s) => s.accessoryStore?.offers.isEmpty ?? true,
++              data: (s) => AccessorySection(accessoryStore: s.accessoryStore),
++            ),
++          ),
++        ];
++      case StoreSegment.bundles:
++        return [
++          SliverToBoxAdapter(
++            child: AsyncValueView<Storefront>(
++              value: storeAsync,
++              puuid: puuid,
++              onRetry: () => ref.invalidate(storefrontProvider(puuid)),
++              isEmpty: (s) => s.bundles.isEmpty,
++              data: (s) => BundleSection(bundles: s.bundles),
++            ),
++          ),
++        ];
++    }
++  }
++
++  /// (Re)schedules the "Cửa hàng đã làm mới" local notification at the daily
++  /// reset time, if the setting is enabled (B8, VF §6.9).
++  Future<void> _scheduleResetNotification({
++    required Account account,
++    required Storefront store,
++  }) async {
++    if (!ref.read(appSettingsProvider).storeResetNotifications) return;
++    final resetAt = store.daily.expiresAt;
++    if (resetAt == null) return;
++    await ref
++        .read(notificationServiceProvider)
++        .scheduleAt(
++          id: NotificationIds.storeReset(account.puuid),
++          at: resetAt.add(const Duration(minutes: 1)),
++          title: StoreStrings.resetNotificationTitle,
++          body: StoreStrings.resetNotificationBody(
++            store.daily.offers.length,
++            account.riotId,
++          ),
++          channel: NotificationChannel.storeReset,
++          payload: '${StoreRoutes.root}?account=${account.puuid}',
++          accountPuuid: account.puuid,
++        );
++  }
+ }
+diff --git a/lib/features/store/ui/widgets/accessory_row.dart b/lib/features/store/ui/widgets/accessory_row.dart
+new file mode 100644
+index 0000000..8cfdffd
+--- /dev/null
++++ b/lib/features/store/ui/widgets/accessory_row.dart
+@@ -0,0 +1,48 @@
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:material_ui/material_ui.dart';
++
++import '../../../../core/content/content_db.dart';
++import '../../../../core/content/content_repository.dart';
++import '../../../../core/domain/economy/economy.dart';
++import '../../../../core/l10n/common_strings.dart';
++import '../../../../core/ui/currency_amount.dart';
++import '../../../../core/ui/net_image.dart';
++import '../../store_strings.dart';
++
++/// S12 accessory-store row: image, name, type label, KC price, optional
++/// "Từ: `<contract>`".
++class AccessoryRow extends ConsumerWidget {
++  const AccessoryRow({super.key, required this.offer});
++
++  final AccessoryOffer offer;
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
++    final item = db.item(offer.itemTypeId ?? '', offer.itemId);
++    final contractName = offer.contractId == null
++        ? null
++        : db.contract(offer.contractId!)?.displayName;
++    final subtitle = [
++      item?.typeLabel,
++      if (contractName != null) StoreStrings.accessoryFrom(contractName),
++    ].nonNulls.join(' · ');
++
++    return ListTile(
++      leading: ClipRRect(
++        borderRadius: BorderRadius.circular(6),
++        child: NetImage(
++          item?.image,
++          width: 44,
++          height: 44,
++          fit: BoxFit.contain,
++        ),
++      ),
++      title: Text(item?.name ?? CommonStrings.unknownItem),
++      subtitle: subtitle.isEmpty ? null : Text(subtitle),
++      trailing: offer.kcCost == null
++          ? const Text(CommonStrings.dash)
++          : CurrencyAmount.kc(offer.kcCost!),
++    );
++  }
++}
+diff --git a/lib/features/store/ui/widgets/accessory_section.dart b/lib/features/store/ui/widgets/accessory_section.dart
+new file mode 100644
+index 0000000..46709b6
+--- /dev/null
++++ b/lib/features/store/ui/widgets/accessory_section.dart
+@@ -0,0 +1,58 @@
++import 'package:material_ui/material_ui.dart';
++
++import '../../../../core/domain/economy/economy.dart';
++import '../../../../core/ui/countdown_text.dart';
++import '../../../../core/ui/empty_view.dart';
++import '../../store_strings.dart';
++import 'accessory_row.dart';
++
++/// S12 body: countdown row, 4 rows of accessories.
++class AccessorySection extends StatelessWidget {
++  const AccessorySection({super.key, required this.accessoryStore});
++
++  final AccessoryStore? accessoryStore;
++
++  @override
++  Widget build(BuildContext context) {
++    final store = accessoryStore;
++    if (store == null || store.offers.isEmpty) {
++      return const Padding(
++        padding: EdgeInsets.symmetric(vertical: 24),
++        child: EmptyView(message: StoreStrings.accessoryEmpty),
++      );
++    }
++    final theme = Theme.of(context);
++    return Column(
++      crossAxisAlignment: CrossAxisAlignment.stretch,
++      children: [
++        if (store.expiresAt != null)
++          Padding(
++            padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
++            child: Row(
++              children: [
++                Icon(
++                  Icons.schedule,
++                  size: 16,
++                  color: theme.colorScheme.onSurfaceVariant,
++                ),
++                const SizedBox(width: 6),
++                CountdownText(
++                  expiresAt: store.expiresAt!,
++                  builder: StoreStrings.accessoryRefreshIn,
++                  style: theme.textTheme.bodyMedium,
++                ),
++              ],
++            ),
++          ),
++        ListView.separated(
++          padding: const EdgeInsets.symmetric(vertical: 8),
++          physics: const NeverScrollableScrollPhysics(),
++          shrinkWrap: true,
++          itemCount: store.offers.length,
++          separatorBuilder: (_, _) => const Divider(height: 1),
++          itemBuilder: (context, i) => AccessoryRow(offer: store.offers[i]),
++        ),
++      ],
++    );
++  }
++}
+diff --git a/lib/features/store/ui/widgets/bundle_banner.dart b/lib/features/store/ui/widgets/bundle_banner.dart
+new file mode 100644
+index 0000000..65ccf87
+--- /dev/null
++++ b/lib/features/store/ui/widgets/bundle_banner.dart
+@@ -0,0 +1,103 @@
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:go_router/go_router.dart';
++import 'package:material_ui/material_ui.dart';
++
++import '../../../../core/content/content_repository.dart';
++import '../../../../core/domain/economy/economy.dart';
++import '../../../../core/l10n/common_strings.dart';
++import '../../../../core/ui/countdown_text.dart';
++import '../../../../core/ui/currency_amount.dart';
++import '../../../../core/ui/net_image.dart';
++import '../../store_routes.dart';
++import '../../store_strings.dart';
++
++/// S13 bundle-list banner: art, name, price, countdown.
++class BundleBanner extends ConsumerWidget {
++  const BundleBanner({super.key, required this.bundle});
++
++  final StoreBundle bundle;
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final content = ref
++        .watch(contentProvider)
++        .value
++        ?.bundleByUuid(bundle.dataAssetId);
++    final expiresAt = bundle.expiresAt;
++
++    return Padding(
++      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
++      child: Semantics(
++        button: true,
++        label: content?.displayName ?? CommonStrings.unknownItem,
++        child: InkWell(
++          borderRadius: BorderRadius.circular(12),
++          onTap: () => context.push(StoreRoutes.bundle(bundle.id)),
++          child: ClipRRect(
++            borderRadius: BorderRadius.circular(12),
++            child: AspectRatio(
++              aspectRatio: 16 / 9,
++              child: Stack(
++                fit: StackFit.expand,
++                children: [
++                  NetImage(content?.cardImage, fit: BoxFit.cover),
++                  DecoratedBox(
++                    decoration: BoxDecoration(
++                      gradient: LinearGradient(
++                        begin: Alignment.topCenter,
++                        end: Alignment.bottomCenter,
++                        colors: [
++                          Colors.transparent,
++                          Colors.black.withValues(alpha: 0.78),
++                        ],
++                        stops: const [0.35, 1],
++                      ),
++                    ),
++                  ),
++                  Positioned(
++                    left: 12,
++                    right: 12,
++                    bottom: 12,
++                    child: Column(
++                      crossAxisAlignment: CrossAxisAlignment.start,
++                      mainAxisSize: MainAxisSize.min,
++                      children: [
++                        Text(
++                          content?.displayName ?? CommonStrings.unknownItem,
++                          maxLines: 1,
++                          overflow: TextOverflow.ellipsis,
++                          style: Theme.of(context).textTheme.titleMedium
++                              ?.copyWith(
++                                color: Colors.white,
++                                fontWeight: FontWeight.w700,
++                              ),
++                        ),
++                        const SizedBox(height: 4),
++                        Row(
++                          children: [
++                            CurrencyAmount(
++                              currencyId: bundle.currencyId,
++                              amount: bundle.price,
++                              style: const TextStyle(color: Colors.white),
++                            ),
++                            const Spacer(),
++                            if (expiresAt != null)
++                              CountdownText(
++                                expiresAt: expiresAt,
++                                builder: StoreStrings.bundleEndsIn,
++                                style: const TextStyle(color: Colors.white70),
++                              ),
++                          ],
++                        ),
++                      ],
++                    ),
++                  ),
++                ],
++              ),
++            ),
++          ),
++        ),
++      ),
++    );
++  }
++}
+diff --git a/lib/features/store/ui/widgets/bundle_section.dart b/lib/features/store/ui/widgets/bundle_section.dart
+new file mode 100644
+index 0000000..a52045a
+--- /dev/null
++++ b/lib/features/store/ui/widgets/bundle_section.dart
+@@ -0,0 +1,29 @@
++import 'package:material_ui/material_ui.dart';
++
++import '../../../../core/domain/economy/economy.dart';
++import '../../../../core/ui/empty_view.dart';
++import '../../store_strings.dart';
++import 'bundle_banner.dart';
++
++/// S13 body: one banner per featured bundle.
++class BundleSection extends StatelessWidget {
++  const BundleSection({super.key, required this.bundles});
++
++  final List<StoreBundle> bundles;
++
++  @override
++  Widget build(BuildContext context) {
++    if (bundles.isEmpty) {
++      return const Padding(
++        padding: EdgeInsets.symmetric(vertical: 24),
++        child: EmptyView(message: StoreStrings.bundlesEmpty),
++      );
++    }
++    return Padding(
++      padding: const EdgeInsets.symmetric(vertical: 8),
++      child: Column(
++        children: [for (final b in bundles) BundleBanner(bundle: b)],
++      ),
++    );
++  }
++}
+diff --git a/lib/features/store/ui/widgets/daily_offer_card.dart b/lib/features/store/ui/widgets/daily_offer_card.dart
+new file mode 100644
+index 0000000..8509f53
+--- /dev/null
++++ b/lib/features/store/ui/widgets/daily_offer_card.dart
+@@ -0,0 +1,133 @@
++import 'dart:async';
++
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:material_ui/material_ui.dart';
++
++import '../../../../core/content/content_db.dart';
++import '../../../../core/content/content_repository.dart';
++import '../../../../core/domain/economy/economy.dart';
++import '../../../../core/l10n/common_strings.dart';
++import '../../../../core/theme/app_theme.dart';
++import '../../../../core/ui/content_tier_badge.dart';
++import '../../../../core/ui/currency_amount.dart';
++import '../../../../core/ui/net_image.dart';
++import '../../../skin_detail/skin_detail_sheet.dart';
++import '../../store_strings.dart';
++import 'store_ui_bits.dart';
++
++/// S10 daily-shop card: tier-tinted gradient, render, name, price, badges.
++class DailyOfferCard extends ConsumerWidget {
++  const DailyOfferCard({super.key, required this.offer, required this.puuid});
++
++  final DailyOffer offer;
++  final String puuid;
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
++    final skin = db.skinByLevelUuid(offer.skinLevelUuid);
++    final tint = contentTierTint(
++      ref,
++      skin?.contentTierUuid,
++      fallback: valColorsOf(context).muted,
++    );
++    final owned =
++        ref
++            .watch(ownedItemsProvider(puuid))
++            .value
++            ?.isSkinOwned(offer.skinLevelUuid) ??
++        false;
++    final wishlist = ref.watch(wishlistProvider(puuid));
++    final inWishlist = wishlistContains(wishlist, offer.skinLevelUuid, db);
++    final scheme = Theme.of(context).colorScheme;
++
++    return Semantics(
++      button: true,
++      label: skin?.displayName ?? CommonStrings.unknownItem,
++      child: InkWell(
++        borderRadius: BorderRadius.circular(12),
++        onTap: () => showSkinDetailSheet(
++          context,
++          skinOrLevelUuid: offer.skinLevelUuid,
++          mode: SkinDetailMode.store,
++        ),
++        child: Ink(
++          decoration: BoxDecoration(
++            borderRadius: BorderRadius.circular(12),
++            gradient: LinearGradient(
++              begin: Alignment.topCenter,
++              end: Alignment.bottomCenter,
++              colors: [
++                tint.withValues(alpha: 0.32),
++                tint.withValues(alpha: 0.06),
++              ],
++            ),
++          ),
++          child: Column(
++            crossAxisAlignment: CrossAxisAlignment.stretch,
++            children: [
++              Expanded(
++                child: Stack(
++                  fit: StackFit.expand,
++                  children: [
++                    Padding(
++                      padding: const EdgeInsets.all(8),
++                      child: NetImage(
++                        skin?.render ?? skin?.image,
++                        fit: BoxFit.contain,
++                      ),
++                    ),
++                    Positioned(
++                      top: 4,
++                      right: 4,
++                      child: WishlistHeartButton(
++                        active: inWishlist,
++                        onTap: () => unawaited(
++                          ref
++                              .read(wishlistProvider(puuid).notifier)
++                              .toggleSkin(offer.skinLevelUuid, db),
++                        ),
++                      ),
++                    ),
++                    if (owned)
++                      Positioned(
++                        top: 4,
++                        left: 4,
++                        child: StoreBadge(
++                          StoreStrings.ownedBadge,
++                          color: scheme.primary,
++                        ),
++                      ),
++                  ],
++                ),
++              ),
++              Padding(
++                padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
++                child: Column(
++                  crossAxisAlignment: CrossAxisAlignment.start,
++                  children: [
++                    ContentTierBadge(
++                      contentTierUuid: skin?.contentTierUuid,
++                      size: 14,
++                    ),
++                    const SizedBox(height: 2),
++                    Text(
++                      skin?.displayName ?? CommonStrings.unknownItem,
++                      maxLines: 1,
++                      overflow: TextOverflow.ellipsis,
++                      style: Theme.of(context).textTheme.labelLarge,
++                    ),
++                    const SizedBox(height: 4),
++                    offer.vpCost == null
++                        ? const Text(CommonStrings.dash)
++                        : CurrencyAmount.vp(offer.vpCost!),
++                  ],
++                ),
++              ),
++            ],
++          ),
++        ),
++      ),
++    );
++  }
++}
+diff --git a/lib/features/store/ui/widgets/daily_section.dart b/lib/features/store/ui/widgets/daily_section.dart
+new file mode 100644
+index 0000000..a4e292a
+--- /dev/null
++++ b/lib/features/store/ui/widgets/daily_section.dart
+@@ -0,0 +1,75 @@
++import 'package:material_ui/material_ui.dart';
++
++import '../../../../core/domain/economy/economy.dart';
++import '../../../../core/ui/countdown_text.dart';
++import '../../../../core/ui/currency_amount.dart';
++import '../../../../core/ui/empty_view.dart';
++import '../../store_strings.dart';
++import 'daily_offer_card.dart';
++
++/// S10 body: countdown row, optional total, 2-column grid of offer cards.
++class DailySection extends StatelessWidget {
++  const DailySection({super.key, required this.daily, required this.puuid});
++
++  final DailyStore daily;
++  final String puuid;
++
++  @override
++  Widget build(BuildContext context) {
++    if (daily.isEmpty) {
++      return const Padding(
++        padding: EdgeInsets.symmetric(vertical: 24),
++        child: EmptyView(message: StoreStrings.dailyEmpty),
++      );
++    }
++    final expiresAt = daily.expiresAt;
++    return Column(
++      crossAxisAlignment: CrossAxisAlignment.stretch,
++      children: [
++        Padding(
++          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
++          child: Row(
++            children: [
++              Icon(
++                Icons.schedule,
++                size: 16,
++                color: Theme.of(context).colorScheme.onSurfaceVariant,
++              ),
++              const SizedBox(width: 6),
++              Expanded(
++                child: expiresAt == null
++                    ? const SizedBox.shrink()
++                    : CountdownText(
++                        expiresAt: expiresAt,
++                        builder: StoreStrings.resetsIn,
++                        style: Theme.of(context).textTheme.bodyMedium,
++                      ),
++              ),
++              if (daily.totalVp > 0) ...[
++                Text(
++                  '${StoreStrings.dailyTotalLabel} ',
++                  style: Theme.of(context).textTheme.bodyMedium,
++                ),
++                CurrencyAmount.vp(daily.totalVp),
++              ],
++            ],
++          ),
++        ),
++        GridView.builder(
++          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
++          physics: const NeverScrollableScrollPhysics(),
++          shrinkWrap: true,
++          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
++            crossAxisCount: 2,
++            mainAxisSpacing: 12,
++            crossAxisSpacing: 12,
++            childAspectRatio: 0.72,
++          ),
++          itemCount: daily.offers.length,
++          itemBuilder: (context, i) =>
++              DailyOfferCard(offer: daily.offers[i], puuid: puuid),
++        ),
++      ],
++    );
++  }
++}
+diff --git a/lib/features/store/ui/widgets/night_market_card.dart b/lib/features/store/ui/widgets/night_market_card.dart
+new file mode 100644
+index 0000000..5439e35
+--- /dev/null
++++ b/lib/features/store/ui/widgets/night_market_card.dart
+@@ -0,0 +1,137 @@
++import 'dart:async';
++
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:material_ui/material_ui.dart';
++
++import '../../../../core/content/content_db.dart';
++import '../../../../core/content/content_repository.dart';
++import '../../../../core/domain/economy/economy.dart';
++import '../../../../core/l10n/common_strings.dart';
++import '../../../../core/theme/app_theme.dart';
++import '../../../../core/ui/content_tier_badge.dart';
++import '../../../../core/ui/currency_amount.dart';
++import '../../../../core/ui/net_image.dart';
++import '../../../../core/util/format.dart';
++import '../../../skin_detail/skin_detail_sheet.dart';
++import 'store_ui_bits.dart';
++
++/// S11 Night Market card: struck base price, discounted price, `-xx%` badge.
++class NightMarketCard extends ConsumerWidget {
++  const NightMarketCard({super.key, required this.offer, required this.puuid});
++
++  final NightMarketOffer offer;
++  final String puuid;
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
++    final skin = db.skinByLevelUuid(offer.skinLevelUuid);
++    final tint = contentTierTint(
++      ref,
++      skin?.contentTierUuid,
++      fallback: valColorsOf(context).muted,
++    );
++    final wishlist = ref.watch(wishlistProvider(puuid));
++    final inWishlist = wishlistContains(wishlist, offer.skinLevelUuid, db);
++
++    return Semantics(
++      button: true,
++      label: skin?.displayName ?? CommonStrings.unknownItem,
++      child: InkWell(
++        borderRadius: BorderRadius.circular(12),
++        onTap: () => showSkinDetailSheet(
++          context,
++          skinOrLevelUuid: offer.skinLevelUuid,
++          mode: SkinDetailMode.store,
++        ),
++        child: Ink(
++          decoration: BoxDecoration(
++            borderRadius: BorderRadius.circular(12),
++            gradient: LinearGradient(
++              begin: Alignment.topCenter,
++              end: Alignment.bottomCenter,
++              colors: [
++                tint.withValues(alpha: 0.32),
++                tint.withValues(alpha: 0.06),
++              ],
++            ),
++          ),
++          child: Column(
++            crossAxisAlignment: CrossAxisAlignment.stretch,
++            children: [
++              Expanded(
++                child: Stack(
++                  fit: StackFit.expand,
++                  children: [
++                    Padding(
++                      padding: const EdgeInsets.all(8),
++                      child: NetImage(
++                        skin?.render ?? skin?.image,
++                        fit: BoxFit.contain,
++                      ),
++                    ),
++                    Positioned(
++                      top: 4,
++                      left: 4,
++                      child: StoreBadge(
++                        formatDiscountPercent(offer.discountPercent),
++                        color: ValColors.red,
++                      ),
++                    ),
++                    Positioned(
++                      top: 4,
++                      right: 4,
++                      child: WishlistHeartButton(
++                        active: inWishlist,
++                        onTap: () => unawaited(
++                          ref
++                              .read(wishlistProvider(puuid).notifier)
++                              .toggleSkin(offer.skinLevelUuid, db),
++                        ),
++                      ),
++                    ),
++                  ],
++                ),
++              ),
++              Padding(
++                padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
++                child: Column(
++                  crossAxisAlignment: CrossAxisAlignment.start,
++                  children: [
++                    ContentTierBadge(
++                      contentTierUuid: skin?.contentTierUuid,
++                      size: 14,
++                    ),
++                    const SizedBox(height: 2),
++                    Text(
++                      skin?.displayName ?? CommonStrings.unknownItem,
++                      maxLines: 1,
++                      overflow: TextOverflow.ellipsis,
++                      style: Theme.of(context).textTheme.labelLarge,
++                    ),
++                    const SizedBox(height: 4),
++                    Row(
++                      children: [
++                        if (offer.basePrice != null)
++                          CurrencyAmount.vp(
++                            offer.basePrice!,
++                            iconSize: 12,
++                            strikethrough: true,
++                          ),
++                        if (offer.basePrice != null &&
++                            offer.discountedPrice != null)
++                          const SizedBox(width: 6),
++                        if (offer.discountedPrice != null)
++                          CurrencyAmount.vp(offer.discountedPrice!),
++                      ],
++                    ),
++                  ],
++                ),
++              ),
++            ],
++          ),
++        ),
++      ),
++    );
++  }
++}
+diff --git a/lib/features/store/ui/widgets/night_market_section.dart b/lib/features/store/ui/widgets/night_market_section.dart
+new file mode 100644
+index 0000000..9a0a1bc
+--- /dev/null
++++ b/lib/features/store/ui/widgets/night_market_section.dart
+@@ -0,0 +1,89 @@
++import 'package:material_ui/material_ui.dart';
++
++import '../../../../core/domain/economy/economy.dart';
++import '../../../../core/ui/countdown_text.dart';
++import '../../../../core/ui/empty_view.dart';
++import '../../../../core/util/format.dart';
++import '../../store_strings.dart';
++import 'night_market_card.dart';
++
++/// S11 body: countdown, up to 6 cards, total-savings footer, info note.
++class NightMarketSection extends StatelessWidget {
++  const NightMarketSection({
++    super.key,
++    required this.nightMarket,
++    required this.puuid,
++  });
++
++  final NightMarket? nightMarket;
++  final String puuid;
++
++  @override
++  Widget build(BuildContext context) {
++    final nm = nightMarket;
++    if (nm == null || nm.offers.isEmpty) {
++      return const Padding(
++        padding: EdgeInsets.symmetric(vertical: 24),
++        child: EmptyView(message: StoreStrings.nightMarketEmpty),
++      );
++    }
++    final theme = Theme.of(context);
++    return Column(
++      crossAxisAlignment: CrossAxisAlignment.stretch,
++      children: [
++        if (nm.expiresAt != null)
++          Padding(
++            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
++            child: Row(
++              children: [
++                Icon(
++                  Icons.schedule,
++                  size: 16,
++                  color: theme.colorScheme.onSurfaceVariant,
++                ),
++                const SizedBox(width: 6),
++                CountdownText(
++                  expiresAt: nm.expiresAt!,
++                  builder: StoreStrings.nightMarketEndsIn,
++                  style: theme.textTheme.bodyMedium,
++                ),
++              ],
++            ),
++          ),
++        GridView.builder(
++          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
++          physics: const NeverScrollableScrollPhysics(),
++          shrinkWrap: true,
++          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
++            crossAxisCount: 2,
++            mainAxisSpacing: 12,
++            crossAxisSpacing: 12,
++            childAspectRatio: 0.72,
++          ),
++          itemCount: nm.offers.length,
++          itemBuilder: (context, i) =>
++              NightMarketCard(offer: nm.offers[i], puuid: puuid),
++        ),
++        if (nm.totalSavings > 0)
++          Padding(
++            padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
++            child: Text(
++              StoreStrings.nightMarketTotalSavings(formatVp(nm.totalSavings)),
++              style: theme.textTheme.bodyMedium?.copyWith(
++                fontWeight: FontWeight.w600,
++              ),
++            ),
++          ),
++        Padding(
++          padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
++          child: Text(
++            StoreStrings.nightMarketNote,
++            style: theme.textTheme.bodySmall?.copyWith(
++              color: theme.colorScheme.onSurfaceVariant,
++            ),
++          ),
++        ),
++      ],
++    );
++  }
++}
+diff --git a/lib/features/store/ui/widgets/store_ui_bits.dart b/lib/features/store/ui/widgets/store_ui_bits.dart
+new file mode 100644
+index 0000000..d1ffc2d
+--- /dev/null
++++ b/lib/features/store/ui/widgets/store_ui_bits.dart
+@@ -0,0 +1,73 @@
++import 'package:material_ui/material_ui.dart';
++
++import '../../../../core/theme/app_theme.dart';
++
++/// Small solid pill badge ("Đã sở hữu", "-32%").
++class StoreBadge extends StatelessWidget {
++  const StoreBadge(this.text, {super.key, required this.color});
++
++  final String text;
++  final Color color;
++
++  @override
++  Widget build(BuildContext context) {
++    return Container(
++      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
++      decoration: BoxDecoration(
++        color: color,
++        borderRadius: BorderRadius.circular(4),
++      ),
++      child: Text(
++        text,
++        style: Theme.of(context).textTheme.labelSmall
++            ?.copyWith(color: Colors.white),
++      ),
++    );
++  }
++}
++
++/// Floating wishlist heart toggle used on daily / Night Market cards and the
++/// skin-detail sheet.
++class WishlistHeartButton extends StatelessWidget {
++  const WishlistHeartButton({
++    super.key,
++    required this.active,
++    required this.onTap,
++    this.size = 16,
++    this.dark = true,
++  });
++
++  final bool active;
++  final VoidCallback onTap;
++  final double size;
++
++  /// Dark translucent background (over a skin render); false for a light
++  /// surface (e.g. the skin-detail sheet action row).
++  final bool dark;
++
++  @override
++  Widget build(BuildContext context) {
++    return Material(
++      color: dark
++          ? Colors.black.withValues(alpha: 0.45)
++          : Theme.of(context).colorScheme.surfaceContainerHigh,
++      shape: const CircleBorder(),
++      child: InkWell(
++        customBorder: const CircleBorder(),
++        onTap: onTap,
++        child: Padding(
++          padding: EdgeInsets.all(size * 0.4),
++          child: Icon(
++            active ? Icons.favorite : Icons.favorite_border,
++            size: size,
++            color: active
++                ? ValColors.red
++                : (dark
++                      ? Colors.white
++                      : Theme.of(context).colorScheme.onSurface),
++          ),
++        ),
++      ),
++    );
++  }
++}
+diff --git a/lib/features/store/ui/widgets/wallet_pill.dart b/lib/features/store/ui/widgets/wallet_pill.dart
+new file mode 100644
+index 0000000..b6fb093
+--- /dev/null
++++ b/lib/features/store/ui/widgets/wallet_pill.dart
+@@ -0,0 +1,70 @@
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:material_ui/material_ui.dart';
++
++import '../../../../core/domain/economy/economy.dart';
++import '../../../../core/ui/currency_amount.dart';
++import '../../../../core/ui/skeleton.dart';
++
++/// Common-header wallet pill: VP / KC / RP balances (VF §6.2).
++class WalletPill extends ConsumerWidget {
++  const WalletPill({super.key, required this.puuid});
++
++  final String puuid;
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final wallet = ref.watch(walletProvider(puuid));
++    final scheme = Theme.of(context).colorScheme;
++    return Padding(
++      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
++      child: wallet.when(
++        skipLoadingOnReload: true,
++        skipError: true,
++        data: (w) => _Pill(
++          scheme: scheme,
++          children: [
++            CurrencyAmount.vp(w.vp),
++            CurrencyAmount.kc(w.kc),
++            CurrencyAmount.rp(w.rp),
++          ],
++        ),
++        loading: () => const Padding(
++          padding: EdgeInsets.symmetric(vertical: 4),
++          child: Skeleton(width: 160, height: 22, radius: 12),
++        ),
++        error: (_, _) => const SizedBox.shrink(),
++      ),
++    );
++  }
++}
++
++class _Pill extends StatelessWidget {
++  const _Pill({required this.scheme, required this.children});
++
++  final ColorScheme scheme;
++  final List<Widget> children;
++
++  @override
++  Widget build(BuildContext context) {
++    return Container(
++      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
++      decoration: BoxDecoration(
++        color: scheme.surfaceContainerHigh,
++        borderRadius: BorderRadius.circular(20),
++      ),
++      child: Row(
++        mainAxisSize: MainAxisSize.min,
++        children: [
++          for (var i = 0; i < children.length; i++) ...[
++            if (i > 0) ...[
++              const SizedBox(width: 10),
++              Container(width: 1, height: 12, color: scheme.outlineVariant),
++              const SizedBox(width: 10),
++            ],
++            children[i],
++          ],
++        ],
++      ),
++    );
++  }
++}
+diff --git a/test/features/settings/data/cache_stats_test.dart b/test/features/settings/data/cache_stats_test.dart
+new file mode 100644
+index 0000000..06bdaca
+--- /dev/null
++++ b/test/features/settings/data/cache_stats_test.dart
+@@ -0,0 +1,39 @@
++import 'dart:io';
++
++import 'package:flutter_test/flutter_test.dart';
++import 'package:valvn/features/settings/data/cache_stats.dart';
++
++void main() {
++  group('formatBytes', () {
++    test('bytes, KB, MB, GB', () {
++      expect(formatBytes(0), '0 B');
++      expect(formatBytes(512), '512 B');
++      expect(formatBytes(1024), '1 KB');
++      expect(formatBytes(48 * 1024), '48 KB');
++      expect(formatBytes((3.2 * 1024 * 1024).round()), '3,2 MB');
++      expect(formatBytes((1.1 * 1024 * 1024 * 1024).round()), '1,1 GB');
++    });
++  });
++
++  group('dirSizeBytes', () {
++    late Directory tmp;
++
++    setUp(() async {
++      tmp = await Directory.systemTemp.createTemp('valvn_cache_stats_test');
++    });
++
++    tearDown(() => tmp.delete(recursive: true));
++
++    test('missing directory is zero', () async {
++      final missing = Directory('${tmp.path}/nope');
++      expect(await dirSizeBytes(missing), 0);
++    });
++
++    test('sums every file recursively', () async {
++      await File('${tmp.path}/a.json').writeAsString('123456789'); // 9 bytes
++      final sub = Directory('${tmp.path}/sub')..createSync();
++      await File('${sub.path}/b.json').writeAsString('12345'); // 5 bytes
++      expect(await dirSizeBytes(tmp), 14);
++    });
++  });
++}
+diff --git a/test/features/settings/ui/about_screen_test.dart b/test/features/settings/ui/about_screen_test.dart
+new file mode 100644
+index 0000000..c2bd3fb
+--- /dev/null
++++ b/test/features/settings/ui/about_screen_test.dart
+@@ -0,0 +1,53 @@
++import 'dart:async';
++
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:material_ui/material_ui.dart';
++import 'package:package_info_plus/package_info_plus.dart';
++import 'package:valvn/core/l10n/common_strings.dart';
++import 'package:valvn/features/settings/providers/settings_providers.dart';
++import 'package:valvn/features/settings/settings_strings.dart';
++import 'package:valvn/features/settings/ui/about_screen.dart';
++
++void main() {
++  testWidgets('shows the app name, version, credits and legal notice', (tester) async {
++    await tester.pumpWidget(
++      ProviderScope(
++        overrides: [
++          packageInfoProvider.overrideWith(
++            (ref) async => PackageInfo(
++              appName: 'ValVN',
++              packageName: 'vn.valvn.app',
++              version: '1.2.3',
++              buildNumber: '42',
++            ),
++          ),
++        ],
++        child: const MaterialApp(home: AboutScreen()),
++      ),
++    );
++    await tester.pumpAndSettle();
++
++    expect(find.text('VALVN'), findsOneWidget);
++    expect(find.text(SettingsStrings.version('1.2.3')), findsOneWidget);
++    expect(find.text(SettingsStrings.aboutCreditContent), findsOneWidget);
++    expect(find.text(SettingsStrings.aboutCreditRiot), findsOneWidget);
++    expect(find.text(CommonStrings.riotDisclaimer), findsOneWidget);
++  });
++
++  testWidgets('shows a fallback while the version is loading', (tester) async {
++    await tester.pumpWidget(
++      ProviderScope(
++        overrides: [
++          packageInfoProvider.overrideWith(
++            (ref) => Completer<PackageInfo>().future,
++          ),
++        ],
++        child: const MaterialApp(home: AboutScreen()),
++      ),
++    );
++    await tester.pump();
++
++    expect(find.text(SettingsStrings.aboutTitle), findsOneWidget);
++  });
++}
+diff --git a/test/features/settings/ui/session_log_screen_test.dart b/test/features/settings/ui/session_log_screen_test.dart
+new file mode 100644
+index 0000000..d22638f
+--- /dev/null
++++ b/test/features/settings/ui/session_log_screen_test.dart
+@@ -0,0 +1,71 @@
++import 'package:flutter/services.dart' show Clipboard, ClipboardData;
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:material_ui/material_ui.dart';
++import 'package:valvn/core/l10n/common_strings.dart';
++import 'package:valvn/core/logging/session_log.dart';
++import 'package:valvn/features/settings/settings_strings.dart';
++import 'package:valvn/features/settings/ui/session_log_screen.dart';
++
++void main() {
++  Widget harness(SessionLog log) => ProviderScope(
++    overrides: [sessionLogProvider.overrideWithValue(log)],
++    child: const MaterialApp(home: SessionLogScreen()),
++  );
++
++  testWidgets('empty log shows the empty state', (tester) async {
++    await tester.pumpWidget(harness(SessionLog()));
++    await tester.pumpAndSettle();
++    expect(find.text(SettingsStrings.exportLogEmpty), findsOneWidget);
++  });
++
++  testWidgets('renders entries newest first with the no-secrets note', (tester) async {
++    final log = SessionLog();
++    log.add(
++      'http.get',
++      uri: Uri.parse('https://pd.ap.a.pvp.net/store/v3/storefront/11111111-1111-1111-1111-111111111111'),
++      status: 200,
++      elapsed: const Duration(milliseconds: 120),
++    );
++    log.add('reauth.ok', status: 200);
++
++    await tester.pumpWidget(harness(log));
++    await tester.pumpAndSettle();
++
++    expect(find.text(SettingsStrings.exportLogNote), findsOneWidget);
++    expect(find.textContaining('reauth.ok'), findsOneWidget);
++    expect(find.textContaining('pd.ap.a.pvp.net/store/v3/storefront/{id}'), findsOneWidget);
++    // No raw PUUID/UUID ever reaches the screen.
++    expect(find.textContaining('11111111-1111-1111-1111-111111111111'), findsNothing);
++
++    final texts = tester.widgetList<Text>(find.byType(Text)).map((t) => t.data).toList();
++    final firstEntryIndex = texts.indexWhere((t) => t?.contains('reauth.ok') ?? false);
++    final secondEntryIndex = texts.indexWhere((t) => t?.contains('http.get') ?? false);
++    expect(firstEntryIndex, lessThan(secondEntryIndex), reason: 'newest entry listed first');
++  });
++
++  testWidgets('copy button copies the exported text to the clipboard', (tester) async {
++    final log = SessionLog();
++    log.add('reauth.ok', status: 200);
++    await tester.pumpWidget(harness(log));
++    await tester.pumpAndSettle();
++
++    await tester.tap(find.byIcon(Icons.copy_outlined));
++    await tester.pumpAndSettle();
++
++    expect(find.text(CommonStrings.copied), findsOneWidget);
++    final clip = await Clipboard.getData('text/plain');
++    expect(clip?.text, contains('reauth.ok'));
++    // Auto-dismiss the snackbar so no Timer leaks past this test.
++    await tester.pump(const Duration(seconds: 5));
++  });
++
++  testWidgets('share button is present (not invoked: no plugin in tests)', (tester) async {
++    final log = SessionLog();
++    log.add('reauth.ok', status: 200);
++    await tester.pumpWidget(harness(log));
++    await tester.pumpAndSettle();
++
++    expect(find.byIcon(Icons.share_outlined), findsOneWidget);
++  });
++}
+diff --git a/test/features/settings/ui/settings_screen_test.dart b/test/features/settings/ui/settings_screen_test.dart
+new file mode 100644
+index 0000000..fe19284
+--- /dev/null
++++ b/test/features/settings/ui/settings_screen_test.dart
+@@ -0,0 +1,230 @@
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:go_router/go_router.dart';
++import 'package:material_ui/material_ui.dart';
++import 'package:mocktail/mocktail.dart';
++import 'package:package_info_plus/package_info_plus.dart';
++import 'package:valvn/core/accounts/account.dart';
++import 'package:valvn/core/auth/auth_providers.dart';
++import 'package:valvn/core/auth/auth_routes.dart';
++import 'package:valvn/core/auth/session_manager.dart';
++import 'package:valvn/core/l10n/account_strings.dart';
++import 'package:valvn/core/l10n/common_strings.dart';
++import 'package:valvn/core/notifications/notification_service.dart';
++import 'package:valvn/core/riot/pvp_api.dart';
++import 'package:valvn/core/settings/app_settings.dart';
++import 'package:valvn/core/storage/json_file_cache.dart';
++import 'package:valvn/core/storage/prefs.dart';
++import 'package:valvn/core/storage/secure_store.dart';
++import 'package:valvn/features/settings/providers/settings_providers.dart';
++import 'package:valvn/features/settings/settings_routes.dart';
++import 'package:valvn/features/settings/settings_strings.dart';
++import 'package:valvn/features/settings/ui/settings_screen.dart';
++
++import '../../../helpers/test_prefs.dart';
++
++class MockPvpApi extends Mock implements PvpApi {}
++
++class MockSessionManager extends Mock implements SessionManager {}
++
++/// In-memory [JsonFileCache] (no `dart:io`, so nothing races against
++/// `pumpAndSettle`).
++class FakeJsonFileCache extends JsonFileCache {
++  FakeJsonFileCache() : super(() => throw UnimplementedError());
++
++  final entries = <String, CachedJson>{};
++
++  @override
++  Future<CachedJson?> read(String key) async => entries[key];
++
++  @override
++  Future<void> write(String key, Object? data, {DateTime? savedAt}) async =>
++      entries[key] = CachedJson(data, savedAt ?? DateTime.now());
++
++  @override
++  Future<void> deletePrefix(String prefix) async =>
++      entries.removeWhere((k, _) => k.startsWith(prefix));
++
++  @override
++  Future<void> clear() async => entries.clear();
++
++  @override
++  Future<int> sizeBytes() async => 0;
++}
++
++String _puuid(int i) => '00000000-0000-0000-0000-${i.toString().padLeft(12, '0')}';
++
++Account _account(int i, {bool needsLogin = false}) => Account(
++  puuid: _puuid(i),
++  gameName: 'Player$i',
++  tagLine: 'VN',
++  region: 'ap',
++  shard: 'ap',
++  needsLogin: needsLogin,
++);
++
++/// A tall, narrow surface so every section renders without scrolling.
++void _growSurface(WidgetTester tester) {
++  tester.view.physicalSize = const Size(480, 3200);
++  tester.view.devicePixelRatio = 1.0;
++  addTearDown(tester.view.reset);
++}
++
++void main() {
++  late Prefs prefs;
++  late FakeJsonFileCache fileCache;
++  late MockPvpApi api;
++  late MockSessionManager sessions;
++
++  setUp(() async {
++    prefs = await createTestPrefs();
++    fileCache = FakeJsonFileCache();
++    api = MockPvpApi();
++    when(() => api.platformStatus(any())).thenAnswer((_) async => <String, dynamic>{});
++    sessions = MockSessionManager();
++    when(() => sessions.events).thenAnswer((_) => const Stream.empty());
++    when(() => sessions.forget(any())).thenAnswer((_) async {});
++  });
++
++  GoRouter buildRouter() => GoRouter(
++    initialLocation: SettingsRoutes.root,
++    routes: [
++      GoRoute(path: SettingsRoutes.root, builder: (c, s) => const SettingsScreen()),
++      GoRoute(path: AuthRoutes.login, builder: (c, s) => const Scaffold(body: Text('LOGIN_STUB'))),
++    ],
++  );
++
++  /// Wraps [SettingsScreen] with every provider it needs faked out (no
++  /// platform channels, no network). [onContainer] captures the container
++  /// for tests that need to read provider state directly.
++  Widget harness({void Function(ProviderContainer)? onContainer}) => ProviderScope(
++    overrides: [
++      prefsProvider.overrideWithValue(prefs),
++      secureStoreProvider.overrideWithValue(MemorySecureStore()),
++      jsonFileCacheProvider.overrideWithValue(fileCache),
++      notificationServiceProvider.overrideWithValue(NotificationService(prefs: prefs)),
++      pvpApiProvider.overrideWithValue(api),
++      sessionManagerProvider.overrideWithValue(sessions),
++      packageInfoProvider.overrideWith(
++        (ref) async => PackageInfo(
++          appName: 'ValVN',
++          packageName: 'vn.valvn.app',
++          version: '1.2.3',
++          buildNumber: '42',
++        ),
++      ),
++      cacheSizeBytesProvider.overrideWith((ref) async => 5 * 1024 * 1024),
++      clearMediaCacheProvider.overrideWithValue(() async {}),
++    ],
++    child: Builder(
++      builder: (context) {
++        onContainer?.call(ProviderScope.containerOf(context));
++        return MaterialApp.router(routerConfig: buildRouter());
++      },
++    ),
++  );
++
++  testWidgets('renders every section header and the account list', (tester) async {
++    _growSurface(tester);
++    await prefs.setJson(PrefKeys.accounts, [_account(1).toJson(), _account(2).toJson()]);
++    await tester.pumpWidget(harness());
++    await tester.pumpAndSettle();
++
++    expect(find.text(AccountStrings.accountsHeader(2, 10)), findsOneWidget);
++    expect(find.text(SettingsStrings.optionsHeader), findsOneWidget);
++    expect(find.text(SettingsStrings.notificationsHeader), findsOneWidget);
++    expect(find.text(SettingsStrings.appearanceHeader), findsOneWidget);
++    expect(find.text(SettingsStrings.appHeader), findsOneWidget);
++    expect(find.text(SettingsStrings.aboutHeader), findsOneWidget);
++    expect(find.text('Player1#VN'), findsOneWidget);
++    expect(find.text('Player2#VN'), findsOneWidget);
++    expect(find.text(SettingsStrings.version('1.2.3')), findsOneWidget);
++  });
++
++  testWidgets('tapping + Thêm tài khoản navigates to /login', (tester) async {
++    _growSurface(tester);
++    await prefs.setJson(PrefKeys.accounts, [_account(1).toJson()]);
++    await tester.pumpWidget(harness());
++    await tester.pumpAndSettle();
++
++    await tester.tap(find.text(AccountStrings.addAccount(1, 10)));
++    await tester.pumpAndSettle();
++    expect(find.text('LOGIN_STUB'), findsOneWidget);
++  });
++
++  testWidgets('deleting an account asks for confirmation, then removes it', (tester) async {
++    _growSurface(tester);
++    await prefs.setJson(PrefKeys.accounts, [_account(1).toJson(), _account(2).toJson()]);
++    await tester.pumpWidget(harness());
++    await tester.pumpAndSettle();
++
++    await tester.tap(find.byIcon(Icons.delete_outline).first);
++    await tester.pumpAndSettle();
++    expect(find.text(AccountStrings.removeAccountConfirm('Player1#VN')), findsOneWidget);
++
++    // Cancelling keeps both accounts.
++    await tester.tap(find.text(CommonStrings.cancel));
++    await tester.pumpAndSettle();
++    expect(find.text('Player1#VN'), findsOneWidget);
++
++    await tester.tap(find.byIcon(Icons.delete_outline).first);
++    await tester.pumpAndSettle();
++    await tester.tap(find.text(CommonStrings.delete));
++    await tester.pumpAndSettle();
++
++    expect(find.text('Player1#VN'), findsNothing);
++    expect(find.text('Player2#VN'), findsOneWidget);
++  });
++
++  testWidgets('toggling an option switch persists to appSettingsProvider', (tester) async {
++    _growSurface(tester);
++    await prefs.setJson(PrefKeys.accounts, [_account(1).toJson()]);
++    late ProviderContainer container;
++    await tester.pumpWidget(harness(onContainer: (c) => container = c));
++    await tester.pumpAndSettle();
++
++    expect(container.read(appSettingsProvider).autoOpenLiveGame, isTrue);
++    await tester.tap(find.text(SettingsStrings.optionAutoOpenLiveGame));
++    await tester.pumpAndSettle();
++    expect(container.read(appSettingsProvider).autoOpenLiveGame, isFalse);
++  });
++
++  testWidgets('picking a theme persists it and updates the subtitle', (tester) async {
++    _growSurface(tester);
++    await prefs.setJson(PrefKeys.accounts, [_account(1).toJson()]);
++    late ProviderContainer container;
++    await tester.pumpWidget(harness(onContainer: (c) => container = c));
++    await tester.pumpAndSettle();
++
++    expect(find.text(SettingsStrings.themeDark), findsOneWidget);
++    await tester.tap(find.text(SettingsStrings.themeLabel));
++    await tester.pumpAndSettle();
++    await tester.tap(find.text(SettingsStrings.themeLight).last);
++    await tester.pumpAndSettle();
++
++    expect(container.read(appSettingsProvider).themeMode, ThemeMode.light);
++    expect(find.text(SettingsStrings.themeLight), findsOneWidget);
++  });
++
++  testWidgets('clearing the cache shows a confirmation snackbar', (tester) async {
++    _growSurface(tester);
++    await prefs.setJson(PrefKeys.accounts, [_account(1).toJson()]);
++    await tester.pumpWidget(harness());
++    await tester.pumpAndSettle();
++
++    await tester.tap(find.text(SettingsStrings.clearCache));
++    await tester.pumpAndSettle();
++    expect(find.text(SettingsStrings.cacheCleared('5,0 MB')), findsOneWidget);
++    // Let the snackbar's auto-dismiss timer run out before the test ends.
++    await tester.pump(const Duration(seconds: 5));
++  });
++
++  testWidgets('an empty account list shows the empty state', (tester) async {
++    _growSurface(tester);
++    await tester.pumpWidget(harness());
++    await tester.pumpAndSettle();
++
++    expect(find.text(AccountStrings.accountsHeader(0, 10)), findsOneWidget);
++    expect(find.text(CommonStrings.errorNoAccount), findsOneWidget);
++  });
++}
+diff --git a/test/features/skin_detail/skin_detail_sheet_test.dart b/test/features/skin_detail/skin_detail_sheet_test.dart
+new file mode 100644
+index 0000000..0f29168
+--- /dev/null
++++ b/test/features/skin_detail/skin_detail_sheet_test.dart
+@@ -0,0 +1,218 @@
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:material_ui/material_ui.dart';
++import 'package:mocktail/mocktail.dart';
++import 'package:valvn/core/accounts/account.dart';
++import 'package:valvn/core/accounts/account_providers.dart';
++import 'package:valvn/core/content/content_repository.dart';
++import 'package:valvn/core/domain/economy/economy.dart';
++import 'package:valvn/core/riot/pvp_api.dart';
++import 'package:valvn/core/storage/json_file_cache.dart';
++import 'package:valvn/core/storage/prefs.dart';
++import 'package:valvn/core/util/clock.dart';
++import 'package:valvn/features/skin_detail/skin_detail_sheet.dart';
++import 'package:valvn/features/skin_detail/skin_detail_strings.dart';
++import 'package:valvn/features/skin_detail/skin_video_view.dart';
++
++import '../../core/domain/economy/economy_fixtures.dart';
++import '../../helpers/test_prefs.dart';
++
++class MockPvpApi extends Mock implements PvpApi {}
++
++class MemoryJsonCache extends JsonFileCache {
++  MemoryJsonCache() : super(() => throw UnimplementedError());
++
++  final entries = <String, CachedJson>{};
++
++  @override
++  Future<CachedJson?> read(String key) async => entries[key];
++
++  @override
++  Future<void> write(String key, Object? data, {DateTime? savedAt}) async =>
++      entries[key] = CachedJson(data, savedAt ?? DateTime.now());
++}
++
++/// Fixed account list, bypassing [AccountRepository] / [SessionManager].
++class _FixedAccountsNotifier extends AccountsNotifier {
++  _FixedAccountsNotifier(this._fixed);
++
++  final List<Account> _fixed;
++
++  @override
++  List<Account> build() => _fixed;
++}
++
++final _t0 = DateTime(2026, 9, 28, 12);
++
++const _account = Account(
++  puuid: Fx.puuid,
++  gameName: 'Người Chơi',
++  tagLine: 'VN2',
++  region: 'ap',
++  shard: 'ap',
++);
++
++const _second = Account(
++  puuid: '11111111-1111-1111-1111-111111111111',
++  gameName: 'Bạn Thân',
++  tagLine: 'VN9',
++  region: 'ap',
++  shard: 'ap',
++);
++
++/// A screen with a button that opens the sheet, so `Navigator`/theming work
++/// the same way the real app opens it.
++class _Harness extends StatelessWidget {
++  const _Harness({required this.skinOrLevelUuid, this.mode = SkinDetailMode.store});
++
++  final String skinOrLevelUuid;
++  final SkinDetailMode mode;
++
++  @override
++  Widget build(BuildContext context) {
++    return Scaffold(
++      body: Center(
++        child: Builder(
++          builder: (context) => ElevatedButton(
++            onPressed: () => showSkinDetailSheet(
++              context,
++              skinOrLevelUuid: skinOrLevelUuid,
++              mode: mode,
++            ),
++            child: const Text('open'),
++          ),
++        ),
++      ),
++    );
++  }
++}
++
++Future<void> _settle(WidgetTester tester) async {
++  for (var i = 0; i < 6; i++) {
++    await tester.pump();
++  }
++}
++
++void main() {
++  testWidgets(
++    'shows render, tier price, chroma swatches, level chips and toggles '
++    'the wishlist',
++    (tester) async {
++      final prefs = await createTestPrefs();
++      await tester.pumpWidget(
++        ProviderScope(
++          overrides: [
++            pvpApiProvider.overrideWithValue(MockPvpApi()),
++            prefsProvider.overrideWithValue(prefs),
++            jsonFileCacheProvider.overrideWithValue(MemoryJsonCache()),
++            clockProvider.overrideWithValue(FixedClock(_t0)),
++            accountProvider.overrideWith((ref, puuid) => null),
++            activeAccountProvider.overrideWithValue(_account),
++            contentProvider.overrideWith((ref) async => economyContent()),
++          ],
++          child: const MaterialApp(
++            home: _Harness(skinOrLevelUuid: Fx.reaverVandal),
++          ),
++        ),
++      );
++      await _settle(tester);
++
++      await tester.tap(find.text('open'));
++      await _settle(tester);
++
++      expect(find.text('Vandal Reaver'), findsWidgets);
++      // Content-tier fallback estimate (Premium -> 1775 VP, "≈").
++      expect(find.textContaining('1.775'), findsOneWidget);
++
++      // 4 chromas, 4 levels.
++      expect(find.text(SkinDetailStrings.variants), findsOneWidget);
++      expect(find.text(SkinDetailStrings.upgrades), findsOneWidget);
++      expect(find.text('Cấp 1'), findsOneWidget);
++      expect(find.text('Cấp 4'), findsOneWidget);
++
++      // Wishlist toggle.
++      expect(find.text(SkinDetailStrings.addToWishlist), findsOneWidget);
++      await tester.tap(find.text(SkinDetailStrings.addToWishlist));
++      await _settle(tester);
++      expect(find.text(SkinDetailStrings.inWishlist), findsOneWidget);
++
++      await tester.pumpWidget(const SizedBox());
++    },
++  );
++
++  testWidgets('tapping a level with video opens the full-screen player', (
++    tester,
++  ) async {
++    final prefs = await createTestPrefs();
++    await tester.pumpWidget(
++      ProviderScope(
++        overrides: [
++          pvpApiProvider.overrideWithValue(MockPvpApi()),
++          prefsProvider.overrideWithValue(prefs),
++          jsonFileCacheProvider.overrideWithValue(MemoryJsonCache()),
++          clockProvider.overrideWithValue(FixedClock(_t0)),
++          accountProvider.overrideWith((ref, puuid) => null),
++          activeAccountProvider.overrideWithValue(_account),
++          contentProvider.overrideWith((ref) async => economyContent()),
++        ],
++        child: const MaterialApp(
++          home: _Harness(skinOrLevelUuid: Fx.reaverVandal),
++        ),
++      ),
++    );
++    await _settle(tester);
++    await tester.tap(find.text('open'));
++    await _settle(tester);
++
++    await tester.tap(find.text('Cấp 4'));
++    await tester.pump();
++
++    expect(find.byType(SkinVideoView), findsOneWidget);
++    expect(find.text(SkinDetailStrings.playVideo), findsOneWidget);
++
++    await tester.pumpWidget(const SizedBox());
++  });
++
++  testWidgets(
++    'shows "Có trong cửa hàng của" when another account has it in stock',
++    (tester) async {
++      final api = MockPvpApi();
++      when(
++        () => api.storefront(_second.puuid),
++      ).thenAnswer((_) async => economyFixture('storefront.json'));
++      final prefs = await createTestPrefs();
++      await tester.pumpWidget(
++        ProviderScope(
++          overrides: [
++            pvpApiProvider.overrideWithValue(api),
++            prefsProvider.overrideWithValue(prefs),
++            jsonFileCacheProvider.overrideWithValue(MemoryJsonCache()),
++            clockProvider.overrideWithValue(FixedClock(_t0)),
++            accountProvider.overrideWith((ref, puuid) => null),
++            activeAccountProvider.overrideWithValue(_account),
++            accountsProvider.overrideWith(
++              () => _FixedAccountsNotifier([_account, _second]),
++            ),
++            contentProvider.overrideWith((ref) async => economyContent()),
++          ],
++          child: const MaterialApp(
++            home: _Harness(
++              skinOrLevelUuid: Fx.reaverVandal,
++              mode: SkinDetailMode.catalog,
++            ),
++          ),
++        ),
++      );
++      await _settle(tester);
++      await tester.tap(find.text('open'));
++      await _settle(tester);
++
++      expect(
++        find.text(SkinDetailStrings.availableInStoreOf(_second.riotId)),
++        findsOneWidget,
++      );
++
++      await tester.pumpWidget(const SizedBox());
++    },
++  );
++}
+diff --git a/test/features/store/bundle_detail_screen_test.dart b/test/features/store/bundle_detail_screen_test.dart
+new file mode 100644
+index 0000000..74f5000
+--- /dev/null
++++ b/test/features/store/bundle_detail_screen_test.dart
+@@ -0,0 +1,109 @@
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:material_ui/material_ui.dart';
++import 'package:mocktail/mocktail.dart';
++import 'package:valvn/core/accounts/account.dart';
++import 'package:valvn/core/accounts/account_providers.dart';
++import 'package:valvn/core/content/content_repository.dart';
++import 'package:valvn/core/domain/economy/economy.dart';
++import 'package:valvn/core/riot/pvp_api.dart';
++import 'package:valvn/core/storage/json_file_cache.dart';
++import 'package:valvn/core/storage/prefs.dart';
++import 'package:valvn/core/util/clock.dart';
++import 'package:valvn/features/store/store_strings.dart';
++import 'package:valvn/features/store/ui/bundle_detail_screen.dart';
++
++import '../../core/domain/economy/economy_fixtures.dart';
++import '../../helpers/test_prefs.dart';
++
++class MockPvpApi extends Mock implements PvpApi {}
++
++class MemoryJsonCache extends JsonFileCache {
++  MemoryJsonCache() : super(() => throw UnimplementedError());
++
++  final entries = <String, CachedJson>{};
++
++  @override
++  Future<CachedJson?> read(String key) async => entries[key];
++
++  @override
++  Future<void> write(String key, Object? data, {DateTime? savedAt}) async =>
++      entries[key] = CachedJson(data, savedAt ?? DateTime.now());
++}
++
++final _t0 = DateTime(2026, 9, 28, 12);
++
++const _account = Account(
++  puuid: Fx.puuid,
++  gameName: 'Người Chơi',
++  tagLine: 'VN2',
++  region: 'ap',
++  shard: 'ap',
++);
++
++Widget _app({required MockPvpApi api, required Prefs prefs, String? id}) {
++  return ProviderScope(
++    overrides: [
++      pvpApiProvider.overrideWithValue(api),
++      prefsProvider.overrideWithValue(prefs),
++      jsonFileCacheProvider.overrideWithValue(MemoryJsonCache()),
++      clockProvider.overrideWithValue(FixedClock(_t0)),
++      accountProvider.overrideWith((ref, puuid) => null),
++      activeAccountProvider.overrideWithValue(_account),
++      contentProvider.overrideWith((ref) async => economyContent()),
++    ],
++    child: MaterialApp(
++      home: BundleDetailScreen(bundleId: id ?? Fx.bundleId),
++    ),
++  );
++}
++
++Future<void> _settle(WidgetTester tester) async {
++  for (var i = 0; i < 6; i++) {
++    await tester.pump();
++  }
++}
++
++void main() {
++  testWidgets('shows the bundle name, items and price summary', (
++    tester,
++  ) async {
++    final api = MockPvpApi();
++    when(
++      () => api.storefront(Fx.puuid),
++    ).thenAnswer((_) async => economyFixture('storefront.json'));
++    final prefs = await createTestPrefs();
++    await tester.pumpWidget(_app(api: api, prefs: prefs));
++    await _settle(tester);
++
++    expect(find.text('Neo Frontier'), findsWidgets);
++
++    // The price summary sits below the banner; scroll it into view.
++    await tester.scrollUntilVisible(
++      find.text(StoreStrings.bundlePriceLabel),
++      300,
++      scrollable: find.byType(Scrollable).first,
++    );
++    await tester.pump();
++    expect(find.text(StoreStrings.bundlePriceLabel), findsOneWidget);
++    expect(find.text(StoreStrings.bundleBuySeparateLabel), findsOneWidget);
++    expect(find.text(StoreStrings.bundleSavingsLabel), findsOneWidget);
++
++    await tester.pumpWidget(const SizedBox());
++  });
++
++  testWidgets('shows an empty state for a bundle id that is not in the '
++      'current storefront', (tester) async {
++    final api = MockPvpApi();
++    when(
++      () => api.storefront(Fx.puuid),
++    ).thenAnswer((_) async => economyFixture('storefront.json'));
++    final prefs = await createTestPrefs();
++    await tester.pumpWidget(_app(api: api, prefs: prefs, id: 'not-a-bundle'));
++    await _settle(tester);
++
++    expect(find.text(StoreStrings.bundleNotFound), findsOneWidget);
++
++    await tester.pumpWidget(const SizedBox());
++  });
++}
+diff --git a/test/features/store/store_screen_test.dart b/test/features/store/store_screen_test.dart
+new file mode 100644
+index 0000000..16eeb70
+--- /dev/null
++++ b/test/features/store/store_screen_test.dart
+@@ -0,0 +1,249 @@
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:material_ui/material_ui.dart';
++import 'package:mocktail/mocktail.dart';
++import 'package:valvn/core/accounts/account.dart';
++import 'package:valvn/core/accounts/account_providers.dart';
++import 'package:valvn/core/content/content_repository.dart';
++import 'package:valvn/core/domain/economy/economy.dart';
++import 'package:valvn/core/network/riot_exception.dart';
++import 'package:valvn/core/notifications/notification_service.dart';
++import 'package:valvn/core/riot/pvp_api.dart';
++import 'package:valvn/core/settings/app_settings.dart';
++import 'package:valvn/core/storage/json_file_cache.dart';
++import 'package:valvn/core/storage/prefs.dart';
++import 'package:valvn/core/util/clock.dart';
++import 'package:valvn/features/store/store_strings.dart';
++import 'package:valvn/features/store/ui/store_screen.dart';
++
++import '../../core/domain/economy/economy_fixtures.dart';
++import '../../helpers/test_prefs.dart';
++
++class MockPvpApi extends Mock implements PvpApi {}
++
++/// In-memory [JsonFileCache] (no dart:io; safe in widget tests).
++class MemoryJsonCache extends JsonFileCache {
++  MemoryJsonCache() : super(() => throw UnimplementedError());
++
++  final entries = <String, CachedJson>{};
++
++  @override
++  Future<CachedJson?> read(String key) async => entries[key];
++
++  @override
++  Future<void> write(String key, Object? data, {DateTime? savedAt}) async =>
++      entries[key] = CachedJson(data, savedAt ?? DateTime.now());
++}
++
++final _t0 = DateTime(2026, 9, 28, 12);
++
++const _account = Account(
++  puuid: Fx.puuid,
++  gameName: 'Người Chơi',
++  tagLine: 'VN2',
++  region: 'ap',
++  shard: 'ap',
++);
++
++Future<MockPvpApi> _mockApi() async {
++  final api = MockPvpApi();
++  when(
++    () => api.storefront(Fx.puuid),
++  ).thenAnswer((_) async => economyFixture('storefront.json'));
++  when(
++    () => api.wallet(Fx.puuid),
++  ).thenAnswer((_) async => economyFixture('wallet.json'));
++  when(
++    () => api.platformStatus(any()),
++  ).thenThrow(const TransientException(reason: 'unused-in-test'));
++  return api;
++}
++
++Widget _app({
++  required MockPvpApi api,
++  required Prefs prefs,
++  required MemoryJsonCache cache,
++}) {
++  return ProviderScope(
++    overrides: [
++      pvpApiProvider.overrideWithValue(api),
++      prefsProvider.overrideWithValue(prefs),
++      jsonFileCacheProvider.overrideWithValue(cache),
++      clockProvider.overrideWithValue(FixedClock(_t0)),
++      accountProvider.overrideWith((ref, puuid) => null),
++      activeAccountProvider.overrideWithValue(_account),
++      contentProvider.overrideWith((ref) async => economyContent()),
++    ],
++    child: const MaterialApp(home: StoreScreen()),
++  );
++}
++
++/// Settles the pending storefront / wallet / content futures without using
++/// `pumpAndSettle` (the store screen renders [CountdownText], whose
++/// `Timer.periodic` never lets `pumpAndSettle` finish).
++Future<void> _settle(WidgetTester tester) async {
++  for (var i = 0; i < 6; i++) {
++    await tester.pump();
++  }
++}
++
++/// Unmounts the tree so every `Timer` (CountdownText, provider refresh
++/// timers) is cancelled before the test's fake-async zone closes.
++Future<void> _unmount(WidgetTester tester) =>
++    tester.pumpWidget(const SizedBox());
++
++void main() {
++  testWidgets('renders the daily segment with wallet pill and prices', (
++    tester,
++  ) async {
++    final api = await _mockApi();
++    final prefs = await createTestPrefs();
++    final cache = MemoryJsonCache();
++    await tester.pumpWidget(_app(api: api, prefs: prefs, cache: cache));
++    await _settle(tester);
++
++    // Header: title, wallet pill (VP/KC/RP from wallet.json: 1450/11200/60).
++    expect(find.text(StoreStrings.title.toUpperCase()), findsOneWidget);
++    expect(find.textContaining('1.450'), findsOneWidget);
++    expect(find.textContaining('11.200'), findsOneWidget);
++    expect(find.textContaining('60'), findsWidgets);
++
++    // Segmented control shows all four segments (BonusStore is present).
++    expect(find.text(StoreStrings.segmentDaily), findsOneWidget);
++    expect(find.text(StoreStrings.segmentNightMarket), findsOneWidget);
++    expect(find.text(StoreStrings.segmentAccessories), findsOneWidget);
++    expect(find.text(StoreStrings.segmentBundles), findsOneWidget);
++
++    // 4 daily cards with a recognizable skin name and a VP price.
++    expect(find.textContaining('Ares Sentinels of Light'), findsOneWidget);
++    expect(find.textContaining('2.175'), findsOneWidget);
++
++    await _unmount(tester);
++  });
++
++  testWidgets('switching to the Night Market segment shows discounted cards '
++      'and marks it seen', (tester) async {
++    final api = await _mockApi();
++    final prefs = await createTestPrefs();
++    final cache = MemoryJsonCache();
++    await tester.pumpWidget(_app(api: api, prefs: prefs, cache: cache));
++    await _settle(tester);
++
++    await tester.tap(find.text(StoreStrings.segmentNightMarket));
++    await _settle(tester);
++
++    expect(find.textContaining('-'), findsWidgets); // discount badge(s)
++    expect(find.text(StoreStrings.nightMarketNote), findsOneWidget);
++
++    await _unmount(tester);
++  });
++
++  testWidgets('switching to the accessories segment shows KC rows', (
++    tester,
++  ) async {
++    final api = await _mockApi();
++    final prefs = await createTestPrefs();
++    final cache = MemoryJsonCache();
++    await tester.pumpWidget(_app(api: api, prefs: prefs, cache: cache));
++    await _settle(tester);
++
++    await tester.tap(find.text(StoreStrings.segmentAccessories));
++    await _settle(tester);
++
++    expect(find.byType(ListTile), findsWidgets);
++
++    await _unmount(tester);
++  });
++
++  testWidgets('switching to the bundles segment shows the bundle banner', (
++    tester,
++  ) async {
++    final api = await _mockApi();
++    final prefs = await createTestPrefs();
++    final cache = MemoryJsonCache();
++    await tester.pumpWidget(_app(api: api, prefs: prefs, cache: cache));
++    await _settle(tester);
++
++    await tester.tap(find.text(StoreStrings.segmentBundles));
++    await _settle(tester);
++
++    expect(find.textContaining('Neo Frontier'), findsOneWidget);
++
++    await _unmount(tester);
++  });
++
++  testWidgets('shows the no-account empty state without any account', (
++    tester,
++  ) async {
++    final prefs = await createTestPrefs();
++    await tester.pumpWidget(
++      ProviderScope(
++        overrides: [
++          prefsProvider.overrideWithValue(prefs),
++          clockProvider.overrideWithValue(FixedClock(_t0)),
++        ],
++        child: const MaterialApp(home: StoreScreen()),
++      ),
++    );
++    await tester.pump();
++    expect(find.text(StoreStrings.title.toUpperCase()), findsOneWidget);
++
++    await _unmount(tester);
++  });
++
++  testWidgets(
++    'schedules the store-reset notification when the setting is enabled',
++    (tester) async {
++      final api = await _mockApi();
++      final prefs = await createTestPrefs();
++      await prefs.setJson(
++        PrefKeys.appSettings,
++        const AppSettings(storeResetNotifications: true).toJson(),
++      );
++      final cache = MemoryJsonCache();
++      final calls = <int>[];
++      await tester.pumpWidget(
++        ProviderScope(
++          overrides: [
++            pvpApiProvider.overrideWithValue(api),
++            prefsProvider.overrideWithValue(prefs),
++            jsonFileCacheProvider.overrideWithValue(cache),
++            clockProvider.overrideWithValue(FixedClock(_t0)),
++            accountProvider.overrideWith((ref, puuid) => null),
++            activeAccountProvider.overrideWithValue(_account),
++            contentProvider.overrideWith((ref) async => economyContent()),
++            notificationServiceProvider.overrideWithValue(
++              _RecordingNotificationService(calls),
++            ),
++          ],
++          child: const MaterialApp(home: StoreScreen()),
++        ),
++      );
++      await _settle(tester);
++
++      expect(calls, contains(NotificationIds.storeReset(Fx.puuid)));
++
++      await _unmount(tester);
++    },
++  );
++}
++
++class _RecordingNotificationService extends NotificationService {
++  _RecordingNotificationService(this.ids);
++
++  final List<int> ids;
++
++  @override
++  Future<void> scheduleAt({
++    required int id,
++    required DateTime at,
++    required String title,
++    required String body,
++    required NotificationChannel channel,
++    String? payload,
++    String? accountPuuid,
++    String? tag,
++  }) async {
++    ids.add(id);
++  }
++}
