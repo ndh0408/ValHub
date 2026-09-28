@@ -1,0 +1,21 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "c5de005c-4bdc-26a7-a47d-c295eaaae9d8",
+   "displayName": "Classic",
+   "category": "EEquippableCategory::Sidearm",
+   "displayIcon": "https://media.valorant-api.com/gamemodeequippables/c5de005c-4bdc-26a7-a47d-c295eaaae9d8/displayicon.png",
+   "killStreamIcon": "https://media.valorant-api.com/gamemodeequippables/c5de005c-4bdc-26a7-a47d-c295eaaae9d8/killstreamicon.png",
+   "assetPath": "ShooterGame/Content/GameModes/Equippables/BasePistolNPEPrimaryAsset"
+  },
+  {
+   "uuid": "3de32920-4a8f-0499-7740-648a5bf95470",
+   "displayName": "Súng Hoàng Kim",
+   "category": "EEquippableCategory::Sidearm",
+   "displayIcon": "https://media.valorant-api.com/gamemodeequippables/3de32920-4a8f-0499-7740-648a5bf95470/displayicon.png",
+   "killStreamIcon": "https://media.valorant-api.com/gamemodeequippables/3de32920-4a8f-0499-7740-648a5bf95470/killstreamicon.png",
+   "assetPath": "ShooterGame/Content/GameModes/Equippables/GoldenGun/SpikeRush_GoldenGun_PrimaryAsset"
+  }
+ ]
+}

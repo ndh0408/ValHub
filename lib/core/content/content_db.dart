@@ -38,6 +38,9 @@ abstract final class ContentEndpoints {
   static const currencies = 'currencies';
   static const contentTiers = 'contenttiers';
   static const ceremonies = 'ceremonies';
+  static const gear = 'gear';
+  static const events = 'events';
+  static const equippables = 'equippables';
 }
 
 /// A resolved store / reward item of any type (bundles, accessory store,
@@ -104,6 +107,9 @@ class ContentDb {
     required List<Currency> currencies,
     required List<ContentTier> contentTiers,
     required List<Ceremony> ceremonies,
+    required List<Gear> gear,
+    required List<GameEvent> events,
+    required List<Weapon> equippables,
   }) : weapons = List<Weapon>.unmodifiable(
          <Weapon>[...weapons]..sort((a, b) {
            final c = a.category.index.compareTo(b.category.index);
@@ -148,7 +154,10 @@ class ContentDb {
                : contentTiers),
          ]..sort((a, b) => a.rank.compareTo(b.rank)),
        ),
-       ceremonies = List.unmodifiable(ceremonies) {
+       ceremonies = List.unmodifiable(ceremonies),
+       gear = List.unmodifiable(gear),
+       events = List.unmodifiable(events),
+       equippables = List.unmodifiable(equippables) {
     _index();
   }
 
@@ -177,6 +186,9 @@ class ContentDb {
     currencies: const [],
     contentTiers: const [],
     ceremonies: const [],
+    gear: const [],
+    events: const [],
+    equippables: const [],
   );
 
   /// Parses raw valorant-api responses keyed by [ContentEndpoints] (each an
@@ -228,6 +240,9 @@ class ContentDb {
       currencies: parse(ContentEndpoints.currencies, Currency.fromJson),
       contentTiers: parse(ContentEndpoints.contentTiers, ContentTier.fromJson),
       ceremonies: parse(ContentEndpoints.ceremonies, Ceremony.fromJson),
+      gear: parse(ContentEndpoints.gear, Gear.fromJson),
+      events: parse(ContentEndpoints.events, GameEvent.fromJson),
+      equippables: parse(ContentEndpoints.equippables, Weapon.fromJson),
     );
   }
 
@@ -267,6 +282,13 @@ class ContentDb {
   final List<ContentTier> contentTiers;
   final List<Ceremony> ceremonies;
 
+  /// Armor (`/v1/gear`).
+  final List<Gear> gear;
+  final List<GameEvent> events;
+
+  /// Game-mode weapons not in `/v1/weapons` (Golden Gun, NPE Classic).
+  final List<Weapon> equippables;
+
   bool get isEmpty => weapons.isEmpty;
 
   // ------------------------------------------------------------------ indices
@@ -299,6 +321,9 @@ class ContentDb {
   final Map<String, Currency> _currencies = {};
   final Map<String, ContentTier> _contentTiers = {};
   final Map<String, Ceremony> _ceremonies = {};
+  final Map<String, Gear> _gear = {};
+  final Map<String, GameEvent> _events = {};
+  final Map<String, Weapon> _equippables = {};
 
   void _index() {
     for (final w in weapons) {
@@ -388,6 +413,15 @@ class ContentDb {
     }
     for (final c in ceremonies) {
       _ceremonies[c.key.toLowerCase()] = c;
+    }
+    for (final g in gear) {
+      _gear[g.uuid] = g;
+    }
+    for (final e in events) {
+      _events[e.uuid] = e;
+    }
+    for (final e in equippables) {
+      _equippables[e.uuid] = e;
     }
   }
 
@@ -577,6 +611,16 @@ class ContentDb {
     }
     return null;
   }
+
+  /// Armor by uuid (match `playerEconomy.armor`).
+  Gear? gearItem(String uuid) => _gear[_k(uuid)];
+
+  GameEvent? event(String uuid) => _events[_k(uuid)];
+
+  /// Weapon or game-mode equippable (kill feed `damageItem`, which arrives
+  /// UPPERCASE; SUMMARY §9.8).
+  Weapon? weaponOrEquippable(String uuid) =>
+      _weapons[_k(uuid)] ?? _equippables[_k(uuid)];
 
   // ------------------------------------------------------------ agents / maps
 

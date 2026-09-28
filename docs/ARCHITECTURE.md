@@ -301,7 +301,7 @@ descriptions), `Buddy`/`BuddyLevel`, `Spray` (`image`, `animatedImage`), `Player
 `ContentTier` (`shortName`, `fallbackPrice`, `highlightColor`), `Currency` (`label`,
 `fullLabel`), `Agent` (`role.label`, portraits, `abilities`, `ability(slot)`, `isStarter`),
 `GameMap` (`mapUrl`, `splash`, `listViewIcon`), `GameQueue` (`label`), `GameMode`,
-`Ceremony`, `CompetitiveTierTable`/`CompetitiveTier` (`displayName` "Kim Cương 1",
+`Ceremony`, `Gear`, `GameEvent`, `CompetitiveTierTable`/`CompetitiveTier` (`displayName` "Kim Cương 1",
 `isUnranked`, icons, colors), `Season` (`isAct`, `title`, times), `CompetitiveSeason`
 (`borders`), `Contract` (`relation`, `relationUuid`, `chapters`, `flatLevels`, `totalXp`,
 `xpForNextLevel(level)`), `ContractReward` (`type.label`, `type.itemTypeId`), `Mission`.
@@ -313,7 +313,9 @@ descriptions), `Buddy`/`BuddyLevel`, `Spray` (`image`, `animatedImage`), `Player
 `item(itemTypeId, itemId) → ContentItemRef(name, typeLabel, image, contentTierUuid)`,
 `agent`, `mapByUrl(mapId)`, `queue`, `queueName(queueId)` (API → VF §8.9 fallback →
 raw id; handles `console_*` and `""`), `queueShortName`, `gameModeByPath(modeId)`,
-`ceremony('CeremonyAce')`, `tierTableForSeason(seasonId)` (SUMMARY §7.4; unknown act →
+`ceremony('CeremonyAce')`, `gearItem(armorId)`, `event(uuid)`,
+`weaponOrEquippable(damageItem)` (kill feed; includes Golden Gun / NPE Classic),
+`tierTableForSeason(seasonId)` (SUMMARY §7.4; unknown act →
 newest table), `tier(n, seasonUuid:)`, `season`, `competitiveSeason`, `acts`,
 `currentAct(now)`, `episodeOf(act)`, `actTitle(act)`, `contract`, `currentBattlePass(now)`,
 `mission`, `rewardSource(itemUuid)` / `rewardSourceForSkin(skin)` → `RewardSource.label`

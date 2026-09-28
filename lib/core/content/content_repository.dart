@@ -71,6 +71,9 @@ class ContentRepository {
     ContentEndpoints.currencies: '/currencies',
     ContentEndpoints.contentTiers: '/contenttiers',
     ContentEndpoints.ceremonies: '/ceremonies',
+    ContentEndpoints.gear: '/gear',
+    ContentEndpoints.events: '/events',
+    ContentEndpoints.equippables: '/gamemodes/equippables',
   };
 
   static String cacheKey(String? manifestId, String language) =>

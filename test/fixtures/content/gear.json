@@ -1,0 +1,105 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "822bcab2-40a2-324e-c137-e09195ad7692",
+   "displayName": "Giáp Hạng Nặng",
+   "description": "Hấp thụ 66% sát thương nhận vào. Vỡ sau khi hấp thụ 50 sát thương.",
+   "descriptions": [
+    "Hấp thụ 66% sát thương nhận vào. Vỡ sau khi hấp thụ 50 sát thương."
+   ],
+   "details": [
+    {
+     "name": "GIẢM SÁT THƯƠNG",
+     "value": "Một phần"
+    },
+    {
+     "name": "SÁT THƯƠNG ĐÃ HẤP THỤ",
+     "value": "66%"
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gear/822bcab2-40a2-324e-c137-e09195ad7692/displayicon.png",
+   "assetPath": "ShooterGame/Content/Gear/HeavyArmor_PrimaryAsset",
+   "shopData": {
+    "cost": 1000,
+    "category": "Armor",
+    "shopOrderPriority": 0,
+    "categoryText": "Khiên",
+    "gridPosition": null,
+    "canBeTrashed": false,
+    "image": null,
+    "newImage": "https://media.valorant-api.com/gear/822bcab2-40a2-324e-c137-e09195ad7692/shop/newimage.png",
+    "newImage2": null,
+    "assetPath": "ShooterGame/Content/Gear/HeavyArmorPurchasable"
+   }
+  },
+  {
+   "uuid": "4dec83d5-4902-9ab3-bed6-a7a390761157",
+   "displayName": "Giáp Hạng Nhẹ",
+   "description": "Hấp thụ 66% sát thương nhận vào. Vỡ sau khi hấp thụ 25 sát thương.",
+   "descriptions": [
+    "Hấp thụ 66% sát thương nhận vào. Vỡ sau khi hấp thụ 25 sát thương."
+   ],
+   "details": [
+    {
+     "name": "GIẢM SÁT THƯƠNG",
+     "value": "Một phần"
+    },
+    {
+     "name": "SÁT THƯƠNG ĐÃ HẤP THỤ",
+     "value": "66%"
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gear/4dec83d5-4902-9ab3-bed6-a7a390761157/displayicon.png",
+   "assetPath": "ShooterGame/Content/Gear/LightArmor_PrimaryAsset",
+   "shopData": {
+    "cost": 400,
+    "category": "Armor",
+    "shopOrderPriority": 0,
+    "categoryText": "Khiên",
+    "gridPosition": null,
+    "canBeTrashed": false,
+    "image": null,
+    "newImage": "https://media.valorant-api.com/gear/4dec83d5-4902-9ab3-bed6-a7a390761157/shop/newimage.png",
+    "newImage2": null,
+    "assetPath": "ShooterGame/Content/Gear/LightArmorPurchasable"
+   }
+  },
+  {
+   "uuid": "b1b9086d-41bd-a516-5d29-e3b34a6f1644",
+   "displayName": "Khiên Hồi Phục",
+   "description": "Hấp thụ 100% sát thương nhận vào. Hồi lại sau khi hấp thụ sát thương. Tổng lượng hồi phục có giá trị là 50.",
+   "descriptions": [
+    "Hấp thụ 100% sát thương nhận vào. Hồi lại sau khi hấp thụ sát thương. Tổng lượng hồi phục có giá trị là 50."
+   ],
+   "details": [
+    {
+     "name": "GIẢM SÁT THƯƠNG",
+     "value": "Toàn bộ"
+    },
+    {
+     "name": "SÁT THƯƠNG ĐÃ HẤP THỤ",
+     "value": "100%"
+    },
+    {
+     "name": "LƯỢNG HỒI PHỤC",
+     "value": "50"
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gear/b1b9086d-41bd-a516-5d29-e3b34a6f1644/displayicon.png",
+   "assetPath": "ShooterGame/Content/Gear/PlasmaArmor/PlasmaArmor_PrimaryAsset",
+   "shopData": {
+    "cost": 650,
+    "category": "Armor",
+    "shopOrderPriority": 0,
+    "categoryText": "Khiên",
+    "gridPosition": null,
+    "canBeTrashed": false,
+    "image": null,
+    "newImage": "https://media.valorant-api.com/gear/b1b9086d-41bd-a516-5d29-e3b34a6f1644/shop/newimage.png",
+    "newImage2": null,
+    "assetPath": "ShooterGame/Content/Gear/PlasmaArmor/PlasmaArmorPurchasable"
+   }
+  }
+ ]
+}

@@ -1,0 +1,29 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "96682481-4f7b-6322-18bb-f1a76f91a35f",
+   "displayName": "Champions",
+   "shortDisplayName": "BattlePass Champions",
+   "startTime": "2022-08-23T14:00:00Z",
+   "endTime": "2022-09-21T21:00:00Z",
+   "assetPath": "ShooterGame/Content/Events/2022Champions_EventPass/Event_Champions_DataAssetV2"
+  },
+  {
+   "uuid": "024d36a7-46e3-8a29-30c6-09a7fb81bebe",
+   "displayName": "Vé Sự Kiện Mừng Tết Nguyên Đán",
+   "shortDisplayName": "TẾT 2022",
+   "startTime": "2022-02-01T12:00:00Z",
+   "endTime": "2022-02-16T22:00:00Z",
+   "assetPath": "ShooterGame/Content/Events/2022LNY_Event_Pass/Event_2022LNY_DataAssetV2"
+  },
+  {
+   "uuid": "700c7584-43b8-3e48-bde7-fa88f33da72f",
+   "displayName": "BattlePass Hồi Tưởng 2022",
+   "shortDisplayName": "Hồi Tưởng",
+   "startTime": "2022-12-14T14:00:00Z",
+   "endTime": "2023-01-05T00:00:00Z",
+   "assetPath": "ShooterGame/Content/Events/2022Recall_EventPass/Event_Recall_DataAsset"
+  }
+ ]
+}

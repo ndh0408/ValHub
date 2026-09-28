@@ -258,6 +258,22 @@ void main() {
     });
   });
 
+  test('gear, events and game-mode equippables', () {
+    expect(
+      db.gearItem('822BCAB2-40A2-324E-C137-E09195AD7692')!.displayName,
+      'Giáp Hạng Nặng',
+    );
+    expect(db.gearItem('822bcab2-40a2-324e-c137-e09195ad7692')!.cost, 1000);
+    expect(db.events, hasLength(3));
+    expect(
+      db
+          .weaponOrEquippable('C5DE005C-4BDC-26A7-A47D-C295EAAAE9D8')!
+          .displayName,
+      'Classic',
+    );
+    expect(db.weaponOrEquippable(_vandal)!.displayName, 'Vandal');
+  });
+
   test('missions', () {
     final m = db.missions.first;
     expect(m.isWeekly, isTrue);

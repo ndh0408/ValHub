@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../l10n/content_strings.dart';
 import '../../riot/riot_ids.dart';
+import '../../util/format.dart';
 import '../../util/json.dart';
 import 'weapon_models.dart' show cleanText;
 
@@ -324,4 +325,77 @@ class Ceremony {
   final String uuid;
   final String displayName;
   final String key;
+}
+
+/// `/v1/gear` (armor; match `playerEconomy.armor`).
+@immutable
+class Gear {
+  const Gear({
+    required this.uuid,
+    required this.displayName,
+    this.description,
+    this.displayIcon,
+    this.cost,
+  });
+
+  static Gear? fromJson(Object? json) {
+    final m = asMap(json);
+    final uuid = lowerUuid(m?['uuid']);
+    if (m == null || uuid == null) return null;
+    return Gear(
+      uuid: uuid,
+      displayName: cleanText(m['displayName']) ?? '',
+      description: cleanText(m['description']),
+      displayIcon: asNonEmptyString(m['displayIcon']),
+      cost: asInt(pick(m, ['shopData', 'cost'])),
+    );
+  }
+
+  final String uuid;
+  final String displayName;
+  final String? description;
+  final String? displayIcon;
+  final int? cost;
+}
+
+/// `/v1/events` (event passes point here via `relationUuid`).
+@immutable
+class GameEvent {
+  const GameEvent({
+    required this.uuid,
+    required this.displayName,
+    this.shortDisplayName,
+    this.startTime,
+    this.endTime,
+  });
+
+  static GameEvent? fromJson(Object? json) {
+    final m = asMap(json);
+    final uuid = lowerUuid(m?['uuid']);
+    if (m == null || uuid == null) return null;
+    String? text(String key) {
+      final t = cleanText(m[key]);
+      return isRawLocKey(t) ? null : t;
+    }
+
+    return GameEvent(
+      uuid: uuid,
+      displayName: text('displayName') ?? '',
+      shortDisplayName: text('shortDisplayName'),
+      startTime: asDateTime(m['startTime']),
+      endTime: asDateTime(m['endTime']),
+    );
+  }
+
+  final String uuid;
+  final String displayName;
+  final String? shortDisplayName;
+  final DateTime? startTime;
+  final DateTime? endTime;
+
+  bool isActiveAt(DateTime now) {
+    final s = startTime;
+    final e = endTime;
+    return s != null && e != null && !now.isBefore(s) && now.isBefore(e);
+  }
 }

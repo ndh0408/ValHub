@@ -134,7 +134,16 @@ class SessionManager {
     if (cached != null && !cached.isExpiringSoon(_clock.now())) {
       return _withCurrentVersion(cached);
     }
-    return _singleFlight(id, failedAccessToken: null);
+    try {
+      return await _singleFlight(id, failedAccessToken: null);
+    } on TransientException {
+      // Early refresh failed transiently: keep using the old token while it
+      // is still valid (it has < 5 min left).
+      if (cached != null && _clock.now().isBefore(cached.expiresAt)) {
+        return _withCurrentVersion(cached);
+      }
+      rethrow;
+    }
   }
 
   /// Forces a re-auth after the server rejected [failedAccessToken]
