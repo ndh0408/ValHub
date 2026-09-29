@@ -360,7 +360,10 @@ class _HeroChip extends StatelessWidget {
         // A dark base keeps the result chip legible over bright map art.
         color: c == null
             ? Colors.black.withValues(alpha: 0.35)
-            : Color.alphaBlend(c.withValues(alpha: 0.28), const Color(0xB3000000)),
+            : Color.alphaBlend(
+                c.withValues(alpha: 0.28),
+                const Color(0xB3000000),
+              ),
         borderRadius: BorderRadius.circular(ValRadius.pill),
         border: c == null ? null : Border.all(color: c.withValues(alpha: 0.6)),
       ),
