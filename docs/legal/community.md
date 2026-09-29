@@ -15,7 +15,7 @@ Cộng đồng ValVN là nơi người chơi VALORANT khoe cửa hàng, bàn chu
 
 ## 2. Nội dung không được phép
 
-- Nội dung vi phạm pháp luật Việt Nam, xuyên tạc, gây phương hại đến an ninh quốc gia, trật tự an toàn xã hội hoặc thuần phong mỹ tục.
+- Nội dung vi phạm pháp luật áp dụng (pháp luật Việt Nam và pháp luật nơi bạn sống), kích động bạo lực hay thù ghét, gây phương hại đến an toàn của người khác hoặc trật tự an toàn xã hội.
 - Nội dung khiêu dâm, gợi dục, đặc biệt là liên quan đến trẻ em.
 - Hình ảnh bạo lực, máu me gây sốc, tự hại hoặc cổ vũ hành vi nguy hiểm.
 - Thông tin sai sự thật có chủ đích, tin giả, lừa đảo, mạo danh sự kiện tặng quà hay "hack VP miễn phí".

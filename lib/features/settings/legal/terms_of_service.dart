@@ -66,12 +66,15 @@ const termsOfService = LegalDocument(
       LegalList([
         LegalItem(
           'Bạn phải đủ điều kiện sở hữu và sử dụng Tài khoản Riot theo điều '
-          'khoản của Riot Games, và từ đủ 13 tuổi trở lên.',
+          'khoản của Riot Games, và từ đủ 13 tuổi trở lên (hoặc độ tuổi cao hơn '
+          'mà luật nơi bạn sống yêu cầu, ví dụ 16 tuổi ở một số nước Liên minh '
+          'châu Âu).',
         ),
         LegalItem(
-          'Nếu bạn dưới 16 tuổi, bạn chỉ được sử dụng Ứng dụng khi cha, mẹ '
-          'hoặc người giám hộ hợp pháp đã đọc, đồng ý với Điều khoản này và '
-          'Chính sách quyền riêng tư, đồng thời giám sát việc sử dụng của bạn.',
+          'Nếu bạn chưa đủ tuổi tự đồng ý theo luật nơi bạn sống (16 tuổi ở '
+          'một số nơi), bạn chỉ được sử dụng Ứng dụng khi cha, mẹ hoặc người '
+          'giám hộ hợp pháp đã đọc, đồng ý với Điều khoản này và Chính sách '
+          'quyền riêng tư, đồng thời giám sát việc sử dụng của bạn.',
         ),
         LegalItem(
           'Bạn không thuộc đối tượng bị pháp luật hiện hành cấm sử dụng dịch vụ '
@@ -208,7 +211,7 @@ const termsOfService = LegalDocument(
         ),
         LegalItem(
           'Nội dung của bạn phải tuân thủ Tiêu chuẩn cộng đồng và pháp luật. '
-          'Nghiêm cấm nội dung vi phạm pháp luật Việt Nam, xúc phạm, quấy rối, '
+          'Nghiêm cấm nội dung vi phạm pháp luật áp dụng, xúc phạm, quấy rối, '
           'thù ghét, khiêu dâm, bạo lực, lừa đảo, spam, quảng cáo trái phép, '
           'mua bán tài khoản, dịch vụ cày thuê hoặc phần mềm gian lận, và nội '
           'dung tiết lộ thông tin cá nhân của người khác.',
@@ -280,7 +283,8 @@ const termsOfService = LegalDocument(
           lead: 'valorant-api.com:',
         ),
         LegalItem(
-          'hạ tầng lưu trữ và vận hành máy chủ cộng đồng của ValVN.',
+          'mạng chuyển tiếp (Cloudflare Tunnel) cho lưu lượng tới máy chủ '
+          'cộng đồng do chúng tôi tự vận hành.',
           lead: 'Cloudflare:',
         ),
         LegalItem(
@@ -335,9 +339,9 @@ const termsOfService = LegalDocument(
         'với mọi khiếu nại liên quan đến Ứng dụng, trong phạm vi pháp luật cho '
         'phép, không vượt quá số tiền bạn đã trả trực tiếp cho chúng tôi để sử '
         'dụng Ứng dụng trong 12 tháng trước sự kiện phát sinh khiếu nại (nếu '
-        'có). Điều khoản này không loại trừ trách nhiệm mà pháp luật Việt Nam '
-        'không cho phép loại trừ, bao gồm quyền của người tiêu dùng theo Luật '
-        'Bảo vệ quyền lợi người tiêu dùng.',
+        'có). Điều khoản này không loại trừ trách nhiệm mà pháp luật áp dụng '
+        'không cho phép loại trừ, bao gồm quyền của người tiêu dùng theo pháp '
+        'luật Việt Nam hoặc pháp luật nơi bạn cư trú.',
       ),
     ]),
     LegalSection('Trách nhiệm bồi hoàn', [
@@ -392,7 +396,9 @@ const termsOfService = LegalDocument(
         'để cùng giải quyết. Nếu không thể giải quyết trong vòng 30 ngày kể từ '
         'ngày một bên thông báo tranh chấp, tranh chấp sẽ được đưa ra Tòa án '
         'nhân dân có thẩm quyền tại Việt Nam, trừ khi pháp luật về bảo vệ quyền '
-        'lợi người tiêu dùng cho phép bạn lựa chọn cơ chế khác.',
+        'lợi người tiêu dùng ở nơi bạn cư trú cho phép bạn lựa chọn cơ chế '
+        'khác. Điều khoản này không làm mất các quyền bắt buộc mà pháp luật '
+        'nơi bạn sống dành cho người tiêu dùng và người dùng dịch vụ.',
       ),
     ]),
     LegalSection('Điều khoản chung', [
