@@ -291,6 +291,15 @@ JsonMap partyJson({bool matchmaking = true}) => {
   'QueueEntryTime': '2026-09-28T11:58:28Z',
 };
 
+/// A friend's presence in party [party].
+FriendPresence friendInParty(String puuid, String party, DateTime at) =>
+    FriendPresence(
+      puuid: puuid,
+      receivedAt: at,
+      product: 'valorant',
+      valorant: PresenceSnapshot(loopState: LoopState.ingame, partyId: party),
+    );
+
 /// Own game-client presence with a live score.
 FriendPresence scorePresence(
   DateTime at, {
@@ -383,6 +392,7 @@ class LiveTestEnv {
   JsonMap? core;
   JsonMap? party;
   FriendPresence? presence;
+  XmppSnapshot snapshot = const XmppSnapshot();
   Object? sessionError;
 
   Map<String, Object?> matches = {
@@ -403,9 +413,7 @@ class LiveTestEnv {
     remoteConfigProvider.overrideWithValue(const RemoteConfig()),
     appForegroundProvider.overrideWith(() => foreground),
     ownPresenceProvider.overrideWith((ref) => Stream.value(presence)),
-    xmppSnapshotProvider.overrideWith(
-      (ref) => Stream.value(const XmppSnapshot()),
-    ),
+    xmppSnapshotProvider.overrideWith((ref) => Stream.value(snapshot)),
     ownedItemsProvider.overrideWith(
       (ref, puuid) async => OwnedItems.resolve(
         Entitlements.fromTypeResponses({

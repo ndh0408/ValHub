@@ -28,7 +28,6 @@ Future<void> showLiveGameSheet(BuildContext context) async {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      showDragHandle: true,
       builder: (_) => const LiveGameSheet(),
     );
   } finally {

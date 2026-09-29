@@ -2,6 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/network/riot_exception.dart';
+import 'package:valvn/core/settings/app_settings.dart';
+import 'package:valvn/core/storage/prefs.dart';
+import 'package:valvn/core/xmpp/xmpp.dart';
 import 'package:valvn/features/live_game/live_game_sheet.dart';
 import 'package:valvn/features/live_game/player_loadout_sheet.dart';
 
@@ -199,6 +202,39 @@ void main() {
       expect(find.text('Ẩn danh'), findsOneWidget);
       expect(find.text('Kẻ Thù#EN2'), findsNothing);
       expect(find.text('Omen'), findsOneWidget);
+    });
+
+    testWidgets('friends queued together get party badges', (tester) async {
+      final at = DateTime.utc(2026, 9, 28, 12);
+      env.snapshot = XmppSnapshot(
+        presences: {
+          enemy1: friendInParty(enemy1, 'pp', at),
+          enemy2: friendInParty(enemy2, 'pp', at),
+        },
+      );
+      await pumpSheet(tester);
+      await tester.tap(find.text('Đội địch'));
+      await settle(tester, frames: 12);
+      expect(find.text('Tổ đội'), findsNWidgets(2));
+    });
+
+    testWidgets('no chat lookups when the live score is off', (tester) async {
+      await env.prefs.setJson(
+        PrefKeys.appSettings,
+        const AppSettings(showLiveScore: false).toJson(),
+      );
+      final at = DateTime.utc(2026, 9, 28, 12);
+      env.snapshot = XmppSnapshot(
+        presences: {
+          enemy1: friendInParty(enemy1, 'pp', at),
+          enemy2: friendInParty(enemy2, 'pp', at),
+        },
+      );
+      await pumpSheet(tester);
+      expect(find.text('TỈ SỐ TRỰC TIẾP'), findsNothing);
+      await tester.tap(find.text('Đội địch'));
+      await settle(tester, frames: 12);
+      expect(find.text('Tổ đội'), findsNothing);
     });
 
     testWidgets('tapping a player opens their loadout (S51)', (tester) async {

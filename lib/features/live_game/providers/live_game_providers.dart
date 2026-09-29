@@ -316,12 +316,13 @@ final liveOwnPartyProvider = FutureProvider.autoDispose
 
 /// PUUID → party id of the players we know about during a match: our own
 /// party (G-13) plus friends' presences (XMPP). Used for party badges.
+/// The chat is only read when the live score already needs it (setting on).
 final livePartyOfProvider = Provider.autoDispose
     .family<Map<String, String>, LiveMatchKey>((ref, key) {
       final out = <String, String>{};
-      final presences = ref.watch(
-        xmppSnapshotProvider.select((s) => s.value?.presences),
-      );
+      final presences = ref.watch(liveScoreEnabledProvider)
+          ? ref.watch(xmppSnapshotProvider.select((s) => s.value?.presences))
+          : null;
       for (final entry in (presences ?? const {}).entries) {
         final party = lowerUuid(entry.value.valorant?.partyId);
         if (party != null) out[entry.key.toLowerCase()] = party;
