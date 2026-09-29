@@ -88,15 +88,13 @@ class IdentityBanner extends ConsumerWidget {
                     stops: [0.25, 1],
                   ).createShader(rect),
                   blendMode: BlendMode.dstIn,
-                  child: Opacity(
+                  child: NetImage(
+                    card!.wideArt,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.centerRight,
+                    showSkeleton: false,
                     opacity: 0.35,
-                    child: NetImage(
-                      card!.wideArt,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.centerRight,
-                      showSkeleton: false,
-                      error: const SizedBox.shrink(),
-                    ),
+                    error: const SizedBox.shrink(),
                   ),
                 ),
               ),

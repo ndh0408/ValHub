@@ -11,8 +11,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../accounts/account.dart';
 import '../accounts/account_providers.dart';
+import '../accounts/account_widgets.dart';
+import '../accounts/login_note.dart';
 import '../config/app_constants.dart';
 import '../config/remote_config.dart';
+import '../l10n/account_strings.dart';
 import '../l10n/auth_strings.dart';
 import '../l10n/common_strings.dart';
 import '../logging/session_log.dart';
@@ -270,8 +273,92 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return NavigationActionPolicy.CANCEL;
   }
 
+  /// Types a saved login note into Riot's page (only on a Riot host; the
+  /// values never leave the device otherwise).
+  Future<void> _quickFill(List<(Account, LoginNote)> saved) async {
+    final controller = _controller;
+    if (controller == null || saved.isEmpty) return;
+    var note = saved.first.$2;
+    if (saved.length > 1 || saved.first.$1.puuid != widget.reauthPuuid) {
+      final picked = await _pickNote(saved);
+      if (picked == null || !mounted) return;
+      note = picked;
+    }
+    final url = await controller.getUrl();
+    final host = url?.host ?? '';
+    // Riot's own pages only (never Google / Facebook / Apple sign-in).
+    if (host != 'riotgames.com' && !host.endsWith('.riotgames.com')) {
+      if (mounted) showAppSnackBar(context, AccountStrings.quickFillNotReady);
+      return;
+    }
+    Object? ok;
+    try {
+      ok = await controller.evaluateJavascript(
+        source: loginNoteFillScript(note),
+      );
+    } on Object {
+      ok = false;
+    }
+    if (!mounted) return;
+    showAppSnackBar(
+      context,
+      ok == true
+          ? AccountStrings.quickFillDone
+          : AccountStrings.quickFillNotReady,
+    );
+  }
+
+  Future<LoginNote?> _pickNote(List<(Account, LoginNote)> saved) =>
+      showModalBottomSheet<LoginNote>(
+        context: context,
+        useSafeArea: true,
+        builder: (context) => SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                child: Text(
+                  AccountStrings.quickFillTitle,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    for (final (account, note) in saved)
+                      ListTile(
+                        leading: AccountAvatar(
+                          account: account,
+                          size: 36,
+                          circle: true,
+                        ),
+                        title: Text(
+                          account.riotId,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Text(
+                          note.username,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        onTap: () => Navigator.of(context).pop(note),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
+    final saved =
+        ref.watch(savedLoginNotesProvider(widget.reauthPuuid)).value ??
+        const <(Account, LoginNote)>[];
     final socialHint = ref
         .watch(remoteConfigProvider)
         .flag(RemoteFlags.socialLoginHint, fallback: true);
@@ -307,6 +394,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             _Hint(
               text: AuthStrings.rememberMeHint,
               secondary: socialHint ? AuthStrings.socialLoginHint : null,
+              action: saved.isEmpty
+                  ? null
+                  : TextButton.icon(
+                      onPressed: () => unawaited(_quickFill(saved)),
+                      icon: const Icon(Icons.key, size: 18),
+                      label: const Text(AccountStrings.quickFill),
+                    ),
             ),
             Expanded(child: _webView()),
           ],
@@ -358,10 +452,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 }
 
 class _Hint extends StatelessWidget {
-  const _Hint({required this.text, this.secondary});
+  const _Hint({required this.text, this.secondary, this.action});
 
   final String text;
   final String? secondary;
+
+  /// "Điền nhanh" when a login note is saved.
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -394,6 +491,7 @@ class _Hint extends StatelessWidget {
                 ],
               ),
             ),
+            if (action != null) ...[const SizedBox(width: 8), action!],
           ],
         ),
       ),

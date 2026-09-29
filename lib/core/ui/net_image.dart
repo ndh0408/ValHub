@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:material_ui/material_ui.dart';
@@ -17,6 +19,16 @@ final CacheManager valMediaCache = CacheManager(
 /// Clears the media cache ("Xóa bộ nhớ đệm").
 Future<void> clearMediaCache() => valMediaCache.emptyCache();
 
+/// URLs whose cached file was already dropped after a failed load, so a
+/// broken download (truncated file, Cloudflare page) does not stick for
+/// 30 days, without retrying in a loop.
+final Set<String> _evictedAfterError = {};
+
+void _evictBrokenFile(String url) {
+  if (!_evictedAfterError.add(url)) return;
+  valMediaCache.removeFile(url).ignore();
+}
+
 /// Cached network image with a skeleton placeholder and a quiet error icon.
 ///
 /// A `null` / empty [url] renders the error placeholder, so callers can pass
@@ -34,6 +46,7 @@ class NetImage extends StatelessWidget {
     this.color,
     this.alignment = Alignment.center,
     this.showSkeleton = true,
+    this.opacity,
   });
 
   final String? url;
@@ -51,6 +64,10 @@ class NetImage extends StatelessWidget {
   final Alignment alignment;
   final bool showSkeleton;
 
+  /// Faded image (backgrounds). Applied as a modulate tint while painting,
+  /// so unlike wrapping in `Opacity` it needs no extra layer per frame.
+  final double? opacity;
+
   @override
   Widget build(BuildContext context) {
     final u = url;
@@ -59,31 +76,66 @@ class NetImage extends StatelessWidget {
       child = _error(context);
     } else {
       final dpr = MediaQuery.maybeDevicePixelRatioOf(context) ?? 2;
-      child = CachedNetworkImage(
-        imageUrl: u,
-        cacheManager: valMediaCache,
-        width: width,
-        height: height,
-        fit: fit,
-        color: color,
-        alignment: alignment,
-        memCacheWidth: width == null || !width!.isFinite
-            ? null
-            : (width! * dpr).round(),
-        fadeInDuration: const Duration(milliseconds: 120),
-        fadeOutDuration: const Duration(milliseconds: 80),
-        placeholder: (context, _) =>
-            placeholder ??
-            (showSkeleton
-                ? Skeleton(width: width, height: height)
-                : SizedBox(width: width, height: height)),
-        errorWidget: (context, _, _) => _error(context),
-      );
+      final w = width;
+      child = w != null && w.isFinite
+          ? _image(context, u, _decodeWidth(w, height, dpr))
+          // No fixed width (full-width banners, backgrounds): decode at the
+          // laid-out size instead of the source size (1920 px map splashes).
+          : LayoutBuilder(
+              builder: (context, box) => _image(
+                context,
+                u,
+                box.hasBoundedWidth
+                    ? _decodeWidth(
+                        box.maxWidth,
+                        box.hasBoundedHeight ? box.maxHeight : null,
+                        dpr,
+                      )
+                    : null,
+              ),
+            );
     }
     final radius = borderRadius;
     return radius == null
         ? child
         : ClipRRect(borderRadius: radius, child: child);
+  }
+
+  /// Decode width in physical pixels. `cover` may scale the image up to fill
+  /// the height, so leave room for a ~2:1 source.
+  int? _decodeWidth(double w, double? h, double dpr) {
+    var logical = w;
+    if (fit == BoxFit.cover && h != null && h.isFinite) {
+      logical = math.max(w, h * 2);
+    }
+    if (logical <= 0) return null;
+    return (logical * dpr).round();
+  }
+
+  Widget _image(BuildContext context, String u, int? decodeWidth) {
+    final o = opacity;
+    return CachedNetworkImage(
+      imageUrl: u,
+      cacheManager: valMediaCache,
+      width: width,
+      height: height,
+      fit: fit,
+      color: o != null ? Colors.white.withValues(alpha: o) : color,
+      colorBlendMode: o != null ? BlendMode.modulate : null,
+      alignment: alignment,
+      memCacheWidth: decodeWidth,
+      fadeInDuration: const Duration(milliseconds: 120),
+      fadeOutDuration: const Duration(milliseconds: 80),
+      placeholder: (context, _) =>
+          placeholder ??
+          (showSkeleton
+              ? Skeleton(width: width, height: height)
+              : SizedBox(width: width, height: height)),
+      errorWidget: (context, _, _) {
+        _evictBrokenFile(u);
+        return _error(context);
+      },
+    );
   }
 
   Widget _error(BuildContext context) =>

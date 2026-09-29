@@ -122,15 +122,14 @@ class _CardShell extends StatelessWidget {
             children: [
               if (map != null)
                 Positioned.fill(
-                  child: Opacity(
-                    opacity: 0.18,
-                    child: NetImage(
-                      map,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.centerRight,
-                      showSkeleton: false,
-                      error: const SizedBox.shrink(),
-                    ),
+                  // Map splash visible on the right, faded under the text.
+                  child: NetImage(
+                    map,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.centerRight,
+                    showSkeleton: false,
+                    opacity: 0.75,
+                    error: const SizedBox.shrink(),
                   ),
                 ),
               Positioned.fill(
@@ -139,10 +138,12 @@ class _CardShell extends StatelessWidget {
                     gradient: LinearGradient(
                       colors: [
                         scheme.surfaceContainer,
-                        scheme.surfaceContainer.withValues(alpha: 0.85),
-                        scheme.surfaceContainer.withValues(alpha: 0.35),
+                        scheme.surfaceContainer.withValues(alpha: 0.8),
+                        scheme.surfaceContainer.withValues(alpha: 0.2),
+                        // Keeps the score / K/D/A column readable.
+                        scheme.surfaceContainer.withValues(alpha: 0.72),
                       ],
-                      stops: const [0, 0.55, 1],
+                      stops: const [0, 0.38, 0.6, 0.85],
                     ),
                   ),
                 ),

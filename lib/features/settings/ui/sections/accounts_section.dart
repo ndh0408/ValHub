@@ -6,6 +6,9 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account.dart';
 import '../../../../core/accounts/account_providers.dart';
+import '../../../../core/accounts/account_status.dart';
+import '../../../../core/accounts/login_note.dart';
+import '../../../../core/accounts/login_note_sheet.dart';
 import '../../../../core/accounts/account_widgets.dart';
 import '../../../../core/auth/auth_routes.dart';
 import '../../../../core/config/app_constants.dart';
@@ -17,9 +20,9 @@ import '../../../../core/ui/val_widgets.dart';
 import '../../settings_strings.dart';
 import '../widgets/settings_widgets.dart';
 
-/// "TÀI KHOẢN (n/10)" (S70, A4/A11): rows with the active marker, tap to
-/// switch (or re-login when the session expired), trash with confirmation,
-/// "+ Thêm tài khoản".
+/// "TÀI KHOẢN (n/10) · 2 ĐANG TRỰC TUYẾN" (S70, A4/A11): rows with the
+/// active marker and each account's live status, tap to switch (or re-login
+/// when the session expired), trash with confirmation, "+ Thêm tài khoản".
 class SettingsAccountsSection extends ConsumerWidget {
   const SettingsAccountsSection({super.key});
 
@@ -60,51 +63,59 @@ class SettingsAccountsSection extends ConsumerWidget {
     const max = AppConstants.maxAccounts;
     final full = accounts.length >= max;
     final scheme = Theme.of(context).colorScheme;
-    return SettingsGroup(
-      title: AccountStrings.accountsHeader(accounts.length, max),
-      children: [
-        if (accounts.isEmpty)
+    final online = ref.watch(onlineAccountCountProvider);
+    final header = AccountStrings.accountsHeader(accounts.length, max);
+    return AccountActivityPoller(
+      child: SettingsGroup(
+        title: online > 0
+            ? '$header · ${AccountStrings.onlineCount(online).toUpperCase()}'
+            : header,
+        children: [
+          if (accounts.isEmpty)
+            ListTile(
+              leading: SettingsIcon(
+                Icons.person_off_outlined,
+                color: scheme.onSurfaceVariant,
+              ),
+              title: const Text(CommonStrings.errorNoAccount),
+            ),
+          for (final a in accounts)
+            _AccountRow(
+              key: ValueKey(a.puuid),
+              account: a,
+              active: a.puuid == active,
+              onTap: () => unawaited(_open(context, ref, a)),
+              onReauth: () => unawaited(
+                context.push(AuthRoutes.loginPath(reauthPuuid: a.puuid)),
+              ),
+              onRemove: () => unawaited(_remove(context, ref, a)),
+              onNote: () => unawaited(showLoginNoteSheet(context, a)),
+            ),
           ListTile(
-            leading: SettingsIcon(
-              Icons.person_off_outlined,
-              color: scheme.onSurfaceVariant,
-            ),
-            title: const Text(CommonStrings.errorNoAccount),
-          ),
-        for (final a in accounts)
-          _AccountRow(
-            key: ValueKey(a.puuid),
-            account: a,
-            active: a.puuid == active,
-            onTap: () => unawaited(_open(context, ref, a)),
-            onReauth: () => unawaited(
-              context.push(AuthRoutes.loginPath(reauthPuuid: a.puuid)),
-            ),
-            onRemove: () => unawaited(_remove(context, ref, a)),
-          ),
-        ListTile(
-          leading: Icon(
-            Icons.add,
-            color: full ? scheme.onSurfaceVariant : scheme.primary,
-          ),
-          title: Text(
-            AccountStrings.addAccount(accounts.length, max),
-            style: TextStyle(
+            leading: Icon(
+              Icons.add,
               color: full ? scheme.onSurfaceVariant : scheme.primary,
-              fontWeight: FontWeight.w600,
             ),
+            title: Text(
+              AccountStrings.addAccount(accounts.length, max),
+              style: TextStyle(
+                color: full ? scheme.onSurfaceVariant : scheme.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            subtitle: full ? Text(AccountStrings.maxAccounts(max)) : null,
+            onTap: full
+                ? () =>
+                      showAppSnackBar(context, AccountStrings.maxAccounts(max))
+                : () => unawaited(context.push(AuthRoutes.login)),
           ),
-          subtitle: full ? Text(AccountStrings.maxAccounts(max)) : null,
-          onTap: full
-              ? () => showAppSnackBar(context, AccountStrings.maxAccounts(max))
-              : () => unawaited(context.push(AuthRoutes.login)),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
-class _AccountRow extends StatelessWidget {
+class _AccountRow extends ConsumerWidget {
   const _AccountRow({
     super.key,
     required this.account,
@@ -112,6 +123,7 @@ class _AccountRow extends StatelessWidget {
     required this.onTap,
     required this.onReauth,
     required this.onRemove,
+    required this.onNote,
   });
 
   final Account account;
@@ -120,9 +132,13 @@ class _AccountRow extends StatelessWidget {
   final VoidCallback onReauth;
   final VoidCallback onRemove;
 
+  /// Opens the login note (saved username / password).
+  final VoidCallback onNote;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final scheme = Theme.of(context).colorScheme;
+    final hasNote = ref.watch(loginNoteProvider(account.puuid)).value != null;
     // Active marker: a red accent bar (always) plus a check mark when there
     // is room. The tile is not `selected`: a red title would read like the
     // "Cần đăng nhập lại" error of another row.
@@ -158,9 +174,19 @@ class _AccountRow extends StatelessWidget {
               ),
             ),
           IconButton(
+            icon: Icon(hasNote ? Icons.key : Icons.key_outlined),
+            color: hasNote ? scheme.primary : scheme.onSurfaceVariant,
+            tooltip: hasNote
+                ? AccountStrings.loginNote
+                : AccountStrings.loginNoteEmpty,
+            visualDensity: VisualDensity.compact,
+            onPressed: onNote,
+          ),
+          IconButton(
             icon: const Icon(Icons.delete_outline),
             color: scheme.onSurfaceVariant,
             tooltip: AccountStrings.removeAccount,
+            visualDensity: VisualDensity.compact,
             onPressed: onRemove,
           ),
         ],

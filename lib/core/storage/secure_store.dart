@@ -10,6 +10,10 @@ abstract final class SecureKeys {
   static String entitlementsToken(String puuid) => 'acct.$puuid.entitlements';
   static String tokenExpiry(String puuid) => 'acct.$puuid.expiry';
 
+  /// The user's own login note (Riot username + password), opt-in. Kept
+  /// when the session expires; deleted only with the account.
+  static String loginNote(String puuid) => 'acct.$puuid.login';
+
   /// Every key that belongs to [puuid] (wiped on sign-out).
   static List<String> allFor(String puuid) => [
     cookies(puuid),
@@ -18,6 +22,7 @@ abstract final class SecureKeys {
     idToken(puuid),
     entitlementsToken(puuid),
     tokenExpiry(puuid),
+    loginNote(puuid),
   ];
 }
 

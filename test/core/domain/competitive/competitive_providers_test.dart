@@ -19,6 +19,7 @@ import 'package:valvn/core/storage/secure_store.dart';
 import 'package:valvn/core/util/clock.dart';
 import 'package:valvn/core/util/json.dart';
 
+import '../../../helpers/temp_dir.dart';
 import '../../../helpers/test_prefs.dart';
 import 'competitive_test_utils.dart';
 
@@ -77,7 +78,7 @@ void main() {
 
   tearDown(() async {
     store.dispose();
-    await tmp.delete(recursive: true);
+    await deleteTempDir(tmp);
   });
 
   Future<ProviderContainer> container({

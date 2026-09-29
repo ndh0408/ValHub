@@ -120,13 +120,14 @@ JsonMap updateRow(
 };
 
 /// Default P-12 page: the competitive fixture match (+24 today) and two
-/// older matches.
+/// matches yesterday evening (local time, so days group the same in every
+/// time zone).
 JsonMap defaultUpdates() => {
   'Subject': me,
   'Matches': [
     updateRow(
       compMatch,
-      start: DateTime.utc(2026, 9, 28, 4),
+      start: DateTime(2026, 9, 28, 11),
       tierBefore: 17,
       tierAfter: 18,
       rrBefore: 82,
@@ -135,14 +136,14 @@ JsonMap defaultUpdates() => {
     ),
     updateRow(
       'e2000000-0000-4000-8000-000000000002',
-      start: DateTime.utc(2026, 9, 27, 18),
+      start: DateTime(2026, 9, 27, 21),
       rrBefore: 100,
       rrAfter: 82,
       earned: -18,
     ),
     updateRow(
       'e1000000-0000-4000-8000-000000000001',
-      start: DateTime.utc(2026, 9, 27, 17),
+      start: DateTime(2026, 9, 27, 20),
       rrBefore: 80,
       rrAfter: 100,
       earned: 20,
@@ -173,7 +174,8 @@ class ProfileTestEnv {
   final sessions = MockSessionManager();
   final files = MemoryJsonFileCache();
   late final history = RrHistoryStore(MemoryJsonFileCache());
-  final clock = FixedClock(DateTime.utc(2026, 9, 28, 12));
+  // Local wall-clock times so "today / yesterday" hold in every time zone.
+  final clock = FixedClock(DateTime(2026, 9, 28, 19));
 
   /// Match details by id (lowercase) served by [api].
   final matches = <String, Object?>{

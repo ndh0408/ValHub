@@ -16,6 +16,7 @@ import '../ui/rank_badge.dart';
 import '../ui/val_widgets.dart';
 import 'account.dart';
 import 'account_providers.dart';
+import 'account_status.dart';
 
 /// Square avatar: the account's cached player-card small art, or initials.
 class AccountAvatar extends ConsumerWidget {
@@ -135,7 +136,8 @@ Future<void> showAccountSwitcherSheet(BuildContext context) =>
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (_) => const AccountSwitcherSheet(),
+      builder: (_) =>
+          const AccountActivityPoller(child: AccountSwitcherSheet()),
     );
 
 /// Account list with the active marker, rank, "Cần đăng nhập lại" and
@@ -148,6 +150,7 @@ class AccountSwitcherSheet extends ConsumerWidget {
     final accounts = ref.watch(accountsProvider);
     final active = ref.watch(activePuuidProvider);
     final full = accounts.length >= AppConstants.maxAccounts;
+    final online = ref.watch(onlineAccountCountProvider);
     final theme = Theme.of(context);
     return SafeArea(
       child: Column(
@@ -156,9 +159,28 @@ class AccountSwitcherSheet extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: Text(
-              AccountStrings.switcherTitle,
-              style: theme.textTheme.titleLarge,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  AccountStrings.switcherTitle,
+                  style: theme.textTheme.titleLarge,
+                ),
+                if (online > 0) ...[
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: Text(
+                      AccountStrings.onlineCount(online),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: valColorsOf(context).win,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
           Flexible(
@@ -217,15 +239,17 @@ class AccountSwitcherSheet extends ConsumerWidget {
   }
 }
 
-/// One account row (A4): avatar, Riot ID, "AP · Cấp 222", rank, markers.
-/// Also usable in the settings account list.
-class AccountTile extends StatelessWidget {
+/// One account row (A4): avatar with a live status dot, Riot ID,
+/// "Đang đấu · AP · Cấp 222", current rank (icon + name), markers. Also usable in the settings
+/// account list.
+class AccountTile extends ConsumerWidget {
   const AccountTile({
     super.key,
     required this.account,
     this.selected = false,
     this.onTap,
     this.trailing,
+    this.showActivity = true,
   });
 
   final Account account;
@@ -235,55 +259,96 @@ class AccountTile extends StatelessWidget {
   /// Replaces the default check mark (e.g. a delete button in settings).
   final Widget? trailing;
 
+  /// Checks and shows what the account is doing right now.
+  final bool showActivity;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    final live = showActivity && !account.needsLogin;
+    final activity = live
+        ? ref.watch(accountActivityProvider(account.puuid)).value
+        : null;
+    // Loads (and caches on the account) the current rank of every listed
+    // account, not only the ones already opened in the Profile tab.
+    if (live) ref.watch(accountRankRefreshProvider(account.puuid));
+    final tier = account.rankTier;
     final meta = [
       account.region.toUpperCase(),
       if (account.level != null) AccountStrings.levelShort(account.level!),
     ].join(' · ');
+    final small = theme.textTheme.bodySmall;
+    final Widget subtitle;
+    if (account.needsLogin) {
+      subtitle = Text(
+        AccountStrings.needsLogin,
+        style: small?.copyWith(color: valColorsOf(context).warning),
+      );
+    } else if (activity == null || activity == AccountActivity.unknown) {
+      subtitle = Text(meta, style: small?.copyWith(color: muted));
+    } else {
+      subtitle = Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: activity.label,
+              style: TextStyle(
+                color: activity.color(context),
+                fontWeight: activity.isOnline ? FontWeight.w700 : null,
+              ),
+            ),
+            TextSpan(text: ' · $meta'),
+          ],
+        ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: small?.copyWith(color: muted),
+      );
+    }
     return ListTile(
       onTap: onTap,
       selected: selected,
-      leading: AccountAvatar(account: account, size: 40, circle: true),
+      isThreeLine: tier != null,
+      leading: _StatusDot(
+        activity: activity,
+        child: AccountAvatar(account: account, size: 40, circle: true),
+      ),
       title: Text(
         account.riotId,
         overflow: TextOverflow.ellipsis,
         style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
       ),
-      subtitle: account.needsLogin
-          ? Text(
-              AccountStrings.needsLogin,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: valColorsOf(context).warning,
-              ),
-            )
-          : Text(
-              meta,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+      subtitle: tier == null
+          ? subtitle
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                subtitle,
+                const SizedBox(height: 4),
+                RankBadge(
+                  tier: tier,
+                  seasonId: account.rankSeasonId,
+                  size: 20,
+                  style: small?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
       trailing:
           trailing ??
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (account.rankTier != null && account.rankTier! > 2)
-                RankBadge(
-                  tier: account.rankTier!,
-                  seasonId: account.rankSeasonId,
-                  size: 28,
-                  showName: false,
-                ),
-              if (selected) ...[
-                const SizedBox(width: 8),
+              if (selected)
                 Icon(
                   Icons.check_circle,
                   color: theme.colorScheme.primary,
                   semanticLabel: AccountStrings.active,
                 ),
-              ],
               if (account.needsLogin) ...[
                 const SizedBox(width: 8),
                 const Tooltip(
@@ -293,6 +358,42 @@ class AccountTile extends StatelessWidget {
               ],
             ],
           ),
+    );
+  }
+}
+
+/// Green / amber / red dot on the avatar while the account's game runs.
+class _StatusDot extends StatelessWidget {
+  const _StatusDot({required this.activity, required this.child});
+
+  final AccountActivity? activity;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final a = activity;
+    if (a == null || !a.isOnline) return child;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        child,
+        Positioned(
+          right: -1,
+          bottom: -1,
+          child: Container(
+            width: 14,
+            height: 14,
+            decoration: BoxDecoration(
+              color: a.color(context),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.surface,
+                width: 2,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

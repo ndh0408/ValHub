@@ -16,6 +16,39 @@ abstract final class AccountStrings {
   static const signOutAllConfirm =
       'Đăng xuất và xóa mọi tài khoản khỏi thiết bị này? Wishlist vẫn được giữ lại.';
   static String levelShort(int level) => 'Cấp $level';
+
+  // Live activity of each account in the lists (VF §8: online / offline)
+  static const statusOnline = 'Trực tuyến';
+  static const statusOffline = 'Ngoại tuyến';
+  static const statusAgentSelect = 'Đang chọn đặc vụ';
+  static const statusInMatch = 'Đang đấu';
+  static const statusUnknown = 'Chưa rõ trạng thái';
+  static String onlineCount(int count) => '$count đang trực tuyến';
+
+  // Login note: the user's own Riot username / password per account
+  static const loginNote = 'Ghi chú đăng nhập';
+  static const loginNoteEmpty = 'Chưa có ghi chú đăng nhập';
+  static const loginNoteHint =
+      'Chỉ lưu trên thiết bị này, trong bộ nhớ bảo mật. Dùng để xem lại hoặc '
+      'điền nhanh khi đăng nhập lại.';
+  static const loginNoteUsername = 'Tên đăng nhập Riot';
+  static const loginNotePassword = 'Mật khẩu';
+  static const showPassword = 'Hiện mật khẩu';
+  static const hidePassword = 'Ẩn mật khẩu';
+  static const copyUsername = 'Sao chép tên đăng nhập';
+  static const copyPassword = 'Sao chép mật khẩu';
+  static const loginNoteSaved = 'Đã lưu ghi chú đăng nhập';
+  static const loginNoteDeleted = 'Đã xóa ghi chú đăng nhập';
+  static const deleteLoginNote = 'Xóa ghi chú';
+  static const deleteLoginNoteConfirm =
+      'Xóa tên đăng nhập và mật khẩu đã lưu của tài khoản này?';
+
+  // Quick fill on the Riot login page
+  static const quickFill = 'Điền nhanh';
+  static const quickFillTitle = 'Điền tài khoản đã lưu';
+  static const quickFillDone = 'Đã điền, hãy bấm Đăng nhập.';
+  static const quickFillNotReady =
+      'Chưa thấy ô đăng nhập. Đợi trang tải xong rồi thử lại.';
   static const unknownPlayer = 'Người chơi';
 
   // Platforms (A8)

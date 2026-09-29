@@ -3,8 +3,9 @@ abstract final class AuthStrings {
   static const loginTitle = 'Đăng nhập Riot';
   static const signInCta = 'Đăng nhập bằng tài khoản Riot';
   static const signInNote =
-      'Bạn đăng nhập trên trang chính thức của Riot. ValVN không lưu mật khẩu; '
-      'token chỉ nằm trên thiết bị của bạn.';
+      'Bạn đăng nhập trên trang chính thức của Riot. ValVN chỉ lưu mật khẩu khi '
+      'bạn tự thêm ghi chú đăng nhập; token và ghi chú chỉ nằm trên thiết bị '
+      'của bạn.';
   static const rememberMeHint =
       'Hãy tick "Duy trì đăng nhập" để không phải đăng nhập lại.';
   static const socialLoginHint =
