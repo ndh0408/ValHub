@@ -58,3 +58,21 @@ Header nhất quán (tiêu đề lớn thu gọn khi cuộn, hoặc sheet có n�
 nội dung có ảnh, skeleton giống bố cục thật, trạng thái trống/lỗi có hành động, kéo để
 làm mới, Hero transition từ danh sách vào chi tiết, 60 fps, không tràn ở 360 dp/chữ
 200%, sáng + tối, iOS + Android.
+
+## Toàn cầu (quyết định 29/09/2026)
+
+- App dành cho mọi quốc gia, 18 ngôn ngữ VALORANT (mặc định theo máy, chọn được);
+  tiếng Việt là ngôn ngữ gốc. Tên nội dung theo valorant-api đúng ngôn ngữ.
+- Tính năng địa phương hóa thay cho tính năng "chỉ Việt Nam": tìm kiếm không phân biệt
+  dấu mọi ngôn ngữ; giá ước tính theo tiền tệ nước người dùng (bảng giá chính thức đã
+  xác minh, hoặc giá người dùng tự nhập); chia sẻ qua bảng chia sẻ hệ thống; giờ và
+  định dạng theo thiết bị.
+- Cộng đồng 3 tầng: **Quốc gia** (mặc định bảng tin + xếp hạng skin "Nước bạn";
+  quốc gia lấy từ tài khoản Riot), **Khu vực máy chủ** (mặc định Tìm đồng đội — chỉ
+  cùng máy chủ mới vào tổ đội được), **Quốc tế** (lọc theo ngôn ngữ, nút Dịch trên
+  máy). Xem cộng đồng nước khác qua danh sách các nước đang hoạt động. Xem
+  `docs/community-api.md` mục "Community scopes v3".
+- Quốc gia & kết nối: bộ chọn quốc gia (cờ, tìm kiếm, máy chủ phục vụ, có được
+  VALORANT hỗ trợ không, lọc "chỉ nước được hỗ trợ"); máy chủ tự nhận theo tài khoản,
+  chọn tay được.
+- Pháp lý: bổ sung quyền người dùng quốc tế (GDPR, CCPA, LGPD…), dịch 18 ngôn ngữ.
