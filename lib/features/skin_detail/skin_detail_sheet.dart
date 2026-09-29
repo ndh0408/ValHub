@@ -19,6 +19,7 @@ import '../../core/ui/error_view.dart';
 import '../../core/ui/net_image.dart';
 import '../../core/ui/skeleton.dart';
 import '../../core/ui/val_widgets.dart';
+import '../community/ui/skins/skin_vote_button.dart';
 import '../store/ui/widgets/store_ui_bits.dart';
 import 'providers/skin_availability.dart';
 import 'skin_detail_strings.dart';
@@ -326,6 +327,8 @@ class _SkinBody extends ConsumerWidget {
             ],
           ),
         ),
+        const SizedBox(height: 8),
+        SkinVoteButton(skinUuid: skin.uuid, weaponUuid: skin.weaponUuid),
         if (elsewhere.isNotEmpty) ...[
           const SizedBox(height: 10),
           Row(

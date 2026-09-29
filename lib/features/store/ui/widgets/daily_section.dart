@@ -7,6 +7,7 @@ import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/ui/empty_view.dart';
+import '../../../community/ui/share_to_community_button.dart';
 import '../../store_strings.dart';
 import 'daily_offer_card.dart';
 import 'store_ui_bits.dart';
@@ -111,6 +112,7 @@ class DailySection extends ConsumerWidget {
             ],
           ),
         ),
+        ShareToCommunityButton.daily(daily),
       ],
     );
   }

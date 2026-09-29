@@ -11,18 +11,23 @@ import 'adaptive.dart';
 ///
 /// Takes the same [NavigationDestination]s as a Material [NavigationBar]
 /// (icon / selectedIcon / label), so any number of tabs (5–6) works; items
-/// share the width equally.
+/// share the width equally. Labels shrink to fit instead of ellipsizing.
 class FloatingNavBar extends StatelessWidget {
   const FloatingNavBar({
     super.key,
     required this.destinations,
     required this.selectedIndex,
     required this.onDestinationSelected,
+    this.compact = false,
   });
 
   final List<NavigationDestination> destinations;
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
+
+  /// Narrow screens with many tabs: unselected items show only their icon
+  /// (label kept for semantics / tooltips), the selected one icon + label.
+  final bool compact;
 
   static const _barHeight = 64.0;
 
@@ -75,6 +80,7 @@ class FloatingNavBar extends StatelessWidget {
                           child: _NavItem(
                             destination: destinations[i],
                             selected: i == selectedIndex,
+                            showLabel: !compact || i == selectedIndex,
                             onTap: () {
                               if (i != selectedIndex) Haptics.selection();
                               onDestinationSelected(i);
@@ -98,11 +104,13 @@ class _NavItem extends StatelessWidget {
     required this.destination,
     required this.selected,
     required this.onTap,
+    this.showLabel = true,
   });
 
   final NavigationDestination destination;
   final bool selected;
   final VoidCallback onTap;
+  final bool showLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -135,20 +143,29 @@ class _NavItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconTheme.merge(
-                data: IconThemeData(color: fg, size: 22),
+                data: IconThemeData(color: fg, size: showLabel ? 22 : 24),
                 child: icon,
               ),
-              const SizedBox(height: 2),
-              Text(
-                destination.label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: fg,
-                  fontSize: 10.5,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+              if (showLabel) ...[
+                const SizedBox(height: 2),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      destination.label,
+                      maxLines: 1,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: fg,
+                        fontSize: 10.5,
+                        fontWeight: selected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

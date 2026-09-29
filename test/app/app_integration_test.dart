@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +21,9 @@ import 'package:valvn/core/storage/secure_store.dart';
 import 'package:valvn/core/xmpp/xmpp.dart';
 import 'package:valvn/features/battlepass/ui/battlepass_screen.dart';
 import 'package:valvn/features/collection/ui/collection_screen.dart';
+import 'package:valvn/features/community/data/community_http.dart';
+import 'package:valvn/features/community/providers/community_providers.dart';
+import 'package:valvn/features/community/ui/community_screen.dart';
 import 'package:valvn/features/profile/profile_routes.dart';
 import 'package:valvn/features/profile/ui/profile_screen.dart';
 import 'package:valvn/features/profile/ui/rank_up_calculator_screen.dart';
@@ -51,6 +55,24 @@ class _MemoryJsonCache extends JsonFileCache {
   @override
   Future<void> write(String key, Object? data, {DateTime? savedAt}) async =>
       _entries[key] = CachedJson(data, savedAt ?? DateTime(2026));
+}
+
+/// The community server is unreachable too.
+class _OfflineAdapter implements HttpClientAdapter {
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<List<int>>? requestStream,
+    Future<void>? cancelFuture,
+  ) => Future.error(
+    DioException(
+      requestOptions: options,
+      type: DioExceptionType.connectionError,
+    ),
+  );
+
+  @override
+  void close({bool force = false}) {}
 }
 
 class _NoopMissReporter extends ContentMissReporter {
@@ -85,11 +107,13 @@ Future<void> _settle(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 16));
 }
 
+/// Taps the destination labelled [label]. On narrow phones only the
+/// selected tab shows its label, so tap the destination, not the text.
 Future<void> _tapTab(WidgetTester tester, String label) async {
   await tester.tap(
     find.descendant(
       of: find.byType(FloatingNavBar),
-      matching: find.text(label),
+      matching: find.bySemanticsLabel(label),
     ),
   );
   await _settle(tester);
@@ -126,6 +150,12 @@ void main() {
           priceAssetLoaderProvider.overrideWithValue(() async => '{}'),
           contentMissReporterProvider.overrideWith(_NoopMissReporter.new),
           xmppServiceProvider.overrideWith((ref) => null),
+          communityHttpProvider.overrideWithValue(
+            CommunityHttp(
+              dio: Dio()..httpClientAdapter = _OfflineAdapter(),
+              baseUrl: 'https://community.test',
+            ),
+          ),
         ],
         child: const ValVnApp(),
       ),
@@ -150,6 +180,9 @@ void main() {
     await _tapTab(tester, CommonStrings.tabBattlePass);
     expect(find.byType(BattlePassScreen), findsOneWidget);
     expect(find.text(CommonStrings.retry), findsWidgets);
+
+    await _tapTab(tester, CommonStrings.tabCommunity);
+    expect(find.byType(CommunityScreen), findsOneWidget);
 
     await _tapTab(tester, CommonStrings.tabCollection);
     expect(find.byType(CollectionScreen), findsOneWidget);

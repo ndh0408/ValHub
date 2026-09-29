@@ -1,0 +1,210 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:valvn/features/community/community_strings.dart';
+import 'package:valvn/features/community/data/community_models.dart';
+import 'package:valvn/features/community/data/compose_draft.dart';
+import 'package:valvn/features/community/data/image_source.dart';
+import 'package:valvn/features/community/ui/compose_screen.dart';
+
+import '../community_test_env.dart';
+
+FilledButton _publishButton(WidgetTester tester) => tester.widget<FilledButton>(
+  find.ancestor(
+    of: find.text(CommunityStrings.publish),
+    matching: find.byType(FilledButton),
+  ),
+);
+
+/// Opens the composer from a button so it can be popped.
+class _Launcher extends StatelessWidget {
+  const _Launcher({this.draft});
+
+  final ComposeDraft? draft;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: Center(
+      child: TextButton(
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => ComposeScreen(draft: draft)),
+        ),
+        child: const Text('mở'),
+      ),
+    ),
+  );
+}
+
+void main() {
+  late CommunityTestEnv env;
+  setUp(() async => env = await CommunityTestEnv.create());
+
+  test('validation rules', () {
+    expect(
+      validateCompose(body: '  ', images: 0, hasAttachment: false),
+      ComposeProblem.empty,
+    );
+    expect(validateCompose(body: '', images: 1, hasAttachment: false), isNull);
+    expect(validateCompose(body: '', images: 0, hasAttachment: true), isNull);
+    expect(
+      validateCompose(
+        body: 'a' * (kMaxPostLength + 1),
+        images: 0,
+        hasAttachment: false,
+      ),
+      ComposeProblem.tooLong,
+    );
+    expect(
+      validateCompose(
+        body: 'á' * kMaxPostLength,
+        images: 0,
+        hasAttachment: false,
+      ),
+      isNull,
+    );
+  });
+
+  testWidgets('empty or too long posts cannot be published', (tester) async {
+    await pumpCommunity(tester, env, const ComposeScreen());
+    await settle(tester);
+    expect(find.text(CommunityStrings.composerTitle), findsOneWidget);
+    expect(_publishButton(tester).onPressed, isNull);
+    expect(find.text('0/1.000'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'Xin chào anh em');
+    await tester.pump();
+    expect(_publishButton(tester).onPressed, isNotNull);
+
+    await tester.enterText(find.byType(TextField), 'x' * 1001);
+    await tester.pump();
+    expect(find.text('1.001/1.000'), findsOneWidget);
+    expect(find.text(CommunityStrings.tooLong(1000)), findsOneWidget);
+    expect(_publishButton(tester).onPressed, isNull);
+    await unmount(tester);
+  });
+
+  testWidgets('images: pick up to 4, remove, upload then publish', (
+    tester,
+  ) async {
+    env.picker.next = [
+      PickedImage(bytes: jpegBytes(), name: 'a.jpg'),
+      PickedImage(bytes: jpegBytes(8), name: 'b.jpg'),
+    ];
+    var n = 0;
+    env.server
+      ..on('POST /v1/media', (_) {
+        n++;
+        return FakeResponse(200, {
+          'key': 'm$n',
+          'url': 'https://val.test/m$n.jpg',
+        });
+      })
+      ..json('POST /v1/posts', postJson('new', body: ''));
+    await tester.pumpWidget(const SizedBox());
+    await pumpCommunity(tester, env, const _Launcher());
+    await tester.tap(find.text('mở'));
+    await settle(tester);
+
+    await tester.tap(find.text(CommunityStrings.addPhotos));
+    await settle(tester);
+    expect(find.text(CommunityStrings.photoCount(2, 4)), findsOneWidget);
+    expect(find.byTooltip(CommunityStrings.removePhoto), findsNWidgets(2));
+    expect(_publishButton(tester).onPressed, isNotNull);
+
+    await tester.tap(find.byTooltip(CommunityStrings.removePhoto).first);
+    await tester.pump();
+    expect(find.text(CommunityStrings.photoCount(1, 4)), findsOneWidget);
+
+    await tester.tap(find.text(CommunityStrings.publish));
+    await settle(tester, frames: 30);
+
+    expect(env.server.calls('POST /v1/media'), hasLength(1));
+    expect(env.server.calls('POST /v1/posts').single.json, {
+      'kind': 'text',
+      'body': '',
+      'media': ['m1'],
+    });
+    expect(find.byType(ComposeScreen), findsNothing);
+    expect(find.text(CommunityStrings.posted), findsOneWidget);
+    await unmount(tester);
+  });
+
+  testWidgets('non-image files are rejected with a message', (tester) async {
+    env.picker.next = [
+      PickedImage(bytes: jpegBytes()..[0] = 0x00, name: 'doc.pdf'),
+    ];
+    await pumpCommunity(tester, env, const ComposeScreen());
+    await settle(tester);
+    await tester.tap(find.text(CommunityStrings.addPhotos));
+    await settle(tester);
+    expect(find.text(CommunityStrings.errorImageType), findsOneWidget);
+    expect(find.text(CommunityStrings.photoCount(0, 4)), findsOneWidget);
+    await unmount(tester);
+  });
+
+  testWidgets('store draft is attached and published as a store post', (
+    tester,
+  ) async {
+    env.server.json('POST /v1/posts', postJson('s1', kind: 'store'));
+    const draft = ComposeDraft(
+      kind: PostKind.store,
+      payload: PostPayload(
+        date: '2026-09-28',
+        offers: [
+          PayloadOffer(skinUuid: reaverSkin, cost: 1775),
+          PayloadOffer(skinUuid: knifeSkin, cost: 4350),
+        ],
+      ),
+    );
+    await pumpCommunity(tester, env, const _Launcher(draft: draft));
+    await tester.tap(find.text('mở'));
+    await settle(tester);
+
+    expect(find.text('Cửa hàng ngày 28/09'), findsOneWidget);
+    expect(find.text('Vandal Reaver'), findsOneWidget);
+    expect(_publishButton(tester).onPressed, isNotNull);
+
+    await tester.enterText(find.byType(TextField), 'Shop xịn');
+    await tester.tap(find.text(CommunityStrings.publish));
+    await settle(tester);
+
+    final body = env.server.calls('POST /v1/posts').single.json! as Map;
+    expect(body['kind'], 'store');
+    expect(body['body'], 'Shop xịn');
+    expect((body['payload'] as Map)['offers'], hasLength(2));
+    await unmount(tester);
+  });
+
+  testWidgets('leaving with a draft asks for confirmation', (tester) async {
+    await pumpCommunity(tester, env, const _Launcher());
+    await tester.tap(find.text('mở'));
+    await settle(tester);
+    await tester.enterText(find.byType(TextField), 'Nháp');
+    await tester.pump();
+
+    await tester.tap(find.byTooltip('Đóng'));
+    await settle(tester);
+    expect(find.text(CommunityStrings.discardTitle), findsOneWidget);
+    await tester.tap(find.text(CommunityStrings.discard));
+    await settle(tester, frames: 30);
+    expect(find.byType(ComposeScreen), findsNothing);
+    await unmount(tester);
+  });
+
+  testWidgets('server errors keep the draft and explain', (tester) async {
+    env.server.json('POST /v1/posts', {
+      'error': {'code': 'rate_limited', 'retryAfter': 600},
+    }, status: 429);
+    await pumpCommunity(tester, env, const ComposeScreen());
+    await settle(tester);
+    await tester.enterText(find.byType(TextField), 'Thử đăng');
+    await tester.pump();
+    await tester.tap(find.text(CommunityStrings.publish));
+    await settle(tester);
+    expect(
+      find.text(CommunityStrings.errorRateLimitedIn('10 phút')),
+      findsOneWidget,
+    );
+    expect(find.text('Thử đăng'), findsOneWidget);
+    await unmount(tester);
+  });
+}

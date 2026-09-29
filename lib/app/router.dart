@@ -10,6 +10,7 @@ import '../core/l10n/common_strings.dart';
 import '../core/ui/empty_view.dart';
 import '../features/battlepass/battlepass_routes.dart';
 import '../features/collection/collection_routes.dart';
+import '../features/community/community_routes.dart';
 import '../features/profile/profile_routes.dart';
 import '../features/settings/settings_routes.dart';
 import '../features/social/social_routes.dart';
@@ -47,11 +48,13 @@ List<RouteBase> buildAppRoutes() => [
         LoginScreen(reauthPuuid: state.uri.queryParameters['reauth']),
   ),
   ...profileTopLevelRoutes,
+  ...communityTopLevelRoutes,
   StatefulShellRoute.indexedStack(
     builder: (context, state, shell) => AppShell(navigationShell: shell),
     branches: [
       StatefulShellBranch(routes: storeBranchRoutes),
       StatefulShellBranch(routes: battlepassBranchRoutes),
+      StatefulShellBranch(routes: communityBranchRoutes),
       StatefulShellBranch(
         routes: collectionBranchRoutes(nested: wishlistRoutes),
       ),

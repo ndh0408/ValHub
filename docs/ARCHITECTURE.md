@@ -21,7 +21,7 @@ lib/
 │  ├─ app.dart               ValVnApp: MaterialApp.router (material_ui), themes, vi locale,
 │  │                         notification deep links, resume hooks
 │  ├─ router.dart            routerProvider, appRedirect(), buildAppRoutes(), createAppRouter()
-│  ├─ shell.dart             AppShell: 5-tab NavigationBar + LiveGameOverlayHost
+│  ├─ shell.dart             AppShell: 6-tab NavigationBar + LiveGameOverlayHost
 │  └─ deep_links.dart        parseDeepLink() for notification payloads
 ├─ core/
 │  ├─ accounts/              Account model, AccountRepository, providers, AccountChip / switcher sheet
@@ -43,6 +43,7 @@ lib/
 └─ features/
    ├─ store/          (+ skin_detail/)   TAB 1 Cửa hàng
    ├─ battlepass/                        TAB 2 Battle Pass
+   ├─ community/                         TAB 3 Cộng đồng (feed, LFG, skin votes; docs/community-api.md)
    ├─ collection/                        TAB 3 Bộ sưu tập
    ├─ wishlist/                          Wishlist + catalog + background check
    ├─ profile/                           TAB 4 Hồ sơ, match detail, player profile
@@ -129,14 +130,16 @@ Routes are composed in `lib/app/router.dart`; features only edit their own
 |---|---|---|
 | top level | `settings_routes.dart` (`settingsTopLevelRoutes`) | `/welcome` → `WelcomeScreen` |
 | top level | core (`AuthRoutes`) | `/login`, `/login?reauth=<puuid>` → `LoginScreen` |
+| top level | `community_routes.dart` (`communityTopLevelRoutes`) | `/compose` → `ComposeScreen` (`extra`: `ComposeDraft`), `/post/:id` → `PostDetailScreen` (`extra`: `CommunityPost`) |
 | top level | `profile_routes.dart` (`profileTopLevelRoutes`) | `/player/:puuid[?hidden=1]` → `PlayerProfileScreen`, `/match/:id[?player=<puuid>]` → `MatchDetailScreen` (full screen, e.g. from the live-game sheet) |
 | tab 0 | `store_routes.dart` (`storeBranchRoutes`) | `/store[?segment=daily\|nightmarket\|accessories\|bundles]`, `/store/bundle/:id` |
 | tab 1 | `battlepass_routes.dart` (`battlepassBranchRoutes`) | `/battlepass`, `/battlepass/rewards` |
-| tab 2 | `collection_routes.dart` (`collectionBranchRoutes({nested})`) | `/collection`, `/card`, `/title`, `/weapons`, `/weapons/:weaponId`, `/weapons/:weaponId/skin/:skinId`, `/expressions`, `/presets`, `/browse/:type` |
-| tab 2 (nested) | `wishlist_routes.dart` (`wishlistRoutes`, relative) | `/collection/wishlist`, `/collection/catalog` |
-| tab 3 | `profile_routes.dart` (`profileBranchRoutes({nested})`) | `/profile`, `/profile/rankup`, `/profile/daily-rr`, `/profile/match/:id` |
-| tab 3 (nested) | `social_routes.dart` (`socialRoutes`, relative) | `/profile/party`, `/profile/friends`, `/profile/friends/:puuid/chat` |
-| tab 4 | `settings_routes.dart` (`settingsBranchRoutes`) | `/settings`, `/settings/log`, `/settings/about` |
+| tab 2 | `community_routes.dart` (`communityBranchRoutes`) | `/community[?section=feed\|lfg\|skins]` |
+| tab 3 | `collection_routes.dart` (`collectionBranchRoutes({nested})`) | `/collection`, `/card`, `/title`, `/weapons`, `/weapons/:weaponId`, `/weapons/:weaponId/skin/:skinId`, `/expressions`, `/presets`, `/browse/:type` |
+| tab 3 (nested) | `wishlist_routes.dart` (`wishlistRoutes`, relative) | `/collection/wishlist`, `/collection/catalog` |
+| tab 4 | `profile_routes.dart` (`profileBranchRoutes({nested})`) | `/profile`, `/profile/rankup`, `/profile/daily-rr`, `/profile/match/:id` |
+| tab 4 (nested) | `social_routes.dart` (`socialRoutes`, relative) | `/profile/party`, `/profile/friends`, `/profile/friends/:puuid/chat` |
+| tab 5 | `settings_routes.dart` (`settingsBranchRoutes`) | `/settings`, `/settings/log`, `/settings/about` |
 
 Location helpers (use them instead of string literals):
 `StoreRoutes.bundle(id)`, `StoreRoutes.segment(StoreSegment.nightMarket)`,
