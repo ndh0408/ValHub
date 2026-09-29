@@ -334,7 +334,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           title: HomeStrings.quietTitle,
                           message: HomeStrings.quietBody,
                         ),
-                      if (!arrangement.isEmpty)
+                      // Also in the quiet state: the user can still arrange the
+                      // cards for when they have something to show.
+                      if (!arrangement.allUserHidden)
                         Align(
                           alignment: Alignment.center,
                           child: TextButton.icon(

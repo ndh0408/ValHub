@@ -1,5 +1,6 @@
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/features/home/data/home_card.dart';
@@ -19,6 +20,9 @@ Future<ProviderContainer> _openSheet(
 }) async {
   await pumpHomeScreen(tester, env, overrides: overrides ?? vmFull());
   await homePastGate(tester);
+  // The button sits at the end of the page.
+  await tester.ensureVisible(find.text(HomeStrings.customize));
+  await homeSettle(tester);
   await tester.tap(find.text(HomeStrings.customize));
   await homeSettle(tester);
   return ProviderScope.containerOf(tester.element(find.byType(Scaffold).first));
@@ -32,11 +36,18 @@ void main() {
     await _openSheet(tester, env, overrides: vmEmpty());
     // Nothing shows on Home, yet all eight cards can be arranged.
     expect(find.text(HomeStrings.customizeHint), findsOneWidget);
-    for (final id in HomeCardId.values) {
+    final list = tester.widget<ReorderableListView>(
+      find.byType(ReorderableListView),
+    );
+    expect(list.itemCount, HomeCardId.values.length);
+    // The first rows are on screen (the list is lazy); the rest scrolls.
+    for (final id in HomeCardId.values.take(4)) {
       expect(_row(id), findsOneWidget, reason: id.name);
       expect(find.text(id.title), findsWidgets);
     }
-    expect(find.byType(Switch), findsNWidgets(8));
+    await tester.ensureVisible(find.text(HomeStrings.resetLayout));
+    await homeSettle(tester);
+    expect(_row(HomeCardId.serverStatus), findsOneWidget);
     homeExpectNoException(tester);
     await homeUnmount(tester);
   });
@@ -54,19 +65,24 @@ void main() {
     );
     await tester.tap(rankSwitch);
     await homeSettle(tester);
-    expect(container.read(homeLayoutProvider).isHidden(HomeCardId.rank), isTrue);
+    expect(
+      container.read(homeLayoutProvider).isHidden(HomeCardId.rank),
+      isTrue,
+    );
     expect(find.byType(RankHomeCard), findsNothing);
     // Persisted in Prefs under f.home.layout.
     expect(
-      HomeLayout.fromJson(env.prefs.getJson(kHomeLayoutPrefKey)).isHidden(
-        HomeCardId.rank,
-      ),
+      HomeLayout.fromJson(env.prefs.getJson(kHomeLayoutPrefKey))
+          .isHidden(HomeCardId.rank),
       isTrue,
     );
 
     await tester.tap(rankSwitch);
     await homeSettle(tester);
-    expect(container.read(homeLayoutProvider).isHidden(HomeCardId.rank), isFalse);
+    expect(
+      container.read(homeLayoutProvider).isHidden(HomeCardId.rank),
+      isFalse,
+    );
     expect(find.byType(RankHomeCard), findsOneWidget);
     await homeUnmount(tester);
   });
@@ -106,7 +122,7 @@ void main() {
     final node = tester.getSemantics(_row(HomeCardId.rank));
     final data = node.getSemanticsData();
     final labels = {
-      for (final id in data.customSemanticsActionIds)
+      for (final id in data.customSemanticsActionIds ?? const <int>[])
         id: CustomSemanticsAction.getAction(id)!.label,
     };
     // Material's reorder actions (localized): move up / down / start / end.
@@ -114,20 +130,21 @@ void main() {
 
     final up = labels.entries
         .firstWhere(
-          (e) => e.value == MaterialLocalizations.of(
-            tester.element(_row(HomeCardId.rank)),
-          ).reorderItemUp,
+          (e) =>
+              e.value ==
+              WidgetsLocalizations.of(tester.element(_row(HomeCardId.rank)))
+                  .reorderItemUp,
         )
         .key;
     final before = container
         .read(homeLayoutProvider)
         .order
         .indexOf(HomeCardId.rank);
-    tester.binding.pipelineOwner.semanticsOwner!.performAction(
-      node.id,
-      SemanticsAction.customAction,
-      up,
-    );
+    tester
+        .renderObject(_row(HomeCardId.rank))
+        .owner!
+        .semanticsOwner!
+        .performAction(node.id, SemanticsAction.customAction, up);
     await homeSettle(tester);
     expect(
       container.read(homeLayoutProvider).order.indexOf(HomeCardId.rank),
@@ -155,9 +172,13 @@ void main() {
       },
     );
     final container = await _openSheet(tester, env);
-    expect(container.read(homeLayoutProvider).order.first, HomeCardId.serverStatus);
+    expect(
+      container.read(homeLayoutProvider).order.first,
+      HomeCardId.serverStatus,
+    );
 
     await tester.ensureVisible(find.text(HomeStrings.resetLayout));
+    await homeSettle(tester);
     await tester.tap(find.text(HomeStrings.resetLayout));
     await homeSettle(tester);
     expect(container.read(homeLayoutProvider), HomeLayout.defaults);
@@ -275,14 +296,19 @@ void main() {
       tester.element(find.byType(Scaffold).first),
     );
 
-    await tester.tap(find.byTooltip(HomeStrings.moreActions(HomeCardId.rank.title)));
+    await tester.tap(
+      find.byTooltip(HomeStrings.moreActions(HomeCardId.rank.title)),
+    );
     await homeSettle(tester);
     expect(find.text(HomeStrings.hideCard), findsOneWidget);
     expect(find.text('${HomeStrings.customize}…'), findsOneWidget);
 
     await tester.tap(find.text(HomeStrings.hideCard));
     await homeSettle(tester);
-    expect(container.read(homeLayoutProvider).isHidden(HomeCardId.rank), isTrue);
+    expect(
+      container.read(homeLayoutProvider).isHidden(HomeCardId.rank),
+      isTrue,
+    );
     expect(find.byType(RankHomeCard), findsNothing);
     expect(
       find.text(HomeStrings.cardHidden(HomeCardId.rank.title)),
@@ -291,7 +317,10 @@ void main() {
 
     await tester.tap(find.text(HomeStrings.undo));
     await homeSettle(tester);
-    expect(container.read(homeLayoutProvider).isHidden(HomeCardId.rank), isFalse);
+    expect(
+      container.read(homeLayoutProvider).isHidden(HomeCardId.rank),
+      isFalse,
+    );
     expect(find.byType(RankHomeCard), findsOneWidget);
     await homeUnmount(tester);
   });
