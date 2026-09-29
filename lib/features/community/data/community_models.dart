@@ -200,6 +200,66 @@ class ScopeFilter {
   String toString() => 'ScopeFilter(${scope.name}, $country, $region)';
 }
 
+/// The scope the server really applied to a list (`appliedScope` of feed /
+/// LFG / review lists and skin top / votes / summary). It can differ from
+/// what was asked: a `country` scope without a known country falls back to
+/// the viewer's `region`, then to `global`.
+@immutable
+class AppliedScope {
+  const AppliedScope({required this.scope, this.country, this.region});
+
+  static const global = AppliedScope(scope: CommunityScope.global);
+
+  /// `null` when the body carries no (valid) `appliedScope` (older server).
+  static AppliedScope? fromJson(Object? json) {
+    final m = asMap(json);
+    final scope = CommunityScope.tryParse(asNonEmptyString(m?['scope']));
+    if (m == null || scope == null) return null;
+    final country = scope == CommunityScope.country
+        ? countryCode(m['country'])
+        : null;
+    // A country scope always names its country.
+    if (scope == CommunityScope.country && country == null) return null;
+    final region = asNonEmptyString(m['region'])?.toLowerCase();
+    return AppliedScope(
+      scope: scope,
+      country: country,
+      region:
+          scope == CommunityScope.region && kCommunityRegions.contains(region)
+          ? region
+          : null,
+    );
+  }
+
+  final CommunityScope scope;
+
+  /// Set for the `country` scope.
+  final String? country;
+
+  /// Set for the `region` scope.
+  final String? region;
+
+  /// Whether the server applied what [asked] means (its country / region
+  /// when it named one).
+  bool matches(ScopeFilter asked) =>
+      scope == asked.scope &&
+      (asked.country == null || country == asked.country) &&
+      (asked.region == null || region == asked.region);
+
+  @override
+  bool operator ==(Object other) =>
+      other is AppliedScope &&
+      other.scope == scope &&
+      other.country == country &&
+      other.region == region;
+
+  @override
+  int get hashCode => Object.hash(scope, country, region);
+
+  @override
+  String toString() => 'AppliedScope(${scope.name}, $country, $region)';
+}
+
 /// One active country community (`GET /v1/communities`).
 @immutable
 class CountryCommunity {
@@ -231,7 +291,7 @@ class CountryCommunity {
 /// A cursor page (`{"items": [...], "nextCursor": "…" | null}`).
 @immutable
 class CommunityPage<T> {
-  const CommunityPage(this.items, {this.nextCursor});
+  const CommunityPage(this.items, {this.nextCursor, this.applied});
 
   static CommunityPage<T> fromJson<T>(
     Object? json,
@@ -239,13 +299,18 @@ class CommunityPage<T> {
   ) {
     final m = asMap(json);
     final list = m == null ? asList(json) : asList(m['items']);
-    return CommunityPage<T>([
-      for (final e in list) ?parse(e),
-    ], nextCursor: asNonEmptyString(m?['nextCursor']));
+    return CommunityPage<T>(
+      [for (final e in list) ?parse(e)],
+      nextCursor: asNonEmptyString(m?['nextCursor']),
+      applied: AppliedScope.fromJson(m?['appliedScope']),
+    );
   }
 
   final List<T> items;
   final String? nextCursor;
+
+  /// The scope the server applied (lists of the scoped endpoints).
+  final AppliedScope? applied;
 
   bool get hasMore => nextCursor != null;
 }
@@ -898,16 +963,27 @@ String formatRating(double value) =>
 /// Votes + rating of one skin (`/v1/skins/votes` items).
 @immutable
 class SkinStats {
-  const SkinStats({required this.vote, this.rating = SkinRating.none});
+  const SkinStats({
+    required this.vote,
+    this.rating = SkinRating.none,
+    this.applied,
+  });
 
-  static SkinStats? fromJson(Object? json) {
+  static SkinStats? fromJson(Object? json, {AppliedScope? applied}) {
     final vote = SkinVote.fromJson(json);
     if (vote == null) return null;
-    return SkinStats(vote: vote, rating: SkinRating.fromJson(json));
+    return SkinStats(
+      vote: vote,
+      rating: SkinRating.fromJson(json),
+      applied: applied,
+    );
   }
 
   final SkinVote vote;
   final SkinRating rating;
+
+  /// The scope the numbers were counted for (the response's `appliedScope`).
+  final AppliedScope? applied;
 
   String get skinUuid => vote.skinUuid;
 }
@@ -949,6 +1025,17 @@ class TopSkin {
   final SkinRating rating;
 
   String get skinUuid => vote.skinUuid;
+}
+
+/// `GET /v1/skins/top`: the rows plus the scope the server applied.
+@immutable
+class TopSkinsResult {
+  const TopSkinsResult(this.rows, {this.applied});
+
+  final List<TopSkin> rows;
+  final AppliedScope? applied;
+
+  bool get isEmpty => rows.isEmpty;
 }
 
 /// Leaderboard periods.
@@ -1063,6 +1150,7 @@ class SkinSummary {
     this.rating = SkinRating.none,
     this.distribution = const [0, 0, 0, 0, 0],
     this.myReview,
+    this.applied,
   });
 
   static SkinSummary fromJson(Object? json, String skinUuid) {
@@ -1082,6 +1170,7 @@ class SkinSummary {
         for (var i = 0; i < 5; i++) i < raw.length ? _count(raw[i]) : 0,
       ],
       myReview: SkinReview.fromJson(m?['myReview']),
+      applied: AppliedScope.fromJson(m?['appliedScope']),
     );
   }
 
@@ -1093,6 +1182,9 @@ class SkinSummary {
   /// Counts of 1★ … 5★ ratings (always 5 entries).
   final List<int> distribution;
   final SkinReview? myReview;
+
+  /// The scope the counts were made for.
+  final AppliedScope? applied;
 
   int get distributionTotal => distribution.fold(0, (a, b) => a + b);
 
@@ -1110,5 +1202,6 @@ class SkinSummary {
     rating: rating,
     distribution: distribution,
     myReview: review,
+    applied: applied,
   );
 }

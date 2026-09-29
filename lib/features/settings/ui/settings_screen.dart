@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/riot/platform_status.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
+import '../../community/ui/data_rights/community_data_section.dart';
 import '../providers/settings_providers.dart';
 import '../settings_strings.dart';
 import 'sections/accounts_section.dart';
@@ -43,6 +44,7 @@ class SettingsScreen extends ConsumerWidget {
           sliver: SliverList(
             delegate: SliverChildListDelegate.fixed([
               SettingsAccountsSection(),
+              CommunityDataSection(),
               SettingsOptionsSection(),
               SettingsNotificationsSection(),
               SettingsAppearanceSection(),

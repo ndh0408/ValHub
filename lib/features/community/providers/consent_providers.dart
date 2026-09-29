@@ -50,6 +50,13 @@ class CommunityConsentNotifier extends Notifier<CommunityConsent> {
 
   Future<void> decline() => _set(CommunityConsent.declined, 'declined');
 
+  /// Withdraws the decision altogether ("Rút lại đồng ý"): the account is
+  /// back to "never asked" and the Community tab is anonymous again.
+  Future<void> revoke() async {
+    state = CommunityConsent.unknown;
+    await ref.read(prefsProvider).remove(communityConsentKey(puuid));
+  }
+
   Future<void> _set(CommunityConsent value, String stored) async {
     state = value;
     await ref.read(prefsProvider).setString(communityConsentKey(puuid), stored);

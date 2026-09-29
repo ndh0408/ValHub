@@ -76,9 +76,11 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
     final live = ref.watch(lfgLivePartyProvider(account.puuid));
     final viewerRank = lfgViewerRank(account);
 
+    // The shard the server really listed (`appliedScope`), else the asked one.
+    final appliedRegion = async.value?.applied?.region;
     final header = _Filters(
       filter: filter,
-      region: query.region,
+      region: appliedRegion ?? query.region,
       myRegion: communityRegion(account.region),
       hasRank: viewerRank != null,
     );

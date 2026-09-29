@@ -26,6 +26,15 @@ class CommunityException implements Exception {
   static const rateLimited = 'rate_limited';
   static const riotRejected = 'riot_rejected';
   static const serverError = 'server_error';
+
+  /// `503` on sign-in: Riot could not verify the token right now (rate
+  /// limit, outage, challenge page). Not a refusal: the Riot token and the
+  /// community session are untouched; retry after [retryAfter].
+  static const riotUnavailable = 'riot_unavailable';
+
+  /// `507`: the server's image storage is full (posting without images
+  /// still works).
+  static const storageFull = 'storage_full';
   static const network = 'network';
   static const timeout = 'timeout';
   static const cancelled = 'cancelled';
@@ -55,6 +64,7 @@ class CommunityException implements Exception {
       code == timeout ||
       code == serverError ||
       code == rateLimited ||
+      code == riotUnavailable ||
       code == badResponse;
 
   /// Maps a dio failure (or anything else) to a [CommunityException].
@@ -99,6 +109,7 @@ class CommunityException implements Exception {
           404 => notFound,
           400 || 413 || 415 || 422 => invalidInput,
           429 => rateLimited,
+          507 => storageFull,
           _ => serverError,
         };
     return CommunityException(
@@ -136,6 +147,20 @@ ErrorDescription describeCommunityError(Object error) {
               formatDurationCoarse(e.retryAfter!),
             ),
       icon: Icons.hourglass_top_rounded,
+    ),
+    CommunityException.riotUnavailable => ErrorDescription(
+      title: CommunityStrings.riotUnavailableTitle,
+      message: e.retryAfter == null
+          ? CommunityStrings.errorRiotUnavailable
+          : CommunityStrings.errorRiotUnavailableIn(
+              formatDurationCoarse(e.retryAfter!),
+            ),
+      icon: Icons.cloud_off_outlined,
+    ),
+    CommunityException.storageFull => const ErrorDescription(
+      message: CommunityStrings.errorStorageFull,
+      icon: Icons.cloud_off_outlined,
+      canRetry: false,
     ),
     CommunityException.riotRejected => const ErrorDescription(
       message: CommunityStrings.errorRiotRejected,

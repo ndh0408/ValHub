@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -29,6 +30,7 @@ import 'package:valvn/features/community/data/community_models.dart'
 import 'package:valvn/features/community/data/community_translator.dart';
 import 'package:valvn/features/community/data/image_source.dart';
 import 'package:valvn/features/community/providers/consent_providers.dart';
+import 'package:valvn/features/community/providers/data_rights_providers.dart';
 import 'package:valvn/features/community/providers/translation_providers.dart';
 import 'package:valvn/features/community/providers/community_providers.dart';
 
@@ -224,7 +226,13 @@ class FakeCommunityServer implements HttpClientAdapter {
 
   late final Dio dio = Dio()..httpClientAdapter = this;
 
+  final Map<String, Completer<void>> _holds = {};
+
   void on(String route, FakeHandler handler) => _routes[route] = handler;
+
+  /// Keeps the answer to [route] pending until [gate] completes (a request
+  /// "in flight").
+  void hold(String route, Completer<void> gate) => _holds[route] = gate;
 
   /// Serves [body] with 200 for [route].
   void json(String route, Object? body, {int status = 200}) =>
@@ -266,6 +274,9 @@ class FakeCommunityServer implements HttpClientAdapter {
       bytes: bytes,
     );
     requests.add(req);
+    for (final e in _holds.entries) {
+      if (_matches(e.key, req.method, req.path)) await e.value.future;
+    }
     FakeHandler? handler;
     for (final e in _routes.entries) {
       if (_matches(e.key, req.method, req.path)) handler = e.value;
@@ -431,6 +442,9 @@ class CommunityTestEnv {
   late final notifications = RecordingNotifications(prefs);
   final translator = FakeCommunityTranslator();
 
+  /// Export files handed to the (fake) native share sheet.
+  final sharedExports = <CommunityExportFile>[];
+
   List<Override> get overrides => [
     prefsProvider.overrideWithValue(prefs),
     secureStoreProvider.overrideWithValue(secure),
@@ -446,6 +460,9 @@ class CommunityTestEnv {
     communityImagePickerProvider.overrideWithValue(picker),
     notificationServiceProvider.overrideWithValue(notifications),
     communityTranslatorProvider.overrideWithValue(translator),
+    communityExportSharerProvider.overrideWithValue((file, {origin}) async {
+      sharedExports.add(file);
+    }),
   ];
 
   ProviderContainer container() =>

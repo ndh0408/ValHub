@@ -42,6 +42,14 @@ abstract final class CommunityStrings {
   static const errorRiotRejected =
       'Riot chưa xác minh được tài khoản của bạn. Hãy đăng nhập lại tài khoản '
       'Riot rồi thử lại.';
+  static const riotUnavailableTitle = 'Riot đang gặp sự cố';
+  static const errorRiotUnavailable =
+      'Riot đang gặp sự cố. Thử lại sau ít phút.';
+  static String errorRiotUnavailableIn(String duration) =>
+      'Riot đang gặp sự cố, thử lại sau $duration.';
+  static const errorStorageFull =
+      'Máy chủ Cộng đồng đã đầy dung lượng ảnh. Bạn vẫn đăng bài được nhưng '
+      'chưa thể kèm ảnh; hãy thử lại ảnh sau.';
   static const errorForbidden = 'Bạn không có quyền thực hiện thao tác này.';
   static const errorNotFound = 'Nội dung này không còn tồn tại.';
   static const errorInvalid = 'Nội dung chưa hợp lệ. Kiểm tra lại rồi thử lại.';
@@ -513,6 +521,49 @@ abstract final class CommunityStrings {
       'IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY '
       'IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR '
       'PURPOSE AND NONINFRINGEMENT.';
+
+  // ------------------------------------------------- data rights (Settings)
+  static const dataTitle = 'Dữ liệu Cộng đồng của bạn';
+  static String dataFooter(String riotId) =>
+      'Áp dụng cho tài khoản đang dùng: $riotId. Tệp tải về không chứa mật '
+      'khẩu hay token.';
+
+  static const exportTitle = 'Tải dữ liệu của tôi';
+  static const exportSubtitle =
+      'Bản sao bài viết, bình luận, đánh giá, lượt thích, bình chọn và tin '
+      'tìm đồng đội (tệp .json).';
+  static const exportSubject = 'Dữ liệu Cộng đồng ValVN';
+  static const exportPreparing = 'Đang chuẩn bị…';
+
+  static const deleteDataTitle = 'Xóa dữ liệu Cộng đồng của tôi';
+  static const deleteDataSubtitle =
+      'Xóa vĩnh viễn mọi thứ bạn đã đăng lên Cộng đồng.';
+  static const deleteDataConfirmTitle = 'Xóa dữ liệu Cộng đồng?';
+  static String deleteDataConfirmBody(String riotId) =>
+      'Toàn bộ bài viết, bình luận, đánh giá skin, lượt thích, bình chọn, '
+      'tin tìm đồng đội và ảnh của $riotId trên Cộng đồng ValVN sẽ bị xóa '
+      'vĩnh viễn và không thể khôi phục. Bạn quay lại chế độ xem ẩn danh và '
+      'cần đồng ý lại nếu muốn tham gia lần nữa.\n\n'
+      'Tài khoản Riot và dữ liệu trong game không bị ảnh hưởng. Hãy tải dữ '
+      'liệu về trước nếu bạn muốn giữ một bản sao.';
+  static const deleteDataConfirm = 'Xóa vĩnh viễn';
+  static const dataDeleted = 'Đã xóa dữ liệu Cộng đồng của bạn.';
+
+  static const withdrawTitle = 'Rút lại đồng ý';
+  static const withdrawSubtitle =
+      'Ngừng dùng Cộng đồng bằng tài khoản này. Bài đã đăng vẫn được giữ.';
+  static const withdrawConfirmTitle = 'Rút lại đồng ý?';
+  static String withdrawConfirmBody(String riotId) =>
+      'Ứng dụng sẽ ngừng dùng Cộng đồng bằng $riotId: phiên Cộng đồng trên '
+      'thiết bị bị xóa và bạn quay lại chế độ xem ẩn danh.\n\n'
+      'Bài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng '
+      'vẫn còn trên '
+      'Cộng đồng và vẫn hiện Riot ID của bạn cho đến khi bạn xóa chúng từng '
+      'cái, hoặc chọn "Xóa dữ liệu Cộng đồng của tôi". Bạn có thể tham gia '
+      'lại bất cứ lúc nào.';
+  static const withdrawConfirm = 'Rút lại';
+  static const consentWithdrawn =
+      'Đã rút lại đồng ý. Bạn đang xem Cộng đồng ẩn danh.';
 
   // -------------------------------------------------------------- consent
   static const consentTitle = 'Tham gia Cộng đồng ValVN';
