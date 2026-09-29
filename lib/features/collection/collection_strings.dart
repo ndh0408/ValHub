@@ -178,6 +178,17 @@ abstract final class CollectionStrings {
   static const browseTitles = 'Danh hiệu';
   static const browseFlex = 'Flex';
   static const searchItems = 'Tìm kiếm…';
+
+  /// One line under the large title of "Duyệt bộ sưu tập" by type path.
+  static String browseSubtitle(String type) => switch (type) {
+    'skin' => 'Mọi skin bạn sở hữu, tính giá trị theo giá cửa hàng',
+    'buddy' => 'Phụ kiện súng đã sở hữu và số bản sao',
+    'spray' => 'Hình phun sơn bạn có thể gắn vào tổ hợp cảm xúc',
+    'card' => 'Thẻ người chơi đã mở khóa, chạm để xem và trang bị',
+    'title' => 'Danh hiệu bạn có thể hiển thị dưới tên',
+    'flex' => 'Flex đã sở hữu',
+    _ => browseTitle,
+  };
   static String summarySkins(int count, String value) => '$count skin · $value';
   static String summaryFiltered(int count, String value) =>
       'Đang lọc: $count skin · $value';
