@@ -13,8 +13,10 @@ void main() {
   PrefsAccountLock lock({Duration maxWait = const Duration(seconds: 2)}) =>
       PrefsAccountLock(
         prefs: SharedPreferencesAsync(),
-        heartbeat: const Duration(milliseconds: 100),
-        staleAfter: const Duration(milliseconds: 400),
+        heartbeat: const Duration(milliseconds: 50),
+        // Wide margin: a loaded CI / dev machine can stall a timer for a
+        // few hundred ms without the holder looking stale.
+        staleAfter: const Duration(milliseconds: 800),
         maxWait: maxWait,
       );
 
@@ -39,7 +41,7 @@ void main() {
       running--;
     });
     // Holder runs well past staleAfter.
-    await Future<void>.delayed(const Duration(milliseconds: 1000));
+    await Future<void>.delayed(const Duration(milliseconds: 1700));
     expect(maxRunning, 1);
     release.complete();
     await Future.wait([first, second]);
