@@ -86,5 +86,5 @@ abstract final class AccountStrings {
   // Switcher sheet (S05)
   static String accountCount(int count, int max) => '$count/$max tài khoản';
   static const manageHint =
-      'Chạm để chuyển tài khoản. Xóa hoặc sửa ghi chú đăng nhập trong Cài đặt.';
+      'Xóa tài khoản hoặc sửa ghi chú đăng nhập trong Cài đặt.';
 }
