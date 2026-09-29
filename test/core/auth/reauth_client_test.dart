@@ -86,6 +86,29 @@ void main() {
       expect((v as VerdictNeedsLogin).reason, 'login_required');
     });
 
+    test('Riot-side OAuth error (server_error) → unknown, not needsLogin', () {
+      final v = classify(
+        303,
+        location: 'https://playvalorant.com/opt_in#error=server_error',
+      );
+      expect(v, isA<VerdictUnknown>());
+      expect(
+        classify(
+          303,
+          location:
+              'https://playvalorant.com/opt_in#error=temporarily_unavailable',
+        ),
+        isA<VerdictUnknown>(),
+      );
+      expect(
+        classify(
+          303,
+          location: 'https://playvalorant.com/opt_in#error=login_required',
+        ),
+        isA<VerdictNeedsLogin>(),
+      );
+    });
+
     test('absolute authenticate.riotgames.com/login → needsLogin', () {
       final v = classify(
         303,
@@ -159,6 +182,18 @@ void main() {
     test('auth / multifactor → needsLogin', () {
       expect(classify(200, {'type': 'auth'}), isA<VerdictNeedsLogin>());
       expect(classify(200, {'type': 'multifactor'}), isA<VerdictNeedsLogin>());
+    });
+
+    test('JSON error field: only login errors → needsLogin', () {
+      expect(
+        classify(200, {'type': 'error', 'error': 'rate_limited'}),
+        isA<VerdictUnknown>(),
+      );
+      expect(classify(400, {'error': 'rate_limited'}), isA<VerdictUnknown>());
+      expect(
+        classify(400, {'error': 'login_required'}),
+        isA<VerdictNeedsLogin>(),
+      );
     });
 
     test('HTML 403 / 429 → transient; junk → unknown', () {

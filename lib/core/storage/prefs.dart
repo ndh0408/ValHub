@@ -42,16 +42,46 @@ abstract final class PrefKeys {
 class Prefs {
   Prefs(this._prefs);
 
-  final SharedPreferencesWithCache _prefs;
+  SharedPreferencesWithCache _prefs;
 
-  static Future<Prefs> create() async => Prefs(
-    await SharedPreferencesWithCache.create(
-      cacheOptions: const SharedPreferencesWithCacheOptions(),
-    ),
-  );
+  /// Writes made while [reload] is reading from disk; replayed on the fresh
+  /// cache so they are not overwritten by the older disk snapshot.
+  List<Future<void> Function(SharedPreferencesWithCache)>? _pendingWrites;
+  Future<void>? _reloading;
 
-  /// Re-reads every value from disk.
-  Future<void> reload() => _prefs.reloadCache();
+  static Future<SharedPreferencesWithCache> _open() =>
+      SharedPreferencesWithCache.create(
+        cacheOptions: const SharedPreferencesWithCacheOptions(),
+      );
+
+  static Future<Prefs> create() async => Prefs(await _open());
+
+  /// Re-reads every value from disk. The current cache keeps serving reads
+  /// until the fresh snapshot is ready (never an empty window), then it is
+  /// swapped in atomically.
+  Future<void> reload() => _reloading ??= _reload().whenComplete(() {
+    _reloading = null;
+  });
+
+  Future<void> _reload() async {
+    _pendingWrites = [];
+    try {
+      final fresh = await _open();
+      final pending = _pendingWrites ?? const [];
+      _pendingWrites = null;
+      _prefs = fresh;
+      for (final write in pending) {
+        await write(fresh);
+      }
+    } finally {
+      _pendingWrites = null;
+    }
+  }
+
+  Future<void> _write(Future<void> Function(SharedPreferencesWithCache) op) {
+    _pendingWrites?.add(op);
+    return op(_prefs);
+  }
 
   Set<String> get keys => _prefs.keys;
   bool containsKey(String key) => _prefs.containsKey(key);
@@ -63,21 +93,54 @@ class Prefs {
   List<String>? getStringList(String key) =>
       _safe(() => _prefs.getStringList(key));
 
+  /// Reads [key] straight from disk (bypassing this isolate's cache), for
+  /// read-modify-write of values another isolate may have changed. Falls
+  /// back to the cached value when storage is unavailable.
+  Future<String?> getStringFromDisk(String key) async {
+    try {
+      return await SharedPreferencesAsync().getString(key);
+    } on Object {
+      return getString(key);
+    }
+  }
+
+  /// [getStringList] straight from disk (see [getStringFromDisk]).
+  Future<List<String>?> getStringListFromDisk(String key) async {
+    try {
+      return await SharedPreferencesAsync().getStringList(key);
+    } on Object {
+      return getStringList(key);
+    }
+  }
+
+  /// Every key on disk (including ones written by other isolates since the
+  /// last [reload]), plus the cached ones.
+  Future<Set<String>> keysOnDisk() async {
+    try {
+      return {...await SharedPreferencesAsync().getKeys(), ...keys};
+    } on Object {
+      return keys;
+    }
+  }
+
   Future<void> setString(String key, String value) =>
-      _prefs.setString(key, value);
-  Future<void> setInt(String key, int value) => _prefs.setInt(key, value);
+      _write((p) => p.setString(key, value));
+  Future<void> setInt(String key, int value) =>
+      _write((p) => p.setInt(key, value));
   Future<void> setDouble(String key, double value) =>
-      _prefs.setDouble(key, value);
-  Future<void> setBool(String key, bool value) => _prefs.setBool(key, value);
+      _write((p) => p.setDouble(key, value));
+  Future<void> setBool(String key, bool value) =>
+      _write((p) => p.setBool(key, value));
   Future<void> setStringList(String key, List<String> value) =>
-      _prefs.setStringList(key, value);
+      _write((p) => p.setStringList(key, value));
 
-  Future<void> remove(String key) => _prefs.remove(key);
+  Future<void> remove(String key) => _write((p) => p.remove(key));
 
-  /// Removes every key starting with [prefix].
+  /// Removes every key starting with [prefix], including keys another
+  /// isolate wrote since the last [reload].
   Future<void> removePrefix(String prefix) async {
-    for (final key in keys.where((k) => k.startsWith(prefix)).toList()) {
-      await _prefs.remove(key);
+    for (final key in (await keysOnDisk()).where((k) => k.startsWith(prefix))) {
+      await remove(key);
     }
   }
 
@@ -86,7 +149,7 @@ class Prefs {
 
   /// Stores [value] as a JSON string.
   Future<void> setJson(String key, Object? value) =>
-      _prefs.setString(key, jsonEncode(value));
+      setString(key, jsonEncode(value));
 
   /// Reads a stored instant (epoch ms).
   DateTime? getDateTime(String key) {
@@ -95,7 +158,7 @@ class Prefs {
   }
 
   Future<void> setDateTime(String key, DateTime value) =>
-      _prefs.setInt(key, value.millisecondsSinceEpoch);
+      setInt(key, value.millisecondsSinceEpoch);
 
   /// A value of the wrong type (e.g. after a schema change) reads as null
   /// instead of throwing.

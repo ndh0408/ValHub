@@ -118,6 +118,14 @@ class SessionManager {
 
   final Map<String, RiotSession> _cache = {};
   final Map<String, Future<RiotSession>> _inFlight = {};
+
+  /// Accounts signed out in this isolate: a re-auth still running for one of
+  /// them must not write its cookies/tokens back (SUMMARY §3.5).
+  final Set<String> _forgotten = {};
+
+  /// Token whose region was already re-checked after a post-re-auth failure.
+  final Map<String, String> _regionCheckedFor = {};
+  final Map<String, Future<void>> _postReauthChecks = {};
   final StreamController<SessionEvent> _events =
       StreamController<SessionEvent>.broadcast();
 
@@ -172,12 +180,93 @@ class SessionManager {
   void invalidate(String puuid) => _cache.remove(puuid.toLowerCase());
 
   /// Drops the session and deletes the account's secrets (sign-out).
+  ///
+  /// Waits for a re-auth already running for [puuid] (it will not persist
+  /// anything once the account is forgotten) and deletes under the account
+  /// lock, so a background isolate's re-auth cannot write the jar back after
+  /// the wipe.
   Future<void> forget(String puuid) async {
     final id = puuid.toLowerCase();
+    _forgotten.add(id);
     _cache.remove(id);
-    for (final key in SecureKeys.allFor(id)) {
-      await _secure.delete(key);
+    _regionCheckedFor.remove(id);
+    final running = _inFlight[id];
+    if (running != null) {
+      try {
+        await running;
+      } on Object {
+        // Expected: the re-auth bails out with NeedsLoginException.
+      }
     }
+    Future<void> wipe() async {
+      _cache.remove(id);
+      for (final key in SecureKeys.allFor(id)) {
+        await _secure.delete(key);
+      }
+    }
+
+    try {
+      await _lock.run(id, wipe);
+    } on TransientException {
+      // Lock held too long by another isolate: sign-out must still wipe.
+      await wipe();
+    }
+  }
+
+  /// Called when a request still fails with 401 / 400 BAD_CLAIMS right after
+  /// a re-auth and its single retry with [accessToken] (SUMMARY §11.2:
+  /// "re-auth, retry once, otherwise needsLogin").
+  ///
+  /// The first time for a token, the region is re-fetched (a stale shard,
+  /// e.g. after a region transfer, is the likely cause); if it changed, the
+  /// account and session move to the new hosts. Otherwise the account is
+  /// marked `needsLogin`, so later requests stop re-authing in a loop.
+  Future<void> reportAuthFailureAfterReauth(
+    String puuid, {
+    required String accessToken,
+  }) {
+    final id = puuid.toLowerCase();
+    final running = _postReauthChecks[id];
+    if (running != null) return running;
+    final future = _handlePostReauthFailure(
+      id,
+      accessToken,
+    ).whenComplete(() => _postReauthChecks.removeWhere((key, _) => key == id));
+    _postReauthChecks[id] = future;
+    return future;
+  }
+
+  Future<void> _handlePostReauthFailure(String id, String token) async {
+    final cached = _cache[id];
+    // Superseded by a newer token: that one has not failed yet.
+    if (cached == null || cached.accessToken != token) return;
+    final account = _accounts.find(id);
+    if (account == null || account.needsLogin) return;
+    if (_regionCheckedFor[id] != token) {
+      _regionCheckedFor[id] = token;
+      try {
+        final region = await _bootstrap.fetchRegion(
+          cached.accessToken,
+          cached.idToken,
+        );
+        if (supportedRegions.contains(region) && region != account.region) {
+          await _accounts.patch(
+            id,
+            (a) => a.copyWith(region: region, shard: shardForRegion(region)),
+          );
+          if (identical(_cache[id], cached)) {
+            _cache[id] = cached.copyWith(hosts: RiotHosts.forRegion(region));
+          }
+          _log?.add('reauth.regionChanged');
+          return;
+        }
+      } on Object {
+        // Could not verify now; the next failure with this token decides.
+        return;
+      }
+    }
+    _log?.add('reauth.rejected', detail: 'auth_failed_after_reauth');
+    await _markNeedsLogin(id, 'auth_failed_after_reauth');
   }
 
   Future<void> dispose() => _events.close();
@@ -202,8 +291,13 @@ class SessionManager {
     return future;
   }
 
+  /// False once the account was signed out (here or, read from disk, in
+  /// another isolate): nothing may be persisted for it any more.
+  Future<bool> _stillExists(String id) async =>
+      !_forgotten.contains(id) && await _accounts.findFresh(id) != null;
+
   Future<RiotSession> _refresh(String id, {String? failedAccessToken}) async {
-    final account = _accounts.find(id);
+    final account = _forgotten.contains(id) ? null : _accounts.find(id);
     if (account == null) {
       throw NeedsLoginException(puuid: id, reason: 'unknown_account');
     }
@@ -245,6 +339,10 @@ class SessionManager {
 
     switch (outcome) {
       case ReauthOk(:final tokens, jar: final rotated):
+        if (!await _stillExists(id)) {
+          // Signed out while the re-auth ran: persist nothing.
+          throw NeedsLoginException(puuid: id, reason: 'unknown_account');
+        }
         // Persist rotated cookies BEFORE using the tokens.
         if (usedPrevious) {
           await _secure.write(SecureKeys.cookies(id), rotated.encode());
@@ -315,6 +413,12 @@ class SessionManager {
       clientVersion: _versions.current.riotClientVersion,
       userAgent: _versions.apiUserAgent,
     );
+    if (!await _stillExists(account.puuid)) {
+      throw NeedsLoginException(
+        puuid: account.puuid,
+        reason: 'unknown_account',
+      );
+    }
     await _writeTokenCache(session);
     _cache[account.puuid] = session;
     if (account.needsLogin) {
@@ -335,11 +439,10 @@ class SessionManager {
     required RiotCookieJar cookies,
   }) async {
     final id = tokens.puuid;
+    _forgotten.remove(id);
     return _lock.run(id, () async {
-      final old = await _secure.read(SecureKeys.cookies(id));
-      if (old != null) await _secure.write(SecureKeys.previousCookies(id), old);
-      await _secure.write(SecureKeys.cookies(id), cookies.encode());
-
+      // Bootstrap first: if it fails, nothing is left in secure storage for
+      // an account that was never added.
       final userInfo = await _bootstrap.fetchUserInfo(tokens.accessToken);
       final region = await _bootstrap.fetchRegion(
         tokens.accessToken,
@@ -358,6 +461,9 @@ class SessionManager {
         clientVersion: _versions.current.riotClientVersion,
         userAgent: _versions.apiUserAgent,
       );
+      final old = await _secure.read(SecureKeys.cookies(id));
+      if (old != null) await _secure.write(SecureKeys.previousCookies(id), old);
+      await _secure.write(SecureKeys.cookies(id), cookies.encode());
       await _writeTokenCache(session);
       _cache[id] = session;
       _log?.add('login.ok', detail: cookies.has('ssid') ? null : 'no_ssid');

@@ -121,6 +121,10 @@ class RiotAuthInterceptor extends Interceptor {
     }
   }
 
+  /// Tokens whose name-service 403 survived a re-auth + retry: further
+  /// name-service 403s with them do not trigger another re-auth.
+  final Set<String> _nameServiceRejected = {};
+
   @override
   Future<void> onError(
     DioException err,
@@ -129,12 +133,25 @@ class RiotAuthInterceptor extends Interceptor {
     final options = err.requestOptions;
     final puuid = options.extra[RequestExtras.puuid];
     final response = err.response;
+    final status = response?.statusCode;
+    final contentType = response?.headers.value(Headers.contentTypeHeader);
+    final nameService = isNameServiceAuthFailure(
+      status,
+      response?.data,
+      path: options.uri.path,
+      contentType: contentType,
+    );
     if (puuid is! String ||
         options.extra[RequestExtras.authRetried] == true ||
-        !isAuthFailure(response?.statusCode, response?.data)) {
+        !(nameService || isAuthFailure(status, response?.data))) {
       return handler.next(err);
     }
     final failedToken = _bearer(options.headers['Authorization']);
+    if (nameService &&
+        failedToken != null &&
+        _nameServiceRejected.contains(failedToken)) {
+      return handler.next(err);
+    }
     try {
       final session = await _sessions.refreshAfterAuthFailure(
         puuid,
@@ -142,8 +159,13 @@ class RiotAuthInterceptor extends Interceptor {
       );
       options.extra[RequestExtras.authRetried] = true;
       options.headers.addAll(session.gameHeaders);
-      final retried = await _dio.fetch<dynamic>(options);
-      handler.resolve(retried);
+      try {
+        final retried = await _dio.fetch<dynamic>(options);
+        handler.resolve(retried);
+      } on DioException catch (e) {
+        await _afterFailedRetry(puuid, session.accessToken, e, nameService);
+        handler.next(e);
+      }
     } on DioException catch (e) {
       handler.next(e);
     } on Object catch (e) {
@@ -151,6 +173,33 @@ class RiotAuthInterceptor extends Interceptor {
       handler.next(
         DioException(requestOptions: options, error: error, response: response),
       );
+    }
+  }
+
+  /// The retry with fresh tokens failed too (SUMMARY §11.2: otherwise
+  /// needsLogin). Stops the next request from re-authing in a loop.
+  Future<void> _afterFailedRetry(
+    String puuid,
+    String token,
+    DioException e,
+    bool nameService,
+  ) async {
+    final res = e.response;
+    try {
+      if (isAuthFailure(res?.statusCode, res?.data)) {
+        await _sessions.reportAuthFailureAfterReauth(puuid, accessToken: token);
+      } else if (nameService &&
+          isNameServiceAuthFailure(
+            res?.statusCode,
+            res?.data,
+            path: e.requestOptions.uri.path,
+            contentType: res?.headers.value(Headers.contentTypeHeader),
+          )) {
+        if (_nameServiceRejected.length > 32) _nameServiceRejected.clear();
+        _nameServiceRejected.add(token);
+      }
+    } on Object {
+      // Best effort: the original error is still reported to the caller.
     }
   }
 

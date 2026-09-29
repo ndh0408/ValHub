@@ -110,9 +110,13 @@ class AccountsNotifier extends Notifier<List<Account>> {
   Future<void> remove(String puuid) async {
     final id = puuid.toLowerCase();
     await ref.read(notificationServiceProvider).cancelForAccount(id);
-    await ref.read(sessionManagerProvider).forget(id);
-    await _repo.wipeAccountData(id);
+    // Metadata first: a re-auth still running (here or in the background
+    // isolate) re-checks the account list before persisting anything.
     await _repo.removeMetadata(id);
+    // Waits for an in-flight re-auth and deletes under the account lock.
+    await ref.read(sessionManagerProvider).forget(id);
+    // Backstop: deletes the secrets again, plus prefs and file caches.
+    await _repo.wipeAccountData(id);
     final remaining = _repo.loadAll();
     if (_repo.activePuuid == id) {
       await _repo.setActivePuuid(remaining.firstOrNull?.puuid);

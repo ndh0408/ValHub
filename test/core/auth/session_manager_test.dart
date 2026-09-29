@@ -305,4 +305,106 @@ void main() {
     await manager.forget(_puuid);
     expect(secure.values.keys.where((k) => k.contains(_puuid)), isEmpty);
   });
+
+  test('sign-out during a re-auth persists nothing afterwards', () async {
+    final gate = Completer<ReauthOutcome>();
+    when(() => reauth.reauth(any(), postFirst: any(named: 'postFirst')))
+        .thenAnswer((_) => gate.future);
+    final pending = manager.session(_puuid);
+    // Sign-out order of AccountsNotifier.remove: metadata, then forget.
+    await accounts.removeMetadata(_puuid);
+    final forgetting = manager.forget(_puuid);
+    gate.complete(
+      ReauthOk(_tokens(clock.now()), const RiotCookieJar({'ssid': 'rotated'})),
+    );
+    await expectLater(pending, throwsA(isA<NeedsLoginException>()));
+    await forgetting;
+    expect(secure.values.keys.where((k) => k.contains(_puuid)), isEmpty);
+    expect(manager.peek(_puuid), isNull);
+  });
+
+  test('forget alone blocks a running re-auth from writing back', () async {
+    final gate = Completer<ReauthOutcome>();
+    when(() => reauth.reauth(any(), postFirst: any(named: 'postFirst')))
+        .thenAnswer((_) => gate.future);
+    final pending = manager.session(_puuid);
+    final forgetting = manager.forget(_puuid);
+    gate.complete(
+      ReauthOk(_tokens(clock.now()), const RiotCookieJar({'ssid': 'rotated'})),
+    );
+    await expectLater(pending, throwsA(isA<NeedsLoginException>()));
+    await forgetting;
+    expect(secure.values.keys.where((k) => k.contains(_puuid)), isEmpty);
+  });
+
+  test('establishFromLogin stores nothing when bootstrap fails', () async {
+    secure.values.clear();
+    when(() => bootstrap.fetchUserInfo(any()))
+        .thenThrow(const TransientException(reason: 'network'));
+    await expectLater(
+      manager.establishFromLogin(
+        tokens: _tokens(clock.now()),
+        cookies: const RiotCookieJar({'ssid': 'fresh'}),
+      ),
+      throwsA(isA<TransientException>()),
+    );
+    expect(secure.values, isEmpty);
+  });
+
+  group('reportAuthFailureAfterReauth', () {
+    setUp(() {
+      when(
+        () => reauth.reauth(any(), postFirst: any(named: 'postFirst')),
+      ).thenAnswer(
+        (_) async =>
+            ReauthOk(_tokens(clock.now()), const RiotCookieJar({'ssid': 'n'})),
+      );
+    });
+
+    test('same region: marks needsLogin, no more re-auth loops', () async {
+      when(() => bootstrap.fetchRegion(any(), any()))
+          .thenAnswer((_) async => 'ap');
+      final s = await manager.session(_puuid);
+      await manager.reportAuthFailureAfterReauth(
+        _puuid,
+        accessToken: s.accessToken,
+      );
+      // Region re-checked (unchanged) → needsLogin.
+      verify(() => bootstrap.fetchRegion(any(), any())).called(1);
+      expect(accounts.find(_puuid)!.needsLogin, isTrue);
+      await expectLater(
+        manager.refreshAfterAuthFailure(
+          _puuid,
+          failedAccessToken: s.accessToken,
+        ),
+        throwsA(isA<NeedsLoginException>()),
+      );
+      verify(() => reauth.reauth(any(), postFirst: any(named: 'postFirst')))
+          .called(1);
+    });
+
+    test('changed region: moves the account instead of marking it', () async {
+      when(() => bootstrap.fetchRegion(any(), any()))
+          .thenAnswer((_) async => 'eu');
+      final s = await manager.session(_puuid);
+      await manager.reportAuthFailureAfterReauth(
+        _puuid,
+        accessToken: s.accessToken,
+      );
+      final account = accounts.find(_puuid)!;
+      expect(account.needsLogin, isFalse);
+      expect(account.region, 'eu');
+      expect(manager.peek(_puuid)!.hosts.pd, 'https://pd.eu.a.pvp.net');
+    });
+
+    test('ignored for a superseded token', () async {
+      final s = await manager.session(_puuid);
+      await manager.reportAuthFailureAfterReauth(
+        _puuid,
+        accessToken: '${s.accessToken}-old',
+      );
+      verifyNever(() => bootstrap.fetchRegion(any(), any()));
+      expect(accounts.find(_puuid)!.needsLogin, isFalse);
+    });
+  });
 }

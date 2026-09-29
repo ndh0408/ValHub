@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../network/riot_exception.dart';
+
 /// Serialises re-auth for one account across isolates (UI + background),
 /// because two parallel re-auths can invalidate each other's rotated cookies
 /// (SUMMARY §3.4 "Concurrency").
@@ -32,18 +34,26 @@ class LocalAccountLock implements AccountLock {
 }
 
 /// Advisory cross-isolate lock: a `{owner}|{epochMs}` timestamp in prefs
-/// (read straight from disk with [SharedPreferencesAsync]). Stale locks
-/// (older than [staleAfter]) are taken over; waiting gives up after
-/// [maxWait] and proceeds anyway (never deadlock the app).
+/// (read straight from disk with [SharedPreferencesAsync]).
+///
+/// The holder rewrites the timestamp every [heartbeat] while its body runs,
+/// so a long re-auth (several 20 s auth calls + bootstrap) is never mistaken
+/// for a stale lock; a lock not refreshed for [staleAfter] (its isolate
+/// died) is taken over. A waiter that cannot get the lock within [maxWait]
+/// does NOT run the body (two parallel re-auths invalidate each other's
+/// cookies, SUMMARY §3.4): it throws a [TransientException]
+/// (`lock_timeout`).
 class PrefsAccountLock implements AccountLock {
   PrefsAccountLock({
     SharedPreferencesAsync? prefs,
-    this.staleAfter = const Duration(seconds: 60),
-    this.maxWait = const Duration(seconds: 45),
+    this.heartbeat = const Duration(seconds: 15),
+    this.staleAfter = const Duration(seconds: 40),
+    this.maxWait = const Duration(seconds: 60),
   }) : _prefs = prefs ?? SharedPreferencesAsync(),
        _owner = _randomOwner();
 
   final SharedPreferencesAsync _prefs;
+  final Duration heartbeat;
   final Duration staleAfter;
   final Duration maxWait;
   final String _owner;
@@ -60,12 +70,29 @@ class PrefsAccountLock implements AccountLock {
   Future<T> run<T>(String puuid, Future<T> Function() body) =>
       _local.run(puuid, () async {
         await _acquire(puuid);
+        final beat = Timer.periodic(heartbeat, (_) => _touch(puuid));
         try {
           return await body();
         } finally {
+          beat.cancel();
           await _release(puuid);
         }
       });
+
+  Future<void> _touch(String puuid) async {
+    try {
+      final key = _key(puuid);
+      final value = await _prefs.getString(key);
+      if (value != null && value.startsWith('$_owner|')) {
+        await _prefs.setString(
+          key,
+          '$_owner|${DateTime.now().millisecondsSinceEpoch}',
+        );
+      }
+    } on Object {
+      // Best effort.
+    }
+  }
 
   Future<void> _acquire(String puuid) async {
     final key = _key(puuid);
@@ -90,7 +117,9 @@ class PrefsAccountLock implements AccountLock {
           return;
         }
       }
-      if (DateTime.now().isAfter(deadline)) return;
+      if (DateTime.now().isAfter(deadline)) {
+        throw const TransientException(reason: 'lock_timeout');
+      }
       await Future<void>.delayed(const Duration(milliseconds: 400));
     }
   }

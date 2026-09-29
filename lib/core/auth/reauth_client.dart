@@ -86,13 +86,33 @@ ReauthVerdict? _transientFor(
   return null;
 }
 
+/// OAuth errors that really mean "the cookies no longer log in" (SUMMARY
+/// §3.4). Anything else (`server_error`, `temporarily_unavailable`,
+/// `rate_limited`…) is a Riot-side hiccup and must not mark the account.
+const _loginErrors = {
+  'login_required',
+  'interaction_required',
+  'consent_required',
+  'account_selection_required',
+};
+
+bool _isLoginError(String? error, [String? description]) {
+  if (error != null && _loginErrors.contains(error.toLowerCase())) return true;
+  return description != null &&
+      description.toLowerCase().contains('login_required');
+}
+
 /// Verdict for a callback-shaped URL (`…/opt_in#access_token=…` or `#error=…`).
 ReauthVerdict _verdictForCallbackUri(Uri uri, DateTime receivedAt) {
   final params = parseCallbackParams(uri);
   final error = params['error'];
   if (error != null) {
+    final code = error.firstOrNull;
     final description = params['error_description']?.firstOrNull;
-    return VerdictNeedsLogin(description ?? error.firstOrNull ?? 'error');
+    if (_isLoginError(code, description)) {
+      return VerdictNeedsLogin(description ?? code ?? 'error');
+    }
+    return VerdictUnknown('callback_error_${code ?? 'unknown'}');
   }
   final tokens = AuthTokens.fromParams(params, receivedAt: receivedAt);
   if (tokens != null) return VerdictOk(tokens);
@@ -174,8 +194,12 @@ ReauthVerdict classifyAuthorizationResponse({
     if (uri != null) return _verdictForCallbackUri(uri, receivedAt);
     return const VerdictUnknown('response_without_uri');
   }
-  if (asString(json['error']) != null) {
-    return VerdictNeedsLogin(asString(json['error'])!);
+  final error = asString(json['error']);
+  if (error != null) {
+    if (_isLoginError(error, asString(json['error_description']))) {
+      return VerdictNeedsLogin(error);
+    }
+    return VerdictUnknown('error_$error');
   }
   return VerdictUnknown('type_${type ?? 'null'}');
 }

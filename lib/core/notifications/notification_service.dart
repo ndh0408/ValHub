@@ -298,7 +298,13 @@ class NotificationService {
     final prefs = _prefs;
     if (prefs == null) return;
     final key = PrefKeys.account(puuid, 'notificationIds');
-    for (final raw in prefs.getStringList(key) ?? const <String>[]) {
+    // From disk: the background isolate may have tracked ids since the
+    // last reload.
+    final ids = {
+      ...?prefs.getStringList(key),
+      ...?await prefs.getStringListFromDisk(key),
+    };
+    for (final raw in ids) {
       final id = int.tryParse(raw);
       if (id != null) await cancel(id);
     }

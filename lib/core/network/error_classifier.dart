@@ -65,10 +65,42 @@ String? _riotMessage(Object? body) {
 
 /// True when a PD/GLZ/auth response means "token expired": `401`, or `400`
 /// with `errorCode == BAD_CLAIMS` (SUMMARY §1 #4).
-bool isAuthFailure(int? status, Object? body) {
+///
+/// With the request [path], a `403` with a JSON body from `name-service` is a
+/// re-auth trigger too (SUMMARY §3.4, U15); a Cloudflare HTML 403 and
+/// `SCHEDULED_DOWNTIME` never are. Without [path] (e.g. [classifyHttpError])
+/// only 401 / BAD_CLAIMS count, so a name-service 403 that survives the retry
+/// stays a cosmetic [RiotApiException] and never marks the account.
+bool isAuthFailure(
+  int? status,
+  Object? body, {
+  String? path,
+  String? contentType,
+}) {
   if (status == 401) return true;
-  return status == 400 && riotErrorCode(body) == 'BAD_CLAIMS';
+  if (status == 400) return riotErrorCode(body) == 'BAD_CLAIMS';
+  return status == 403 &&
+      isNameServiceAuthFailure(
+        status,
+        body,
+        path: path,
+        contentType: contentType,
+      );
 }
+
+/// `403` + JSON body (not downtime) on a `/name-service/` path.
+bool isNameServiceAuthFailure(
+  int? status,
+  Object? body, {
+  String? path,
+  String? contentType,
+}) =>
+    status == 403 &&
+    path != null &&
+    path.contains('/name-service/') &&
+    body != null &&
+    !looksLikeHtml(body, contentType: contentType) &&
+    riotErrorCode(body) != 'SCHEDULED_DOWNTIME';
 
 /// Maps an HTTP error response to a [RiotException] (SUMMARY §7.8, §11).
 RiotException classifyHttpError({

@@ -21,12 +21,30 @@ class AccountRepository {
   final JsonFileCache? _files;
 
   /// All accounts in the user's order. Corrupt entries are skipped.
-  List<Account> loadAll() {
+  List<Account> loadAll() => _parse(_prefs.getJson(PrefKeys.accounts));
+
+  static List<Account> _parse(Object? raw) {
     final seen = <String>{};
     return [
-      for (final json in asList(_prefs.getJson(PrefKeys.accounts)))
+      for (final json in asList(raw))
         if (Account.fromJson(json) case final a? when seen.add(a.puuid)) a,
     ];
+  }
+
+  /// The list as stored on disk right now. Read-modify-write goes through
+  /// this, because another isolate (background task) may have changed the
+  /// list since this isolate's prefs cache was loaded; rewriting the stale
+  /// cached list would resurrect removed accounts or drop `needsLogin`.
+  Future<List<Account>> _loadFresh() async =>
+      _parse(tryDecodeJson(await _prefs.getStringFromDisk(PrefKeys.accounts)));
+
+  /// Like [find], but reads the list from disk (cross-isolate check).
+  Future<Account?> findFresh(String puuid) async {
+    final id = puuid.toLowerCase();
+    for (final a in await _loadFresh()) {
+      if (a.puuid == id) return a;
+    }
+    return null;
   }
 
   Future<void> saveAll(List<Account> accounts) =>
@@ -42,7 +60,7 @@ class AccountRepository {
 
   /// Inserts or replaces (keeping the list position) [account].
   Future<void> upsert(Account account) async {
-    final all = loadAll();
+    final all = await _loadFresh();
     final i = all.indexWhere((a) => a.puuid == account.puuid);
     if (i < 0) {
       all.add(account);
@@ -54,15 +72,22 @@ class AccountRepository {
 
   /// Applies [update] to the stored account, if present. Returns the result.
   Future<Account?> patch(String puuid, Account Function(Account) update) async {
-    final current = find(puuid);
-    if (current == null) return null;
+    final id = puuid.toLowerCase();
+    final all = await _loadFresh();
+    final i = all.indexWhere((a) => a.puuid == id);
+    if (i < 0) return null;
+    final current = all[i];
     final next = update(current);
-    if (next != current) await upsert(next);
+    if (next != current || find(id) != current) {
+      all[i] = next;
+      await saveAll(all);
+    }
     return next;
   }
 
   Future<void> removeMetadata(String puuid) async {
-    final all = loadAll()..removeWhere((a) => a.puuid == puuid.toLowerCase());
+    final all = (await _loadFresh())
+      ..removeWhere((a) => a.puuid == puuid.toLowerCase());
     await saveAll(all);
   }
 

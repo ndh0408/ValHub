@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform;
+    show TargetPlatform, defaultTargetPlatform, visibleForTesting;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart'
     hide AndroidOptions;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +27,13 @@ import 'cookie_jar.dart';
 /// on the device (secure storage) and never sent anywhere else.
 ///
 /// Route: `/login` (add account) or `/login?reauth=<puuid>` (re-login).
+/// After a successful login: return to the screen that opened the login
+/// (re-login from Collection / Settings, "Thêm tài khoản") instead of jumping
+/// to the Store. Only the first sign-in (from /welcome) goes to the Store.
+@visibleForTesting
+bool shouldPopAfterLogin({required bool hadAccounts, required bool canPop}) =>
+    hadAccounts && canPop;
+
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key, this.reauthPuuid});
 
@@ -49,11 +56,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   String? _errorMessage;
   InAppWebViewController? _controller;
 
-  SessionLog get _log => ref.read(sessionLogProvider);
+  // Read once while mounted: failures after the user closed the screen must
+  // still be logged without touching `ref` (unsafe once unmounted).
+  late final SessionLog _log = ref.read(sessionLogProvider);
+
+  /// False on the very first sign-in (pushed from /welcome): that one lands
+  /// on the Store; every other login returns to where the user was.
+  late final bool _hadAccounts = ref.read(hasAccountsProvider);
 
   @override
   void initState() {
     super.initState();
+    _log;
+    _hadAccounts;
     unawaited(_prepare());
   }
 
@@ -195,7 +210,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       } else if (widget.reauthPuuid != null) {
         showAppSnackBar(context, AuthStrings.reloginDone);
       }
-      context.go('/store');
+      if (shouldPopAfterLogin(
+        hadAccounts: _hadAccounts,
+        canPop: context.canPop(),
+      )) {
+        context.pop(true);
+      } else {
+        context.go('/store');
+      }
     } on MaxAccountsException catch (e) {
       _fail(e.message, logDetail: 'max_accounts');
     } on RiotException catch (e) {
