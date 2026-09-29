@@ -22,6 +22,7 @@ import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/core/util/clock.dart';
 import 'package:valvn/core/util/json.dart';
 import 'package:valvn/core/xmpp/xmpp.dart';
+import 'package:valvn/features/social/providers/party_providers.dart';
 
 import '../../helpers/fixtures.dart';
 import '../../helpers/test_prefs.dart';
@@ -189,7 +190,11 @@ class SocialTestEnv {
   final clock = FixedClock(now);
   RemoteConfig remoteConfig = const RemoteConfig();
 
+  /// Texts sent to the OS share sheet.
+  final shared = <String>[];
+
   List<Override> get overrides => [
+    partyShareProvider.overrideWithValue((text) async => shared.add(text)),
     prefsProvider.overrideWithValue(prefs),
     secureStoreProvider.overrideWithValue(MemorySecureStore()),
     sessionManagerProvider.overrideWithValue(sessions),
@@ -277,21 +282,34 @@ void registerSocialFallbacks() {
   registerFallbackValue(<String>[]);
 }
 
-/// Pumps [child] at phone size (360 × [height] dp) with the dark theme.
+/// Pumps [child] at phone size (360 × [height] dp) with the dark theme
+/// (or [theme]) and an optional forced text scale.
 Future<void> pumpSocial(
   WidgetTester tester,
   SocialTestEnv env,
   Widget child, {
   double height = 1400,
+  ThemeData? theme,
+  double? textScale,
 }) async {
   tester.view.physicalSize = Size(360, height);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
+  final scale = textScale;
   await tester.pumpWidget(
     ProviderScope(
       overrides: env.overrides,
       retry: (_, _) => null,
-      child: MaterialApp(theme: buildDarkTheme(), home: child),
+      child: MaterialApp(
+        theme: theme ?? buildDarkTheme(),
+        home: scale == null
+            ? child
+            : MediaQuery.withClampedTextScaling(
+                minScaleFactor: scale,
+                maxScaleFactor: scale,
+                child: child,
+              ),
+      ),
     ),
   );
 }

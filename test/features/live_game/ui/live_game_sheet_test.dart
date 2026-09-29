@@ -1,9 +1,11 @@
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoAlertDialog;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/settings/app_settings.dart';
 import 'package:valvn/core/storage/prefs.dart';
+import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/core/xmpp/xmpp.dart';
 import 'package:valvn/features/live_game/live_game_sheet.dart';
 import 'package:valvn/features/live_game/player_loadout_sheet.dart';
@@ -24,6 +26,7 @@ void main() {
     double width = 360,
     double height = 780,
     double textScale = 1,
+    ThemeData? theme,
   }) async {
     await pumpLive(
       tester,
@@ -32,6 +35,7 @@ void main() {
       width: width,
       height: height,
       textScale: textScale,
+      theme: theme,
     );
     await settle(tester, frames: 10);
   }
@@ -75,7 +79,7 @@ void main() {
     testWidgets('header, hint, timer and grid', (tester) async {
       await pumpSheet(tester);
       expect(find.text('Đang chọn đặc vụ'), findsOneWidget);
-      expect(find.text('ASCENT'), findsOneWidget);
+      expect(find.text('Ascent'), findsOneWidget);
       expect(find.text('Thi đấu xếp hạng'), findsOneWidget);
       expect(find.text('Chạm để chọn, giữ để khóa đặc vụ.'), findsOneWidget);
       expect(find.text('Còn 0:42'), findsOneWidget);
@@ -112,6 +116,10 @@ void main() {
       await tester.tap(find.text('Omen'));
       await settle(tester);
       expect(find.text('Bạn chưa sở hữu đặc vụ này.'), findsOneWidget);
+      // The map splash header pushes the grid down: bring Sova to the top
+      // of the grid, clear of the snackbar.
+      await tester.ensureVisible(find.text('Sova'));
+      await settle(tester);
       await tester.longPress(find.text('Sova'));
       await tester.tap(find.text('Sova'));
       await settle(tester);
@@ -170,6 +178,22 @@ void main() {
       expect(find.text('Đã rời trận.'), findsOneWidget);
     });
 
+    testWidgets('on iOS the dodge warning is a Cupertino alert', (
+      tester,
+    ) async {
+      await pumpSheet(
+        tester,
+        theme: buildDarkTheme().copyWith(platform: TargetPlatform.iOS),
+      );
+      await tester.tap(find.text('Rời trận'));
+      await settle(tester);
+      expect(find.byType(CupertinoAlertDialog), findsOneWidget);
+      expect(find.byType(AlertDialog), findsNothing);
+      await tester.tap(find.text('Hủy'));
+      await settle(tester);
+      verifyNever(() => env.api.pregameQuit(any(), any()));
+    });
+
     testWidgets('no overflow at 320 dp with 130 % text', (tester) async {
       await pumpSheet(tester, width: 320, height: 640, textScale: 1.3);
       expect(tester.takeException(), isNull);
@@ -202,6 +226,21 @@ void main() {
       expect(find.text('Ẩn danh'), findsOneWidget);
       expect(find.text('Kẻ Thù#EN2'), findsNothing);
       expect(find.text('Omen'), findsOneWidget);
+    });
+
+    testWidgets('roster fits 360 dp at 200 % text', (tester) async {
+      await pumpSheet(tester, width: 360, height: 800, textScale: 2);
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.text('Đội địch'));
+      await settle(tester, frames: 12);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('renders on the light theme', (tester) async {
+      await pumpSheet(tester, theme: buildLightTheme());
+      expect(tester.takeException(), isNull);
+      expect(find.text('Đang diễn ra'), findsOneWidget);
+      expect(find.text('Tôi#VN1'), findsOneWidget);
     });
 
     testWidgets('friends queued together get party badges', (tester) async {

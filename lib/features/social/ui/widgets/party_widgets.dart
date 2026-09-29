@@ -7,6 +7,7 @@ import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/competitive/competitive.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/rank_badge.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
@@ -273,6 +274,7 @@ class QueuePicker extends ConsumerWidget {
                 ? null
                 : (_) {
                     if (c.selectable) {
+                      Haptics.selection();
                       onSelect(c.queueId);
                     } else {
                       onBlocked(
@@ -410,17 +412,22 @@ class PartyMemberTile extends ConsumerWidget {
       direction: DismissDirection.endToStart,
       confirmDismiss: (_) => remove(),
       background: Container(
-        color: ValColors.red,
+        color: theme.colorScheme.error,
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.person_remove_outlined, color: Colors.white),
+            Icon(
+              Icons.person_remove_outlined,
+              color: theme.colorScheme.onError,
+            ),
             const SizedBox(width: 8),
             Text(
               SocialStrings.removeMember,
-              style: theme.textTheme.labelLarge?.copyWith(color: Colors.white),
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: theme.colorScheme.onError,
+              ),
             ),
           ],
         ),

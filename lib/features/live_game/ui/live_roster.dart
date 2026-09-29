@@ -8,6 +8,7 @@ import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive.dart';
 import '../../../core/settings/app_settings.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/skeleton.dart';
@@ -52,11 +53,11 @@ class LiveRosterList extends ConsumerWidget {
     Future<void> refresh() =>
         ref.read(liveGameProvider(puuid).notifier).refresh();
 
-    return RefreshIndicator(
+    return AdaptiveRefresh(
       onRefresh: refresh,
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 16),
+        padding: const EdgeInsets.fromLTRB(12, 4, 12, 24),
         children: [
           ?header,
           if (players.isEmpty)
@@ -137,15 +138,19 @@ class LivePlayerRow extends ConsumerWidget {
     final locked = match.isPregame && player.isLocked;
     final group = partyGroup;
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+    final strip = group == null ? null : partyColor(group);
+    // ValBuddy: flat rows on the sheet; your own row is a tinted card with
+    // an accent outline.
+    return Material(
+      type: isSelf ? MaterialType.canvas : MaterialType.transparency,
+      color: isSelf ? theme.colorScheme.primary.withValues(alpha: 0.08) : null,
       clipBehavior: Clip.antiAlias,
-      // Figma: your own row on s2 with a red outline.
-      color: isSelf ? colors.surface2 : null,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(ValRadius.small),
         side: isSelf
-            ? const BorderSide(color: ValColors.red, width: 1.2)
+            ? BorderSide(
+                color: theme.colorScheme.primary.withValues(alpha: 0.7),
+              )
             : BorderSide.none,
       ),
       child: InkWell(
@@ -159,88 +164,97 @@ class LivePlayerRow extends ConsumerWidget {
             playerName: name,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 12, 4, 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _AgentPortrait(
-                icon: agent?.displayIcon,
-                size: 48,
-                dimmed: match.isPregame && !locked,
-                partyColor: group == null ? null : partyColor(group),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: hidden
-                                  ? theme.colorScheme.onSurfaceVariant
-                                  : null,
-                            ),
-                          ),
-                        ),
-                        if (isSelf) ...[
-                          const SizedBox(width: 8),
-                          const ValBadge(
-                            LiveGameStrings.you,
-                            color: ValColors.red,
-                          ),
-                        ],
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    if (group != null || locked) ...[
-                      const SizedBox(height: 4),
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 4,
-                        children: [
-                          if (group != null)
-                            LiveTag(
-                              LiveGameStrings.party,
-                              color: partyColor(group),
-                              icon: Icons.group,
-                            ),
-                          if (locked)
-                            LiveTag(
-                              LiveGameStrings.lockedTag,
-                              color: colors.win,
-                              icon: Icons.lock,
-                            ),
-                        ],
-                      ),
-                    ],
-                    const SizedBox(height: 6),
-                    _RankLine(puuid: player.subject, showPeak: showPeak),
-                  ],
+        child: DecoratedBox(
+          // Party grouping: a colored strip on the leading edge, shared by
+          // everyone queued together.
+          decoration: BoxDecoration(
+            border: strip == null
+                ? null
+                : Border(left: BorderSide(color: strip, width: 3)),
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(strip == null ? 8 : 6, 10, 0, 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _AgentPortrait(
+                  icon: agent?.displayIcon,
+                  size: 46,
+                  dimmed: match.isPregame && !locked,
+                  partyColor: group == null ? null : partyColor(group),
                 ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: theme.colorScheme.onSurfaceVariant,
-                semanticLabel: LiveGameStrings.openLoadoutOf(name),
-              ),
-            ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: hidden
+                                    ? theme.colorScheme.onSurfaceVariant
+                                    : null,
+                              ),
+                            ),
+                          ),
+                          if (isSelf) ...[
+                            const SizedBox(width: 8),
+                            ValBadge(
+                              LiveGameStrings.you,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      if (group != null || locked) ...[
+                        const SizedBox(height: 4),
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 4,
+                          children: [
+                            if (group != null)
+                              LiveTag(
+                                LiveGameStrings.party,
+                                color: partyColor(group),
+                                icon: Icons.group,
+                              ),
+                            if (locked)
+                              LiveTag(
+                                LiveGameStrings.lockedTag,
+                                color: colors.win,
+                                icon: Icons.lock,
+                              ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                _RankColumn(puuid: player.subject, showPeak: showPeak),
+                Icon(
+                  Icons.chevron_right,
+                  color: theme.colorScheme.onSurfaceVariant,
+                  semanticLabel: LiveGameStrings.openLoadoutOf(name),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -270,7 +284,13 @@ class _AgentPortrait extends StatelessWidget {
             size: size * 0.5,
             color: theme.colorScheme.onSurfaceVariant,
           )
-        : NetImage(icon, width: size, height: size, fit: BoxFit.cover);
+        : NetImage(
+            icon,
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+            opacity: dimmed ? 0.5 : null,
+          );
     return Container(
       width: size,
       height: size,
@@ -283,14 +303,15 @@ class _AgentPortrait extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       alignment: Alignment.center,
-      child: Opacity(opacity: dimmed ? 0.55 : 1, child: image),
+      child: image,
     );
   }
 }
 
-/// Current rank (+ "Cao nhất: …" when [showPeak]) from P-11 (G5, G6).
-class _RankLine extends ConsumerWidget {
-  const _RankLine({required this.puuid, required this.showPeak});
+/// Right-hand rank block (ValBuddy): current rank icon with its name
+/// under it, and "Cao nhất: …" when [showPeak] (P-11, G5, G6).
+class _RankColumn extends ConsumerWidget {
+  const _RankColumn({required this.puuid, required this.showPeak});
 
   final String puuid;
   final bool showPeak;
@@ -298,66 +319,64 @@ class _RankLine extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
     final summary = ref.watch(rankSummaryProvider(puuid));
     final value = summary.value;
+    final Widget child;
     if (value == null) {
-      if (summary.hasError && !summary.isLoading) {
-        return Text(
-          LiveGameStrings.rankUnavailable,
-          maxLines: 1,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        );
-      }
-      return const Skeleton(width: 110, height: 14);
-    }
-    final peak = value.peak?.rank;
-    return Wrap(
-      spacing: 12,
-      runSpacing: 4,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        _RankChip(rank: value.current),
-        if (showPeak && peak != null && !peak.isUnranked)
-          _RankChip(rank: peak, prefixPeak: true),
-      ],
-    );
-  }
-}
-
-class _RankChip extends StatelessWidget {
-  const _RankChip({required this.rank, this.prefixPeak = false});
-
-  final RankInfo rank;
-  final bool prefixPeak;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final label = prefixPeak
-        ? LiveGameStrings.peak(rank.tierName)
-        : rank.tierName;
-    final color = rank.isUnranked
-        ? theme.colorScheme.onSurfaceVariant
-        : rank.color;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        NetImage(rank.icon, width: 18, height: 18, showSkeleton: false),
-        const SizedBox(width: 4),
-        Flexible(
-          child: Text(
-            label,
+      child = summary.hasError && !summary.isLoading
+          ? Text(
+              LiveGameStrings.rankUnavailable,
+              maxLines: 2,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.labelSmall?.copyWith(color: muted),
+            )
+          : const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Skeleton(width: 30, height: 30, radius: 8),
+                SizedBox(height: 4),
+                Skeleton(width: 56, height: 10),
+              ],
+            );
+    } else {
+      final rank = value.current;
+      final peak = value.peak?.rank;
+      final color = rank.isUnranked
+          ? muted
+          : legibleAccent(context, rank.color, min: 3.5);
+      child = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          NetImage(rank.icon, width: 30, height: 30, showSkeleton: false),
+          const SizedBox(height: 2),
+          Text(
+            rank.tierName,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.bodySmall?.copyWith(
+            textAlign: TextAlign.center,
+            style: theme.textTheme.labelSmall?.copyWith(
               color: color,
               fontWeight: FontWeight.w600,
             ),
           ),
-        ),
-      ],
+          if (showPeak && peak != null && !peak.isUnranked)
+            Text(
+              LiveGameStrings.peak(peak.tierName),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: muted,
+                fontSize: 10,
+              ),
+            ),
+        ],
+      );
+    }
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 64, maxWidth: 96),
+      child: child,
     );
   }
 }

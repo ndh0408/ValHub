@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/config/remote_config.dart';
@@ -10,6 +11,13 @@ import '../../../core/util/clock.dart';
 import '../../../core/util/json.dart';
 import '../../../core/xmpp/xmpp_models.dart' show LoopState;
 import '../data/party_models.dart';
+
+/// Opens the OS share sheet with [text] (party code). Overridden in tests.
+final partyShareProvider = Provider<Future<void> Function(String text)>(
+  (ref) => (text) async {
+    await SharePlus.instance.share(ShareParams(text: text));
+  },
+);
 
 /// Party & remote queue of one signed-in account (S55, SUMMARY §6.4):
 /// G-12 → G-13 (+ G-1 for the in-match lock). `404` on G-12 means the game

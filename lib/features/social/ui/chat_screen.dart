@@ -10,6 +10,7 @@ import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive_strings.dart';
 import '../../../core/domain/competitive/names.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
@@ -184,7 +185,7 @@ class _ConversationBody extends StatelessWidget {
       if (error != null) {
         return ErrorView(error: error, onRetry: () => unawaited(onRefresh()));
       }
-      return RefreshIndicator(
+      return AdaptiveRefresh(
         onRefresh: onRefresh,
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -208,10 +209,11 @@ class _ConversationBody extends StatelessWidget {
             onRetry: () => unawaited(onRefresh()),
           ),
         Expanded(
-          child: RefreshIndicator(
+          child: AdaptiveRefresh(
             onRefresh: onRefresh,
             child: ListView.builder(
               reverse: true,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
               itemCount: items.length,
@@ -314,11 +316,12 @@ class _Bubble extends StatelessWidget {
     final mine = message.outgoing;
     final failed = message.status == ChatMessageStatus.failed;
     final bg = mine
-        ? ValColors.red.withValues(alpha: 0.9)
+        ? theme.colorScheme.primary
         : theme.colorScheme.surfaceContainerHigh;
-    final fg = mine ? Colors.white : theme.colorScheme.onSurface;
-    const r = Radius.circular(16);
-    const tail = Radius.circular(4);
+    final fg = mine ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface;
+    const r = Radius.circular(18);
+    // Only the first bubble of a run gets the tail corner.
+    final tail = firstOfGroup ? const Radius.circular(4) : r;
     return Padding(
       padding: EdgeInsets.only(top: firstOfGroup ? 8 : 2),
       child: Align(
@@ -330,10 +333,10 @@ class _Bubble extends StatelessWidget {
               decoration: BoxDecoration(
                 color: bg,
                 borderRadius: BorderRadius.only(
-                  topLeft: r,
-                  topRight: r,
-                  bottomLeft: mine ? r : tail,
-                  bottomRight: mine ? tail : r,
+                  topLeft: mine ? r : tail,
+                  topRight: mine ? tail : r,
+                  bottomLeft: r,
+                  bottomRight: r,
                 ),
               ),
               child: Padding(
@@ -356,13 +359,14 @@ class _Bubble extends StatelessWidget {
                           Icon(
                             Icons.error_outline,
                             size: 12,
-                            color: theme.colorScheme.error,
+                            color: mine ? fg : theme.colorScheme.error,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             SocialStrings.failedBadge,
                             style: theme.textTheme.labelSmall?.copyWith(
-                              color: theme.colorScheme.error,
+                              color: mine ? fg : theme.colorScheme.error,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                           const SizedBox(width: 6),
@@ -403,7 +407,8 @@ class _Composer extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Material(
-      color: theme.colorScheme.surfaceContainer,
+      color: theme.scaffoldBackgroundColor,
+      shape: Border(top: BorderSide(color: valColorsOf(context).hairline)),
       child: SafeArea(
         top: false,
         child: Padding(
@@ -428,6 +433,24 @@ class _Composer extends StatelessWidget {
                     hintMaxLines: 2,
                     counterText: '',
                     isDense: true,
+                    filled: true,
+                    fillColor: theme.colorScheme.surfaceContainer,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(22),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(22),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(22),
+                      borderSide: BorderSide(color: theme.colorScheme.primary),
+                    ),
                   ),
                 ),
               ),
@@ -437,7 +460,10 @@ class _Composer extends StatelessWidget {
                 builder: (context, _) => IconButton.filled(
                   tooltip: SocialStrings.send,
                   onPressed: enabled && controller.text.trim().isNotEmpty
-                      ? onSend
+                      ? () {
+                          Haptics.light();
+                          onSend();
+                        }
                       : null,
                   icon: const Icon(Icons.send_rounded),
                 ),

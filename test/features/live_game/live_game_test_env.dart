@@ -510,6 +510,7 @@ Future<void> pumpLive(
   double width = 360,
   double height = 800,
   double textScale = 1,
+  ThemeData? theme,
 }) async {
   tester.view.physicalSize = Size(width, height);
   tester.view.devicePixelRatio = 1.0;
@@ -519,7 +520,7 @@ Future<void> pumpLive(
       overrides: env.overrides,
       retry: (_, _) => null,
       child: MaterialApp(
-        theme: buildDarkTheme(),
+        theme: theme ?? buildDarkTheme(),
         home: MediaQuery.withClampedTextScaling(
           minScaleFactor: textScale,
           maxScaleFactor: textScale,

@@ -10,6 +10,12 @@ abstract final class SocialStrings {
   static const clearSearch = 'Xóa tìm kiếm';
   static String onlineSection(int n) => 'Trực tuyến ($n)';
   static String offlineSection(int n) => 'Ngoại tuyến ($n)';
+  static String playingSection(int n) => 'Đang chơi ($n)';
+  static const filterAll = 'Tất cả';
+  static const filterOnline = 'Trực tuyến';
+  static const filterUnread = 'Chưa đọc';
+  static const noFriendsTitle = 'Chưa có bạn bè';
+  static const noFilterResults = 'Không có bạn bè nào khớp bộ lọc này.';
   static const noFriends =
       'Danh sách bạn bè Riot của bạn đang trống. Hãy kết bạn trong game.';
   static const noSearchResults = 'Không tìm thấy bạn bè nào phù hợp.';
@@ -127,6 +133,15 @@ abstract final class SocialStrings {
   static String partyCodeValue(String code) => 'Mã tổ đội: $code';
   static const generateCode = 'Tạo mã';
   static const copyCode = 'Sao chép';
+  static const shareCode = 'Chia sẻ';
+
+  /// Text shared with the party code (OS share sheet).
+  static String shareCodeText(String code) =>
+      'Vào tổ đội VALORANT của mình bằng mã: $code';
+
+  /// "Sẵn sàng 3/5".
+  static String readyCount(int ready, int total) => 'Sẵn sàng $ready/$total';
+  static const idleQueue = 'Sẵn sàng tìm trận';
   static const disableCode = 'Tắt mã';
   static const noCode = 'Tạo mã để bạn bè tham gia nhanh bằng mã.';
   static const codeCopied = 'Đã sao chép mã tổ đội!';

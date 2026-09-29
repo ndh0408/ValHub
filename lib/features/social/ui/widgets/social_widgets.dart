@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/xmpp/xmpp_models.dart';
 import '../../data/friend_status.dart';
@@ -13,7 +14,7 @@ import '../../social_strings.dart';
 Color statusColor(BuildContext context, StatusTone tone) {
   final colors = valColorsOf(context);
   return switch (tone) {
-    StatusTone.inMatch => ValColors.red,
+    StatusTone.inMatch => Theme.of(context).colorScheme.primary,
     StatusTone.busy => colors.warning,
     StatusTone.active => colors.win,
     StatusTone.online => colors.win,
@@ -22,8 +23,9 @@ Color statusColor(BuildContext context, StatusTone tone) {
   };
 }
 
-/// Player-card avatar (S5) with an optional presence dot; initials when the
-/// card is unknown.
+/// Round player-card avatar (S5) with an optional presence dot; initials
+/// when the card is unknown. [dimmed] fades the art while painting (offline
+/// friends) instead of an `Opacity` layer.
 class FriendAvatar extends ConsumerWidget {
   const FriendAvatar({
     super.key,
@@ -31,7 +33,10 @@ class FriendAvatar extends ConsumerWidget {
     this.name,
     this.tone,
     this.size = 44,
+    this.dimmed = false,
   });
+
+  final bool dimmed;
 
   final String? playerCardId;
   final String? name;
@@ -55,7 +60,7 @@ class FriendAvatar extends ConsumerWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(size * 0.22),
+        shape: BoxShape.circle,
       ),
       child: Text(
         initial,
@@ -72,7 +77,8 @@ class FriendAvatar extends ConsumerWidget {
             width: size,
             height: size,
             fit: BoxFit.cover,
-            borderRadius: BorderRadius.circular(size * 0.22),
+            borderRadius: BorderRadius.circular(size / 2),
+            opacity: dimmed ? 0.5 : null,
             error: fallback,
           );
     final t = tone;
@@ -121,13 +127,15 @@ class UnreadBadge extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 6),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: ValColors.red,
+          color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(11),
         ),
         child: Text(
           SocialStrings.unreadBadge(count),
-          style: Theme.of(context).textTheme.labelSmall
-              ?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );
@@ -160,7 +168,7 @@ class ConnectionBanner extends StatelessWidget {
             if (busy)
               const SizedBox.square(
                 dimension: 16,
-                child: CircularProgressIndicator(strokeWidth: 2),
+                child: CircularProgressIndicator.adaptive(strokeWidth: 2),
               )
             else
               Icon(
@@ -190,32 +198,17 @@ class ConnectionBanner extends StatelessWidget {
 }
 
 /// Confirmation dialog for account-changing actions; `true` = confirmed.
+/// Cupertino alert on iOS, Material alert elsewhere.
 Future<bool> confirmAction(
   BuildContext context, {
   required String title,
   required String body,
   required String confirmLabel,
   bool destructive = true,
-}) async {
-  final ok = await showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(title),
-      content: Text(body),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: const Text(CommonStrings.cancel),
-        ),
-        FilledButton(
-          style: destructive
-              ? FilledButton.styleFrom(backgroundColor: ValColors.red)
-              : null,
-          onPressed: () => Navigator.of(context).pop(true),
-          child: Text(confirmLabel),
-        ),
-      ],
-    ),
-  );
-  return ok ?? false;
-}
+}) => showConfirmDialog(
+  context,
+  title: title,
+  message: body,
+  confirmLabel: confirmLabel,
+  destructive: destructive,
+);

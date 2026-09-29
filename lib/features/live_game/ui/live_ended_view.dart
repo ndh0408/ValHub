@@ -10,6 +10,7 @@ import '../../../core/domain/competitive/competitive.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/network/riot_exception.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/net_image.dart';
@@ -98,9 +99,8 @@ class _LiveEndedViewState extends ConsumerState<LiveEndedView> {
         children: [
           EmptyView(
             icon: Icons.hourglass_top_rounded,
-            message:
-                '${CompetitiveStrings.matchPending}\n'
-                '${LiveGameStrings.matchPendingHint}',
+            title: CompetitiveStrings.matchPending,
+            message: LiveGameStrings.matchPendingHint,
             action: OutlinedButton.icon(
               onPressed: () => ref.invalidate(matchDetailsProvider(_id)),
               icon: const Icon(Icons.refresh),
@@ -123,7 +123,7 @@ class _LiveEndedViewState extends ConsumerState<LiveEndedView> {
     } else {
       child = const SkeletonList(itemCount: 6, itemHeight: 52);
     }
-    return RefreshIndicator(onRefresh: _refresh, child: child);
+    return AdaptiveRefresh(onRefresh: _refresh, child: child);
   }
 }
 
@@ -222,8 +222,9 @@ class _Scoreboard extends ConsumerWidget {
                 children: [
                   Text(
                     result.outcome.label,
-                    style: theme.textTheme.headlineMedium?.copyWith(
+                    style: theme.textTheme.headlineSmall?.copyWith(
                       color: outcomeColor,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                   if (result.hasScore)
@@ -232,7 +233,10 @@ class _Scoreboard extends ConsumerWidget {
                         result.myScore!,
                         result.otherScore!,
                       ),
-                      style: theme.textTheme.headlineMedium,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
                     ),
                 ],
               ),
@@ -325,7 +329,17 @@ class _ScoreRow extends StatelessWidget {
       fontFeatures: const [FontFeature.tabularFigures()],
     );
     return Container(
-      color: isSelf ? theme.colorScheme.primary.withValues(alpha: 0.08) : null,
+      decoration: BoxDecoration(
+        color: isSelf
+            ? theme.colorScheme.primary.withValues(alpha: 0.08)
+            : null,
+        border: isSelf
+            ? Border(
+                left: BorderSide(color: theme.colorScheme.primary, width: 3),
+              )
+            : null,
+      ),
+      constraints: const BoxConstraints(minHeight: 48),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Row(
         children: [
