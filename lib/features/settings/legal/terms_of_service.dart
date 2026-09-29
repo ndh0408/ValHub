@@ -30,8 +30,8 @@ const termsOfService = LegalDocument(
       LegalParagraph(
         'Bằng việc tải, cài đặt, đăng nhập hoặc tiếp tục sử dụng Ứng dụng, bạn '
         'xác nhận đã đọc, hiểu và đồng ý với Điều khoản này, Chính sách quyền '
-        'riêng tư, Tiêu chuẩn cộng đồng và Giấy phép phần mềm của ValVN. Các văn '
-        'bản này là một phần không tách rời của Điều khoản.',
+        'riêng tư và Tiêu chuẩn cộng đồng của ValVN. Các văn bản này là một '
+        'phần không tách rời của Điều khoản.',
       ),
       LegalParagraph(
         'Nếu bạn không đồng ý với bất kỳ nội dung nào, vui lòng không sử dụng '
@@ -130,8 +130,7 @@ const termsOfService = LegalDocument(
       LegalParagraph(
         'ValVN là phần mềm độc quyền, không phải phần mềm mã nguồn mở. Chúng '
         'tôi cấp phép sử dụng chứ không bán Ứng dụng cho bạn; mọi quyền không '
-        'được cấp rõ ràng trong Điều khoản này đều được bảo lưu. Chi tiết xem '
-        'Giấy phép phần mềm.',
+        'được cấp rõ ràng trong Điều khoản này đều được bảo lưu.',
       ),
     ]),
     LegalSection('Các hành vi bị cấm', [

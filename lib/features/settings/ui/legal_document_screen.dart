@@ -1,15 +1,19 @@
 import 'dart:async';
 
+import 'package:flutter/rendering.dart' show RenderAbstractViewport;
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/sub_page.dart';
 import '../legal/legal_documents.dart';
 import '../legal/legal_strings.dart';
 
-/// Native reader of one [LegalDocument] (Terms, Privacy Policy, …): large
-/// title, version + effective-date chips, a tappable table of contents,
-/// numbered sections and selectable text. Routes `/settings/about/<id>`.
+/// Native reader of one [LegalDocument] (Terms, Privacy Policy, …) on the
+/// shared sub-page chrome: large title that hands over to the bar, the
+/// one-line summary, version + effective-date chips, a tappable table of
+/// contents, numbered sections and selectable text, and a "Về đầu trang"
+/// button once scrolled. Routes `/settings/about/<id>`.
 ///
 /// Everything is laid out eagerly (documents are a few screens long) so the
 /// table of contents can jump to any section with [Scrollable.ensureVisible].
@@ -55,11 +59,20 @@ class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
 
   void _onScroll() => _scrolled.value = _scroll.offset > 96;
 
+  /// Scrolls [index]'s heading just below the pinned bar (a plain
+  /// `Scrollable.ensureVisible` would tuck it under the bar).
   void _jumpTo(int index) {
-    final target = _sectionKeys[index].currentContext;
-    if (target == null) return;
+    final box = _sectionKeys[index].currentContext?.findRenderObject();
+    if (box == null || !_scroll.hasClients) return;
+    final viewport = RenderAbstractViewport.maybeOf(box);
+    if (viewport == null) return;
+    final bar = kToolbarHeight + MediaQuery.paddingOf(context).top;
+    final position = _scroll.position;
+    final target = (viewport.getOffsetToReveal(box, 0).offset - bar - 8)
+        .clamp(position.minScrollExtent, position.maxScrollExtent)
+        .toDouble();
     unawaited(
-      Scrollable.ensureVisible(
+      _scroll.animateTo(
         target,
         duration: const Duration(milliseconds: 350),
         curve: Curves.easeOutCubic,
@@ -78,23 +91,15 @@ class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
   @override
   Widget build(BuildContext context) {
     final doc = widget.document;
-    return Scaffold(
-      appBar: AppBar(
-        title: ValueListenableBuilder<bool>(
-          valueListenable: _scrolled,
-          builder: (context, scrolled, child) => AnimatedOpacity(
-            opacity: scrolled ? 1 : 0,
-            duration: const Duration(milliseconds: 180),
-            child: child,
-          ),
-          child: Text(doc.title, maxLines: 1, overflow: TextOverflow.ellipsis),
-        ),
-      ),
+    return SubPageScaffold(
+      title: doc.title,
+      subtitle: doc.summary,
+      controller: _scroll,
       floatingActionButton: ValueListenableBuilder<bool>(
         valueListenable: _scrolled,
         builder: (context, scrolled, _) => AnimatedScale(
           scale: scrolled ? 1 : 0,
-          duration: const Duration(milliseconds: 180),
+          duration: ValMotion.fast,
           child: FloatingActionButton.small(
             heroTag: null,
             tooltip: LegalStrings.backToTop,
@@ -103,41 +108,42 @@ class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
           ),
         ),
       ),
-      body: Scrollbar(
-        controller: _scroll,
-        child: SelectionArea(
-          child: SingleChildScrollView(
-            controller: _scroll,
-            padding: const EdgeInsets.fromLTRB(20, 4, 20, 96),
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 72),
+          sliver: SliverToBoxAdapter(
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 720),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _Header(document: doc),
-                    for (final block in doc.preamble) _Block(block: block),
-                    const SizedBox(height: 8),
-                    _TableOfContents(document: doc, onTap: _jumpTo),
-                    const SizedBox(height: 8),
-                    for (var i = 0; i < doc.sections.length; i++)
-                      _Section(
-                        key: _sectionKeys[i],
-                        index: i,
-                        section: doc.sections[i],
-                      ),
-                    const _Footer(),
-                  ],
+                child: SelectionArea(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _Header(document: doc),
+                      for (final block in doc.preamble) _Block(block: block),
+                      const SizedBox(height: 8),
+                      _TableOfContents(document: doc, onTap: _jumpTo),
+                      const SizedBox(height: 8),
+                      for (var i = 0; i < doc.sections.length; i++)
+                        _Section(
+                          key: _sectionKeys[i],
+                          index: i,
+                          section: doc.sections[i],
+                        ),
+                      const _Footer(),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
 
+/// Version and effective-date chips under the title.
 class _Header extends StatelessWidget {
   const _Header({required this.document});
 
@@ -145,38 +151,19 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
         children: [
-          Text(
-            LegalStrings.kicker,
-            style: ValText.label.copyWith(color: ValColors.red),
+          _MetaChip(
+            icon: Icons.sell_outlined,
+            label: LegalStrings.version(document.version),
           ),
-          const SizedBox(height: 6),
-          Semantics(
-            header: true,
-            child: Text(
-              document.title,
-              style: theme.textTheme.headlineMedium?.copyWith(height: 1.15),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _MetaChip(
-                icon: Icons.sell_outlined,
-                label: LegalStrings.version(document.version),
-              ),
-              _MetaChip(
-                icon: Icons.event_outlined,
-                label: LegalStrings.effectiveFrom(document.effectiveDate),
-              ),
-            ],
+          _MetaChip(
+            icon: Icons.event_outlined,
+            label: LegalStrings.effectiveFrom(document.effectiveDate),
           ),
         ],
       ),
@@ -268,7 +255,7 @@ class _TableOfContents extends StatelessWidget {
                           child: Text(
                             '${i + 1}.',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: ValColors.red,
+                              color: legibleAccent(context, ValColors.red),
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -312,7 +299,9 @@ class _Section extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: '${index + 1}. ',
-                    style: const TextStyle(color: ValColors.red),
+                    style: TextStyle(
+                      color: legibleAccent(context, ValColors.red),
+                    ),
                   ),
                   TextSpan(text: section.heading),
                 ],

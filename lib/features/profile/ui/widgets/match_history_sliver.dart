@@ -14,6 +14,7 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/section_header.dart';
 import '../../../../core/ui/filter_bar.dart';
 import '../../../../core/ui/segmented_tabs.dart';
+import '../../../../core/ui/sub_page.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
@@ -256,38 +257,34 @@ Future<void> _pickMap(
   void Function(String?) onPicked,
 ) async {
   final maps = filterableMaps(db);
-  final picked = await showModalBottomSheet<({String? url})>(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) => DraggableScrollableSheet(
-      expand: false,
-      initialChildSize: 0.6,
-      maxChildSize: 0.9,
-      builder: (context, controller) => ListView(
-        controller: controller,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: Text(
-              ProfileStrings.chooseMap,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
-          _MapTile(
-            label: ProfileStrings.filterAll,
-            selected: selected == null,
-            onTap: () => Navigator.pop(context, (url: null)),
-          ),
-          for (final m in maps)
-            _MapTile(
-              label: m.displayName,
-              image: m.listViewIcon,
-              selected:
-                  selected?.toLowerCase() == m.mapUrl.trim().toLowerCase(),
-              onTap: () => Navigator.pop(context, (url: m.mapUrl)),
-            ),
-        ],
+  final picked = await showValSheet<({String? url})>(
+    context,
+    title: ProfileStrings.chooseMap,
+    scrollable: true,
+    initialSize: 0.65,
+    maxSize: 0.92,
+    builder: (context, controller) => ListView(
+      controller: controller,
+      padding: EdgeInsets.fromLTRB(
+        0,
+        4,
+        0,
+        16 + MediaQuery.paddingOf(context).bottom,
       ),
+      children: [
+        _MapTile(
+          label: ProfileStrings.filterAll,
+          selected: selected == null,
+          onTap: () => Navigator.pop(context, (url: null)),
+        ),
+        for (final m in maps)
+          _MapTile(
+            label: m.displayName,
+            image: m.listViewIcon,
+            selected: selected?.toLowerCase() == m.mapUrl.trim().toLowerCase(),
+            onTap: () => Navigator.pop(context, (url: m.mapUrl)),
+          ),
+      ],
     ),
   );
   if (picked != null) onPicked(picked.url);

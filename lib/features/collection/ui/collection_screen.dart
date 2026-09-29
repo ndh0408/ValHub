@@ -19,6 +19,7 @@ import '../../../core/ui/net_image.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../../../core/ui/val_widgets.dart';
+import '../../../core/ui/vnd_estimate.dart';
 import '../../../core/util/format.dart';
 import '../../wishlist/wishlist_routes.dart';
 import '../collection_routes.dart';
@@ -65,26 +66,6 @@ class CollectionScreen extends ConsumerWidget {
       ],
     );
   }
-}
-
-/// Plain bold section title ("Trang bị", "Duyệt bộ sưu tập").
-class CollectionSectionTitle extends StatelessWidget {
-  const CollectionSectionTitle(this.text, {super.key});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
-    child: Semantics(
-      header: true,
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.titleMedium
-            ?.copyWith(fontWeight: FontWeight.w700),
-      ),
-    ),
-  );
 }
 
 // ------------------------------------------------------------------ header
@@ -142,6 +123,7 @@ class _Header extends ConsumerWidget {
             excludeSemantics: true,
             child: _CardBanner(
               art: card?.wideArt,
+              heroTag: CollectionHeroTags.equippedCard,
               onTap: () {
                 Haptics.selection();
                 unawaited(context.push(CollectionRoutes.card));
@@ -173,17 +155,24 @@ const _bannerRatio = 452 / 128;
 
 /// Rounded wide player-card art with a thin accent frame and an edit hint.
 class _CardBanner extends StatelessWidget {
-  const _CardBanner({required this.art, required this.onTap});
+  const _CardBanner({
+    required this.art,
+    required this.onTap,
+    required this.heroTag,
+  });
 
   final String? art;
   final VoidCallback onTap;
+  final Object heroTag;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return AspectRatio(
       aspectRatio: _bannerRatio,
-      child: Material(
+      child: Hero(
+        tag: heroTag,
+        child: Material(
         color: scheme.surfaceContainerHigh,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(ValRadius.card),
@@ -225,6 +214,7 @@ class _CardBanner extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }
@@ -499,6 +489,11 @@ class _ValueCard extends ConsumerWidget {
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
             child: Text(amount, style: ValText.display(34, color: gold)),
+          ),
+          VndEstimate(
+            value.totalVp,
+            style: theme.textTheme.bodyMedium,
+            color: theme.colorScheme.onSurface,
           ),
           const SizedBox(height: 2),
           Text(

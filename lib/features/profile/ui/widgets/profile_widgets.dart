@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../core/content/content_db.dart';
 import '../../../../core/domain/competitive/competitive.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/error_view.dart';
+import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/skeleton.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
@@ -288,6 +290,105 @@ class MatchCardSkeleton extends StatelessWidget {
       ),
     ),
   );
+}
+
+/// Hero tag shared by a match card's map art and the match-detail hero, so
+/// the map image flies from the history list into the detail.
+String matchMapHeroTag(String matchId) =>
+    'profile.match-map.${matchId.trim().toLowerCase()}';
+
+/// Map artwork of a match: the splash, then the list-view banner when the
+/// splash cannot be loaded, with a tinted, named placeholder while loading
+/// and when neither loads. Some splashes are 4K PNGs (Skirmish maps, ~5 MB):
+/// the card must never be a blank box while they download.
+class MapArtImage extends StatelessWidget {
+  const MapArtImage({
+    super.key,
+    required this.map,
+    this.tint,
+    this.alignment = Alignment.center,
+  });
+
+  final GameMap? map;
+
+  /// Accent of the placeholder gradient (result color).
+  final Color? tint;
+  final Alignment alignment;
+
+  @override
+  Widget build(BuildContext context) {
+    final placeholder = MapArtPlaceholder(name: map?.displayName, tint: tint);
+    final splash = map?.splash;
+    final banner = map?.listViewIcon;
+    final Widget fallback = banner == null || banner == splash
+        ? placeholder
+        : NetImage(
+            banner,
+            fit: BoxFit.cover,
+            alignment: alignment,
+            placeholder: placeholder,
+            error: placeholder,
+          );
+    if (splash == null) return fallback;
+    return NetImage(
+      splash,
+      fit: BoxFit.cover,
+      alignment: alignment,
+      placeholder: placeholder,
+      error: fallback,
+    );
+  }
+}
+
+/// Dark gradient tinted by the match result with the map name as a faint
+/// Anton watermark (loading / missing map art).
+class MapArtPlaceholder extends StatelessWidget {
+  const MapArtPlaceholder({super.key, this.name, this.tint});
+
+  final String? name;
+  final Color? tint;
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = tint ?? ValColors.muted;
+    final label = name?.trim();
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color.alphaBlend(
+              accent.withValues(alpha: 0.28),
+              ValColors.surfaceHigh,
+            ),
+            ValColors.nearBlack,
+          ],
+        ),
+      ),
+      child: label == null || label.isEmpty
+          ? const SizedBox.expand()
+          : Align(
+              alignment: const Alignment(0.9, 0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: ExcludeSemantics(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      label.toUpperCase(),
+                      maxLines: 1,
+                      style: ValText.display(
+                        44,
+                        color: Colors.white.withValues(alpha: 0.12),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+    );
+  }
 }
 
 /// Copies [text] and confirms with [message] in a snackbar.

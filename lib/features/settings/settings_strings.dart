@@ -4,6 +4,8 @@ abstract final class SettingsStrings {
   static const title = 'Cài đặt';
   static const sessionLogTitle = 'Nhật ký phiên';
   static const aboutTitle = 'Giới thiệu & pháp lý';
+  static const aboutRowSubtitle =
+      'Quyền riêng tư, điều khoản, bản quyền và liên hệ';
 
   // Welcome (S01)
   static const logoPrefix = 'Val';
@@ -16,12 +18,21 @@ abstract final class SettingsStrings {
   static const legalNotice = 'Thông báo pháp lý';
 
   // Notification priming (S04)
-  static const primingTitle = 'Bật thông báo';
+  static const primingTitle = 'Đừng bỏ lỡ skin bạn săn';
   static const primingBody =
-      'Bật thông báo để biết khi cửa hàng làm mới và khi skin trong wishlist xuất hiện.';
+      'Bật thông báo để biết khi cửa hàng làm mới và khi skin trong wishlist '
+      'xuất hiện.';
   static const primingPointStore = 'Nhắc khi cửa hàng hằng ngày làm mới';
+  static const primingPointStoreDetail = 'Mỗi ngày lúc 07:00 giờ Việt Nam';
   static const primingPointWishlist = 'Báo ngay khi skin bạn săn xuất hiện';
+  static const primingPointWishlistDetail =
+      'Kiểm tra cửa hàng của mọi tài khoản trong nền';
   static const primingPointNightMarket = 'Biết khi Chợ Đêm mở';
+  static const primingPointNightMarketDetail =
+      'Để kịp lật thẻ ưu đãi trước khi hết hạn';
+  static const primingFootnote =
+      'Bạn có thể bật hoặc tắt từng loại thông báo bất cứ lúc nào trong Cài '
+      'đặt.';
   static const primingEnable = 'Bật thông báo';
   static const primingLater = 'Để sau';
 
@@ -29,6 +40,7 @@ abstract final class SettingsStrings {
   static const optionsHeader = 'TÙY CHỌN';
   static const notificationsHeader = 'THÔNG BÁO';
   static const appearanceHeader = 'GIAO DIỆN';
+  static const supportHeader = 'HỖ TRỢ';
   static const appHeader = 'ỨNG DỤNG';
   static const aboutHeader = 'THÔNG TIN';
 
@@ -47,6 +59,12 @@ abstract final class SettingsStrings {
   static const platformHint =
       'Người chơi console chọn đúng nền tảng để xem lịch sử đấu chính xác.';
   static String platformAppliesTo(String account) => 'Áp dụng cho $account';
+  static const optionShowVnd = 'Hiện giá VND ước tính';
+  static const optionShowVndSubtitle =
+      'Cạnh giá VP, quy đổi theo gói nạp VP có lợi nhất tại Việt Nam';
+  static const optionShowVndUnavailable =
+      'Chưa có bảng giá nạp VP đã xác minh, nên chưa thể ước tính.';
+  static const optionShowVndInfo = 'Cách tính giá VND';
 
   // THÔNG BÁO
   static const notifStoreReset = 'Khi cửa hàng làm mới';
@@ -80,24 +98,79 @@ abstract final class SettingsStrings {
   static const clearCacheSubtitle = 'Ảnh và dữ liệu ngoại tuyến đã lưu';
   static String cacheCleared(String size) => 'Đã xóa $size';
   static const clearCacheFailed = 'Không thể xóa bộ nhớ đệm. Vui lòng thử lại.';
-  static const exportLog = 'Xuất nhật ký phiên';
+  static const exportLog = 'Nhật ký phiên';
+  static const exportLogSubtitle = 'Xem, sao chép hoặc gửi khi báo lỗi';
   static const exportLogNote =
       'Nhật ký không chứa mật khẩu, token hay ID tài khoản.';
-  static const exportLogEmpty = 'Chưa có nhật ký nào.';
+  static const exportLogEmptyTitle = 'Chưa có nhật ký';
+  static const exportLogEmpty =
+      'Các yêu cầu tới máy chủ Riot sẽ hiện ở đây khi bạn dùng ứng dụng.';
 
-  // THÔNG TIN
-  static const privacyPolicy = 'Chính sách quyền riêng tư';
-  static const terms = 'Điều khoản sử dụng';
+  // HỖ TRỢ
   static const feedback = 'Góp ý & báo lỗi';
   static const feedbackSubtitle = 'Gửi góp ý trên GitHub';
   static const linkOpenFailed = 'Không mở được liên kết.';
-  static const licenses = 'Giấy phép thư viện bên thứ ba';
+  static const serverStatus = 'Trạng thái máy chủ';
+  static const serverStatusSubtitle = 'Bảo trì và sự cố VALORANT theo khu vực';
+  static const serverStatusMaintenance = 'Đang bảo trì';
+  static String serverStatusNotices(int n) => '$n thông báo';
+
+  // Server status screen (ValVN extra, X-1)
+  static const statusSourceNote =
+      'Nguồn: trang trạng thái chính thức của Riot Games. Giờ hiển thị theo '
+      'múi giờ của điện thoại.';
+  static const statusAllGood = 'Máy chủ hoạt động bình thường';
+  static String statusAllGoodBody(String region) =>
+      'Không có sự cố hay bảo trì nào ở khu vực $region.';
+  static const statusMaintenanceNow = 'Máy chủ đang bảo trì';
+  static const statusMaintenanceNowBody =
+      'Bạn có thể chưa vào được game hoặc ứng dụng tạm thời không tải được '
+      'dữ liệu.';
+  static const statusIssues = 'Riot đang xử lý sự cố';
+  static String statusIssuesBody(int n) =>
+      '$n thông báo đang mở ở khu vực này.';
+  static const statusScheduled = 'Sắp có bảo trì';
+  static String statusScheduledBody(int n) =>
+      '$n lịch bảo trì đã được Riot thông báo.';
+  static const statusKindMaintenance = 'Bảo trì';
+  static const statusKindIncident = 'Sự cố';
+  static const severityInfo = 'Thông tin';
+  static const severityWarning = 'Cảnh báo';
+  static const severityCritical = 'Nghiêm trọng';
+  static const phaseScheduled = 'Đã lên lịch';
+  static const phaseInProgress = 'Đang diễn ra';
+  static const phaseComplete = 'Đã xong';
+  static String statusStarted(String when) => 'Bắt đầu $when';
+  static String statusUpdated(String when) => 'Cập nhật $when';
+  static const statusUpdatesHeader = 'CẬP NHẬT TỪ RIOT';
+  static String statusMoreUpdates(int n) => 'Xem thêm $n cập nhật';
+  static const statusFewerUpdates = 'Thu gọn';
+  static const statusRegionPicker = 'Khu vực';
+
+  /// Riot platform ids of the status page → Vietnamese labels.
+  static String platformName(String id) => switch (id.toLowerCase()) {
+    'windows' || 'pc' => 'PC',
+    'macos' => 'Mac',
+    'ps4' => 'PlayStation 4',
+    'ps5' => 'PlayStation 5',
+    'playstation' => 'PlayStation',
+    'xbone' => 'Xbox One',
+    'xbox' || 'xboxseries' || 'xbox_series' => 'Xbox',
+    'android' => 'Android',
+    'ios' => 'iOS',
+    'mobile' => 'Di động',
+    _ => id,
+  };
 
   // Sign out
   static const signedOutAll = 'Đã đăng xuất tất cả tài khoản';
 
   // Session log (S71)
   static String logEntryCount(int count) => '$count mục';
+  static String logEntryShown(int shown, int total) => '$shown / $total mục';
+  static const logSearchHint = 'Tìm theo sự kiện, địa chỉ, mã lỗi…';
+  static const logSearchEmpty = 'Không có mục nào khớp tìm kiếm.';
+  static const logMore = 'Thao tác khác';
   static const clearLog = 'Xóa nhật ký';
   static const clearLogConfirm = 'Xóa toàn bộ nhật ký phiên trên thiết bị này?';
   static const logCleared = 'Đã xóa nhật ký';

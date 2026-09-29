@@ -85,7 +85,8 @@ class MatchCard extends ConsumerWidget {
       onTap: onTap,
       accent: accent,
       art: _MapArt(
-        map: map?.splash ?? map?.listViewIcon,
+        matchId: entry.matchId,
+        map: map,
         accent: accent,
         rankTier: competitive ? value.player.competitiveTier : 0,
         seasonId: value.info.seasonId,
@@ -169,9 +170,11 @@ class _CardShell extends StatelessWidget {
 }
 
 /// Map image of a match card with the agent (+ rank icon) and the RR
-/// change overlaid on the top corners.
+/// change overlaid on the top corners. The image is a [Hero] that flies
+/// into the match-detail header.
 class _MapArt extends StatelessWidget {
   const _MapArt({
+    required this.matchId,
     required this.map,
     required this.agentIcon,
     required this.accent,
@@ -180,7 +183,8 @@ class _MapArt extends StatelessWidget {
     required this.rr,
   });
 
-  final String? map;
+  final String matchId;
+  final GameMap? map;
   final String? agentIcon;
   final Color accent;
   final int rankTier;
@@ -191,31 +195,15 @@ class _MapArt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final fallback = ColoredBox(
-      color: scheme.surfaceContainerHigh,
-      child: Center(
-        child: Icon(
-          Icons.map_outlined,
-          size: 32,
-          color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
-        ),
-      ),
-    );
     return SizedBox(
       height: height,
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (map == null)
-            fallback
-          else
-            NetImage(
-              map,
-              fit: BoxFit.cover,
-              showSkeleton: false,
-              error: fallback,
-            ),
+          Hero(
+            tag: matchMapHeroTag(matchId),
+            child: MapArtImage(map: map, tint: accent),
+          ),
           // Top scrim so the overlays stay readable on bright maps.
           const DecoratedBox(
             decoration: BoxDecoration(

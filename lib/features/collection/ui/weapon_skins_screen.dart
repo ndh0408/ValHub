@@ -4,16 +4,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/accounts/account_providers.dart';
+import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
-import '../../../core/content/models/weapon_models.dart';
 import '../../../core/domain/economy/economy.dart';
+import '../../../core/domain/loadout/loadout.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
+import '../../../core/ui/currency_amount.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/skin_art_card.dart';
+import '../../../core/ui/sub_page.dart';
+import '../../../core/ui/vnd_estimate.dart';
 import '../collection_routes.dart';
 import '../collection_strings.dart';
 import '../data/collection_search.dart';
@@ -22,9 +27,11 @@ import '../data/query_memory.dart';
 import '../data/skin_query.dart';
 import '../providers/collection_providers.dart';
 import 'widgets/collection_widgets.dart';
+import 'widgets/gun_hero.dart';
 
-/// S34 "Chọn skin" for one weapon: search, tier chips, sort (Độ hiếm · Tên
-/// · Giá), owned skins with "Mặc định" first. Route
+/// S34 "Chọn skin" for one weapon: the equipped render as the header art
+/// (flies in from the weapon grid), pinned search + sort (Độ hiếm · Tên ·
+/// Giá) + rarity chips, then the owned skins with "Mặc định" first. Route
 /// `/collection/weapons/:weaponId`.
 class WeaponSkinsScreen extends ConsumerStatefulWidget {
   const WeaponSkinsScreen({super.key, required this.weaponId});
@@ -57,122 +64,172 @@ class _WeaponSkinsScreenState extends ConsumerState<WeaponSkinsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final weapon = ref.watch(contentProvider).value?.weapon(_weaponId);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(weapon?.displayName ?? CollectionStrings.weaponSkinsTitle),
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
+    final weapon = db.weapon(_weaponId);
+    final title = weapon?.displayName ?? CollectionStrings.weaponSkinsTitle;
+    final account = ref.watch(activeAccountProvider);
+    if (account == null) return NoAccountPage(title: title);
+    final puuid = account.puuid;
+    final gun = ref.watch(loadoutProvider(puuid)).value?.loadout.gun(_weaponId);
+    final equipped = equippedSkin(gun, db);
+    final tint =
+        equipped != null &&
+            !equipped.isStandard &&
+            equipped.contentTierUuid != null
+        ? skinTierColor(ref, context, equipped.contentTierUuid)
+        : null;
+    return SubPageScaffold(
+      title: title,
+      subtitle: equipped == null
+          ? null
+          : CollectionStrings.equippedLine(skinLabel(equipped)),
+      hero: GunHero(
+        render: gunRender(gun, db, weapon: weapon),
+        tint: tint,
+        heroTag: CollectionHeroTags.gun(_weaponId),
       ),
-      body: CollectionAccountGate(
-        builder: (context, account) => Column(
-          children: [
-            CollectionSearchField(
-              hint: CollectionStrings.searchSkins,
-              onChanged: (v) =>
-                  setState(() => _query = _query.copyWith(search: v)),
+      heroHeight: 200,
+      onRefresh: () => refreshCollection(ref, puuid),
+      header: SearchStrip(
+        search: CollectionSearchField(
+          hint: CollectionStrings.searchSkins,
+          initialValue: _query.search,
+          onChanged: (v) => setState(() => _query = _query.copyWith(search: v)),
+        ),
+        filters: SkinFilterBar(
+          query: _query,
+          sorts: _sorts,
+          onChanged: _setQuery,
+        ),
+      ),
+      headerHeight: searchStripHeight(context, filters: true),
+      slivers: loadoutSlivers(
+        ref,
+        puuid: puuid,
+        loading: const _SkinRowsSkeleton(),
+        data: (snapshot, owned, db) {
+          final w = db.weapon(_weaponId);
+          if (w == null) {
+            return [
+              const SliverFillRemaining(
+                hasScrollBody: false,
+                child: EmptyView(
+                  message: CollectionStrings.weaponNotFound,
+                  icon: Icons.help_outline,
+                ),
+              ),
+            ];
+          }
+          final gun = snapshot.loadout.gun(_weaponId);
+          final prices = ref.watch(priceServiceProvider);
+          final all = owned.ownedSkinsForWeapon(_weaponId);
+          final standard = [
+            for (final s in all)
+              if (s.isStandard &&
+                  _query.tiers.isEmpty &&
+                  matchesSearch(_query.search, [
+                    s.displayName,
+                    CollectionStrings.defaultSkin,
+                  ]))
+                s,
+          ];
+          final skins = [
+            ...standard,
+            ...querySkins(
+              all.where((s) => !s.isStandard),
+              _query,
+              db: db,
+              prices: prices,
             ),
-            SkinFilterBar(query: _query, sorts: _sorts, onChanged: _setQuery),
-            Expanded(
-              child: LoadoutDataBuilder(
-                puuid: account.puuid,
-                loading: const SkeletonList(itemHeight: 84, spacing: 10),
-                builder: (context, snapshot, owned, db) {
-                  final w = db.weapon(_weaponId);
-                  if (w == null) {
-                    return const EmptyView(
-                      message: CollectionStrings.weaponNotFound,
-                      icon: Icons.help_outline,
-                    );
-                  }
-                  final gun = snapshot.loadout.gun(_weaponId);
-                  final all = owned.ownedSkinsForWeapon(_weaponId);
-                  final standard = [
-                    for (final s in all)
-                      if (s.isStandard &&
-                          _query.tiers.isEmpty &&
-                          matchesSearch(_query.search, [
-                            s.displayName,
-                            CollectionStrings.defaultSkin,
-                          ]))
-                        s,
-                  ];
-                  final skins = [
-                    ...standard,
-                    ...querySkins(
-                      all.where((s) => !s.isStandard),
-                      _query,
-                      db: db,
-                      prices: ref.watch(priceServiceProvider),
-                    ),
-                  ];
-                  return AdaptiveRefresh(
-                    onRefresh: () => refreshCollection(ref, account.puuid),
-                    child: skins.isEmpty
-                        ? ListView(
-                            children: [
-                              if (_query.isFiltering)
-                                EmptyView(
-                                  title: CollectionStrings.noResultsTitle,
-                                  message: CollectionStrings.noResults,
-                                  icon: Icons.search_off,
-                                  action: _query.tiers.isEmpty
-                                      ? null
-                                      : OutlinedButton.icon(
-                                          onPressed: () => _setQuery(
-                                            _query.copyWith(tiers: {}),
-                                          ),
-                                          icon: const Icon(
-                                            Icons.filter_alt_off_outlined,
-                                          ),
-                                          label: const Text(
-                                            CollectionStrings.clearTiers,
-                                          ),
-                                        ),
-                                )
-                              else
-                                const EmptyView(
-                                  message: CollectionStrings.noSkinsForWeapon,
-                                  icon: Icons.inventory_2_outlined,
-                                ),
-                            ],
-                          )
-                        : ListView.separated(
-                            keyboardDismissBehavior:
-                                ScrollViewKeyboardDismissBehavior.onDrag,
-                            padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-                            itemCount: skins.length,
-                            separatorBuilder: (_, _) =>
-                                const SizedBox(height: 10),
-                            itemBuilder: (context, i) {
-                              final skin = skins[i];
-                              return SkinRow(
-                                key: ValueKey(skin.uuid),
-                                skin: skin,
-                                owned: owned,
-                                equipped: gun?.skinId == skin.uuid,
-                                onTap: () => unawaited(
-                                  context.push(
-                                    CollectionRoutes.weaponSkin(
-                                      _weaponId,
-                                      skin.uuid,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                  );
-                },
+          ];
+          final collectible = all.where((s) => !s.isStandard).length;
+          return [
+            if (snapshot.isFromCache)
+              const SliverToBoxAdapter(child: CachedLoadoutBanner()),
+            SliverToBoxAdapter(child: SavingBar(visible: snapshot.isPending)),
+            SliverToBoxAdapter(
+              child: SummaryStrip(
+                text: _query.isFiltering
+                    ? CollectionStrings.summaryFilteredItems(
+                        skins.length,
+                        all.length,
+                      )
+                    : CollectionStrings.ownedForWeapon(collectible),
+                highlighted: _query.isFiltering,
               ),
             ),
-          ],
-        ),
+            if (skins.isEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: _query.isFiltering
+                    ? EmptyView(
+                        title: CollectionStrings.noResultsTitle,
+                        message: CollectionStrings.noResults,
+                        icon: Icons.search_off,
+                        action: _query.tiers.isEmpty
+                            ? null
+                            : OutlinedButton.icon(
+                                onPressed: () =>
+                                    _setQuery(_query.copyWith(tiers: {})),
+                                icon: const Icon(Icons.filter_alt_off_outlined),
+                                label: const Text(CollectionStrings.clearTiers),
+                              ),
+                      )
+                    : const EmptyView(
+                        message: CollectionStrings.noSkinsForWeapon,
+                        icon: Icons.inventory_2_outlined,
+                      ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                sliver: SliverList.separated(
+                  itemCount: skins.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 10),
+                  itemBuilder: (context, i) {
+                    final skin = skins[i];
+                    return SkinRow(
+                      key: ValueKey(skin.uuid),
+                      skin: skin,
+                      owned: owned,
+                      quote: skin.isStandard
+                          ? null
+                          : prices.priceForSkin(skin.uuid),
+                      equipped: gun?.skinId == skin.uuid,
+                      onTap: () {
+                        Haptics.selection();
+                        unawaited(
+                          context.push(
+                            CollectionRoutes.weaponSkin(_weaponId, skin.uuid),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+          ];
+        },
       ),
     );
   }
 }
 
-/// One owned skin: render on a rarity glow, name, rarity tag, owned levels
-/// / variants and "Đang dùng" (accent frame).
+class _SkinRowsSkeleton extends StatelessWidget {
+  const _SkinRowsSkeleton();
+
+  @override
+  Widget build(BuildContext context) => const SkeletonList(
+    itemCount: 5,
+    itemHeight: 92,
+    spacing: 10,
+    padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+  );
+}
+
+/// One owned skin: render on a rarity glow (Hero into "Tùy chỉnh skin"),
+/// rarity tag, name, owned levels / variants, the store price with its VND
+/// estimate (or the reward source) and "Đang dùng" (accent frame).
 class SkinRow extends ConsumerWidget {
   const SkinRow({
     super.key,
@@ -180,12 +237,16 @@ class SkinRow extends ConsumerWidget {
     required this.owned,
     required this.equipped,
     required this.onTap,
+    this.quote,
   });
 
   final WeaponSkin skin;
   final OwnedItems owned;
   final bool equipped;
   final VoidCallback onTap;
+
+  /// Store price / reward source; `null` hides the price line (Standard).
+  final PriceQuote? quote;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -204,6 +265,7 @@ class SkinRow extends ConsumerWidget {
         CollectionStrings.chromaCount(chromas, skin.chromas.length),
     ];
     final narrow = MediaQuery.sizeOf(context).width < 360;
+    final q = quote;
     return Semantics(
       button: true,
       selected: equipped,
@@ -241,7 +303,10 @@ class SkinRow extends ConsumerWidget {
                   SizedBox(
                     width: narrow ? 96 : 120,
                     height: 56,
-                    child: NetImage(skin.image, fit: BoxFit.contain),
+                    child: Hero(
+                      tag: CollectionHeroTags.skin(skin.uuid),
+                      child: NetImage(skin.image, fit: BoxFit.contain),
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -260,6 +325,10 @@ class SkinRow extends ConsumerWidget {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
+                        if (q != null) ...[
+                          const SizedBox(height: 4),
+                          _PriceLine(quote: q),
+                        ],
                         if (equipped || details.isNotEmpty) ...[
                           const SizedBox(height: 6),
                           Wrap(
@@ -288,6 +357,59 @@ class SkinRow extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// "[VP] 1.775 · ≈ 268.000 ₫" or the reward source ("Phần thưởng Battle
+/// Pass").
+class _PriceLine extends StatelessWidget {
+  const _PriceLine({required this.quote});
+
+  final PriceQuote quote;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    final vp = quote.vp;
+    if (vp == null) {
+      final caption = quote.caption;
+      if (caption == null) return const SizedBox.shrink();
+      return Row(
+        children: [
+          Icon(
+            quote.isReward ? Icons.card_giftcard : Icons.remove_circle_outline,
+            size: 13,
+            color: muted,
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Text(
+              caption,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelSmall?.copyWith(color: muted),
+            ),
+          ),
+        ],
+      );
+    }
+    return Wrap(
+      spacing: 8,
+      runSpacing: 2,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        CurrencyAmount.vp(
+          vp,
+          estimate: quote.isEstimate,
+          iconSize: 13,
+          style: theme.textTheme.labelMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        VndEstimate(vp, interactive: false, style: theme.textTheme.labelSmall),
+      ],
     );
   }
 }

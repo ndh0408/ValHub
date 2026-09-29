@@ -125,8 +125,8 @@ abstract final class ProfileStrings {
   static const dailyRrEmpty =
       'Chưa có trận xếp hạng nào được lưu trên thiết bị này.';
   static const dailyRrFootnote =
-      'Lịch sử RR được lưu trên thiết bị của bạn; ngày được tính theo giờ '
-      'địa phương.';
+      'Lịch sử RR được lưu ngay trên thiết bị của bạn, kể cả các trận Riot '
+      'không còn trả về.';
 
   /// "4 thắng – 2 thua" (+ " – 1 hòa").
   static String winsLosses(int w, int l, int d) =>
@@ -225,4 +225,84 @@ abstract final class ProfileStrings {
 
   // Rank-Up Calculator (redesign)
   static const progressToTarget = 'Tiến độ tới hạng mục tiêu';
+
+  // ------------------------------------------------ sub-pages (redesign v3)
+
+  // Match detail hero + summary
+  /// "Hôm qua · 14:49" (day header + 24 h local time).
+  static String playedAt(String day, String time) => joined([day, time]);
+
+  /// Screen-reader label of the match hero.
+  static String matchHeroSemantics(String map, String result, String? score) =>
+      joined([map, result, ?score]);
+  static const kast = 'KAST';
+  static const kastHint =
+      'Tỉ lệ vòng bạn có hạ gục, hỗ trợ, sống sót hoặc được đồng đội trả thù';
+  static const hitDistribution = 'Phân bố phát bắn trúng';
+  static const hitHead = 'Đầu';
+  static const hitBody = 'Thân';
+  static const hitLegs = 'Chân';
+
+  /// "Đầu 24%".
+  static String hitShare(String part, String percent) => '$part $percent';
+
+  // Round timeline: kill feed per round
+  static const roundsHint = 'Chạm vào một vòng để xem từng pha hạ gục.';
+  static const noKillsInRound = 'Vòng này không có dữ liệu hạ gục.';
+  static const spike = 'Spike';
+  static const fallDamage = 'Rơi từ trên cao';
+  static const ability = 'Kỹ năng';
+  static const showKills = 'Xem pha hạ gục';
+  static const hideKills = 'Ẩn pha hạ gục';
+
+  /// Screen-reader line of one kill: "Jett hạ gục Sova bằng Vandal (0:42)".
+  static String killSemantics(
+    String killer,
+    String victim,
+    String? weapon,
+    String time,
+  ) => weapon == null || weapon.isEmpty
+      ? '$killer hạ gục $victim ($time)'
+      : '$killer hạ gục $victim bằng $weapon ($time)';
+
+  // Daily RR
+  /// "7 ngày qua".
+  static String lastDays(int n) => '$n ngày qua';
+
+  /// "Ngày tính theo giờ Việt Nam (UTC+7)".
+  static String dayBoundary(String zone) => 'Ngày tính theo $zone';
+
+  /// Device time zone: "giờ Việt Nam (UTC+7)" for UTC+7, else
+  /// "giờ địa phương (UTC+9)".
+  static String timeZoneLabel(Duration offset) {
+    final sign = offset.isNegative ? '−' : '+';
+    final abs = offset.abs();
+    final h = abs.inHours;
+    final m = abs.inMinutes.remainder(60);
+    final utc = m == 0
+        ? 'UTC$sign$h'
+        : 'UTC$sign$h:${m.toString().padLeft(2, '0')}';
+    return offset == const Duration(hours: 7)
+        ? 'giờ Việt Nam ($utc)'
+        : 'giờ địa phương ($utc)';
+  }
+
+  /// "5 ngày có trận".
+  static String daysPlayed(int n) => '$n ngày có trận';
+
+  /// Short weekday of a day badge, indexed by `DateTime.weekday - 1`.
+  static const weekdayShort = <String>['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+
+  // Rank-Up Calculator
+  /// "Tiến độ tới Kim Cương 2".
+  static String progressTo(String rank) => 'Tiến độ tới $rank';
+
+  /// "+22 RR khi thắng".
+  static String gainPerWin(String rr) => '$rr RR khi thắng';
+
+  /// "−18 RR khi thua".
+  static String lossPerLoss(String rr) => '$rr RR khi thua';
+  static const byWinRateTitle = 'Theo tỉ lệ thắng';
+  static const yourWinRate = 'Tỉ lệ thắng gần đây của bạn';
+  static const pickTargetHint = 'Chọn hạng bạn muốn đạt';
 }

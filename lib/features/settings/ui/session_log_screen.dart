@@ -6,21 +6,27 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/logging/session_log.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/storage/ui_memory.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
+import '../../../core/ui/filter_bar.dart';
 import '../../../core/ui/segmented_tabs.dart';
+import '../../../core/ui/sub_page.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
+import '../../../core/util/search_text.dart';
 import '../providers/settings_providers.dart';
 import '../settings_strings.dart';
 import 'widgets/settings_widgets.dart';
 
 /// S71 "Nhật ký phiên": newest-first list of scrubbed session events
 /// (timestamps, request templates, HTTP status; never tokens, cookies or
-/// PUUIDs) with "Sao chép" / "Chia sẻ" (share_plus) and "Xóa nhật ký".
-/// Route `/settings/log`.
-class SessionLogScreen extends ConsumerWidget {
+/// PUUIDs) on the shared sub-page chrome, with a pinned search field and
+/// level filter (remembered), "Sao chép" / "Chia sẻ" (share_plus) at the
+/// bottom and "Xóa nhật ký" (with confirmation) in the bar. Tapping a row
+/// copies that line. Route `/settings/log`.
+class SessionLogScreen extends ConsumerStatefulWidget {
   const SessionLogScreen({super.key});
 
   static String exportTextOf(SessionLog log, String? version) => log.exportText(
@@ -30,7 +36,26 @@ class SessionLogScreen extends ConsumerWidget {
     ),
   );
 
-  Future<void> _copy(BuildContext context, String text) async {
+  @override
+  ConsumerState<SessionLogScreen> createState() => _SessionLogScreenState();
+}
+
+class _SessionLogScreenState extends ConsumerState<SessionLogScreen> {
+  late SessionLogFilter _filter = ref
+      .read(uiMemoryProvider)
+      .readEnum(
+        SessionLogFilter.memoryKey,
+        SessionLogFilter.values,
+        SessionLogFilter.all,
+      );
+  String _query = '';
+
+  void _setFilter(SessionLogFilter f) {
+    setState(() => _filter = f);
+    ref.read(uiMemoryProvider).writeEnum(SessionLogFilter.memoryKey, f);
+  }
+
+  Future<void> _copy(String text) async {
     final messenger = ScaffoldMessenger.maybeOf(context);
     await Clipboard.setData(ClipboardData(text: text));
     messenger
@@ -38,11 +63,7 @@ class SessionLogScreen extends ConsumerWidget {
       ..showSnackBar(const SnackBar(content: Text(CommonStrings.copied)));
   }
 
-  Future<void> _share(
-    BuildContext buttonContext,
-    WidgetRef ref,
-    String text,
-  ) async {
+  Future<void> _share(BuildContext buttonContext, String text) async {
     final messenger = ScaffoldMessenger.maybeOf(buttonContext);
     final box = buttonContext.findRenderObject();
     final origin = box is RenderBox && box.hasSize
@@ -63,15 +84,16 @@ class SessionLogScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _clear(BuildContext context, SessionLog log) async {
+  Future<void> _clear(SessionLog log) async {
     final ok = await confirmSettingsAction(
       context,
       title: SettingsStrings.clearLog,
       message: SettingsStrings.clearLogConfirm,
       confirmLabel: CommonStrings.delete,
       destructive: true,
+      icon: Icons.delete_sweep_outlined,
     );
-    if (!ok || !context.mounted) return;
+    if (!ok || !mounted) return;
     final messenger = ScaffoldMessenger.maybeOf(context);
     await log.clear();
     messenger
@@ -79,75 +101,196 @@ class SessionLogScreen extends ConsumerWidget {
       ..showSnackBar(const SnackBar(content: Text(SettingsStrings.logCleared)));
   }
 
+  bool _matches(SessionLogEntry e) =>
+      _filter.matches(e) &&
+      matchesSearch(_query, [e.event, e.target, e.detail, '${e.status ?? ''}']);
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final log = ref.watch(sessionLogProvider);
     final version = ref.watch(packageInfoProvider).value?.version;
+    final now = ref.watch(clockProvider).now();
     return ListenableBuilder(
       listenable: log,
       builder: (context, _) {
         final entries = log.entries;
         final hasEntries = entries.isNotEmpty;
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text(SettingsStrings.sessionLogTitle),
-            actions: [
-              if (hasEntries)
-                IconButton(
-                  icon: const Icon(Icons.delete_sweep_outlined),
-                  tooltip: SettingsStrings.clearLog,
-                  onPressed: () => unawaited(_clear(context, log)),
-                ),
-            ],
-          ),
+        // Newest first, with a day header whenever the local day changes.
+        final rows = <Object>[];
+        DateTime? day;
+        for (final e in entries.reversed) {
+          if (!_matches(e)) continue;
+          final local = e.time.toLocal();
+          final d = DateTime(local.year, local.month, local.day);
+          if (d != day) {
+            day = d;
+            rows.add(d);
+          }
+          rows.add(e);
+        }
+        final shown = rows.whereType<SessionLogEntry>().length;
+        return SubPageScaffold(
+          title: SettingsStrings.sessionLogTitle,
+          subtitle: SettingsStrings.exportLogNote,
+          actions: [
+            if (hasEntries)
+              IconButton(
+                icon: const Icon(Icons.delete_sweep_outlined),
+                tooltip: SettingsStrings.clearLog,
+                onPressed: () => unawaited(_clear(log)),
+              ),
+          ],
+          header: hasEntries
+              ? _LogHeader(
+                  filter: _filter,
+                  onFilter: _setFilter,
+                  onQuery: (q) => setState(() => _query = q),
+                )
+              : null,
+          headerHeight: 112,
+          bottomBar: hasEntries
+              ? Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(48),
+                        ),
+                        icon: const Icon(Icons.copy_outlined),
+                        label: const Text(CommonStrings.copy),
+                        onPressed: () => unawaited(
+                          _copy(SessionLogScreen.exportTextOf(log, version)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Builder(
+                        builder: (buttonContext) => FilledButton.icon(
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size.fromHeight(48),
+                          ),
+                          icon: const Icon(Icons.share_outlined),
+                          label: const Text(CommonStrings.share),
+                          onPressed: () => unawaited(
+                            _share(
+                              buttonContext,
+                              SessionLogScreen.exportTextOf(log, version),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : null,
           body: hasEntries
-              ? _LogList(entries: entries)
+              ? null
               : const EmptyView(
+                  title: SettingsStrings.exportLogEmptyTitle,
                   message: SettingsStrings.exportLogEmpty,
                   icon: Icons.receipt_long_outlined,
                 ),
-          bottomNavigationBar: hasEntries
-              ? SafeArea(
-                  minimum: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(48),
-                          ),
-                          icon: const Icon(Icons.copy_outlined),
-                          label: const Text(CommonStrings.copy),
-                          onPressed: () => unawaited(
-                            _copy(context, exportTextOf(log, version)),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Builder(
-                          builder: (buttonContext) => FilledButton.icon(
-                            style: FilledButton.styleFrom(
-                              minimumSize: const Size.fromHeight(48),
+          slivers: !hasEntries
+              ? null
+              : [
+                  SliverToBoxAdapter(
+                    child: _CountLine(
+                      text: shown == entries.length
+                          ? SettingsStrings.logEntryCount(entries.length)
+                          : SettingsStrings.logEntryShown(
+                              shown,
+                              entries.length,
                             ),
-                            icon: const Icon(Icons.share_outlined),
-                            label: const Text(CommonStrings.share),
-                            onPressed: () => unawaited(
-                              _share(
-                                buttonContext,
-                                ref,
-                                exportTextOf(log, version),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                )
-              : null,
+                  if (rows.isEmpty)
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: EmptyView(
+                        message: _query.trim().isEmpty
+                            ? SettingsStrings.logFilterEmpty
+                            : SettingsStrings.logSearchEmpty,
+                        icon: _query.trim().isEmpty
+                            ? Icons.filter_alt_off_outlined
+                            : Icons.search_off_outlined,
+                      ),
+                    )
+                  else
+                    SliverList.builder(
+                      itemCount: rows.length,
+                      itemBuilder: (context, i) => switch (rows[i]) {
+                        final DateTime d => _DayHeader(
+                          formatDayHeader(d, now),
+                        ),
+                        final SessionLogEntry e => _LogRow(
+                          entry: e,
+                          onTap: () => unawaited(_copy(e.toLine())),
+                        ),
+                        _ => const SizedBox.shrink(),
+                      },
+                    ),
+                ],
         );
       },
+    );
+  }
+}
+
+/// Pinned search field + level filter.
+class _LogHeader extends StatelessWidget {
+  const _LogHeader({
+    required this.filter,
+    required this.onFilter,
+    required this.onQuery,
+  });
+
+  final SessionLogFilter filter;
+  final ValueChanged<SessionLogFilter> onFilter;
+  final ValueChanged<String> onQuery;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 6, 16, 2),
+          child: GlassSearchField(
+            hintText: SettingsStrings.logSearchHint,
+            onChanged: onQuery,
+          ),
+        ),
+        SegmentedTabs<SessionLogFilter>(
+          tabs: [
+            for (final f in SessionLogFilter.values)
+              SegmentedTab(value: f, label: f.label),
+          ],
+          selected: filter,
+          onChanged: onFilter,
+        ),
+      ],
+    );
+  }
+}
+
+class _CountLine extends StatelessWidget {
+  const _CountLine({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+      child: Text(
+        text,
+        style: theme.textTheme.labelMedium?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
     );
   }
 }
@@ -196,117 +339,6 @@ enum SessionLogFilter {
   }
 }
 
-class _LogList extends ConsumerStatefulWidget {
-  const _LogList({required this.entries});
-
-  final List<SessionLogEntry> entries;
-
-  @override
-  ConsumerState<_LogList> createState() => _LogListState();
-}
-
-class _LogListState extends ConsumerState<_LogList> {
-  late SessionLogFilter _filter = ref
-      .read(uiMemoryProvider)
-      .readEnum(
-        SessionLogFilter.memoryKey,
-        SessionLogFilter.values,
-        SessionLogFilter.all,
-      );
-
-  void _setFilter(SessionLogFilter f) {
-    setState(() => _filter = f);
-    ref.read(uiMemoryProvider).writeEnum(SessionLogFilter.memoryKey, f);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final now = ref.watch(clockProvider).now();
-    final entries = widget.entries;
-    // Newest first, with a day header whenever the local day changes.
-    final rows = <Object>[];
-    DateTime? day;
-    for (final e in entries.reversed) {
-      if (!_filter.matches(e)) continue;
-      final local = e.time.toLocal();
-      final d = DateTime(local.year, local.month, local.day);
-      if (d != day) {
-        day = d;
-        rows.add(d);
-      }
-      rows.add(e);
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _NoteBanner(count: entries.length),
-        SegmentedTabs<SessionLogFilter>(
-          tabs: [
-            for (final f in SessionLogFilter.values)
-              SegmentedTab(value: f, label: f.label),
-          ],
-          selected: _filter,
-          onChanged: _setFilter,
-        ),
-        const Divider(height: 1),
-        Expanded(
-          child: AnimatedSwitcher(
-            duration: ValMotion.fast,
-            child: rows.isEmpty
-                ? const EmptyView(
-                    key: ValueKey('empty'),
-                    message: SettingsStrings.logFilterEmpty,
-                    icon: Icons.filter_alt_off_outlined,
-                  )
-                : ListView.builder(
-                    key: ValueKey(_filter),
-                    padding: const EdgeInsets.only(bottom: 24),
-                    itemCount: rows.length,
-                    itemBuilder: (context, i) => switch (rows[i]) {
-                      final DateTime d => _DayHeader(formatDayHeader(d, now)),
-                      final SessionLogEntry e => _LogRow(entry: e),
-                      _ => const SizedBox.shrink(),
-                    },
-                  ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _NoteBanner extends StatelessWidget {
-  const _NoteBanner({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final muted = theme.colorScheme.onSurfaceVariant;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-      child: Row(
-        children: [
-          Icon(Icons.shield_outlined, size: 18, color: muted),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              SettingsStrings.exportLogNote,
-              style: theme.textTheme.bodySmall?.copyWith(color: muted),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            SettingsStrings.logEntryCount(count),
-            style: theme.textTheme.labelMedium?.copyWith(color: muted),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _DayHeader extends StatelessWidget {
   const _DayHeader(this.label);
 
@@ -314,24 +346,17 @@ class _DayHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-      child: Text(
-        label.toUpperCase(),
-        style: theme.textTheme.labelMedium?.copyWith(
-          letterSpacing: 1.1,
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
-      ),
-    );
+    return SectionLabel(label, padding: const EdgeInsets.fromLTRB(20, 18, 20, 6));
   }
 }
 
 class _LogRow extends StatelessWidget {
-  const _LogRow({required this.entry});
+  const _LogRow({required this.entry, required this.onTap});
 
   final SessionLogEntry entry;
+
+  /// Copies this line.
+  final VoidCallback onTap;
 
   static String _clock(DateTime t) {
     final l = t.toLocal();
@@ -356,83 +381,79 @@ class _LogRow extends StatelessWidget {
         : (entry.status != null && entry.status! < 300)
         ? colors.win
         : colors.track;
-    return Container(
-      margin: const EdgeInsets.fromLTRB(12, 3, 12, 3),
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 3, 16, 3),
+      child: Material(
         color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ColoredBox(color: level, child: const SizedBox(width: 3)),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-                child: _body(theme, muted, mono, target, detail),
-              ),
-            ),
-          ],
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ValRadius.small),
+          side: theme.brightness == Brightness.light
+              ? BorderSide(color: colors.hairline)
+              : BorderSide.none,
         ),
-      ),
-    );
-  }
-
-  Widget _body(
-    ThemeData theme,
-    Color muted,
-    TextStyle mono,
-    String? target,
-    String? detail,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(_clock(entry.time), style: mono.copyWith(color: muted)),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                entry.event,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelLarge,
-              ),
+        child: InkWell(
+          onTap: onTap,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              border: Border(left: BorderSide(color: level, width: 3)),
             ),
-            if (entry.ms != null) ...[
-              Text(
-                '${formatNumber(entry.ms!)} ms',
-                style: mono.copyWith(color: muted),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        _clock(entry.time),
+                        style: mono.copyWith(color: muted),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          entry.event,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelLarge,
+                        ),
+                      ),
+                      if (entry.ms != null) ...[
+                        Text(
+                          '${formatNumber(entry.ms!)} ms',
+                          style: mono.copyWith(color: muted),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                      if (entry.status != null) _StatusChip(entry.status!),
+                    ],
+                  ),
+                  if (target != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        target,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: mono,
+                      ),
+                    ),
+                  if (detail != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        detail,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: mono.copyWith(color: muted),
+                      ),
+                    ),
+                ],
               ),
-              const SizedBox(width: 8),
-            ],
-            if (entry.status != null) _StatusChip(entry.status!),
-          ],
-        ),
-        if (target != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: Text(
-              target,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: mono,
             ),
           ),
-        if (detail != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: Text(
-              detail,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: mono.copyWith(color: muted),
-            ),
-          ),
-      ],
+        ),
+      ),
     );
   }
 }
@@ -464,7 +485,7 @@ class _StatusChip extends StatelessWidget {
           fontFamilyFallback: _monoFallback,
           fontSize: 12,
           fontWeight: FontWeight.w700,
-          color: color,
+          color: legibleAccent(context, color),
         ),
       ),
     );

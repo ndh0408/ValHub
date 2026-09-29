@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -11,17 +13,31 @@ import '../../../../core/domain/loadout/loadout.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tier_colors.dart';
-import '../../../../core/ui/async_value_view.dart';
 import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/empty_view.dart';
+import '../../../../core/ui/error_view.dart';
 import '../../../../core/ui/filter_bar.dart';
 import '../../../../core/ui/net_image.dart';
+import '../../../../core/ui/segmented_tabs.dart';
 import '../../../../core/ui/skeleton.dart';
+import '../../../../core/ui/sub_page.dart';
 import '../../collection_strings.dart';
 import '../../data/skin_query.dart';
 
+/// Hero tags shared by the collection screens (list → detail flights).
+abstract final class CollectionHeroTags {
+  /// The equipped player card: hub banner → "Đổi thẻ người chơi".
+  static const equippedCard = 'collection.equippedCard';
+
+  /// A gun's equipped render: weapon grid → that weapon's skins.
+  static String gun(String weaponId) => 'collection.gun.$weaponId';
+
+  /// A skin render: skin list → "Tùy chỉnh skin".
+  static String skin(String skinUuid) => 'collection.skin.$skinUuid';
+}
+
 /// Builds [builder] with the active account, or an empty state when nobody
-/// is signed in.
+/// is signed in (sheets; pages use [NoAccountPage]).
 class CollectionAccountGate extends ConsumerWidget {
   const CollectionAccountGate({super.key, required this.builder});
 
@@ -40,47 +56,126 @@ class CollectionAccountGate extends ConsumerWidget {
   }
 }
 
-/// Loadout + owned items + content with the standard loading / error states
-/// (each source keeps its own "Thử lại").
-class LoadoutDataBuilder extends ConsumerWidget {
-  const LoadoutDataBuilder({
-    super.key,
-    required this.puuid,
-    required this.builder,
-    this.loading,
-  });
+/// A collection sub-page when no account is signed in.
+class NoAccountPage extends StatelessWidget {
+  const NoAccountPage({super.key, required this.title});
 
-  final String puuid;
-  final Widget? loading;
-  final Widget Function(
-    BuildContext context,
+  final String title;
+
+  @override
+  Widget build(BuildContext context) => SubPageScaffold(
+    title: title,
+    body: const EmptyView(
+      message: CommonStrings.errorNoAccount,
+      icon: Icons.person_off_outlined,
+    ),
+  );
+}
+
+/// Slivers for data that needs the loadout, the owned items and content:
+/// [loading] (a box skeleton mirroring the final layout) until both have
+/// loaded, a full-page error with "Thử lại" / "Đăng nhập lại" when one
+/// failed, else [data]'s slivers. A failed refresh keeps the data and adds
+/// a compact error row on top (like `AsyncValueView`).
+///
+/// Call it from `build` (it watches the providers through [ref]).
+List<Widget> loadoutSlivers(
+  WidgetRef ref, {
+  required String puuid,
+  required Widget loading,
+  required List<Widget> Function(
     LoadoutSnapshot snapshot,
     OwnedItems owned,
     ContentDb db,
   )
-  builder;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return AsyncValueView(
-      value: ref.watch(loadoutProvider(puuid)),
-      puuid: puuid,
-      loading: loading,
-      onRetry: () => ref.invalidate(loadoutProvider(puuid)),
-      data: (snapshot) => AsyncValueView(
-        value: ref.watch(ownedItemsProvider(puuid)),
-        puuid: puuid,
-        loading: loading,
-        onRetry: () => ref.invalidate(entitlementsProvider(puuid)),
-        data: (owned) => builder(
-          context,
-          snapshot,
-          owned,
-          ref.watch(contentProvider).value ?? ContentDb.empty(),
+  data,
+}) {
+  final loadout = ref.watch(loadoutProvider(puuid));
+  final owned = ref.watch(ownedItemsProvider(puuid));
+  void retryLoadout() => ref.invalidate(loadoutProvider(puuid));
+  void retryOwned() => ref.invalidate(entitlementsProvider(puuid));
+  final l = loadout.value;
+  final o = owned.value;
+  if (l != null && o != null) {
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
+    return [
+      if (loadout.hasError && !loadout.isLoading)
+        SliverToBoxAdapter(
+          child: ErrorView(
+            error: loadout.error!,
+            puuid: puuid,
+            compact: true,
+            onRetry: retryLoadout,
+          ),
+        ),
+      if (owned.hasError && !owned.isLoading)
+        SliverToBoxAdapter(
+          child: ErrorView(
+            error: owned.error!,
+            puuid: puuid,
+            compact: true,
+            onRetry: retryOwned,
+          ),
+        ),
+      ...data(l, o, db),
+    ];
+  }
+  if (l == null && loadout.hasError && !loadout.isLoading) {
+    return [
+      SliverFillRemaining(
+        hasScrollBody: false,
+        child: ErrorView(
+          error: loadout.error!,
+          puuid: puuid,
+          onRetry: retryLoadout,
         ),
       ),
-    );
+    ];
   }
+  if (o == null && owned.hasError && !owned.isLoading) {
+    return [
+      SliverFillRemaining(
+        hasScrollBody: false,
+        child: ErrorView(error: owned.error!, puuid: puuid, onRetry: retryOwned),
+      ),
+    ];
+  }
+  return [SliverToBoxAdapter(child: loading)];
+}
+
+/// Like [loadoutSlivers] for screens that only need the owned items.
+List<Widget> ownedSlivers(
+  WidgetRef ref, {
+  required String puuid,
+  required Widget loading,
+  required List<Widget> Function(OwnedItems owned, ContentDb db) data,
+}) {
+  final owned = ref.watch(ownedItemsProvider(puuid));
+  void retry() => ref.invalidate(entitlementsProvider(puuid));
+  if (owned.value case final o?) {
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
+    return [
+      if (owned.hasError && !owned.isLoading)
+        SliverToBoxAdapter(
+          child: ErrorView(
+            error: owned.error!,
+            puuid: puuid,
+            compact: true,
+            onRetry: retry,
+          ),
+        ),
+      ...data(o, db),
+    ];
+  }
+  if (owned.hasError && !owned.isLoading) {
+    return [
+      SliverFillRemaining(
+        hasScrollBody: false,
+        child: ErrorView(error: owned.error!, puuid: puuid, onRetry: retry),
+      ),
+    ];
+  }
+  return [SliverToBoxAdapter(child: loading)];
 }
 
 /// "Glass" search bar used by every picker (C10): pill field with a clear
@@ -124,6 +219,70 @@ class _CollectionSearchFieldState extends State<CollectionSearchField> {
     ),
   );
 }
+
+/// Font size [size] after the user's text scaling (clamped to 200 %).
+double _scaled(BuildContext context, double size) => math.min(
+  MediaQuery.textScalerOf(context).scale(size),
+  size * 2,
+);
+
+/// Height of a pinned [SearchStrip] (search field, plus the filter row when
+/// [filters]) at the current text size, so it never clips up to 200 %.
+double searchStripHeight(BuildContext context, {bool filters = false}) {
+  // Field: 12 + 12 content padding + one bodyLarge line (16 × 1.5); the
+  // prefix icon keeps it at least 48 dp. 8 dp above and below.
+  final field = math.max(48, 24 + _scaled(context, 16) * 1.5);
+  var height = 16 + field;
+  if (filters) {
+    // Compact chips: labelLarge line (14 × 1.43) + padding, 48 dp tap area;
+    // 4 dp below the row.
+    height += math.max(48, 16 + _scaled(context, 14) * 1.43) + 4;
+  }
+  return height.ceilToDouble() + 2;
+}
+
+/// Content of a pinned search header (a [GlassHeaderDelegate] of
+/// [searchStripHeight]): the search field and optional filter row. Never
+/// throws an overflow if the fonts are larger than estimated (clips).
+class SearchStrip extends StatelessWidget {
+  const SearchStrip({super.key, required this.search, this.filters});
+
+  final Widget search;
+  final Widget? filters;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: double.infinity,
+    child: ClipRect(
+      child: OverflowBox(
+        alignment: Alignment.topCenter,
+        minHeight: 0,
+        maxHeight: double.infinity,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [search, ?filters],
+        ),
+      ),
+    ),
+  );
+}
+
+/// A pinned [SearchStrip] as a sliver (for pages whose search sits below a
+/// preview rather than right under the title).
+Widget pinnedSearchSliver(
+  BuildContext context, {
+  required Widget search,
+  Widget? filters,
+  Key? key,
+}) => SliverPersistentHeader(
+  key: key,
+  pinned: true,
+  delegate: GlassHeaderDelegate(
+    height: searchStripHeight(context, filters: filters != null),
+    child: SearchStrip(search: search, filters: filters),
+  ),
+);
 
 /// Content tier of [id] (content, else the bundled fallback).
 ContentTier? _tier(ContentDb? db, String id) =>
@@ -185,6 +344,59 @@ String? skinTierName(WidgetRef ref, String? tierUuid) {
   return _tier(ref.watch(contentProvider).value, tierUuid)?.shortName;
 }
 
+/// Plain bold section title ("Trang bị", "Biến thể") of the collection tab
+/// and its sub-pages, with an optional trailing caption.
+class CollectionSectionTitle extends StatelessWidget {
+  const CollectionSectionTitle(
+    this.text, {
+    super.key,
+    this.trailing,
+    this.padding = const EdgeInsets.fromLTRB(20, 24, 20, 10),
+  });
+
+  final String text;
+  final String? trailing;
+  final EdgeInsetsGeometry padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final title = Semantics(
+      header: true,
+      child: Text(
+        text,
+        style: theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+    return Padding(
+      padding: padding,
+      child: trailing == null
+          ? title
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Expanded(child: title),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Text(
+                    trailing!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.end,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}
+
 /// Red outline icon of a hub row (ValBuddy grouped-list style).
 class HubIcon extends StatelessWidget {
   const HubIcon(this.icon, {super.key});
@@ -194,7 +406,15 @@ class HubIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SizedBox(
     width: 28,
-    child: Icon(icon, size: 22, color: Theme.of(context).colorScheme.primary),
+    child: Icon(
+      icon,
+      size: 22,
+      color: legibleAccent(
+        context,
+        Theme.of(context).colorScheme.primary,
+        min: 3,
+      ),
+    ),
   );
 }
 
@@ -208,6 +428,7 @@ class HubRow extends StatelessWidget {
     this.value,
     this.onTap,
     this.leading,
+    this.trailing,
   });
 
   final IconData icon;
@@ -217,6 +438,9 @@ class HubRow extends StatelessWidget {
 
   /// Replaces the icon (e.g. an image).
   final Widget? leading;
+
+  /// Replaces the "›" (e.g. a button).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -267,7 +491,7 @@ class HubRow extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 2),
-              Icon(Icons.chevron_right, color: muted, size: 20),
+              trailing ?? Icon(Icons.chevron_right, color: muted, size: 20),
             ],
           ),
         ),
@@ -300,8 +524,10 @@ class EquippedBadge extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelSmall
-                  ?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],
@@ -494,25 +720,28 @@ class _CheckDot extends StatelessWidget {
   );
 }
 
-/// "142 skin · 98.765 VP" / "Đang lọc: …" strip.
+/// "142 skin · 98.765 VP" / "Đang lọc: …" strip with an optional trailing
+/// widget (VND estimate).
 class SummaryStrip extends StatelessWidget {
   const SummaryStrip({
     super.key,
     required this.text,
     this.caption,
     this.highlighted = false,
+    this.trailing,
   });
 
   final String text;
   final String? caption;
   final bool highlighted;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
       child: Row(
         children: [
           Container(
@@ -541,6 +770,7 @@ class SummaryStrip extends StatelessWidget {
                     caption!,
                     style: theme.textTheme.labelSmall?.copyWith(color: muted),
                   ),
+                ?trailing,
               ],
             ),
           ),
@@ -573,6 +803,44 @@ class CachedLoadoutBanner extends StatelessWidget {
               CollectionStrings.cachedLoadout,
               style: Theme.of(context).textTheme.bodySmall,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Tinted notice card (locked skin, melee without buddy…).
+class CollectionNotice extends StatelessWidget {
+  const CollectionNotice({
+    super.key,
+    required this.icon,
+    required this.text,
+    this.color,
+    this.margin = const EdgeInsets.fromLTRB(16, 12, 16, 0),
+  });
+
+  final IconData icon;
+  final String text;
+  final Color? color;
+  final EdgeInsetsGeometry margin;
+
+  @override
+  Widget build(BuildContext context) {
+    final tint = color ?? valColorsOf(context).warning;
+    return Container(
+      margin: margin,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: tint.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(ValRadius.small),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: tint),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
           ),
         ],
       ),
@@ -617,8 +885,109 @@ class CollectionGridSkeleton extends StatelessWidget {
   );
 }
 
+/// Skeleton of a `SliverGridDelegateWithMaxCrossAxisExtent` grid with the
+/// same column count and tile height as the real one ([rows] rows).
+class SkeletonTileGrid extends StatelessWidget {
+  const SkeletonTileGrid({
+    super.key,
+    required this.maxExtent,
+    required this.tileHeight,
+    this.rows = 3,
+    this.spacing = 10,
+    this.padding = const EdgeInsets.fromLTRB(16, 4, 16, 16),
+    this.shimmer = true,
+  });
+
+  final double maxExtent;
+  final double tileHeight;
+  final int rows;
+  final double spacing;
+  final EdgeInsets padding;
+  final bool shimmer;
+
+  @override
+  Widget build(BuildContext context) {
+    final grid = LayoutBuilder(
+      builder: (context, c) {
+        final width = c.maxWidth - padding.horizontal;
+        final columns = math.max(1, (width / (maxExtent + spacing)).ceil());
+        final tileWidth = (width - spacing * (columns - 1)) / columns;
+        return Padding(
+          padding: padding,
+          child: Wrap(
+            spacing: spacing,
+            runSpacing: spacing,
+            children: [
+              for (var i = 0; i < columns * rows; i++)
+                Skeleton(
+                  width: tileWidth,
+                  height: tileHeight,
+                  radius: ValRadius.card,
+                  shimmer: false,
+                ),
+            ],
+          ),
+        );
+      },
+    );
+    return shimmer ? SkeletonShimmer(child: grid) : grid;
+  }
+}
+
+/// Skeleton of a grouped list: a rounded card of [rows] rows.
+class SkeletonGroupedRows extends StatelessWidget {
+  const SkeletonGroupedRows({
+    super.key,
+    this.rows = 5,
+    this.rowHeight = 52,
+    this.shimmer = true,
+  });
+
+  final int rows;
+  final double rowHeight;
+  final bool shimmer;
+
+  @override
+  Widget build(BuildContext context) {
+    final body = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(ValRadius.card),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        child: Column(
+          children: [
+            for (var i = 0; i < rows; i++)
+              SizedBox(
+                height: rowHeight,
+                child: const Row(
+                  children: [
+                    Skeleton(width: 24, height: 24, shimmer: false),
+                    SizedBox(width: 14),
+                    Expanded(
+                      child: Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: FractionallySizedBox(
+                          widthFactor: 0.6,
+                          child: Skeleton(height: 14, shimmer: false),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+    return shimmer ? SkeletonShimmer(child: body) : body;
+  }
+}
+
 /// Height of a grid tile whose caption is 2 lines + an optional footer line,
-/// scaled with the user's text size (no overflow at 1.3×).
+/// scaled with the user's text size (no overflow up to 200 %).
 double tileExtent(
   BuildContext context, {
   required double image,
@@ -629,19 +998,28 @@ double tileExtent(
 }
 
 /// Height of a [SkinArtCard] in the skin grids: an [image] area plus the
-/// name (2 lines) and the price line, scaled with the text size.
-double skinCardExtent(BuildContext context, {double image = 104}) =>
-    image + _skinCardText(context);
+/// name (2 lines) and the price line (and a VND line when [extraLine]),
+/// scaled with the text size.
+double skinCardExtent(
+  BuildContext context, {
+  double image = 104,
+  bool extraLine = false,
+}) => image + _skinCardText(context, extraLine: extraLine);
 
 /// `imageFlex` for a [SkinArtCard] of [skinCardExtent] height so the text
 /// block always gets the room it needs (no overflow up to 200 % text).
-int skinCardImageFlex(BuildContext context, {double image = 104}) {
-  final text = _skinCardText(context);
+int skinCardImageFlex(
+  BuildContext context, {
+  double image = 104,
+  bool extraLine = false,
+}) {
+  final text = _skinCardText(context, extraLine: extraLine);
   return (4 * image / text).floor().clamp(1, 8);
 }
 
-double _skinCardText(BuildContext context) {
+double _skinCardText(BuildContext context, {bool extraLine = false}) {
   final scale = MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 2.0);
-  // Name: 2 lines × 14 × 1.25; price row 16; paddings 6 + 12 (+ slack).
-  return 51 * scale + 30;
+  // Name: 2 lines × 14 × 1.25; price row 16; paddings 6 + 12 (+ slack);
+  // VND line: labelSmall ≈ 16 + 2.
+  return (51 + (extraLine ? 18 : 0)) * scale + 30;
 }

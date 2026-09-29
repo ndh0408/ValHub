@@ -10,13 +10,14 @@ import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive_strings.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/ui/adaptive.dart';
-import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
+import '../../../core/ui/error_view.dart';
 import '../../../core/ui/filter_bar.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
+import '../../../core/util/search_text.dart';
 import '../../../core/xmpp/friends.dart';
 import '../../../core/xmpp/xmpp_providers.dart';
 import '../data/friend_sections.dart';
@@ -29,9 +30,10 @@ import 'widgets/social_widgets.dart';
 /// S60 "Bạn bè & trò chuyện". Route `/profile/friends`.
 ///
 /// Riot friends (XMPP roster + presence) in "Đang chơi (n)" /
-/// "Trực tuyến (n)" / "Ngoại tuyến (n)" cards, searchable by Riot ID
-/// (without diacritics), with a remembered quick filter (Tất cả / Trực
-/// tuyến / Chưa đọc) and unread badges.
+/// "Trực tuyến (n)" / "Ngoại tuyến (n)" groups under a large title, with a
+/// pinned search field (Riot ID, case- and diacritic-insensitive: "duc"
+/// finds "Đức"), a remembered quick filter (Tất cả / Trực tuyến / Chưa
+/// đọc), unread badges and pull-to-refresh (re-requests presences).
 class FriendsScreen extends ConsumerStatefulWidget {
   const FriendsScreen({super.key});
 
@@ -68,25 +70,87 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     ref.read(uiMemoryProvider).writeEnum(_filterKey, f);
   }
 
+  void _clearQuery() {
+    _search.clear();
+    setState(() => _query = '');
+  }
+
   @override
   Widget build(BuildContext context) {
     final friends = ref.watch(friendsProvider);
     final puuid = ref.watch(activePuuidProvider);
-    final unread = friends.value?.totalUnread ?? 0;
-    return Scaffold(
-      appBar: AppBar(title: const Text(SocialStrings.friendsTitle)),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+    final view = friends.value;
+    final unread = view?.totalUnread ?? 0;
+
+    final List<Widget> body;
+    if (view != null) {
+      body = [
+        SliverToBoxAdapter(
+          child: ConnectionBanner(state: view.connection, onRetry: _retry),
+        ),
+        if (friends.hasError && !friends.isLoading)
+          SliverToBoxAdapter(
+            child: ErrorView(
+              error: friends.error!,
+              onRetry: _retry,
+              puuid: puuid,
+              compact: true,
+            ),
+          ),
+        if (view.isEmpty)
+          const SliverFillRemaining(
+            hasScrollBody: false,
+            child: EmptyView(
+              title: SocialStrings.noFriendsTitle,
+              message: SocialStrings.noFriends,
+              icon: Icons.group_outlined,
+            ),
+          )
+        else
+          ..._FriendsSlivers.build(
+            context: context,
+            ref: ref,
+            view: searchFriends(view, _query),
+            filter: _filter,
+            searching: searchTokens(_query).isNotEmpty,
+            onClearSearch: _clearQuery,
+            onShowAll: () => _setFilter(FriendsFilter.all),
+          ),
+      ];
+    } else if (friends.hasError && !friends.isLoading) {
+      body = [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: ErrorView(
+            error: friends.error!,
+            onRetry: _retry,
+            puuid: puuid,
+          ),
+        ),
+      ];
+    } else {
+      body = const [SliverToBoxAdapter(child: _FriendsSkeleton())];
+    }
+
+    return SubPageScaffold(
+      title: SocialStrings.friendsTitle,
+      subtitle: view == null || view.isEmpty
+          ? null
+          : SocialStrings.friendsSummary(view.all.length, view.online.length),
+      onRefresh: _refresh,
+      slivers: [
+        PinnedHeaderSliver(
+          child: _SearchStrip(
             child: GlassSearchField(
               controller: _search,
               hintText: SocialStrings.searchHint,
               onChanged: (v) => setState(() => _query = v),
             ),
           ),
-          SizedBox(
-            height: 52,
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 4),
             child: FilterChipBar(
               children: [
                 for (final f in FriendsFilter.values)
@@ -100,7 +164,6 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                                   '(${SocialStrings.unreadBadge(unread)})'
                             : SocialStrings.filterUnread,
                     },
-                    // Compact: the three chips fit a 360 dp phone.
                     dotColor: f == FriendsFilter.online
                         ? valColorsOf(context).win
                         : null,
@@ -110,36 +173,124 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
               ],
             ),
           ),
-          if (friends.value case final view?)
-            ConnectionBanner(state: view.connection, onRetry: _retry),
+        ),
+        ...body,
+      ],
+    );
+  }
+}
+
+/// Opaque strip behind the pinned search field (no blur: it sits over a
+/// scrolling list), with a hairline once content scrolls under it.
+class _SearchStrip extends StatelessWidget {
+  const _SearchStrip({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => ColoredBox(
+    color: Theme.of(context).scaffoldBackgroundColor,
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+      child: child,
+    ),
+  );
+}
+
+/// The grouped friend sections (or the empty state of a search / filter).
+abstract final class _FriendsSlivers {
+  static List<Widget> build({
+    required BuildContext context,
+    required WidgetRef ref,
+    required FriendsView view,
+    required FriendsFilter filter,
+    required bool searching,
+    required VoidCallback onClearSearch,
+    required VoidCallback onShowAll,
+  }) {
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
+    final now = ref.watch(clockProvider).now();
+    final sections = friendSections(view, filter: filter);
+    if (sections.isEmpty) {
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: EmptyView(
+            title: searching ? SocialStrings.noSearchResultsTitle : null,
+            message: searching
+                ? SocialStrings.noSearchResults
+                : SocialStrings.noFilterResults,
+            icon: searching
+                ? Icons.search_off_outlined
+                : Icons.filter_alt_off_outlined,
+            action: OutlinedButton(
+              onPressed: searching ? onClearSearch : onShowAll,
+              child: Text(
+                searching
+                    ? SocialStrings.showEveryone
+                    : SocialStrings.filterAll,
+              ),
+            ),
+          ),
+        ),
+      ];
+    }
+
+    Widget tile(Friend f) => FriendTile(
+      key: ValueKey(f.puuid),
+      friend: f,
+      status: friendStatus(f, db: db, now: now),
+      detail: friendDetail(f, db: db),
+      rankTier: friendRankTier(f),
+      unknownName: CompetitiveStrings.unknownPlayer,
+      heroTag: friendAvatarHeroTag(f.puuid),
+      onTap: () => unawaited(context.push(SocialRoutes.chat(f.puuid))),
+    );
+
+    return [
+      for (final section in sections) ...[
+        SliverToBoxAdapter(
+          child: SectionLabel(switch (section.kind) {
+            FriendSectionKind.playing => SocialStrings.playingSection(
+              section.friends.length,
+            ),
+            FriendSectionKind.online => SocialStrings.onlineSection(
+              section.friends.length,
+            ),
+            FriendSectionKind.offline => SocialStrings.offlineSection(
+              section.friends.length,
+            ),
+          }, padding: const EdgeInsets.fromLTRB(20, 16, 20, 8)),
+        ),
+        // Lazy: long offline lists only build the visible rows.
+        GroupedSliverList(
+          itemCount: section.friends.length,
+          itemBuilder: (context, i) => tile(section.friends[i]),
+        ),
+      ],
+      const SliverToBoxAdapter(child: _PrivacyNote()),
+    ];
+  }
+}
+
+class _PrivacyNote extends StatelessWidget {
+  const _PrivacyNote();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.lock_outline, size: 16, color: muted),
+          const SizedBox(width: 8),
           Expanded(
-            child: AsyncValueView<FriendsView>(
-              value: friends,
-              puuid: puuid,
-              onRetry: _retry,
-              loading: const _FriendsSkeleton(),
-              isEmpty: (v) => v.isEmpty,
-              empty: AdaptiveRefresh(
-                onRefresh: _refresh,
-                child: ListView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  children: const [
-                    EmptyView(
-                      title: SocialStrings.noFriendsTitle,
-                      message: SocialStrings.noFriends,
-                      icon: Icons.group_outlined,
-                    ),
-                  ],
-                ),
-              ),
-              data: (view) => AdaptiveRefresh(
-                onRefresh: _refresh,
-                child: _FriendsList(
-                  view: view.filter(_query),
-                  filter: _filter,
-                  searching: _query.trim().isNotEmpty,
-                ),
-              ),
+            child: Text(
+              SocialStrings.friendsPrivacyNote,
+              style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),
           ),
         ],
@@ -148,109 +299,67 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
   }
 }
 
-class _FriendsList extends ConsumerWidget {
-  const _FriendsList({
-    required this.view,
-    required this.filter,
-    required this.searching,
-  });
-
-  final FriendsView view;
-  final FriendsFilter filter;
-  final bool searching;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
-    final now = ref.watch(clockProvider).now();
-    final sections = friendSections(view, filter: filter);
-    if (sections.isEmpty) {
-      return ListView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        children: [
-          EmptyView(
-            message: searching || view.isEmpty
-                ? SocialStrings.noSearchResults
-                : SocialStrings.noFilterResults,
-            icon: searching
-                ? Icons.search_off_outlined
-                : Icons.filter_alt_off_outlined,
-          ),
-        ],
-      );
-    }
-
-    Widget tile(Friend f) => FriendTile(
-      key: ValueKey(f.puuid),
-      friend: f,
-      status: friendStatus(f, db: db, now: now),
-      unknownName: CompetitiveStrings.unknownPlayer,
-      onTap: () => unawaited(context.push(SocialRoutes.chat(f.puuid))),
-    );
-
-    return CustomScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      slivers: [
-        for (final section in sections) ...[
-          SliverToBoxAdapter(
-            child: SectionLabel(switch (section.kind) {
-              FriendSectionKind.playing => SocialStrings.playingSection(
-                section.friends.length,
-              ),
-              FriendSectionKind.online => SocialStrings.onlineSection(
-                section.friends.length,
-              ),
-              FriendSectionKind.offline => SocialStrings.offlineSection(
-                section.friends.length,
-              ),
-            }, padding: const EdgeInsets.fromLTRB(20, 16, 20, 8)),
-          ),
-          SliverToBoxAdapter(
-            child: GroupedSection(
-              children: [for (final f in section.friends) tile(f)],
-            ),
-          ),
-        ],
-        const SliverToBoxAdapter(child: SizedBox(height: 24)),
-      ],
-    );
-  }
-}
-
+/// Mirrors the loaded layout: a section label and a grouped card of rows.
 class _FriendsSkeleton extends StatelessWidget {
   const _FriendsSkeleton();
 
   @override
   Widget build(BuildContext context) {
     return SkeletonShimmer(
-      child: ListView(
-        physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        children: [
-          const Skeleton(width: 120, height: 18, shimmer: false),
-          const SizedBox(height: 12),
-          for (var i = 0; i < 8; i++)
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Row(
+              padding: EdgeInsets.fromLTRB(4, 4, 0, 10),
+              child: Skeleton(width: 110, height: 12, shimmer: false),
+            ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainer,
+                borderRadius: BorderRadius.circular(ValRadius.card),
+              ),
+              child: Column(
                 children: [
-                  Skeleton(width: 44, height: 44, radius: 10, shimmer: false),
-                  SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Skeleton(width: 150, height: 14, shimmer: false),
-                        SizedBox(height: 8),
-                        Skeleton(width: 110, height: 12, shimmer: false),
-                      ],
+                  for (var i = 0; i < 7; i++)
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(14, 12, 14, 12),
+                      child: Row(
+                        children: [
+                          Skeleton(
+                            width: 46,
+                            height: 46,
+                            radius: 23,
+                            shimmer: false,
+                          ),
+                          SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Skeleton(
+                                  width: 150,
+                                  height: 14,
+                                  shimmer: false,
+                                ),
+                                SizedBox(height: 8),
+                                Skeleton(
+                                  width: 110,
+                                  height: 12,
+                                  shimmer: false,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }

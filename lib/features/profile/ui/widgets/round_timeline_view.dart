@@ -5,7 +5,10 @@ import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/competitive/competitive.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/empty_view.dart';
+import '../../../../core/ui/net_image.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../data/round_timeline.dart';
 import '../../profile_strings.dart';
@@ -20,17 +23,23 @@ IconData roundEndIcon(RoundEndType type) => switch (type) {
   RoundEndType.unknown => Icons.help_outline_rounded,
 };
 
-/// "Diễn biến vòng đấu" (S43): a strip of round results, then one line
-/// per round (end type, ceremony, side, running score, your kills).
+/// "Diễn biến vòng đấu" (S43): a strip of round results, then one card per
+/// round (end type, ceremony, side, running score, your kills). Tapping a
+/// round opens its kill feed: who killed whom, with what, and when in the
+/// round.
 class RoundTimelineSliver extends StatelessWidget {
   const RoundTimelineSliver({
     super.key,
     required this.details,
     required this.perspective,
+    this.hidden = const {},
   });
 
   final MatchDetails details;
   final String? perspective;
+
+  /// PUUIDs shown as "Người chơi ẩn danh" in the kill feed.
+  final Set<String> hidden;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +57,15 @@ class RoundTimelineSliver extends StatelessWidget {
         half = row.half;
         items.add(_HalfHeader(half: row.half));
       }
-      items.add(_RoundLine(row: row));
+      items.add(
+        _RoundLine(
+          key: ValueKey('round-${row.number}'),
+          row: row,
+          details: details,
+          perspective: perspective,
+          hidden: hidden,
+        ),
+      );
     }
     return SliverMainAxisGroup(
       slivers: [
@@ -123,12 +140,39 @@ class _RoundStrip extends StatelessWidget {
       );
     }
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      child: Wrap(
-        spacing: 4,
-        runSpacing: 6,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: items,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: ValCard(
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Wrap(
+              spacing: 4,
+              runSpacing: 6,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: items,
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Icon(
+                  Icons.touch_app_outlined,
+                  size: 15,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    ProfileStrings.roundsHint,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -146,7 +190,7 @@ class _HalfHeader extends StatelessWidget {
     return Semantics(
       header: true,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
+        padding: const EdgeInsets.fromLTRB(16, 18, 16, 6),
         child: Row(
           children: [
             if (half != MatchHalf.first) ...[
@@ -178,61 +222,47 @@ class _HalfHeader extends StatelessWidget {
   }
 }
 
-class _RoundLine extends ConsumerWidget {
-  const _RoundLine({required this.row});
+/// One round: result strip, number, end type (+ ceremony), your side /
+/// plant / kills, the running score and a chevron; expands to the kill
+/// feed of the round.
+class _RoundLine extends ConsumerStatefulWidget {
+  const _RoundLine({
+    super.key,
+    required this.row,
+    required this.details,
+    required this.perspective,
+    required this.hidden,
+  });
 
   final RoundRow row;
+  final MatchDetails details;
+  final String? perspective;
+  final Set<String> hidden;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_RoundLine> createState() => _RoundLineState();
+}
+
+class _RoundLineState extends ConsumerState<_RoundLine> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final row = widget.row;
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final ceremony = db.ceremony(row.round.ceremony)?.displayName;
     final color = _roundColor(context, row.won);
     final muted = theme.colorScheme.onSurfaceVariant;
     final site = row.round.plantSite;
-    final details = [
+    final facts = [
       ?row.mySide?.label,
       if (site != null && site.isNotEmpty) ProfileStrings.plantedAt(site),
       if (row.myKills > 0) ProfileStrings.roundKills(row.myKills),
       if (row.firstBloodByMe) ProfileStrings.firstBloods,
     ];
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
-      child: Container(
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(ValRadius.small),
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: 3,
-              child: ColoredBox(color: color),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(13, 8, 12, 8),
-              child: _content(context, theme, color, muted, ceremony, details),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _content(
-    BuildContext context,
-    ThemeData theme,
-    Color color,
-    Color muted,
-    String? ceremony,
-    List<String> details,
-  ) {
-    return Row(
+    final gold = valColorsOf(context).gold;
+    final header = Row(
       children: [
         SizedBox(
           width: 28,
@@ -249,46 +279,44 @@ class _RoundLine extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              Wrap(
+                spacing: 6,
+                runSpacing: 2,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Flexible(
-                    child: Text(
-                      row.endType.label ?? ProfileStrings.round(row.number),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodyMedium,
+                  Text(
+                    row.endType.label ?? ProfileStrings.round(row.number),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  if (ceremony != null && ceremony.isNotEmpty) ...[
-                    const SizedBox(width: 6),
-                    Flexible(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 1,
-                        ),
-                        decoration: BoxDecoration(
-                          color: valColorsOf(context).gold
-                              .withValues(alpha: 0.16),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          ceremony,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: valColorsOf(context).gold,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  if (ceremony != null && ceremony.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 1,
+                      ),
+                      decoration: BoxDecoration(
+                        color: gold.withValues(alpha: 0.16),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        ceremony,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: gold,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-                  ],
                 ],
               ),
-              if (details.isNotEmpty)
+              if (facts.isNotEmpty)
                 Text(
-                  ProfileStrings.joined(details),
+                  ProfileStrings.joined(facts),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.labelSmall?.copyWith(color: muted),
@@ -304,7 +332,294 @@ class _RoundLine extends ConsumerWidget {
             fontFeatures: const [FontFeature.tabularFigures()],
           ),
         ),
+        const SizedBox(width: 2),
+        AnimatedRotation(
+          turns: _expanded ? 0.5 : 0,
+          duration: ValMotion.fast,
+          child: Icon(Icons.expand_more_rounded, size: 20, color: muted),
+        ),
       ],
+    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
+      child: Material(
+        color: theme.colorScheme.surfaceContainer,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ValRadius.small),
+          side: theme.brightness == Brightness.light
+              ? BorderSide(color: valColorsOf(context).hairline)
+              : BorderSide.none,
+        ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border(left: BorderSide(color: color, width: 3)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Semantics(
+                button: true,
+                expanded: _expanded,
+                hint: _expanded
+                    ? ProfileStrings.hideKills
+                    : ProfileStrings.showKills,
+                child: InkWell(
+                  onTap: () {
+                    Haptics.selection();
+                    setState(() => _expanded = !_expanded);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                    child: header,
+                  ),
+                ),
+              ),
+              AnimatedSize(
+                duration: ValMotion.medium,
+                curve: ValMotion.curve,
+                alignment: Alignment.topCenter,
+                child: _expanded
+                    ? _KillFeed(
+                        details: widget.details,
+                        roundNum: row.round.roundNum,
+                        perspective: widget.perspective,
+                        hidden: widget.hidden,
+                      )
+                    : const SizedBox(width: double.infinity),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Kills of one round in order: time in round, killer (agent + name),
+/// the weapon / ability, and the victim. Your team is green, theirs red.
+class _KillFeed extends ConsumerWidget {
+  const _KillFeed({
+    required this.details,
+    required this.roundNum,
+    required this.perspective,
+    required this.hidden,
+  });
+
+  final MatchDetails details;
+  final int roundNum;
+  final String? perspective;
+  final Set<String> hidden;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
+    final kills = details.killsInRound(roundNum);
+    final hairline = valColorsOf(context).hairline;
+    if (kills.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        child: Text(
+          ProfileStrings.noKillsInRound,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      );
+    }
+    final me = details.player(perspective);
+    final myTeam = me == null || me.isObserver
+        ? (details.sideIds.isEmpty ? null : details.sideIds.first)
+        : me.teamId;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Divider(height: 1, thickness: 1, color: hairline),
+        const SizedBox(height: 4),
+        for (final k in kills)
+          _KillRow(
+            kill: k,
+            details: details,
+            db: db,
+            myTeam: myTeam,
+            perspective: perspective,
+            hidden: hidden,
+          ),
+        const SizedBox(height: 6),
+      ],
+    );
+  }
+}
+
+class _KillRow extends StatelessWidget {
+  const _KillRow({
+    required this.kill,
+    required this.details,
+    required this.db,
+    required this.myTeam,
+    required this.perspective,
+    required this.hidden,
+  });
+
+  final Kill kill;
+  final MatchDetails details;
+  final ContentDb db;
+  final String? myTeam;
+  final String? perspective;
+  final Set<String> hidden;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = valColorsOf(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    final killer = details.player(kill.killer);
+    final victim = details.player(kill.victim);
+    final killerAgent = killer?.characterId == null
+        ? null
+        : db.agent(killer!.characterId!);
+    final victimAgent = victim?.characterId == null
+        ? null
+        : db.agent(victim!.characterId!);
+    String nameOf(MatchPlayer? p, Agent? agent, String subject) =>
+        playerDisplayName(
+          p?.name,
+          hidden: hidden.contains(subject),
+          withTag: false,
+          fallback: agent?.displayName,
+        );
+    Color sideColor(MatchPlayer? p) => myTeam == null || p?.teamId == null
+        ? theme.colorScheme.onSurface
+        : p!.teamId == myTeam
+        ? colors.win
+        : colors.loss;
+
+    // Weapon (kill-feed icon), ability icon, spike or fall damage.
+    final weapon = kill.weaponId == null
+        ? null
+        : db.weaponOrEquippable(kill.weaponId!);
+    final slot = kill.abilitySlot;
+    final ability = slot == null ? null : killerAgent?.ability(slot);
+    final type = (kill.damageType ?? '').toLowerCase();
+    final String? how;
+    final Widget howIcon;
+    if (weapon != null) {
+      how = weapon.displayName;
+      howIcon = NetImage(
+        weapon.killStreamIcon ?? weapon.displayIcon,
+        width: 44,
+        height: 16,
+        color: muted,
+        showSkeleton: false,
+        error: Icon(Icons.gps_fixed_rounded, size: 16, color: muted),
+      );
+    } else if (ability != null) {
+      how = ability.displayName;
+      howIcon = NetImage(
+        ability.displayIcon,
+        width: 18,
+        height: 18,
+        color: muted,
+        showSkeleton: false,
+        error: Icon(Icons.auto_awesome, size: 16, color: muted),
+      );
+    } else if (type == 'bomb') {
+      how = ProfileStrings.spike;
+      howIcon = Icon(
+        Icons.local_fire_department_rounded,
+        size: 18,
+        color: muted,
+      );
+    } else if (type == 'fall') {
+      how = ProfileStrings.fallDamage;
+      howIcon = Icon(Icons.south_rounded, size: 18, color: muted);
+    } else {
+      how = slot == null ? null : ProfileStrings.ability;
+      howIcon = Icon(Icons.gps_fixed_rounded, size: 16, color: muted);
+    }
+    final time = formatMinutesSeconds(
+      Duration(milliseconds: kill.roundTime),
+      padMinutes: false,
+    );
+    final killerName = nameOf(killer, killerAgent, kill.killer);
+    final victimName = nameOf(victim, victimAgent, kill.victim);
+    final isMine =
+        perspective != null &&
+        (kill.killer == perspective || kill.victim == perspective);
+    final nameStyle = theme.textTheme.bodySmall?.copyWith(
+      fontWeight: FontWeight.w600,
+    );
+    Widget side(Agent? agent, String name, Color color) => Expanded(
+      child: Row(
+        children: [
+          ClipOval(
+            child: SizedBox(
+              width: 24,
+              height: 24,
+              child: ColoredBox(
+                color: theme.colorScheme.surfaceContainerHigh,
+                child: NetImage(
+                  agent?.displayIconSmall ?? agent?.displayIcon,
+                  width: 24,
+                  height: 24,
+                  showSkeleton: false,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: nameStyle?.copyWith(color: color),
+            ),
+          ),
+        ],
+      ),
+    );
+    return Semantics(
+      label: ProfileStrings.killSemantics(killerName, victimName, how, time),
+      excludeSemantics: true,
+      child: Container(
+        color: isMine
+            ? theme.colorScheme.primary.withValues(alpha: 0.08)
+            : null,
+        padding: const EdgeInsets.fromLTRB(12, 5, 12, 5),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 36,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  time,
+                  maxLines: 1,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: muted,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ),
+            ),
+            side(killerAgent, killerName, sideColor(killer)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: SizedBox(
+                width: 44,
+                height: 18,
+                child: how == null
+                    ? Center(child: howIcon)
+                    : Tooltip(message: how, child: Center(child: howIcon)),
+              ),
+            ),
+            side(victimAgent, victimName, sideColor(victim)),
+          ],
+        ),
+      ),
     );
   }
 }

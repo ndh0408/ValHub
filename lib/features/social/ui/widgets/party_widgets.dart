@@ -9,6 +9,8 @@ import '../../../../core/domain/competitive/competitive.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/rank_badge.dart';
+import '../../../../core/ui/sub_page.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 import '../../../../core/xmpp/friends.dart';
@@ -80,19 +82,30 @@ class _RefreshRingState extends State<RefreshRing>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return IconButton(
       tooltip: widget.tooltip,
       onPressed: () => unawaited(_now()),
       icon: SizedBox.square(
-        dimension: 22,
-        child: AnimatedBuilder(
-          animation: _c,
-          builder: (context, _) => CircularProgressIndicator(
-            value: 1 - _c.value,
-            strokeWidth: 2.5,
-            backgroundColor: Theme.of(context).colorScheme.onSurface
-                .withValues(alpha: 0.12),
-          ),
+        dimension: 24,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            AnimatedBuilder(
+              animation: _c,
+              builder: (context, _) => CircularProgressIndicator(
+                value: 1 - _c.value,
+                strokeWidth: 2.2,
+                color: theme.colorScheme.primary,
+                backgroundColor: valColorsOf(context).track,
+              ),
+            ),
+            Icon(
+              Icons.refresh,
+              size: 13,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ],
         ),
       ),
     );
@@ -101,10 +114,16 @@ class _RefreshRingState extends State<RefreshRing>
 
 /// "01:32" since [since], ticking every second.
 class ElapsedText extends ConsumerStatefulWidget {
-  const ElapsedText({super.key, required this.since, required this.builder});
+  const ElapsedText({
+    super.key,
+    required this.since,
+    required this.builder,
+    this.style,
+  });
 
   final DateTime since;
   final String Function(String elapsed) builder;
+  final TextStyle? style;
 
   @override
   ConsumerState<ElapsedText> createState() => _ElapsedTextState();
@@ -134,54 +153,8 @@ class _ElapsedTextState extends ConsumerState<ElapsedText> {
       widget.builder(formatMinutesSeconds(now.difference(widget.since))),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-    );
-  }
-}
-
-/// Card section with a title.
-class PartySection extends StatelessWidget {
-  const PartySection({
-    super.key,
-    required this.title,
-    required this.child,
-    this.trailing,
-  });
-
-  final String title;
-  final Widget child;
-  final Widget? trailing;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    title.toUpperCase(),
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      letterSpacing: 1.1,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
-                ?trailing,
-              ],
-            ),
-          ),
-          Card(
-            margin: EdgeInsets.zero,
-            clipBehavior: Clip.antiAlias,
-            child: child,
-          ),
-        ],
+      style: widget.style?.copyWith(
+        fontFeatures: const [FontFeature.tabularFigures()],
       ),
     );
   }
@@ -203,18 +176,26 @@ class PartyNotice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final c = color ?? theme.colorScheme.onSurfaceVariant;
+    final c = color == null
+        ? theme.colorScheme.onSurfaceVariant
+        : legibleAccent(context, color!, min: 4.5);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: c),
+          Padding(
+            padding: const EdgeInsets.only(top: 1),
+            child: Icon(icon, size: 17, color: c),
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               text,
-              style: theme.textTheme.bodySmall?.copyWith(color: c),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: c,
+                height: 1.35,
+              ),
             ),
           ),
         ],
@@ -236,60 +217,112 @@ String queueBlockReason(QueueChoice c, Party party) => switch (c.block) {
   QueueBlock.other || null => SocialStrings.reasonGeneric,
 };
 
-/// Queue chips (VF S55): vi names, current queue selected, blocked queues
-/// greyed (tap → reason), competitive always selectable.
-class QueuePicker extends ConsumerWidget {
-  const QueuePicker({
-    super.key,
-    required this.party,
-    required this.canChange,
-    required this.onSelect,
-    required this.onBlocked,
-  });
+/// "Chọn hàng chờ" sheet (VF S55): every queue with its vi name, the
+/// current one ticked, blocked ones greyed with the reason; competitive
+/// stays selectable (Riot lets the party pick it and explains why it cannot
+/// start). Resolves to the picked queue id, `null` when dismissed.
+Future<String?> showQueuePickerSheet(BuildContext context, Party party) =>
+    showValSheet<String>(
+      context,
+      title: SocialStrings.pickQueueTitle,
+      subtitle: SocialStrings.pickQueueSubtitle(party.size),
+      builder: (context, _) => _QueuePickerBody(party: party),
+    );
+
+class _QueuePickerBody extends ConsumerWidget {
+  const _QueuePickerBody({required this.party});
 
   final Party party;
-  final bool canChange;
-  final void Function(String queueId) onSelect;
-  final void Function(String message) onBlocked;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
-    final choices = queueChoices(party);
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+    final colors = valColorsOf(context);
+    return ListView(
+      shrinkWrap: true,
+      padding: const EdgeInsets.only(bottom: 24),
       children: [
-        for (final c in choices)
-          ChoiceChip(
-            label: Text(
-              db.queueName(c.queueId),
-              overflow: TextOverflow.ellipsis,
-            ),
-            selected: c.queueId == party.queueId,
-            avatar: c.eligible
-                ? null
-                : const Icon(Icons.lock_outline, size: 16),
-            onSelected: !canChange || c.queueId == party.queueId
-                ? null
-                : (_) {
-                    if (c.selectable) {
-                      Haptics.selection();
-                      onSelect(c.queueId);
-                    } else {
-                      onBlocked(
-                        SocialStrings.sentence(queueBlockReason(c, party)),
-                      );
-                    }
-                  },
-          ),
+        GroupedSection(
+          children: [
+            for (final c in queueChoices(party))
+              Builder(
+                builder: (context) {
+                  final current = c.queueId == party.queueId;
+                  final max = kQueuePartyLimits[c.queueId.replaceFirst(
+                    'console_',
+                    '',
+                  )];
+                  final String? subtitle = !c.eligible
+                      ? SocialStrings.sentence(queueBlockReason(c, party))
+                      : max != null
+                      ? SocialStrings.queueMaxParty(max)
+                      : null;
+                  final enabled = !current && c.selectable;
+                  return GroupedRow(
+                    key: ValueKey('queue-${c.queueId}'),
+                    title: db.queueName(c.queueId),
+                    subtitle: subtitle,
+                    titleColor: enabled || current
+                        ? null
+                        : theme.colorScheme.onSurfaceVariant,
+                    leading: _QueueIcon(
+                      icon: current
+                          ? Icons.check_rounded
+                          : c.eligible
+                          ? Icons.sports_esports_outlined
+                          : Icons.lock_outline,
+                      color: current
+                          ? theme.colorScheme.primary
+                          : c.eligible
+                          ? colors.muted
+                          : theme.colorScheme.error,
+                    ),
+                    trailing: current
+                        ? ValBadge(
+                            SocialStrings.currentQueue,
+                            color: theme.colorScheme.primary,
+                            soft: true,
+                          )
+                        : null,
+                    showChevron: enabled,
+                    onTap: enabled
+                        ? () {
+                            Haptics.selection();
+                            Navigator.of(context).pop(c.queueId);
+                          }
+                        : null,
+                  );
+                },
+              ),
+          ],
+        ),
       ],
     );
   }
 }
 
-/// One party member (VF S55): card, Riot ID, rank + RR, level, ready,
-/// leader crown. Owners can remove others (swipe left or the button).
+class _QueueIcon extends StatelessWidget {
+  const _QueueIcon({required this.icon, required this.color});
+
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 36,
+    height: 36,
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: 0.14),
+      shape: BoxShape.circle,
+    ),
+    child: Icon(icon, size: 19, color: legibleAccent(context, color, min: 3)),
+  );
+}
+
+/// One party member (VF S55): card art, Riot ID, leader badge, rank + RR,
+/// level, console platform, best ping and the ready state. Owners can
+/// remove others (swipe left or the button; both ask first).
 class PartyMemberTile extends ConsumerWidget {
   const PartyMemberTile({
     super.key,
@@ -308,6 +341,7 @@ class PartyMemberTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colors = valColorsOf(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
     final name = ref.watch(playerNameProvider(member.puuid)).value;
     final rank = ref.watch(rankSummaryProvider(member.puuid)).value?.current;
     final tier = rank?.tier ?? member.competitiveTier;
@@ -317,14 +351,30 @@ class PartyMemberTile extends ConsumerWidget {
       isSelf: isSelf,
       isPartyMember: true,
     );
+    final ready = member.isReady || member.isOwner;
+    final console = SocialStrings.consolePlatform(member.platformType);
+    final ping = member.ping;
+    final small = theme.textTheme.bodySmall?.copyWith(color: muted);
+
     final row = Padding(
-      padding: const EdgeInsets.fromLTRB(16, 10, 8, 10),
+      padding: const EdgeInsets.fromLTRB(14, 12, 6, 12),
       child: Row(
         children: [
-          FriendAvatar(
-            playerCardId: member.playerCardId,
-            name: name?.gameName,
-            size: 44,
+          // Green ring = ready (the leader is always ready).
+          Container(
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: ready ? colors.win : Colors.transparent,
+                width: 2,
+              ),
+            ),
+            child: FriendAvatar(
+              playerCardId: member.playerCardId,
+              name: name?.gameName,
+              size: 44,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -340,7 +390,7 @@ class PartyMemberTile extends ConsumerWidget {
                         child: Icon(
                           Icons.workspace_premium,
                           size: 18,
-                          color: colors.warning,
+                          color: colors.gold,
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -353,16 +403,16 @@ class PartyMemberTile extends ConsumerWidget {
                     ),
                     if (isSelf) ...[
                       const SizedBox(width: 6),
-                      Text(
-                        SocialStrings.youTag,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
+                      ValBadge(
+                        SocialStrings.you,
+                        color: theme.colorScheme.primary,
+                        soft: true,
+                        uppercase: true,
                       ),
                     ],
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 5),
                 Wrap(
                   spacing: 10,
                   runSpacing: 4,
@@ -373,35 +423,37 @@ class PartyMemberTile extends ConsumerWidget {
                       seasonId: rank?.actUuid,
                       rr: (rank != null && !rank.isUnranked) ? rank.rr : null,
                       size: 20,
-                      style: theme.textTheme.bodySmall,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     if (level != null)
-                      Text(
-                        SocialStrings.level(level),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
+                      Text(SocialStrings.level(level), style: small),
                     if (member.isOwner)
                       Text(
                         SocialStrings.leader,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: colors.warning,
+                        style: small?.copyWith(
+                          color: colors.gold,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
+                    if (console != null) Text(console, style: small),
+                    if (ping != null) _PingLabel(ms: ping),
                   ],
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 8),
-          _ReadyChip(ready: member.isReady || member.isOwner),
+          const SizedBox(width: 6),
+          _ReadyIcon(ready: ready),
           if (onRemove != null)
             IconButton(
               tooltip: SocialStrings.removeMember,
               icon: const Icon(Icons.person_remove_outlined),
               onPressed: () => unawaited(onRemove!()),
-            ),
+            )
+          else
+            const SizedBox(width: 8),
         ],
       ),
     );
@@ -411,25 +463,29 @@ class PartyMemberTile extends ConsumerWidget {
       key: ValueKey('member-${member.puuid}'),
       direction: DismissDirection.endToStart,
       confirmDismiss: (_) => remove(),
-      background: Container(
+      background: ColoredBox(
         color: theme.colorScheme.error,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.person_remove_outlined,
-              color: theme.colorScheme.onError,
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.person_remove_outlined,
+                  color: theme.colorScheme.onError,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  SocialStrings.removeMember,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: theme.colorScheme.onError,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            Text(
-              SocialStrings.removeMember,
-              style: theme.textTheme.labelLarge?.copyWith(
-                color: theme.colorScheme.onError,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
       child: row,
@@ -437,8 +493,46 @@ class PartyMemberTile extends ConsumerWidget {
   }
 }
 
-class _ReadyChip extends StatelessWidget {
-  const _ReadyChip({required this.ready});
+/// "24 ms" with a signal icon colored by quality (players in Vietnam
+/// usually see 30–60 ms to the Singapore / Hong Kong servers).
+class _PingLabel extends StatelessWidget {
+  const _PingLabel({required this.ms});
+
+  final int ms;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = valColorsOf(context);
+    final color = ms < 60
+        ? colors.win
+        : ms < 100
+        ? colors.warning
+        : colors.loss;
+    final c = legibleAccent(context, color, min: 4.5);
+    return Tooltip(
+      message: SocialStrings.pingTooltip,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.network_check_rounded, size: 14, color: c),
+          const SizedBox(width: 3),
+          Text(
+            SocialStrings.ping(ms),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: c,
+              fontWeight: FontWeight.w600,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReadyIcon extends StatelessWidget {
+  const _ReadyIcon({required this.ready});
 
   final bool ready;
 
@@ -478,13 +572,14 @@ class InviteStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scale = MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 2.0);
     return SizedBox(
-      height: 104,
+      height: 90 + 18 * scale,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        padding: const EdgeInsets.fromLTRB(12, 14, 12, 10),
         itemCount: friends.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 6),
         itemBuilder: (context, i) {
           final f = friends[i];
           final ticked = isTicked(f);
@@ -496,10 +591,10 @@ class InviteStrip extends StatelessWidget {
                 : SocialStrings.inviteLabel(label),
             excludeSemantics: true,
             child: InkWell(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(ValRadius.small),
               onTap: ticked || !enabled ? null : () => onInvite(f),
               child: SizedBox(
-                width: 68,
+                width: 72,
                 child: Column(
                   children: [
                     Stack(
@@ -508,19 +603,21 @@ class InviteStrip extends StatelessWidget {
                         FriendAvatar(
                           playerCardId: f.playerCardId,
                           name: f.name?.gameName,
-                          size: 48,
+                          size: 50,
                         ),
                         Positioned(
-                          right: -4,
-                          bottom: -4,
-                          child: Container(
+                          right: -3,
+                          bottom: -3,
+                          child: AnimatedContainer(
+                            duration: ValMotion.medium,
+                            curve: ValMotion.curve,
                             decoration: BoxDecoration(
                               color: ticked
                                   ? valColorsOf(context).win
                                   : theme.colorScheme.primary,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: theme.colorScheme.surface,
+                                color: theme.colorScheme.surfaceContainer,
                                 width: 2,
                               ),
                             ),
@@ -540,7 +637,9 @@ class InviteStrip extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
-                      style: theme.textTheme.labelSmall,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),

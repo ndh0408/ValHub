@@ -4,17 +4,132 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/l10n/common_strings.dart';
+import '../../../../core/riot/platform_status.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/skeleton.dart';
 import '../../data/cache_stats.dart';
-import '../../legal/legal_documents.dart';
 import '../../providers/settings_providers.dart';
 import '../../settings_routes.dart';
 import '../../settings_strings.dart';
-import '../widgets/legal_widgets.dart';
 import '../widgets/settings_widgets.dart';
 
-/// "ỨNG DỤNG" (S70, X2): version, clear cache (with its size), session log.
+/// Opens [uri] outside the app; a snackbar reports failures.
+Future<void> openSettingsLink(
+  BuildContext context,
+  WidgetRef ref,
+  Uri uri,
+) async {
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  final ok = await ref.read(externalUrlOpenerProvider)(uri);
+  if (!ok) {
+    messenger
+      ?..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(content: Text(SettingsStrings.linkOpenFailed)),
+      );
+  }
+}
+
+/// "HỖ TRỢ": server status of the active account's region (with a colored
+/// dot while Riot reports a maintenance or an incident), the session log
+/// and feedback.
+class SettingsSupportSection extends ConsumerWidget {
+  const SettingsSupportSection({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SettingsGroup(
+      title: SettingsStrings.supportHeader,
+      children: [
+        ListTile(
+          leading: const SettingsIcon(Icons.dns_outlined),
+          title: const Text(SettingsStrings.serverStatus),
+          subtitle: const Text(SettingsStrings.serverStatusSubtitle),
+          trailing: const _ServerStatusValue(),
+          onTap: () => unawaited(context.push(SettingsRoutes.status)),
+        ),
+        ListTile(
+          leading: const SettingsIcon(Icons.receipt_long_outlined),
+          title: const Text(SettingsStrings.exportLog),
+          subtitle: const Text(SettingsStrings.exportLogSubtitle),
+          trailing: const SettingsChevron(),
+          onTap: () => unawaited(context.push(SettingsRoutes.log)),
+        ),
+        ListTile(
+          leading: const SettingsIcon(Icons.forum_outlined),
+          title: const Text(SettingsStrings.feedback),
+          subtitle: const Text(SettingsStrings.feedbackSubtitle),
+          trailing: const SettingsChevron(icon: Icons.open_in_new),
+          onTap: () =>
+              unawaited(openSettingsLink(context, ref, SettingsLinks.feedback)),
+        ),
+      ],
+    );
+  }
+}
+
+/// "● Đang bảo trì" / "● 2 thông báo" from the (cached) X-1 status of the
+/// active region; only a chevron while nothing is reported (a failed
+/// download never claims that everything is fine).
+class _ServerStatusValue extends ConsumerWidget {
+  const _ServerStatusValue();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final region = ref.watch(activeAccountProvider.select((a) => a?.region));
+    final status = region == null
+        ? null
+        : ref.watch(platformStatusProvider(region)).value;
+    final colors = valColorsOf(context);
+    final scheme = Theme.of(context).colorScheme;
+    final (String, Color)? badge;
+    if (status == null || status.isEmpty) {
+      badge = null;
+    } else if (status.activeMaintenances.isNotEmpty) {
+      badge = (SettingsStrings.serverStatusMaintenance, colors.warning);
+    } else {
+      final count = status.maintenances.length + status.incidents.length;
+      final critical = status.incidents.any((i) => i.severity == 'critical');
+      badge = (
+        SettingsStrings.serverStatusNotices(count),
+        critical ? scheme.error : colors.warning,
+      );
+    }
+    if (badge == null) return const SettingsChevron();
+    final (label, color) = badge;
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 150),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: legibleAccent(context, color),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(width: 2),
+          const SettingsChevron(),
+        ],
+      ),
+    );
+  }
+}
+
+/// "ỨNG DỤNG" (S70, X2): version and clear cache (with its size).
 class SettingsAppSection extends ConsumerStatefulWidget {
   const SettingsAppSection({super.key});
 
@@ -93,83 +208,27 @@ class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
                 },
           onTap: _clearing ? null : () => unawaited(_clearCache()),
         ),
-        ListTile(
-          leading: const SettingsIcon(Icons.receipt_long_outlined),
-          title: const Text(SettingsStrings.exportLog),
-          subtitle: const Text(SettingsStrings.exportLogNote),
-          trailing: const SettingsChevron(),
-          onTap: () => unawaited(context.push(SettingsRoutes.log)),
-        ),
       ],
     );
   }
 }
 
-/// "THÔNG TIN" (S70): privacy, terms, feedback, licenses, About (S72) and
-/// the Riot legal disclaimer.
-class SettingsAboutSection extends ConsumerWidget {
+/// "THÔNG TIN": the single "Giới thiệu & pháp lý" row that closes the
+/// settings (docs/design/IA.md "Pháp lý"); every legal document, the
+/// licences of third-party libraries, contact and the copyright line live in
+/// that hub (S72).
+class SettingsAboutSection extends StatelessWidget {
   const SettingsAboutSection({super.key});
 
-  Future<void> _openFeedback(BuildContext context, WidgetRef ref) async {
-    final messenger = ScaffoldMessenger.maybeOf(context);
-    final ok = await ref.read(externalUrlOpenerProvider)(
-      SettingsLinks.feedback,
-    );
-    if (!ok) {
-      messenger
-        ?..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(content: Text(SettingsStrings.linkOpenFailed)),
-        );
-    }
-  }
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final version = ref.watch(packageInfoProvider).value?.version;
-    final theme = Theme.of(context);
+  Widget build(BuildContext context) {
     return SettingsGroup(
       title: SettingsStrings.aboutHeader,
-      footer: Text(
-        CommonStrings.riotDisclaimer,
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-          height: 1.4,
-        ),
-      ),
       children: [
         ListTile(
-          leading: const SettingsIcon(Icons.privacy_tip_outlined),
-          title: const Text(SettingsStrings.privacyPolicy),
-          trailing: const SettingsChevron(),
-          onTap: () => unawaited(
-            context.push(SettingsRoutes.legal(LegalDocuments.privacy)),
-          ),
-        ),
-        ListTile(
-          leading: const SettingsIcon(Icons.gavel_outlined),
-          title: const Text(SettingsStrings.terms),
-          trailing: const SettingsChevron(),
-          onTap: () => unawaited(
-            context.push(SettingsRoutes.legal(LegalDocuments.terms)),
-          ),
-        ),
-        ListTile(
-          leading: const SettingsIcon(Icons.forum_outlined),
-          title: const Text(SettingsStrings.feedback),
-          subtitle: const Text(SettingsStrings.feedbackSubtitle),
-          trailing: const SettingsChevron(icon: Icons.open_in_new),
-          onTap: () => unawaited(_openFeedback(context, ref)),
-        ),
-        ListTile(
-          leading: const SettingsIcon(Icons.description_outlined),
-          title: const Text(SettingsStrings.licenses),
-          trailing: const SettingsChevron(),
-          onTap: () => showThirdPartyLicenses(context, version: version),
-        ),
-        ListTile(
-          leading: const SettingsIcon(Icons.info_outline),
+          leading: const SettingsIcon(Icons.shield_outlined),
           title: const Text(SettingsStrings.aboutTitle),
+          subtitle: const Text(SettingsStrings.aboutRowSubtitle),
           trailing: const SettingsChevron(),
           onTap: () => unawaited(context.push(SettingsRoutes.about)),
         ),

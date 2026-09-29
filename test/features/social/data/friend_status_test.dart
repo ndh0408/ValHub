@@ -150,4 +150,71 @@ void main() {
     );
     expect(_status(null, online: false).text, 'Ngoại tuyến');
   });
+
+  group('friendDetail / friendRankTier', () {
+    Friend friend(PresenceSnapshot? v, {bool online = true}) => Friend(
+      puuid: 'x',
+      presence: online
+          ? FriendPresence(
+              puuid: 'x',
+              show: PresenceShow.chat,
+              product: 'valorant',
+              valorant: v,
+              receivedAt: _now,
+            )
+          : null,
+    );
+
+    test('match: queue, party size and leaderboard position', () {
+      final f = friend(
+        const PresenceSnapshot(
+          loopState: LoopState.ingame,
+          queueId: 'competitive',
+          partySize: 3,
+          maxPartySize: 5,
+          leaderboardPosition: 1234,
+          competitiveTier: 24,
+        ),
+      );
+      expect(
+        friendDetail(f, db: _db),
+        'Thi đấu xếp hạng · Tổ đội 3/5 · Top 1.234',
+      );
+      expect(friendRankTier(f), 24);
+    });
+
+    test('lobby: the party is already in the status line', () {
+      final f = friend(
+        const PresenceSnapshot(loopState: LoopState.menus, partySize: 3),
+      );
+      expect(friendDetail(f, db: _db), isNull);
+    });
+
+    test('custom games, solo players and offline friends add nothing', () {
+      expect(
+        friendDetail(
+          friend(
+            const PresenceSnapshot(
+              loopState: LoopState.ingame,
+              provisioningFlow: 'CustomGame',
+              queueId: '',
+            ),
+          ),
+          db: _db,
+        ),
+        isNull,
+      );
+      expect(friendDetail(friend(null), db: _db), isNull);
+      final offline = friend(
+        const PresenceSnapshot(competitiveTier: 20),
+        online: false,
+      );
+      expect(friendDetail(offline, db: _db), isNull);
+      expect(friendRankTier(offline), isNull);
+      expect(
+        friendRankTier(friend(const PresenceSnapshot(competitiveTier: 0))),
+        isNull,
+      );
+    });
+  });
 }

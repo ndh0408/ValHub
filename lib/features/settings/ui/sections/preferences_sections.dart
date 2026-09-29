@@ -5,9 +5,12 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account.dart';
 import '../../../../core/accounts/account_providers.dart';
+import '../../../../core/config/remote_config.dart';
 import '../../../../core/settings/app_settings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
+import '../../../../core/ui/sub_page.dart';
+import '../../../../core/ui/vnd_estimate.dart';
 import '../../settings_strings.dart';
 import '../widgets/settings_widgets.dart';
 
@@ -24,8 +27,8 @@ String itemLanguageLabel(ItemLanguage language) => switch (language) {
   ItemLanguage.en => SettingsStrings.itemLanguageEn,
 };
 
-/// "TÙY CHỌN" (S70, X1): live-game switches and the platform of the
-/// active account.
+/// "TÙY CHỌN" (S70, X1): live-game switches, the platform of the active
+/// account and the VND estimate next to VP prices (ValVN extra).
 class SettingsOptionsSection extends ConsumerWidget {
   const SettingsOptionsSection({super.key});
 
@@ -56,6 +59,10 @@ class SettingsOptionsSection extends ConsumerWidget {
     final settings = ref.watch(appSettingsProvider);
     final account = ref.watch(activeAccountProvider);
     final notifier = ref.read(appSettingsProvider.notifier);
+    // Without a verified price table there is nothing to estimate with.
+    final hasPrices = ref.watch(
+      remoteConfigProvider.select((c) => c.vpPrices != null),
+    );
     return SettingsGroup(
       title: SettingsStrings.optionsHeader,
       children: [
@@ -95,6 +102,21 @@ class SettingsOptionsSection extends ConsumerWidget {
               ? null
               : () => unawaited(_pickPlatform(context, ref, account)),
         ),
+        SettingsSwitchTile(
+          icon: Icons.payments_outlined,
+          title: SettingsStrings.optionShowVnd,
+          subtitle: hasPrices
+              ? SettingsStrings.optionShowVndSubtitle
+              : SettingsStrings.optionShowVndUnavailable,
+          value: hasPrices && settings.showVndEstimate,
+          onChanged: hasPrices
+              ? (v) => unawaited(
+                  notifier.update((s) => s.copyWith(showVndEstimate: v)),
+                )
+              : null,
+          infoTooltip: SettingsStrings.optionShowVndInfo,
+          onInfo: hasPrices ? () => unawaited(showVndInfoSheet(context)) : null,
+        ),
       ],
     );
   }
@@ -118,18 +140,16 @@ class SettingsAppearanceSection extends ConsumerWidget {
       );
     } else {
       // Material: a live preview of each theme above the list.
-      chosen = await showModalBottomSheet<ThemeMode>(
-        context: context,
-        useSafeArea: true,
-        isScrollControlled: true,
-        builder: (sheetContext) {
+      chosen = await showValSheet<ThemeMode>(
+        context,
+        title: SettingsStrings.themePickerTitle,
+        builder: (sheetContext, _) {
           void pick(ThemeMode m) => Navigator.of(sheetContext).pop(m);
           return SettingsChoiceList<ThemeMode>(
-            title: SettingsStrings.themePickerTitle,
             selected: current,
             onPicked: pick,
             header: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Row(
                 children: [
                   for (final m in modes) ...[

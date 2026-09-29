@@ -63,4 +63,21 @@ abstract final class AccountStrings {
   static const regionKr = 'Hàn Quốc';
   static const regionLatam = 'Mỹ Latinh';
   static const regionBr = 'Brazil';
+
+  /// Vietnamese name of a Riot region id (`ap` → "Châu Á - Thái Bình
+  /// Dương"); unknown ids are shown upper-cased.
+  static String regionName(String region) => switch (region.toLowerCase()) {
+    'ap' => regionAp,
+    'na' => regionNa,
+    'eu' => regionEu,
+    'kr' => regionKr,
+    'latam' => regionLatam,
+    'br' => regionBr,
+    _ => region.toUpperCase(),
+  };
+
+  // Switcher sheet (S05)
+  static String accountCount(int count, int max) => '$count/$max tài khoản';
+  static const manageHint =
+      'Chạm để chuyển tài khoản. Xóa hoặc sửa ghi chú đăng nhập trong Cài đặt.';
 }

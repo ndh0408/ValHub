@@ -8,6 +8,7 @@ import '../../../../core/ui/empty_view.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/rank_badge.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../profile_strings.dart';
 import 'profile_widgets.dart';
@@ -63,16 +64,20 @@ class ScoreboardSliver extends StatelessWidget {
           const SliverToBoxAdapter(
             child: _TeamHeader(title: ProfileStrings.allPlayers),
           ),
-          const SliverToBoxAdapter(child: _ColumnHeader(deathmatch: true)),
-          SliverList.builder(
-            itemCount: ranked.length,
-            itemBuilder: (context, i) => _PlayerRow(
-              details: details,
-              player: ranked[i],
-              place: i + 1,
-              hidden: hidden.contains(ranked[i].subject),
-              highlighted: ranked[i].subject == perspective,
-              onTap: () => onOpenPlayer(ranked[i].subject),
+          SliverToBoxAdapter(
+            child: _TeamCard(
+              deathmatch: true,
+              rows: [
+                for (var i = 0; i < ranked.length; i++)
+                  _PlayerRow(
+                    details: details,
+                    player: ranked[i],
+                    place: i + 1,
+                    hidden: hidden.contains(ranked[i].subject),
+                    highlighted: ranked[i].subject == perspective,
+                    onTap: () => onOpenPlayer(ranked[i].subject),
+                  ),
+              ],
             ),
           ),
         ],
@@ -125,16 +130,19 @@ class ScoreboardSliver extends StatelessWidget {
             ),
           ),
         )
-        ..add(const SliverToBoxAdapter(child: _ColumnHeader()))
         ..add(
-          SliverList.builder(
-            itemCount: teamPlayers.length,
-            itemBuilder: (context, i) => _PlayerRow(
-              details: details,
-              player: teamPlayers[i],
-              hidden: hidden.contains(teamPlayers[i].subject),
-              highlighted: teamPlayers[i].subject == perspective,
-              onTap: () => onOpenPlayer(teamPlayers[i].subject),
+          SliverToBoxAdapter(
+            child: _TeamCard(
+              rows: [
+                for (final p in teamPlayers)
+                  _PlayerRow(
+                    details: details,
+                    player: p,
+                    hidden: hidden.contains(p.subject),
+                    highlighted: p.subject == perspective,
+                    onTap: () => onOpenPlayer(p.subject),
+                  ),
+              ],
             ),
           ),
         );
@@ -170,7 +178,7 @@ class _TeamHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
+      padding: const EdgeInsets.fromLTRB(16, 18, 16, 8),
       child: Row(
         children: [
           if (accent != null) ...[
@@ -185,22 +193,68 @@ class _TeamHeader extends StatelessWidget {
             const SizedBox(width: 8),
           ],
           Expanded(
-            child: Text(
-              title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleSmall,
+            child: Semantics(
+              header: true,
+              child: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: ValText.sectionTitle.copyWith(
+                  fontSize: 17,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
             ),
           ),
           if (score != null) ...[
+            // The score takes the team's result color (the strip on the
+            // left is the side: yours green, theirs red).
             Text(
               formatNumber(score!),
-              style: ValText.display(22, color: accent),
+              style: ValText.display(
+                22,
+                color: outcome == null
+                    ? accent
+                    : outcomeColor(context, outcome!),
+              ),
             ),
             const SizedBox(width: 8),
           ],
           if (outcome != null) OutcomeTag(outcome!, dense: true),
         ],
+      ),
+    );
+  }
+}
+
+/// One team (or the whole Deathmatch lobby) on a rounded card: the column
+/// labels, then the player rows separated by hairlines.
+class _TeamCard extends StatelessWidget {
+  const _TeamCard({required this.rows, this.deathmatch = false});
+
+  final List<Widget> rows;
+  final bool deathmatch;
+
+  @override
+  Widget build(BuildContext context) {
+    final hairline = valColorsOf(context).hairline;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: ValCard(
+        padding: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 2),
+              child: _ColumnHeader(deathmatch: deathmatch),
+            ),
+            for (var i = 0; i < rows.length; i++) ...[
+              if (i > 0) Divider(height: 1, thickness: 1, color: hairline),
+              rows[i],
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -219,7 +273,7 @@ class _ColumnHeader extends StatelessWidget {
       letterSpacing: 0.4,
     );
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
         children: [
           if (deathmatch) _Cell(ProfileStrings.colPlace, _wPlace, style: style),
@@ -316,7 +370,7 @@ class _PlayerRow extends ConsumerWidget {
                   ),
                 )
               : null,
-          padding: EdgeInsets.fromLTRB(highlighted ? 13 : 16, 6, 16, 6),
+          padding: EdgeInsets.fromLTRB(highlighted ? 9 : 12, 6, 12, 6),
           child: Row(
             children: [
               if (place != null)

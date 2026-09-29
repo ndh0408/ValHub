@@ -4,13 +4,11 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/content/content_fallbacks.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/l10n/common_strings.dart';
-import '../../../../core/riot/riot_ids.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tier_colors.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/countdown_ring.dart';
 import '../../../../core/ui/countdown_text.dart';
-import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
@@ -146,14 +144,16 @@ class WishlistHeartButton extends StatelessWidget {
 }
 
 /// Small muted countdown line under the segments: ring + "Làm mới sau
-/// 11:54:37", with an optional trailing widget (e.g. "Tổng 7.775 VP").
-/// Only the ring and the text rebuild every second.
+/// 11:54:37", an optional [note] under it with the local wall time
+/// ("Làm mới lúc 07:00 hằng ngày"), and an optional trailing widget
+/// (e.g. "Tổng 7.775 VP"). Only the ring and the text rebuild every second.
 class CountdownRow extends StatelessWidget {
   const CountdownRow({
     super.key,
     required this.expiresAt,
     required this.builder,
     this.trailing,
+    this.note,
     this.period = const Duration(days: 1),
     this.padding = const EdgeInsets.fromLTRB(16, 4, 16, 12),
   });
@@ -161,6 +161,9 @@ class CountdownRow extends StatelessWidget {
   final DateTime? expiresAt;
   final String Function(String formatted) builder;
   final Widget? trailing;
+
+  /// Second muted line: when it happens in the device's local time.
+  final String? note;
 
   /// Full cycle length for the ring (a day for the daily shop).
   final Duration period;
@@ -171,6 +174,7 @@ class CountdownRow extends StatelessWidget {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
     final at = expiresAt;
+    final note = this.note;
     return Padding(
       padding: padding,
       child: Wrap(
@@ -191,14 +195,29 @@ class CountdownRow extends StatelessWidget {
                 ),
                 const SizedBox(width: 7),
                 Flexible(
-                  child: CountdownText(
-                    expiresAt: at,
-                    builder: builder,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: muted,
-                      fontWeight: FontWeight.w500,
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CountdownText(
+                        expiresAt: at,
+                        builder: builder,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: muted,
+                          fontWeight: FontWeight.w500,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                      if (note != null)
+                        Text(
+                          note,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: muted,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ],
@@ -208,6 +227,102 @@ class CountdownRow extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Tinted pill button for a segment action ("Chia sẻ ảnh"): icon + label,
+/// 48 dp tap target.
+class StoreActionPill extends StatelessWidget {
+  const StoreActionPill({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final c = color ?? theme.colorScheme.primary;
+    final fg = legibleAccent(context, c, min: 3.5);
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48),
+        child: Center(
+          widthFactor: 1,
+          child: Material(
+            color: c.withValues(alpha: 0.14),
+            shape: StadiumBorder(
+              side: BorderSide(color: c.withValues(alpha: 0.35)),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () {
+                Haptics.light();
+                onTap();
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(icon, size: 16, color: fg),
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: fg,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Summary chips on the left, one action pill on the right; wraps onto a
+/// second line instead of overflowing (large text, narrow phones).
+class StoreSummaryRow extends StatelessWidget {
+  const StoreSummaryRow({super.key, required this.chips, required this.action});
+
+  final List<Widget> chips;
+  final Widget action;
+
+  @override
+  Widget build(BuildContext context) => Wrap(
+    alignment: chips.isEmpty ? WrapAlignment.end : WrapAlignment.spaceBetween,
+    crossAxisAlignment: WrapCrossAlignment.center,
+    spacing: 8,
+    runSpacing: 4,
+    children: [
+      if (chips.isNotEmpty)
+        Wrap(
+          spacing: 8,
+          runSpacing: 6,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: chips,
+        ),
+      action,
+    ],
+  );
 }
 
 /// Small muted pill with an icon: derived facts under a section header
@@ -444,28 +559,6 @@ class TierCard extends StatelessWidget {
   }
 }
 
-/// Rounded translucent box holding a skin render on the right of a
-/// [TierCard].
-class SkinRenderBox extends StatelessWidget {
-  const SkinRenderBox({super.key, required this.child, this.height = 76});
-
-  final Widget child;
-  final double height;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(ValRadius.small),
-      ),
-      child: child,
-    );
-  }
-}
-
 /// Content-tier icon + name in the tier color ("Cao Cấp" /
 /// "Phiên Bản Cao Cấp"). Unlike `ContentTierBadge` with `showName`, the
 /// name wraps instead of overflowing on narrow screens.
@@ -508,44 +601,6 @@ class TierLabel extends ConsumerWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-/// Figma price line: red dot, amount, "VP" ("● 1.775 VP").
-class VpPrice extends ConsumerWidget {
-  const VpPrice(this.amount, {super.key, this.style});
-
-  final num? amount;
-  final TextStyle? style;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final base =
-        style ??
-        Theme.of(context).textTheme.bodyLarge
-            ?.copyWith(fontWeight: FontWeight.w600);
-    final a = amount;
-    final row = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: const BoxDecoration(
-            color: CurrencyColors.vp,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 6),
-        Text(a == null ? CommonStrings.dash : formatNumber(a), style: base),
-        Text(' ${currencyOf(ref, CurrencyIds.vp)?.label ?? ''}', style: base),
-      ],
-    );
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      alignment: AlignmentDirectional.centerStart,
-      child: row,
     );
   }
 }

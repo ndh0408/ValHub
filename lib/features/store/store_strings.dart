@@ -8,14 +8,16 @@ abstract final class StoreStrings {
   static const bundleDetailTitle = 'Chi tiết bundle';
 
   // Wallet pill (common header).
-  static const walletTitle = 'Ví';
-
   /// Screen-reader label of the wallet pill.
   static String walletSemantics(String vp, String kc, String rp) =>
       'Số dư: $vp VP, $kc KC, $rp RP';
 
   // Daily shop (S10).
   static String resetsIn(String t) => 'Làm mới sau $t';
+
+  /// Local wall time of the daily reset (device time zone, 24 h):
+  /// "Làm mới lúc 07:00 hằng ngày".
+  static String dailyResetAt(String time) => 'Làm mới lúc $time hằng ngày';
   static const dailyTotalLabel = 'Tổng';
   static const dailyEmpty = 'Hôm nay cửa hàng không có skin nào.';
   static const dailyEmptyTitle = 'Cửa hàng trống';
@@ -28,6 +30,9 @@ abstract final class StoreStrings {
 
   // Night Market (S11).
   static String nightMarketEndsIn(String t) => 'Kết thúc sau $t';
+
+  /// "Kết thúc lúc 07:00 thứ Tư 08/10" (local wall time).
+  static String nightMarketEndsAt(String wall) => 'Kết thúc lúc $wall';
   static String nightMarketTotalSavings(String amount) =>
       'Tiết kiệm tổng cộng $amount';
   static const nightMarketNote =
@@ -37,20 +42,25 @@ abstract final class StoreStrings {
 
   /// Offer not yet flipped in game.
   static const nightMarketUnrevealed = 'Chưa lật';
-  static const priceOriginal = 'Giá gốc';
-  static const priceDiscounted = 'Giá ưu đãi';
 
   // Accessories (S12).
   static String accessoryRefreshIn(String t) => 'Làm mới sau $t';
+
+  /// "Làm mới lúc 07:00 thứ Năm 01/10" (local wall time).
+  static String accessoryResetAt(String wall) => 'Làm mới lúc $wall';
   static String accessoryFrom(String contract) => 'Từ: $contract';
   static const accessoryEmpty = 'Cửa hàng phụ kiện hiện không có gì.';
   static const accessoryEmptyTitle = 'Chưa có phụ kiện';
 
   // Bundles (S13 / S14).
   static String bundleEndsIn(String t) => 'Còn $t';
+
+  /// "Hết hạn lúc 07:00 thứ Tư 21/10" (local wall time).
+  static String bundleEndsAt(String wall) => 'Hết hạn lúc $wall';
   static const bundlesEmpty = 'Hiện không có bundle nào đang mở bán.';
   static const bundlesEmptyTitle = 'Chưa có bundle';
   static const bundleNotFoundTitle = 'Bundle đã hết hạn';
+  static const backToBundles = 'Xem các bundle đang bán';
 
   /// "Đã sở hữu 2/6 vật phẩm" (bundle detail).
   static String bundleOwnedCount(int owned, int total) =>
@@ -65,6 +75,45 @@ abstract final class StoreStrings {
   static const bundleItemsTitle = 'Vật phẩm trong bundle';
   static String bundleItemCount(int n) => '$n vật phẩm';
   static String quantity(int n) => '×$n';
+
+  // "Chia sẻ ảnh": branded picture of the daily shop / Night Market.
+  static const shareImage = 'Chia sẻ ảnh';
+  static const shareDailyTitle = 'Chia sẻ cửa hàng hôm nay';
+  static const shareNightMarketTitle = 'Chia sẻ Chợ Đêm';
+  static const shareSubtitle =
+      'Tạo ảnh để đăng lên Zalo, Messenger, Facebook hay Discord.';
+  static const shareShowRiotId = 'Hiện Riot ID trên ảnh';
+  static const shareShowRiotIdHint = 'Tắt sẵn để giữ riêng tư cho bạn.';
+  static const shareShowVnd = 'Hiện giá VND ước tính';
+  static const shareShowVndHint = 'Quy đổi theo gói nạp VP có lợi nhất.';
+  static const sharePreparing = 'Đang tải ảnh skin…';
+  static const shareButton = 'Chia sẻ';
+  static const shareFailed = 'Không tạo được ảnh. Vui lòng thử lại.';
+  static const shareCardDaily = 'Cửa hàng hôm nay';
+  static const shareCardNightMarket = 'Chợ Đêm';
+  static const shareCardBrand = 'ValVN';
+  static const shareCardMark = 'V';
+  static const shareCardWatermark = 'VALVN';
+  static const shareCardTagline = 'Trợ thủ VALORANT tiếng Việt';
+  static const shareCardVndNote = 'Giá VND là ước tính theo gói nạp VP.';
+
+  /// "Tổng 6.500 VP".
+  static String shareCardTotal(String vp) => 'Tổng $vp';
+
+  /// "Tiết kiệm 2.331 VP".
+  static String shareCardSaved(String vp) => 'Tiết kiệm $vp';
+
+  /// "Đến 07:00 thứ Tư 08/10" (Night Market end on the picture).
+  static String shareCardUntil(String wall) => 'Đến $wall';
+
+  /// Share-sheet subject / chooser title.
+  static const shareSubjectDaily = 'Cửa hàng VALORANT hôm nay của mình';
+  static const shareSubjectNightMarket = 'Chợ Đêm VALORANT của mình';
+
+  /// ASCII file names ("valvn-cua-hang-2026-09-29.png").
+  static String shareFileDaily(String stamp) => 'valvn-cua-hang-$stamp.png';
+  static String shareFileNightMarket(String stamp) =>
+      'valvn-cho-dem-$stamp.png';
 
   // Shared badges and actions.
   static const ownedBadge = 'Đã sở hữu';
