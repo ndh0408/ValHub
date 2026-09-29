@@ -146,6 +146,12 @@ class _Scoreboard extends ConsumerWidget {
     final result = details.resultFor(puuid);
     final myTeam = details.player(puuid)?.teamId;
     final ffa = details.modeKind == MatchModeKind.deathmatch;
+    // Same rule as the live roster: Incognito players seen while the match
+    // was polled stay anonymous here (SUMMARY U16).
+    final hidden = ref
+        .watch(matchPrivacyStoreProvider)
+        .read(puuid, details.matchId)
+        .hiddenIn(details, puuid);
     final outcomeColor = switch (result.outcome) {
       MatchOutcome.win => colors.win,
       MatchOutcome.loss => colors.loss,
@@ -164,6 +170,7 @@ class _Scoreboard extends ConsumerWidget {
                 stats: s,
                 db: db,
                 isSelf: p.subject == puuid,
+                hidden: hidden.contains(p.subject),
               ),
         ]);
     } else {
@@ -184,6 +191,7 @@ class _Scoreboard extends ConsumerWidget {
               stats: details.statsFor(p.subject),
               db: db,
               isSelf: p.subject == puuid,
+              hidden: hidden.contains(p.subject),
             ),
           );
         }
@@ -289,12 +297,16 @@ class _ScoreRow extends StatelessWidget {
     required this.stats,
     required this.db,
     required this.isSelf,
+    this.hidden = false,
   });
 
   final MatchPlayer player;
   final ScoreboardStats? stats;
   final ContentDb db;
   final bool isSelf;
+
+  /// Incognito (and not self / party): show "Người chơi ẩn danh".
+  final bool hidden;
 
   @override
   Widget build(BuildContext context) {
@@ -331,6 +343,7 @@ class _ScoreRow extends StatelessWidget {
             child: Text(
               playerDisplayName(
                 player.name,
+                hidden: hidden,
                 withTag: false,
                 fallback: agent?.displayName,
               ),

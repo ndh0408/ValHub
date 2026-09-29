@@ -153,4 +153,44 @@ void main() {
     await settle(tester, frames: 20);
     expect(find.text(ProfileStrings.playerProfileTitle), findsOneWidget);
   });
+
+  testWidgets('incognito player seen live stays anonymous, profile too', (
+    tester,
+  ) async {
+    await MatchPrivacyStore(env.prefs)
+        .record(me, compMatch, const MatchPrivacy(incognito: {enemy1}));
+    final router = await pumpProfileRouter(
+      tester,
+      env,
+      routes: [
+        ...profileTopLevelRoutes,
+        GoRoute(path: '/', builder: (_, _) => const SizedBox()),
+      ],
+      initialLocation: ProfileRoutes.matchFullScreen(compMatch),
+      height: 2000,
+    );
+    await settle(tester);
+    expect(find.text('Đối Thủ'), findsNothing);
+    expect(find.text('Đồng Đội'), findsOneWidget);
+    expect(find.text(CompetitiveStrings.incognitoPlayer), findsOneWidget);
+    // Its Riot ID is never looked up.
+    final looked = verify(() => env.api.names(any(), captureAny())).captured;
+    expect(
+      looked.expand((l) => l as Iterable).map((s) => '$s'.toLowerCase()),
+      isNot(contains(enemy1)),
+    );
+
+    await tester.tap(find.text(CompetitiveStrings.incognitoPlayer));
+    await settle(tester, frames: 20);
+    expect(find.text(ProfileStrings.playerProfileTitle), findsOneWidget);
+    final pushed = router.routerDelegate.currentConfiguration.last;
+    expect(
+      pushed.matchedLocation,
+      ProfileRoutes.player(enemy1).split('?').first,
+    );
+    // Profile opened with ?hidden=1: no Riot ID, anonymous label.
+    expect(find.text('Đối Thủ'), findsNothing);
+    expect(find.textContaining('Đối Thủ'), findsNothing);
+    expect(find.text(CompetitiveStrings.incognitoPlayer), findsWidgets);
+  });
 }

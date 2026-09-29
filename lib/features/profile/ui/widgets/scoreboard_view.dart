@@ -26,11 +26,16 @@ class ScoreboardSliver extends StatelessWidget {
     required this.details,
     required this.perspective,
     required this.onOpenPlayer,
+    this.hidden = const {},
   });
 
   final MatchDetails details;
   final String? perspective;
   final ValueChanged<String> onOpenPlayer;
+
+  /// PUUIDs shown as "Người chơi ẩn danh" (Incognito, SUMMARY U16; see
+  /// [MatchPrivacy.hiddenIn]).
+  final Set<String> hidden;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +69,7 @@ class ScoreboardSliver extends StatelessWidget {
               details: details,
               player: ranked[i],
               place: i + 1,
+              hidden: hidden.contains(ranked[i].subject),
               highlighted: ranked[i].subject == perspective,
               onTap: () => onOpenPlayer(ranked[i].subject),
             ),
@@ -125,6 +131,7 @@ class ScoreboardSliver extends StatelessWidget {
             itemBuilder: (context, i) => _PlayerRow(
               details: details,
               player: teamPlayers[i],
+              hidden: hidden.contains(teamPlayers[i].subject),
               highlighted: teamPlayers[i].subject == perspective,
               onTap: () => onOpenPlayer(teamPlayers[i].subject),
             ),
@@ -253,12 +260,14 @@ class _PlayerRow extends ConsumerWidget {
     required this.highlighted,
     required this.onTap,
     this.place,
+    this.hidden = false,
   });
 
   final MatchDetails details;
   final MatchPlayer player;
   final bool highlighted;
   final VoidCallback onTap;
+  final bool hidden;
 
   /// Deathmatch position.
   final int? place;
@@ -275,6 +284,7 @@ class _PlayerRow extends ConsumerWidget {
         ScoreboardStats(subject: player.subject);
     final name = playerDisplayName(
       player.name,
+      hidden: hidden,
       withTag: false,
       fallback: agent?.displayName,
     );

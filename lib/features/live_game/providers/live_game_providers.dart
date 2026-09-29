@@ -127,6 +127,7 @@ class LiveGameController extends AsyncNotifier<LiveGameState> {
       if (generation == _generation) {
         _last = result;
         _lastError = null;
+        _recordPrivacy(result);
       }
       return result;
     } on Object catch (e) {
@@ -139,6 +140,31 @@ class LiveGameController extends AsyncNotifier<LiveGameState> {
         _schedule(delay: _takeAgain() ? Duration.zero : null);
       }
     }
+  }
+
+  /// Remembers who is Incognito / hides their level in this match, so the
+  /// scoreboard after the match (and match history) keeps hiding them:
+  /// Riot's match details carry no such flag (SUMMARY U16).
+  void _recordPrivacy(LiveGameState state) {
+    final match = state.match;
+    if (match == null) return;
+    final privacy = MatchPrivacy(
+      incognito: {
+        for (final p in match.players)
+          if (p.incognito) p.subject.toLowerCase(),
+      },
+      hiddenLevel: {
+        for (final p in match.players)
+          if (p.hideAccountLevel) p.subject.toLowerCase(),
+      },
+    );
+    if (privacy.isEmpty) return;
+    unawaited(
+      ref
+          .read(matchPrivacyStoreProvider)
+          .record(puuid, match.matchId, privacy)
+          .catchError((Object _) {}),
+    );
   }
 
   /// Polls now (refresh button, pull-to-refresh, after an action). Joins a
@@ -169,6 +195,7 @@ class LiveGameController extends AsyncNotifier<LiveGameState> {
       _last = next;
       _lastError = null;
       state = AsyncData(next);
+      _recordPrivacy(next);
       _afterPoll(previous, next);
     } on Object catch (e, st) {
       if (generation != _generation || !ref.mounted) return;

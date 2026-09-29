@@ -10,6 +10,7 @@ library;
 export 'account_xp.dart';
 export 'competitive_strings.dart';
 export 'matches.dart';
+export 'match_privacy.dart';
 export 'names.dart';
 export 'rank.dart';
 export 'viewer.dart';

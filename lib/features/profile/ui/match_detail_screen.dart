@@ -90,8 +90,14 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
     final inMatch = me != null && !me.isObserver;
     final hasRounds = d.modeKind.isRoundBased && d.playedRounds.isNotEmpty;
     final tab = hasRounds ? _tab : _Tab.scoreboard;
-    void openPlayer(String puuid) =>
-        unawaited(context.push(ProfileRoutes.player(puuid)));
+    // Incognito players seen during the live match stay anonymous here and
+    // on their profile (SUMMARY U16).
+    final hidden = ref
+        .watch(matchPrivacyProvider(_id))
+        .hiddenIn(d, ref.read(activePuuidProvider));
+    void openPlayer(String puuid) => unawaited(
+      context.push(ProfileRoutes.player(puuid, hidden: hidden.contains(puuid))),
+    );
     return CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
@@ -100,7 +106,11 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
         ),
         if (inMatch)
           SliverToBoxAdapter(
-            child: _PlayerSummary(details: d, player: me),
+            child: _PlayerSummary(
+              details: d,
+              player: me,
+              hidden: hidden.contains(me.subject),
+            ),
           ),
         if (hasRounds)
           SliverToBoxAdapter(
@@ -124,6 +134,7 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
             details: d,
             perspective: perspective,
             onOpenPlayer: openPlayer,
+            hidden: hidden,
           )
         else
           RoundTimelineSliver(details: d, perspective: perspective),
@@ -269,10 +280,15 @@ class _MatchHeader extends ConsumerWidget {
 }
 
 class _PlayerSummary extends ConsumerWidget {
-  const _PlayerSummary({required this.details, required this.player});
+  const _PlayerSummary({
+    required this.details,
+    required this.player,
+    this.hidden = false,
+  });
 
   final MatchDetails details;
   final MatchPlayer player;
+  final bool hidden;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -335,7 +351,11 @@ class _PlayerSummary extends ConsumerWidget {
                         ),
                         Text(
                           ProfileStrings.joined([
-                            playerDisplayName(player.name, withTag: false),
+                            playerDisplayName(
+                              player.name,
+                              hidden: hidden,
+                              withTag: false,
+                            ),
                             ?agent?.displayName,
                           ]),
                           maxLines: 2,

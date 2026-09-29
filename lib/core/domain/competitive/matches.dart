@@ -10,6 +10,7 @@ import '../../riot/pvp_api.dart';
 import '../../storage/json_file_cache.dart';
 import '../../util/json.dart';
 import 'match_models.dart';
+import 'match_privacy.dart';
 import 'names.dart';
 import 'paging.dart';
 import 'rank_models.dart' show kCompetitiveQueue;
@@ -348,6 +349,12 @@ final matchDetailsProvider = FutureProvider.autoDispose
       cacheFor(ref, const Duration(minutes: 10));
 
       final details = await repo.details(viewer, id);
+      // Incognito players seen during the live match (U16): their Riot ID
+      // is never looked up, and the UI shows them as anonymous.
+      final hidden = ref
+          .read(matchPrivacyStoreProvider)
+          .read(viewer, id)
+          .hiddenIn(details, viewer);
       final accounts = ref.read(accountsProvider);
       final names = <String, RiotName>{};
       for (final a in accounts) {
@@ -360,7 +367,7 @@ final matchDetailsProvider = FutureProvider.autoDispose
       }
       final missing = [
         for (final s in details.unnamedSubjects)
-          if (!names.containsKey(s)) s,
+          if (!names.containsKey(s) && !hidden.contains(s)) s,
       ];
       if (missing.isNotEmpty) {
         try {

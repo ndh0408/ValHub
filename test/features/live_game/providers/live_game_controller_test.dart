@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:valvn/core/domain/competitive/competitive.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/features/live_game/data/live_game_models.dart';
@@ -242,6 +243,22 @@ void main() {
       );
       verifyNever(() => env.api.coreGameDisassociate(any(), any()));
       verifyNever(() => env.api.pregameQuit(any(), any()));
+    });
+  });
+
+  testWidgets('polling remembers incognito players of the match', (
+    tester,
+  ) async {
+    env
+      ..loop = 'INGAME'
+      ..core = coreMatchJson();
+    await withContainer((c) async {
+      c.listen(liveGameProvider(me), (_, _) {});
+      await tester.pump();
+      await tester.pump();
+      final privacy = MatchPrivacyStore(env.prefs).read(me, liveMatchId);
+      expect(privacy.incognito, contains(enemy2));
+      expect(privacy.hiddenLevel, contains(enemy2));
     });
   });
 
