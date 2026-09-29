@@ -44,7 +44,7 @@ abstract final class WishlistStrings {
   // Notification toggle (VF §6.4 S3A, §8.5 notifWishlistBg).
   static const notifToggle = 'Thông báo wishlist';
   static const notifToggleSubtitle =
-      'Kiểm tra wishlist trong nền cho tất cả tài khoản';
+      'Kiểm tra wishlist trong nền cho tài khoản này';
   static const notifPermissionMissing = 'Ứng dụng chưa có quyền gửi thông báo.';
   static const openSettings = 'Mở cài đặt';
 

@@ -375,6 +375,13 @@ class _PlayerRow extends ConsumerWidget {
                         fontWeight: highlighted ? FontWeight.w700 : null,
                       ),
                     ),
+                    if (place == null && s.placement > 0)
+                      Text(
+                        ProfileStrings.placement(s.placement),
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                     if (s.isMatchMvp || s.isTeamMvp)
                       Text(
                         s.isMatchMvp

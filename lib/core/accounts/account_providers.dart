@@ -8,6 +8,7 @@ import '../auth/cookie_jar.dart';
 import '../config/app_constants.dart';
 import '../notifications/notification_service.dart';
 import '../riot/riot_hosts.dart';
+import '../settings/app_settings.dart';
 import '../storage/json_file_cache.dart';
 import '../storage/prefs.dart';
 import '../storage/secure_store.dart';
@@ -117,6 +118,13 @@ class AccountsNotifier extends Notifier<List<Account>> {
     await ref.read(sessionManagerProvider).forget(id);
     // Backstop: deletes the secrets again, plus prefs and file caches.
     await _repo.wipeAccountData(id);
+    await ref.read(appSettingsProvider.notifier).update((settings) {
+      if (!settings.wishlistNotificationsByAccount.containsKey(id)) {
+        return settings;
+      }
+      final choices = {...settings.wishlistNotificationsByAccount}..remove(id);
+      return settings.copyWith(wishlistNotificationsByAccount: choices);
+    });
     final remaining = _repo.loadAll();
     if (_repo.activePuuid == id) {
       await _repo.setActivePuuid(remaining.firstOrNull?.puuid);

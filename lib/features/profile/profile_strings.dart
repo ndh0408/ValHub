@@ -142,6 +142,7 @@ abstract final class ProfileStrings {
   static const yourSummary = 'Thành tích của bạn';
   static const playerSummary = 'Thành tích';
   static const scoreboard = 'Bảng điểm';
+  static const rankedScoreboard = 'Bảng điểm xếp hạng';
   static const roundTimeline = 'Diễn biến vòng đấu';
   static const acs = 'ACS';
   static const acsHint = 'Điểm chiến đấu trung bình';

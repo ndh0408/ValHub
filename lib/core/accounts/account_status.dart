@@ -13,6 +13,7 @@ import '../riot/pvp_api.dart';
 import '../theme/app_theme.dart';
 import '../util/clock.dart';
 import '../util/json.dart';
+import '../xmpp/xmpp_providers.dart' show appForegroundProvider;
 import '../xmpp/xmpp_models.dart' show LoopState;
 import 'account_providers.dart';
 
@@ -34,14 +35,24 @@ enum AccountActivity {
   unknown;
 
   /// From a G-1 `session/v1/sessions/{puuid}` body; `null` (404) = offline.
-  static AccountActivity fromSession(Object? session) {
+  static AccountActivity fromSession(Object? session, {DateTime? now}) {
     if (session == null) return offline;
-    return switch (LoopState.parse(asString(asMap(session)?['loopState']))) {
+    final body = asMap(session);
+    if (body == null) return unknown;
+    final connection = asNonEmptyString(body['cxnState'])?.toUpperCase();
+    if (connection != null && connection != 'CONNECTED') return offline;
+    if (asBool(body['shouldForceInvalidate']) == true) return offline;
+    final expires = asDateTime(body['expiredTime']);
+    if (expires != null && !expires.isAfter(now ?? DateTime.now())) {
+      return offline;
+    }
+    final loop = asNonEmptyString(body['loopState']);
+    if (loop == null) return unknown;
+    return switch (LoopState.parse(loop)) {
       LoopState.menus => online,
       LoopState.pregame => agentSelect,
       LoopState.ingame => inMatch,
-      // A session exists, so the game is running.
-      LoopState.unknown => online,
+      LoopState.unknown => unknown,
     };
   }
 
@@ -91,7 +102,10 @@ final accountActivityProvider = FutureProvider.autoDispose
             .read(pvpApiProvider)
             .gameSession(puuid)
             .orNullIfNotFound();
-        return AccountActivity.fromSession(session);
+        return AccountActivity.fromSession(
+          session,
+          now: ref.read(clockProvider).now(),
+        );
       } on NeedsLoginException {
         return AccountActivity.needsLogin;
       } on Object {
@@ -118,18 +132,28 @@ class _AccountActivityPollerState extends ConsumerState<AccountActivityPoller> {
 
   /// False while this tab is in the background.
   var _visible = true;
+  var _initialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _visible = TickerMode.valuesOf(context).enabled;
+    final visible = TickerMode.valuesOf(context).enabled;
+    if (_initialized && visible && !_visible) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _visible && ref.read(appForegroundProvider)) {
+          ref.invalidate(accountActivityProvider);
+        }
+      });
+    }
+    _visible = visible;
+    _initialized = true;
   }
 
   @override
   void initState() {
     super.initState();
     _timer = Timer.periodic(kAccountActivityRefresh, (_) {
-      if (mounted && _visible) {
+      if (mounted && _visible && ref.read(appForegroundProvider)) {
         ref.invalidate(accountActivityProvider);
       }
     });
@@ -142,7 +166,14 @@ class _AccountActivityPollerState extends ConsumerState<AccountActivityPoller> {
   }
 
   @override
-  Widget build(BuildContext context) => widget.child;
+  Widget build(BuildContext context) {
+    ref.listen<bool>(appForegroundProvider, (wasForeground, foreground) {
+      if (foreground && wasForeground == false && _visible) {
+        ref.invalidate(accountActivityProvider);
+      }
+    });
+    return widget.child;
+  }
 }
 
 /// Number of accounts whose game is running (for the list headers). Counts

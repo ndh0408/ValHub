@@ -51,6 +51,7 @@ void main() {
     expect(find.text('+24 RR'), findsOneWidget);
 
     // Scoreboard: your team first, names resolved via name-service.
+    expect(find.text(ProfileStrings.rankedScoreboard), findsOneWidget);
     expect(find.text(ProfileStrings.yourTeam), findsOneWidget);
     expect(find.text(ProfileStrings.enemyTeam), findsOneWidget);
     expect(find.text('Đồng Đội'), findsOneWidget);
@@ -69,6 +70,10 @@ void main() {
 
     await tester.tap(find.text(ProfileStrings.roundTimeline));
     await settle(tester);
+
+    // The scoreboard remains available above the expanded round details.
+    expect(find.text(ProfileStrings.rankedScoreboard), findsOneWidget);
+    expect(find.text(ProfileStrings.yourTeam), findsOneWidget);
 
     expect(find.text(ProfileStrings.firstHalf), findsOneWidget);
     expect(find.text(CompetitiveStrings.roundElimination), findsOneWidget);

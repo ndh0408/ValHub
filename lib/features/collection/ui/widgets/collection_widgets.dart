@@ -198,6 +198,20 @@ class HubIcon extends StatelessWidget {
   );
 }
 
+/// Small artwork from the game content, used in collection navigation rows.
+class HubArtwork extends StatelessWidget {
+  const HubArtwork(this.image, {super.key});
+
+  final String image;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: 28,
+    height: 28,
+    child: NetImage(image, fit: BoxFit.contain, showSkeleton: false),
+  );
+}
+
 /// One tappable row of the hub: red outline icon, title, grey current
 /// value and "›" (min 54 dp tall).
 class HubRow extends StatelessWidget {

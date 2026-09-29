@@ -15,7 +15,6 @@ import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
@@ -40,12 +39,16 @@ class MatchDetailScreen extends ConsumerStatefulWidget {
   ConsumerState<MatchDetailScreen> createState() => _MatchDetailScreenState();
 }
 
-enum _Tab { scoreboard, rounds }
-
 class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
-  _Tab _tab = _Tab.scoreboard;
+  bool _roundsExpanded = false;
 
   String get _id => widget.matchId.trim().toLowerCase();
+
+  @override
+  void didUpdateWidget(covariant MatchDetailScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.matchId != widget.matchId) _roundsExpanded = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +96,6 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
     final me = d.player(perspective);
     final inMatch = me != null && !me.isObserver;
     final hasRounds = d.modeKind.isRoundBased && d.playedRounds.isNotEmpty;
-    final tab = hasRounds ? _tab : _Tab.scoreboard;
     // Incognito players seen during the live match stay anonymous here and
     // on their profile (SUMMARY U16).
     final hidden = ref
@@ -116,33 +118,34 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
               hidden: hidden.contains(me.subject),
             ),
           ),
-        if (hasRounds)
-          SliverToBoxAdapter(
-            child: SegmentedTabs<_Tab>(
-              expand: true,
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              tabs: const [
-                SegmentedTab(
-                  value: _Tab.scoreboard,
-                  label: ProfileStrings.scoreboard,
-                ),
-                SegmentedTab(
-                  value: _Tab.rounds,
-                  label: ProfileStrings.roundTimeline,
-                ),
-              ],
-              selected: tab,
-              onChanged: (t) => setState(() => _tab = t),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+            child: Text(
+              baseQueueId(d.info.queueId) == kCompetitiveQueue
+                  ? ProfileStrings.rankedScoreboard
+                  : ProfileStrings.scoreboard,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
           ),
-        if (tab == _Tab.scoreboard)
-          ScoreboardSliver(
-            details: d,
-            perspective: perspective,
-            onOpenPlayer: openPlayer,
-            hidden: hidden,
-          )
-        else
+        ),
+        ScoreboardSliver(
+          details: d,
+          perspective: perspective,
+          onOpenPlayer: openPlayer,
+          hidden: hidden,
+        ),
+        if (hasRounds)
+          SliverToBoxAdapter(
+            child: ListTile(
+              title: const Text(ProfileStrings.roundTimeline),
+              trailing: Icon(
+                _roundsExpanded ? Icons.expand_less : Icons.expand_more,
+              ),
+              onTap: () => setState(() => _roundsExpanded = !_roundsExpanded),
+            ),
+          ),
+        if (hasRounds && _roundsExpanded)
           RoundTimelineSliver(details: d, perspective: perspective),
         const SliverToBoxAdapter(child: SizedBox(height: 24)),
       ],
