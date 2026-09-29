@@ -143,6 +143,7 @@ void main() {
       'weaponUuid': vandal,
       'rating': 4,
       'body': 'Rất đẹp',
+      'language': 'vi',
     });
     expect(find.text(CommunityStrings.reviewSaved), findsOneWidget);
     expect(find.text(CommunityStrings.editReview), findsOneWidget);

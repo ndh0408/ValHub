@@ -171,6 +171,7 @@ void main() {
       await notifier.add('  Mới  ');
       expect(env.server.calls('POST /v1/posts/p1/comments').single.json, {
         'body': 'Mới',
+        'language': 'vi',
       });
       await notifier.delete('c1');
 

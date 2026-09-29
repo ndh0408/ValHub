@@ -337,6 +337,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
         kind: draft?.hasAttachment ?? false ? draft!.kind : PostKind.text,
         body: _text.text,
         payload: draft?.hasAttachment ?? false ? draft!.payload : null,
+        language: ref.read(communityAppLanguageProvider),
         uploads: [
           for (final img in _images)
             () => api.uploadMedia(account.puuid, img.bytes),

@@ -237,5 +237,10 @@ filter must never reject text only because it is in an unsupported language.
 - Every account-changing Riot action (joining a party by code) stays user-initiated
   with a confirmation; the community server never touches Riot on the user's
   behalf beyond `/userinfo` during `/v1/auth/riot`.
+- The Riot access token is sent to `/v1/auth/riot` only after the user agreed, once per account
+  (consent sheet: what is sent, what others see, links to the privacy policy and community
+  guidelines; stored under `acct.<puuid>.community.consent`). Declining sends nothing.
+- Translation of posts / comments / reviews happens on the device (ML Kit); no text is sent
+  to any server.
 - The community session token is stored in secure storage under
   `acct.<puuid>.community` and wiped with the account.

@@ -152,6 +152,7 @@ Future<SkinReview> submitSkinReview(
         rating: rating,
         body: body,
         weaponUuid: weaponUuid,
+        language: ref.read(communityAppLanguageProvider),
       );
   final id = skinUuid.toLowerCase();
   final summary = skinSummaryProvider((puuid: puuid, skinUuid: id));

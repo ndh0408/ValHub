@@ -477,6 +477,26 @@ restored the next time the screen opens (deep links still win).
   static `scrubUri`, `scrubText`. Every HTTP call through core dios is logged
   automatically.
 
+### 5.13 Community — `lib/features/community/`
+
+- **Session and consent:** the Riot access token goes to `POST /v1/auth/riot` only after the
+  account agreed once (`communityConsentProvider(puuid)`, pref `acct.<puuid>.community.consent`,
+  wiped with the account). `CommunityAuth` throws `consentRequired` before touching Riot or the
+  network; the tab shows the consent sheet the first time (`ensureCommunityConsent`), "Để sau" is
+  remembered and only an explicit button asks again. Home previews never ask and never sign in.
+- **Scopes (v3):** feed and skin leaderboard default to the viewer's country
+  (`communityScopeProvider(ScopedSection)` remembered in `UiMemory`, resolved by
+  `resolvedScopeProvider`; no country → the viewer's shard), LFG always shows one shard.
+  `GET /v1/communities` feeds the country picker.
+- **Translation:** on-device only (`CommunityTranslator`, ML Kit `google_mlkit_translation` on
+  Android / iOS, download confirmed with its size, Google attribution shown). **iOS needs
+  CocoaPods for this plugin**: `ios/Podfile` (iOS 15.5) is checked in and the deployment target is
+  15.5; to drop translation remove the package, `ios/Podfile` and use
+  `UnsupportedCommunityTranslator`.
+- Public entry points for other screens: `community_previews.dart`
+  (`matchingLfgPreviewProvider`, `trendingSkinsProvider`, `LfgPreviewCard`, `TrendingSkinsCard`),
+  `openSkinReview(context, skinUuid)`.
+
 ---
 
 ## 6. Recipes

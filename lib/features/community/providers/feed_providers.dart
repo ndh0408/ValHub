@@ -168,7 +168,12 @@ class CommentsNotifier extends AsyncNotifier<PagedState<CommunityComment>>
 
   /// Posts a comment and appends it.
   Future<CommunityComment> add(String body) async {
-    final comment = await _api.addComment(key.puuid, key.postId, body);
+    final comment = await _api.addComment(
+      key.puuid,
+      key.postId,
+      body,
+      language: ref.read(communityAppLanguageProvider),
+    );
     final s = state.value;
     if (ref.mounted && s != null) {
       state = AsyncData(
@@ -195,6 +200,7 @@ Future<CommunityPost> publishPost(
   required String body,
   List<Future<PostMedia> Function()> uploads = const [],
   PostPayload? payload,
+  String? language,
 }) async {
   final media = <String>[];
   for (final upload in uploads) {
@@ -206,6 +212,7 @@ Future<CommunityPost> publishPost(
     body: body,
     media: media,
     payload: payload,
+    language: language,
   );
 }
 

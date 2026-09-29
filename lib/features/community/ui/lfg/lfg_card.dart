@@ -14,6 +14,7 @@ import '../../data/community_models.dart';
 import '../../data/lfg_sync.dart';
 import '../feed/report_sheet.dart';
 import '../widgets/community_widgets.dart';
+import '../widgets/translatable_text.dart';
 import 'lfg_bits.dart';
 
 /// One "Tìm đồng đội" post: author, time left, mode, rank range, roles,
@@ -200,8 +201,9 @@ class LfgCard extends ConsumerWidget {
                     left: BorderSide(color: ValColors.red, width: 3),
                   ),
                 ),
-                child: Text(
+                child: TranslatableText(
                   post.note,
+                  language: post.language,
                   style: theme.textTheme.bodyMedium?.copyWith(height: 1.35),
                 ),
               ),

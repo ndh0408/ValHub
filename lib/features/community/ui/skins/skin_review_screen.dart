@@ -30,6 +30,7 @@ import '../widgets/community_widgets.dart';
 import '../consent/consent_sheet.dart';
 import 'review_editor_sheet.dart';
 import 'skin_vote_button.dart';
+import '../widgets/translatable_text.dart';
 import 'star_rating.dart';
 
 /// `UiMemory` key of the review list order.
@@ -747,8 +748,9 @@ class ReviewTile extends ConsumerWidget {
           if (review.body.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 6, right: 10),
-              child: Text(
+              child: TranslatableText(
                 review.body,
+                language: review.language ?? review.author.language,
                 style: theme.textTheme.bodyMedium?.copyWith(height: 1.4),
               ),
             ),

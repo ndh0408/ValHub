@@ -24,8 +24,12 @@ import 'package:valvn/core/storage/secure_store.dart';
 import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/core/util/clock.dart';
 import 'package:valvn/features/community/data/community_http.dart';
+import 'package:valvn/features/community/data/community_models.dart'
+    show kLfgLanguages;
+import 'package:valvn/features/community/data/community_translator.dart';
 import 'package:valvn/features/community/data/image_source.dart';
 import 'package:valvn/features/community/providers/consent_providers.dart';
+import 'package:valvn/features/community/providers/translation_providers.dart';
 import 'package:valvn/features/community/providers/community_providers.dart';
 
 import '../../helpers/fixtures.dart';
@@ -303,6 +307,48 @@ class FakeImagePicker implements CommunityImagePicker {
 Uint8List jpegBytes([int size = 64]) =>
     Uint8List.fromList([0xFF, 0xD8, 0xFF, 0xE0, ...List.filled(size, 1)]);
 
+/// In-memory [CommunityTranslator]: records downloads / translations, no
+/// plugin, no network.
+class FakeCommunityTranslator implements CommunityTranslator {
+  FakeCommunityTranslator({
+    this.supported = true,
+    Set<String>? downloaded,
+    this.failTranslate = false,
+  }) : downloaded = downloaded ?? {'vi', 'en'};
+
+  bool supported;
+  bool failTranslate;
+  final Set<String> downloaded;
+  final List<String> downloads = [];
+  final List<(String, String, String)> translations = [];
+
+  @override
+  bool get isSupported => supported;
+
+  @override
+  bool supportsLanguage(String code) => kLfgLanguages.contains(code);
+
+  @override
+  Future<bool> isDownloaded(String code) async => downloaded.contains(code);
+
+  @override
+  Future<void> download(String code) async {
+    downloads.add(code);
+    downloaded.add(code);
+  }
+
+  @override
+  Future<String> translate(
+    String text, {
+    required String from,
+    required String to,
+  }) async {
+    translations.add((text, from, to));
+    if (failTranslate) throw StateError('translate failed');
+    return '[$from>$to] $text';
+  }
+}
+
 /// In-memory [JsonFileCache].
 class MemoryJsonFileCache extends JsonFileCache {
   MemoryJsonFileCache() : super(() => throw UnimplementedError());
@@ -383,6 +429,7 @@ class CommunityTestEnv {
   final picker = FakeImagePicker();
   final clock = FixedClock(now);
   late final notifications = RecordingNotifications(prefs);
+  final translator = FakeCommunityTranslator();
 
   List<Override> get overrides => [
     prefsProvider.overrideWithValue(prefs),
@@ -398,6 +445,7 @@ class CommunityTestEnv {
     ),
     communityImagePickerProvider.overrideWithValue(picker),
     notificationServiceProvider.overrideWithValue(notifications),
+    communityTranslatorProvider.overrideWithValue(translator),
   ];
 
   ProviderContainer container() =>
