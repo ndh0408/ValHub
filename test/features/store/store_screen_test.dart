@@ -8,7 +8,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/domain/economy/economy.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/network/riot_exception.dart';
-import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/core/settings/app_settings.dart';
 import 'package:valvn/core/storage/json_file_cache.dart';
 import 'package:valvn/core/storage/prefs.dart';

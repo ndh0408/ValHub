@@ -244,9 +244,16 @@ class _FooterRow extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
-                BattlePassStrings.checkpointsDone(done, kDailyCheckpointCount),
-                style: theme.textTheme.bodySmall?.copyWith(color: muted),
+              Flexible(
+                child: Text(
+                  BattlePassStrings.checkpointsDone(
+                    done,
+                    kDailyCheckpointCount,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall?.copyWith(color: muted),
+                ),
               ),
             ],
           ),

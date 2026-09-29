@@ -114,10 +114,7 @@ void main() {
       expect(s.current.rr, 6);
       expect(s.progress, closeTo(0.06, 1e-9));
       expect(s.rrToNext, 94);
-      expect(
-        s.nextTierName,
-        'Kim Cương 2',
-      );
+      expect(s.nextTierName, 'Kim Cương 2');
       expect(s.leaderboard, isNull);
       expect(s.previousAct, isNull);
     });
