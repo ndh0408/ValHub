@@ -1,0 +1,29 @@
+services:
+  valvn-community:
+    build: .
+    image: valvn-community:latest
+    container_name: valvn-community
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PORT: "8080"
+      DATA_DIR: /data
+    # Only reachable from the host itself; cloudflared forwards to http://127.0.0.1:8787.
+    ports:
+      - "127.0.0.1:8787:8080"
+    volumes:
+      - valvn-community-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  valvn-community-data:
+    name: valvn-community-data

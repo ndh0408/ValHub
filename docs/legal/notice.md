@@ -28,12 +28,12 @@ Tên, hình ảnh, video và dữ liệu của skin, đặc vụ, bản đồ, r
 
 ## 5. Bản quyền ValVN
 
-© 2026 [TÊN NHÀ PHÁT HÀNH]. Bảo lưu mọi quyền. ValVN là phần mềm độc quyền; việc sử dụng tuân theo Giấy phép phần mềm và Điều khoản sử dụng.
+© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền. ValVN là phần mềm độc quyền; việc sử dụng tuân theo Giấy phép phần mềm và Điều khoản sử dụng.
 
 ## 6. Báo cáo vi phạm quyền sở hữu trí tuệ
 
-Nếu bạn cho rằng nội dung trong ValVN, kể cả nội dung do người dùng đăng trong Cộng đồng, vi phạm quyền sở hữu trí tuệ của bạn, vui lòng gửi email tới [EMAIL LIÊN HỆ] kèm: thông tin liên hệ của bạn, mô tả tác phẩm được bảo hộ, vị trí nội dung vi phạm trong Ứng dụng và cam kết thông tin bạn cung cấp là chính xác. Chúng tôi sẽ xem xét và xử lý kịp thời.
+Nếu bạn cho rằng nội dung trong ValVN, kể cả nội dung do người dùng đăng trong Cộng đồng, vi phạm quyền sở hữu trí tuệ của bạn, vui lòng gửi email tới ndh0408@gmail.com kèm: thông tin liên hệ của bạn, mô tả tác phẩm được bảo hộ, vị trí nội dung vi phạm trong Ứng dụng và cam kết thông tin bạn cung cấp là chính xác. Chúng tôi sẽ xem xét và xử lý kịp thời.
 
 ---
 
-© 2026 [TÊN NHÀ PHÁT HÀNH]. Bảo lưu mọi quyền.
+© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền.

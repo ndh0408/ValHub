@@ -3,7 +3,6 @@ import 'legal_info.dart';
 
 const _publisher = LegalInfo.publisherName;
 const _email = LegalInfo.contactEmail;
-const _address = LegalInfo.publisherAddress;
 
 /// Chính sách quyền riêng tư ValVN.
 ///
@@ -455,7 +454,6 @@ const privacyPolicy = LegalDocument(
       LegalList([
         LegalItem(_publisher, lead: 'Bên kiểm soát dữ liệu:'),
         LegalItem(_email, lead: 'Email:'),
-        LegalItem(_address, lead: 'Địa chỉ:'),
       ]),
     ]),
   ],

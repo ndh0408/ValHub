@@ -50,7 +50,7 @@ Cộng đồng ValVN là nơi người chơi VALORANT khoe cửa hàng, bàn chu
 Thấy nội dung vi phạm? Hãy dùng nút Báo cáo trên bài đăng, bình luận hoặc bài tìm đồng đội và chọn lý do phù hợp. Báo cáo được giữ kín, người bị báo cáo không biết ai đã báo cáo.
 
 - Nội dung nhận đủ báo cáo từ nhiều người dùng khác nhau sẽ được tự động ẩn trong khi chờ xem xét.
-- Với trường hợp khẩn cấp hoặc nghiêm trọng (đe dọa, nội dung liên quan đến trẻ em, lộ thông tin cá nhân), hãy báo cáo và gửi thêm email tới [EMAIL LIÊN HỆ].
+- Với trường hợp khẩn cấp hoặc nghiêm trọng (đe dọa, nội dung liên quan đến trẻ em, lộ thông tin cá nhân), hãy báo cáo và gửi thêm email tới ndh0408@gmail.com.
 - Không lạm dụng tính năng báo cáo để tấn công người khác; báo cáo sai sự thật lặp lại cũng là vi phạm.
 
 ## 8. Hậu quả khi vi phạm
@@ -66,8 +66,8 @@ Các biện pháp này chỉ áp dụng trong ValVN và không ảnh hưởng t�
 
 ## 9. Khiếu nại quyết định kiểm duyệt
 
-Nếu bạn cho rằng nội dung của mình bị gỡ nhầm hoặc biện pháp áp dụng chưa hợp lý, hãy gửi email tới [EMAIL LIÊN HỆ] kèm Riot ID và mô tả ngắn. Chúng tôi sẽ xem xét lại và phản hồi sớm nhất có thể.
+Nếu bạn cho rằng nội dung của mình bị gỡ nhầm hoặc biện pháp áp dụng chưa hợp lý, hãy gửi email tới ndh0408@gmail.com kèm Riot ID và mô tả ngắn. Chúng tôi sẽ xem xét lại và phản hồi sớm nhất có thể.
 
 ---
 
-© 2026 [TÊN NHÀ PHÁT HÀNH]. Bảo lưu mọi quyền.
+© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền.

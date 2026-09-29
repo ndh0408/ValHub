@@ -1,0 +1,13 @@
+node_modules
+dist
+data
+test
+coverage
+.env
+.env.*
+!.env.example
+*.log
+Dockerfile
+docker-compose.yml
+README.md
+vitest.config.ts

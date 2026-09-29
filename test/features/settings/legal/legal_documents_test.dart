@@ -58,7 +58,7 @@ void main() {
     });
 
     test('contact details come only from LegalInfo (no invented email)', () {
-      final emailPattern = RegExp(r'[\w.+-]+@[\w-]+\.[\w.]+');
+      final emailPattern = RegExp(r'[\w.+-]+@[\w-]+(?:\.[\w-]+)+');
       for (final doc in LegalDocuments.all) {
         final text = legalDocumentToMarkdown(doc);
         final emails = emailPattern.allMatches(text).map((m) => m[0]).toSet();

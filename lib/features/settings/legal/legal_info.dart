@@ -6,13 +6,10 @@
 /// Pure Dart (no Flutter import) so the export tool can run it.
 abstract final class LegalInfo {
   /// Tên cá nhân / tổ chức phát hành ValVN (bên kiểm soát dữ liệu).
-  static const publisherName = '[TÊN NHÀ PHÁT HÀNH]';
+  static const publisherName = 'Nguyễn Đức Huy';
 
   /// Email nhận liên hệ, yêu cầu về dữ liệu cá nhân và báo cáo vi phạm.
-  static const contactEmail = '[EMAIL LIÊN HỆ]';
-
-  /// Địa chỉ liên hệ của nhà phát hành (Việt Nam).
-  static const publisherAddress = '[ĐỊA CHỈ LIÊN HỆ]';
+  static const contactEmail = 'ndh0408@gmail.com';
 
   /// Năm bản quyền.
   static const copyrightYear = '2026';
@@ -23,7 +20,7 @@ abstract final class LegalInfo {
   /// Tên sản phẩm dùng trong văn bản pháp lý.
   static const productName = 'ValVN';
 
-  /// "© 2026 [TÊN NHÀ PHÁT HÀNH]. Bảo lưu mọi quyền."
+  /// "© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền."
   static const copyrightNotice =
       '© $copyrightYear $publisherName. Bảo lưu mọi quyền.';
 

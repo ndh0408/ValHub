@@ -3,7 +3,6 @@ import 'legal_info.dart';
 
 const _publisher = LegalInfo.publisherName;
 const _email = LegalInfo.contactEmail;
-const _address = LegalInfo.publisherAddress;
 
 /// Điều khoản sử dụng ValVN.
 const termsOfService = LegalDocument(
@@ -424,7 +423,6 @@ const termsOfService = LegalDocument(
       LegalList([
         LegalItem(_publisher, lead: 'Nhà phát hành:'),
         LegalItem(_email, lead: 'Email:'),
-        LegalItem(_address, lead: 'Địa chỉ:'),
       ]),
     ]),
   ],

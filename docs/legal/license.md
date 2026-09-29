@@ -4,13 +4,13 @@
 
 **ValVN** · Phiên bản 1.0 · Hiệu lực từ: 29/09/2026
 
-> © 2026 [TÊN NHÀ PHÁT HÀNH]. Bảo lưu mọi quyền.
+> © 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền.
 
-Giấy phép sử dụng phần mềm dành cho người dùng cuối ("Giấy phép") này là thỏa thuận giữa bạn và [TÊN NHÀ PHÁT HÀNH] về việc sử dụng ứng dụng ValVN ("Phần mềm"). ValVN là phần mềm độc quyền, không phải phần mềm mã nguồn mở.
+Giấy phép sử dụng phần mềm dành cho người dùng cuối ("Giấy phép") này là thỏa thuận giữa bạn và Nguyễn Đức Huy về việc sử dụng ứng dụng ValVN ("Phần mềm"). ValVN là phần mềm độc quyền, không phải phần mềm mã nguồn mở.
 
 ## 1. Quyền sở hữu
 
-Phần mềm, bao gồm mã nguồn, mã máy, cấu trúc, thiết kế giao diện, biểu tượng, tên và logo ValVN, văn bản và tài liệu đi kèm, thuộc quyền sở hữu của [TÊN NHÀ PHÁT HÀNH] và được bảo hộ bởi pháp luật Việt Nam về sở hữu trí tuệ và các điều ước quốc tế có liên quan. Phần mềm được cấp phép cho bạn sử dụng, không phải được bán.
+Phần mềm, bao gồm mã nguồn, mã máy, cấu trúc, thiết kế giao diện, biểu tượng, tên và logo ValVN, văn bản và tài liệu đi kèm, thuộc quyền sở hữu của Nguyễn Đức Huy và được bảo hộ bởi pháp luật Việt Nam về sở hữu trí tuệ và các điều ước quốc tế có liên quan. Phần mềm được cấp phép cho bạn sử dụng, không phải được bán.
 
 ## 2. Phạm vi cấp phép
 
@@ -40,7 +40,7 @@ Chúng tôi có thể phát hành bản cập nhật để sửa lỗi, cải th
 
 ## 7. Phân phối qua App Store và Google Play
 
-- Giấy phép này được ký kết giữa bạn và [TÊN NHÀ PHÁT HÀNH], không phải với Apple Inc. hay Google LLC. Apple và Google không chịu trách nhiệm về Phần mềm, việc bảo trì, hỗ trợ hay giải quyết khiếu nại liên quan đến Phần mềm.
+- Giấy phép này được ký kết giữa bạn và Nguyễn Đức Huy, không phải với Apple Inc. hay Google LLC. Apple và Google không chịu trách nhiệm về Phần mềm, việc bảo trì, hỗ trợ hay giải quyết khiếu nại liên quan đến Phần mềm.
 - Bạn phải tuân thủ quy định sử dụng của cửa hàng ứng dụng nơi bạn tải Phần mềm. Với bản tải từ App Store, Apple và các công ty con của Apple là bên thụ hưởng thứ ba của Giấy phép này và có quyền thực thi Giấy phép đối với bạn.
 
 ## 8. Chấm dứt
@@ -53,8 +53,8 @@ Phần mềm được cung cấp "nguyên trạng". Các quy định về miễn
 
 ## 10. Liên hệ cấp phép
 
-Mọi yêu cầu cấp phép, hợp tác hoặc sử dụng Phần mềm ngoài phạm vi Giấy phép này, vui lòng liên hệ [EMAIL LIÊN HỆ].
+Mọi yêu cầu cấp phép, hợp tác hoặc sử dụng Phần mềm ngoài phạm vi Giấy phép này, vui lòng liên hệ ndh0408@gmail.com.
 
 ---
 
-© 2026 [TÊN NHÀ PHÁT HÀNH]. Bảo lưu mọi quyền.
+© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền.

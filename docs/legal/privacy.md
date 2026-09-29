@@ -10,7 +10,7 @@ Chính sách này giải thích cách ValVN thu thập, sử dụng, lưu trữ 
 
 ## 1. Bên kiểm soát và xử lý dữ liệu
 
-[TÊN NHÀ PHÁT HÀNH] ("chúng tôi") là bên quyết định mục đích và phương tiện xử lý dữ liệu cá nhân trong ValVN (bên kiểm soát và xử lý dữ liệu cá nhân). Thông tin liên hệ có ở mục cuối của Chính sách này.
+Nguyễn Đức Huy ("chúng tôi") là bên quyết định mục đích và phương tiện xử lý dữ liệu cá nhân trong ValVN (bên kiểm soát và xử lý dữ liệu cá nhân). Thông tin liên hệ có ở mục cuối của Chính sách này.
 
 ## 2. Phạm vi áp dụng
 
@@ -100,7 +100,7 @@ Máy chủ Cộng đồng chạy trên mạng lưới toàn cầu của Cloudfla
 ### Trên máy chủ Cộng đồng
 
 - Bạn có thể tự xóa bài đăng, bình luận, bài tìm đồng đội và bỏ bình chọn ngay trong Ứng dụng.
-- Để xóa toàn bộ dữ liệu Cộng đồng gắn với Riot ID của bạn, hãy gửi email tới [EMAIL LIÊN HỆ] kèm Riot ID. Chúng tôi có thể yêu cầu xác minh bạn là chủ tài khoản trước khi xử lý và sẽ phản hồi trong thời hạn pháp luật quy định.
+- Để xóa toàn bộ dữ liệu Cộng đồng gắn với Riot ID của bạn, hãy gửi email tới ndh0408@gmail.com kèm Riot ID. Chúng tôi có thể yêu cầu xác minh bạn là chủ tài khoản trước khi xử lý và sẽ phản hồi trong thời hạn pháp luật quy định.
 - Lưu ý: đăng xuất khỏi Ứng dụng không tự động xóa nội dung bạn đã đăng trên máy chủ Cộng đồng.
 
 ## 12. Thông báo và tác vụ nền
@@ -140,7 +140,7 @@ Theo pháp luật Việt Nam về bảo vệ dữ liệu cá nhân (bao gồm Ng
 - **Quyền khiếu nại và yêu cầu bồi thường:** khiếu nại, tố cáo, khởi kiện và yêu cầu bồi thường thiệt hại theo quy định của pháp luật;
 - **Quyền tự bảo vệ:** tự bảo vệ dữ liệu cá nhân của mình.
 
-Phần lớn dữ liệu nằm trên thiết bị và bạn có thể tự xem hoặc xóa ngay trong Ứng dụng. Với dữ liệu trên máy chủ Cộng đồng, hãy gửi yêu cầu tới [EMAIL LIÊN HỆ]. Chúng tôi sẽ phản hồi trong thời hạn pháp luật quy định và có thể cần xác minh danh tính của bạn trước khi xử lý.
+Phần lớn dữ liệu nằm trên thiết bị và bạn có thể tự xem hoặc xóa ngay trong Ứng dụng. Với dữ liệu trên máy chủ Cộng đồng, hãy gửi yêu cầu tới ndh0408@gmail.com. Chúng tôi sẽ phản hồi trong thời hạn pháp luật quy định và có thể cần xác minh danh tính của bạn trước khi xử lý.
 
 ## 17. Thay đổi Chính sách
 
@@ -150,10 +150,9 @@ Chúng tôi có thể cập nhật Chính sách này khi Ứng dụng hoặc quy
 
 Mọi câu hỏi hoặc yêu cầu về quyền riêng tư và dữ liệu cá nhân, vui lòng liên hệ:
 
-- **Bên kiểm soát dữ liệu:** [TÊN NHÀ PHÁT HÀNH]
-- **Email:** [EMAIL LIÊN HỆ]
-- **Địa chỉ:** [ĐỊA CHỈ LIÊN HỆ]
+- **Bên kiểm soát dữ liệu:** Nguyễn Đức Huy
+- **Email:** ndh0408@gmail.com
 
 ---
 
-© 2026 [TÊN NHÀ PHÁT HÀNH]. Bảo lưu mọi quyền.
+© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền.

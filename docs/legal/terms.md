@@ -4,7 +4,7 @@
 
 **ValVN** · Phiên bản 1.0 · Hiệu lực từ: 29/09/2026
 
-Chào mừng bạn đến với ValVN. Điều khoản sử dụng này ("Điều khoản") là thỏa thuận ràng buộc giữa bạn và [TÊN NHÀ PHÁT HÀNH] ("chúng tôi") về việc tải, cài đặt và sử dụng ứng dụng ValVN trên iOS và Android, bao gồm cả các tính năng Cộng đồng (gọi chung là "Ứng dụng").
+Chào mừng bạn đến với ValVN. Điều khoản sử dụng này ("Điều khoản") là thỏa thuận ràng buộc giữa bạn và Nguyễn Đức Huy ("chúng tôi") về việc tải, cài đặt và sử dụng ứng dụng ValVN trên iOS và Android, bao gồm cả các tính năng Cộng đồng (gọi chung là "Ứng dụng").
 
 > Tóm tắt: ValVN là ứng dụng đồng hành không chính thức, không thuộc Riot Games. Bạn đăng nhập bằng tài khoản Riot của chính mình trên trang chính thức của Riot, tự chịu trách nhiệm về tài khoản và mọi thao tác bạn thực hiện, cư xử văn minh trong Cộng đồng và không dùng ứng dụng để gian lận, tự động hóa hay khai thác trái phép. Ứng dụng được cung cấp nguyên trạng.
 
@@ -89,7 +89,7 @@ Bạn vẫn là chủ sở hữu Nội dung người dùng của mình. Khi đă
 
 ## 9. Quyền sở hữu trí tuệ
 
-Ứng dụng, bao gồm mã nguồn, thiết kế giao diện, biểu tượng, tên và logo ValVN, văn bản và các tài liệu đi kèm, thuộc quyền sở hữu của [TÊN NHÀ PHÁT HÀNH] và được bảo hộ theo pháp luật về sở hữu trí tuệ.
+Ứng dụng, bao gồm mã nguồn, thiết kế giao diện, biểu tượng, tên và logo ValVN, văn bản và các tài liệu đi kèm, thuộc quyền sở hữu của Nguyễn Đức Huy và được bảo hộ theo pháp luật về sở hữu trí tuệ.
 
 VALORANT, Riot Games cùng tên, hình ảnh, biểu tượng và nội dung trong trò chơi (skin, đặc vụ, bản đồ, rank…) thuộc quyền sở hữu của Riot Games, Inc. và được hiển thị trong Ứng dụng chỉ nhằm mục đích tham chiếu cho người chơi. Việc hiển thị này không chuyển giao cho bạn hay cho chúng tôi bất kỳ quyền nào đối với các tài sản đó.
 
@@ -152,10 +152,9 @@ Mọi tranh chấp phát sinh trước hết được giải quyết thông qua 
 
 Mọi câu hỏi, góp ý hoặc khiếu nại về Điều khoản này, vui lòng liên hệ:
 
-- **Nhà phát hành:** [TÊN NHÀ PHÁT HÀNH]
-- **Email:** [EMAIL LIÊN HỆ]
-- **Địa chỉ:** [ĐỊA CHỈ LIÊN HỆ]
+- **Nhà phát hành:** Nguyễn Đức Huy
+- **Email:** ndh0408@gmail.com
 
 ---
 
-© 2026 [TÊN NHÀ PHÁT HÀNH]. Bảo lưu mọi quyền.
+© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền.
