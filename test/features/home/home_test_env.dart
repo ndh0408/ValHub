@@ -181,6 +181,10 @@ class HomeTestEnv {
   /// Times the chat service was created (it must stay 0 without consent).
   int xmppCreated = 0;
 
+  /// The chat service the app gets when it asks for one (`null` = signed
+  /// out of chat).
+  XmppService? xmpp;
+
   ContentDb content = economyContent();
 
   List<Override> get overrides => [
@@ -204,7 +208,7 @@ class HomeTestEnv {
     appForegroundProvider.overrideWith(() => foreground),
     xmppServiceProvider.overrideWith((ref) {
       xmppCreated++;
-      return null;
+      return xmpp;
     }),
   ];
 }
@@ -254,12 +258,15 @@ List<Override> vmWith({
 
   /// Leaves the live card to the real live-game provider.
   bool realLive = false,
+
+  /// Leaves the friends card to the real chat providers.
+  bool realFriends = false,
 }) => [
   if (!realLive) liveOverride ?? vmLive(live),
   storeOverride ?? vmStore(store),
   vmRank(rank),
   vmBp(bp),
-  ...vmFriends(friends),
+  if (!realFriends) ...vmFriends(friends),
   vmCommunity(community),
   vmOthers(others),
   vmStatus(status),
@@ -273,8 +280,10 @@ List<Override> vmFull({
   Override? storeOverride,
   Override? liveOverride,
   bool realLive = false,
+  bool realFriends = false,
 }) => vmWith(
   realLive: realLive,
+  realFriends: realFriends,
   storeOverride: storeOverride,
   liveOverride: liveOverride,
   live: live,

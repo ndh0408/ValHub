@@ -25,6 +25,7 @@ import '../../data/home_accounts.dart';
 import '../../data/home_card.dart';
 import '../../home_strings.dart';
 import '../../providers/home_card_providers.dart';
+import '../../providers/home_refresh.dart';
 import '../home_card_frame.dart';
 
 class OtherAccountsHomeCard extends ConsumerWidget {
@@ -35,28 +36,42 @@ class OtherAccountsHomeCard extends ConsumerWidget {
     final data = ref.watch(homeOtherAccountsProvider);
     if (data == null || data.rows.isEmpty) return const SizedBox.shrink();
     final count = data.rows.length + data.more;
-    return HomeCardFrame(
-      card: HomeCardId.otherAccounts,
-      title: HomeStrings.otherAccountsTitle(count),
-      childPadding: const EdgeInsetsDirectional.fromSTEB(4, 0, 4, 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (final row in data.rows) _AccountRow(row: row),
-          if (data.more > 0)
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: Padding(
-                padding: const EdgeInsetsDirectional.only(start: 8),
-                child: TextButton.icon(
-                  onPressed: () => unawaited(showAccountSwitcherSheet(context)),
-                  icon: const Icon(Icons.chevron_right),
-                  iconAlignment: IconAlignment.end,
-                  label: Text(HomeStrings.otherMore(data.more)),
+    // The slow activity poll: only the rows shown, never an account that
+    // has to sign in again, and only while Home is visible.
+    return HomeCardPoller(
+      every: kHomeAccountsRefresh,
+      onTick: () {
+        for (final row
+            in ref.read(homeOtherAccountsProvider)?.rows ??
+                const <OtherAccountSummary>[]) {
+          if (row.account.needsLogin) continue;
+          ref.invalidate(accountActivityProvider(row.account.puuid));
+        }
+      },
+      child: HomeCardFrame(
+        card: HomeCardId.otherAccounts,
+        title: HomeStrings.otherAccountsTitle(count),
+        childPadding: const EdgeInsetsDirectional.fromSTEB(4, 0, 4, 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final row in data.rows) _AccountRow(row: row),
+            if (data.more > 0)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.only(start: 8),
+                  child: TextButton.icon(
+                    onPressed: () =>
+                        unawaited(showAccountSwitcherSheet(context)),
+                    icon: const Icon(Icons.chevron_right),
+                    iconAlignment: IconAlignment.end,
+                    label: Text(HomeStrings.otherMore(data.more)),
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -70,13 +85,9 @@ class _AccountRow extends ConsumerWidget {
 
   final OtherAccountSummary row;
 
-  Future<void> _switchTo(WidgetRef ref, {String? then}) async {
+  void _switchTo(WidgetRef ref) {
     Haptics.selection();
     ref.read(activePuuidProvider.notifier).select(row.account.puuid);
-    if (then != null) {
-      // Let the tab rebuild for the new account first.
-      await Future<void>.delayed(Duration.zero);
-    }
   }
 
   @override
@@ -134,7 +145,7 @@ class _AccountRow extends ConsumerWidget {
                     ),
                   );
                 } else {
-                  unawaited(_switchTo(ref));
+                  _switchTo(ref);
                 }
               },
               child: ConstrainedBox(
@@ -181,7 +192,7 @@ class _AccountRow extends ConsumerWidget {
         if (hit != null)
           _HitBadge(
             onTap: () {
-              unawaited(_switchTo(ref, then: 'store'));
+              _switchTo(ref);
               switch (hit.place) {
                 case WishlistPlace.daily:
                   context.go(StoreRoutes.segment(StoreSegment.daily));
