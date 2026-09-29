@@ -67,7 +67,8 @@ void main() {
     expect(c.value.volume, 1);
     expect(find.byIcon(Icons.play_circle_fill), findsNothing);
 
-    await tester.tap(find.byType(VideoPlayer));
+    // The tap-to-pause detector sits above the player.
+    await tester.tapAt(tester.getCenter(find.byType(VideoPlayer)));
     await _settle(tester);
     expect(c.value.isPlaying, isFalse);
     expect(find.byIcon(Icons.play_circle_fill), findsOneWidget);

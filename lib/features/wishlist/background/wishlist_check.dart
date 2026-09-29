@@ -6,6 +6,8 @@
 /// `needsLogin`, at most once per UTC day: silent session (SUMMARY §3.4) →
 /// storefront (P-1) → `findWishlistHits` → local notifications saying which
 /// account the skin is waiting in, with a deep link that switches to it.
+/// With "Khi Chợ Đêm mở" on, the same daily storefront read also sends
+/// "Chợ Đêm đã mở!" once per Night Market (VF §6.9), for every account.
 /// A re-auth failure marks the account `needsLogin` and sends "Cần đăng
 /// nhập lại" once. Never throws.
 library;
@@ -19,9 +21,16 @@ import '../../../core/network/riot_exception.dart';
 import '../../../core/notifications/notification_service.dart';
 import '../../../core/settings/app_settings.dart';
 import '../../../core/storage/prefs.dart';
+import '../../../core/util/format.dart';
 import '../../settings/settings_routes.dart';
+import '../../store/store_routes.dart';
+import '../../store/ui/store_screen.dart' show StoreSegment;
 import 'wishlist_alerts.dart';
 import 'wishlist_check_state.dart';
+
+/// How long a Night Market without a remaining duration counts as
+/// announced.
+const kNightMarketFallbackLength = Duration(days: 14);
 
 /// Entry point used by `core/background/background_tasks.dart`.
 ///
@@ -95,6 +104,9 @@ class WishlistCheckReport {
   /// Notifications shown for wishlist hits.
   int alerts = 0;
 
+  /// "Chợ Đêm đã mở!" notifications shown.
+  int nightMarkets = 0;
+
   /// Accounts whose re-auth failed.
   int needsLogin = 0;
 
@@ -108,7 +120,8 @@ class WishlistCheckReport {
 
   @override
   String toString() =>
-      'checked=$checked alerts=$alerts needsLogin=$needsLogin '
+      'checked=$checked alerts=$alerts nightMarkets=$nightMarkets '
+      'needsLogin=$needsLogin '
       'failed=$failed retry=$retry';
 }
 
@@ -131,28 +144,36 @@ class WishlistChecker {
     try {
       await _guard(env.reload);
       final settings = readAppSettings(env.prefs);
-      if (!settings.wishlistNotifications) {
+      final wishlistOn = settings.wishlistNotifications;
+      final nightMarketOn = settings.nightMarketNotifications;
+      if (!wishlistOn && !nightMarketOn) {
         report.disabled = true;
         return report;
       }
+      bool wantsWishlist(Account a) =>
+          wishlistOn && env.wishlist(a.puuid).isNotEmpty;
+
       final started = env.now();
       final state = WishlistCheckState(env.prefs);
       final due = [
         for (final a in env.accounts())
           if (!a.needsLogin &&
               !state.checkedToday(a.puuid, started) &&
-              env.wishlist(a.puuid).isNotEmpty)
+              (nightMarketOn || wantsWishlist(a)))
             a,
       ];
       if (due.isEmpty) return report;
 
-      final ContentDb db;
-      try {
-        db = await env.loadContent(settings.itemLanguage.apiCode);
-      } on Object catch (e) {
-        _log('wishlist.check.content_failed', e.runtimeType.toString());
-        report.retry = true;
-        return report;
+      // Skin names are only needed for wishlist alerts.
+      ContentDb? db;
+      if (due.any(wantsWishlist)) {
+        try {
+          db = await env.loadContent(settings.itemLanguage.apiCode);
+        } on Object catch (e) {
+          _log('wishlist.check.content_failed', e.runtimeType.toString());
+          report.retry = true;
+          return report;
+        }
       }
 
       for (final (i, account) in due.indexed) {
@@ -160,7 +181,13 @@ class WishlistChecker {
           report.retry = true;
           break;
         }
-        await _checkAccount(account, db, state, report);
+        await _checkAccount(
+          account,
+          wantsWishlist(account) ? db : null,
+          state,
+          report,
+          nightMarket: nightMarketOn,
+        );
       }
     } on Object catch (e) {
       _log('wishlist.check.error', e.runtimeType.toString());
@@ -170,12 +197,15 @@ class WishlistChecker {
     return report;
   }
 
+  /// Reads [account]'s storefront once, then sends its wishlist alerts
+  /// (when [db] is given) and the Night Market notice (when [nightMarket]).
   Future<void> _checkAccount(
     Account account,
-    ContentDb db,
+    ContentDb? db,
     WishlistCheckState state,
-    WishlistCheckReport report,
-  ) async {
+    WishlistCheckReport report, {
+    required bool nightMarket,
+  }) async {
     final puuid = account.puuid;
     final now = env.now();
     try {
@@ -185,35 +215,12 @@ class WishlistChecker {
       await _guard(
         () => ObservedPriceStore(env.prefs).record(store.observedSkinPrices()),
       );
-      final hits = findWishlistHits(store, env.wishlist(puuid), db);
-
-      final notified = state.notified(puuid, now);
-      final (fresh, covered) = _newHits(hits, notified);
-      final alerts = buildWishlistAlerts(
-        fresh,
-        account: account,
-        db: db,
-        now: now,
-        maxSeparate: maxSeparateAlerts,
-      );
-      for (final alert in alerts) {
-        final shown = await _guard(
-          () => env.notify(
-            id: alert.id,
-            title: alert.title,
-            body: alert.body,
-            channel: NotificationChannel.wishlist,
-            payload: alert.payload,
-            accountPuuid: puuid,
-          ),
-        );
-        if (shown) report.alerts++;
+      if (nightMarket) {
+        await _announceNightMarket(account, store, state, report, now);
       }
-
-      await state.saveNotified(puuid, {
-        ...notified,
-        for (final h in covered) h.key: _liveUntil(h, now),
-      });
+      if (db != null) {
+        await _alertWishlist(account, store, db, state, report, now);
+      }
       await state.markChecked(puuid, now);
       if (state.needsLoginNotified(puuid)) {
         await state.setNeedsLoginNotified(puuid, false);
@@ -245,6 +252,87 @@ class WishlistChecker {
       report.failed++;
       _log('wishlist.check.account_failed', e.runtimeType.toString());
     }
+  }
+
+  /// "Chợ Đêm đã mở!" once per Night Market (remembered until it ends).
+  Future<void> _announceNightMarket(
+    Account account,
+    Storefront store,
+    WishlistCheckState state,
+    WishlistCheckReport report,
+    DateTime now,
+  ) async {
+    final market = store.nightMarket;
+    final puuid = account.puuid;
+    if (market == null || state.nightMarketNotified(puuid, now)) return;
+    final shown = await _guard(
+      () => env.notify(
+        id: NotificationIds.nightMarket(puuid),
+        title: NotificationStrings.nightMarketOpenTitle,
+        body: NotificationStrings.nightMarketOpenBody(
+          formatNumber(market.offers.length),
+          account.riotId,
+        ),
+        channel: NotificationChannel.nightMarket,
+        payload: withAccountParam(
+          StoreRoutes.segment(StoreSegment.nightMarket),
+          puuid,
+        ),
+        accountPuuid: puuid,
+      ),
+    );
+    if (!shown) return;
+    report.nightMarkets++;
+    final end = market.expiresAt;
+    await _guard(
+      () => state.setNightMarketNotified(
+        puuid,
+        end != null && end.isAfter(now)
+            ? end
+            : now.add(kNightMarketFallbackLength),
+      ),
+    );
+  }
+
+  /// Wishlist hits of [store] not notified yet.
+  Future<void> _alertWishlist(
+    Account account,
+    Storefront store,
+    ContentDb db,
+    WishlistCheckState state,
+    WishlistCheckReport report,
+    DateTime now,
+  ) async {
+    final puuid = account.puuid;
+    final hits = findWishlistHits(store, env.wishlist(puuid), db);
+
+    final notified = state.notified(puuid, now);
+    final (fresh, covered) = _newHits(hits, notified);
+    final alerts = buildWishlistAlerts(
+      fresh,
+      account: account,
+      db: db,
+      now: now,
+      maxSeparate: maxSeparateAlerts,
+    );
+    for (final alert in alerts) {
+      final shown = await _guard(
+        () => env.notify(
+          id: alert.id,
+          title: alert.title,
+          body: alert.body,
+          channel: NotificationChannel.wishlist,
+          payload: alert.payload,
+          accountPuuid: puuid,
+        ),
+      );
+      if (shown) report.alerts++;
+    }
+
+    await state.saveNotified(puuid, {
+      ...notified,
+      for (final h in covered) h.key: _liveUntil(h, now),
+    });
   }
 
   /// One new hit per skin (store order: daily → Night Market → bundles)

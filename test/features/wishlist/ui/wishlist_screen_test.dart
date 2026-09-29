@@ -133,7 +133,10 @@ void main() {
       find.text(WishlistStrings.sortLabel(WishlistStrings.sortRarity)),
     );
     await settle(tester);
-    await tester.tap(find.text(WishlistStrings.sortName).last);
+    // The menu item's text is not itself hit-testable mid-animation.
+    await tester.tapAt(
+      tester.getCenter(find.text(WishlistStrings.sortName).last),
+    );
     await settle(tester);
     expect(
       find.text(WishlistStrings.sortLabel(WishlistStrings.sortName)),

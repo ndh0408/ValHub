@@ -18,6 +18,11 @@ class WishlistCheckState {
   static String notifiedKey(String puuid) =>
       PrefKeys.account(puuid, 'wishlist.notified');
 
+  /// Until when the current Night Market was already announced ("Chợ Đêm
+  /// đã mở!" is sent once per Night Market).
+  static String nightMarketNotifiedKey(String puuid) =>
+      PrefKeys.account(puuid, 'nightMarket.notifiedUntil');
+
   /// Same key as `core/background/session_keep_alive.dart`, so the
   /// "Cần đăng nhập lại" notification is sent once whichever task notices.
   static String needsLoginNotifiedKey(String puuid) =>
@@ -58,6 +63,18 @@ class WishlistCheckState {
         for (final e in notified.entries)
           e.key: e.value.toUtc().toIso8601String(),
       });
+
+  /// Whether the Night Market running at [now] was already announced.
+  bool nightMarketNotified(String puuid, DateTime now) {
+    final until = asDateTime(_prefs.getString(nightMarketNotifiedKey(puuid)));
+    return until != null && until.isAfter(now);
+  }
+
+  Future<void> setNightMarketNotified(String puuid, DateTime until) =>
+      _prefs.setString(
+        nightMarketNotifiedKey(puuid),
+        until.toUtc().toIso8601String(),
+      );
 
   bool needsLoginNotified(String puuid) =>
       _prefs.getBool(needsLoginNotifiedKey(puuid)) ?? false;

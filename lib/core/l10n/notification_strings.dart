@@ -12,6 +12,10 @@ abstract final class NotificationStrings {
   static const channelAccountDescription =
       'Nhắc khi một tài khoản cần đăng nhập lại';
 
+  static const nightMarketOpenTitle = 'Chợ Đêm đã mở!';
+  static String nightMarketOpenBody(String cards, String account) =>
+      'Lật $cards thẻ ưu đãi của $account ngay.';
+
   static const sessionExpiredTitle = 'Cần đăng nhập lại';
   static String sessionExpiredBody(String account) =>
       'Phiên của $account đã hết hạn, thông báo wishlist tạm dừng.';

@@ -129,7 +129,7 @@ Routes are composed in `lib/app/router.dart`; features only edit their own
 |---|---|---|
 | top level | `settings_routes.dart` (`settingsTopLevelRoutes`) | `/welcome` → `WelcomeScreen` |
 | top level | core (`AuthRoutes`) | `/login`, `/login?reauth=<puuid>` → `LoginScreen` |
-| top level | `profile_routes.dart` (`profileTopLevelRoutes`) | `/player/:puuid` → `PlayerProfileScreen` |
+| top level | `profile_routes.dart` (`profileTopLevelRoutes`) | `/player/:puuid[?hidden=1]` → `PlayerProfileScreen`, `/match/:id[?player=<puuid>]` → `MatchDetailScreen` (full screen, e.g. from the live-game sheet) |
 | tab 0 | `store_routes.dart` (`storeBranchRoutes`) | `/store[?segment=daily\|nightmarket\|accessories\|bundles]`, `/store/bundle/:id` |
 | tab 1 | `battlepass_routes.dart` (`battlepassBranchRoutes`) | `/battlepass`, `/battlepass/rewards` |
 | tab 2 | `collection_routes.dart` (`collectionBranchRoutes({nested})`) | `/collection`, `/card`, `/title`, `/weapons`, `/weapons/:weaponId`, `/weapons/:weaponId/skin/:skinId`, `/expressions`, `/presets`, `/browse/:type` |
@@ -142,7 +142,8 @@ Location helpers (use them instead of string literals):
 `StoreRoutes.bundle(id)`, `StoreRoutes.segment(StoreSegment.nightMarket)`,
 `BattlePassRoutes.rewards`, `CollectionRoutes.weapon(id)`, `CollectionRoutes.weaponSkin(w, s)`,
 `CollectionRoutes.browse(CollectionBrowseType.spray)`, `WishlistRoutes.wishlist`,
-`ProfileRoutes.match(id)`, `ProfileRoutes.player(puuid)`, `SocialRoutes.chat(puuid)`,
+`ProfileRoutes.match(id, {player})`, `ProfileRoutes.matchFullScreen(id, {player})`,
+`ProfileRoutes.player(puuid, {hidden})`, `SocialRoutes.chat(puuid)`,
 `SettingsRoutes.log`, `AuthRoutes.loginPath(reauthPuuid: puuid)`.
 
 ```dart
@@ -156,8 +157,10 @@ Redirect (`appRedirect`, unit-tested): no accounts → everything except `/welco
 
 Sheets (not routes): `showSkinDetailSheet(context, skinOrLevelUuid: id, mode:
 SkinDetailMode.store|owned|catalog)`, `openSkinVideo(context, videoUrl:)` (S16), `showLiveGameSheet(context)`,
-`showPlayerLoadoutSheet(context, matchId:, playerPuuid:)`, `showBuddyPickerSheet(context,
-weaponId:)`, `showNotificationPrimingSheet(context) → Future<bool>`,
+`showPlayerLoadoutSheet(context, matchId:, playerPuuid:, pregame:, viewerPuuid:, playerName:)` (last three optional),
+`showBuddyPickerSheet(context, weaponId:)`, `showNotificationPrimingSheet(context) →
+Future<bool>` (asks the OS itself; `true` only when notifications end up allowed;
+`runNotificationPriming()` also tells "Để sau" apart from a refusal),
 `showAccountSwitcherSheet(context)`.
 
 Notification payloads are route locations, optionally with `account=<puuid>`
@@ -352,7 +355,8 @@ On a miss (a Riot uuid not in `ContentDb` after a patch) call
 ### 5.8 Notifications — `core/notifications/notification_service.dart`
 
 `notificationServiceProvider` → `NotificationService`:
-`requestPermission()` (Android 13+/iOS; show `showNotificationPrimingSheet` first),
+`requestPermission()` (Android 13+/iOS; normally reached through
+`showNotificationPrimingSheet`, which calls it), 
 `areEnabled()`, `openSystemSettings()`,
 `scheduleAt({id, at, title, body, channel, payload, accountPuuid, tag})` (inexact,
 tz-aware; `accountPuuid` makes it cancelled on sign-out), `showNow({...})`,
@@ -360,6 +364,8 @@ tz-aware; `accountPuuid` makes it cancelled on sign-out), `showNow({...})`,
 Channels: `NotificationChannel.storeReset | wishlist | nightMarket | account`.
 Stable ids: `NotificationIds.storeReset(puuid)`, `.nightMarket(puuid)`,
 `.wishlistHit(puuid, skinUuid)`, `.sessionExpired(puuid)`, `.forKey(anyKey)`.
+Android small icon: `@drawable/ic_stat_valvn` (white V, kept by `res/raw/keep.xml`),
+tinted Valorant red.
 
 ```dart
 // B8: store reset reminder (re-schedule after every storefront fetch).
@@ -381,7 +387,10 @@ One periodic workmanager task `kWishlistCheckTask = 'vn.valvn.app.wishlistCheck'
 network required; same id in Info.plist and AppDelegate). It runs
 `runSessionKeepAlive()` (re-auths dormant accounts every 3 days, notifies "Cần đăng nhập
 lại" once) then `runWishlistCheck()` (wishlist feature,
-`lib/features/wishlist/background/wishlist_check.dart`). No Riverpod there: use
+`lib/features/wishlist/background/wishlist_check.dart`): at most one storefront read per
+account per UTC day, which serves both the wishlist alerts (setting
+`wishlistNotifications`) and "Chợ Đêm đã mở!" once per Night Market (setting
+`nightMarketNotifications`). No Riverpod there: use
 
 ```dart
 final ctx = await BackgroundContext.instance();   // prefs, accounts, sessions, pvp,

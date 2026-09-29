@@ -143,22 +143,26 @@ class FakeEnv implements WishlistCheckEnv {
   void log(String event, {String? detail}) => logs.add('$event $detail');
 }
 
-Future<Prefs> prefsWith({bool enabled = true}) => createTestPrefs({
-  PrefKeys.appSettings: '{"wishlistNotifications": $enabled}',
-});
+Future<Prefs> prefsWith({bool enabled = true, bool nightMarket = false}) =>
+    createTestPrefs({
+      PrefKeys.appSettings:
+          '{"wishlistNotifications": $enabled, '
+          '"nightMarketNotifications": $nightMarket}',
+    });
 
 void main() {
   final monday = DateTime.utc(2026, 9, 28, 5);
 
   Future<FakeEnv> env({
     bool enabled = true,
+    bool nightMarket = false,
     List<Account> accounts = const [account1],
     Map<String, Set<String>> wishlists = const {
       puuid1: {Fx.aresSentinels, Fx.reaverVandal},
     },
   }) async {
     final e = FakeEnv(
-      await prefsWith(enabled: enabled),
+      await prefsWith(enabled: enabled, nightMarket: nightMarket),
       accountList: accounts,
       now0: monday,
     );
@@ -431,6 +435,102 @@ void main() {
       ..wishlists[puuid1] = {Fx.aresSentinels};
     await WishlistChecker(e).run();
     expect(e.languages, [ItemLanguage.en.apiCode]);
+  });
+
+  group('"Chợ Đêm đã mở!"', () {
+    List<NotifyCall> nightMarketNotices(FakeEnv e) => [
+      for (final n in e.notifications)
+        if (n.channel == NotificationChannel.nightMarket) n,
+    ];
+
+    test('both settings off → disabled', () async {
+      final e = await env(enabled: false);
+      final report = await WishlistChecker(e).run();
+      expect(report.disabled, isTrue);
+      expect(e.storefrontCalls, isEmpty);
+    });
+
+    test('sent for every account, even with an empty wishlist', () async {
+      final e = await env(
+        enabled: false,
+        nightMarket: true,
+        accounts: const [account1, account2],
+        wishlists: const {},
+      );
+      final report = await WishlistChecker(e).run();
+      expect(report.ok, isTrue);
+      expect(report.nightMarkets, 2);
+      expect(e.contentLoads, 0, reason: 'no skin names needed');
+      final notices = nightMarketNotices(e);
+      expect(notices, hasLength(2));
+      expect(notices.first.title, NotificationStrings.nightMarketOpenTitle);
+      expect(notices.first.body, contains('Người Chơi#VN2'));
+      expect(
+        notices.first.body,
+        contains('3 thẻ'),
+        reason: 'offers in the fixture',
+      );
+      expect(notices.first.id, NotificationIds.nightMarket(puuid1));
+      expect(notices.first.payload, contains('segment=nightmarket'));
+      expect(notices.first.payload, contains('account=$puuid1'));
+      expect(notices.last.puuid, puuid2);
+      expect(e.notifications, hasLength(2), reason: 'no wishlist alerts');
+    });
+
+    test('once per Night Market, again when a new one opens', () async {
+      final e = await env(enabled: false, nightMarket: true);
+      await WishlistChecker(e).run();
+      expect(nightMarketNotices(e), hasLength(1));
+
+      // Next days: the same Night Market (≈ 12.8 days left) is not repeated.
+      e.now0 = DateTime.utc(2026, 9, 29, 5);
+      await WishlistChecker(e).run();
+      e.now0 = DateTime.utc(2026, 10, 5, 5);
+      await WishlistChecker(e).run();
+      expect(e.storefrontCalls, hasLength(3));
+      expect(nightMarketNotices(e), hasLength(1));
+
+      // Weeks later a new Night Market opens.
+      e.now0 = DateTime.utc(2026, 12, 1, 5);
+      await WishlistChecker(e).run();
+      expect(nightMarketNotices(e), hasLength(2));
+    });
+
+    test('no Night Market in the storefront → nothing', () async {
+      final e = await env(enabled: false, nightMarket: true)
+        ..storefrontJson = (Map.of(economyFixture('storefront.json'))
+          ..remove('BonusStore'));
+      final report = await WishlistChecker(e).run();
+      expect(report.checked, 1);
+      expect(report.nightMarkets, 0);
+      expect(e.notifications, isEmpty);
+    });
+
+    test('with the wishlist check on: one storefront read for both', () async {
+      final e = await env(nightMarket: true);
+      final report = await WishlistChecker(e).run();
+      expect(e.storefrontCalls, [puuid1]);
+      expect(report.nightMarkets, 1);
+      expect(report.alerts, 2);
+      expect(
+        e.notifications.first.channel,
+        NotificationChannel.nightMarket,
+        reason: 'the opening notice comes before the skin alerts',
+      );
+    });
+
+    test('a failed notification is retried at the next check', () async {
+      final e = await env(enabled: false, nightMarket: true)
+        ..notifyThrows = true;
+      final first = await WishlistChecker(e).run();
+      expect(first.nightMarkets, 0);
+
+      e
+        ..notifyThrows = false
+        ..now0 = DateTime.utc(2026, 9, 29, 5);
+      final next = await WishlistChecker(e).run();
+      expect(next.nightMarkets, 1);
+    });
   });
 
   group('WishlistCheckState', () {

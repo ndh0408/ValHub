@@ -56,6 +56,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   mocktail: ^1.0.5
   shared_preferences_platform_interface: ^2.4.2   # in-memory prefs in tests
+  flutter_launcher_icons: ^0.14.4
 
 # flutter_inappwebview 6.2.0-beta.3 depends on the 1.1.x platform packages via caret
 # ranges that don't select prereleases; pin the whole family to the self-consistent beta line.
@@ -85,3 +86,16 @@ flutter:
     - family: Anton
       fonts:
         - asset: assets/fonts/Anton-Regular.ttf
+
+# App icon (original ValVN artwork, see tool/generate_icon.py).
+# Regenerate: `python3 tool/generate_icon.py && dart run flutter_launcher_icons`.
+flutter_launcher_icons:
+  image_path: assets/icon/icon.png
+  android: true
+  min_sdk_android: 24
+  adaptive_icon_background: "#0F1923"
+  adaptive_icon_foreground: assets/icon/icon_foreground.png
+  adaptive_icon_monochrome: assets/icon/icon_monochrome.png
+  ios: true
+  remove_alpha_ios: true
+  background_color_ios: "#0F1923"

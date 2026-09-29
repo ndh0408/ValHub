@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'dart:ui' show Color;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -22,6 +23,13 @@ Future<void> initTimeZone() async {
     tz.setLocalLocation(tz.getLocation('Asia/Ho_Chi_Minh'));
   }
 }
+
+/// Status-bar icon (white silhouette, `android/app/src/main/res/drawable-*`;
+/// kept from resource shrinking by `res/raw/keep.xml`).
+const _androidSmallIcon = '@drawable/ic_stat_valvn';
+
+/// Accent tint of Android notifications (Valorant red).
+const _accent = Color(0xFFFF4655);
 
 /// Android channels (ids never change after release).
 enum NotificationChannel {
@@ -106,7 +114,7 @@ class NotificationService {
     try {
       await _plugin.initialize(
         settings: const InitializationSettings(
-          android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+          android: AndroidInitializationSettings(_androidSmallIcon),
           iOS: DarwinInitializationSettings(
             requestAlertPermission: false,
             requestBadgePermission: false,
@@ -209,6 +217,8 @@ class NotificationService {
           channelDescription: channel.description,
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
+          icon: _androidSmallIcon,
+          color: _accent,
           tag: tag,
         ),
         iOS: const DarwinNotificationDetails(),
