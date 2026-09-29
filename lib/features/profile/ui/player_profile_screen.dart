@@ -7,6 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/domain/competitive/competitive.dart';
 import '../../../core/l10n/common_strings.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../profile_routes.dart';
 import '../profile_strings.dart';
@@ -14,6 +15,7 @@ import '../providers/profile_providers.dart';
 import 'widgets/identity_banner.dart';
 import 'widgets/match_history_sliver.dart';
 import 'widgets/rank_card.dart';
+import 'widgets/recent_form_card.dart';
 
 /// S44 "Hồ sơ người chơi" (any player). Top-level route `/player/:puuid`
 /// (`?hidden=1` keeps an incognito player's name hidden, SUMMARY U16).
@@ -43,7 +45,7 @@ class PlayerProfileScreen extends ConsumerWidget {
               icon: Icons.person_search_outlined,
               message: CommonStrings.errorNotFound,
             )
-          : RefreshIndicator(
+          : AdaptiveRefresh(
               onRefresh: () => _refresh(ref, id),
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -53,7 +55,13 @@ class PlayerProfileScreen extends ConsumerWidget {
                   ),
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-                    sliver: SliverToBoxAdapter(child: RankCard(puuid: id)),
+                    sliver: SliverList.list(
+                      children: [
+                        RankCard(puuid: id),
+                        const SizedBox(height: 12),
+                        RecentFormCard(puuid: id),
+                      ],
+                    ),
                   ),
                   MatchHistorySliver(
                     puuid: id,

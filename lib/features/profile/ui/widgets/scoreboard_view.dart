@@ -174,7 +174,14 @@ class _TeamHeader extends StatelessWidget {
       child: Row(
         children: [
           if (accent != null) ...[
-            Container(width: 4, height: 18, color: accent),
+            Container(
+              width: 4,
+              height: 18,
+              decoration: BoxDecoration(
+                color: accent,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
             const SizedBox(width: 8),
           ],
           Expanded(
@@ -188,9 +195,7 @@ class _TeamHeader extends StatelessWidget {
           if (score != null) ...[
             Text(
               formatNumber(score!),
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
+              style: ValText.display(22, color: accent),
             ),
             const SizedBox(width: 8),
           ],
@@ -299,8 +304,19 @@ class _PlayerRow extends ConsumerWidget {
           : Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 52),
+          decoration: highlighted
+              ? BoxDecoration(
+                  border: Border(
+                    left: BorderSide(
+                      color: theme.colorScheme.primary,
+                      width: 3,
+                    ),
+                  ),
+                )
+              : null,
+          padding: EdgeInsets.fromLTRB(highlighted ? 13 : 16, 6, 16, 6),
           child: Row(
             children: [
               if (place != null)
@@ -311,12 +327,20 @@ class _PlayerRow extends ConsumerWidget {
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        width: 36,
-                        height: 36,
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
                         color: theme.colorScheme.surfaceContainerHigh,
+                        border: highlighted
+                            ? Border.all(
+                                color: theme.colorScheme.primary,
+                                width: 1.5,
+                              )
+                            : null,
+                      ),
+                      child: ClipOval(
                         child: NetImage(
                           agent?.displayIconSmall ?? agent?.displayIcon,
                           width: 36,

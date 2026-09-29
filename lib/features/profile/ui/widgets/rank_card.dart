@@ -9,6 +9,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/error_view.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/skeleton.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../data/rr_trend.dart';
 import '../../profile_strings.dart';
@@ -37,7 +38,8 @@ class RankCard extends ConsumerWidget {
     final value = summary.value;
     if (value == null) {
       if (summary.hasError && !summary.isLoading) {
-        return Card(
+        return ValCard(
+          padding: EdgeInsets.zero,
           child: ErrorView(
             error: summary.error!,
             puuid: puuid,
@@ -46,7 +48,7 @@ class RankCard extends ConsumerWidget {
           ),
         );
       }
-      return const Skeleton(height: 150, radius: ValRadius.card);
+      return const Skeleton(height: 168, radius: ValRadius.card);
     }
     return _RankCardBody(
       puuid: puuid,
@@ -85,13 +87,13 @@ class _RankCardBody extends ConsumerWidget {
         : null;
     final changes = updates == null ? const <int>[] : recentRrChanges(updates);
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
+    return ValCard(
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+            padding: const EdgeInsets.fromLTRB(12, 16, 12, 12),
             child: IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -105,9 +107,20 @@ class _RankCardBody extends ConsumerWidget {
                           : current.isUnranked
                           ? null
                           : formatRr(current.rr),
+                      progress:
+                          !current.isUnranked &&
+                              current.normalizedTier < kRankUpMaxTier &&
+                              current.rr >= 0 &&
+                              current.rr <= 100
+                          ? current.rr / 100
+                          : null,
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  VerticalDivider(
+                    width: 20,
+                    thickness: 1,
+                    color: valColorsOf(context).hairline,
+                  ),
                   Expanded(
                     child: peak == null
                         ? _RankColumn(
@@ -169,6 +182,7 @@ class _RankColumn extends StatelessWidget {
     required this.rank,
     this.detail,
     this.caption,
+    this.progress,
   });
 
   final String label;
@@ -176,68 +190,82 @@ class _RankColumn extends StatelessWidget {
   final String? detail;
   final String? caption;
 
+  /// RR progress (0–1) to the next tier.
+  final double? progress;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
     final r = rank;
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: valColorsOf(context).surface2,
-        borderRadius: BorderRadius.circular(ValRadius.small),
-      ),
+    final ranked = r != null && !r.isUnranked;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label.toUpperCase(),
             maxLines: 2,
+            textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
             style: ValText.label.copyWith(color: muted, fontSize: 11),
           ),
           const SizedBox(height: 10),
-          Row(
-            children: [
-              SizedBox(
-                width: 40,
-                height: 40,
-                child: r?.largeIcon == null
-                    ? Icon(Icons.shield_outlined, size: 32, color: muted)
-                    : NetImage(r!.largeIcon, width: 40, height: 40),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      r?.tierName ?? ContentStrings.unranked,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    if (detail != null)
-                      Text(
-                        detail!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: muted,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: ranked
+                  ? RadialGradient(
+                      colors: [
+                        r.color.withValues(alpha: 0.35),
+                        r.color.withValues(alpha: 0),
+                      ],
+                    )
+                  : null,
+            ),
+            alignment: Alignment.center,
+            child: r?.largeIcon == null
+                ? Icon(Icons.shield_outlined, size: 44, color: muted)
+                : NetImage(r!.largeIcon, width: 56, height: 56),
           ),
+          const SizedBox(height: 8),
+          Text(
+            r?.tierName ?? ContentStrings.unranked,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: ranked ? legibleAccent(context, r.color, min: 3.5) : null,
+            ),
+          ),
+          if (detail != null)
+            Text(
+              detail!,
+              maxLines: 2,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodySmall?.copyWith(color: muted),
+            ),
+          if (progress != null) ...[
+            const SizedBox(height: 8),
+            FractionallySizedBox(
+              widthFactor: 0.7,
+              child: ValProgressBar(
+                value: progress!,
+                height: 4,
+                semanticsLabel: ProfileStrings.rrToNext(r?.rr ?? 0),
+              ),
+            ),
+          ],
           if (caption != null) ...[
             const SizedBox(height: 6),
             Text(
               caption!,
               maxLines: 2,
+              textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.labelSmall?.copyWith(color: muted),
             ),
@@ -320,9 +348,15 @@ class _RankUpHint extends ConsumerWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 4, 12, 14),
+          padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
           child: Row(
             children: [
+              Icon(
+                Icons.trending_up_rounded,
+                size: 20,
+                color: valColorsOf(context).win,
+              ),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   text,
@@ -331,7 +365,11 @@ class _RankUpHint extends ConsumerWidget {
                   style: theme.textTheme.bodyMedium,
                 ),
               ),
-              const Icon(Icons.chevron_right, color: ValColors.red),
+              Icon(
+                Icons.chevron_right,
+                color: theme.colorScheme.primary,
+                semanticLabel: ProfileStrings.rankUpOpen,
+              ),
             ],
           ),
         ),

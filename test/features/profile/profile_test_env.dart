@@ -279,6 +279,7 @@ Future<void> pumpProfile(
   ProfileTestEnv env,
   Widget child, {
   double height = 1400,
+  ThemeData? theme,
 }) async {
   tester.view.physicalSize = Size(360, height);
   tester.view.devicePixelRatio = 1.0;
@@ -287,7 +288,7 @@ Future<void> pumpProfile(
     ProviderScope(
       overrides: env.overrides,
       retry: (_, _) => null,
-      child: MaterialApp(theme: buildDarkTheme(), home: child),
+      child: MaterialApp(theme: theme ?? buildDarkTheme(), home: child),
     ),
   );
 }

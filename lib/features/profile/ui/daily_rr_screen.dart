@@ -9,10 +9,12 @@ import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive.dart';
 import '../../../core/l10n/common_strings.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
 import '../profile_routes.dart';
@@ -116,7 +118,7 @@ class _DailyRrBody extends ConsumerWidget {
         );
     }
 
-    return RefreshIndicator(
+    return AdaptiveRefresh(
       onRefresh: () => ref
           .refresh(competitiveUpdatesProvider(puuid).future)
           .then<void>((_) {}, onError: (Object _) {}),
@@ -147,7 +149,8 @@ class _TrendCard extends StatelessWidget {
     final net = changes.fold<int>(0, (a, b) => a + b);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-      child: Card(
+      child: ValCard(
+        padding: EdgeInsets.zero,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
           child: Column(
@@ -204,8 +207,8 @@ class _DayCard extends ConsumerWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-      child: Card(
-        clipBehavior: Clip.antiAlias,
+      child: ValCard(
+        padding: EdgeInsets.zero,
         child: Theme(
           data: theme.copyWith(dividerColor: Colors.transparent),
           child: ExpansionTile(
@@ -400,7 +403,7 @@ class _Footer extends ConsumerWidget {
                 child: SizedBox(
                   width: 24,
                   height: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2.5),
+                  child: CircularProgressIndicator.adaptive(strokeWidth: 2.5),
                 ),
               ),
             )

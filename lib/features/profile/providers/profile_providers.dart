@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/domain/competitive/competitive.dart';
 import '../../../core/riot/pvp_api.dart';
+import '../../../core/storage/ui_memory.dart';
 import '../data/match_filter.dart';
 import '../data/player_identity.dart';
 
@@ -40,7 +41,9 @@ final playerIdentityProvider = FutureProvider.autoDispose
     });
 
 /// Queue + map filter of one player's match history (family key = PUUID).
-/// Kept for the app session so the profile tab remembers the chips.
+/// Kept for the app session; for signed-in accounts the choice is also
+/// remembered across launches ([UiMemory] keys `profile.history.mode` /
+/// `profile.history.map`), so the profile tab reopens on the same chips.
 final matchFilterProvider =
     NotifierProvider.family<MatchFilterNotifier, MatchFilter, String>(
       MatchFilterNotifier.new,
@@ -51,12 +54,36 @@ class MatchFilterNotifier extends Notifier<MatchFilter> {
 
   final String puuid;
 
+  static const modeKey = 'profile.history.mode';
+  static const mapKey = 'profile.history.map';
+
+  /// Only the user's own profiles remember the filter (another player's
+  /// profile always opens on "Tất cả").
+  bool get _remembers =>
+      ref.read(accountProvider(puuid.trim().toLowerCase())) != null;
+
   @override
-  MatchFilter build() => const MatchFilter();
+  MatchFilter build() {
+    if (!_remembers) return const MatchFilter();
+    final memory = ref.read(uiMemoryProvider);
+    final queue = memory.read(modeKey);
+    return MatchFilter(
+      queue: queue != null && kProfileQueueFilters.contains(queue)
+          ? queue
+          : null,
+      mapUrl: memory.read(mapKey),
+    );
+  }
 
-  void setQueue(String? queue) => state = state.withQueue(queue);
+  void setQueue(String? queue) {
+    state = state.withQueue(queue);
+    if (_remembers) ref.read(uiMemoryProvider).write(modeKey, queue);
+  }
 
-  void setMap(String? mapUrl) => state = state.withMap(mapUrl);
+  void setMap(String? mapUrl) {
+    state = state.withMap(mapUrl);
+    if (_remembers) ref.read(uiMemoryProvider).write(mapKey, mapUrl);
+  }
 }
 
 /// What another player's profile header shows, taken from their most

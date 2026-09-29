@@ -187,4 +187,42 @@ abstract final class ProfileStrings {
   // Player profile (S44)
   static const recentMatches = 'Trận gần đây';
   static const levelHidden = 'Cấp ẩn';
+
+  // Recent form card (derived from the loaded match history)
+  static const recentFormTitle = 'Phong độ gần đây';
+  static const kd = 'K/D';
+
+  /// "Chuỗi 3 trận thắng".
+  static String winStreak(int n) => 'Chuỗi $n trận thắng';
+
+  /// "Chuỗi 2 trận thua".
+  static String lossStreak(int n) => 'Chuỗi $n trận thua';
+
+  /// "7T · 3B" (thắng / bại) under the win-rate ring.
+  static String recordShort(int w, int l, int d) =>
+      d > 0 ? '${w}T · ${l}B · ${d}H' : '${w}T · ${l}B';
+
+  /// Screen-reader summary of the W/L strip.
+  static String formSemantics(int w, int l, int games) =>
+      '$games trận gần nhất: $w thắng, $l thua';
+
+  // Match history (redesign)
+  static const clearMap = 'Bỏ lọc bản đồ';
+
+  /// Screen-reader label of a match card.
+  static String matchSemantics(String map, String outcome, String? score) =>
+      joined([map, outcome, ?score]);
+
+  // Rank card (redesign)
+  /// "6 / 100 RR" progress to the next tier.
+  static String rrToNext(int rr) => '$rr / 100 RR';
+  static const rankUpOpen = 'Mở tính toán lên hạng';
+
+  // Match detail (redesign)
+  static const sideSwitch = 'Đổi bên';
+  static const roundWon = 'Thắng vòng';
+  static const roundLost = 'Thua vòng';
+
+  // Rank-Up Calculator (redesign)
+  static const progressToTarget = 'Tiến độ tới hạng mục tiêu';
 }
