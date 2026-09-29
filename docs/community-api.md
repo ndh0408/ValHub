@@ -5,10 +5,11 @@ party by code, skin voting (one vote per account per skin → most-loved
 leaderboard), a feed of posts with images / likes / comments / reports, and
 "khoe cửa hàng / Chợ Đêm" posts.
 
-- Runtime: Cloudflare Worker (TypeScript) in `server/community/`, D1 database
-  `valvn-community`, R2 bucket `valvn-community-media`.
-- Base URL: configured in the app (`AppConstants.communityBaseUrl`, overridable by
-  remote config key `communityBaseUrl`).
+- Runtime: Node (Hono, TypeScript) in `server/community/`, SQLite + media files on a
+  Docker volume, deployed on the owner's server behind the Cloudflare Tunnel
+  `cf-gianguyen` (see `server/community/README.md`).
+- Base URL: `https://val.gianguyen.cloud` (`AppConstants.communityBaseUrl`, overridable
+  by remote config key `communityBaseUrl`).
 - JSON everywhere (`content-type: application/json; charset=utf-8`) except media
   upload. Times are ISO-8601 UTC strings. UUIDs lowercase.
 - Errors: HTTP status + `{"error": {"code": "snake_case", "message": "…"}}`.
@@ -26,8 +27,8 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
   `acct.game_name`, `acct.tag_line`, then **drops the token** (never stored, never
   logged). This is the only place a Riot token leaves the device.
 - The PUUID is never stored or returned: the user id is
-  `hex(sha256(PEPPER + puuid))[0..32]` (`PEPPER` = Worker secret).
-- The Worker issues its own session token: HS256 JWT signed with the Worker secret
+  `hex(sha256(PEPPER + puuid))[0..32]` (`PEPPER` = server secret).
+- The server issues its own session token: HS256 JWT signed with the server secret
   `SESSION_SECRET`, claims `{sub: userId, name, tag, iat, exp}` (30 days).
   Clients send `Authorization: Bearer <token>`. Riot ID is refreshed on every
   `/v1/auth/riot`.
