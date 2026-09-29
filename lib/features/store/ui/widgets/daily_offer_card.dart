@@ -15,7 +15,7 @@ import '../../../skin_detail/skin_detail_sheet.dart';
 import '../../store_strings.dart';
 import 'store_ui_bits.dart';
 
-/// S10 daily-shop card, image-forward (ValBuddy style): full width, ~2.2:1,
+/// S10 daily-shop card, image-forward (ValBuddy style): full width, ~2.8:1,
 /// tier-tinted background with a soft glow and a large centered render;
 /// bottom row = tier icon + name, VP icon + price. "Đã sở hữu" and the
 /// wishlist heart stay small in the top corners. Tap → S15.
@@ -62,10 +62,10 @@ class DailyOfferCard extends ConsumerWidget {
           mode: SkinDetailMode.store,
         ),
       ),
-      // Full-width ~2.2:1 card: large centered render on the tier-tinted
+      // Full-width ~2.8:1 card: large centered render on the tier-tinted
       // background, then tier icon + name (left) and VP price (right).
       child: AspectRatio(
-        aspectRatio: 2.2,
+        aspectRatio: 2.8,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -76,7 +76,7 @@ class DailyOfferCard extends ConsumerWidget {
                   SkinGlowArt(
                     imageUrl: skin?.image,
                     tint: tint,
-                    padding: const EdgeInsets.fromLTRB(36, 14, 36, 2),
+                    padding: const EdgeInsets.fromLTRB(48, 10, 48, 0),
                   ),
                   if (owned)
                     const PositionedDirectional(
@@ -121,7 +121,9 @@ class DailyOfferCard extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Flexible(
+                  // Intrinsic width, pinned right: the name takes the rest.
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 120),
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       alignment: AlignmentDirectional.centerEnd,
