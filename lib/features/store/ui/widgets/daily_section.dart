@@ -61,7 +61,7 @@ class DailySection extends ConsumerWidget {
           // The daily shop always resets at the same local time.
           note: expiresAt == null
               ? null
-              : StoreStrings.dailyResetAt(formatTime(expiresAt)),
+              : StoreStrings.dailyResetAt(formatTime(roundToMinute(expiresAt))),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
           trailing: daily.totalVp > 0
               ? Column(

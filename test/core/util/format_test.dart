@@ -196,6 +196,27 @@ void main() {
       expect(formatTime(d), '14:05');
     });
 
+    test('reset times are rounded to the minute', () {
+      final now = DateTime(2026, 9, 29, 3, 30);
+      expect(
+        roundToMinute(DateTime(2026, 9, 29, 6, 59, 41)),
+        DateTime(2026, 9, 29, 7),
+      );
+      expect(
+        roundToMinute(DateTime(2026, 9, 29, 7, 0, 20)),
+        DateTime(2026, 9, 29, 7),
+      );
+      expect(
+        formatWallTime(DateTime(2026, 9, 29, 6, 59, 41), now),
+        '07:00 hôm nay',
+      );
+      // 23:59:50 rolls over to the next day.
+      expect(
+        formatWallTime(DateTime(2026, 9, 29, 23, 59, 50), now),
+        '00:00 ngày mai',
+      );
+    });
+
     test('formatWallTime uses today / tomorrow / weekday, 24 h', () {
       final now = DateTime(2026, 9, 29, 18, 30); // Tuesday
       expect(

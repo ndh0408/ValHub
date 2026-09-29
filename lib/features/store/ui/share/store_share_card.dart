@@ -57,64 +57,68 @@ class StoreShareCard extends StatelessWidget {
 
   Widget _body() {
     final price = this.price;
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: _Ink.background,
-        gradient: RadialGradient(
-          center: Alignment(-1, -1),
-          radius: 1.3,
-          colors: [Color(0x47FF4655), Color(0x00FF4655)],
+    // A gradient replaces `BoxDecoration.color`, so the solid background is
+    // its own layer (the picture must never be transparent).
+    return ColoredBox(
+      color: _Ink.background,
+      child: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment(-1, -1),
+            radius: 1.3,
+            colors: [Color(0x47FF4655), Color(0x00FF4655)],
+          ),
         ),
-      ),
-      child: Stack(
-        children: [
-          // Faint watermark in the bottom-right corner.
-          const Positioned(
-            right: -6,
-            bottom: 34,
-            child: Text(
-              StoreStrings.shareCardWatermark,
-              style: TextStyle(
-                fontFamily: AppFonts.display,
-                fontSize: 88,
-                height: 1,
-                color: Color(0x0DFFFFFF),
+        child: Stack(
+          children: [
+            // Faint watermark in the bottom-right corner.
+            const Positioned(
+              right: -6,
+              bottom: 34,
+              child: Text(
+                StoreStrings.shareCardWatermark,
+                style: TextStyle(
+                  fontFamily: AppFonts.display,
+                  fontSize: 88,
+                  height: 1,
+                  color: Color(0x0DFFFFFF),
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _Header(data: data, riotId: riotId),
-                const SizedBox(height: 14),
-                if (data.isNightMarket)
-                  _NightMarketGrid(
-                    items: data.items,
-                    price: price,
-                    imageFor: imageFor,
-                  )
-                else
-                  for (var i = 0; i < data.items.length; i++) ...[
-                    if (i > 0) const SizedBox(height: 8),
-                    _DailyRow(
-                      item: data.items[i],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _Header(data: data, riotId: riotId),
+                  const SizedBox(height: 14),
+                  if (data.isNightMarket)
+                    _NightMarketGrid(
+                      items: data.items,
                       price: price,
                       imageFor: imageFor,
-                    ),
-                  ],
-                const SizedBox(height: 12),
-                _Totals(data: data, price: price),
-                const SizedBox(height: 12),
-                const Divider(height: 1, thickness: 1, color: _Ink.hairline),
-                const SizedBox(height: 10),
-                _Footer(showPriceNote: price != null),
-              ],
+                    )
+                  else
+                    for (var i = 0; i < data.items.length; i++) ...[
+                      if (i > 0) const SizedBox(height: 8),
+                      _DailyRow(
+                        item: data.items[i],
+                        price: price,
+                        imageFor: imageFor,
+                      ),
+                    ],
+                  const SizedBox(height: 12),
+                  _Totals(data: data, price: price),
+                  const SizedBox(height: 12),
+                  const Divider(height: 1, thickness: 1, color: _Ink.hairline),
+                  const SizedBox(height: 10),
+                  _Footer(showPriceNote: price != null),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -132,7 +136,7 @@ abstract final class _Ink {
 
 /// `07:00 thứ Tư 08/10`: absolute, since the picture is read later.
 String _absoluteWall(DateTime at) {
-  final l = at.toLocal();
+  final l = roundToMinute(at).toLocal();
   return '${formatTime(l)} ${formatWeekdayLower(l)} ${formatDayMonth(l)}';
 }
 

@@ -222,11 +222,19 @@ String formatWeekdayDate(DateTime d, {String? locale}) =>
     '${formatWeekday(d, locale: locale)}, '
     '${formatDayMonth(d, locale: locale)}';
 
+/// [d] rounded to the nearest minute (half up). Countdowns count down to
+/// 06:59:41 when the store resets at 07:00:00 (the remaining seconds are
+/// received a moment late), so reset / expiry times are shown rounded.
+DateTime roundToMinute(DateTime d) {
+  final ms = (d.millisecondsSinceEpoch + 30000) ~/ 60000 * 60000;
+  return DateTime.fromMillisecondsSinceEpoch(ms, isUtc: d.isUtc);
+}
+
 /// Wall-clock moment of a reset or expiry in the device time zone, with the
 /// locale's clock: `07:00 hôm nay`, `07:00 ngày mai`, else
 /// `23:59 thứ Hai 06/10`.
 String formatWallTime(DateTime at, DateTime now, {String? locale}) {
-  final t = at.toLocal();
+  final t = roundToMinute(at).toLocal();
   final dayDiff = _dateOnly(t).difference(_dateOnly(now.toLocal())).inDays;
   final String day;
   if (dayDiff == 0) {
