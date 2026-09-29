@@ -120,6 +120,8 @@ void main() {
     await tester.enterText(find.byType(TextField), 'zzz');
     await settle(tester);
     expect(find.text(WishlistStrings.noMatch), findsOneWidget);
+    await tester.ensureVisible(find.text(WishlistStrings.clearFilters));
+    await settle(tester);
     await tester.tap(find.text(WishlistStrings.clearFilters));
     await settle(tester);
     expect(find.text('Ares Sentinels of Light'), findsOneWidget);
@@ -158,6 +160,8 @@ void main() {
   testWidgets('swipe removes with undo', (tester) async {
     final prefs = await _prefs();
     await _pump(tester, prefs: prefs);
+    await tester.ensureVisible(find.text('Ares Sentinels of Light'));
+    await settle(tester);
     await tester.drag(
       find.text('Ares Sentinels of Light'),
       const Offset(-600, 0),
@@ -254,6 +258,8 @@ void main() {
     final notifications = FakeNotificationService(enabled: false);
     await _pump(tester, prefs: prefs, notifications: notifications);
     await tester.tap(find.byType(Switch));
+    await settle(tester);
+    await tester.ensureVisible(find.text('Bật thông báo').last);
     await settle(tester);
     await tester.tap(find.text('Bật thông báo').last);
     await settle(tester);

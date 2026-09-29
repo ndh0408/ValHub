@@ -331,15 +331,9 @@ class _BarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final button = IconButton(
-      tooltip: CommonStrings.back,
-      icon: Icon(
-        isCupertino(context) ? Icons.arrow_back_ios_new : Icons.arrow_back,
-        size: isCupertino(context) ? 20 : 24,
-        color: onImage ? Colors.white : null,
-      ),
-      onPressed: () => Navigator.of(context).maybePop(),
-    );
+    // The framework's BackButton: platform icon, localized tooltip, and it
+    // pops through the router / predictive back like the default app bar.
+    final button = BackButton(color: onImage ? Colors.white : null);
     return onImage ? _OnImage(child: button) : button;
   }
 }

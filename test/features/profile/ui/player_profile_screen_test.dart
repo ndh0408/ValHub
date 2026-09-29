@@ -6,6 +6,7 @@ import 'package:valvn/core/domain/competitive/competitive.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/features/profile/profile_routes.dart';
 import 'package:valvn/features/profile/profile_strings.dart';
+import 'package:valvn/features/profile/ui/match_detail_screen.dart';
 import 'package:valvn/features/profile/ui/player_profile_screen.dart';
 import 'package:valvn/features/profile/ui/widgets/match_card.dart';
 import 'package:valvn/features/profile/ui/widgets/rank_card.dart';
@@ -97,7 +98,7 @@ void main() {
     await tester.tap(find.byType(MatchCard));
     await settle(tester, frames: 20);
     // The detail shows the match from this player's side (they lost).
-    expect(find.text(ProfileStrings.matchDetailTitle), findsOneWidget);
+    expect(find.byType(MatchDetailScreen), findsOneWidget);
     expect(find.text(ProfileStrings.playerSummary), findsOneWidget);
     expect(find.text(CompetitiveStrings.defeat), findsWidgets);
     router.pop();

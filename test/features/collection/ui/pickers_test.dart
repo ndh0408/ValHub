@@ -29,7 +29,8 @@ void main() {
         prefs: prefs,
       );
       expect(find.text(CollectionStrings.playerCardTitle), findsOneWidget);
-      expect(find.text('Thẻ Bộ Đôi Ngời Sáng'), findsOneWidget);
+      // The equipped card is shown in the preview and again in the grid.
+      expect(find.text('Thẻ Bộ Đôi Ngời Sáng'), findsNWidgets(2));
       expect(find.text('Thẻ VALORANT'), findsOneWidget);
 
       await tester.tap(find.text('Thẻ VALORANT'));
@@ -54,13 +55,15 @@ void main() {
         riot: riot,
         prefs: prefs,
       );
-      await tester.tap(find.text('Thẻ Bộ Đôi Ngời Sáng'));
+      await tester.tap(find.text('Thẻ Bộ Đôi Ngời Sáng').last);
       await settle(tester);
-      expect(find.text(CollectionStrings.equipped), findsOneWidget);
-      await tester.tap(find.text(CollectionStrings.equipped));
+      // Grid badge + the disabled button of the preview sheet (on top).
+      expect(find.text(CollectionStrings.equipped), findsNWidgets(2));
+      await tester.tap(find.text(CollectionStrings.equipped).last);
       await settle(tester);
       expect(riot.puts, isEmpty);
-      Navigator.of(tester.element(find.text(CollectionStrings.equipped))).pop();
+      Navigator.of(tester.element(find.text(CollectionStrings.equipped).last))
+          .pop();
       await settle(tester);
 
       await tester.enterText(find.byType(TextField), 'khong co the nay');
@@ -79,14 +82,15 @@ void main() {
         prefs: prefs,
       );
       expect(find.text(CollectionStrings.noTitle), findsOneWidget);
-      expect(find.text('Tài Lộc'), findsOneWidget);
+      // The equipped title is shown in the preview and again in the list.
+      expect(find.text('Tài Lộc'), findsNWidgets(2));
       final noneY = tester.getTopLeft(find.text(CollectionStrings.noTitle)).dy;
-      final taiLocY = tester.getTopLeft(find.text('Tài Lộc')).dy;
+      final taiLocY = tester.getTopLeft(find.text('Tài Lộc').last).dy;
       expect(noneY, lessThan(taiLocY));
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
 
       // Tapping the equipped title does nothing.
-      await tester.tap(find.text('Tài Lộc'));
+      await tester.tap(find.text('Tài Lộc').last);
       await settle(tester);
       expect(riot.puts, isEmpty);
 
@@ -100,7 +104,7 @@ void main() {
       await tester.enterText(find.byType(TextField), 'tai loc');
       await settle(tester);
       expect(find.text(CollectionStrings.noTitle), findsNothing);
-      expect(find.text('Tài Lộc'), findsOneWidget);
+      expect(find.text('Tài Lộc'), findsWidgets);
       await unmount(tester);
     });
   });

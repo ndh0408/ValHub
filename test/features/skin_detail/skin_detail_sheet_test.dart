@@ -141,8 +141,21 @@ void main() {
 
     expect(find.byKey(ValueKey(second.fullRender)), findsNothing);
     await _scrollTo(tester, find.byTooltip(second.label));
+    await tester.ensureVisible(find.byTooltip(second.label));
+    await settle(tester, 3);
     await tester.tap(find.byTooltip(second.label));
     await settle(tester, 3);
+    // Back to the top, where the render is built again.
+    await tester.drag(
+      find
+          .descendant(
+            of: find.byType(SkinDetailSheet),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+      const Offset(0, 1200),
+    );
+    await settle(tester, 12);
     expect(find.byKey(ValueKey(second.fullRender)), findsOneWidget);
     // The selected variant's name is shown next to "Biến thể".
     expect(find.text(second.label), findsWidgets);

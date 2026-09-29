@@ -98,7 +98,8 @@ void main() {
       expect(find.text(SettingsStrings.version('1.2.3')), findsOneWidget);
       expect(find.text(SettingsStrings.buildNumber('42')), findsOneWidget);
       expect(find.text('5,0 MB'), findsOneWidget);
-      expect(find.text(CommonStrings.riotDisclaimer), findsOneWidget);
+      // The Riot disclaimer lives in the "Giới thiệu & pháp lý" hub now.
+      expect(find.text(CommonStrings.riotDisclaimer), findsNothing);
       expect(find.text(AccountStrings.signOutAll), findsOneWidget);
     });
 

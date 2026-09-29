@@ -53,6 +53,9 @@ void main() {
     );
     expect(find.text(StoreStrings.bundleItemCount(4)), findsOneWidget);
     expect(find.text('Odin Neo Frontier'), findsOneWidget);
+    // Scrolled past the hero: the bar now carries the small title.
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -200));
+    await settle(tester, 12);
     expect(find.text('Neo Frontier'), findsOneWidget, reason: 'bar title');
     // Buddy ×2, card and spray are free; the Odin is discounted to 1.457.
     await tester.scrollUntilVisible(

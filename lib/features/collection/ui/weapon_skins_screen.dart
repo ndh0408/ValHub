@@ -400,18 +400,26 @@ class _PriceLine extends StatelessWidget {
       runSpacing: 2,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        CurrencyAmount.vp(
-          vp,
-          estimate: quote.isEstimate,
-          iconSize: 13,
-          style: theme.textTheme.labelMedium?.copyWith(
-            fontWeight: FontWeight.w700,
+        // Each part scales down instead of overflowing a narrow column at
+        // large text sizes.
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: CurrencyAmount.vp(
+            vp,
+            estimate: quote.isEstimate,
+            iconSize: 13,
+            style: theme.textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
-        PriceEstimate(
-          vp,
-          interactive: false,
-          style: theme.textTheme.labelSmall,
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: PriceEstimate(
+            vp,
+            interactive: false,
+            style: theme.textTheme.labelSmall,
+          ),
         ),
       ],
     );

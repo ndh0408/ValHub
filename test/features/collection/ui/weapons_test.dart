@@ -37,6 +37,14 @@ class _BuddyHost extends StatelessWidget {
   );
 }
 
+/// The page's own scrollable (the pinned search field has one too).
+Finder get _mainScrollable => find
+    .descendant(
+      of: find.byType(CustomScrollView),
+      matching: find.byType(Scrollable),
+    )
+    .first;
+
 void main() {
   late Prefs prefs;
   late FakeRiot riot;
@@ -59,11 +67,19 @@ void main() {
     expect(find.text('PHANTOM'), findsOneWidget);
     expect(find.text('Mặc định'), findsWidgets);
     // Section header and the melee tile share the uppercase name.
-    await tester.scrollUntilVisible(find.text('CẬN CHIẾN').first, 200);
+    await tester.scrollUntilVisible(
+      find.text('CẬN CHIẾN').first,
+      200,
+      scrollable: _mainScrollable,
+    );
     expect(find.text('CẬN CHIẾN'), findsWidgets);
     expect(tester.takeException(), isNull);
 
-    await tester.scrollUntilVisible(find.text('VANDAL'), -200);
+    await tester.scrollUntilVisible(
+      find.text('VANDAL'),
+      -200,
+      scrollable: _mainScrollable,
+    );
     await tester.tap(find.text('VANDAL'));
     await settle(tester);
     expect(find.text('Vandal Reaver'), findsOneWidget);
@@ -121,10 +137,15 @@ void main() {
     await tester.scrollUntilVisible(
       find.text(CollectionStrings.buddySlot),
       200,
-      scrollable: find.byType(Scrollable).first,
+      scrollable: _mainScrollable,
     );
     expect(find.text(CollectionStrings.levels), findsOneWidget);
     expect(find.text(CollectionStrings.locked), findsOneWidget); // level 4
+    await tester.scrollUntilVisible(
+      find.text('Phụ Kiện Neo Frontier'),
+      200,
+      scrollable: _mainScrollable,
+    );
     expect(find.text('Phụ Kiện Neo Frontier'), findsOneWidget);
 
     await tester.tap(find.text(CollectionStrings.equip));

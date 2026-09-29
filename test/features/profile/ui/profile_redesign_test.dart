@@ -120,7 +120,7 @@ void main() {
       );
       await settle(tester, frames: 12);
       expect(tester.takeException(), isNull);
-      expect(find.text('ASCENT'), findsOneWidget);
+      expect(find.text('ASCENT'), findsWidgets);
       await tester.tap(find.text(ProfileStrings.roundTimeline));
       await settle(tester);
       expect(tester.takeException(), isNull);

@@ -100,8 +100,8 @@ class _NotificationPrimingSheetState
         SettingsStrings.primingPointNightMarketDetail,
       ),
     ];
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+    final scrollable = SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -159,32 +159,49 @@ class _NotificationPrimingSheetState
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          FilledButton(
-            style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
-            onPressed: _requesting ? null : () => unawaited(_enable()),
-            child: _requesting
-                ? const SizedBox.square(
-                    dimension: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Text(SettingsStrings.primingEnable),
-          ),
-          const SizedBox(height: 4),
-          TextButton(
-            style: TextButton.styleFrom(minimumSize: const Size(0, 48)),
-            onPressed: _requesting
-                ? null
-                : () =>
-                      Navigator.of(context)
-                          .pop(NotificationPrimingResult.dismissed),
-            child: const Text(SettingsStrings.primingLater),
-          ),
         ],
       ),
+    );
+    // The buttons stay pinned under the scrolling explanation, so they are
+    // reachable on short screens and at large text sizes.
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Flexible(child: scrollable),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              FilledButton(
+                style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
+                onPressed: _requesting ? null : () => unawaited(_enable()),
+                child: _requesting
+                    ? const SizedBox.square(
+                        dimension: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text(SettingsStrings.primingEnable),
+              ),
+              const SizedBox(height: 4),
+              TextButton(
+                style: TextButton.styleFrom(minimumSize: const Size(0, 48)),
+                onPressed: _requesting
+                    ? null
+                    : () =>
+                          Navigator.of(context)
+                              .pop(NotificationPrimingResult.dismissed),
+                child: const Text(SettingsStrings.primingLater),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
