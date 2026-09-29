@@ -30,6 +30,21 @@ abstract final class CommonStrings {
   static const loadMore = 'Tải thêm';
   static const openSettings = 'Mở cài đặt';
   static const signInAgain = 'Đăng nhập lại';
+  static const clearSearch = 'Xóa tìm kiếm';
+  static const clearFilters = 'Bỏ lọc';
+  static const filter = 'Lọc';
+  static const sort = 'Sắp xếp';
+
+  /// "Sắp xếp: Độ hiếm" (sort button label).
+  static String sortBy(String option) => 'Sắp xếp: $option';
+
+  // Sort options shared by the skin / item lists
+  static const sortRarity = 'Độ hiếm';
+  static const sortName = 'Tên A–Z';
+  static const sortWeapon = 'Vũ khí';
+  static const sortPriceHigh = 'Giá cao → thấp';
+  static const sortPriceLow = 'Giá thấp → cao';
+  static const sortNewest = 'Mới nhất';
 
   // States
   static const loading = 'Đang tải…';

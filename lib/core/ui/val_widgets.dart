@@ -34,11 +34,16 @@ class ValCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // On the light theme a white card on the pale background needs a
+    // hairline edge to read as a card.
+    final light = Theme.of(context).brightness == Brightness.light;
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(radius),
-      side: borderColor == null
-          ? BorderSide.none
-          : BorderSide(color: borderColor!),
+      side: borderColor != null
+          ? BorderSide(color: borderColor!)
+          : light
+          ? BorderSide(color: valColorsOf(context).hairline)
+          : BorderSide.none,
     );
     final bg = color ?? Theme.of(context).colorScheme.surfaceContainer;
     Widget content = Padding(padding: padding, child: child);
@@ -115,7 +120,12 @@ class GroupedSection extends StatelessWidget {
       padding: margin,
       child: Material(
         color: Theme.of(context).colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(ValRadius.card),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ValRadius.card),
+          side: Theme.of(context).brightness == Brightness.light
+              ? BorderSide(color: hairline)
+              : BorderSide.none,
+        ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -299,10 +309,15 @@ class ValProgressBar extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               ColoredBox(color: trackColor ?? extras.track),
-              FractionallySizedBox(
-                alignment: AlignmentDirectional.centerStart,
-                widthFactor: v,
-                child: ColoredBox(color: fill),
+              TweenAnimationBuilder<double>(
+                tween: Tween(end: v),
+                duration: ValMotion.slow,
+                curve: ValMotion.curve,
+                builder: (context, t, _) => FractionallySizedBox(
+                  alignment: AlignmentDirectional.centerStart,
+                  widthFactor: t,
+                  child: ColoredBox(color: fill),
+                ),
               ),
             ],
           ),
@@ -389,8 +404,10 @@ class StatusPill extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelMedium
-                  ?.copyWith(color: color, fontWeight: FontWeight.w600),
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: legibleAccent(context, color, min: 3.5),
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -419,7 +436,9 @@ class ValBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fg = soft ? color : readableOn(color);
+    final fg = soft
+        ? legibleAccent(context, color, min: 3.5)
+        : readableOn(color);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(

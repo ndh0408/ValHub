@@ -45,6 +45,8 @@ void main() {
         const SizedBox(width: 200, child: ValProgressBar(value: double.nan)),
       ),
     );
+    // The fill animates to the new value.
+    await tester.pumpAndSettle();
     expect(
       tester
           .widget<FractionallySizedBox>(find.byType(FractionallySizedBox))

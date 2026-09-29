@@ -97,17 +97,19 @@ class ValThemeColors extends ThemeExtension<ValThemeColors> {
     gold: ValColors.gold,
   );
 
+  // Every text color here reaches WCAG AA (≥ 4.5:1) on the light background
+  // #F4F2EE and on white cards (see test/core/theme/contrast_test.dart).
   static const light = ValThemeColors(
-    win: Color(0xFF0B9E7A),
-    loss: Color(0xFFD9303F),
-    draw: Color(0xFF6B7570),
-    warning: Color(0xFFB9780F),
-    muted: Color(0xFF6B7570),
+    win: Color(0xFF06785F),
+    loss: Color(0xFFC8202F),
+    draw: Color(0xFF5C6670),
+    warning: Color(0xFF9A6208),
+    muted: Color(0xFF5C6670),
     skeletonBase: Color(0xFFE3E0DA),
     skeletonHighlight: Color(0xFFF1EFEA),
     // Darker than the dark-theme yellows: readable on #F4F2EE.
-    away: Color(0xFF9A7A12),
-    gold: Color(0xFFA07800),
+    away: Color(0xFF8A6700),
+    gold: Color(0xFF8A6700),
     track: ValColors.lightTrack,
     hairline: Color(0x14000000),
     surface2: ValColors.lightSurfaceHigh,
@@ -196,6 +198,45 @@ Color readableOn(Color background) =>
     ? ValColors.ink
     : Colors.white;
 
+/// [color] adjusted (darker on light backgrounds, lighter on dark ones)
+/// until it reaches [minContrast] against [background]. Use it for text in
+/// a content color (rarity, rank, tier), which is often too pale on the
+/// light theme (Siêu Cấp yellow on white is 1.4:1).
+Color legibleOn(Color color, Color background, {double minContrast = 4.5}) {
+  final c = color.withValues(alpha: 1);
+  if (_contrast(c, background) >= minContrast) return c;
+  final darken = background.computeLuminance() > 0.4;
+  final hsl = HSLColor.fromColor(c);
+  var l = hsl.lightness;
+  for (var i = 0; i < 20; i++) {
+    l = (darken ? l - 0.04 : l + 0.04).clamp(0.0, 1.0);
+    final next = hsl.withLightness(l).toColor();
+    if (_contrast(next, background) >= minContrast || l == 0 || l == 1) {
+      return next;
+    }
+  }
+  return hsl.withLightness(l).toColor();
+}
+
+/// [legibleOn] against the current theme's card surface.
+Color legibleAccent(BuildContext context, Color color, {double min = 4.5}) =>
+    legibleOn(
+      color,
+      Theme.of(context).colorScheme.surfaceContainer,
+      minContrast: min,
+    );
+
+/// WCAG contrast ratio of two opaque colors.
+double contrastRatio(Color a, Color b) => _contrast(a, b);
+
+double _contrast(Color a, Color b) {
+  final la = a.computeLuminance();
+  final lb = b.computeLuminance();
+  final hi = la > lb ? la : lb;
+  final lo = la > lb ? lb : la;
+  return (hi + 0.05) / (lo + 0.05);
+}
+
 /// Semantic colors of the current theme.
 ValThemeColors valColorsOf(BuildContext context) =>
     Theme.of(context).extension<ValThemeColors>() ?? ValThemeColors.dark;
@@ -247,10 +288,33 @@ abstract final class ValRadius {
   static const pill = 999.0;
 }
 
+/// Spacing scale (4-pt grid) used for paddings and gaps.
+abstract final class ValSpace {
+  static const xs = 4.0;
+  static const s = 8.0;
+  static const m = 12.0;
+  static const l = 16.0;
+  static const xl = 20.0;
+  static const xxl = 24.0;
+  static const xxxl = 32.0;
+
+  /// Horizontal page gutter of lists and cards.
+  static const gutter = 16.0;
+}
+
+/// Motion durations / curves for implicit animations.
+abstract final class ValMotion {
+  static const fast = Duration(milliseconds: 150);
+  static const medium = Duration(milliseconds: 250);
+  static const slow = Duration(milliseconds: 400);
+  static const curve = Curves.easeOutCubic;
+}
+
 const _transitions = PageTransitionsTheme(
   builders: {
     TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
     TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+    TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
   },
 );
 
@@ -262,6 +326,9 @@ ThemeData _build({
   required Color navBar,
   required ValThemeColors extras,
 }) {
+  // Brand red on dark; a deeper red on light so red text and outlines keep
+  // ≥ 4.5:1 contrast on the pale background.
+  final accent = scheme.primary;
   final base = ThemeData(
     useMaterial3: true,
     brightness: brightness,
@@ -327,7 +394,7 @@ ThemeData _build({
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       height: 68,
-      indicatorColor: ValColors.red.withValues(alpha: 0.16),
+      indicatorColor: accent.withValues(alpha: 0.16),
       indicatorShape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -336,7 +403,7 @@ ThemeData _build({
           fontFamily: AppFonts.body,
           fontSize: 12,
           color: s.contains(WidgetState.selected)
-              ? ValColors.red
+              ? accent
               : scheme.onSurfaceVariant,
           fontWeight: s.contains(WidgetState.selected)
               ? FontWeight.w700
@@ -346,7 +413,7 @@ ThemeData _build({
       iconTheme: WidgetStateProperty.resolveWith(
         (s) => IconThemeData(
           color: s.contains(WidgetState.selected)
-              ? ValColors.red
+              ? accent
               : scheme.onSurfaceVariant,
         ),
       ),
@@ -360,8 +427,8 @@ ThemeData _build({
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: ValColors.red,
-        foregroundColor: Colors.white,
+        backgroundColor: accent,
+        foregroundColor: scheme.onPrimary,
         minimumSize: const Size(64, 48),
         padding: const EdgeInsets.symmetric(horizontal: 20),
         shape: buttonShape,
@@ -373,13 +440,13 @@ ThemeData _build({
         foregroundColor: WidgetStateProperty.resolveWith(
           (s) => s.contains(WidgetState.disabled)
               ? scheme.onSurface.withValues(alpha: 0.38)
-              : ValColors.red,
+              : accent,
         ),
         side: WidgetStateProperty.resolveWith(
           (s) => BorderSide(
             color: s.contains(WidgetState.disabled)
                 ? scheme.onSurface.withValues(alpha: 0.12)
-                : ValColors.red,
+                : accent,
           ),
         ),
         minimumSize: const WidgetStatePropertyAll(Size(64, 48)),
@@ -392,7 +459,7 @@ ThemeData _build({
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: ValColors.red,
+        foregroundColor: accent,
         shape: buttonShape,
         textStyle: buttonText.copyWith(fontSize: 14),
       ),
@@ -411,8 +478,8 @@ ThemeData _build({
       trackColor: WidgetStateProperty.resolveWith(
         (s) => s.contains(WidgetState.selected)
             ? (s.contains(WidgetState.disabled)
-                  ? ValColors.red.withValues(alpha: 0.38)
-                  : ValColors.red)
+                  ? accent.withValues(alpha: 0.38)
+                  : accent)
             : extras.track,
       ),
       trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
@@ -422,7 +489,7 @@ ThemeData _build({
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
     ),
     tabBarTheme: TabBarThemeData(
-      indicatorColor: ValColors.red,
+      indicatorColor: accent,
       labelColor: scheme.onSurface,
       unselectedLabelColor: scheme.onSurfaceVariant,
       dividerColor: Colors.transparent,
@@ -467,7 +534,7 @@ ThemeData _build({
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(ValRadius.small),
-        borderSide: const BorderSide(color: ValColors.red),
+        borderSide: BorderSide(color: accent),
       ),
     ),
     bottomSheetTheme: BottomSheetThemeData(
@@ -482,7 +549,7 @@ ThemeData _build({
     ),
     dividerTheme: DividerThemeData(color: extras.hairline, space: 1),
     progressIndicatorTheme: ProgressIndicatorThemeData(
-      color: ValColors.red,
+      color: accent,
       linearTrackColor: extras.track,
       circularTrackColor: Colors.transparent,
     ),
@@ -533,12 +600,14 @@ ThemeData buildLightTheme() {
         seedColor: ValColors.red,
         brightness: Brightness.light,
       ).copyWith(
-        primary: const Color(0xFFE8303F),
+        primary: const Color(0xFFD42A38),
         onPrimary: Colors.white,
-        secondary: const Color(0xFF0B9E7A),
+        secondary: const Color(0xFF06785F),
         surface: ValColors.lightBackground,
         onSurface: ValColors.ink,
         onSurfaceVariant: const Color(0xFF55606A),
+        outline: const Color(0xFFB9B4AC),
+        error: const Color(0xFFC8202F),
         surfaceContainerLow: const Color(0xFFF9F8F5),
         surfaceContainer: ValColors.lightSurface,
         surfaceContainerHigh: ValColors.lightSurfaceHigh,
