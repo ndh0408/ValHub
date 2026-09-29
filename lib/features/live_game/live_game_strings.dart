@@ -88,9 +88,6 @@ abstract final class LiveGameStrings {
   static const rankUnavailable = 'Không rõ rank';
   static String openLoadoutOf(String name) => 'Xem trang bị của $name';
 
-  /// "Đội của bạn · 5".
-  static String teamHeader(String team, int count) => '$team · $count';
-
   // Live score (G7)
   static const liveScore = 'Tỉ số trực tiếp';
 
@@ -132,8 +129,6 @@ abstract final class LiveGameStrings {
   static const noLoadout = 'Không có thông tin trang bị của người chơi này.';
   static const buddy = 'Phụ kiện súng';
 
-  /// "Vũ khí · 12".
-  static String weaponsCount(int n) => '$weapons · $n';
   static const loadoutFromMatch = 'Trang bị trong trận này';
   static const loadoutFromAgentSelect = 'Trang bị lúc chọn đặc vụ';
 }
