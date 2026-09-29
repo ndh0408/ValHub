@@ -157,11 +157,16 @@ class GroupedRow extends StatelessWidget {
     this.accentStrip,
     this.titleColor,
     this.dense = false,
+    this.icon,
   });
 
   final String title;
   final String? subtitle;
   final Widget? leading;
+
+  /// ValBuddy-style red outline icon before the title (used when [leading]
+  /// is null).
+  final IconData? icon;
 
   /// Muted current value before the chevron ("Reaver", "PC").
   final String? value;
@@ -181,12 +186,23 @@ class GroupedRow extends StatelessWidget {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
     final chevron = showChevron ?? (onTap != null && trailing == null);
+    final tap = onTap;
     final strip = accentStrip;
     Widget row = Padding(
       padding: EdgeInsets.fromLTRB(16, dense ? 10 : 14, 12, dense ? 10 : 14),
       child: Row(
         children: [
-          if (leading != null) ...[leading!, const SizedBox(width: 14)],
+          if (leading != null) ...[
+            leading!,
+            const SizedBox(width: 14),
+          ] else if (icon != null) ...[
+            Icon(
+              icon,
+              size: 22,
+              color: legibleAccent(context, ValColors.red, min: 3),
+            ),
+            const SizedBox(width: 14),
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,7 +257,14 @@ class GroupedRow extends StatelessWidget {
         child: row,
       );
     }
-    return onTap == null ? row : InkWell(onTap: onTap, child: row);
+    if (tap == null) return row;
+    return InkWell(
+      onTap: tap,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48),
+        child: row,
+      ),
+    );
   }
 }
 
