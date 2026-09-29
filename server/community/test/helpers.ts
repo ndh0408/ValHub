@@ -3,11 +3,14 @@ import os from 'node:os';
 import path from 'node:path';
 import { expect } from 'vitest';
 import { createApp } from '../src/app.js';
+import type { Tuning } from '../src/context.js';
+import type { ContentCatalog } from '../src/content.js';
 import { openDatabase, type Db } from '../src/db/database.js';
 import { countryFromAlpha3 } from '../src/geo/countries.js';
 import { SqliteRepo } from '../src/db/sqlite-repo.js';
 import { DiskMediaStore } from '../src/media.js';
 import type { RiotUserinfoFn } from '../src/riot.js';
+import { makeJpeg, makePng, makeWebp } from './fixtures.js';
 
 export const SECRET = 'test-session-secret-0123456789abcdef';
 export const PEPPER = 'test-pepper-0123456789abcdef-0123456';
@@ -19,9 +22,16 @@ export const SKIN_C = '33333333-3333-4333-8333-333333333333';
 export const WEAPON_1 = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 export const WEAPON_2 = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 
-export const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13, 1, 2, 3]);
-export const JPEG = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 16, 0x4a, 0x46, 0x49, 0x46]);
-export const WEBP = new Uint8Array([0x52, 0x49, 0x46, 0x46, 4, 0, 0, 0, 0x57, 0x45, 0x42, 0x50, 1, 2]);
+/** Small valid images without metadata (sanitising leaves them byte-identical). */
+export const PNG = makePng({ text: false, exif: false, time: false });
+export const JPEG = makeJpeg({ exif: false, xmp: false, iptc: false, comment: false });
+export const WEBP = makeWebp({ exif: false, xmp: false, extended: false });
+
+export interface SetupOptions {
+  tuning?: Partial<Tuning>;
+  content?: ContentCatalog;
+  riot?: RiotUserinfoFn;
+}
 
 export interface Res {
   status: number;
@@ -37,11 +47,13 @@ export interface ReqOpts {
   headers?: Record<string, string>;
 }
 
-export function setup() {
+export function setup(opts: SetupOptions = {}) {
   const db: Db = openDatabase(':memory:');
   const repo = new SqliteRepo(db);
-  const mediaDir = fs.mkdtempSync(path.join(os.tmpdir(), 'valvn-media-'));
-  const media = new DiskMediaStore(mediaDir);
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'valvn-data-'));
+  const mediaDir = path.join(dataDir, 'media');
+  const quarantineDir = path.join(dataDir, 'quarantine');
+  const media = new DiskMediaStore(mediaDir, quarantineDir);
   const clock = { t: Date.UTC(2026, 8, 1, 12, 0, 0) };
   const riotTokens: string[] = [];
   const errors: string[] = [];
@@ -68,8 +80,9 @@ export function setup() {
   const app = createApp({
     repo,
     media,
-    config: { sessionSecret: SECRET, pepper: PEPPER, publicBaseUrl: '', trustProxy: true },
-    riotUserinfo: riot,
+    config: { sessionSecret: SECRET, pepper: PEPPER, publicBaseUrl: '', trustProxy: true, ...opts.tuning },
+    content: opts.content,
+    riotUserinfo: opts.riot ?? riot,
     now: () => clock.t,
     logError: (m) => errors.push(m),
   });
@@ -101,10 +114,24 @@ export function setup() {
 
   function close() {
     db.close();
-    fs.rmSync(mediaDir, { recursive: true, force: true });
+    fs.rmSync(dataDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 50 });
   }
 
-  return { app, db, repo, media, mediaDir, clock, riotTokens, riotCountries, errors, req, login, close };
+  /**
+   * Makes a user an established account for the report-hiding rule: account 2 days old and with some
+   * activity (a vote). Direct DB access, so no rate limits or clock changes are involved.
+   */
+  function mature(userId: string) {
+    db.prepare('UPDATE users SET created_at = ? WHERE id = ?').run(clock.t - 2 * 86400_000, userId);
+    db.prepare(
+      "INSERT OR IGNORE INTO skin_votes (user_id, skin_uuid, weapon_uuid, created_at, country, region) VALUES (?, ?, ?, ?, NULL, 'ap')",
+    ).run(userId, '99999999-9999-4999-8999-999999999999', WEAPON_1, clock.t - 86400_000);
+  }
+
+  /** Dependencies of the media lifecycle helpers / sweeper, wired to this test environment. */
+  const mediaDeps = () => ({ repo, media, now: () => clock.t, logError: (m: string) => errors.push(m) });
+
+  return { app, db, repo, media, mediaDeps, mediaDir, quarantineDir, dataDir, clock, riotTokens, riotCountries, errors, req, login, mature, close };
 }
 
 export type Env = ReturnType<typeof setup>;

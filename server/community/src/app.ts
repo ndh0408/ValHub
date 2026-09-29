@@ -2,11 +2,13 @@ import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { Ctx, type AppDeps } from './context.js';
 import { ApiError, errorBody, invalid } from './errors.js';
+import { registerAccount } from './routes/account.js';
 import { registerAuth } from './routes/auth.js';
 import { registerCommunities } from './routes/communities.js';
 import { registerLfg } from './routes/lfg.js';
 import { registerMedia } from './routes/media.js';
 import { registerPosts } from './routes/posts.js';
+import { registerPublicGuard } from './routes/public-guard.js';
 import { registerReviews } from './routes/reviews.js';
 import { registerSkins } from './routes/skins.js';
 
@@ -23,6 +25,11 @@ const jsonBodyLimit = bodyLimit({
 
 /** Builds the HTTP app. Everything external (DB, disk, Riot, clock) comes from `deps`. */
 export function createApp(deps: AppDeps): Hono {
+  return createAppWithCtx(deps).app;
+}
+
+/** Same as [createApp], also returning the shared context (the sweeper prunes its in-memory caches). */
+export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
   const x = new Ctx(deps);
   const logError = deps.logError ?? ((msg: string) => console.error(msg));
   const app = new Hono();
@@ -46,7 +53,9 @@ export function createApp(deps: AppDeps): Hono {
     return x.json(c, { ok }, ok ? 200 : (500 as 200));
   });
 
+  registerPublicGuard(app, x);
   registerAuth(app, x);
+  registerAccount(app, x);
   registerLfg(app, x);
   registerSkins(app, x);
   registerReviews(app, x);
@@ -75,5 +84,5 @@ export function createApp(deps: AppDeps): Hono {
     return c.body(JSON.stringify(errorBody(err)), err.status as 400, headers);
   });
 
-  return app;
+  return { app, ctx: x };
 }

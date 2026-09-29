@@ -1,11 +1,13 @@
 import path from 'node:path';
 import { serve } from '@hono/node-server';
-import { createApp } from './app.js';
+import { createAppWithCtx } from './app.js';
 import { loadConfig } from './config.js';
+import { ValorantContentCatalog } from './content.js';
 import { openDatabase } from './db/database.js';
 import { SqliteRepo } from './db/sqlite-repo.js';
 import { DiskMediaStore } from './media.js';
 import { fetchRiotUserinfo } from './riot.js';
+import { sweep } from './sweeper.js';
 
 let config;
 try {
@@ -17,9 +19,18 @@ try {
 
 const db = openDatabase(path.join(config.dataDir, 'community.db'));
 const repo = new SqliteRepo(db);
-const media = new DiskMediaStore(path.join(config.dataDir, 'media'));
+const media = new DiskMediaStore(path.join(config.dataDir, 'media'), path.join(config.dataDir, 'quarantine'));
+const content = new ValorantContentCatalog({ log: (m) => console.error(m) });
+void content.warm(); // load the game-content catalog in the background (requests never wait for it)
 
-const app = createApp({ repo, media, config, riotUserinfo: fetchRiotUserinfo });
+const { app, ctx } = createAppWithCtx({
+  repo,
+  media,
+  config,
+  content,
+  riotUserinfo: fetchRiotUserinfo,
+  logError: (m) => console.error(m),
+});
 
 // Minimal access log: method, path (no query string, no headers), status, duration.
 const handler = async (req: Request, env: unknown) => {
@@ -36,21 +47,37 @@ const server = serve({ fetch: handler, port: config.port, hostname: '0.0.0.0' },
   console.log(`valvn-community listening on :${info.port} (data: ${config.dataDir})`);
 });
 
-// Periodic housekeeping: old rate-limit windows + long-expired LFG posts.
-const cleanup = () => {
+// Periodic sweeper (unref'd: never keeps the process alive): orphan uploads, quarantine expiry, stray files,
+// old reports (12 months), reports on deleted content, old rate-limit windows, expired LFG rows.
+let sweeping = false;
+const runSweep = async () => {
+  if (sweeping) return;
+  sweeping = true;
   try {
-    repo.cleanup(Date.now());
+    const r = await sweep({
+      repo,
+      media,
+      now: () => Date.now(),
+      logError: (m) => console.error(m),
+      prune: () => ctx.pruneMemory(),
+    });
+    const changed = Object.entries(r).filter(([, n]) => n > 0);
+    if (changed.length > 0) console.log(`sweep: ${changed.map(([k, n]) => `${k}=${n}`).join(' ')}`);
   } catch (e) {
-    console.error(`cleanup failed: ${(e as Error).message}`);
+    console.error(`sweep failed: ${(e as Error).message}`);
+  } finally {
+    sweeping = false;
   }
 };
-cleanup();
-const timer = setInterval(cleanup, 10 * 60_000);
+const first = setTimeout(() => void runSweep(), 5_000);
+first.unref();
+const timer = setInterval(() => void runSweep(), 10 * 60_000);
 timer.unref();
 
 const shutdown = (signal: string) => {
   console.log(`${signal} received, shutting down`);
   clearInterval(timer);
+  clearTimeout(first);
   server.close(() => {
     db.close();
     process.exit(0);

@@ -25,20 +25,35 @@ const REJECT_CATEGORIES: ReadonlySet<WordCategory> = new Set(['hate', 'sexual', 
 
 // ---- normalisation ---------------------------------------------------------------
 
-const LEET: Record<string, string> = { '0': 'o', '1': 'i', '3': 'e', '4': 'a', '@': 'a', $: 's' };
+/** Leetspeak, applied only inside words that contain letters ("sh1t", "$hit", "5hit"). */
+const LEET: Record<string, string> = { '0': 'o', '1': 'i', '3': 'e', '4': 'a', '5': 's', '7': 't', '@': 'a', $: 's' };
 
 /**
- * Letter folding shared by text and list entries: lower case, NFC, Arabic letter variants
- * (أ إ آ → ا, ى → ي, ة → ه, tatweel removed), ё → е, ß → ss.
+ * Invisible / formatting characters that are pasted into words to defeat filters: soft hyphen, combining
+ * grapheme joiner, Arabic letter mark, Hangul / Khmer fillers, Mongolian separators, zero-width space /
+ * (non-)joiner, LRM / RLM, bidi controls and isolates, word joiner and the invisible operators, Hangul
+ * filler, variation selectors, BOM, half-width Hangul filler, tag characters.
+ */
+const IGN =
+  '\\u00AD\\u034F\\u061C\\u115F\\u1160\\u17B4\\u17B5\\u180B-\\u180F\\u200B-\\u200F\\u202A-\\u202E\\u2060-\\u206F\\u3164\\uFE00-\\uFE0F\\uFEFF\\uFFA0\\u{E0000}-\\u{E007F}\\u{E0100}-\\u{E01EF}';
+const IGNORABLE = new RegExp(`[${IGN}]`, 'gu');
+const HAS_IGNORABLE = new RegExp(`[${IGN}]`, 'u');
+
+/**
+ * Letter folding shared by text and list entries: invisible characters removed, NFKC (full-width, math /
+ * circled / stylised letters and digits become plain ones; half-width kana widened), lower case, NFC,
+ * Arabic letter variants (أ إ آ → ا, ى → ي, ة → ه, tatweel removed), ё → е, ß → ss.
  */
 export function canon(s: string): string {
   return s
+    .replace(IGNORABLE, '')
+    .normalize('NFKC')
     .toLowerCase()
     .normalize('NFC')
-    .replace(/\u0640/g, '')
-    .replace(/[\u0622\u0623\u0625\u0671]/g, '\u0627')
-    .replace(/\u0649/g, '\u064A')
-    .replace(/\u0629/g, '\u0647')
+    .replace(/ـ/g, '')
+    .replace(/[آأإٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه')
     .replace(/ё/g, 'е')
     .replace(/ß/g, 'ss');
 }
@@ -50,11 +65,24 @@ export function stripDiacritics(s: string): string {
 
 const collapseRuns = (s: string): string => s.replace(/(.)\1+/gu, '$1');
 
-interface Token {
-  start: number;
-  end: number;
-  /** The original characters of the token. */
-  raw: string;
+/**
+ * Look-alike letters. Cyrillic / Greek letters that pass for Latin ones ("fuсk" with a Cyrillic с,
+ * "dіt" with a Cyrillic і, "fοck" with a Greek ο) are folded to Latin, and Latin letters inside a
+ * Cyrillic word ("xуй") to Cyrillic, as ADDITIONAL forms of the token: the token still matches as written.
+ */
+const LOOKALIKE_TO_LATIN: Record<string, string> = {
+  а: 'a', в: 'b', е: 'e', і: 'i', ї: 'i', ј: 'j', к: 'k', м: 'm', н: 'h', о: 'o', р: 'p', с: 'c', т: 't',
+  у: 'y', х: 'x', ѕ: 's', һ: 'h', ԁ: 'd', ԛ: 'q', ԝ: 'w', ө: 'o', ɡ: 'g',
+  α: 'a', β: 'b', ε: 'e', ι: 'i', κ: 'k', ν: 'v', ο: 'o', ρ: 'p', τ: 't', υ: 'u', χ: 'x', ω: 'w', η: 'n',
+};
+const LATIN_TO_CYRILLIC: Record<string, string> = {
+  a: 'а', b: 'в', c: 'с', e: 'е', h: 'н', k: 'к', m: 'м', o: 'о', p: 'р', t: 'т', x: 'х', y: 'у',
+};
+const foldWith = (s: string, map: Record<string, string>): string => [...s].map((ch) => map[ch] ?? ch).join('');
+const HAS_LOOKALIKE_SCRIPT = /[\p{Script=Cyrillic}\p{Script=Greek}]/u;
+
+/** One normalised spelling of a token. */
+interface Form {
   /** canon(), separators removed, leetspeak mapped: keeps diacritics. */
   toned: string;
   /** toned without diacritics. */
@@ -63,22 +91,56 @@ interface Token {
   plainCollapsed: string;
 }
 
+interface Token extends Form {
+  start: number;
+  end: number;
+  /** The original characters of the token. */
+  raw: string;
+  /** Letters were joined across separators / invisible characters / spaces: multi-word phrases may match the run. */
+  squash: boolean;
+  /** Made of several source tokens: a match always covers the whole span. */
+  whole: boolean;
+  /** Look-alike-folded spellings. */
+  alts: Form[];
+  /** The single letters this token is made of ("d", "u.c"), when it is a spelled-out piece of a word. */
+  pieces?: string[];
+}
+
+const makeForm = (toned: string): Form => {
+  const plain = stripDiacritics(toned);
+  return { toned, plain, tonedCollapsed: collapseRuns(toned), plainCollapsed: collapseRuns(plain) };
+};
+
 /** Normalised forms of one word (separators removed, leetspeak mapped when the word has letters). */
 function makeToken(raw: string, start: number, end: number): Token {
-  let s = canon(raw).replace(/[._*-]+/g, '');
+  const c = canon(raw);
+  let s = c.replace(/[._*-]+/g, '');
+  const squash = s.length !== c.length || HAS_IGNORABLE.test(raw);
   if (/\p{L}/u.test(s)) s = [...s].map((ch) => LEET[ch] ?? ch).join('');
-  const plain = stripDiacritics(s);
-  return { start, end, raw, toned: s, plain, tonedCollapsed: collapseRuns(s), plainCollapsed: collapseRuns(plain) };
+  const alts: Form[] = [];
+  if (HAS_LOOKALIKE_SCRIPT.test(s)) {
+    const latin = foldWith(s, LOOKALIKE_TO_LATIN);
+    if (latin !== s) alts.push(makeForm(latin));
+    if (/\p{Script=Cyrillic}/u.test(s) && /[a-z]/.test(s)) {
+      const cyr = foldWith(s, LATIN_TO_CYRILLIC);
+      if (cyr !== s) alts.push(makeForm(cyr));
+    }
+  }
+  return { ...makeForm(s), start, end, raw, squash, whole: false, alts, pieces: piecesOf(raw) };
 }
 
 /**
  * Maps a match [idx, idx+len) of the normalised token string (toned or plain) back to a range of the
- * original text. Normalisation can drop characters (tone marks, separators), so it is redone per
- * character cluster (base + combining marks); when that does not reproduce the token string exactly,
- * the whole token is returned.
+ * original text. Normalisation can drop characters (tone marks, separators, invisible characters), so it
+ * is redone per character cluster (base + combining marks); when that does not reproduce the token
+ * string exactly, the whole token is returned.
  */
 function rawRange(t: Token, hay: string, toned: boolean, idx: number, len: number): [number, number] {
-  if (hay.length === t.end - t.start) return [t.start + idx, t.start + idx + len];
+  if (t.whole) return [t.start, t.end];
+  if (hay.length === t.end - t.start && hay === (toned ? t.toned : t.plain)) {
+    // Same length as the source: offsets map 1:1 unless something was substituted in place; verify below.
+    if (t.raw.length === hay.length && canon(t.raw) === t.raw) return [t.start + idx, t.start + idx + len];
+  }
   const hasLetters = /\p{L}/u.test(t.raw);
   const clusters = t.raw.match(/\P{M}\p{M}*/gu);
   if (clusters && clusters.join('') === t.raw) {
@@ -104,22 +166,30 @@ function rawRange(t: Token, hay: string, toned: boolean, idx: number, len: numbe
   return [t.start, t.end];
 }
 
-const TOKEN_RE = /[\p{L}\p{M}\p{N}@$]+(?:[._*-]+[\p{L}\p{M}\p{N}@$]+)*/gu;
+// Letters, marks, digits, @ $ and the circled / squared Latin letters (Ⓕ 🄵) that NFKC turns into plain ones.
+const WORD_CH = '\\p{L}\\p{M}\\p{N}@$\\u24B6-\\u24E9\\u{1F130}-\\u{1F149}';
+const TOKEN_RE_IGNORE = new RegExp(`[${WORD_CH}${IGN}]+(?:[._*-]+[${WORD_CH}${IGN}]+)*`, 'gu');
+const TOKEN_RE_SPLIT = new RegExp(`[${WORD_CH}]+(?:[._*-]+[${WORD_CH}]+)*`, 'gu');
 
 /**
  * Splits text into word tokens. Separators `_ - *` inside a word are dropped ("đ-m", "f*ck");
  * dots are only dropped when every piece is a single character ("đ.m", "v.c.l"), so ordinary
  * text like "ok.đi" or "v1.0" stays separate words. Ranges in `skip` (kept links) are ignored.
+ *
+ * Invisible characters (zero-width space, soft hyphen, ...) either belong to the word they sit in
+ * (`mode = 'ignore'`, "d​m" → "dm") or separate words (`mode = 'split'`, "dm​hello" → "dm", "hello"):
+ * text that contains them is matched both ways.
  */
-export function tokenize(text: string, skip: [number, number][] = []): Token[] {
+export function tokenize(text: string, skip: [number, number][] = [], mode: 'ignore' | 'split' = 'ignore'): Token[] {
   const tokens: Token[] = [];
   const inSkip = (a: number, b: number) => skip.some(([s, e]) => a < e && b > s);
-  for (const m of text.matchAll(TOKEN_RE)) {
+  const re = mode === 'ignore' ? TOKEN_RE_IGNORE : TOKEN_RE_SPLIT;
+  for (const m of text.matchAll(re)) {
     const raw = m[0];
     const at = m.index;
     if (inSkip(at, at + raw.length)) continue;
     const pieces = raw.split(/[._*-]+/);
-    const spelledOut = pieces.every((p) => [...p].length === 1);
+    const spelledOut = pieces.every((p) => [...canon(p)].length === 1);
     if (raw.includes('.') && !spelledOut) {
       for (const sub of raw.matchAll(/[^.]+/g)) {
         tokens.push(makeToken(sub[0], at + sub.index, at + sub.index + sub[0].length));
@@ -128,7 +198,116 @@ export function tokenize(text: string, skip: [number, number][] = []): Token[] {
       tokens.push(makeToken(raw, at, at + raw.length));
     }
   }
-  return tokens;
+  return tokens.filter((t) => t.toned.length > 0); // a run of invisible characters is not a word
+}
+
+const GAP_RE = /^[^\p{L}\p{N}]{1,3}$/u;
+const SINGLE_RE = /^[\p{L}\p{N}]\p{M}*$/u;
+/** Longest run of single letters read as one word, and longest window inside a run tried as a word. */
+const MAX_RUN_UNITS = 64;
+const MAX_WINDOW_UNITS = 24;
+
+/** One spelled-out letter: a single-letter token, or one piece of a "d.i.t"-style token. */
+interface Unit {
+  /** canon()-ed letter. */
+  piece: string;
+  start: number;
+  end: number;
+  /** Index of the token it belongs to. */
+  token: number;
+}
+
+/**
+ * The single letters of a token ("d", "u.c" → u, c), or undefined when the token is a normal word.
+ * Separators inside a token were already accepted by the tokenizer.
+ */
+function piecesOf(raw: string): string[] | undefined {
+  const out: string[] = [];
+  for (const m of raw.matchAll(/[^._*-]+/g)) {
+    const c = canon(m[0]);
+    if (c.length === 0) continue; // only invisible characters
+    if (!SINGLE_RE.test(c)) return undefined;
+    out.push(c);
+  }
+  return out.length > 0 ? out : undefined;
+}
+
+function unitsOf(tokens: Token[]): Unit[] {
+  const out: Unit[] = [];
+  tokens.forEach((t, token) => {
+    if (!t.pieces || t.whole) return;
+    for (const m of t.raw.matchAll(/[^._*-]+/g)) {
+      const piece = canon(m[0]);
+      if (piece.length === 0) continue;
+      out.push({ piece, start: t.start + m.index, end: t.start + m.index + m[0].length, token });
+    }
+  });
+  return out;
+}
+
+/**
+ * "d i t m e", "f.u.c.k", "f,u,c,k", "s|h|i|t", "d🔥i🔥t": runs of at least three single letters / digits
+ * separated by 1–3 non-alphanumeric characters (or by the dots / dashes of one token).
+ */
+function runsOf(units: Unit[], text: string): Unit[][] {
+  const runs: Unit[][] = [];
+  let i = 0;
+  while (i < units.length) {
+    let j = i;
+    while (
+      j + 1 < units.length &&
+      j - i + 1 < MAX_RUN_UNITS &&
+      (units[j]!.token === units[j + 1]!.token || GAP_RE.test(text.slice(units[j]!.end, units[j + 1]!.start)))
+    ) {
+      j++;
+    }
+    if (j - i + 1 >= 3) runs.push(units.slice(i, j + 1));
+    i = j + 1;
+  }
+  return runs;
+}
+
+/** Each run read as one word: the run's tokens replaced by a single merged token (phrases may then span it). */
+function mergedStream(tokens: Token[], runs: Unit[][], text: string): Token[] | null {
+  if (runs.length === 0) return null;
+  const replace = new Map<number, Token | null>(); // token index → merged token (first) / null (swallowed)
+  for (const run of runs) {
+    const first = run[0]!.token;
+    const last = run[run.length - 1]!.token;
+    const ownsFirst = unitsOf([tokens[first]!]).length === 0 ? false : run[0]!.start === tokens[first]!.start;
+    const ownsLast = run[run.length - 1]!.end === tokens[last]!.end;
+    if (!ownsFirst || !ownsLast) continue; // cut inside a token by the length cap: leave it to the windows
+    const raw = run.map((u) => text.slice(u.start, u.end)).join('');
+    const merged = makeToken(raw, run[0]!.start, run[run.length - 1]!.end);
+    merged.squash = true;
+    merged.whole = true;
+    for (let k = first; k <= last; k++) replace.set(k, k === first ? merged : null);
+  }
+  if (replace.size === 0) return null;
+  const out: Token[] = [];
+  tokens.forEach((t, k) => {
+    if (!replace.has(k)) out.push(t);
+    else {
+      const m = replace.get(k);
+      if (m) out.push(m);
+    }
+  });
+  return out;
+}
+
+/** Every reading of the text that is matched against the word lists, plus its spelled-out runs. */
+function streamsOf(text: string, skip: [number, number][]): { streams: Token[][]; runs: Unit[][] } {
+  const bases = [tokenize(text, skip, 'ignore')];
+  if (HAS_IGNORABLE.test(text)) bases.push(tokenize(text, skip, 'split'));
+  const streams = [...bases];
+  const runs: Unit[][] = [];
+  for (const b of bases) {
+    const r = runsOf(unitsOf(b), text);
+    runs.push(...r);
+    const merged = mergedStream(b, r, text);
+    if (merged) streams.push(merged);
+  }
+  return { streams, runs };
 }
 
 // ---- word list compilation -----------------------------------------------------------
@@ -207,23 +386,58 @@ function compileList(key: ListKey): Pattern[] {
   return out;
 }
 
-const PLAN_CACHE = new Map<string, { words: Pattern[]; substrings: Pattern[] }>();
+/** Whole-word patterns looked up by their letters with the spaces removed ("dit me" → "ditme"), for spelled-out runs. */
+interface SquashIndex {
+  toned: Map<string, Pattern[]>;
+  plain: Map<string, Pattern[]>;
+  tonedCollapsed: Map<string, Pattern[]>;
+  plainCollapsed: Map<string, Pattern[]>;
+  /** Entries whose last word is a `stem*`. */
+  prefixes: { joined: string; toned: boolean; pattern: Pattern }[];
+}
+
+interface Plan {
+  words: Pattern[];
+  substrings: Pattern[];
+  squash: SquashIndex;
+}
+
+const PLAN_CACHE = new Map<string, Plan>();
+
+function buildSquashIndex(words: Pattern[]): SquashIndex {
+  const idx: SquashIndex = { toned: new Map(), plain: new Map(), tonedCollapsed: new Map(), plainCollapsed: new Map(), prefixes: [] };
+  const put = (m: Map<string, Pattern[]>, k: string, p: Pattern) => {
+    const list = m.get(k);
+    if (list) list.push(p);
+    else m.set(k, [p]);
+  };
+  for (const p of words) {
+    if (p.words.slice(0, -1).some((w) => w.prefix)) continue;
+    const joined = p.words.map((w) => w.word).join('');
+    const toned = p.words.some((w) => w.toned);
+    if (p.words[p.words.length - 1]!.prefix) {
+      idx.prefixes.push({ joined, toned, pattern: p });
+      continue;
+    }
+    put(toned ? idx.toned : idx.plain, joined, p);
+    put(toned ? idx.tonedCollapsed : idx.plainCollapsed, collapseRuns(joined), p);
+  }
+  return idx;
+}
 
 /** Word patterns (longest phrases first, so "bú lồn" wins over "lồn") and substring patterns of some lists. */
-function planFor(lists: readonly ListKey[]) {
+function planFor(lists: readonly ListKey[]): Plan {
   const id = [...lists].sort().join(',');
   const cached = PLAN_CACHE.get(id);
   if (cached) return cached;
   const all = lists.flatMap((k) => compileList(k));
-  const plan = {
-    words: all.filter((p) => !p.substring).sort((a, b) => b.words.length - a.words.length),
-    substrings: all.filter((p) => p.substring),
-  };
+  const words = all.filter((p) => !p.substring).sort((a, b) => b.words.length - a.words.length);
+  const plan: Plan = { words, substrings: all.filter((p) => p.substring), squash: buildSquashIndex(words) };
   PLAN_CACHE.set(id, plan);
   return plan;
 }
 
-function wordMatches(t: Token, w: PatternWord): boolean {
+function matchForm(t: Form, w: PatternWord): boolean {
   if (w.prefix) return (w.toned ? t.toned : t.plain).startsWith(w.word);
   if (w.toned) {
     return t.toned === w.word || (t.tonedCollapsed !== t.toned && t.tonedCollapsed === w.collapsed);
@@ -231,6 +445,28 @@ function wordMatches(t: Token, w: PatternWord): boolean {
   // Elongated forms ("đmmmm", "fuuuck") match via the collapsed form, but only when the token
   // really contained a repeated letter — so "as" never matches a collapsed "ass".
   return t.plain === w.word || (t.plainCollapsed !== t.plain && t.plainCollapsed === w.collapsed);
+}
+
+function wordMatches(t: Token, w: PatternWord): boolean {
+  return matchForm(t, w) || t.alts.some((a) => matchForm(a, w));
+}
+
+/**
+ * A run joined across separators ("dit_me", "d i t m e", "ngu-vl") matches a multi-word entry written
+ * with spaces ("dit me", "ngu vl") when the letters are the same.
+ */
+function squashMatches(t: Token, p: Pattern): boolean {
+  if (!t.squash || p.substring || p.words.length < 2) return false;
+  if (p.words.slice(0, -1).some((w) => w.prefix)) return false;
+  const joined = p.words.map((w) => w.word).join('');
+  const toned = p.words.some((w) => w.toned);
+  const last = p.words[p.words.length - 1]!;
+  const forms: Form[] = [t, ...t.alts];
+  return forms.some((f) => {
+    const hay = toned ? f.toned : f.plain;
+    if (last.prefix) return hay.startsWith(joined);
+    return hay === joined || collapseRuns(hay) === collapseRuns(joined);
+  });
 }
 
 /** Token-level exceptions: excepted whole words / prefixes, or a token containing an excepted `*part*`. */
@@ -263,33 +499,36 @@ export interface WordMatch {
   list: ListKey;
 }
 
-/** Finds word-list matches of the given lists (whole words, prefixes and substrings; see types.ts). */
-export function findMatches(text: string, lists: readonly ListKey[], skip: [number, number][] = []): WordMatch[] {
-  const tokens = tokenize(text, skip);
-  const plan = planFor(lists);
-  const found: WordMatch[] = [];
-
+function collect(tokens: Token[], plan: Plan, found: WordMatch[]): void {
   // Whole words, prefixes and phrases.
   let i = 0;
   while (i < tokens.length) {
     let hit: Pattern | undefined;
+    let used = 1;
+    const first = tokens[i]!;
     for (const p of plan.words) {
+      if (squashMatches(first, p)) {
+        if (p.words.some((w) => w.prefix) && tokenExcepted(first, p.exceptions)) continue;
+        hit = p;
+        used = 1;
+        break;
+      }
       if (i + p.words.length > tokens.length) continue;
-      const first = tokens[i]!;
       if (!p.words.every((w, k) => wordMatches(tokens[i + k]!, w))) continue;
       if (p.words.some((w) => w.prefix) && tokenExcepted(first, p.exceptions)) continue;
       hit = p;
+      used = p.words.length;
       break;
     }
     if (hit) {
       found.push({
         start: tokens[i]!.start,
-        end: tokens[i + hit.words.length - 1]!.end,
+        end: tokens[i + used - 1]!.end,
         category: hit.category,
         source: hit.source,
         list: hit.list,
       });
-      i += hit.words.length;
+      i += used;
     } else {
       i++;
     }
@@ -300,28 +539,86 @@ export function findMatches(text: string, lists: readonly ListKey[], skip: [numb
     for (const t of tokens) {
       for (const p of plan.substrings) {
         const w = p.words[0]!;
-        const hay = w.toned ? t.toned : t.plain;
-        if (hay.length < w.word.length) continue;
         if (p.exceptions.words.some((x) => wordMatches(t, x))) continue;
-        let from = 0;
-        for (;;) {
-          const idx = hay.indexOf(w.word, from);
-          if (idx < 0) break;
-          from = idx + 1;
-          if (insideExceptionPart(hay, idx, w.word.length, w.toned, p.exceptions)) continue;
-          const [start, end] = rawRange(t, hay, w.toned, idx, w.word.length);
-          found.push({
-            start,
-            end,
-            category: p.category,
-            source: p.source,
-            list: p.list,
-          });
+        const forms: { form: Form; alt: boolean }[] = [{ form: t, alt: false }, ...t.alts.map((form) => ({ form, alt: true }))];
+        for (const { form, alt } of forms) {
+          const hay = w.toned ? form.toned : form.plain;
+          if (hay.length < w.word.length) continue;
+          let from = 0;
+          for (;;) {
+            const idx = hay.indexOf(w.word, from);
+            if (idx < 0) break;
+            from = idx + 1;
+            if (insideExceptionPart(hay, idx, w.word.length, w.toned, p.exceptions)) continue;
+            const [start, end] = alt ? [t.start, t.end] : rawRange(t, hay, w.toned, idx, w.word.length);
+            found.push({ start, end, category: p.category, source: p.source, list: p.list });
+          }
         }
       }
     }
   }
-  return found;
+}
+
+/**
+ * Words hidden inside a run of spelled-out letters ("I f u c k you", "a v c l b"): every window of at least
+ * three letters is looked up as a word (all lookups are hash / prefix checks, so long runs stay cheap).
+ */
+function collectWindows(run: Unit[], plan: Plan, found: WordMatch[]): void {
+  const hits = (str: string): Pattern[] => {
+    const out: Pattern[] = [];
+    const seen = new Set<string>();
+    const add = (list: Pattern[] | undefined) => {
+      for (const p of list ?? []) if (!seen.has(p.source + p.list)) (seen.add(p.source + p.list), out.push(p));
+    };
+    const letters = /\p{L}/u.test(str);
+    const mapped = letters ? [...str].map((ch) => LEET[ch] ?? ch).join('') : str;
+    const spellings = [mapped];
+    if (HAS_LOOKALIKE_SCRIPT.test(mapped)) {
+      const latin = foldWith(mapped, LOOKALIKE_TO_LATIN);
+      if (latin !== mapped) spellings.push(latin);
+      if (/\p{Script=Cyrillic}/u.test(mapped) && /[a-z]/.test(mapped)) spellings.push(foldWith(mapped, LATIN_TO_CYRILLIC));
+    }
+    for (const toned of spellings) {
+      const plain = stripDiacritics(toned);
+      const tonedC = collapseRuns(toned);
+      const plainC = collapseRuns(plain);
+      add(plan.squash.toned.get(toned));
+      add(plan.squash.plain.get(plain));
+      if (tonedC !== toned) add(plan.squash.tonedCollapsed.get(tonedC));
+      if (plainC !== plain) add(plan.squash.plainCollapsed.get(plainC));
+      for (const pre of plan.squash.prefixes) {
+        if ((pre.toned ? toned : plain).startsWith(pre.joined)) add([pre.pattern]);
+      }
+    }
+    return out;
+  };
+
+  for (let a = 0; a + 2 < run.length; a++) {
+    let str = run[a]!.piece + run[a + 1]!.piece;
+    for (let b = a + 2; b < run.length && b - a < MAX_WINDOW_UNITS; b++) {
+      str += run[b]!.piece;
+      for (const p of hits(str)) {
+        found.push({ start: run[a]!.start, end: run[b]!.end, category: p.category, source: p.source, list: p.list });
+      }
+    }
+  }
+}
+
+/** Finds word-list matches of the given lists (whole words, prefixes and substrings; see types.ts). */
+export function findMatches(text: string, lists: readonly ListKey[], skip: [number, number][] = []): WordMatch[] {
+  const plan = planFor(lists);
+  const found: WordMatch[] = [];
+  const { streams, runs } = streamsOf(text, skip);
+  for (const tokens of streams) collect(tokens, plan, found);
+  for (const run of runs) collectWindows(run, plan, found);
+  // Several readings can find the same word: keep one.
+  const seen = new Set<string>();
+  return found.filter((m) => {
+    const k = `${m.start}:${m.end}:${m.category}:${m.source}`;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
 }
 
 // ---- which lists apply --------------------------------------------------------------------
@@ -370,7 +667,9 @@ export function listsFor(text: string, language?: string | null, country?: strin
   const declared = listKeyForLanguage(language);
   if (declared) set.add(declared);
 
-  const has = (re: RegExp) => re.test(text);
+  // Look at the text the way the matcher does: invisible characters gone, full-width / stylised letters plain.
+  const seen = text.replace(IGNORABLE, '').normalize('NFKC');
+  const has = (re: RegExp) => re.test(seen);
   const hangul = has(SCRIPT.hangul);
   const kana = has(SCRIPT.kana);
   const han = has(SCRIPT.han);
@@ -389,7 +688,18 @@ export function listsFor(text: string, language?: string | null, country?: strin
   if (has(SCRIPT.pl)) set.add('pl');
   if (has(SCRIPT.tr)) set.add('tr');
 
-  const latinOnly = !(hangul || kana || han || thai || arabic || cyrillic || has(SCRIPT.otherNonLatin));
+  // A Latin word with a few Cyrillic / Greek look-alike letters ("dіt") is still Latin text: the Latin
+  // rules (Vietnamese teencode, country language) apply to it too.
+  const folded = foldWith(seen.toLowerCase(), LOOKALIKE_TO_LATIN);
+  const latinOnly = !(
+    hangul ||
+    kana ||
+    han ||
+    thai ||
+    arabic ||
+    SCRIPT.cyrillic.test(folded) ||
+    SCRIPT.otherNonLatin.test(folded)
+  );
   if (latinOnly) {
     if (!declared || declared === 'vi' || declared === 'en') set.add('vi');
     for (const k of COUNTRY_LATIN_LISTS[(country ?? '').toUpperCase()] ?? []) set.add(k);
@@ -444,12 +754,14 @@ function linkRanges(text: string): [number, number][] {
 }
 
 /** Vietnamese mobile numbers: 0xxxxxxxxx / +84xxxxxxxxx, digits optionally separated by space . - */
-const PHONE_VN_RE = /(?<!\p{N})(?:\+?\s?84|0)[\s.-]?[35789](?:[\s.-]?\d){8}(?!\p{N})/u;
+const PHONE_VN_RE = /(?<!\p{N})(?:\+?\s?84|0)[\s.\-_/·•]{0,2}[35789](?:[\s.\-_/·•]{0,2}\d){8}(?!\p{N})/u;
 /** International numbers written with a leading "+" and country code: +1 (415) 555-2671, +62 812-3456-7890. */
 const PHONE_INTL_RE = /(?<![\p{L}\p{N}])\+\s?\d{1,3}(?:[\s.()-]{0,2}\d){7,12}(?!\p{N})/u;
 
 export function containsPhoneNumber(text: string): boolean {
-  return PHONE_VN_RE.test(text) || PHONE_INTL_RE.test(text);
+  // Full-width digits and invisible characters inside the number do not hide it.
+  const t = text.replace(IGNORABLE, '').normalize('NFKC');
+  return PHONE_VN_RE.test(t) || PHONE_INTL_RE.test(t);
 }
 
 // ---- public API ------------------------------------------------------------------------------

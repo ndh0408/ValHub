@@ -290,7 +290,7 @@ describe('migration from a v1 database', () => {
          VALUES ('00000000-0000-4000-8000-000000000001', '${'a'.repeat(32)}', 'ap', 'unrated', 'AAAAAA', 3, 1000, 9999999999999)`,
       ).run();
 
-      expect(migrate(db)).toEqual(['0002_reviews.sql', '0003_lfg_v2.sql', '0004_scopes.sql']);
+      expect(migrate(db)).toEqual(['0002_reviews.sql', '0003_lfg_v2.sql', '0004_scopes.sql', '0005_hardening.sql']);
       const repo = new SqliteRepo(db);
       const row = repo.getLfg('00000000-0000-4000-8000-000000000001')!;
       expect(row).toMatchObject({

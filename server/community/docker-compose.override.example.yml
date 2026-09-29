@@ -1,0 +1,17 @@
+# Copy to docker-compose.override.yml on a host where cloudflared runs in ANOTHER compose stack.
+#
+# The Cloudflare Tunnel (`cf-gianguyen`) reaches the API over a shared external network named `edge`
+# (create it once: docker network create edge); in the tunnel's public hostname use
+#   service: http://valvn-community:8080
+# The 127.0.0.1:8787 port stays published for local debugging / health checks.
+#
+# The valvn-backup service lives in docker-compose.yml now: if an older override file on the host still
+# defines it, delete that block (this file replaces it).
+
+services:
+  valvn-community:
+    networks: [default, edge]
+
+networks:
+  edge:
+    external: true

@@ -38,6 +38,8 @@ export function registerReviews(app: Hono, x: Ctx): void {
     const body = await x.readJson(c);
     const weaponUuid = parseUuid(body.weaponUuid, 'weaponUuid');
     const rating = parseInt(body.rating, 1, 5, 'rating');
+    await x.assertContent('skin', skinUuid, 'skinUuid');
+    await x.assertContent('weapon', weaponUuid, 'weaponUuid');
     const language = contentLanguage(body, user.language);
     const text =
       body.body === undefined || body.body === null

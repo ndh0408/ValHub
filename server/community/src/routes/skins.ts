@@ -29,6 +29,8 @@ export function registerSkins(app: Hono, x: Ctx): void {
     const skinUuid = parseUuid(c.req.param('skinUuid'), 'skinUuid');
     const body = await x.readJson(c);
     const weaponUuid = parseUuid(body.weaponUuid, 'weaponUuid');
+    await x.assertContent('skin', skinUuid, 'skinUuid');
+    await x.assertContent('weapon', weaponUuid, 'weaponUuid');
     x.rateLimit('votes', user.id);
     x.repo.voteSkin(user.id, skinUuid, weaponUuid, x.now(), {
       country: user.country,

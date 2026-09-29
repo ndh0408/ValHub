@@ -63,9 +63,9 @@ describe('POST /v1/auth/riot', () => {
     expectError(res, 401, 'riot_rejected');
   });
 
-  it('returns server_error when Riot is unreachable', async () => {
+  it('returns riot_unavailable (503) when Riot is unreachable', async () => {
     const res = await e.req('POST', '/v1/auth/riot', { body: { accessToken: 'down', region: 'ap' } });
-    expectError(res, 500, 'server_error');
+    expectError(res, 503, 'riot_unavailable');
   });
 
   it.each([

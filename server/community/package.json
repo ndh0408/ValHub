@@ -13,7 +13,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "docker:build": "docker compose build",
-    "deploy": "docker compose up -d --build"
+    "deploy": "docker compose up -d --build",
+    "cli": "tsx src/cli.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.3",
