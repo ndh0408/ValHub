@@ -187,10 +187,27 @@ override `pvpApiProvider` (mocktail `MockPvpApi` answering `playerLoadout` /
 `putPlayerLoadout`), `prefsProvider` (`createTestPrefs()`),
 `jsonFileCacheProvider` (in-memory subclass), `clockProvider` and
 `accountProvider.overrideWith((ref, puuid) => null)`. Fixtures and helpers:
-`test/core/domain/loadout/loadout_fixtures.dart` (`loadoutJson()`,
-`entitlementsFor(type)`, ids in `Lx`). Widget tests can override the provider
-directly:
+`test/core/domain/loadout/loadout_fixtures.dart` (`loadoutJson()` — a real v3
+body with an unknown 13.06 key that must round-trip —, `entitlementsFor(type)`,
+ids in `Lx`). Widget tests keep the real controller and fake Riot instead:
+`test/features/collection/collection_test_harness.dart` (`FakeRiot` serves the
+loadout, records every PUT body and bumps `Version`).
 
-```dart
-loadoutProvider.overrideWith(() => FakeLoadoutController(snapshot)),   // or a real controller over a MockPvpApi
-```
+---
+
+## 7. Screens built on this domain (collection feature)
+
+| Route / helper | Screen |
+|---|---|
+| `CollectionRoutes.root` `/collection` | S30 hub: equipped card, loadout rows, level border / hide level / incognito, browse rows, collection value |
+| `CollectionRoutes.card`, `.title` | S31 / S32 pickers (`SetPlayerCard`, `SetPlayerTitle`) |
+| `CollectionRoutes.weapons`, `.weapon(id)`, `.weaponSkin(w, s)` | S33 weapons by category → S34 skin picker → S35 customize (`EquipSkin`) |
+| `showBuddyPickerSheet(context, weaponId:)` | S36 buddies "Còn n/m", "Gỡ phụ kiện" (`EquipBuddy`, `RemoveBuddy`) |
+| `CollectionRoutes.expressions` | S37 wheel (`SetExpression`) |
+| `CollectionRoutes.presets` | S38 presets (`loadoutPresetsProvider`, `applyPreset`) |
+| `CollectionRoutes.browse(type)` | S39 browse skins / buddies / sprays / cards / titles / Flex |
+
+Search / tier filter / sort for skin lists (`SkinQuery`, `querySkins`,
+accent-insensitive `matchesSearch`) live in
+`lib/features/collection/data/` and can be imported by other features
+(wishlist, catalog) that need the same C7 behaviour.
