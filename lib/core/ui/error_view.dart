@@ -42,9 +42,11 @@ ErrorDescription describeError(Object error) {
       canRetry: false,
       icon: Icons.lock_clock_outlined,
     ),
-    MaintenanceException(:final message) => ErrorDescription(
+    // Riot's own message is English: it stays in the exception (debug
+    // only); the UI always shows the Vietnamese copy.
+    MaintenanceException() => ErrorDescription(
       title: CommonStrings.maintenanceTitle,
-      message: message ?? CommonStrings.errorMaintenance,
+      message: CommonStrings.errorMaintenance,
       icon: Icons.construction_outlined,
     ),
     TransientException(:final retryAfter, :final reason) => ErrorDescription(

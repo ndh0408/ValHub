@@ -16,11 +16,39 @@ typedef BackgroundTaskHandler = Future<bool> Function(
   Map<String, dynamic>? input,
 );
 
+/// Whole-job budget: iOS BGAppRefresh gives ~30 s in total.
+const kBackgroundJobBudget = Duration(seconds: 25);
+
 /// The periodic job: keep dormant sessions alive, then check wishlists.
-Future<bool> _periodic(Map<String, dynamic>? input) async {
-  final keepAlive = await runSessionKeepAlive();
-  final wishlist = await runWishlistCheck();
-  return keepAlive && wishlist;
+Future<bool> _periodic(Map<String, dynamic>? input) => runPeriodicJob(
+  keepAlive: () => runSessionKeepAlive(budget: const Duration(seconds: 12)),
+  wishlist: (budget) => runWishlistCheck(budget: budget),
+);
+
+/// One deadline ([kBackgroundJobBudget]) covers both steps, the wishlist
+/// step gets whatever time is left, and a failure in one never skips the
+/// other.
+@visibleForTesting
+Future<bool> runPeriodicJob({
+  required Future<bool> Function() keepAlive,
+  required Future<bool> Function(Duration budget) wishlist,
+  DateTime Function() now = DateTime.now,
+}) async {
+  final deadline = now().add(kBackgroundJobBudget);
+  var keepAliveOk = false;
+  try {
+    keepAliveOk = await keepAlive();
+  } on Object catch (e) {
+    debugPrint('Keep-alive failed: ${e.runtimeType}');
+  }
+  final rest = deadline.difference(now());
+  var wishlistOk = false;
+  try {
+    wishlistOk = await wishlist(rest.isNegative ? Duration.zero : rest);
+  } on Object catch (e) {
+    debugPrint('Wishlist check failed: ${e.runtimeType}');
+  }
+  return keepAliveOk && wishlistOk;
 }
 
 /// Task name → handler. iOS background fetch arrives as

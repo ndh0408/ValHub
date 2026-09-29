@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../core/accounts/account_providers.dart';
 import '../core/config/client_version.dart';
+import '../core/content/content_repository.dart';
 import '../core/l10n/common_strings.dart';
 import '../core/l10n/locale.dart';
 import '../core/notifications/notification_service.dart';
@@ -45,6 +46,7 @@ class _ValVnAppState extends ConsumerState<ValVnApp> {
     await ref.read(prefsProvider).reload();
     if (!mounted) return;
     ref.read(accountsProvider.notifier).reload();
+    ref.retryContentIfFailed();
     unawaited(ref.read(clientVersionRepositoryProvider).refresh());
   }
 

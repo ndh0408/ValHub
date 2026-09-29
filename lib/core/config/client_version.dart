@@ -74,7 +74,19 @@ class ClientVersionRepository {
     this._clock = const Clock(),
   }) : _config = remoteConfig,
        _dio =
-           dio ?? Dio(BaseOptions(receiveTimeout: AppConstants.networkTimeout));
+           dio ??
+           Dio(
+             BaseOptions(
+               // Short: every content load waits for this (black-holed
+               // networks would otherwise hang on the OS TCP timeout).
+               connectTimeout: versionTimeout,
+               receiveTimeout: versionTimeout,
+               sendTimeout: versionTimeout,
+             ),
+           );
+
+  /// Timeout of the `/version` request.
+  static const versionTimeout = Duration(seconds: 10);
 
   final Prefs _prefs;
   final RemoteConfig Function() _config;

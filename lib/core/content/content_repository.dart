@@ -97,11 +97,26 @@ class ContentRepository {
   ///
   /// Throws [TransientException] only when nothing is cached and the
   /// download failed.
+  ///
+  /// [preferCache] (background tasks, ~30 s budget): any complete cached
+  /// content is returned whatever its age, without the `/version` check; a
+  /// download happens only when nothing complete is cached.
   Future<ContentDb> load({
     String language = 'vi-VN',
     bool force = false,
+    bool preferCache = false,
   }) async {
-    final version = await _versions.refresh();
+    if (preferCache && !force) {
+      final cached = await _readAll(language);
+      if (cached.length == endpoints.length) {
+        return _parser(cached, language, _versions.current.manifestId);
+      }
+    }
+    // A slow /version must never block content served from the cache.
+    final version = await _versions.refresh().timeout(
+      const Duration(seconds: 5),
+      onTimeout: () => _versions.current,
+    );
     final key = cacheKey(version.manifestId, language);
     final meta = (await _cache.read(_metaKey(language)))?.map;
     final cachedKey = asString(meta?['key']);
@@ -225,6 +240,15 @@ final contentProvider = FutureProvider<ContentDb>((ref) {
   final language = ref.watch(appSettingsProvider.select((s) => s.itemLanguage));
   return ref.watch(contentRepositoryProvider).load(language: language.apiCode);
 });
+
+/// Re-runs [contentProvider] when it is in error (it is kept alive, so a
+/// failed first load would otherwise stay failed until restart). Call from
+/// refresh / retry handlers and on app resume.
+extension ContentRetry on WidgetRef {
+  void retryContentIfFailed() {
+    if (read(contentProvider).hasError) invalidate(contentProvider);
+  }
+}
 
 /// Call when a Riot UUID is missing from [ContentDb] (new patch content):
 /// re-downloads content at most once every 6 h.

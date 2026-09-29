@@ -190,7 +190,12 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
     String puuid,
     AsyncValue<Storefront> storeAsync,
   ) {
-    void retry() => ref.invalidate(storefrontProvider(puuid));
+    void retry() {
+      ref
+        ..retryContentIfFailed()
+        ..invalidate(storefrontProvider(puuid));
+    }
+
     return switch (segment) {
       StoreSegment.daily => AsyncValueView<Storefront>(
         value: storeAsync,
@@ -226,7 +231,9 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
   }
 
   Future<void> _refresh(String puuid) async {
-    ref.invalidate(walletProvider(puuid));
+    ref
+      ..retryContentIfFailed()
+      ..invalidate(walletProvider(puuid));
     try {
       ref.invalidate(storefrontProvider(puuid));
       await ref.read(storefrontProvider(puuid).future);

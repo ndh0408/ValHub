@@ -13,6 +13,18 @@ Future<bool> runSessionKeepAlive({
   Duration budget = const Duration(seconds: 20),
 }) async {
   final ctx = await BackgroundContext.instance();
+  try {
+    return await _keepAlive(ctx, budget);
+  } finally {
+    try {
+      await ctx.finish();
+    } on Object {
+      // Flushing the session log is best effort.
+    }
+  }
+}
+
+Future<bool> _keepAlive(BackgroundContext ctx, Duration budget) async {
   final started = DateTime.now();
   var ok = true;
   for (final account in ctx.accounts.loadAll()) {
@@ -43,8 +55,12 @@ Future<bool> runSessionKeepAlive({
       }
     } on RiotException {
       ok = false;
+    } on Object catch (e) {
+      // Keystore/keychain or plugin error for this account: skip it, keep
+      // the others (and the wishlist check that follows) running.
+      ctx.log.add('keepAlive.error', detail: e.runtimeType.toString());
+      ok = false;
     }
   }
-  await ctx.finish();
   return ok;
 }

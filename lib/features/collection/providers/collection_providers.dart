@@ -3,6 +3,7 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/domain/loadout/loadout.dart';
 
@@ -10,6 +11,7 @@ import '../../../core/domain/loadout/loadout.dart';
 /// entitlements (SUMMARY §10 "on focus"). Errors are rendered by the
 /// screens' `AsyncValueView`s, so they are swallowed here.
 Future<void> refreshCollection(WidgetRef ref, String puuid) async {
+  ref.retryContentIfFailed();
   final futures = <Future<Object?>>[
     ref.refresh(loadoutProvider(puuid).future),
     ref.refresh(entitlementsProvider(puuid).future),

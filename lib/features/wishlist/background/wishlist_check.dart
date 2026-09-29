@@ -36,12 +36,16 @@ const kNightMarketFallbackLength = Duration(days: 14);
 ///
 /// Returns `true` on success, `false` to let Android retry with backoff
 /// (network trouble, or accounts left over when the time budget ran out).
-Future<bool> runWishlistCheck() async {
+Future<bool> runWishlistCheck({
+  Duration budget = const Duration(seconds: 25),
+}) async {
   try {
     final ctx = await BackgroundContext.instance();
     try {
-      final report = await WishlistChecker(BackgroundWishlistCheckEnv(ctx))
-          .run();
+      final report = await WishlistChecker(
+        BackgroundWishlistCheckEnv(ctx),
+        budget: budget,
+      ).run();
       return report.ok;
     } finally {
       try {
@@ -418,7 +422,8 @@ class BackgroundWishlistCheckEnv implements WishlistCheckEnv {
 
   @override
   Future<ContentDb> loadContent(String language) =>
-      _ctx.content.load(language: language);
+      // Background budget: any complete cache beats a full re-download.
+      _ctx.content.load(language: language, preferCache: true);
 
   @override
   Future<void> notify({
