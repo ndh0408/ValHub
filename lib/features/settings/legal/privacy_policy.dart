@@ -336,9 +336,10 @@ const privacyPolicy = LegalDocument(
           lead: 'Bài đăng, đánh giá, bình luận, bình chọn:',
         ),
         LegalItem(
-          'chúng tôi cam kết chỉ giữ báo cáo trong thời gian cần thiết để xử '
-          'lý vi phạm và phòng chống lạm dụng, và xóa hoặc ẩn danh chúng khi '
-          'không còn cần thiết, trừ khi pháp luật yêu cầu giữ lâu hơn.',
+          'chỉ giữ tối đa 12 tháng để xử lý vi phạm và phòng chống lạm dụng, '
+          'rồi máy chủ tự xóa; báo cáo về nội dung đã bị xóa cũng bị xóa, và '
+          'báo cáo do chính bạn gửi được ẩn danh khi bạn xóa dữ liệu Cộng '
+          'đồng.',
           lead: 'Báo cáo vi phạm:',
         ),
         LegalItem(
@@ -381,17 +382,20 @@ const privacyPolicy = LegalDocument(
           'bỏ bình chọn ngay trong Ứng dụng.',
         ),
         LegalItem(
-          'Để xóa toàn bộ dữ liệu Cộng đồng gắn với Riot ID của bạn, hãy gửi '
-          'email tới $_email kèm Riot ID. Chúng tôi có thể yêu cầu xác minh '
-          'bạn là chủ tài khoản trước khi xử lý và xử lý yêu cầu trong vòng 30 '
-          'ngày.',
+          'Để xóa toàn bộ dữ liệu Cộng đồng gắn với Riot ID của bạn, vào Cài '
+          'đặt > "Dữ liệu Cộng đồng của bạn" > "Xóa dữ liệu Cộng đồng của '
+          'tôi". Máy chủ xóa vĩnh viễn bài đăng, bình luận, đánh giá, lượt '
+          'thích, bình chọn, bài tìm đồng đội, ảnh và bản ghi tài khoản Cộng '
+          'đồng của bạn; việc này không thể hoàn tác. Bạn cũng có thể gửi '
+          'email tới $_email kèm Riot ID; chúng tôi có thể yêu cầu xác minh '
+          'bạn là chủ tài khoản và xử lý trong vòng 30 ngày.',
         ),
         LegalItem(
-          'Hình ảnh: hiện máy chủ chưa tự động xóa tệp ảnh khi bạn xóa bài '
-          'đăng. Chúng tôi cam kết xóa ảnh của bạn trong vòng 30 ngày kể từ khi '
-          'nhận được yêu cầu qua email. Nếu và khi chức năng này được triển '
-          'khai, ảnh sẽ được xóa cùng bài đăng hoặc tài khoản và Chính sách sẽ '
-          'được cập nhật.',
+          'Hình ảnh: tệp ảnh bị xóa cùng bài đăng hoặc tài khoản. Ảnh của nội '
+          'dung bị ẩn vì báo cáo được cách ly khỏi truy cập công khai và bị '
+          'xóa sau 30 ngày; ảnh tải lên nhưng không được dùng bị xóa sau 24 '
+          'giờ. Máy chủ gỡ thông tin vị trí và siêu dữ liệu (EXIF) khỏi ảnh '
+          'khi tải lên.',
         ),
         LegalItem(
           'Nội dung đã xóa có thể còn trong bản sao lưu tối đa 14 ngày trước '
@@ -513,10 +517,10 @@ const privacyPolicy = LegalDocument(
         'Phần lớn dữ liệu nằm trên thiết bị và bạn có thể tự xem hoặc xóa ngay '
         'trong Ứng dụng. Với dữ liệu trên máy chủ Cộng đồng, hãy gửi yêu cầu '
         'tới $_email. Chúng tôi xử lý yêu cầu trong vòng 30 ngày và có thể cần '
-        'xác minh danh tính của bạn trước khi xử lý. Hiện chúng tôi chưa có '
-        'công cụ tự động xuất dữ liệu: yêu cầu cung cấp bản sao dữ liệu được '
-        'xử lý thủ công và trả lời bằng tệp văn bản thông dụng trong cùng thời '
-        'hạn.',
+        'xác minh danh tính của bạn trước khi xử lý. Bạn cũng có thể tự tải '
+        'bản sao dữ liệu Cộng đồng của mình (tệp JSON) tại Cài đặt > "Dữ liệu '
+        'Cộng đồng của bạn" > "Tải dữ liệu của tôi", và tự xóa chúng ngay '
+        'tại đó.',
       ),
     ]),
     LegalSection('Quyền của bạn theo luật nơi bạn sống', [
