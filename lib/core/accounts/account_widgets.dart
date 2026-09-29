@@ -9,18 +9,28 @@ import '../config/app_constants.dart';
 import '../content/content_repository.dart';
 import '../l10n/account_strings.dart';
 import '../l10n/common_strings.dart';
+import '../theme/app_theme.dart';
 import '../ui/error_view.dart';
 import '../ui/net_image.dart';
 import '../ui/rank_badge.dart';
+import '../ui/val_widgets.dart';
 import 'account.dart';
 import 'account_providers.dart';
 
 /// Square avatar: the account's cached player-card small art, or initials.
 class AccountAvatar extends ConsumerWidget {
-  const AccountAvatar({super.key, required this.account, this.size = 32});
+  const AccountAvatar({
+    super.key,
+    required this.account,
+    this.size = 32,
+    this.circle = false,
+  });
 
   final Account account;
   final double size;
+
+  /// Round avatar with the red gradient fallback (Figma account chip).
+  final bool circle;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,16 +43,22 @@ class AccountAvatar extends ConsumerWidget {
       width: size,
       height: size,
       alignment: Alignment.center,
-      color: scheme.surfaceContainerHighest,
+      decoration: circle
+          ? redAvatarGradient()
+          : BoxDecoration(color: scheme.surfaceContainerHighest),
       child: Text(
         account.gameName.isEmpty
             ? '?'
             : account.gameName.characters.first.toUpperCase(),
-        style: TextStyle(fontWeight: FontWeight.w700, fontSize: size * 0.45),
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: size * 0.45,
+          color: circle ? Colors.white : null,
+        ),
       ),
     );
     return ClipRRect(
-      borderRadius: BorderRadius.circular(4),
+      borderRadius: BorderRadius.circular(circle ? size / 2 : 6),
       child: art == null
           ? fallback
           : NetImage(
@@ -68,37 +84,44 @@ class AccountChip extends ConsumerWidget {
     final account = ref.watch(activeAccountProvider);
     if (account == null) return const SizedBox.shrink();
     final theme = Theme.of(context);
+    final name = account.gameName.isEmpty ? account.riotId : account.gameName;
     return Semantics(
       button: true,
       label: AccountStrings.switcherTitle,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: () => unawaited(showAccountSwitcherSheet(context)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Badge(
-                isLabelVisible: account.needsLogin,
-                smallSize: 8,
-                child: AccountAvatar(account: account, size: 28),
-              ),
-              if (showName) ...[
-                const SizedBox(width: 8),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 140),
-                  child: Text(
-                    account.gameName.isEmpty
-                        ? account.riotId
-                        : account.gameName,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.labelLarge,
+      child: Material(
+        color: theme.colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(22),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => unawaited(showAccountSwitcherSheet(context)),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(4, 4, showName ? 12 : 4, 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Badge(
+                  isLabelVisible: account.needsLogin,
+                  smallSize: 8,
+                  child: AccountAvatar(
+                    account: account,
+                    size: 30,
+                    circle: true,
                   ),
                 ),
-                const Icon(Icons.expand_more, size: 18),
+                if (showName) ...[
+                  const SizedBox(width: 8),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 120),
+                    child: Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelLarge,
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -222,14 +245,25 @@ class AccountTile extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       selected: selected,
-      leading: AccountAvatar(account: account, size: 40),
-      title: Text(account.riotId, overflow: TextOverflow.ellipsis),
+      leading: AccountAvatar(account: account, size: 40, circle: true),
+      title: Text(
+        account.riotId,
+        overflow: TextOverflow.ellipsis,
+        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
+      ),
       subtitle: account.needsLogin
           ? Text(
               AccountStrings.needsLogin,
-              style: TextStyle(color: theme.colorScheme.error),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: valColorsOf(context).warning,
+              ),
             )
-          : Text(meta),
+          : Text(
+              meta,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
       trailing:
           trailing ??
           Row(

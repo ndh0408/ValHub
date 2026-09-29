@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../theme/app_theme.dart';
+
 /// One segment of [SegmentedTabs].
 class SegmentedTab<T> {
   const SegmentedTab({
@@ -37,20 +39,27 @@ class SegmentedTabs<T> extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: padding,
-      child: Row(
-        children: [
-          for (final tab in tabs)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: _Segment(
-                label: tab.label,
-                selected: tab.value == selected,
-                showDot: tab.showDot,
-                onTap: () => onChanged(tab.value),
-                scheme: scheme,
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: scheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(ValRadius.small),
+        ),
+        child: Row(
+          children: [
+            for (final tab in tabs)
+              Padding(
+                padding: EdgeInsets.only(right: tab == tabs.last ? 0 : 4),
+                child: _Segment(
+                  label: tab.label,
+                  selected: tab.value == selected,
+                  showDot: tab.showDot,
+                  onTap: () => onChanged(tab.value),
+                  scheme: scheme,
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -78,13 +87,13 @@ class _Segment extends StatelessWidget {
       button: true,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(2),
+        borderRadius: BorderRadius.circular(9),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: selected ? scheme.primary : scheme.surfaceContainerHigh,
-            borderRadius: BorderRadius.circular(2),
+            color: selected ? ValColors.red : Colors.transparent,
+            borderRadius: BorderRadius.circular(9),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -92,7 +101,7 @@ class _Segment extends StatelessWidget {
               Text(
                 label,
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: selected ? scheme.onPrimary : scheme.onSurface,
+                  color: selected ? Colors.white : scheme.onSurface,
                 ),
               ),
               if (showDot) ...[
@@ -101,7 +110,7 @@ class _Segment extends StatelessWidget {
                   width: 6,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: selected ? scheme.onPrimary : scheme.primary,
+                    color: selected ? Colors.white : ValColors.red,
                     shape: BoxShape.circle,
                   ),
                 ),

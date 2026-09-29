@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../theme/app_theme.dart';
+
 /// Section title with an optional trailing widget / "›" tap target.
 class SectionHeader extends StatelessWidget {
   const SectionHeader(
@@ -23,16 +25,15 @@ class SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final style = uppercase
-        ? theme.textTheme.labelMedium?.copyWith(
-            letterSpacing: 1.2,
-            color: theme.colorScheme.onSurfaceVariant,
-          )
-        : theme.textTheme.titleMedium;
+        ? ValText.label.copyWith(color: theme.colorScheme.onSurfaceVariant)
+        : theme.textTheme.titleLarge;
     final row = Padding(
       padding: padding,
       child: Row(
         children: [
-          Expanded(child: Text(title, style: style)),
+          Expanded(
+            child: Text(uppercase ? title.toUpperCase() : title, style: style),
+          ),
           ?trailing,
           if (onTap != null && trailing == null)
             Icon(

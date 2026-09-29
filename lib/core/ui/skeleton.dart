@@ -59,7 +59,7 @@ class Skeleton extends StatelessWidget {
     super.key,
     this.width,
     this.height = 16,
-    this.radius = 4,
+    this.radius = 6,
     this.shimmer = true,
   });
 
@@ -106,7 +106,8 @@ class SkeletonList extends StatelessWidget {
         shrinkWrap: true,
         itemCount: itemCount,
         separatorBuilder: (_, _) => SizedBox(height: spacing),
-        itemBuilder: (_, _) => Skeleton(height: itemHeight, shimmer: false),
+        itemBuilder: (_, _) =>
+            Skeleton(height: itemHeight, radius: 16, shimmer: false),
       ),
     );
   }

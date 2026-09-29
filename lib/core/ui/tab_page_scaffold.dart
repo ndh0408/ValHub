@@ -1,9 +1,10 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../accounts/account_widgets.dart';
+import '../theme/app_theme.dart';
 import 'maintenance_banner.dart';
 
-/// Standard scaffold for the five tab roots: large Anton title, the account
+/// Standard scaffold for the five tab roots: Anton 34 title (Figma), the account
 /// chip, optional actions, an optional pinned header (e.g. [SegmentedTabs]),
 /// the maintenance banner and pull-to-refresh.
 ///
@@ -47,24 +48,26 @@ class TabPageScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final headerWidget = header;
     final scroll = CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverAppBar(
           pinned: true,
-          toolbarHeight: 64,
-          titleSpacing: 16,
+          toolbarHeight: 72,
+          titleSpacing: 20,
           title: Text(
-            title.toUpperCase(),
-            style: theme.textTheme.headlineMedium,
+            title,
+            style: ValText.screenTitle.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           actions: [
             ...actions,
             if (showAccountChip) const AccountChip(),
-            const SizedBox(width: 8),
+            const SizedBox(width: 16),
           ],
         ),
         if (showMaintenanceBanner)
