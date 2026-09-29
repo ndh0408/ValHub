@@ -8,6 +8,7 @@ import '../../../core/l10n/auth_strings.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../settings_strings.dart';
+import 'widgets/legal_widgets.dart';
 
 /// S01 "Chào mừng" (shown when no account is signed in). Top-level route
 /// `/welcome`.
@@ -110,6 +111,13 @@ class WelcomeScreen extends StatelessWidget {
                             ),
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 12),
+                      LegalConsentText(
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                          height: 1.45,
+                        ),
                       ),
                       const SizedBox(height: 20),
                       Text(

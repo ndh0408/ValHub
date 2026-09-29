@@ -1,0 +1,105 @@
+ValVN — Proprietary Software License / Giấy phép phần mềm độc quyền
+
+Copyright (c) 2026 [TÊN NHÀ PHÁT HÀNH]. All rights reserved.
+Bản quyền (c) 2026 [TÊN NHÀ PHÁT HÀNH]. Bảo lưu mọi quyền.
+
+-------------------------------------------------------------------------------
+ENGLISH
+-------------------------------------------------------------------------------
+
+This repository and all of its contents, including but not limited to source
+code, object code, build scripts, configuration, designs, graphics, icons,
+text and documentation (the "Software"), are the proprietary and confidential
+property of [TÊN NHÀ PHÁT HÀNH] (the "Owner").
+
+The Software is NOT open source. No license or other right is granted to you,
+by implication, estoppel or otherwise, except as expressly set out in a
+separate written agreement signed by the Owner.
+
+Without the prior written permission of the Owner you may not:
+
+  1. copy, reproduce, publish or mirror the Software, in whole or in part;
+  2. modify, translate, adapt or create derivative works of the Software;
+  3. distribute, sublicense, sell, rent, lease, lend or otherwise make the
+     Software available to any third party;
+  4. reverse engineer, decompile or disassemble any compiled form of the
+     Software, except to the extent such restriction is prohibited by
+     applicable law;
+  5. remove or alter any copyright, trademark or other proprietary notice.
+
+Access to this repository, where granted, is for the sole purpose authorized
+by the Owner and does not transfer any ownership or license rights.
+
+End users may use the published ValVN application only under the in-app
+End-User License ("Giấy phép phần mềm") and Terms of Service ("Điều khoản sử
+dụng"); see docs/legal/.
+
+Third-party components included in or used by the Software (for example
+Flutter and Dart packages) are licensed under their own respective licenses,
+which remain in full force for those components only. Their notices are shown
+in the application under "Giấy phép thư viện bên thứ ba".
+
+ValVN isn't endorsed by Riot Games and doesn't reflect the views or opinions
+of Riot Games or anyone officially involved in producing or managing Riot
+Games properties. Riot Games, VALORANT and all associated properties are
+trademarks or registered trademarks of Riot Games, Inc.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED. IN NO EVENT SHALL THE OWNER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE, TO THE
+MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW.
+
+This notice is governed by the laws of the Socialist Republic of Vietnam.
+
+For licensing inquiries: [EMAIL LIÊN HỆ]
+
+-------------------------------------------------------------------------------
+TIẾNG VIỆT
+-------------------------------------------------------------------------------
+
+Kho mã này và toàn bộ nội dung trong đó, bao gồm nhưng không giới hạn mã
+nguồn, mã máy, tập lệnh build, cấu hình, thiết kế, hình ảnh, biểu tượng, văn
+bản và tài liệu ("Phần mềm"), là tài sản độc quyền và bí mật của
+[TÊN NHÀ PHÁT HÀNH] ("Chủ sở hữu").
+
+Phần mềm KHÔNG phải phần mềm mã nguồn mở. Không có bất kỳ giấy phép hay quyền
+nào được cấp cho bạn, dù trực tiếp hay ngụ ý, trừ khi được quy định rõ trong
+một thỏa thuận riêng bằng văn bản có chữ ký của Chủ sở hữu.
+
+Nếu chưa có sự cho phép trước bằng văn bản của Chủ sở hữu, bạn không được:
+
+  1. sao chép, tái bản, công bố hoặc tạo bản sao (mirror) Phần mềm, toàn bộ
+     hay một phần;
+  2. sửa đổi, dịch, chuyển thể hoặc tạo tác phẩm phái sinh từ Phần mềm;
+  3. phân phối, cấp phép lại, bán, cho thuê, cho mượn hoặc cung cấp Phần mềm
+     cho bất kỳ bên thứ ba nào;
+  4. dịch ngược, giải mã hoặc tháo rời bất kỳ dạng biên dịch nào của Phần
+     mềm, trừ trường hợp pháp luật hiện hành không cho phép hạn chế điều này;
+  5. gỡ bỏ hoặc thay đổi thông báo bản quyền, nhãn hiệu hay thông báo quyền
+     sở hữu khác.
+
+Quyền truy cập kho mã này (nếu được cấp) chỉ nhằm mục đích được Chủ sở hữu
+cho phép và không chuyển giao bất kỳ quyền sở hữu hay quyền sử dụng nào.
+
+Người dùng cuối chỉ được sử dụng ứng dụng ValVN đã phát hành theo "Giấy phép
+phần mềm" và "Điều khoản sử dụng" trong ứng dụng; xem thư mục docs/legal/.
+
+Các thành phần của bên thứ ba có trong hoặc được Phần mềm sử dụng (ví dụ
+Flutter và các gói Dart) được cấp phép theo giấy phép riêng của từng thành
+phần; các giấy phép đó chỉ áp dụng cho chính thành phần tương ứng. Thông báo
+của chúng được hiển thị trong ứng dụng tại mục "Giấy phép thư viện bên thứ ba".
+
+ValVN không được Riot Games xác nhận và không phản ánh quan điểm của Riot
+Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot
+Games. Riot Games, VALORANT và mọi tài sản liên quan là thương hiệu hoặc thương
+hiệu đã đăng ký của Riot Games, Inc.
+
+PHẦN MỀM ĐƯỢC CUNG CẤP "NGUYÊN TRẠNG", KHÔNG KÈM BẤT KỲ BẢO ĐẢM NÀO, DÙ RÕ
+RÀNG HAY NGỤ Ý. TRONG PHẠM VI TỐI ĐA PHÁP LUẬT CHO PHÉP, CHỦ SỞ HỮU KHÔNG CHỊU
+TRÁCH NHIỆM ĐỐI VỚI BẤT KỲ KHIẾU NẠI, THIỆT HẠI HAY NGHĨA VỤ NÀO PHÁT SINH TỪ
+HOẶC LIÊN QUAN ĐẾN PHẦN MỀM.
+
+Thông báo này được điều chỉnh bởi pháp luật nước Cộng hòa xã hội chủ nghĩa
+Việt Nam.
+
+Liên hệ cấp phép: [EMAIL LIÊN HỆ]

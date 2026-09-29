@@ -87,32 +87,11 @@ abstract final class SettingsStrings {
 
   // THÔNG TIN
   static const privacyPolicy = 'Chính sách quyền riêng tư';
-  static const privacyPolicyBody =
-      'ValVN lưu token đăng nhập Riot và dữ liệu tài khoản chỉ trên thiết bị '
-      'của bạn, trong vùng lưu trữ bảo mật của hệ điều hành. ValVN không có '
-      'máy chủ riêng và không gửi dữ liệu của bạn cho bên thứ ba.\n\n'
-      'Ứng dụng chỉ kết nối tới máy chủ của Riot Games (để đọc cửa hàng, bộ '
-      'sưu tập, trận đấu của chính tài khoản bạn đăng nhập) và tới '
-      'valorant-api.com (tên, hình ảnh vật phẩm công khai).\n\n'
-      'Nhật ký phiên chỉ ghi tên yêu cầu, mã trạng thái và thời gian, không '
-      'bao giờ chứa mật khẩu, token hay ID tài khoản. Nhật ký chỉ rời khỏi '
-      'thiết bị khi bạn tự chia sẻ.\n\n'
-      'Đăng xuất một tài khoản sẽ xóa token, cookie và dữ liệu đã lưu của '
-      'tài khoản đó khỏi thiết bị (wishlist được giữ lại).';
   static const terms = 'Điều khoản sử dụng';
-  static const termsBody =
-      'ValVN là ứng dụng không chính thức của cộng đồng, không liên kết hay '
-      'được Riot Games xác nhận, tài trợ hoặc giám sát.\n\n'
-      'Bạn đăng nhập bằng tài khoản Riot của chính mình trên trang chính thức '
-      'của Riot và cần tuân thủ Điều khoản dịch vụ của Riot Games. Mọi thao '
-      'tác làm thay đổi tài khoản (trang bị, chọn đặc vụ, hàng chờ…) chỉ được '
-      'thực hiện khi bạn tự bấm.\n\n'
-      'Ứng dụng được cung cấp nguyên trạng, không kèm bảo hành dưới bất kỳ '
-      'hình thức nào.';
   static const feedback = 'Góp ý & báo lỗi';
   static const feedbackSubtitle = 'Gửi góp ý trên GitHub';
   static const linkOpenFailed = 'Không mở được liên kết.';
-  static const licenses = 'Giấy phép mã nguồn mở';
+  static const licenses = 'Giấy phép thư viện bên thứ ba';
 
   // Sign out
   static const signedOutAll = 'Đã đăng xuất tất cả tài khoản';

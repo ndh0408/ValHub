@@ -5,8 +5,11 @@ import 'package:valvn/core/auth/auth_routes.dart';
 import 'package:valvn/core/l10n/auth_strings.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/theme/app_theme.dart';
+import 'package:valvn/features/settings/legal/legal_documents.dart';
+import 'package:valvn/features/settings/legal/legal_strings.dart';
 import 'package:valvn/features/settings/settings_routes.dart';
 import 'package:valvn/features/settings/settings_strings.dart';
+import 'package:valvn/features/settings/ui/legal_document_screen.dart';
 
 void main() {
   Future<void> pumpWelcome(WidgetTester tester, Size size) async {
@@ -42,6 +45,40 @@ void main() {
     expect(find.text(AuthStrings.signInCta), findsOneWidget);
     expect(find.text(SettingsStrings.welcomeFootnote), findsOneWidget);
     expect(find.text(CommonStrings.riotDisclaimer), findsOneWidget);
+  });
+
+  testWidgets('the consent line links to the Terms and the Privacy Policy', (
+    tester,
+  ) async {
+    await pumpWelcome(tester, const Size(360, 800));
+
+    expect(
+      find.textContaining(LegalStrings.consentPrefix, findRichText: true),
+      findsOneWidget,
+    );
+    await tester.tapOnText(
+      find.textRange.ofSubstring(LegalStrings.consentTerms),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<LegalDocumentScreen>(find.byType(LegalDocumentScreen))
+          .document,
+      same(LegalDocuments.terms),
+    );
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.tapOnText(
+      find.textRange.ofSubstring(LegalStrings.consentPrivacy),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<LegalDocumentScreen>(find.byType(LegalDocumentScreen))
+          .document,
+      same(LegalDocuments.privacy),
+    );
   });
 
   testWidgets('the sign-in button opens /login', (tester) async {

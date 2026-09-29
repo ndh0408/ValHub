@@ -11,8 +11,10 @@ import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/core/settings/app_settings.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/theme/app_theme.dart';
+import 'package:valvn/features/settings/legal/legal_documents.dart';
 import 'package:valvn/features/settings/settings_routes.dart';
 import 'package:valvn/features/settings/settings_strings.dart';
+import 'package:valvn/features/settings/ui/legal_document_screen.dart';
 import 'package:valvn/features/settings/ui/session_log_screen.dart';
 
 import '../../../helpers/test_prefs.dart';
@@ -420,12 +422,30 @@ void main() {
       await _drainSnackBars(tester);
     });
 
-    testWidgets('privacy policy opens a readable sheet', (tester) async {
+    testWidgets('privacy policy and terms open the legal document screen', (
+      tester,
+    ) async {
       await pumpSettings(tester, accounts: [testAccount(1)]);
 
       await tester.tap(find.text(SettingsStrings.privacyPolicy));
       await tester.pumpAndSettle();
-      expect(find.text(SettingsStrings.privacyPolicyBody), findsOneWidget);
+      expect(
+        tester
+            .widget<LegalDocumentScreen>(find.byType(LegalDocumentScreen))
+            .document,
+        same(LegalDocuments.privacy),
+      );
+
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(SettingsStrings.terms));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<LegalDocumentScreen>(find.byType(LegalDocumentScreen))
+            .document,
+        same(LegalDocuments.terms),
+      );
     });
 
     testWidgets('"Giới thiệu & pháp lý" opens the About screen', (

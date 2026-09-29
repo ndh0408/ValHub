@@ -7,9 +7,11 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/ui/skeleton.dart';
 import '../../data/cache_stats.dart';
+import '../../legal/legal_documents.dart';
 import '../../providers/settings_providers.dart';
 import '../../settings_routes.dart';
 import '../../settings_strings.dart';
+import '../widgets/legal_widgets.dart';
 import '../widgets/settings_widgets.dart';
 
 /// "ỨNG DỤNG" (S70, X2): version, clear cache (with its size), session log.
@@ -141,11 +143,7 @@ class SettingsAboutSection extends ConsumerWidget {
           title: const Text(SettingsStrings.privacyPolicy),
           trailing: const SettingsChevron(),
           onTap: () => unawaited(
-            showSettingsTextSheet(
-              context,
-              title: SettingsStrings.privacyPolicy,
-              body: SettingsStrings.privacyPolicyBody,
-            ),
+            context.push(SettingsRoutes.legal(LegalDocuments.privacy)),
           ),
         ),
         ListTile(
@@ -153,11 +151,7 @@ class SettingsAboutSection extends ConsumerWidget {
           title: const Text(SettingsStrings.terms),
           trailing: const SettingsChevron(),
           onTap: () => unawaited(
-            showSettingsTextSheet(
-              context,
-              title: SettingsStrings.terms,
-              body: SettingsStrings.termsBody,
-            ),
+            context.push(SettingsRoutes.legal(LegalDocuments.terms)),
           ),
         ),
         ListTile(
@@ -171,12 +165,7 @@ class SettingsAboutSection extends ConsumerWidget {
           leading: const SettingsIcon(Icons.description_outlined),
           title: const Text(SettingsStrings.licenses),
           trailing: const SettingsChevron(),
-          onTap: () => showLicensePage(
-            context: context,
-            applicationName: CommonStrings.appName,
-            applicationVersion: version,
-            applicationLegalese: CommonStrings.riotDisclaimer,
-          ),
+          onTap: () => showThirdPartyLicenses(context, version: version),
         ),
         ListTile(
           leading: const SettingsIcon(Icons.info_outline),
