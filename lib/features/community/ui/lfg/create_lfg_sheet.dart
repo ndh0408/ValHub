@@ -5,14 +5,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account.dart';
+import '../../../../core/content/content_db.dart';
+import '../../../../core/content/content_repository.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/ui/error_view.dart' show describeError;
+import '../../../../core/ui/rank_badge.dart';
+import '../../../../core/util/clock.dart';
 import '../../community_strings.dart';
 import '../../data/community_models.dart';
+import '../../data/lfg_sync.dart';
 import '../../providers/lfg_providers.dart';
 import '../widgets/community_widgets.dart';
+import 'lfg_bits.dart';
 
-/// Validates a party code: `null` when valid, else the message.
+/// Validates a typed party code: `null` when valid, else the message.
 String? validatePartyCode(String code) {
   final c = code.trim().toUpperCase();
   if (c.isEmpty) return CommunityStrings.codeRequired;
@@ -35,8 +40,9 @@ Future<LfgPost?> showCreateLfgSheet(
       CreateLfgSheet(account: account, region: region, shownIn: shownIn),
 );
 
-/// Mode chips, slots stepper, note, party code (generated from the current
-/// party with G-18, or typed) and "Đăng tin".
+/// Mode, rank range, roles, mic, language, party size (from the live
+/// party), open slots, note and an optional party code (generated from the
+/// game party on "Đăng tin" when empty).
 class CreateLfgSheet extends ConsumerStatefulWidget {
   const CreateLfgSheet({
     super.key,
@@ -55,12 +61,42 @@ class CreateLfgSheet extends ConsumerStatefulWidget {
 
 class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
   String _mode = 'competitive';
+  int _partySize = 1;
   int _slots = 1;
+  int? _rankMin;
+  int? _rankMax;
+  final Set<String> _roles = {};
+  bool _mic = false;
+
+  /// Picked language; `null` = the app's current language.
+  String? _languageChoice;
+
+  String get _language => _languageChoice ?? communityAppLanguage(context);
+  bool _sizeFromGame = false;
   final _note = TextEditingController();
   final _code = TextEditingController();
   String? _codeError;
-  bool _generating = false;
+  String? _formError;
   bool _posting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_prefillPartySize());
+  }
+
+  /// Party size from the live party (G-12/G-13), when the game runs.
+  Future<void> _prefillPartySize() async {
+    final party = await readLiveParty(ref, widget.account.puuid);
+    if (!mounted || party == null) return;
+    setState(() {
+      _partySize = party.size.clamp(1, 4);
+      _slots = _slots.clamp(1, 5 - _partySize);
+      _sizeFromGame = true;
+      final code = party.inviteCode;
+      if (code != null && _code.text.isEmpty) _code.text = code;
+    });
+  }
 
   @override
   void dispose() {
@@ -73,7 +109,10 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final bottom = MediaQuery.viewInsetsOf(context).bottom;
+    final suggestion = suggestedRankRange(lfgViewerRank(widget.account));
+    final maxSlots = (5 - _partySize).clamp(1, 4);
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: SingleChildScrollView(
@@ -105,66 +144,152 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
               ],
             ),
             const SizedBox(height: 20),
+            _label(CommunityStrings.rankRange),
+            Row(
+              children: [
+                Expanded(
+                  child: _RankButton(
+                    key: const ValueKey('rank-min'),
+                    caption: CommunityStrings.rankFrom,
+                    tier: _rankMin,
+                    onTap: () => unawaited(_pickRank(db, min: true)),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _RankButton(
+                    key: const ValueKey('rank-max'),
+                    caption: CommunityStrings.rankTo,
+                    tier: _rankMax,
+                    onTap: () => unawaited(_pickRank(db, min: false)),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                CommunityChip(
+                  label: CommunityStrings.anyRank,
+                  selected: _rankMin == null && _rankMax == null,
+                  onSelected: () => setState(() {
+                    _rankMin = null;
+                    _rankMax = null;
+                  }),
+                ),
+                if (suggestion != null)
+                  CommunityChip(
+                    key: const ValueKey('rank-suggest'),
+                    icon: Icons.auto_awesome_rounded,
+                    label: rankRangeLabel(db, suggestion.min, suggestion.max),
+                    selected:
+                        _rankMin == suggestion.min &&
+                        _rankMax == suggestion.max,
+                    onSelected: () => setState(() {
+                      _rankMin = suggestion.min;
+                      _rankMax = suggestion.max;
+                    }),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            _label(CommunityStrings.roles),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final r in kLfgRoles)
+                  CommunityChip(
+                    label: lfgRoleLabel(r),
+                    selected: _roles.contains(r),
+                    onSelected: () => setState(() {
+                      if (!_roles.remove(r) && _roles.length < 4) _roles.add(r);
+                    }),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              value: _mic,
+              onChanged: (v) => setState(() => _mic = v),
+              secondary: const Icon(Icons.mic_rounded),
+              title: const Text(CommunityStrings.mic),
+            ),
+            _label(CommunityStrings.language),
+            Material(
+              color: theme.colorScheme.surfaceContainer,
+              borderRadius: BorderRadius.circular(ValRadius.small),
+              child: ListTile(
+                key: const ValueKey('lfg-language'),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(ValRadius.small),
+                ),
+                leading: const Icon(Icons.translate_rounded),
+                title: Text(CommunityStrings.languageLabel(_language)),
+                trailing: const Icon(Icons.expand_more_rounded),
+                onTap: () => unawaited(_pickLanguage()),
+              ),
+            ),
+            const SizedBox(height: 20),
+            _label(CommunityStrings.partySize),
+            _Stepper(
+              key: const ValueKey('party-size'),
+              value: _partySize,
+              min: 1,
+              max: 4,
+              format: CommunityStrings.partySizeValue,
+              onChanged: (v) => setState(() {
+                _partySize = v;
+                _slots = _slots.clamp(1, 5 - v);
+                _sizeFromGame = false;
+              }),
+            ),
+            if (_sizeFromGame)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  CommunityStrings.partySizeFromGame,
+                  style: theme.textTheme.labelSmall?.copyWith(color: muted),
+                ),
+              ),
+            const SizedBox(height: 16),
             _label(CommunityStrings.slots),
-            _SlotsStepper(
+            _Stepper(
+              key: const ValueKey('slots'),
               value: _slots,
+              min: 1,
+              max: maxSlots,
+              format: CommunityStrings.slotsWanted,
               onChanged: (v) => setState(() => _slots = v),
             ),
             const SizedBox(height: 20),
             _label(CommunityStrings.partyCode),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: TextField(
-                    key: const ValueKey('lfg-code'),
-                    controller: _code,
-                    textCapitalization: TextCapitalization.characters,
-                    maxLength: 6,
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]')),
-                      const _UpperCaseFormatter(),
-                    ],
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      letterSpacing: 3,
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
-                    decoration: InputDecoration(
-                      hintText: CommunityStrings.partyCodeHint,
-                      counterText: '',
-                      errorText: _codeError,
-                      errorMaxLines: 3,
-                    ),
-                    onChanged: (_) {
-                      if (_codeError != null) {
-                        setState(() => _codeError = null);
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 8),
-                SizedBox(
-                  height: 56,
-                  child: OutlinedButton.icon(
-                    onPressed: _generating
-                        ? null
-                        : () => unawaited(_generate()),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                    ),
-                    icon: _generating
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.bolt_rounded),
-                    label: const Text(CommunityStrings.generateCode),
-                  ),
-                ),
+            TextField(
+              key: const ValueKey('lfg-code'),
+              controller: _code,
+              textCapitalization: TextCapitalization.characters,
+              maxLength: 6,
+              autocorrect: false,
+              enableSuggestions: false,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]')),
+                const _UpperCaseFormatter(),
               ],
+              style: theme.textTheme.titleMedium?.copyWith(letterSpacing: 3),
+              decoration: InputDecoration(
+                hintText: CommunityStrings.partyCodeHint,
+                counterText: '',
+                helperText: CommunityStrings.codeAuto,
+                helperMaxLines: 3,
+                errorText: _codeError,
+                errorMaxLines: 3,
+              ),
+              onChanged: (_) {
+                if (_codeError != null) setState(() => _codeError = null);
+              },
             ),
             const SizedBox(height: 12),
             _label(CommunityStrings.note),
@@ -178,7 +303,17 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
                 hintText: CommunityStrings.noteHint,
               ),
             ),
-            const SizedBox(height: 12),
+            if (_formError != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  _formError!,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.error,
+                  ),
+                ),
+              ),
+            const SizedBox(height: 8),
             SizedBox(
               height: 52,
               child: FilledButton.icon(
@@ -212,57 +347,135 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
     ),
   );
 
-  Future<void> _generate() async {
+  Future<void> _pickLanguage() async {
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      useSafeArea: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.6,
+        builder: (context, controller) => ListView(
+          controller: controller,
+          children: [
+            for (final code in [kLfgAnyLanguage, ...kLfgLanguages])
+              ListTile(
+                key: ValueKey('lang-$code'),
+                title: Text(CommunityStrings.languageLabel(code)),
+                trailing: code == _language
+                    ? const Icon(Icons.check_rounded)
+                    : null,
+                onTap: () => Navigator.of(context).pop(code),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (picked != null && mounted) setState(() => _languageChoice = picked);
+  }
+
+  Future<void> _pickRank(ContentDb db, {required bool min}) async {
+    final tiers = <int>{
+      for (final t
+          in db.tierTableForSeason(null)?.tiers ?? const <CompetitiveTier>[])
+        if (t.tier > 2 && !t.isUnranked) t.tier,
+    }.toList()..sort();
+    final picked = await showModalBottomSheet<int>(
+      context: context,
+      useSafeArea: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.6,
+        builder: (context, controller) => ListView(
+          controller: controller,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.all_inclusive_rounded),
+              title: const Text(CommunityStrings.anyRank),
+              onTap: () => Navigator.of(context).pop(0),
+            ),
+            for (final t in tiers)
+              ListTile(
+                key: ValueKey('tier-$t'),
+                title: RankBadge(tier: t, size: 28),
+                onTap: () => Navigator.of(context).pop(t),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (picked == null || !mounted) return;
     setState(() {
-      _generating = true;
-      _codeError = null;
-    });
-    try {
-      final code = await currentPartyCode(ref, widget.account.puuid);
-      if (!mounted) return;
-      if (code == null) {
-        setState(() => _codeError = CommunityStrings.noParty);
+      final v = picked == 0 ? null : picked;
+      if (min) {
+        _rankMin = v;
       } else {
-        _code.text = code;
-        ScaffoldMessenger.maybeOf(context)
-          ?..hideCurrentSnackBar()
-          ..showSnackBar(
-            const SnackBar(content: Text(CommunityStrings.codeGenerated)),
-          );
+        _rankMax = v;
       }
-    } on Object catch (e) {
-      if (mounted) {
-        setState(
-          () => _codeError = CommunityStrings.noPartyWithReason(
-            describeError(e).message,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _generating = false);
-    }
+      _formError = null;
+    });
   }
 
   Future<void> _submit() async {
-    final error = validatePartyCode(_code.text);
-    if (error != null) {
-      setState(() => _codeError = error);
+    final problem = validateLfgForm(
+      rankMin: _rankMin,
+      rankMax: _rankMax,
+      partySize: _partySize,
+      slots: _slots,
+      code: _code.text,
+      mode: _mode,
+    );
+    if (problem != null) {
+      setState(() {
+        switch (problem) {
+          case LfgProblem.rankRange:
+            _formError = CommunityStrings.rankRangeInvalid;
+          case LfgProblem.tooManyPlayers:
+            _formError = CommunityStrings.slotsTooMany(5 - _partySize);
+          case LfgProblem.codeInvalid:
+            _codeError = CommunityStrings.codeInvalid;
+        }
+      });
       return;
     }
-    setState(() => _posting = true);
+    setState(() {
+      _posting = true;
+      _formError = null;
+      _codeError = null;
+    });
     try {
       final post = await createLfgPost(
         ref,
         puuid: widget.account.puuid,
         region: widget.region,
         mode: _mode,
-        partyCode: _code.text.trim().toUpperCase(),
+        partyCode: _code.text,
         slots: _slots,
         rankTier: widget.account.rankTier,
         note: _note.text,
+        rankMin: _rankMin,
+        rankMax: _rankMax,
+        roles: [
+          for (final r in kLfgRoles)
+            if (_roles.contains(r)) r,
+        ],
+        mic: _mic,
+        language: _language,
+        partySize: _partySize,
         shownIn: widget.shownIn,
+        now: ref.read(clockProvider).now(),
       );
       if (mounted) Navigator.of(context).pop(post);
+    } on LfgCodeUnavailable {
+      if (mounted) {
+        setState(() {
+          _posting = false;
+          _codeError = CommunityStrings.codeAutoFailed;
+        });
+      }
     } on Object catch (e) {
       if (mounted) {
         setState(() => _posting = false);
@@ -272,10 +485,71 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
   }
 }
 
-class _SlotsStepper extends StatelessWidget {
-  const _SlotsStepper({required this.value, required this.onChanged});
+class _RankButton extends StatelessWidget {
+  const _RankButton({
+    super.key,
+    required this.caption,
+    required this.tier,
+    required this.onTap,
+  });
+
+  final String caption;
+  final int? tier;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final t = tier;
+    return Material(
+      color: theme.colorScheme.surfaceContainer,
+      borderRadius: BorderRadius.circular(ValRadius.small),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(ValRadius.small),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                caption,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 4),
+              if (t == null)
+                Text(
+                  CommunityStrings.anyRank,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                )
+              else
+                RankBadge(tier: t, size: 24),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Stepper extends StatelessWidget {
+  const _Stepper({
+    super.key,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.format,
+    required this.onChanged,
+  });
 
   final int value;
+  final int min;
+  final int max;
+  final String Function(int) format;
   final ValueChanged<int> onChanged;
 
   @override
@@ -291,21 +565,21 @@ class _SlotsStepper extends StatelessWidget {
         children: [
           IconButton(
             tooltip: CommunityStrings.decrease,
-            onPressed: value > 1 ? () => onChanged(value - 1) : null,
+            onPressed: value > min ? () => onChanged(value - 1) : null,
             icon: const Icon(Icons.remove_rounded),
           ),
           Expanded(
             child: Center(
               child: AnimatedCount(
                 value: value,
-                format: CommunityStrings.slotsWanted,
+                format: format,
                 style: theme.textTheme.titleMedium,
               ),
             ),
           ),
           IconButton(
             tooltip: CommunityStrings.increase,
-            onPressed: value < 4 ? () => onChanged(value + 1) : null,
+            onPressed: value < max ? () => onChanged(value + 1) : null,
             icon: const Icon(Icons.add_rounded),
           ),
         ],

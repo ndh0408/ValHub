@@ -43,7 +43,7 @@ lib/
 └─ features/
    ├─ store/          (+ skin_detail/)   TAB 1 Cửa hàng
    ├─ battlepass/                        TAB 2 Battle Pass
-   ├─ community/                         TAB 3 Cộng đồng (feed, LFG, skin votes; docs/community-api.md)
+   ├─ community/                         TAB 3 Cộng đồng (feed, LFG, skin votes + reviews; docs/community-api.md)
    ├─ collection/                        TAB 3 Bộ sưu tập
    ├─ wishlist/                          Wishlist + catalog + background check
    ├─ profile/                           TAB 4 Hồ sơ, match detail, player profile
@@ -130,7 +130,7 @@ Routes are composed in `lib/app/router.dart`; features only edit their own
 |---|---|---|
 | top level | `settings_routes.dart` (`settingsTopLevelRoutes`) | `/welcome` → `WelcomeScreen` |
 | top level | core (`AuthRoutes`) | `/login`, `/login?reauth=<puuid>` → `LoginScreen` |
-| top level | `community_routes.dart` (`communityTopLevelRoutes`) | `/compose` → `ComposeScreen` (`extra`: `ComposeDraft`), `/post/:id` → `PostDetailScreen` (`extra`: `CommunityPost`) |
+| top level | `community_routes.dart` (`communityTopLevelRoutes`) | `/compose` → `ComposeScreen` (`extra`: `ComposeDraft`), `/post/:id` → `PostDetailScreen` (`extra`: `CommunityPost`), `/community/skin/:uuid` → `SkinReviewScreen` (`CommunityRoutes.skin(uuid)`, `openSkinReview(context, uuid)` from anywhere) |
 | top level | `profile_routes.dart` (`profileTopLevelRoutes`) | `/player/:puuid[?hidden=1]` → `PlayerProfileScreen`, `/match/:id[?player=<puuid>]` → `MatchDetailScreen` (full screen, e.g. from the live-game sheet) |
 | tab 0 | `store_routes.dart` (`storeBranchRoutes`) | `/store[?segment=daily\|nightmarket\|accessories\|bundles]`, `/store/bundle/:id` |
 | tab 1 | `battlepass_routes.dart` (`battlepassBranchRoutes`) | `/battlepass`, `/battlepass/rewards` |
@@ -157,6 +157,10 @@ context.go(StoreRoutes.root);                 // switch tab
 
 Redirect (`appRedirect`, unit-tested): no accounts → everything except `/welcome` and
 `/login` goes to `/welcome`; with accounts `/welcome` and `/` go to `/store`.
+
+Community previews for other screens (`lib/features/community/community_previews.dart`):
+`matchingLfgPreviewProvider(puuid)` → 2 open LFG posts that fit the account's rank + `LfgPreviewCard`;
+`trendingSkinsProvider(TopPeriod.week)` → top skins (read-only) + `TrendingSkinsCard`.
 
 Sheets (not routes): `showSkinDetailSheet(context, skinOrLevelUuid: id, mode:
 SkinDetailMode.store|owned|catalog)`, `openSkinVideo(context, videoUrl:)` (S16), `showLiveGameSheet(context)`,
@@ -472,6 +476,26 @@ restored the next time the screen opens (deep links still win).
   status:, elapsed:, detail:)`, `http(...)`, `exportText(header:)`, `clear()`, `flush()`;
   static `scrubUri`, `scrubText`. Every HTTP call through core dios is logged
   automatically.
+
+### 5.13 Community — `lib/features/community/`
+
+- **Session and consent:** the Riot access token goes to `POST /v1/auth/riot` only after the
+  account agreed once (`communityConsentProvider(puuid)`, pref `acct.<puuid>.community.consent`,
+  wiped with the account). `CommunityAuth` throws `consentRequired` before touching Riot or the
+  network; the tab shows the consent sheet the first time (`ensureCommunityConsent`), "Để sau" is
+  remembered and only an explicit button asks again. Home previews never ask and never sign in.
+- **Scopes (v3):** feed and skin leaderboard default to the viewer's country
+  (`communityScopeProvider(ScopedSection)` remembered in `UiMemory`, resolved by
+  `resolvedScopeProvider`; no country → the viewer's shard), LFG always shows one shard.
+  `GET /v1/communities` feeds the country picker.
+- **Translation:** on-device only (`CommunityTranslator`, ML Kit `google_mlkit_translation` on
+  Android / iOS, download confirmed with its size, Google attribution shown). **iOS needs
+  CocoaPods for this plugin**: `ios/Podfile` (iOS 15.5) is checked in and the deployment target is
+  15.5; to drop translation remove the package, `ios/Podfile` and use
+  `UnsupportedCommunityTranslator`.
+- Public entry points for other screens: `community_previews.dart`
+  (`matchingLfgPreviewProvider`, `trendingSkinsProvider`, `LfgPreviewCard`, `TrendingSkinsCard`),
+  `openSkinReview(context, skinUuid)`.
 
 ---
 

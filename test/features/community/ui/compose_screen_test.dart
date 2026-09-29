@@ -121,6 +121,7 @@ void main() {
     expect(env.server.calls('POST /v1/posts').single.json, {
       'kind': 'text',
       'body': '',
+      'language': 'vi',
       'media': ['m1'],
     });
     expect(find.byType(ComposeScreen), findsNothing);

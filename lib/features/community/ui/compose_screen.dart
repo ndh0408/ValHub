@@ -20,6 +20,7 @@ import '../data/image_source.dart';
 import '../providers/community_providers.dart';
 import '../providers/feed_providers.dart';
 import 'feed/offers_grid.dart';
+import 'consent/consent_sheet.dart';
 import 'widgets/community_widgets.dart';
 
 /// Maximum post length (server limit).
@@ -323,6 +324,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
 
   Future<void> _publish(Account account) async {
     FocusScope.of(context).unfocus();
+    // Posting needs a community session: ask (once) before any network call.
+    if (!await ensureCommunityConsent(context, account, askAgain: true)) return;
+    if (!mounted) return;
     setState(() => _busy = true);
     final api = ref.read(communityApiProvider);
     final draft = _draft;
@@ -333,6 +337,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
         kind: draft?.hasAttachment ?? false ? draft!.kind : PostKind.text,
         body: _text.text,
         payload: draft?.hasAttachment ?? false ? draft!.payload : null,
+        language: ref.read(communityAppLanguageProvider),
         uploads: [
           for (final img in _images)
             () => api.uploadMedia(account.puuid, img.bytes),

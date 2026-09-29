@@ -10,6 +10,7 @@ import '../../../../core/auth/auth_routes.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/ui/filter_bar.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/rank_badge.dart';
 import '../../../../core/ui/skeleton.dart';
@@ -18,6 +19,7 @@ import '../../../../core/util/format.dart';
 import '../../community_strings.dart';
 import '../../data/community_exception.dart';
 import '../../data/community_models.dart';
+import '../consent/consent_sheet.dart';
 
 // ---------------------------------------------------------------- segments
 
@@ -204,38 +206,72 @@ class _GlassSegmentButton extends StatelessWidget {
 
 // ------------------------------------------------------------------- chips
 
-/// Filter / choice chip in the community style: pill, no checkmark, red
-/// tint and border when selected.
+/// Filter / choice chip of the community tab (the app's `ValFilterChip`).
 class CommunityChip extends StatelessWidget {
   const CommunityChip({
     super.key,
     required this.label,
     required this.selected,
     required this.onSelected,
+    this.icon,
+    this.dotColor,
   });
 
   final String label;
   final bool selected;
   final VoidCallback onSelected;
+  final IconData? icon;
+  final Color? dotColor;
+
+  @override
+  Widget build(BuildContext context) => ValFilterChip(
+    label: label,
+    selected: selected,
+    icon: icon,
+    dotColor: dotColor,
+    onSelected: (_) => onSelected(),
+  );
+}
+
+/// Pill that opens a popup menu ("Châu Á ▾"): [items] are (value, label).
+class CommunityMenuChip<T> extends StatelessWidget {
+  const CommunityMenuChip({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.tooltip,
+    required this.items,
+    required this.onSelected,
+  });
+
+  final IconData icon;
+  final String label;
+  final String tooltip;
+  final List<(T, String)> items;
+  final ValueChanged<T> onSelected;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return ChoiceChip(
-      label: Text(label),
-      selected: selected,
-      showCheckmark: false,
-      onSelected: (_) => onSelected(),
-      shape: const StadiumBorder(),
-      selectedColor: ValColors.red.withValues(alpha: 0.18),
-      side: BorderSide(
-        color: selected
-            ? ValColors.red.withValues(alpha: 0.6)
-            : valColorsOf(context).hairline,
-      ),
-      labelStyle: theme.textTheme.labelLarge?.copyWith(
-        color: selected ? ValColors.red : theme.colorScheme.onSurface,
-        fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+    return PopupMenuButton<T>(
+      tooltip: tooltip,
+      onSelected: onSelected,
+      itemBuilder: (context) => [
+        for (final (v, l) in items) PopupMenuItem(value: v, child: Text(l)),
+      ],
+      child: Chip(
+        avatar: Icon(icon, size: 16),
+        shape: const StadiumBorder(),
+        label: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+            ),
+            const SizedBox(width: 2),
+            Icon(Icons.expand_more_rounded, size: 16, color: muted),
+          ],
+        ),
       ),
     );
   }
@@ -386,6 +422,19 @@ class AuthorRow extends ConsumerWidget {
                       style: theme.textTheme.bodyLarge,
                     ),
                   ),
+                  if (author.country != null) ...[
+                    const SizedBox(width: 6),
+                    Tooltip(
+                      message: CommunityStrings.countryName(author.country!),
+                      child: Text(
+                        flagEmoji(author.country),
+                        style: const TextStyle(fontSize: 14),
+                        semanticsLabel: CommunityStrings.countryName(
+                          author.country!,
+                        ),
+                      ),
+                    ),
+                  ],
                   if (tier != null && tier > 2) ...[
                     const SizedBox(width: 6),
                     RankBadge(tier: tier, size: 18, showName: false),
@@ -811,6 +860,12 @@ class CommunityErrorState extends StatelessWidget {
 
 /// Snackbar with the Vietnamese message of [error].
 void showCommunityError(BuildContext context, Object error) {
+  if (error is CommunityException &&
+      error.code == CommunityException.consentRequired) {
+    // Not a failure: ask for the missing consent instead.
+    unawaited(promptConsentFromContext(context));
+    return;
+  }
   final messenger = ScaffoldMessenger.maybeOf(context);
   messenger
     ?..hideCurrentSnackBar()

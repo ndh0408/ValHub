@@ -19,6 +19,7 @@ import 'feed/feed_section.dart';
 import 'feed/post_card.dart';
 import 'feed/report_sheet.dart';
 import 'widgets/community_widgets.dart';
+import 'widgets/translatable_text.dart';
 
 /// Post detail: the full post, its comments (paged, oldest first) and a
 /// comment composer that stays above the keyboard.
@@ -405,7 +406,11 @@ class _CommentTile extends StatelessWidget {
                   topLeft: Radius.circular(4),
                 ),
               ),
-              child: Text(comment.body, style: theme.textTheme.bodyMedium),
+              child: TranslatableText(
+                comment.body,
+                language: comment.language ?? comment.author.language,
+                style: theme.textTheme.bodyMedium,
+              ),
             ),
           ),
         ],

@@ -4,6 +4,7 @@ import '../../../core/accounts/account_providers.dart';
 import '../data/community_api.dart';
 import '../data/community_models.dart';
 import 'community_providers.dart';
+import 'scope_providers.dart';
 
 /// The feed of the signed-in account ([puuid] = whose session is used).
 final feedProvider = AsyncNotifierProvider.autoDispose
@@ -23,12 +24,21 @@ class FeedNotifier extends AsyncNotifier<PagedState<CommunityPost>>
   Future<PagedState<CommunityPost>> build() async {
     ref.watch(accountProvider(puuid).select((a) => a?.needsLogin));
     final api = ref.watch(communityApiProvider);
-    return PagedState.fromPage(await api.posts(puuid));
+    _scope = await ref.watch(
+      resolvedScopeProvider((puuid: puuid, section: ScopedSection.feed)).future,
+    );
+    return PagedState.fromPage(
+      await api.posts(puuid, scope: _scope),
+      tag: _scope,
+    );
   }
+
+  /// The scope the current list was loaded with.
+  ScopeFilter? _scope;
 
   @override
   Future<CommunityPage<CommunityPost>> fetchPage(String? cursor) =>
-      _api.posts(puuid, cursor: cursor);
+      _api.posts(puuid, scope: _scope, cursor: cursor);
 
   @override
   String idOf(CommunityPost item) => item.id;
@@ -158,7 +168,12 @@ class CommentsNotifier extends AsyncNotifier<PagedState<CommunityComment>>
 
   /// Posts a comment and appends it.
   Future<CommunityComment> add(String body) async {
-    final comment = await _api.addComment(key.puuid, key.postId, body);
+    final comment = await _api.addComment(
+      key.puuid,
+      key.postId,
+      body,
+      language: ref.read(communityAppLanguageProvider),
+    );
     final s = state.value;
     if (ref.mounted && s != null) {
       state = AsyncData(
@@ -185,6 +200,7 @@ Future<CommunityPost> publishPost(
   required String body,
   List<Future<PostMedia> Function()> uploads = const [],
   PostPayload? payload,
+  String? language,
 }) async {
   final media = <String>[];
   for (final upload in uploads) {
@@ -196,6 +212,7 @@ Future<CommunityPost> publishPost(
     body: body,
     media: media,
     payload: payload,
+    language: language,
   );
 }
 

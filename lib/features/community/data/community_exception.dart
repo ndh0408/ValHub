@@ -31,6 +31,10 @@ class CommunityException implements Exception {
   static const cancelled = 'cancelled';
   static const badResponse = 'bad_response';
   static const disabled = 'disabled';
+
+  /// The user has not agreed to share their Riot ID with the community
+  /// server yet: no sign-in (and no Riot token upload) happens.
+  static const consentRequired = 'consent_required';
   static const imageTooLarge = 'image_too_large';
   static const imageType = 'image_type';
 
@@ -39,7 +43,9 @@ class CommunityException implements Exception {
   final int? status;
   final Duration? retryAfter;
 
-  /// The server's own (English) message: debug only, never shown.
+  /// The ValVN server's Vietnamese message. Shown for `invalid_input`
+  /// (content filter: "Nội dung chứa từ ngữ không phù hợp", account-selling /
+  /// phone-number ads, field validation); other codes use the app's copy.
   final String? serverMessage;
 
   bool get isAuthFailure => code == unauthorized || status == 401;
@@ -149,8 +155,8 @@ ErrorDescription describeCommunityError(Object error) {
       icon: Icons.search_off_outlined,
       canRetry: false,
     ),
-    CommunityException.invalidInput => const ErrorDescription(
-      message: CommunityStrings.errorInvalid,
+    CommunityException.invalidInput => ErrorDescription(
+      message: e.serverMessage ?? CommunityStrings.errorInvalid,
       icon: Icons.edit_note_outlined,
       canRetry: false,
     ),
@@ -162,6 +168,11 @@ ErrorDescription describeCommunityError(Object error) {
     CommunityException.imageType => const ErrorDescription(
       message: CommunityStrings.errorImageType,
       icon: Icons.image_not_supported_outlined,
+      canRetry: false,
+    ),
+    CommunityException.consentRequired => const ErrorDescription(
+      message: CommunityStrings.errorConsent,
+      icon: Icons.verified_user_outlined,
       canRetry: false,
     ),
     CommunityException.disabled => const ErrorDescription(
