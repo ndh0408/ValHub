@@ -22,7 +22,7 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
 
 ## Privacy and identity
 
-- The app sends a Riot **access token only** to `POST /v1/auth/riot`. The Worker
+- The app sends a Riot **access token only** to `POST /v1/auth/riot`. The server
   calls `GET https://auth.riotgames.com/userinfo` with it, reads `sub` (PUUID),
   `acct.game_name`, `acct.tag_line`, then **drops the token** (never stored, never
   logged). This is the only place a Riot token leaves the device.
