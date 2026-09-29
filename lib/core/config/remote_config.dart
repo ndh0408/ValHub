@@ -20,6 +20,7 @@ class RemoteConfig {
     this.webViewUserAgent,
     this.apiUserAgent,
     this.clientVersionOverride,
+    this.communityBaseUrl,
   });
 
   static const defaults = RemoteConfig();
@@ -35,6 +36,7 @@ class RemoteConfig {
       webViewUserAgent: asNonEmptyString(m['webViewUserAgent']),
       apiUserAgent: asNonEmptyString(m['apiUserAgent']),
       clientVersionOverride: asNonEmptyString(m['clientVersionOverride']),
+      communityBaseUrl: asNonEmptyString(m['communityBaseUrl']),
     );
   }
 
@@ -52,6 +54,9 @@ class RemoteConfig {
   /// Replaces `X-Riot-ClientVersion`.
   final String? clientVersionOverride;
 
+  /// Replaces `AppConstants.communityBaseUrl` (community server).
+  final String? communityBaseUrl;
+
   bool flag(String name, {bool fallback = false}) => flags[name] ?? fallback;
 
   /// [other]'s non-null values win.
@@ -60,6 +65,7 @@ class RemoteConfig {
     webViewUserAgent: other.webViewUserAgent ?? webViewUserAgent,
     apiUserAgent: other.apiUserAgent ?? apiUserAgent,
     clientVersionOverride: other.clientVersionOverride ?? clientVersionOverride,
+    communityBaseUrl: other.communityBaseUrl ?? communityBaseUrl,
   );
 
   JsonMap toJson() => {
@@ -67,6 +73,7 @@ class RemoteConfig {
     'webViewUserAgent': webViewUserAgent,
     'apiUserAgent': apiUserAgent,
     'clientVersionOverride': clientVersionOverride,
+    'communityBaseUrl': communityBaseUrl,
   };
 }
 

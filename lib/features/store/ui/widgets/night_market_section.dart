@@ -4,6 +4,7 @@ import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/empty_view.dart';
 import '../../../../core/util/format.dart';
+import '../../../community/ui/share_to_community_button.dart';
 import '../../store_strings.dart';
 import 'night_market_card.dart';
 import 'store_ui_bits.dart';
@@ -42,6 +43,7 @@ class NightMarketSection extends StatelessWidget {
             for (final o in nm.offers) NightMarketCard(offer: o, puuid: puuid),
           ],
         ),
+        ShareToCommunityButton.nightMarket(nm),
         if (nm.totalSavings > 0)
           Container(
             margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),

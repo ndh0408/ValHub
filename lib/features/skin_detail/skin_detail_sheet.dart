@@ -17,6 +17,7 @@ import '../../core/ui/empty_view.dart';
 import '../../core/ui/error_view.dart';
 import '../../core/ui/net_image.dart';
 import '../../core/ui/skeleton.dart';
+import '../community/ui/skins/skin_vote_button.dart';
 import '../store/ui/widgets/store_ui_bits.dart';
 import 'providers/skin_availability.dart';
 import 'skin_detail_strings.dart';
@@ -272,6 +273,7 @@ class _SkinBody extends ConsumerWidget {
             _PriceLabel(quote: quote),
           ],
         ),
+        SkinVoteButton(skinUuid: skin.uuid, weaponUuid: skin.weaponUuid),
         if (reward != null) ...[
           const SizedBox(height: 4),
           Text(

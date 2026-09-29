@@ -8,6 +8,7 @@ abstract final class CommonStrings {
   // Navigation (VF §8.1)
   static const tabStore = 'Cửa hàng';
   static const tabBattlePass = 'Battle Pass';
+  static const tabCommunity = 'Cộng đồng';
   static const tabCollection = 'Bộ sưu tập';
   static const tabProfile = 'Hồ sơ';
   static const tabSettings = 'Cài đặt';

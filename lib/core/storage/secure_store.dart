@@ -14,6 +14,9 @@ abstract final class SecureKeys {
   /// when the session expires; deleted only with the account.
   static String loginNote(String puuid) => 'acct.$puuid.login';
 
+  /// Session token of the ValVN community server (docs/community-api.md).
+  static String community(String puuid) => 'acct.$puuid.community';
+
   /// Every key that belongs to [puuid] (wiped on sign-out).
   static List<String> allFor(String puuid) => [
     cookies(puuid),
@@ -23,6 +26,7 @@ abstract final class SecureKeys {
     entitlementsToken(puuid),
     tokenExpiry(puuid),
     loginNote(puuid),
+    community(puuid),
   ];
 }
 

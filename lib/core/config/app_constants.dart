@@ -93,6 +93,10 @@ abstract final class AppConstants {
   static const statusUrlTemplate =
       'https://valorant.secure.dyn.riotcdn.net/channels/public/x/status/{region}.json';
 
+  /// ValVN community server (docs/community-api.md). Overridden by the
+  /// remote-config key `communityBaseUrl`.
+  static const communityBaseUrl = 'https://val.gianguyen.cloud';
+
   /// Optional remote config URL (static JSON, no user data). Empty = disabled.
   static const remoteConfigUrl = '';
 
