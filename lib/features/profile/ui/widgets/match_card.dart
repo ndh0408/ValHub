@@ -6,6 +6,7 @@ import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/competitive/competitive.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/network/riot_exception.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
@@ -122,7 +123,7 @@ class _CardShell extends StatelessWidget {
               if (map != null)
                 Positioned.fill(
                   child: Opacity(
-                    opacity: 0.45,
+                    opacity: 0.18,
                     child: NetImage(
                       map,
                       fit: BoxFit.cover,
@@ -149,7 +150,7 @@ class _CardShell extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 4),
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(minHeight: 76),
+                  constraints: const BoxConstraints(minHeight: 72),
                   child: Align(alignment: Alignment.centerLeft, child: child),
                 ),
               ),
@@ -189,24 +190,24 @@ class _SummaryBody extends StatelessWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
     final result = summary.result;
     final s = summary.stats;
+    final color = outcomeColor(context, result.outcome);
     final score = result.hasScore
         ? ProfileStrings.score(result.myScore!, result.otherScore!)
         : null;
     final place = result.placement;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 10, 12, 10),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+          ClipOval(
             child: Container(
-              width: 44,
-              height: 44,
-              color: theme.colorScheme.surfaceContainerHigh,
-              child: NetImage(agentIcon, width: 44, height: 44),
+              width: 42,
+              height: 42,
+              color: color.withValues(alpha: 0.22),
+              child: NetImage(agentIcon, width: 42, height: 42),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,35 +220,30 @@ class _SummaryBody extends StatelessWidget {
                         mapName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleSmall?.copyWith(
+                        style: theme.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-                    if (score != null) ...[
-                      const SizedBox(width: 8),
-                      Text(
-                        score,
+                    Text(
+                      ProfileStrings.separator,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        result.outcome.label,
                         maxLines: 1,
-                        style: theme.textTheme.titleSmall?.copyWith(
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ],
-                    const SizedBox(width: 8),
-                    OutcomeTag(result.outcome, dense: true),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  ProfileStrings.joined([
-                    ProfileStrings.kda(s.kills, s.deaths, s.assists),
-                    if (place != null) ProfileStrings.placement(place),
-                  ]),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall,
-                ),
+                const SizedBox(height: 3),
                 Text(
                   meta,
                   maxLines: 1,
@@ -257,10 +253,36 @@ class _SummaryBody extends StatelessWidget {
               ],
             ),
           ),
-          if (rr != null) ...[
-            const SizedBox(width: 8),
-            SignedRrText(rr!, style: theme.textTheme.labelMedium),
-          ],
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (score != null)
+                Text(
+                  score,
+                  maxLines: 1,
+                  style: ValText.display(20, color: color),
+                )
+              else if (place != null)
+                Text(
+                  ProfileStrings.placement(place),
+                  maxLines: 1,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              const SizedBox(height: 2),
+              Text(
+                ProfileStrings.kda(s.kills, s.deaths, s.assists),
+                maxLines: 1,
+                style: theme.textTheme.labelSmall?.copyWith(color: muted),
+              ),
+              if (rr != null)
+                SignedRrText(rr!, style: theme.textTheme.labelMedium),
+            ],
+          ),
         ],
       ),
     );

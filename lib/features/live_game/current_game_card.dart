@@ -169,7 +169,7 @@ class _Leading extends StatelessWidget {
       height: 48,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(12),
         border: Border(left: BorderSide(color: accent, width: 3)),
       ),
       clipBehavior: Clip.antiAlias,

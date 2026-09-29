@@ -130,7 +130,7 @@ class WeaponTile extends ConsumerWidget {
       excludeSemantics: true,
       child: Material(
         color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(16),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () =>

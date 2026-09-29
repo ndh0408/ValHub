@@ -4,8 +4,10 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/accounts/account.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/competitive/competitive.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/skeleton.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../profile_strings.dart';
 import '../../providers/profile_providers.dart';
@@ -53,125 +55,120 @@ class IdentityBanner extends ConsumerWidget {
     final card = cardId == null ? null : db?.card(cardId!);
     final t = titleId == null ? null : db?.title(titleId!);
     final title = t == null || t.isNoTitle ? null : t.text;
-    final scheme = theme.colorScheme;
     final lvl = xp?.level ?? level;
     final tag = tagLine?.trim() ?? '';
     final copy = copyText;
 
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: card?.wideArt == null
-              ? ColoredBox(color: scheme.surfaceContainerLow)
-              : NetImage(
-                  card!.wideArt,
-                  fit: BoxFit.cover,
-                  alignment: Alignment.centerLeft,
-                  showSkeleton: false,
+    const onBanner = Colors.white;
+    final onBannerMuted = Colors.white.withValues(alpha: 0.78);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: Stack(
+          children: [
+            // Figma: red player banner (red → deep red), the player card
+            // art faintly on the right.
+            const Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFFE8404F), Color(0xFF5C1A26)],
+                  ),
                 ),
-        ),
-        Positioned.fill(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  scheme.surface.withValues(alpha: 0.25),
-                  scheme.surface.withValues(alpha: 0.85),
-                  scheme.surface,
-                ],
-                stops: const [0, 0.65, 1],
               ),
             ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 40, 16, 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: Container(
-                  width: 64,
-                  height: 64,
-                  color: scheme.surfaceContainerHigh,
-                  child: card?.smallArt == null
-                      ? Icon(Icons.person, color: scheme.onSurfaceVariant)
-                      : NetImage(card!.smallArt, fit: BoxFit.cover),
+            if (card?.wideArt != null)
+              Positioned.fill(
+                child: ShaderMask(
+                  shaderCallback: (rect) => const LinearGradient(
+                    colors: [Colors.transparent, Colors.white],
+                    stops: [0.25, 1],
+                  ).createShader(rect),
+                  blendMode: BlendMode.dstIn,
+                  child: Opacity(
+                    opacity: 0.35,
+                    child: NetImage(
+                      card!.wideArt,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.centerRight,
+                      showSkeleton: false,
+                      error: const SizedBox.shrink(),
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      onTap: copy == null
-                          ? null
-                          : () => copyWithSnack(
-                              context,
-                              copy,
-                              ProfileStrings.riotIdCopied,
-                            ),
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(text: name),
-                                  if (tag.isNotEmpty)
-                                    TextSpan(
-                                      text: ProfileStrings.tagSuffix(tag),
-                                      style: TextStyle(
-                                        color: scheme.onSurfaceVariant,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                ],
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.titleLarge,
-                            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: copy == null
+                        ? null
+                        : () => copyWithSnack(
+                            context,
+                            copy,
+                            ProfileStrings.riotIdCopied,
                           ),
-                          if (copy != null) ...[
-                            const SizedBox(width: 6),
-                            Icon(
-                              Icons.copy_rounded,
-                              size: 16,
-                              semanticLabel: ProfileStrings.copyRiotId,
-                              color: scheme.onSurfaceVariant,
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(text: name),
+                                if (tag.isNotEmpty)
+                                  TextSpan(
+                                    text: ProfileStrings.tagSuffix(tag),
+                                    style: TextStyle(color: onBannerMuted),
+                                  ),
+                              ],
                             ),
-                          ],
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: ValText.display(28, color: onBanner),
+                          ),
+                        ),
+                        if (copy != null) ...[
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.copy_rounded,
+                            size: 16,
+                            semanticLabel: ProfileStrings.copyRiotId,
+                            color: onBannerMuted,
+                          ),
                         ],
-                      ),
+                      ],
                     ),
-                    if (title != null && title.isNotEmpty)
-                      Text(
+                  ),
+                  if (title != null && title.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
                         title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurfaceVariant,
+                          color: onBannerMuted,
                         ),
                       ),
-                    const SizedBox(height: 6),
-                    _LevelLine(
-                      level: levelHidden ? null : lvl,
-                      hidden: levelHidden,
-                      xp: levelHidden ? null : xp,
-                      loading: xpLoading && !levelHidden,
                     ),
-                  ],
-                ),
+                  const SizedBox(height: 8),
+                  _LevelLine(
+                    level: levelHidden ? null : lvl,
+                    hidden: levelHidden,
+                    xp: levelHidden ? null : xp,
+                    loading: xpLoading && !levelHidden,
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -192,25 +189,22 @@ class _LevelLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final lvl = level;
-    final chip = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        border: Border.all(color: scheme.outline),
-        borderRadius: BorderRadius.circular(2),
-      ),
-      child: Text(
-        hidden ? ProfileStrings.levelHidden : ProfileStrings.level(lvl ?? 0),
-        style: theme.textTheme.labelMedium,
+    final muted = Colors.white.withValues(alpha: 0.8);
+    final chip = Text(
+      hidden ? ProfileStrings.levelHidden : ProfileStrings.level(lvl ?? 0),
+      style: theme.textTheme.bodyMedium?.copyWith(
+        color: muted,
+        fontWeight: FontWeight.w600,
       ),
     );
     final x = xp;
     if (loading && x == null) {
-      return Row(
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (lvl != null) ...[chip, const SizedBox(width: 10)],
-          const Expanded(child: Skeleton(height: 8)),
+          if (lvl != null) ...[chip, const SizedBox(height: 10)],
+          const Skeleton(height: 6),
         ],
       );
     }
@@ -220,34 +214,22 @@ class _LevelLine extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            chip,
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                ProfileStrings.xpProgress(
-                  formatNumber(x.xp),
-                  formatNumber(x.xpPerLevel),
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.end,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-            ),
-          ],
+        chip,
+        const SizedBox(height: 10),
+        ValProgressBar(
+          value: x.progress,
+          color: Colors.white,
+          trackColor: Colors.white.withValues(alpha: 0.25),
         ),
-        const SizedBox(height: 6),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(2),
-          child: LinearProgressIndicator(
-            value: x.progress,
-            minHeight: 4,
-            backgroundColor: scheme.surfaceContainerHighest,
+        const SizedBox(height: 8),
+        Text(
+          ProfileStrings.xpProgress(
+            formatNumber(x.xp),
+            formatNumber(x.xpPerLevel),
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.labelSmall?.copyWith(color: muted),
         ),
       ],
     );

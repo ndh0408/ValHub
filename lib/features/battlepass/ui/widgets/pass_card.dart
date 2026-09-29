@@ -56,20 +56,22 @@ class PassCard extends StatelessWidget {
       fontFeatures: const [FontFeature.tabularFigures()],
     );
 
+    // Figma: wine-red gradient into s1 with a 35% red border.
     final decoration = BoxDecoration(
-      border: const Border(left: BorderSide(color: ValColors.red, width: 3)),
+      borderRadius: BorderRadius.circular(ValRadius.card),
+      border: Border.all(color: ValColors.red.withValues(alpha: 0.35)),
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          ValColors.red.withValues(alpha: 0.14),
+          ValColors.red.withValues(alpha: 0.22),
           scheme.surfaceContainer,
         ],
-        stops: const [0, 0.6],
+        stops: const [0, 0.75],
       ),
     );
     final content = Padding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -83,19 +85,18 @@ class PassCard extends StatelessWidget {
                     if (kicker != null)
                       Text(
                         kicker!.toUpperCase(),
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: ValColors.red,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: ValText.label.copyWith(color: ValColors.red),
                       ),
+                    // Main pass: small uppercase season caption (Figma);
+                    // event passes keep their name readable under the
+                    // red kicker.
                     Text(
-                      name,
+                      kicker == null ? name.toUpperCase() : name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: kicker == null
+                          ? ValText.label.copyWith(color: muted)
+                          : theme.textTheme.titleMedium,
                     ),
                   ],
                 ),
@@ -104,9 +105,9 @@ class PassCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 BpBadge(
                   premium ? BattlePassStrings.premium : BattlePassStrings.free,
-                  color: premium ? valColorsOf(context).warning : muted,
+                  color: premium ? valColorsOf(context).gold : muted,
                   filled: premium,
-                  icon: premium ? Icons.workspace_premium : null,
+                  uppercase: true,
                 ),
               ],
             ],
@@ -120,12 +121,12 @@ class PassCard extends StatelessWidget {
                 formatNumber(p.level),
                 formatNumber(p.levelCount),
               ),
-              style: theme.textTheme.headlineMedium,
+              style: ValText.display(44, color: scheme.onSurface),
             ),
           ),
+          const SizedBox(height: 10),
+          BpProgressBar(value: p.levelFraction),
           const SizedBox(height: 8),
-          BpProgressBar(value: p.levelFraction, height: 8),
-          const SizedBox(height: 6),
           if (p.isComplete)
             Row(
               children: [
@@ -195,7 +196,7 @@ class PassCard extends StatelessWidget {
       ),
     );
     return ClipRRect(
-      borderRadius: BorderRadius.circular(4),
+      borderRadius: BorderRadius.circular(ValRadius.card),
       child: Material(
         type: MaterialType.transparency,
         child: Ink(

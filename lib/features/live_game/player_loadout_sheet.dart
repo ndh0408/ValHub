@@ -177,7 +177,7 @@ class PlayerLoadoutView extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(8),
               child: Container(
                 color: theme.colorScheme.surfaceContainerHigh,
                 constraints: const BoxConstraints(minHeight: 72),
@@ -209,7 +209,7 @@ class PlayerLoadoutView extends ConsumerWidget {
                         children: [
                           if (agent?.displayIcon != null) ...[
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius: BorderRadius.circular(8),
                               child: NetImage(
                                 agent!.displayIcon,
                                 width: 48,
@@ -328,7 +328,7 @@ class _GunTile extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(12),
         border: tint == null
             ? null
             : Border(bottom: BorderSide(color: tint, width: 2)),
@@ -406,7 +406,7 @@ class _ImageStrip extends StatelessWidget {
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: NetImage(image, fit: BoxFit.contain),
               ),

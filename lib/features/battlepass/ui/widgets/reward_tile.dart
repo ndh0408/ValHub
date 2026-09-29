@@ -106,7 +106,7 @@ class RewardTile extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         color: unlocked ? scheme.surfaceContainerHigh : scheme.surfaceContainer,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(16),
           side: BorderSide(
             color: unlocked
                 ? valColorsOf(context).win.withValues(alpha: 0.45)
@@ -207,7 +207,7 @@ class _RewardArt extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
           decoration: BoxDecoration(
             color: theme.colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(2),
+            borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
             reward.name,

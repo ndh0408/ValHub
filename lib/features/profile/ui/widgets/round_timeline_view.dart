@@ -162,7 +162,7 @@ class _RoundLine extends ConsumerWidget {
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: theme.colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Stack(
           children: [
@@ -229,7 +229,7 @@ class _RoundLine extends ConsumerWidget {
                         color: theme.colorScheme.secondary.withValues(
                           alpha: 0.16,
                         ),
-                        borderRadius: BorderRadius.circular(2),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         ceremony,

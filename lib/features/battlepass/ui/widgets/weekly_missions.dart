@@ -132,8 +132,7 @@ class WeeklyMissionTile extends StatelessWidget {
                   const SizedBox(height: 8),
                   BpProgressBar(
                     value: mission.fraction,
-                    height: 4,
-                    color: done ? win : ValColors.red,
+                    color: done ? muted : ValColors.red,
                   ),
                   const SizedBox(height: 6),
                   Row(
@@ -156,8 +155,8 @@ class WeeklyMissionTile extends StatelessWidget {
                             formatNumber(mission.xpGrant),
                           ),
                           style: small?.copyWith(
-                            color: done ? muted : scheme.onSurface,
-                            fontWeight: FontWeight.w600,
+                            color: done ? muted : win,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ],
@@ -189,7 +188,7 @@ class MissionsDoneCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: gold.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(ValRadius.card),
         border: Border.all(color: gold.withValues(alpha: 0.4)),
       ),
       child: Row(

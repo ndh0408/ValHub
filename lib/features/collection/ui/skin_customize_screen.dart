@@ -335,7 +335,7 @@ class _Notice extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: warning.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
@@ -376,12 +376,12 @@ class _ChromaSwatch extends StatelessWidget {
         message: locked ? '$label · ${CollectionStrings.locked}' : label,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(12),
           child: Container(
             width: 60,
             decoration: BoxDecoration(
               color: scheme.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: selected ? ValColors.red : scheme.outlineVariant,
                 width: selected ? 2 : 1,
@@ -462,7 +462,7 @@ class _BuddySlot extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Material(
         color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(16),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
@@ -475,7 +475,7 @@ class _BuddySlot extends StatelessWidget {
                   height: 48,
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   padding: const EdgeInsets.all(6),
                   child: name == null

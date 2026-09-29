@@ -28,6 +28,12 @@ abstract final class CollectionStrings {
   static const tapToChangeCard = 'Chạm để đổi thẻ';
   static String presetCount(int n) => n == 0 ? 'Chưa có' : '$n bộ';
   static String wishlistCount(int n) => n == 0 ? 'Trống' : '$n skin';
+
+  /// Browse tile count ("142 món").
+  static String itemsCount(String n) => '$n món';
+
+  /// Prefix of the equipped title on the hub banner ("Danh hiệu: …").
+  static const bannerTitlePrefix = '$rowTitle: ';
   static const collectionValue = EconomyStrings.collectionValue;
   static const excludedRewards = EconomyStrings.excludedRewards;
   static const valueHasEstimates = EconomyStrings.valueHasEstimates;

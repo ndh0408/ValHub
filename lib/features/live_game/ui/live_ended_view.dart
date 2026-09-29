@@ -330,7 +330,7 @@ class _ScoreRow extends StatelessWidget {
       child: Row(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(8),
             child: NetImage(
               agent?.displayIcon,
               width: 32,

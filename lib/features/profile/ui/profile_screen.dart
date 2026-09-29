@@ -69,7 +69,7 @@ class ProfileScreen extends ConsumerWidget {
                       title: ProfileStrings.partyRow,
                       onTap: () => unawaited(context.push(SocialRoutes.party)),
                     ),
-                    const Divider(indent: 56),
+                    const Divider(indent: 56, height: 1),
                     ProfileNavRow(
                       icon: Icons.forum_outlined,
                       title: ProfileStrings.friendsRow,
@@ -118,7 +118,6 @@ class _DailyRrRow extends ConsumerWidget {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: ProfileNavRow(
-        icon: Icons.calendar_month_outlined,
         title: ProfileStrings.dailyRrTitle,
         subtitle: days == null
             ? null

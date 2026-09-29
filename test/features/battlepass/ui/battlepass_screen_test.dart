@@ -46,12 +46,12 @@ void main() {
   ) async {
     await _pump(tester, bpApi());
 
-    expect(find.text('BATTLE PASS'), findsOneWidget);
-    expect(find.text('Mùa 2026 // Phần V'), findsOneWidget);
+    expect(find.text('Battle Pass'), findsOneWidget);
+    expect(find.text('MÙA 2026 // PHẦN V'), findsOneWidget);
     expect(find.text('Cấp 46 / 55'), findsOneWidget);
     expect(find.text('7.966 / 35.750 XP'), findsOneWidget);
     expect(find.text('840.466 / 1.162.500 XP'), findsOneWidget);
-    expect(find.text(BattlePassStrings.premium), findsOneWidget);
+    expect(find.text(BattlePassStrings.premium.toUpperCase()), findsOneWidget);
     expect(find.text('Phần kết thúc sau 15 ngày'), findsOneWidget);
     expect(find.text(BattlePassStrings.viewAllRewards), findsOneWidget);
     expect(find.text('46/55 đã mở khóa'), findsOneWidget);
@@ -120,8 +120,8 @@ void main() {
       ),
     );
     expect(find.text(BattlePassStrings.allWeeklyDone), findsOneWidget);
-    expect(find.text(BattlePassStrings.free), findsWidgets);
-    expect(find.text(BattlePassStrings.premium), findsNothing);
+    expect(find.text(BattlePassStrings.free.toUpperCase()), findsWidgets);
+    expect(find.text(BattlePassStrings.premium.toUpperCase()), findsNothing);
     await unmount(tester);
 
     await _pump(

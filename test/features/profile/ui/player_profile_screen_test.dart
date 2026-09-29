@@ -46,7 +46,7 @@ void main() {
     expect(find.text(ProfileStrings.playerProfileTitle), findsOneWidget);
     expect(find.textContaining('Đối Thủ'), findsWidgets);
     expect(find.byType(RankCard), findsOneWidget);
-    expect(find.text(ProfileStrings.currentRank), findsOneWidget);
+    expect(find.text(ProfileStrings.currentRank.toUpperCase()), findsOneWidget);
     expect(find.text(ProfileStrings.recentMatches), findsOneWidget);
     expect(find.byType(MatchCard), findsOneWidget);
     // Their side lost 1 – 2.

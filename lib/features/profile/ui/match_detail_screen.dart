@@ -325,7 +325,7 @@ class _PlayerSummary extends ConsumerWidget {
               Row(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(8),
                     child: Container(
                       width: 44,
                       height: 44,
@@ -431,7 +431,7 @@ class _MvpBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         border: Border.all(color: color),
-        borderRadius: BorderRadius.circular(2),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         match ? ProfileStrings.mvp : ProfileStrings.teamMvp,

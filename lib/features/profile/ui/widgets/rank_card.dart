@@ -5,6 +5,7 @@ import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/competitive/competitive.dart';
 import '../../../../core/l10n/content_strings.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/error_view.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/skeleton.dart';
@@ -45,7 +46,7 @@ class RankCard extends ConsumerWidget {
           ),
         );
       }
-      return const Skeleton(height: 188, radius: 4);
+      return const Skeleton(height: 150, radius: ValRadius.card);
     }
     return _RankCardBody(
       puuid: puuid,
@@ -90,7 +91,7 @@ class _RankCardBody extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 16, 12, 12),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
             child: IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -106,10 +107,7 @@ class _RankCardBody extends ConsumerWidget {
                           : formatRr(current.rr),
                     ),
                   ),
-                  VerticalDivider(
-                    width: 16,
-                    color: theme.colorScheme.outlineVariant,
-                  ),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: peak == null
                         ? _RankColumn(
@@ -183,51 +181,69 @@ class _RankColumn extends StatelessWidget {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
     final r = rank;
-    return Column(
-      children: [
-        Text(
-          label,
-          maxLines: 2,
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          style: theme.textTheme.labelMedium?.copyWith(color: muted),
-        ),
-        const SizedBox(height: 8),
-        SizedBox(
-          width: 56,
-          height: 56,
-          child: r?.largeIcon == null
-              ? Icon(Icons.shield_outlined, size: 40, color: muted)
-              : NetImage(r!.largeIcon, width: 56, height: 56),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          r?.tierName ?? ContentStrings.unranked,
-          maxLines: 2,
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          style: theme.textTheme.titleSmall?.copyWith(
-            color: r == null || r.isUnranked ? null : r.color,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        if (detail != null)
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: valColorsOf(context).surface2,
+        borderRadius: BorderRadius.circular(ValRadius.small),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
-            detail!,
+            label.toUpperCase(),
             maxLines: 2,
-            textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.bodySmall,
+            style: ValText.label.copyWith(color: muted, fontSize: 11),
           ),
-        if (caption != null)
-          Text(
-            caption!,
-            maxLines: 2,
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.labelSmall?.copyWith(color: muted),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: r?.largeIcon == null
+                    ? Icon(Icons.shield_outlined, size: 32, color: muted)
+                    : NetImage(r!.largeIcon, width: 40, height: 40),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      r?.tierName ?? ContentStrings.unranked,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (detail != null)
+                      Text(
+                        detail!,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: muted,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
-      ],
+          if (caption != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              caption!,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelSmall?.copyWith(color: muted),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -300,19 +316,13 @@ class _RankUpHint extends ConsumerWidget {
         ? ProfileStrings.rankUpHint(matches, target.tierName)
         : ProfileStrings.rankUpTitle;
     return Material(
-      color: theme.colorScheme.surfaceContainerHigh,
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.fromLTRB(16, 4, 12, 14),
           child: Row(
             children: [
-              Icon(
-                Icons.trending_up_rounded,
-                size: 20,
-                color: theme.colorScheme.primary,
-              ),
-              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   text,
@@ -321,10 +331,7 @@ class _RankUpHint extends ConsumerWidget {
                   style: theme.textTheme.bodyMedium,
                 ),
               ),
-              Icon(
-                Icons.chevron_right,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+              const Icon(Icons.chevron_right, color: ValColors.red),
             ],
           ),
         ),

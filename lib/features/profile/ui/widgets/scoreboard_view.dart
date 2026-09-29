@@ -312,7 +312,7 @@ class _PlayerRow extends ConsumerWidget {
                   clipBehavior: Clip.none,
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                       child: Container(
                         width: 36,
                         height: 36,

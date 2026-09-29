@@ -63,9 +63,12 @@ void main() {
     );
 
     // Rank card: current Diamond 1 (tier 18, 6 RR) and a peak column.
-    expect(find.text(ProfileStrings.currentRank), findsOneWidget);
+    expect(find.text(ProfileStrings.currentRank.toUpperCase()), findsOneWidget);
     expect(find.text('6 RR'), findsOneWidget);
-    expect(find.textContaining(ProfileStrings.peakRank), findsOneWidget);
+    expect(
+      find.textContaining(ProfileStrings.peakRank.toUpperCase()),
+      findsOneWidget,
+    );
     expect(find.byType(RrTrendChart), findsOneWidget);
 
     // Today's net RR (+24 from the competitive fixture match).

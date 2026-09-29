@@ -4,7 +4,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/ui/net_image.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/xmpp/xmpp.dart';
 import '../data/live_game_logic.dart';
@@ -95,7 +94,8 @@ class LiveSheetHeader extends ConsumerWidget {
   }
 }
 
-/// Map splash with the map name, mode and status pill.
+/// Status pill, map name (Anton) and mode, centred on the sheet's teal
+/// hero (Figma). [splash] is kept for callers; the Figma layout has no art.
 class LiveMapBanner extends StatelessWidget {
   const LiveMapBanner({
     super.key,
@@ -117,27 +117,24 @@ class LiveMapBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
     final name = Text(
       (mapName ?? LiveGameStrings.sheetTitle).toUpperCase(),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style:
-          (compact
-                  ? theme.textTheme.headlineSmall?.copyWith(
-                      fontFamily: AppFonts.display,
-                      fontWeight: FontWeight.w400,
-                    )
-                  : theme.textTheme.headlineMedium)
-              ?.copyWith(color: ValColors.bone, height: 1.1),
+      textAlign: compact ? TextAlign.start : TextAlign.center,
+      style: ValText.display(compact ? 26 : 40, color: onSurface),
     );
     final modeText = Text(
       mode,
       maxLines: compact ? 1 : 2,
       overflow: TextOverflow.ellipsis,
+      textAlign: compact ? TextAlign.start : TextAlign.center,
       style: (compact ? theme.textTheme.bodySmall : theme.textTheme.bodyMedium)
-          ?.copyWith(color: ValColors.bone.withValues(alpha: 0.8)),
+          ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
     );
-    final content = compact
+    // Figma: no card, the map sits centred on the sheet's teal hero.
+    return compact
         ? Row(
             children: [
               Expanded(
@@ -151,52 +148,19 @@ class LiveMapBanner extends StatelessWidget {
               Flexible(child: LiveStatusPill(status)),
             ],
           )
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              LiveStatusPill(status),
-              const SizedBox(height: 8),
-              name,
-              const SizedBox(height: 2),
-              modeText,
-            ],
+        : Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LiveStatusPill(status),
+                const SizedBox(height: 10),
+                name,
+                const SizedBox(height: 4),
+                modeText,
+              ],
+            ),
           );
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(4),
-      child: Container(
-        constraints: BoxConstraints(minHeight: compact ? 0 : 104),
-        color: ValColors.surfaceHigh,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: NetImage(splash, fit: BoxFit.cover, showSkeleton: false),
-            ),
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      ValColors.nearBlack.withValues(alpha: 0.92),
-                      ValColors.nearBlack.withValues(alpha: 0.35),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: compact ? 12 : 14,
-                vertical: compact ? 8 : 12,
-              ),
-              child: content,
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
@@ -216,11 +180,8 @@ class LiveScoreBanner extends ConsumerWidget {
     if (score == null) return const SizedBox.shrink();
     final theme = Theme.of(context);
     final colors = valColorsOf(context);
-    final style =
-        (compact
-                ? theme.textTheme.headlineMedium
-                : theme.textTheme.displaySmall)
-            ?.copyWith(height: 1);
+    final style = ValText.display(compact ? 30 : 64)
+        .copyWith(height: 1.05, color: theme.colorScheme.onSurface);
     final label = Text(
       LiveGameStrings.liveScore.toUpperCase(),
       maxLines: 1,
@@ -231,7 +192,7 @@ class LiveScoreBanner extends ConsumerWidget {
       ),
     );
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
       child: Flex(
         direction: compact ? Axis.horizontal : Axis.vertical,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -247,12 +208,18 @@ class LiveScoreBanner extends ConsumerWidget {
                 children: [
                   TextSpan(
                     text: '${score.ally}',
-                    style: style?.copyWith(color: colors.win),
+                    style: style.copyWith(color: colors.win),
                   ),
-                  TextSpan(text: '  –  ', style: style),
+                  TextSpan(
+                    text: '  –  ',
+                    style: style.copyWith(
+                      color: colors.muted,
+                      fontSize: (style.fontSize ?? 64) * 0.5,
+                    ),
+                  ),
                   TextSpan(
                     text: '${score.enemy}',
-                    style: style?.copyWith(color: colors.loss),
+                    style: style.copyWith(color: colors.loss),
                   ),
                 ],
               ),

@@ -343,7 +343,7 @@ class PresetCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(8),
                     child: NetImage(
                       card?.smallArt,
                       width: 44,
@@ -405,7 +405,7 @@ class PresetCard extends StatelessWidget {
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.surfaceContainerHigh,
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: NetImage(_render(w), fit: BoxFit.contain),
                         ),

@@ -319,7 +319,7 @@ class _MatchRow extends ConsumerWidget {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(2),
+              borderRadius: BorderRadius.circular(6),
               child: SizedBox(
                 width: 56,
                 height: 28,

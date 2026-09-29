@@ -202,7 +202,7 @@ class _TargetPicker extends ConsumerWidget {
                       label: rank.tierName,
                       child: InkWell(
                         onTap: () => onSelected(t),
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(12),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 150),
                           padding: const EdgeInsets.symmetric(
@@ -215,7 +215,7 @@ class _TargetPicker extends ConsumerWidget {
                                     alpha: 0.14,
                                   )
                                 : theme.colorScheme.surfaceContainer,
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: isSelected
                                   ? theme.colorScheme.primary

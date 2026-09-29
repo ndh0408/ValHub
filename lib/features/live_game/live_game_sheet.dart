@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../core/accounts/account_providers.dart';
 import '../../core/l10n/common_strings.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/ui/empty_view.dart';
 import '../../core/ui/error_view.dart';
 import '../../core/ui/skeleton.dart';
@@ -28,6 +29,9 @@ Future<void> showLiveGameSheet(BuildContext context) async {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
+      // The header draws its own handle on the teal hero.
+      showDragHandle: false,
+      clipBehavior: Clip.antiAlias,
       builder: (_) => const LiveGameSheet(),
     );
   } finally {
@@ -105,24 +109,38 @@ class LiveGameSheet extends ConsumerWidget {
           : content;
     }
 
-    return SizedBox(
-      height: height,
-      child: ScaffoldMessenger(
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Column(
-            children: [
-              LiveSheetHeader(puuid: puuid, state: state),
-              Expanded(child: body),
-            ],
+    final bg = Theme.of(context).scaffoldBackgroundColor;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return DecoratedBox(
+      // Figma: teal hero fading into the background.
+      decoration: BoxDecoration(
+        color: bg,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color.lerp(bg, ValColors.liveTeal, dark ? 1 : 0.3)!, bg],
+          stops: const [0, 0.42],
+        ),
+      ),
+      child: SizedBox(
+        height: height,
+        child: ScaffoldMessenger(
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Column(
+              children: [
+                LiveSheetHeader(puuid: puuid, state: state),
+                Expanded(child: body),
+              ],
+            ),
+            bottomNavigationBar: match == null
+                ? null
+                : _QuitBar(
+                    key: ValueKey('quit-${match.matchId}'),
+                    puuid: puuid,
+                    match: match,
+                  ),
           ),
-          bottomNavigationBar: match == null
-              ? null
-              : _QuitBar(
-                  key: ValueKey('quit-${match.matchId}'),
-                  puuid: puuid,
-                  match: match,
-                ),
         ),
       ),
     );
@@ -144,6 +162,9 @@ class _PregameTabs extends StatelessWidget {
       child: Column(
         children: [
           const TabBar(
+            isScrollable: true,
+            tabAlignment: TabAlignment.start,
+            padding: EdgeInsets.symmetric(horizontal: 8),
             tabs: [
               Tab(text: LiveGameStrings.tabAgents),
               Tab(text: LiveGameStrings.tabYourTeam),
@@ -193,6 +214,9 @@ class _InGameTabs extends StatelessWidget {
       child: Column(
         children: [
           const TabBar(
+            isScrollable: true,
+            tabAlignment: TabAlignment.start,
+            padding: EdgeInsets.symmetric(horizontal: 8),
             tabs: [
               Tab(text: LiveGameStrings.tabYourTeam),
               Tab(text: LiveGameStrings.tabEnemyTeam),
@@ -267,7 +291,7 @@ class _QuitBarState extends ConsumerState<_QuitBar> {
           style: OutlinedButton.styleFrom(
             foregroundColor: error,
             side: BorderSide(color: error),
-            minimumSize: const Size.fromHeight(48),
+            minimumSize: const Size.fromHeight(52),
           ),
           onPressed: _busy ? null : () => unawaited(_confirmAndQuit()),
           icon: _busy

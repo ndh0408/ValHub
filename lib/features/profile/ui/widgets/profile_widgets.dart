@@ -46,7 +46,7 @@ class OutcomeTag extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.16),
-        borderRadius: BorderRadius.circular(2),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         outcome.label,
@@ -101,7 +101,7 @@ class StatTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(ValRadius.small),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,9 +111,9 @@ class StatTile extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.labelSmall?.copyWith(
+            style: ValText.label.copyWith(
+              fontSize: 11,
               color: theme.colorScheme.onSurfaceVariant,
-              letterSpacing: 0.6,
             ),
           ),
           const SizedBox(height: 2),
@@ -162,14 +162,15 @@ class StatGrid extends StatelessWidget {
 class ProfileNavRow extends StatelessWidget {
   const ProfileNavRow({
     super.key,
-    required this.icon,
+    this.icon,
     required this.title,
     this.subtitle,
     this.trailing,
     required this.onTap,
   });
 
-  final IconData icon;
+  /// Red leading icon; `null` for the Figma text-only rows.
+  final IconData? icon;
   final String title;
   final Widget? subtitle;
   final Widget? trailing;
@@ -181,18 +182,22 @@ class ProfileNavRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            Icon(icon, color: theme.colorScheme.primary),
-            const SizedBox(width: 16),
+            if (icon != null) ...[
+              Icon(icon, color: theme.colorScheme.primary),
+              const SizedBox(width: 16),
+            ],
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: theme.textTheme.titleSmall,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -228,7 +233,7 @@ class MatchCardSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const Padding(
     padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
-    child: Skeleton(height: 76, radius: 4),
+    child: Skeleton(height: 72, radius: ValRadius.card),
   );
 }
 

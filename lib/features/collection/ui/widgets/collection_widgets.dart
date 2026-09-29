@@ -14,6 +14,7 @@ import '../../../../core/theme/tier_colors.dart';
 import '../../../../core/ui/async_value_view.dart';
 import '../../../../core/ui/empty_view.dart';
 import '../../../../core/ui/net_image.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/ui/skeleton.dart';
 import '../../collection_strings.dart';
 import '../../data/skin_query.dart';
@@ -141,7 +142,7 @@ class _CollectionSearchFieldState extends State<CollectionSearchField> {
                   },
                 ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
           ),
         ),
@@ -280,7 +281,7 @@ class _TierChip extends StatelessWidget {
         message: label,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(2),
+          borderRadius: BorderRadius.circular(6),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -288,7 +289,7 @@ class _TierChip extends StatelessWidget {
               color: selected
                   ? color.withValues(alpha: 0.22)
                   : scheme.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(2),
+              borderRadius: BorderRadius.circular(6),
               border: Border.all(color: selected ? color : Colors.transparent),
             ),
             child: NetImage(
@@ -314,9 +315,13 @@ class HubRow extends StatelessWidget {
     this.value,
     this.onTap,
     this.leading,
+    this.color = ValColors.red,
   });
 
   final IconData icon;
+
+  /// Tint of the icon tile (Figma: one color per row).
+  final Color color;
   final String title;
   final String? value;
   final VoidCallback? onTap;
@@ -331,23 +336,25 @@ class HubRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 52),
+        constraints: const BoxConstraints(minHeight: 54),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.fromLTRB(14, 10, 12, 10),
           child: Row(
             children: [
-              SizedBox(
-                width: 28,
-                child: leading ?? Icon(icon, size: 22, color: ValColors.red),
-              ),
-              const SizedBox(width: 12),
+              leading ?? IconTile(icon: icon, color: color, size: 34),
+              const SizedBox(width: 14),
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, c) => Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Flexible(
-                        child: Text(title, style: theme.textTheme.bodyLarge),
+                        child: Text(
+                          title,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                       if (value != null) ...[
                         const SizedBox(width: 8),
@@ -392,7 +399,7 @@ class EquippedBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: ValColors.red,
-        borderRadius: BorderRadius.circular(2),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -459,7 +466,7 @@ class ArtTile extends StatelessWidget {
       child: Material(
         color: scheme.surfaceContainer,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(16),
           side: BorderSide(
             color: selected ? ValColors.red : Colors.transparent,
             width: 2,
@@ -616,7 +623,7 @@ class CachedLoadoutBanner extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: warning.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [

@@ -11,6 +11,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../data/live_game_logic.dart';
 import '../data/live_game_models.dart';
 import '../live_game_strings.dart';
@@ -139,10 +140,12 @@ class LivePlayerRow extends ConsumerWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       clipBehavior: Clip.antiAlias,
+      // Figma: your own row on s2 with a red outline.
+      color: isSelf ? colors.surface2 : null,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(ValRadius.small),
         side: isSelf
-            ? BorderSide(color: theme.colorScheme.primary, width: 1.2)
+            ? const BorderSide(color: ValColors.red, width: 1.2)
             : BorderSide.none,
       ),
       child: InkWell(
@@ -157,7 +160,7 @@ class LivePlayerRow extends ConsumerWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 10, 4, 10),
+          padding: const EdgeInsets.fromLTRB(12, 12, 4, 12),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -173,13 +176,29 @@ class LivePlayerRow extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontStyle: hidden ? FontStyle.italic : null,
-                      ),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: hidden
+                                  ? theme.colorScheme.onSurfaceVariant
+                                  : null,
+                            ),
+                          ),
+                        ),
+                        if (isSelf) ...[
+                          const SizedBox(width: 8),
+                          const ValBadge(
+                            LiveGameStrings.you,
+                            color: ValColors.red,
+                          ),
+                        ],
+                      ],
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -190,17 +209,12 @@ class LivePlayerRow extends ConsumerWidget {
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
-                    if (isSelf || group != null || locked) ...[
+                    if (group != null || locked) ...[
                       const SizedBox(height: 4),
                       Wrap(
                         spacing: 6,
                         runSpacing: 4,
                         children: [
-                          if (isSelf)
-                            LiveTag(
-                              LiveGameStrings.you,
-                              color: theme.colorScheme.primary,
-                            ),
                           if (group != null)
                             LiveTag(
                               LiveGameStrings.party,
@@ -262,10 +276,10 @@ class _AgentPortrait extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(4),
+        shape: BoxShape.circle,
         border: partyColor == null
             ? null
-            : Border(left: BorderSide(color: partyColor!, width: 3)),
+            : Border.all(color: partyColor!, width: 2),
       ),
       clipBehavior: Clip.antiAlias,
       alignment: Alignment.center,

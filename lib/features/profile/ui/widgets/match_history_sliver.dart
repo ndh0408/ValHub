@@ -254,7 +254,7 @@ class _MapTile extends StatelessWidget {
       leading: image == null
           ? const Icon(Icons.public)
           : ClipRRect(
-              borderRadius: BorderRadius.circular(2),
+              borderRadius: BorderRadius.circular(6),
               child: SizedBox(
                 width: 72,
                 height: 28,

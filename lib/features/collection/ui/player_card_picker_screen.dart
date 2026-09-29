@@ -153,7 +153,7 @@ class _CardPreviewSheet extends ConsumerWidget {
                 child: NetImage(
                   card.largeArt ?? card.smallArt,
                   fit: BoxFit.contain,
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
@@ -165,7 +165,7 @@ class _CardPreviewSheet extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
             ClipRRect(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(8),
               child: AspectRatio(
                 aspectRatio: 452 / 128,
                 child: NetImage(card.wideArt, fit: BoxFit.cover),

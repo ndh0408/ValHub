@@ -38,8 +38,11 @@ void main() {
       prefs: prefs,
     );
 
-    expect(find.text('BỘ SƯU TẬP'), findsOneWidget);
-    expect(find.text('Người Chơi#VN2'), findsOneWidget);
+    expect(find.text('Bộ sưu tập'), findsOneWidget);
+    expect(
+      find.text(CollectionStrings.equippedCard.toUpperCase()),
+      findsOneWidget,
+    );
     expect(find.text('Thẻ Bộ Đôi Ngời Sáng'), findsNWidgets(2));
     expect(find.text('Tài Lộc'), findsNWidgets(2));
     expect(find.text(CollectionStrings.rowWeapons), findsOneWidget);
@@ -48,7 +51,10 @@ void main() {
     expect(find.text('Chưa có'), findsOneWidget);
 
     await scrollTo(tester, find.text(CollectionStrings.rowWishlist));
-    expect(find.text(CollectionStrings.sectionBrowse), findsOneWidget);
+    expect(
+      find.text(CollectionStrings.sectionBrowse.toUpperCase()),
+      findsOneWidget,
+    );
     expect(find.text('Phụ kiện súng'), findsOneWidget);
     expect(find.text('Trống'), findsOneWidget); // empty wishlist
 
@@ -125,7 +131,10 @@ void main() {
     riot.loadoutError = null;
     await tester.tap(find.text('Thử lại').first);
     await settle(tester);
-    expect(find.text('Người Chơi#VN2'), findsOneWidget);
+    expect(
+      find.text(CollectionStrings.equippedCard.toUpperCase()),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
     await unmount(tester);
   });
@@ -139,7 +148,7 @@ void main() {
     );
     await tester.tap(find.text(CollectionStrings.rowWeapons));
     await settle(tester);
-    expect(find.text('Súng trường'), findsOneWidget);
+    expect(find.text('SÚNG TRƯỜNG'), findsOneWidget);
     await unmount(tester);
   });
 }

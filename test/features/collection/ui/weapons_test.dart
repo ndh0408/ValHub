@@ -54,13 +54,14 @@ void main() {
       riot: riot,
       prefs: prefs,
     );
-    expect(find.text('Súng phụ'), findsOneWidget);
-    expect(find.text('Súng trường'), findsOneWidget);
+    expect(find.text('SÚNG PHỤ'), findsOneWidget);
+    expect(find.text('SÚNG TRƯỜNG'), findsOneWidget);
     expect(find.text('VANDAL'), findsOneWidget);
     expect(find.text('PHANTOM'), findsOneWidget);
     expect(find.text('Mặc định'), findsWidgets);
-    await tester.scrollUntilVisible(find.text('Cận chiến'), 200);
-    expect(find.text('Cận chiến'), findsOneWidget);
+    // Section header and the melee tile share the uppercase name.
+    await tester.scrollUntilVisible(find.text('CẬN CHIẾN').first, 200);
+    expect(find.text('CẬN CHIẾN'), findsWidgets);
     expect(tester.takeException(), isNull);
 
     await tester.scrollUntilVisible(find.text('VANDAL'), -200);

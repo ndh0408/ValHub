@@ -5,7 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/util/format.dart';
 
-/// Thin, square-cornered Valorant-style progress bar.
+/// Design-system progress bar (Figma: 6 px, rounded, `#2E3F4E` track).
 class BpProgressBar extends StatelessWidget {
   const BpProgressBar({
     super.key,
@@ -23,16 +23,15 @@ class BpProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final v = value.isFinite ? value.clamp(0.0, 1.0) : 0.0;
     return ClipRRect(
-      borderRadius: BorderRadius.circular(1),
+      borderRadius: BorderRadius.circular(height / 2),
       child: SizedBox(
         height: height,
         child: Stack(
           fit: StackFit.expand,
           children: [
-            ColoredBox(color: background ?? scheme.surfaceContainerHighest),
+            ColoredBox(color: background ?? valColorsOf(context).track),
             FractionallySizedBox(
               alignment: Alignment.centerLeft,
               widthFactor: v,
@@ -53,10 +52,14 @@ class BpBadge extends StatelessWidget {
     required this.color,
     this.filled = false,
     this.icon,
+    this.uppercase = false,
   });
 
   final String text;
   final Color color;
+
+  /// "PREMIUM" style (letter-spaced capitals).
+  final bool uppercase;
 
   /// Solid background with white text instead of a tinted one.
   final bool filled;
@@ -66,10 +69,10 @@ class BpBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final fg = filled ? readableOn(color) : color;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: filled ? color : color.withValues(alpha: 0.16),
-        borderRadius: BorderRadius.circular(2),
+        borderRadius: BorderRadius.circular(6),
         border: filled ? null : Border.all(color: color.withValues(alpha: 0.5)),
       ),
       child: Row(
@@ -81,13 +84,13 @@ class BpBadge extends StatelessWidget {
           ],
           Flexible(
             child: Text(
-              text,
+              uppercase ? text.toUpperCase() : text,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: fg,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.4,
+                fontWeight: FontWeight.w800,
+                letterSpacing: uppercase ? 0.8 : 0.4,
               ),
             ),
           ),
@@ -197,7 +200,7 @@ class BpOfflineNotice extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: warning.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(ValRadius.small),
       ),
       child: Row(
         children: [
