@@ -155,8 +155,18 @@ void main() {
   test('Riot needs-login during sign-in propagates as a Riot error', () async {
     when(() => env.sessions.session(any()))
         .thenThrow(const NeedsLoginException(puuid: mePuuid));
-    await expectLater(api.posts(mePuuid), throwsA(isA<NeedsLoginException>()));
+    // A write / the LFG lists need the session ...
+    await expectLater(
+      api.lfg(mePuuid, region: 'ap'),
+      throwsA(isA<NeedsLoginException>()),
+    );
     expect(env.server.requests, isEmpty);
+
+    // ... while public reads fall back to anonymous instead of failing.
+    env.server.json('GET /v1/posts', page([postJson('p1')]));
+    final feed = await api.posts(mePuuid);
+    expect(feed.items.single.id, 'p1');
+    expect(env.server.calls('GET /v1/posts').single.authorization, isNull);
   });
 
   test('rate limits carry retryAfter (body, then header) → vi copy', () async {

@@ -55,6 +55,17 @@ class ScopeBar extends ConsumerWidget {
     );
     final country = chosen.country ?? myCountry;
     final region = chosen.region ?? myRegion;
+    // What is really shown (a missing country falls back to the shard, or to
+    // the world for a reader who has not joined): highlight that segment.
+    final shown = ref
+        .watch(resolvedScopeProvider((puuid: puuid, section: section)))
+        .value
+        ?.scope;
+    final selected =
+        shown ??
+        (chosen.scope == CommunityScope.country && country == null
+            ? CommunityScope.global
+            : chosen.scope);
 
     Future<void> pickCountry() async {
       final picked = await showCountriesSheet(
@@ -85,17 +96,19 @@ class ScopeBar extends ConsumerWidget {
         SegmentedTabs<CommunityScope>(
           expand: true,
           tabs: [
-            SegmentedTab(
-              value: CommunityScope.country,
-              label: countrySegmentLabel(country),
-            ),
+            // Without a known country there is no "nước bạn" to show.
+            if (country != null)
+              SegmentedTab(
+                value: CommunityScope.country,
+                label: countrySegmentLabel(country),
+              ),
             const SegmentedTab(
               value: CommunityScope.region,
               label: CommunityStrings.scopeRegion,
             ),
             SegmentedTab(value: CommunityScope.global, label: globalLabel),
           ],
-          selected: chosen.scope,
+          selected: selected,
           onChanged: (s) => notifier.set(chosen.copyWith(scope: s)),
         ),
         SizedBox(

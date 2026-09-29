@@ -237,6 +237,8 @@ filter must never reject text only because it is in an unsupported language.
 - Every account-changing Riot action (joining a party by code) stays user-initiated
   with a confirmation; the community server never touches Riot on the user's
   behalf beyond `/userinfo` during `/v1/auth/riot`.
+- Public reads (feed, posts, comments, skin top / votes / summary / reviews, communities) are made
+  without a session and without an `Authorization` header until the user joins.
 - The Riot access token is sent to `/v1/auth/riot` only after the user agreed, once per account
   (consent sheet: what is sent, what others see, links to the privacy policy and community
   guidelines; stored under `acct.<puuid>.community.consent`). Declining sends nothing.

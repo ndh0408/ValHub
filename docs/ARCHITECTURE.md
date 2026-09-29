@@ -479,11 +479,16 @@ restored the next time the screen opens (deep links still win).
 
 ### 5.13 Community — `lib/features/community/`
 
-- **Session and consent:** the Riot access token goes to `POST /v1/auth/riot` only after the
-  account agreed once (`communityConsentProvider(puuid)`, pref `acct.<puuid>.community.consent`,
-  wiped with the account). `CommunityAuth` throws `consentRequired` before touching Riot or the
-  network; the tab shows the consent sheet the first time (`ensureCommunityConsent`), "Để sau" is
-  remembered and only an explicit button asks again. Home previews never ask and never sign in.
+- **Session and consent:** everyone can browse (feed, posts + comments, skin leaderboard, review pages,
+  countries) **anonymously**: no consent, no token, no `Authorization` header, scope defaults as the
+  server does when unauthenticated (feed → global) and a banner offers to join. Only actions that need
+  a session (post / comment / review / like / vote / report, all of Tìm đồng đội) require consent: the
+  consent sheet opens at that moment and the action continues after "Đồng ý"
+  (`promptConsentFromContext`). The Riot access token goes to `POST /v1/auth/riot` only after the
+  account agreed once (`communityConsentProvider(puuid)`, pref `acct.<puuid>.community.consent`, wiped
+  with the account); `CommunityAuth` throws `consentRequired` before touching Riot or the network, and
+  optional-auth reads stay anonymous without it. "Để sau" never hides browsing. Home previews never ask
+  and never sign in.
 - **Scopes (v3):** feed and skin leaderboard default to the viewer's country
   (`communityScopeProvider(ScopedSection)` remembered in `UiMemory`, resolved by
   `resolvedScopeProvider`; no country → the viewer's shard), LFG always shows one shard.

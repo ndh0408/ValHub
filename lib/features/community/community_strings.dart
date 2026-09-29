@@ -528,11 +528,14 @@ abstract final class CommunityStrings {
   static const consentGuidelines = 'Tiêu chuẩn cộng đồng';
   static const consentAgree = 'Đồng ý và tiếp tục';
   static const consentLater = 'Để sau';
-  static const consentGateTitle = 'Cộng đồng cần xác minh Riot ID';
-  static const consentGateBody =
-      'Bạn chưa đồng ý chia sẻ Riot ID với Cộng đồng ValVN nên chưa thể xem '
-      'hay đăng bài. Bạn có thể thay đổi quyết định bất cứ lúc nào.';
   static const consentGateAction = 'Xem lại và tham gia';
+  static const anonymousBanner =
+      'Bạn đang xem ẩn danh — tham gia để đăng bài, vote và tìm đồng đội.';
+  static const lfgGateTitle = 'Tìm đồng đội dành cho thành viên';
+  static const lfgGateBody =
+      'Tham gia (xác minh Riot ID một lần) để xem tin của người chơi cùng máy '
+      'chủ và đăng tin tìm đồng đội của bạn. Bạn vẫn xem Bảng tin và Xếp hạng '
+      'skin bình thường.';
   static const errorConsent =
       'Hãy đồng ý chia sẻ Riot ID với Cộng đồng để tiếp tục.';
 }

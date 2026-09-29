@@ -80,6 +80,8 @@ final communityImagePickerProvider = Provider<CommunityImagePicker>(
 final communityMeProvider = FutureProvider.autoDispose
     .family<CommunityAuthor, String>((ref, puuid) async {
       ref.watch(accountProvider(puuid).select((a) => a?.needsLogin));
+      // Joining (or not) decides whether the profile can be read at all.
+      ref.watch(communityConsentProvider(puuid));
       final session = await ref.watch(communityApiProvider).auth.session(puuid);
       return session.user;
     });

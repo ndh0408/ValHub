@@ -4,6 +4,7 @@ import '../../../core/accounts/account_providers.dart';
 import '../data/community_api.dart';
 import '../data/community_models.dart';
 import 'community_providers.dart';
+import 'consent_providers.dart';
 
 /// Key of [skinSummaryProvider] (`puuid` = viewer, `null` when signed out).
 typedef SkinKey = ({String? puuid, String skinUuid});
@@ -22,6 +23,7 @@ class SkinSummaryNotifier extends AsyncNotifier<SkinSummary> {
     final puuid = key.puuid;
     if (puuid != null) {
       ref.watch(accountProvider(puuid).select((a) => a?.needsLogin));
+      ref.watch(communityConsentProvider(puuid));
     }
     return ref
         .watch(communityApiProvider)
@@ -65,11 +67,15 @@ class SkinReviewsNotifier extends AsyncNotifier<PagedState<SkinReview>>
   CommunityApi get _api => ref.read(communityApiProvider);
 
   @override
-  Future<PagedState<SkinReview>> build() async => PagedState.fromPage(
-    await ref
-        .watch(communityApiProvider)
-        .skinReviews(key.skinUuid, puuid: key.puuid, sort: key.sort),
-  );
+  Future<PagedState<SkinReview>> build() async {
+    final viewer = key.puuid;
+    if (viewer != null) ref.watch(communityConsentProvider(viewer));
+    return PagedState.fromPage(
+      await ref
+          .watch(communityApiProvider)
+          .skinReviews(key.skinUuid, puuid: key.puuid, sort: key.sort),
+    );
+  }
 
   @override
   Future<CommunityPage<SkinReview>> fetchPage(String? cursor) =>

@@ -77,7 +77,9 @@ void main() {
       await _open(tester, env);
       final q = _lastQuery(env, 'GET /v1/posts');
       expect((q['scope'], q['region']), ('region', 'ap'));
-      expect(find.text(CommunityStrings.scopeCountry), findsOneWidget);
+      // No "nước bạn" to offer: the shard segment is the one shown.
+      expect(find.text(CommunityStrings.scopeCountry), findsNothing);
+      expect(find.text(CommunityStrings.scopeRegion), findsOneWidget);
       await unmount(tester);
     });
 

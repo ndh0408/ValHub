@@ -4,6 +4,7 @@ import '../../../core/accounts/account_providers.dart';
 import '../data/community_api.dart';
 import '../data/community_models.dart';
 import 'community_providers.dart';
+import 'consent_providers.dart';
 import 'scope_providers.dart';
 
 /// The feed of the signed-in account ([puuid] = whose session is used).
@@ -23,6 +24,8 @@ class FeedNotifier extends AsyncNotifier<PagedState<CommunityPost>>
   @override
   Future<PagedState<CommunityPost>> build() async {
     ref.watch(accountProvider(puuid).select((a) => a?.needsLogin));
+    // Joining (or not) changes what the server may show: reload.
+    ref.watch(communityConsentProvider(puuid));
     final api = ref.watch(communityApiProvider);
     _scope = await ref.watch(
       resolvedScopeProvider((puuid: puuid, section: ScopedSection.feed)).future,
@@ -87,8 +90,10 @@ class PostDetailNotifier extends AsyncNotifier<CommunityPost> {
   CommunityApi get _api => ref.read(communityApiProvider);
 
   @override
-  Future<CommunityPost> build() =>
-      ref.watch(communityApiProvider).post(key.puuid, key.postId);
+  Future<CommunityPost> build() {
+    ref.watch(communityConsentProvider(key.puuid));
+    return ref.watch(communityApiProvider).post(key.puuid, key.postId);
+  }
 
   /// Pushes [post] to this screen and to the feed (when it is alive).
   void apply(CommunityPost post) {
@@ -155,9 +160,12 @@ class CommentsNotifier extends AsyncNotifier<PagedState<CommunityComment>>
   CommunityApi get _api => ref.read(communityApiProvider);
 
   @override
-  Future<PagedState<CommunityComment>> build() async => PagedState.fromPage(
-    await ref.watch(communityApiProvider).comments(key.puuid, key.postId),
-  );
+  Future<PagedState<CommunityComment>> build() async {
+    ref.watch(communityConsentProvider(key.puuid));
+    return PagedState.fromPage(
+      await ref.watch(communityApiProvider).comments(key.puuid, key.postId),
+    );
+  }
 
   @override
   Future<CommunityPage<CommunityComment>> fetchPage(String? cursor) =>

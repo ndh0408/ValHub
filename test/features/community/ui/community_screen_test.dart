@@ -121,10 +121,21 @@ void main() {
       await unmount(tester);
     });
 
-    testWidgets('a dead Riot session asks to sign in again', (tester) async {
+    testWidgets('a dead Riot session: the feed stays readable, LFG asks', (
+      tester,
+    ) async {
       when(() => env.sessions.session(any()))
           .thenThrow(const NeedsLoginException(puuid: mePuuid));
+      env.server
+        ..json('GET /v1/posts', page([postJson('p1', body: 'Vẫn đọc được')]))
+        ..json('GET /v1/lfg', page([]));
       await _open(tester, env);
+      // Public reads fall back to anonymous.
+      expect(find.text('Vẫn đọc được'), findsOneWidget);
+
+      // The LFG lists need the session: sign in again.
+      await tester.tap(find.text(CommunityStrings.sectionLfg));
+      await settle(tester);
       expect(find.text('Đăng nhập lại'), findsOneWidget);
       await unmount(tester);
     });

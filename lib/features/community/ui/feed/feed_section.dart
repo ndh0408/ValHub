@@ -11,6 +11,7 @@ import '../../data/community_models.dart';
 import '../../providers/community_providers.dart';
 import '../../providers/feed_providers.dart';
 import '../../providers/scope_providers.dart';
+import '../consent/consent_sheet.dart';
 import '../scope/scope_bar.dart';
 import '../widgets/community_widgets.dart';
 import 'post_card.dart';
@@ -136,6 +137,8 @@ class FeedSliver extends ConsumerWidget {
     FeedNotifier notifier,
     String postId,
   ) async {
+    // Liking needs a session: ask to join first, then continue.
+    if (!await promptConsentFromContext(context) || !context.mounted) return;
     try {
       await notifier.toggleLike(postId);
     } on Object catch (e) {
@@ -145,8 +148,12 @@ class FeedSliver extends ConsumerWidget {
 }
 
 /// Opens the composer (optionally prefilled) above the tab bar.
-Future<void> openComposer(BuildContext context, {Object? draft}) =>
-    context.push(CommunityRoutes.compose, extra: draft);
+/// Opens the composer; writing needs a session, so the consent sheet comes
+/// first for a reader who has not joined (declined = nothing opens).
+Future<void> openComposer(BuildContext context, {Object? draft}) async {
+  if (!await promptConsentFromContext(context) || !context.mounted) return;
+  await context.push<void>(CommunityRoutes.compose, extra: draft);
+}
 
 /// Delete (own, after a confirmation) or report a post. Returns whether the
 /// post was deleted.

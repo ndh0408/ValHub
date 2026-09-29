@@ -15,6 +15,7 @@ import '../data/community_exception.dart';
 import '../data/community_models.dart';
 import '../providers/community_providers.dart';
 import '../providers/feed_providers.dart';
+import 'consent/consent_sheet.dart';
 import 'feed/feed_section.dart';
 import 'feed/post_card.dart';
 import 'feed/report_sheet.dart';
@@ -287,6 +288,8 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   }
 
   Future<void> _send(PostKey key, CommunityPost post) async {
+    // Commenting needs a session: ask to join first, then continue.
+    if (!await promptConsentFromContext(context) || !mounted) return;
     setState(() => _sending = true);
     try {
       await ref.read(commentsProvider(key).notifier).add(_comment.text);
@@ -301,6 +304,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   }
 
   Future<void> _like(PostDetailNotifier notifier, CommunityPost post) async {
+    if (!await promptConsentFromContext(context) || !mounted) return;
     try {
       await notifier.toggleLike(post);
     } on Object catch (e) {

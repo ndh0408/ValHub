@@ -4,6 +4,7 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../data/community_models.dart';
 import 'community_providers.dart';
+import 'consent_providers.dart';
 
 /// Sections whose content scope the viewer chooses (LFG always shows one
 /// region: only players on the same shard can party).
@@ -73,18 +74,24 @@ class CommunityScopeNotifier extends Notifier<ScopeFilter> {
 }
 
 /// Replaces "the viewer's own" country / region with real values (pure):
-/// a missing country falls back to the viewer's region (spec v3).
+/// a missing country falls back to the viewer's region (spec v3) or, for an
+/// [anonymous] reader (who has not joined, so the server knows neither their
+/// country nor their shard), to the whole world, exactly like the server.
 ScopeFilter resolveScope(
   ScopeFilter chosen, {
   required String? myCountry,
   required String myRegion,
+  bool anonymous = false,
 }) {
   switch (chosen.scope) {
     case CommunityScope.country:
       final country = chosen.country ?? myCountry;
-      return country == null
-          ? ScopeFilter(scope: CommunityScope.region, region: myRegion)
-          : ScopeFilter(scope: CommunityScope.country, country: country);
+      if (country != null) {
+        return ScopeFilter(scope: CommunityScope.country, country: country);
+      }
+      return anonymous
+          ? ScopeFilter.global
+          : ScopeFilter(scope: CommunityScope.region, region: myRegion);
     case CommunityScope.region:
       return ScopeFilter(
         scope: CommunityScope.region,
@@ -109,6 +116,18 @@ final resolvedScopeProvider = FutureProvider.autoDispose
       final chosen = ref.watch(communityScopeProvider(key.section));
       final account = ref.watch(accountProvider(key.puuid));
       final myRegion = communityRegion(account?.region);
+      final joined =
+          ref.watch(communityConsentProvider(key.puuid)) ==
+          CommunityConsent.granted;
+      if (!joined) {
+        // Reading without joining: no profile lookup (that would sign in).
+        return resolveScope(
+          chosen,
+          myCountry: null,
+          myRegion: myRegion,
+          anonymous: true,
+        );
+      }
       String? myCountry;
       if (chosen.scope == CommunityScope.country && chosen.country == null) {
         try {
@@ -127,6 +146,9 @@ final myCountryProvider = FutureProvider.autoDispose.family<String?, String>((
   ref,
   puuid,
 ) async {
+  if (ref.watch(communityConsentProvider(puuid)) != CommunityConsent.granted) {
+    return null;
+  }
   try {
     return (await ref.watch(communityMeProvider(puuid).future)).country;
   } on Object {

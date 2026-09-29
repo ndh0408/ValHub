@@ -217,6 +217,7 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
   }
 
   Future<void> _like(SkinReviewsNotifier notifier, String id) async {
+    if (!await promptConsentFromContext(context) || !mounted) return;
     try {
       await notifier.toggleLike(id);
     } on Object catch (e) {
