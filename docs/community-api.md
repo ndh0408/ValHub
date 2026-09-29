@@ -68,6 +68,45 @@ as-is).
   "rankTier", "note", "createdAt", "expiresAt"}`.
 - Rate limit: 6 posts / 10 min per user.
 
+#### LFG v2 — requirements, live party state, join tracking (additive)
+
+`POST /v1/lfg` also accepts (all optional):
+
+| Field | Type | Meaning |
+|---|---|---|
+| `rankMin`, `rankMax` | int 0..27 | Accepted current-rank range (competitive tiers; 0 = any). `rankMin ≤ rankMax`. |
+| `roles` | array of `duelist, initiator, controller, sentinel, flex` (≤ 4, unique) | Roles the party still needs. |
+| `mic` | bool | Voice chat required. |
+| `language` | `vi` \| `en` \| `any` (default `vi`) | Party language. |
+| `partySize` | int 1..5 | Current party size when posting (default `5 - slots`). |
+| `agents` | array of agent uuids (≤ 5) | Agents already picked by the party (optional, shown as icons). |
+
+New endpoints:
+
+| Method | Path | Body | Response |
+|---|---|---|---|
+| PATCH | `/v1/lfg/{id}` | own post: `{"partySize"?, "slots"?, "note"?, "status"?: "open"\|"full"\|"in_game"}` | `LfgPost` (also extends `expiresAt` to now + 30 min on every PATCH = "still active" heartbeat) |
+| POST | `/v1/lfg/{id}/join` | `{}` — records that the caller tapped "Vào tổ đội" (after the Riot join succeeded) | `{"joins": n}` (one per user; not own post) |
+
+- `GET /v1/lfg` accepts `rank=<tier>` (only posts whose range contains it or has no
+  range), `role=<role>`, `mic=true|false`, `language=`, `status=open` (default: open
+  posts only). `mode` / `region` as before.
+- `LfgPost` gains `"rankMin", "rankMax", "roles", "mic", "language", "partySize",
+  "agents", "status", "joins", "updatedAt"`.
+- Status `full` / `in_game` posts are hidden from lists (default filter) but still
+  returned to their owner via `GET /v1/lfg/mine` → `LfgPost | null` (new).
+- Posts with no PATCH heartbeat for 30 minutes expire as before.
+
+Client behaviour (poster): while the LFG screen / app is open, the poster's app polls
+its own Riot party (G-12/G-13) every 20 s: it PATCHes `partySize` / `slots` when members
+change, sets `status: "full"` when the party reaches 5 (or the mode maximum), and
+`in_game` when the party enters matchmaking or a match; it shows a local notification
+"<Riot ID> đã vào tổ đội" when a new member appears. Creating a post auto-generates a
+party code (G-18) and opens the party when the user has not typed one. Joiner: the
+list shows only posts matching the viewer's rank by default ("Phù hợp với rank của
+bạn" toggle), marks mismatches, and "Vào tổ đội" joins by code (G-19) after one
+confirmation, then calls `POST /v1/lfg/{id}/join`.
+
 ### Skin votes (xếp hạng skin được yêu thích)
 
 | Method | Path | Body / query | Response |
