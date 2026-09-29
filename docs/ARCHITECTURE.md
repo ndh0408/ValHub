@@ -404,7 +404,7 @@ try { … } finally { await ctx.finish(); }
 |---|---|
 | `AsyncValueView<T>(value:, data:, onRetry:, isEmpty:, emptyMessage:, loading:, empty:, puuid:)` | loading skeleton / error ("Thử lại", "Đăng nhập lại" → `/login?reauth=`) / empty / data; keeps stale data visible with a compact error row |
 | `ErrorView(error:, onRetry:, puuid:, compact:)`, `describeError(e)`, `showAppSnackBar(context, msg)` | errors |
-| `EmptyView(message:, icon:, action:)`, `FeaturePlaceholder()` | empty states |
+| `EmptyView(message:, title:, icon:, action:, color:)`, `StateIcon`, `FeaturePlaceholder()` | empty states (icon in a tinted disc, bold title, muted copy, action) |
 | `Skeleton(width:, height:, radius:)`, `SkeletonShimmer`, `SkeletonList`, `SkeletonGrid` | loading |
 | `CountdownText(expiresAt:, builder: (t) => …, onExpired:, format:)` | live `11:54:37` / `2 ngày 15:09:24` |
 | `CurrencyAmount(currencyId:, amount:)`, `.vp(n)`, `.kc(n)`, `.rp(n)` (`estimate`, `strikethrough`, `showLabel`) | amount with valorant-api icon |
@@ -412,14 +412,30 @@ try { … } finally { await ctx.finish(); }
 | `RankBadge(tier:, seasonId:, size:, showName:, rr:)` | rank icon + vi name in the act's table |
 | `ContentTierBadge(contentTierUuid:, showName:, fullName:)`, `contentTierTint(ref, uuid)` | rarity |
 | `SectionHeader(title, trailing:, onTap:, uppercase:)` | section titles |
-| `TabPageScaffold(title:, actions:, onRefresh:, header:, slivers:/body:)` | tab roots: large Anton title, `AccountChip`, maintenance banner, pull-to-refresh |
-| `SegmentedTabs<T>(tabs: [SegmentedTab(value:, label:, showDot:)], selected:, onChanged:)` | store segments etc. |
+| `TabPageScaffold(title:, actions:, onRefresh:, header:, headerHeight:, slivers:/body:)` | tab roots: large Anton title, `AccountChip`, maintenance banner, adaptive pull-to-refresh, frosted pinned header |
+| `SegmentedTabs<T>(tabs: [SegmentedTab(value:, label:, showDot:, icon:)], selected:, onChanged:, expand:)` | "glass capsule" segmented control; the red highlight slides between segments, selection haptic; `expand: true` = equal widths |
+| `GlassCapsule`, `GlassBar`, `GlassHeaderDelegate(child:, height:)` | translucent pill track; frosted strip for small pinned chrome only (never over a whole list) |
+| `adaptive.dart`: `isCupertino(context)`, `Haptics.selection/light/medium/heavy()`, `showConfirmDialog(context, title:, message:, confirmLabel:, destructive:, icon:)` → `bool`, `showActionSheet<T>(context, actions: [SheetAction(value:, label:, icon:, destructive:)])`, `AdaptiveRefresh(onRefresh:, child:)` | Cupertino dialogs / action sheets / refresh spinner on iOS, Material 3 on Android |
+| `filter_bar.dart`: `GlassSearchField`, `ValFilterChip(label:, selected:, onSelected:, dotColor:)`, `SortButton<T>(options: [(value:, label:)], selected:, onSelected:)`, `FilterChipBar(children:, onClear:)` | search / multi-filter chips / sort on every list screen |
+| `CountdownRing(expiresAt:, period:)`, `CountdownPill(expiresAt:, period:, builder:)` | ring of the time left in a cycle (store reset, Night Market, act end); only the ring/text rebuild each second |
+| `SkinArtCard(imageUrl:, name:, tierColor:, footer:, topStart:, topEnd:, dimmed:, selected:)`, `TierTag(label:, color:)` | image-forward grid card with rarity glow and edge |
+| `ValCard`, `SectionLabel`, `GroupedSection`/`GroupedRow`, `IconTile`, `ValProgressBar` (animated), `DiamondPip`, `StatusPill`, `ValBadge`, `CurrencyPill` | Figma design-system pieces (`val_widgets.dart`) |
 | `MaintenanceBanner({region})` | X-1 notice (vi) |
 
 Theme: `ValColors` (red `#FF4655`, navy, teal …), `valColorsOf(context)` →
 `ValThemeColors(win, loss, draw, warning, muted, …)`, `AppFonts.body` (Be Vietnam Pro),
 `AppFonts.display` (Anton, used by `displayX/headlineLarge/headlineMedium`),
-`parseRgba('RRGGBBAA')`, `opaqueRgba(hex)`.
+`parseRgba('RRGGBBAA')`, `opaqueRgba(hex)`. Tokens: `ValRadius` (card 16, small 12, pill),
+`ValSpace` (4-pt scale, gutter 16), `ValMotion` (fast 150 / medium 250 / slow 400 ms,
+`easeOutCubic`), `ValText` (screen title, display, label). Content colors used as text
+(rarity, rank) go through `legibleAccent(context, color)` / `legibleOn(color, bg)` so
+they keep ≥ 4.5:1 on the light theme; the light palette itself is WCAG AA
+(`test/core/theme/contrast_test.dart`).
+
+Remembered UI choices: `ref.read(uiMemoryProvider)` → `UiMemory` (`read/write`,
+`readEnum/writeEnum`, `readBool/writeBool`) under `ui.<screen>.<name>` prefs keys
+(app-wide, survive sign-out). Every segment / filter / sort a user picks should be
+restored the next time the screen opens (deep links still win).
 
 ### 5.11 Utilities — `core/util/`
 

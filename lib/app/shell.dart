@@ -2,7 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../core/l10n/common_strings.dart';
-import '../core/theme/app_theme.dart';
+import '../core/ui/floating_nav_bar.dart';
 import '../features/live_game/live_game_overlay_host.dart';
 
 /// Tab shell: the five ValBuddy tabs (VF §6) and the live-game overlay hook.
@@ -43,20 +43,16 @@ class AppShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: LiveGameOverlayHost(child: navigationShell),
-      bottomNavigationBar: DecoratedBox(
-        // Figma: 6% white hairline above the bar.
-        decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: valColorsOf(context).hairline)),
+      // Floating frosted capsule; styling lives in FloatingNavBar so extra
+      // destinations (e.g. a Community tab) just work.
+      bottomNavigationBar: FloatingNavBar(
+        selectedIndex: navigationShell.currentIndex,
+        // Tapping the active tab pops that branch to its root.
+        onDestinationSelected: (i) => navigationShell.goBranch(
+          i,
+          initialLocation: i == navigationShell.currentIndex,
         ),
-        child: NavigationBar(
-          selectedIndex: navigationShell.currentIndex,
-          // Tapping the active tab pops that branch to its root.
-          onDestinationSelected: (i) => navigationShell.goBranch(
-            i,
-            initialLocation: i == navigationShell.currentIndex,
-          ),
-          destinations: _destinations,
-        ),
+        destinations: _destinations,
       ),
     );
   }

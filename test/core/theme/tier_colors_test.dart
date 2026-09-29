@@ -25,17 +25,17 @@ void main() {
     expect(buildDarkTheme().extension<ValThemeColors>(), isNotNull);
   });
 
-  test('dark theme follows the Figma tokens', () {
+  test('dark theme follows the true-black tokens', () {
     final t = buildDarkTheme();
-    expect(t.scaffoldBackgroundColor, const Color(0xFF0F1923));
-    expect(t.colorScheme.surfaceContainer, const Color(0xFF1A2733));
-    expect(t.colorScheme.surfaceContainerHigh, const Color(0xFF243442));
-    expect(t.colorScheme.onSurface, const Color(0xFFECE8E1));
-    expect(t.colorScheme.onSurfaceVariant, const Color(0xFF8B9BA8));
-    expect(t.navigationBarTheme.backgroundColor, const Color(0xFF131E29));
+    expect(t.scaffoldBackgroundColor, const Color(0xFF000000));
+    expect(t.colorScheme.surfaceContainer, const Color(0xFF141416));
+    expect(t.colorScheme.surfaceContainerHigh, const Color(0xFF1F1F23));
+    expect(t.colorScheme.onSurface, const Color(0xFFF2F1EE));
+    expect(t.colorScheme.onSurfaceVariant, const Color(0xFF8E8E93));
+    expect(t.navigationBarTheme.backgroundColor, const Color(0xFF1C1C1F));
     final extras = t.extension<ValThemeColors>()!;
     expect(extras.win, const Color(0xFF3DDC97));
-    expect(extras.track, const Color(0xFF2E3F4E));
+    expect(extras.track, const Color(0xFF2C2C31));
     expect(
       t.switchTheme.trackColor?.resolve({WidgetState.selected}),
       ValColors.red,

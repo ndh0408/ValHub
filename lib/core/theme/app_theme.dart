@@ -8,27 +8,31 @@ abstract final class ValColors {
   /// Valorant red (primary accent) — token `red`.
   static const red = Color(0xFFFF4655);
 
-  /// Screen background — token `bg`.
-  static const navy = Color(0xFF0F1923);
+  /// Screen background — token `bg`. True black (OLED, ValBuddy-style);
+  /// the historical name is kept for compatibility.
+  static const navy = Color(0xFF000000);
 
-  /// Darker than [navy] (image backdrops, overlays).
-  static const nearBlack = Color(0xFF0A1016);
+  /// Image backdrops, overlays.
+  static const nearBlack = Color(0xFF0A0A0B);
 
-  /// Cards, list rows — token `s1`.
-  static const surface = Color(0xFF1A2733);
+  /// Cards, list rows — token `s1` (near-black).
+  static const surface = Color(0xFF141416);
 
-  /// Nested cards, account chip, "BẠN" row — token `s2`.
-  static const surfaceHigh = Color(0xFF243442);
+  /// Nested cards, inactive pills, account chip, "BẠN" row — token `s2`.
+  static const surfaceHigh = Color(0xFF1F1F23);
 
   /// Progress track, switch off track.
-  static const track = Color(0xFF2E3F4E);
+  static const track = Color(0xFF2C2C31);
 
-  /// Bottom navigation bar.
-  static const navBar = Color(0xFF131E29);
-  static const outline = Color(0xFF34495A);
+  /// Floating tab bar (drawn translucent).
+  static const navBar = Color(0xFF1C1C1F);
+  static const outline = Color(0xFF3A3A40);
 
-  /// Bone-white text — token `text`.
-  static const bone = Color(0xFFECE8E1);
+  /// Deep navy accent surface (hero gradients).
+  static const deepNavy = Color(0xFF0F1923);
+
+  /// Primary text — token `text`.
+  static const bone = Color(0xFFF2F1EE);
 
   /// Win / +RR / "Đang diễn ra" — token `green`.
   static const green = Color(0xFF3DDC97);
@@ -36,8 +40,8 @@ abstract final class ValColors {
   /// Alias of [green] (older name).
   static const teal = green;
 
-  /// Secondary text — token `muted`.
-  static const muted = Color(0xFF8B9BA8);
+  /// Secondary text — token `muted` (iOS system grey).
+  static const muted = Color(0xFF8E8E93);
 
   /// Warnings (agent select pill, estimates, "Đăng nhập lại").
   static const amber = Color(0xFFF5B942);
@@ -49,12 +53,12 @@ abstract final class ValColors {
   /// Live-game hero gradient start.
   static const liveTeal = Color(0xFF1D4A4C);
 
-  // Light variant
-  static const lightBackground = Color(0xFFF4F2EE);
+  // Light variant (iOS system grouped background / white cards)
+  static const lightBackground = Color(0xFFF2F2F7);
   static const lightSurface = Color(0xFFFFFFFF);
-  static const lightSurfaceHigh = Color(0xFFECE9E3);
-  static const lightTrack = Color(0xFFDDD9D2);
-  static const ink = Color(0xFF111820);
+  static const lightSurfaceHigh = Color(0xFFE9E9EE);
+  static const lightTrack = Color(0xFFD9D9DE);
+  static const ink = Color(0xFF111114);
 }
 
 /// Content-tier (rarity) colors from the Figma tokens.
@@ -81,7 +85,7 @@ class ValThemeColors extends ThemeExtension<ValThemeColors> {
     required this.away,
     required this.gold,
     this.track = ValColors.track,
-    this.hairline = const Color(0x0FFFFFFF),
+    this.hairline = const Color(0x17FFFFFF),
     this.surface2 = ValColors.surfaceHigh,
   });
 
@@ -102,16 +106,16 @@ class ValThemeColors extends ThemeExtension<ValThemeColors> {
   static const light = ValThemeColors(
     win: Color(0xFF06785F),
     loss: Color(0xFFC8202F),
-    draw: Color(0xFF5C6670),
+    draw: Color(0xFF636366),
     warning: Color(0xFF9A6208),
-    muted: Color(0xFF5C6670),
-    skeletonBase: Color(0xFFE3E0DA),
-    skeletonHighlight: Color(0xFFF1EFEA),
+    muted: Color(0xFF636366),
+    skeletonBase: Color(0xFFE3E3E8),
+    skeletonHighlight: Color(0xFFF2F2F6),
     // Darker than the dark-theme yellows: readable on #F4F2EE.
     away: Color(0xFF8A6700),
     gold: Color(0xFF8A6700),
     track: ValColors.lightTrack,
-    hairline: Color(0x14000000),
+    hairline: Color(0x1A000000),
     surface2: ValColors.lightSurfaceHigh,
   );
 
@@ -252,13 +256,22 @@ abstract final class AppFonts {
 
 /// Text styles of the Figma design that are not part of [TextTheme].
 abstract final class ValText {
-  /// Tab screen title: Anton 34.
+  /// Tab screen title: large bold plain sans (iOS large-title feel).
   static const screenTitle = TextStyle(
-    fontFamily: AppFonts.display,
-    fontSize: 34,
+    fontFamily: AppFonts.body,
+    fontSize: 32,
     height: 1.15,
-    fontWeight: FontWeight.w400,
-    letterSpacing: 0.2,
+    fontWeight: FontWeight.w800,
+    letterSpacing: -0.4,
+  );
+
+  /// Section title inside a screen ("Trang bị", "Nhiệm vụ tuần").
+  static const sectionTitle = TextStyle(
+    fontFamily: AppFonts.body,
+    fontSize: 19,
+    height: 1.25,
+    fontWeight: FontWeight.w700,
+    letterSpacing: -0.2,
   );
 
   /// Anton display number / map name ("Cấp 46 / 55", "8 - 4", "LOTUS").
@@ -580,7 +593,7 @@ ThemeData buildDarkTheme() {
         surfaceContainerHighest: ValColors.track,
         surfaceTint: Colors.transparent,
         outline: ValColors.outline,
-        outlineVariant: const Color(0xFF24323F),
+        outlineVariant: const Color(0xFF26262B),
         error: ValColors.error,
       );
   return _build(
@@ -605,15 +618,15 @@ ThemeData buildLightTheme() {
         secondary: const Color(0xFF06785F),
         surface: ValColors.lightBackground,
         onSurface: ValColors.ink,
-        onSurfaceVariant: const Color(0xFF55606A),
-        outline: const Color(0xFFB9B4AC),
+        onSurfaceVariant: const Color(0xFF636366),
+        outline: const Color(0xFFC7C7CC),
         error: const Color(0xFFC8202F),
-        surfaceContainerLow: const Color(0xFFF9F8F5),
+        surfaceContainerLow: const Color(0xFFF7F7FA),
         surfaceContainer: ValColors.lightSurface,
         surfaceContainerHigh: ValColors.lightSurfaceHigh,
         surfaceContainerHighest: ValColors.lightTrack,
         surfaceTint: Colors.transparent,
-        outlineVariant: const Color(0xFFDCD8D1),
+        outlineVariant: const Color(0xFFDADADF),
       );
   return _build(
     brightness: Brightness.light,
