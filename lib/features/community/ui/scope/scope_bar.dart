@@ -105,29 +105,25 @@ class ScopeBar extends ConsumerWidget {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.fromLTRB(16, 6, 16, 4),
             children: [
-              ValFilterChip(
-                key: ValueKey('scope-countries-${section.name}'),
-                icon: Icons.public_rounded,
-                label: CommunityStrings.countriesTitle,
-                selected: false,
-                onSelected: (_) => unawaited(pickCountry()),
-              ),
+              // The chip that belongs to the chosen scope comes first, the
+              // country picker last.
               if (chosen.scope == CommunityScope.country &&
                   myCountry != null &&
                   chosen.country != null &&
                   chosen.country != myCountry) ...[
-                const SizedBox(width: 8),
                 ValFilterChip(
+                  key: ValueKey('scope-home-${section.name}'),
                   icon: Icons.home_rounded,
                   label: CommunityStrings.backToMyCountry,
                   selected: false,
                   onSelected: (_) =>
                       notifier.set(chosen.copyWith(country: () => null)),
                 ),
+                const SizedBox(width: 8),
               ],
               if (chosen.scope == CommunityScope.region) ...[
-                const SizedBox(width: 8),
                 CommunityMenuChip<String>(
+                  key: ValueKey('scope-region-${section.name}'),
                   icon: Icons.dns_rounded,
                   label: CommunityStrings.regionLabel(region),
                   tooltip: CommunityStrings.region,
@@ -139,9 +135,9 @@ class ScopeBar extends ConsumerWidget {
                     chosen.copyWith(region: () => r == myRegion ? null : r),
                   ),
                 ),
+                const SizedBox(width: 8),
               ],
               if (chosen.scope == CommunityScope.global) ...[
-                const SizedBox(width: 8),
                 ValFilterChip(
                   key: ValueKey('scope-languages-${section.name}'),
                   icon: Icons.translate_rounded,
@@ -149,7 +145,15 @@ class ScopeBar extends ConsumerWidget {
                   selected: chosen.languages.isNotEmpty,
                   onSelected: (_) => unawaited(pickLanguages()),
                 ),
+                const SizedBox(width: 8),
               ],
+              ValFilterChip(
+                key: ValueKey('scope-countries-${section.name}'),
+                icon: Icons.public_rounded,
+                label: CommunityStrings.countriesTitle,
+                selected: false,
+                onSelected: (_) => unawaited(pickCountry()),
+              ),
             ],
           ),
         ),

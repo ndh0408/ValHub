@@ -79,7 +79,10 @@ void main() {
 
     // "Phù hợp rank của bạn" is on by default: the viewer's rank is sent.
     expect(env.server.calls('GET /v1/lfg').first.query['rank'], '18');
-    expect(find.text(CommunityStrings.matchMyRank), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('lfg-match-rank'), skipOffstage: false),
+      findsOneWidget,
+    );
     expect(find.text('Cần 1 Controller, có mic'), findsOneWidget);
     expect(find.text('Kiểm soát'), findsOneWidget);
     expect(find.text(CommunityStrings.roleFlex), findsOneWidget);
@@ -106,7 +109,9 @@ void main() {
     await _open(tester, env);
     expect(find.text(CommunityStrings.outOfRange), findsNothing);
 
-    await tester.tap(find.text(CommunityStrings.matchMyRank));
+    final toggle = find.byKey(const ValueKey('lfg-match-rank'));
+    await _scrollChip(tester, toggle, 'lfg-filters');
+    await tester.tap(toggle);
     await settle(tester);
 
     expect(

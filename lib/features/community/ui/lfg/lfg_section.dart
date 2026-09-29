@@ -368,17 +368,8 @@ class _Filters extends ConsumerWidget {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
             children: [
-              if (hasRank) ...[
-                CommunityChip(
-                  key: const ValueKey('lfg-match-rank'),
-                  icon: Icons.verified_rounded,
-                  label: CommunityStrings.matchMyRank,
-                  selected: filter.matchRank,
-                  onSelected: () => n.setMatchRank(!filter.matchRank),
-                ),
-                const SizedBox(width: 8),
-              ],
               menuChip<String>(
+                key: const ValueKey('lfg-region'),
                 icon: Icons.public_rounded,
                 label: CommunityStrings.regionLabel(region),
                 tooltip: CommunityStrings.region,
@@ -389,6 +380,16 @@ class _Filters extends ConsumerWidget {
                 onSelected: n.setRegion,
               ),
               const SizedBox(width: 8),
+              if (hasRank) ...[
+                CommunityChip(
+                  key: const ValueKey('lfg-match-rank'),
+                  icon: Icons.verified_rounded,
+                  label: CommunityStrings.matchMyRank,
+                  selected: filter.matchRank,
+                  onSelected: () => n.setMatchRank(!filter.matchRank),
+                ),
+                const SizedBox(width: 8),
+              ],
               menuChip<String>(
                 key: const ValueKey('lfg-role'),
                 icon: Icons.shield_outlined,

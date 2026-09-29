@@ -340,6 +340,9 @@ class RecordingNotifications extends NotificationService {
     String? accountPuuid,
     String? tag,
   }) async => shown.add((title: title, body: body, payload: payload));
+
+  @override
+  Future<void> cancelForAccount(String puuid) async {}
 }
 
 // --------------------------------------------------------------------- env
@@ -365,6 +368,7 @@ class CommunityTestEnv {
     }
     final env = CommunityTestEnv._(prefs);
     when(() => env.sessions.events).thenAnswer((_) => const Stream.empty());
+    when(() => env.sessions.forget(any())).thenAnswer((_) async {});
     when(() => env.sessions.session(any()))
         .thenAnswer((_) async => riotSession());
     env.server.json('POST /v1/auth/riot', sessionJson());
