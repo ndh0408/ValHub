@@ -5,7 +5,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/util/json.dart';
 import 'package:valvn/features/collection/collection_strings.dart';
-import 'package:valvn/features/collection/data/skin_query.dart';
 import 'package:valvn/features/collection/ui/buddy_picker_sheet.dart';
 import 'package:valvn/features/collection/ui/skin_customize_screen.dart';
 import 'package:valvn/features/collection/ui/weapon_loadout_screen.dart';
@@ -91,12 +90,7 @@ void main() {
 
     await tester.tap(find.text(CollectionStrings.sortRarity));
     await settle(tester);
-    await tester.tap(
-      find.widgetWithText(
-        CheckedPopupMenuItem<SkinSort>,
-        CollectionStrings.sortName,
-      ),
-    );
+    await tester.tap(find.text(CollectionStrings.sortName).last);
     await settle(tester);
     expect(y('Vandal Cafe Xanh Mát'), lessThan(y('Vandal Reaver')));
 

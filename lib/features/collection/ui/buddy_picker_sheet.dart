@@ -8,6 +8,7 @@ import '../../../core/content/content_repository.dart';
 import '../../../core/domain/loadout/loadout.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../collection_strings.dart';
 import '../data/buddy_options.dart';
@@ -108,10 +109,15 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
                                 controller: scroll,
                                 children: [
                                   EmptyView(
+                                    title: _search.trim().isEmpty
+                                        ? null
+                                        : CollectionStrings.noResultsTitle,
                                     message: _search.trim().isEmpty
                                         ? CollectionStrings.noBuddies
                                         : CollectionStrings.noResults,
-                                    icon: Icons.key_off_outlined,
+                                    icon: _search.trim().isEmpty
+                                        ? Icons.key_off_outlined
+                                        : Icons.search_off,
                                   ),
                                 ],
                               )
@@ -212,30 +218,18 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
     }
     final from = copy.equippedOn;
     if (from != null && from != _weaponId) {
-      final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text(CollectionStrings.moveBuddyTitle),
-          content: Text(
-            CollectionStrings.moveBuddyBody(
-              option.buddy.displayName,
-              db.weapon(from)?.displayName ?? CommonStrings.unknownItem,
-              db.weapon(_weaponId)?.displayName ?? CommonStrings.unknownItem,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text(CommonStrings.cancel),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text(CollectionStrings.move),
-            ),
-          ],
+      final confirmed = await showConfirmDialog(
+        context,
+        title: CollectionStrings.moveBuddyTitle,
+        message: CollectionStrings.moveBuddyBody(
+          option.buddy.displayName,
+          db.weapon(from)?.displayName ?? CommonStrings.unknownItem,
+          db.weapon(_weaponId)?.displayName ?? CommonStrings.unknownItem,
         ),
+        confirmLabel: CollectionStrings.move,
+        icon: Icons.swap_horiz,
       );
-      if (confirmed != true || !context.mounted) return;
+      if (!confirmed || !context.mounted) return;
     }
     final ok = await applyLoadoutChange(
       context,
@@ -244,6 +238,7 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
       change: option.equipOn(_weaponId, copy),
       successMessage: CollectionStrings.equippedItem(option.buddy.displayName),
     );
+    if (ok) Haptics.medium();
     if (ok && navigator.mounted) navigator.pop();
   }
 }

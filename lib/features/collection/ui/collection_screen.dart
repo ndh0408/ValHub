@@ -12,6 +12,7 @@ import '../../../core/domain/economy/economy.dart';
 import '../../../core/domain/loadout/loadout.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/net_image.dart';
@@ -31,6 +32,11 @@ import 'widgets/level_border_sheet.dart';
 import 'widgets/loadout_actions.dart';
 
 /// TAB 3 "Bộ sưu tập" hub (S30). Route `/collection`.
+///
+/// ValBuddy-style layout: the wide equipped player card as a rounded
+/// banner (name caption under it), then grouped rows with red outline
+/// icons ("Trang bị", "Hiển thị với người chơi khác", "Duyệt bộ sưu tập")
+/// and the collection value at store prices.
 class CollectionScreen extends ConsumerWidget {
   const CollectionScreen({super.key});
 
@@ -52,13 +58,33 @@ class CollectionScreen extends ConsumerWidget {
       slivers: [
         SliverToBoxAdapter(child: _Header(account: account)),
         SliverToBoxAdapter(child: _LoadoutSection(puuid: account.puuid)),
-        SliverToBoxAdapter(child: _IdentitySection(account: account)),
         SliverToBoxAdapter(child: _BrowseSection(puuid: account.puuid)),
         SliverToBoxAdapter(child: _ValueCard(puuid: account.puuid)),
+        SliverToBoxAdapter(child: _IdentitySection(account: account)),
         const SliverToBoxAdapter(child: SizedBox(height: 32)),
       ],
     );
   }
+}
+
+/// Plain bold section title ("Trang bị", "Duyệt bộ sưu tập").
+class CollectionSectionTitle extends StatelessWidget {
+  const CollectionSectionTitle(this.text, {super.key});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
+    child: Semantics(
+      header: true,
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.titleMedium
+            ?.copyWith(fontWeight: FontWeight.w700),
+      ),
+    ),
+  );
 }
 
 // ------------------------------------------------------------------ header
@@ -74,34 +100,35 @@ class _Header extends ConsumerWidget {
     final loadout = ref.watch(loadoutProvider(puuid));
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final snapshot = loadout.value;
+    final theme = Theme.of(context);
     if (snapshot == null) {
       if (loadout.hasError && !loadout.isLoading) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: Card(
-            child: ErrorView(
-              error: loadout.error!,
-              puuid: puuid,
-              compact: true,
-              onRetry: () => ref.invalidate(loadoutProvider(puuid)),
-            ),
-          ),
+        return ErrorView(
+          error: loadout.error!,
+          puuid: puuid,
+          compact: true,
+          onRetry: () => ref.invalidate(loadoutProvider(puuid)),
         );
       }
       return const Padding(
         padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-        child: Skeleton(height: 110, radius: 18),
+        child: Column(
+          children: [
+            AspectRatio(
+              aspectRatio: _bannerRatio,
+              child: Skeleton(radius: ValRadius.card),
+            ),
+            SizedBox(height: 10),
+            Skeleton(width: 140, height: 12),
+          ],
+        ),
       );
     }
     final identity = snapshot.loadout.identity;
     final card = identity.playerCardId == null
         ? null
         : db.card(identity.playerCardId!);
-    final title = db.title(identity.titleOrNone);
-    final theme = Theme.of(context);
-    final titleText = title == null || title.isNoTitle ? null : title.text;
-    const onBanner = Colors.white;
-    final onBannerMuted = Colors.white.withValues(alpha: 0.8);
+    final cardName = card?.displayName ?? CommonStrings.unknownItem;
     return Column(
       children: [
         if (snapshot.isFromCache) const CachedLoadoutBanner(),
@@ -110,102 +137,95 @@ class _Header extends ConsumerWidget {
           child: Semantics(
             button: true,
             label:
-                '${CollectionStrings.equippedCard}: '
-                '${card?.displayName ?? CommonStrings.unknownItem}. '
+                '${CollectionStrings.equippedCard}: $cardName. '
                 '${CollectionStrings.tapToChangeCard}',
             excludeSemantics: true,
-            child: Material(
-              color: theme.colorScheme.surfaceContainer,
-              borderRadius: BorderRadius.circular(18),
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                onTap: () => unawaited(context.push(CollectionRoutes.card)),
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: NetImage(
-                        card?.wideArt,
-                        fit: BoxFit.cover,
-                        showSkeleton: false,
-                        error: const SizedBox.shrink(),
-                      ),
-                    ),
-                    // Figma: purple → red equipped-card banner.
-                    const Positioned.fill(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [Color(0xF24A2A7A), Color(0xB3D9404F)],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(18, 18, 48, 18),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            CollectionStrings.equippedCard.toUpperCase(),
-                            style: ValText.label.copyWith(
-                              color: onBannerMuted,
-                              fontSize: 11,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            card?.displayName ?? CommonStrings.unknownItem,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: ValText.display(24, color: onBanner),
-                          ),
-                          if (titleText != null) ...[
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Text(
-                                  CollectionStrings.bannerTitlePrefix,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: onBannerMuted,
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Text(
-                                    titleText,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: onBanner,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    const Positioned(
-                      right: 14,
-                      top: 14,
-                      child: Icon(
-                        Icons.edit_outlined,
-                        size: 20,
-                        color: Colors.white70,
-                      ),
-                    ),
-                  ],
-                ),
+            child: _CardBanner(
+              art: card?.wideArt,
+              onTap: () {
+                Haptics.selection();
+                unawaited(context.push(CollectionRoutes.card));
+              },
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
+          child: ExcludeSemantics(
+            child: Text(
+              cardName,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
           ),
         ),
         SavingBar(visible: snapshot.isPending),
       ],
+    );
+  }
+}
+
+const _bannerRatio = 452 / 128;
+
+/// Rounded wide player-card art with a thin accent frame and an edit hint.
+class _CardBanner extends StatelessWidget {
+  const _CardBanner({required this.art, required this.onTap});
+
+  final String? art;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return AspectRatio(
+      aspectRatio: _bannerRatio,
+      child: Material(
+        color: scheme.surfaceContainerHigh,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ValRadius.card),
+          side: BorderSide(color: scheme.primary.withValues(alpha: 0.45)),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              NetImage(
+                art,
+                fit: BoxFit.cover,
+                error: Icon(
+                  Icons.badge_outlined,
+                  size: 36,
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+              Positioned(
+                right: 10,
+                top: 10,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.45),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(6),
+                    child: Icon(
+                      Icons.edit_outlined,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -229,45 +249,40 @@ class _LoadoutSection extends ConsumerWidget {
     final titleText = identity == null
         ? null
         : db.title(identity.titleOrNone)?.text ?? CollectionStrings.noTitle;
+    void go(String route) => unawaited(context.push(route));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel(CollectionStrings.sectionLoadout),
+        const CollectionSectionTitle(CollectionStrings.sectionLoadout),
         GroupedSection(
           children: [
             HubRow(
-              icon: Icons.badge_outlined,
-              color: TierColors.premium,
-              title: CollectionStrings.rowCard,
+              icon: Icons.flag_outlined,
+              title: CollectionStrings.playerCardTitle,
               value: cardName,
-              onTap: () => unawaited(context.push(CollectionRoutes.card)),
+              onTap: () => go(CollectionRoutes.card),
             ),
             HubRow(
-              icon: Icons.military_tech_outlined,
-              color: TierColors.ultra,
-              title: CollectionStrings.rowTitle,
+              icon: Icons.text_fields,
+              title: CollectionStrings.playerTitleTitle,
               value: titleText,
-              onTap: () => unawaited(context.push(CollectionRoutes.title)),
+              onTap: () => go(CollectionRoutes.title),
             ),
             HubRow(
               icon: Icons.gps_fixed,
-              color: TierColors.select,
               title: CollectionStrings.rowWeapons,
-              onTap: () => unawaited(context.push(CollectionRoutes.weapons)),
+              onTap: () => go(CollectionRoutes.weapons),
             ),
             HubRow(
-              icon: Icons.emoji_emotions_outlined,
-              color: ValColors.green,
+              icon: Icons.auto_fix_high_outlined,
               title: CollectionStrings.rowExpressions,
-              onTap: () =>
-                  unawaited(context.push(CollectionRoutes.expressions)),
+              onTap: () => go(CollectionRoutes.expressions),
             ),
             HubRow(
-              icon: Icons.bookmarks_outlined,
-              color: const Color(0xFFB07CE8),
+              icon: Icons.inventory_2_outlined,
               title: CollectionStrings.rowPresets,
               value: CollectionStrings.presetCount(presets.length),
-              onTap: () => unawaited(context.push(CollectionRoutes.presets)),
+              onTap: () => go(CollectionRoutes.presets),
             ),
           ],
         ),
@@ -295,14 +310,47 @@ class _IdentitySection extends ConsumerWidget {
         : db.levelBorder(identity.preferredLevelBorderId!);
     final enabled = !snapshot.isPending;
     final theme = Theme.of(context);
+    Widget toggle({
+      required IconData icon,
+      required String title,
+      required String hint,
+      required bool value,
+      required LoadoutChange Function(bool v) change,
+    }) => SwitchListTile.adaptive(
+      secondary: HubIcon(icon),
+      title: Text(
+        title,
+        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(
+        hint,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+      contentPadding: const EdgeInsets.fromLTRB(14, 4, 12, 4),
+      value: value,
+      onChanged: enabled
+          ? (v) {
+              Haptics.light();
+              unawaited(
+                applyLoadoutChange(
+                  context,
+                  ref,
+                  puuid: puuid,
+                  change: change(v),
+                ),
+              );
+            }
+          : null,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel(CollectionStrings.sectionIdentity),
+        const CollectionSectionTitle(CollectionStrings.sectionIdentity),
         GroupedSection(
           children: [
             HubRow(
-              color: TierColors.exclusive,
               icon: Icons.filter_frames_outlined,
               title: CollectionStrings.rowLevelBorder,
               value: border?.displayName.isNotEmpty ?? false
@@ -311,49 +359,19 @@ class _IdentitySection extends ConsumerWidget {
               onTap: () =>
                   unawaited(showLevelBorderSheet(context, account: account)),
             ),
-            SwitchListTile(
-              secondary: const IconTile(
-                icon: Icons.visibility_off_outlined,
-                color: ValColors.red,
-              ),
-              title: const Text(CollectionStrings.hideAccountLevel),
-              subtitle: Text(
-                CollectionStrings.hideAccountLevelHint,
-                style: theme.textTheme.bodySmall,
-              ),
+            toggle(
+              icon: Icons.visibility_off_outlined,
+              title: CollectionStrings.hideAccountLevel,
+              hint: CollectionStrings.hideAccountLevelHint,
               value: identity.hideAccountLevel,
-              onChanged: enabled
-                  ? (v) => unawaited(
-                      applyLoadoutChange(
-                        context,
-                        ref,
-                        puuid: puuid,
-                        change: SetHideAccountLevel(v),
-                      ),
-                    )
-                  : null,
+              change: SetHideAccountLevel.new,
             ),
-            SwitchListTile(
-              secondary: const IconTile(
-                icon: Icons.person_off_outlined,
-                color: ValColors.red,
-              ),
-              title: const Text(CollectionStrings.incognito),
-              subtitle: Text(
-                CollectionStrings.incognitoHint,
-                style: theme.textTheme.bodySmall,
-              ),
+            toggle(
+              icon: Icons.person_off_outlined,
+              title: CollectionStrings.incognito,
+              hint: CollectionStrings.incognitoHint,
               value: snapshot.loadout.incognito,
-              onChanged: enabled
-                  ? (v) => unawaited(
-                      applyLoadoutChange(
-                        context,
-                        ref,
-                        puuid: puuid,
-                        change: SetIncognito(v),
-                      ),
-                    )
-                  : null,
+              change: SetIncognito.new,
             ),
           ],
         ),
@@ -383,141 +401,63 @@ class _BrowseSection extends ConsumerWidget {
     final wishlist = ref.watch(wishlistProvider(puuid));
     String? count(int Function(OwnedItems o) f) =>
         owned == null ? null : formatNumber(f(owned));
-    Widget tile(CollectionBrowseType type, Color color, String? value) =>
-        _BrowseTile(
+    Widget row(CollectionBrowseType type, IconData icon, String? value) =>
+        HubRow(
+          icon: icon,
           title: type.label,
-          color: color,
-          value: value == null ? null : CollectionStrings.itemsCount(value),
+          value: value,
           onTap: () => unawaited(context.push(CollectionRoutes.browse(type))),
         );
-    final tiles = [
-      tile(
-        CollectionBrowseType.skin,
-        TierColors.premium,
-        count((o) => o.ownedCollectibleSkins.length),
-      ),
-      tile(
-        CollectionBrowseType.buddy,
-        TierColors.exclusive,
-        count((o) => buddyOptions(o, db, snapshot?.loadout).length),
-      ),
-      tile(
-        CollectionBrowseType.spray,
-        TierColors.select,
-        count((o) => ownedSprays(o, db).length),
-      ),
-      tile(
-        CollectionBrowseType.card,
-        TierColors.deluxe,
-        count((o) => ownedCards(o, db).length),
-      ),
-      tile(
-        CollectionBrowseType.title,
-        TierColors.ultra,
-        count((o) => ownedTitles(o, db).length),
-      ),
-      tile(
-        CollectionBrowseType.flex,
-        const Color(0xFFB07CE8),
-        count((o) => ownedFlex(o, db).length),
-      ),
-      _BrowseTile(
-        title: CollectionStrings.rowWishlist,
-        color: ValColors.red,
-        value: CollectionStrings.wishlistCount(wishlist.length),
-        onTap: () => unawaited(context.push(WishlistRoutes.wishlist)),
-      ),
-    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel(CollectionStrings.sectionBrowse),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              for (var i = 0; i < tiles.length; i += 2) ...[
-                if (i > 0) const SizedBox(height: 10),
-                IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(child: tiles[i]),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: i + 1 < tiles.length
-                            ? tiles[i + 1]
-                            : const SizedBox.shrink(),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
+        const CollectionSectionTitle(CollectionStrings.sectionBrowse),
+        GroupedSection(
+          children: [
+            row(
+              CollectionBrowseType.skin,
+              Icons.bolt_outlined,
+              count((o) => o.ownedCollectibleSkins.length),
+            ),
+            row(
+              CollectionBrowseType.buddy,
+              Icons.workspace_premium_outlined,
+              count((o) => buddyOptions(o, db, snapshot?.loadout).length),
+            ),
+            row(
+              CollectionBrowseType.spray,
+              Icons.format_paint_outlined,
+              count((o) => ownedSprays(o, db).length),
+            ),
+            row(
+              CollectionBrowseType.card,
+              Icons.image_outlined,
+              count((o) => ownedCards(o, db).length),
+            ),
+            row(
+              CollectionBrowseType.title,
+              Icons.text_fields,
+              count((o) => ownedTitles(o, db).length),
+            ),
+            row(
+              CollectionBrowseType.flex,
+              Icons.back_hand_outlined,
+              count((o) => ownedFlex(o, db).length),
+            ),
+            HubRow(
+              icon: Icons.favorite_border,
+              title: CollectionStrings.rowWishlist,
+              value: CollectionStrings.wishlistCount(wishlist.length),
+              onTap: () => unawaited(context.push(WishlistRoutes.wishlist)),
+            ),
+          ],
         ),
       ],
     );
   }
 }
 
-/// "DUYỆT BỘ SƯU TẬP" tile: colored diamond, name, item count.
-class _BrowseTile extends StatelessWidget {
-  const _BrowseTile({
-    required this.title,
-    required this.color,
-    required this.value,
-    required this.onTap,
-  });
-
-  final String title;
-  final Color color;
-  final String? value;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return ValCard(
-      onTap: onTap,
-      radius: 14,
-      padding: const EdgeInsets.fromLTRB(12, 12, 10, 12),
-      child: Row(
-        children: [
-          DiamondPip(size: 22, color: color),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                if (value != null)
-                  Text(
-                    value!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ------------------------------------------------------------ value footer
+// ------------------------------------------------------------ value card
 
 class _ValueCard extends ConsumerWidget {
   const _ValueCard({required this.puuid});
@@ -528,19 +468,31 @@ class _ValueCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final owned = ref.watch(ownedItemsProvider(puuid));
     final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
     final gold = valColorsOf(context).gold;
     final Widget child;
+    VoidCallback? onTap;
     if (owned.value case final o?) {
       final value = ref.watch(priceServiceProvider).ownedCollectionValue(o);
       final amount = value.isEstimate
           ? formatEstimatedVp(value.totalVp)
           : formatVp(value.totalVp);
+      onTap = () => unawaited(
+        context.push(CollectionRoutes.browse(CollectionBrowseType.skin)),
+      );
       child = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            CollectionStrings.collectionValue.toUpperCase(),
-            style: ValText.label.copyWith(color: gold),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  CollectionStrings.collectionValue.toUpperCase(),
+                  style: ValText.label.copyWith(color: gold),
+                ),
+              ),
+              Icon(Icons.chevron_right, color: muted),
+            ],
           ),
           const SizedBox(height: 6),
           FittedBox(
@@ -548,12 +500,23 @@ class _ValueCard extends ConsumerWidget {
             alignment: Alignment.centerLeft,
             child: Text(amount, style: ValText.display(34, color: gold)),
           ),
+          const SizedBox(height: 2),
+          Text(
+            [
+              CollectionStrings.ownedSkinsStat(
+                formatNumber(o.ownedCollectibleSkins.length),
+              ),
+              CollectionStrings.valueAtStorePrices,
+            ].join(' · '),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           const SizedBox(height: 4),
           Text(
             CollectionStrings.excludedRewards,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
+            style: theme.textTheme.bodySmall?.copyWith(color: muted),
           ),
           if (value.skinCount > 0)
             Text(
@@ -563,18 +526,19 @@ class _ValueCard extends ConsumerWidget {
                   CollectionStrings.valueRewardCount(value.rewardCount),
                 if (value.isEstimate) CollectionStrings.valueHasEstimates,
               ].join(' · '),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+              style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),
         ],
       );
     } else if (owned.hasError && !owned.isLoading) {
-      child = ErrorView(
-        error: owned.error!,
-        puuid: puuid,
-        compact: true,
-        onRetry: () => ref.invalidate(entitlementsProvider(puuid)),
+      return Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: ErrorView(
+          error: owned.error!,
+          puuid: puuid,
+          compact: true,
+          onRetry: () => ref.invalidate(entitlementsProvider(puuid)),
+        ),
       );
     } else {
       child = const Column(
@@ -590,22 +554,35 @@ class _ValueCard extends ConsumerWidget {
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-      child: DecoratedBox(
-        // Figma: gold-bordered value card with a faint gold wash.
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(ValRadius.card),
-          border: Border.all(color: gold.withValues(alpha: 0.55)),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              gold.withValues(alpha: 0.16),
-              theme.colorScheme.surfaceContainer,
-            ],
-            stops: const [0, 0.7],
+      child: Semantics(
+        button: onTap != null,
+        hint: onTap == null ? null : CollectionStrings.valueSeeSkins,
+        child: Material(
+          color: theme.colorScheme.surfaceContainer,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(ValRadius.card),
+            side: BorderSide(color: gold.withValues(alpha: 0.55)),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: Ink(
+              // Gold-bordered value card with a faint gold wash.
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    gold.withValues(alpha: 0.16),
+                    gold.withValues(alpha: 0),
+                  ],
+                  stops: const [0, 0.7],
+                ),
+              ),
+              child: Padding(padding: const EdgeInsets.all(16), child: child),
+            ),
           ),
         ),
-        child: Padding(padding: const EdgeInsets.all(16), child: child),
       ),
     );
   }

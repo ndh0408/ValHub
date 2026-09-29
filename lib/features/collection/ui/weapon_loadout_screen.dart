@@ -6,7 +6,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/content/content_db.dart';
 import '../../../core/domain/loadout/loadout.dart';
-import '../../../core/ui/content_tier_badge.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/section_header.dart';
@@ -39,7 +40,7 @@ class WeaponLoadoutScreen extends ConsumerWidget {
               db.weapons,
               onlyIds: {for (final g in loadout.guns) g.weaponId},
             );
-            return RefreshIndicator(
+            return AdaptiveRefresh(
               onRefresh: () => refreshCollection(ref, account.puuid),
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -76,10 +77,11 @@ class WeaponLoadoutScreen extends ConsumerWidget {
                           maxCrossAxisExtent: 220,
                           mainAxisSpacing: 10,
                           crossAxisSpacing: 10,
-                          mainAxisExtent: tileExtent(context, image: 72),
+                          mainAxisExtent: tileExtent(context, image: 80),
                         ),
                         delegate: SliverChildBuilderDelegate(
                           (context, i) => WeaponTile(
+                            key: ValueKey(section.weapons[i].uuid),
                             weapon: section.weapons[i],
                             gun: loadout.gun(section.weapons[i].uuid),
                             db: db,
@@ -116,38 +118,52 @@ class WeaponTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final dark = theme.brightness == Brightness.dark;
     final skin = equippedSkin(gun, db);
     final buddy = equippedBuddy(gun, db);
-    final tint = contentTierTint(
-      ref,
-      skin?.contentTierUuid,
-      fallback: theme.colorScheme.surfaceContainerHigh,
-    );
+    final hasTier =
+        skin?.contentTierUuid != null && !(skin?.isStandard ?? true);
+    final color = hasTier
+        ? skinTierColor(ref, context, skin!.contentTierUuid)
+        : null;
     final skinName = skin == null ? null : skinLabel(skin);
     return Semantics(
       button: true,
       label: [weapon.displayName, ?skinName, ?buddy?.displayName].join(', '),
       excludeSemantics: true,
       child: Material(
-        color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(16),
+        color: scheme.surfaceContainer,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ValRadius.card),
+          side: BorderSide(
+            color:
+                color?.withValues(alpha: dark ? 0.3 : 0.45) ??
+                valColorsOf(context).hairline,
+          ),
+        ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () =>
               unawaited(context.push(CollectionRoutes.weapon(weapon.uuid))),
-          child: DecoratedBox(
+          child: Ink(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  tint.withValues(alpha: 0.35),
-                  tint.withValues(alpha: 0.05),
-                ],
-              ),
+              gradient: color == null
+                  ? null
+                  : RadialGradient(
+                      center: const Alignment(0, 0.1),
+                      radius: 0.9,
+                      colors: [
+                        color.withValues(alpha: dark ? 0.3 : 0.18),
+                        color.withValues(alpha: 0),
+                      ],
+                    ),
+              border: color == null
+                  ? null
+                  : Border(bottom: BorderSide(color: color, width: 3)),
             ),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+              padding: const EdgeInsets.fromLTRB(12, 8, 10, 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -160,10 +176,9 @@ class WeaponTile extends ConsumerWidget {
                             weapon.displayName.toUpperCase(),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              letterSpacing: 1.1,
-                              color: theme.colorScheme.onSurfaceVariant,
-                              fontWeight: FontWeight.w700,
+                            style: ValText.label.copyWith(
+                              fontSize: 11,
+                              color: scheme.onSurfaceVariant,
                             ),
                           ),
                         ),
@@ -194,8 +209,11 @@ class WeaponTile extends ConsumerWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                       height: 1.2,
+                      color: skin == null || skin.isStandard
+                          ? scheme.onSurfaceVariant
+                          : null,
                     ),
                   ),
                 ],

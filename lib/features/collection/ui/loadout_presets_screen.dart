@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cupertino_ui/cupertino_ui.dart'
+    show CupertinoAlertDialog, CupertinoDialogAction, CupertinoTextField;
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -11,10 +13,12 @@ import '../../../core/domain/loadout/loadout.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/riot/riot_ids.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../collection_strings.dart';
 import '../providers/collection_providers.dart';
@@ -74,7 +78,7 @@ class _PresetsBody extends ConsumerWidget {
       );
     }
 
-    return RefreshIndicator(
+    return AdaptiveRefresh(
       onRefresh: () => refreshCollection(ref, puuid),
       child: ListView(
         padding: const EdgeInsets.only(bottom: 24),
@@ -121,20 +125,35 @@ class _PresetsBody extends ConsumerWidget {
           if (presets.isEmpty)
             const EmptyView(
               message: CollectionStrings.presetsEmpty,
-              icon: Icons.bookmarks_outlined,
+              icon: Icons.inventory_2_outlined,
             ),
           for (final (index, preset) in presets.indexed)
             Dismissible(
               key: ValueKey(preset.id),
               direction: DismissDirection.endToStart,
-              background: Container(
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                color: ValColors.red,
-                child: const Icon(Icons.delete_outline, color: Colors.white),
+              background: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 6,
+                ),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.error,
+                    borderRadius: BorderRadius.circular(ValRadius.card),
+                  ),
+                  child: const Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      child: Icon(Icons.delete_outline, color: Colors.white),
+                    ),
+                  ),
+                ),
               ),
-              onDismissed: (_) =>
-                  unawaited(_delete(context, ref, preset, index)),
+              onDismissed: (_) {
+                Haptics.medium();
+                unawaited(_delete(context, ref, preset, index));
+              },
               child: PresetCard(
                 preset: preset,
                 db: db,
@@ -156,24 +175,14 @@ class _PresetsBody extends ConsumerWidget {
   ) async {
     final messenger = ScaffoldMessenger.maybeOf(context);
     final router = GoRouter.maybeOf(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(CollectionStrings.applyPresetTitle(preset.name)),
-        content: const Text(CollectionStrings.applyPresetBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text(CommonStrings.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text(CollectionStrings.applyPreset),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDialog(
+      context,
+      title: CollectionStrings.applyPresetTitle(preset.name),
+      message: CollectionStrings.applyPresetBody,
+      confirmLabel: CollectionStrings.applyPreset,
+      icon: Icons.download_done,
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
     OwnedItems? owned = ref.read(ownedItemsProvider(puuid)).value;
     if (owned == null) {
       try {
@@ -186,6 +195,7 @@ class _PresetsBody extends ConsumerWidget {
       final skipped = await ref
           .read(loadoutProvider(puuid).notifier)
           .applyPreset(preset, owned: owned);
+      Haptics.medium();
       showCollectionSnack(
         messenger,
         skipped == 0
@@ -230,12 +240,14 @@ class _PresetsBody extends ConsumerWidget {
   }
 }
 
-/// "Tên bộ trang bị" dialog; returns the trimmed name or `null`.
+/// "Tên bộ trang bị" dialog (Cupertino on iOS, Material elsewhere);
+/// returns the trimmed name or `null`.
 Future<String?> showPresetNameDialog(
   BuildContext context, {
   required String initial,
-}) => showDialog<String>(
+}) => showAdaptiveDialog<String>(
   context: context,
+  barrierDismissible: true,
   builder: (context) => _PresetNameDialog(initial: initial),
 );
 
@@ -271,6 +283,34 @@ class _PresetNameDialogState extends State<_PresetNameDialog> {
   @override
   Widget build(BuildContext context) {
     final valid = normalizePresetName(_controller.text) != null;
+    if (isCupertino(context)) {
+      return CupertinoAlertDialog(
+        title: const Text(CollectionStrings.presetNameTitle),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: CupertinoTextField(
+            controller: _controller,
+            autofocus: true,
+            maxLength: kPresetNameMaxLength,
+            placeholder: CollectionStrings.presetNameHint,
+            textInputAction: TextInputAction.done,
+            onChanged: (_) => setState(() {}),
+            onSubmitted: (_) => _submit(),
+          ),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(CommonStrings.cancel),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: valid ? _submit : null,
+            child: const Text(CommonStrings.save),
+          ),
+        ],
+      );
+    }
     return AlertDialog(
       title: const Text(CollectionStrings.presetNameTitle),
       content: TextField(
@@ -326,110 +366,138 @@ class PresetCard extends StatelessWidget {
         (g.skinId == null ? null : db.skinByAnyUuid(g.skinId!)?.image);
   }
 
+  Future<void> _actions(BuildContext context) async {
+    final picked = await showActionSheet<String>(
+      context,
+      title: preset.name,
+      actions: const [
+        SheetAction(
+          value: 'rename',
+          label: CollectionStrings.renamePreset,
+          icon: Icons.edit_outlined,
+        ),
+        SheetAction(
+          value: 'delete',
+          label: CollectionStrings.deletePreset,
+          icon: Icons.delete_outline,
+          destructive: true,
+        ),
+      ],
+    );
+    switch (picked) {
+      case 'rename':
+        onRename();
+      case 'delete':
+        onDelete();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final card = preset.cardId == null ? null : db.card(preset.cardId!);
-    final muted = theme.colorScheme.onSurfaceVariant;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 10, 4, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+    final muted = scheme.onSurfaceVariant;
+    return ValCard(
+      margin: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+      padding: EdgeInsets.zero,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Header: the preset's wide card art, faded under the name.
+          Stack(
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: NetImage(
-                      card?.smallArt,
-                      width: 44,
-                      height: 44,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          preset.name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          CollectionStrings.presetSavedAt(
-                            formatDate(preset.createdAt),
-                          ),
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: muted,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  PopupMenuButton<String>(
-                    tooltip: CollectionStrings.presetActions,
-                    onSelected: (v) => v == 'rename' ? onRename() : onDelete(),
-                    itemBuilder: (_) => const [
-                      PopupMenuItem(
-                        value: 'rename',
-                        child: Text(CollectionStrings.renamePreset),
-                      ),
-                      PopupMenuItem(
-                        value: 'delete',
-                        child: Text(CollectionStrings.deletePreset),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Row(
-                  children: [
-                    for (final w in const [
-                      SpecialIds.vandal,
-                      SpecialIds.phantom,
-                    ]) ...[
-                      Expanded(
-                        child: Container(
-                          height: 52,
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surfaceContainerHigh,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: NetImage(_render(w), fit: BoxFit.contain),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                    ],
-                  ],
+              Positioned.fill(
+                child: NetImage(
+                  card?.wideArt,
+                  fit: BoxFit.cover,
+                  showSkeleton: false,
+                  opacity: 0.28,
+                  error: const SizedBox.shrink(),
                 ),
               ),
-              const SizedBox(height: 10),
               Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: FilledButton.icon(
-                    onPressed: busy ? null : onApply,
-                    icon: const Icon(Icons.download_done),
-                    label: const Text(CollectionStrings.applyPreset),
-                  ),
+                padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: NetImage(
+                        card?.smallArt,
+                        width: 44,
+                        height: 44,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            preset.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            CollectionStrings.presetSavedAt(
+                              formatDate(preset.createdAt),
+                            ),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: muted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: CollectionStrings.presetActions,
+                      icon: const Icon(Icons.more_horiz),
+                      onPressed: () => unawaited(_actions(context)),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+            child: Row(
+              children: [
+                for (final (i, w) in const [
+                  SpecialIds.vandal,
+                  SpecialIds.phantom,
+                ].indexed) ...[
+                  if (i > 0) const SizedBox(width: 8),
+                  Expanded(
+                    child: Container(
+                      height: 56,
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: scheme.surfaceContainerHigh,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: NetImage(_render(w), fit: BoxFit.contain),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+            child: FilledButton.icon(
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(44),
+              ),
+              onPressed: busy ? null : onApply,
+              icon: const Icon(Icons.download_done),
+              label: const Text(CollectionStrings.applyPreset),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -168,6 +168,15 @@ abstract final class CollectionStrings {
       'Đang lọc: $count/$total vật phẩm';
   static String copies(int n) => '×$n';
   static const browseEmpty = 'Bạn chưa có vật phẩm nào ở mục này.';
+  static const browseEmptyTitle = 'Chưa có vật phẩm';
+  static const noResultsTitle = 'Không tìm thấy';
+  static const clearTiers = 'Bỏ lọc phiên bản';
+  static const valueAtStorePrices = 'Tính theo giá cửa hàng';
+  static const valueSeeSkins = 'Xem các skin';
+  static String ownedSkinsStat(String n) => '$n skin đã sở hữu';
+  static String levelsUnlocked(int owned, int total) =>
+      'Đã mở $owned/$total cấp';
+  static const previewing = 'Đang xem';
 
   // ---------------------------------------------------------- errors
   static const saveFailed = LoadoutStrings.saveFailed;

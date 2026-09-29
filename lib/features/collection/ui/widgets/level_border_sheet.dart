@@ -8,7 +8,7 @@ import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/competitive/account_xp.dart';
 import '../../../../core/domain/loadout/loadout.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/async_value_view.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/skeleton.dart';
@@ -126,8 +126,15 @@ class _BorderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-    onTap: onTap,
+    onTap: () {
+      if (!selected) Haptics.selection();
+      onTap();
+    },
     selected: selected,
+    selectedColor: Theme.of(context).colorScheme.onSurface,
+    selectedTileColor: Theme.of(context).colorScheme.primary
+        .withValues(alpha: 0.08),
+    minTileHeight: 56,
     leading: SizedBox(
       width: 56,
       height: 32,
@@ -136,7 +143,7 @@ class _BorderTile extends StatelessWidget {
     title: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
     subtitle: subtitle == null ? null : Text(subtitle!),
     trailing: selected
-        ? const Icon(Icons.check_circle, color: ValColors.red)
+        ? Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary)
         : null,
   );
 }

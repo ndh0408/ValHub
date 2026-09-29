@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/content/models/cosmetic_models.dart';
 import '../../../core/domain/loadout/loadout.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../collection_strings.dart';
@@ -49,7 +50,7 @@ class _PlayerCardPickerScreenState
                     for (final c in ownedCards(owned, db))
                       if (matchesSearch(_search, [c.displayName])) c,
                   ];
-                  return RefreshIndicator(
+                  return AdaptiveRefresh(
                     onRefresh: () => refreshCollection(ref, account.puuid),
                     child: Column(
                       children: [
@@ -59,12 +60,15 @@ class _PlayerCardPickerScreenState
                               ? ListView(
                                   children: const [
                                     EmptyView(
+                                      title: CollectionStrings.noResultsTitle,
                                       message: CollectionStrings.noResults,
                                       icon: Icons.search_off,
                                     ),
                                   ],
                                 )
                               : GridView.builder(
+                                  keyboardDismissBehavior:
+                                      ScrollViewKeyboardDismissBehavior.onDrag,
                                   padding: const EdgeInsets.fromLTRB(
                                     16,
                                     4,
@@ -85,6 +89,7 @@ class _PlayerCardPickerScreenState
                                   itemBuilder: (context, i) {
                                     final card = cards[i];
                                     return ArtTile(
+                                      key: ValueKey(card.uuid),
                                       image: card.largeArt ?? card.smallArt,
                                       label: card.displayName,
                                       imageFit: BoxFit.cover,
@@ -165,7 +170,7 @@ class _CardPreviewSheet extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(ValRadius.card),
               child: AspectRatio(
                 aspectRatio: 452 / 128,
                 child: NetImage(card.wideArt, fit: BoxFit.cover),
@@ -186,6 +191,7 @@ class _CardPreviewSheet extends ConsumerWidget {
                           card.displayName,
                         ),
                       );
+                      if (ok) Haptics.medium();
                       if (ok && navigator.mounted) navigator.pop();
                     },
               icon: Icon(isEquipped ? Icons.check : Icons.style_outlined),
@@ -199,8 +205,9 @@ class _CardPreviewSheet extends ConsumerWidget {
               style: FilledButton.styleFrom(
                 minimumSize: const Size.fromHeight(48),
                 disabledBackgroundColor: isEquipped
-                    ? ValColors.red.withValues(alpha: 0.35)
+                    ? theme.colorScheme.primary.withValues(alpha: 0.35)
                     : null,
+                disabledForegroundColor: isEquipped ? Colors.white : null,
               ),
             ),
           ],

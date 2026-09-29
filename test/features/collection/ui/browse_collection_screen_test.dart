@@ -48,12 +48,15 @@ void main() {
     await tester.enterText(find.byType(TextField), '');
     await settle(tester);
     // Tier chip: Premium only.
-    await tester.tap(
-      find.byWidgetPredicate((w) => w is Tooltip && w.message == 'Cao Cấp'),
-    );
+    final premium = find.widgetWithText(FilterChip, 'Cao Cấp');
+    await tester.ensureVisible(premium);
+    await settle(tester);
+    await tester.tap(premium);
     await settle(tester);
     expect(find.textContaining('Đang lọc: 1 skin · '), findsOneWidget);
-    await tester.tap(find.byTooltip(CollectionStrings.clearFilters));
+    await tester.ensureVisible(find.text(CollectionStrings.clearFilters));
+    await settle(tester);
+    await tester.tap(find.text(CollectionStrings.clearFilters));
     await settle(tester);
     expect(find.textContaining('5 skin · '), findsOneWidget);
     expect(tester.takeException(), isNull);

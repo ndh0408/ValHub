@@ -12,9 +12,10 @@ import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tier_colors.dart';
 import '../../../../core/ui/async_value_view.dart';
+import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/empty_view.dart';
+import '../../../../core/ui/filter_bar.dart';
 import '../../../../core/ui/net_image.dart';
-import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/ui/skeleton.dart';
 import '../../collection_strings.dart';
 import '../../data/skin_query.dart';
@@ -82,7 +83,8 @@ class LoadoutDataBuilder extends ConsumerWidget {
   }
 }
 
-/// "Glass" search bar used by every picker (C10).
+/// "Glass" search bar used by every picker (C10): pill field with a clear
+/// button (core [GlassSearchField]).
 class CollectionSearchField extends StatefulWidget {
   const CollectionSearchField({
     super.key,
@@ -113,45 +115,22 @@ class _CollectionSearchFieldState extends State<CollectionSearchField> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: widget.padding,
-      child: TextField(
-        controller: _controller,
-        onChanged: (v) {
-          setState(() {});
-          widget.onChanged(v);
-        },
-        textInputAction: TextInputAction.search,
-        decoration: InputDecoration(
-          hintText: widget.hint,
-          isDense: true,
-          filled: true,
-          fillColor: scheme.surfaceContainerHigh.withValues(alpha: 0.7),
-          prefixIcon: const Icon(Icons.search, size: 20),
-          suffixIcon: _controller.text.isEmpty
-              ? null
-              : IconButton(
-                  tooltip: CollectionStrings.clearSearch,
-                  icon: const Icon(Icons.close, size: 18),
-                  onPressed: () {
-                    _controller.clear();
-                    setState(() {});
-                    widget.onChanged('');
-                  },
-                ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Padding(
+    padding: widget.padding,
+    child: GlassSearchField(
+      controller: _controller,
+      hintText: widget.hint,
+      onChanged: widget.onChanged,
+    ),
+  );
 }
 
-/// Content-tier filter chips (5 edition icons) plus the sort menu.
+/// Content tier of [id] (content, else the bundled fallback).
+ContentTier? _tier(ContentDb? db, String id) =>
+    db?.contentTier(id) ?? ContentFallbacks.contentTier(id);
+
+/// Sort button + multi-select content-tier chips (rarity color dots) and a
+/// "Bỏ lọc" chip while tiers are picked (C6, C7).
 class SkinFilterBar extends ConsumerWidget {
   const SkinFilterBar({
     super.key,
@@ -167,146 +146,60 @@ class SkinFilterBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final db = ref.watch(contentProvider).value;
-    final theme = Theme.of(context);
-    return SizedBox(
-      height: 44,
-      child: Row(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: FilterChipBar(
+        onClear: query.tiers.isEmpty
+            ? null
+            : () => onChanged(query.copyWith(tiers: {})),
         children: [
-          Expanded(
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(left: 16, right: 8),
-              children: [
-                for (final id in kContentTierOrder)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 6),
-                    child: _TierChip(
-                      tierUuid: id,
-                      selected: query.tiers.contains(id),
-                      label:
-                          (db?.contentTier(id) ??
-                                  ContentFallbacks.contentTier(id))
-                              ?.shortName ??
-                          '',
-                      icon:
-                          (db?.contentTier(id) ??
-                                  ContentFallbacks.contentTier(id))
-                              ?.displayIcon,
-                      color: opaqueRgba(
-                        (db?.contentTier(id) ??
-                                ContentFallbacks.contentTier(id))
-                            ?.highlightColor,
-                      ),
-                      onTap: () => onChanged(query.toggleTier(id)),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          if (query.tiers.isNotEmpty)
-            IconButton(
-              tooltip: CollectionStrings.clearFilters,
-              visualDensity: VisualDensity.compact,
-              onPressed: () => onChanged(query.copyWith(tiers: {})),
-              icon: const Icon(Icons.filter_alt_off_outlined, size: 20),
-            ),
-          PopupMenuButton<SkinSort>(
-            tooltip: CollectionStrings.sortLabel,
-            initialValue: query.sort,
+          SortButton<SkinSort>(
+            options: [for (final s in sorts) (value: s, label: s.label)],
+            selected: query.sort,
             onSelected: (s) => onChanged(query.copyWith(sort: s)),
-            itemBuilder: (_) => [
-              for (final s in sorts)
-                CheckedPopupMenuItem(
-                  value: s,
-                  checked: s == query.sort,
-                  child: Text(s.label),
-                ),
-            ],
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.sort, size: 18),
-                  const SizedBox(width: 4),
-                  Text(query.sort.label, style: theme.textTheme.labelLarge),
-                ],
-              ),
-            ),
           ),
+          for (final id in kContentTierOrder)
+            ValFilterChip(
+              label: _tier(db, id)?.shortName ?? '',
+              dotColor: opaqueRgba(_tier(db, id)?.highlightColor),
+              selected: query.tiers.contains(id),
+              onSelected: (_) => onChanged(query.toggleTier(id)),
+            ),
         ],
       ),
     );
   }
 }
 
-class _TierChip extends StatelessWidget {
-  const _TierChip({
-    required this.tierUuid,
-    required this.selected,
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  });
-
-  final String tierUuid;
-  final bool selected;
-  final String label;
-  final String? icon;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    // Tier colour while the icon loads (or when it cannot load offline).
-    final dot = SizedBox(
-      width: 20,
-      height: 20,
-      child: Center(
-        child: Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-      ),
-    );
-    return Semantics(
-      button: true,
-      selected: selected,
-      label: label,
-      excludeSemantics: true,
-      child: Tooltip(
-        message: label,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(6),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            decoration: BoxDecoration(
-              color: selected
-                  ? color.withValues(alpha: 0.22)
-                  : scheme.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: selected ? color : Colors.transparent),
-            ),
-            child: NetImage(
-              icon,
-              width: 20,
-              height: 20,
-              placeholder: dot,
-              error: dot,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+/// Opaque rarity color of a skin (muted when it has no tier).
+Color skinTierColor(WidgetRef ref, BuildContext context, String? tierUuid) {
+  final tint = contentTierTint(ref, tierUuid);
+  return tint == Colors.transparent
+      ? valColorsOf(context).muted
+      : tint.withValues(alpha: 1);
 }
 
-/// One tappable row of the hub: icon, title, current value and "›".
+/// Short rarity name ("Độc Quyền") of a skin, or `null`.
+String? skinTierName(WidgetRef ref, String? tierUuid) {
+  if (tierUuid == null) return null;
+  return _tier(ref.watch(contentProvider).value, tierUuid)?.shortName;
+}
+
+/// Red outline icon of a hub row (ValBuddy grouped-list style).
+class HubIcon extends StatelessWidget {
+  const HubIcon(this.icon, {super.key});
+
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: 28,
+    child: Icon(icon, size: 22, color: Theme.of(context).colorScheme.primary),
+  );
+}
+
+/// One tappable row of the hub: red outline icon, title, grey current
+/// value and "›" (min 54 dp tall).
 class HubRow extends StatelessWidget {
   const HubRow({
     super.key,
@@ -315,13 +208,9 @@ class HubRow extends StatelessWidget {
     this.value,
     this.onTap,
     this.leading,
-    this.color = ValColors.red,
   });
 
   final IconData icon;
-
-  /// Tint of the icon tile (Figma: one color per row).
-  final Color color;
   final String title;
   final String? value;
   final VoidCallback? onTap;
@@ -338,11 +227,11 @@ class HubRow extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 54),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 10, 12, 10),
+          padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
           child: Row(
             children: [
-              leading ?? IconTile(icon: icon, color: color, size: 34),
-              const SizedBox(width: 14),
+              leading ?? HubIcon(icon),
+              const SizedBox(width: 12),
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, c) => Row(
@@ -377,8 +266,8 @@ class HubRow extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 4),
-              Icon(Icons.chevron_right, color: muted),
+              const SizedBox(width: 2),
+              Icon(Icons.chevron_right, color: muted, size: 20),
             ],
           ),
         ),
@@ -398,7 +287,7 @@ class EquippedBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: ValColors.red,
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
@@ -421,8 +310,10 @@ class EquippedBadge extends StatelessWidget {
   }
 }
 
-/// A grid tile with artwork, a caption and an optional footer; red frame
-/// and check when [selected].
+/// A grid tile with artwork, a caption and an optional footer; accent
+/// frame, glow and check when [selected]. With a [tint] (rarity) the art
+/// sits on a soft glow of that color and the tile gets a colored bottom
+/// edge.
 class ArtTile extends StatelessWidget {
   const ArtTile({
     super.key,
@@ -450,6 +341,9 @@ class ArtTile extends StatelessWidget {
   final BoxFit imageFit;
   final EdgeInsets imagePadding;
   final Color? tint;
+
+  /// Unavailable: faded art (paint-time tint, no `Opacity` layer) and a
+  /// muted caption.
   final bool dimmed;
   final String? semanticsLabel;
 
@@ -457,87 +351,126 @@ class ArtTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final base = tint ?? scheme.surfaceContainerHigh;
+    final dark = theme.brightness == Brightness.dark;
+    final accent = scheme.primary;
+    final color = tint?.withValues(alpha: 1);
+    final base = color ?? scheme.surfaceContainerHigh;
     return Semantics(
       button: onTap != null,
       selected: selected,
       label: semanticsLabel ?? label,
       excludeSemantics: true,
-      child: Material(
-        color: scheme.surfaceContainer,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: selected ? ValColors.red : Colors.transparent,
-            width: 2,
-          ),
+      child: AnimatedContainer(
+        duration: ValMotion.fast,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(ValRadius.card),
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: accent.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                  ),
+                ]
+              : const [],
         ),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Opacity(
-            opacity: dimmed ? 0.45 : 1,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          base.withValues(alpha: 0.55),
-                          base.withValues(alpha: 0.12),
+        child: Material(
+          color: scheme.surfaceContainer,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(ValRadius.card),
+            side: BorderSide(
+              color: selected
+                  ? accent
+                  : (color?.withValues(alpha: dark ? 0.3 : 0.45) ??
+                        valColorsOf(context).hairline),
+              width: selected ? 2 : 1,
+            ),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: Ink(
+              decoration: color == null
+                  ? null
+                  : BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: color, width: 3),
+                      ),
+                    ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: color == null
+                            ? LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  base.withValues(alpha: 0.55),
+                                  base.withValues(alpha: 0.12),
+                                ],
+                              )
+                            : RadialGradient(
+                                radius: 0.8,
+                                colors: [
+                                  color.withValues(alpha: dark ? 0.34 : 0.22),
+                                  color.withValues(alpha: 0.04),
+                                ],
+                              ),
+                      ),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Padding(
+                            padding: imagePadding,
+                            child: image == null && icon != null
+                                ? Icon(
+                                    icon,
+                                    size: 32,
+                                    color: scheme.onSurfaceVariant,
+                                  )
+                                : NetImage(
+                                    image,
+                                    fit: imageFit,
+                                    opacity: dimmed ? 0.4 : null,
+                                  ),
+                          ),
+                          if (selected)
+                            const Positioned(
+                              top: 6,
+                              right: 6,
+                              child: _CheckDot(),
+                            ),
                         ],
                       ),
                     ),
-                    child: Stack(
-                      fit: StackFit.expand,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Padding(
-                          padding: imagePadding,
-                          child: image == null && icon != null
-                              ? Icon(
-                                  icon,
-                                  size: 32,
-                                  color: scheme.onSurfaceVariant,
-                                )
-                              : NetImage(image, fit: imageFit),
-                        ),
-                        if (selected)
-                          const Positioned(
-                            top: 6,
-                            right: 6,
-                            child: _CheckDot(),
+                        Text(
+                          label,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            height: 1.2,
+                            color: dimmed ? scheme.onSurfaceVariant : null,
                           ),
+                        ),
+                        if (footer != null) ...[
+                          const SizedBox(height: 2),
+                          footer!,
+                        ],
                       ],
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        label,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          height: 1.2,
-                        ),
-                      ),
-                      if (footer != null) ...[
-                        const SizedBox(height: 2),
-                        footer!,
-                      ],
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -552,9 +485,10 @@ class _CheckDot extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(3),
-    decoration: const BoxDecoration(
-      color: ValColors.red,
+    decoration: BoxDecoration(
+      color: Theme.of(context).colorScheme.primary,
       shape: BoxShape.circle,
+      boxShadow: const [BoxShadow(color: Color(0x55000000), blurRadius: 4)],
     ),
     child: const Icon(Icons.check, size: 14, color: Colors.white),
   );
@@ -584,7 +518,12 @@ class SummaryStrip extends StatelessWidget {
           Container(
             width: 3,
             height: 18,
-            color: highlighted ? valColorsOf(context).warning : ValColors.red,
+            decoration: BoxDecoration(
+              color: highlighted
+                  ? valColorsOf(context).warning
+                  : Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(2),
+            ),
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -687,4 +626,22 @@ double tileExtent(
 }) {
   final scale = MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 2.0);
   return image + (footer ? 58 : 40) * scale + 8;
+}
+
+/// Height of a [SkinArtCard] in the skin grids: an [image] area plus the
+/// name (2 lines) and the price line, scaled with the text size.
+double skinCardExtent(BuildContext context, {double image = 104}) =>
+    image + _skinCardText(context);
+
+/// `imageFlex` for a [SkinArtCard] of [skinCardExtent] height so the text
+/// block always gets the room it needs (no overflow up to 200 % text).
+int skinCardImageFlex(BuildContext context, {double image = 104}) {
+  final text = _skinCardText(context);
+  return (4 * image / text).floor().clamp(1, 8);
+}
+
+double _skinCardText(BuildContext context) {
+  final scale = MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 2.0);
+  // Name: 2 lines × 14 × 1.25; price row 16; paddings 6 + 12 (+ slack).
+  return 51 * scale + 30;
 }
