@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../community_strings.dart';
 import '../../data/community_api.dart';
 import '../../providers/community_providers.dart';
+import '../consent/consent_sheet.dart';
 import '../widgets/community_widgets.dart';
 
 /// Overflow actions of a post / comment / LFG post.
@@ -81,6 +82,10 @@ Future<bool> reportContent(
   required ReportTarget targetType,
   required String targetId,
 }) async {
+  // Reporting needs a session: ask to join first, then continue.
+  if (!await promptConsentFromContext(context) || !context.mounted) {
+    return false;
+  }
   final reason = await showModalBottomSheet<String>(
     context: context,
     useSafeArea: true,

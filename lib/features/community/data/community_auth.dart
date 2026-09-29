@@ -44,10 +44,19 @@ class CommunityAuth {
   final Map<String, CommunitySession> _memory = {};
   final Map<String, Future<CommunitySession>> _inFlight = {};
 
+  /// Whether [puuid] agreed to join (send the Riot token once). Without it
+  /// the client only reads public data, anonymously.
+  bool hasConsent(String puuid) => _hasConsent(puuid);
+
   /// A valid community token for [puuid]. With [signIn] false only a cached
   /// token is returned (`null` when there is none), so read-only screens can
   /// call the "auth optional" endpoints without talking to Riot.
   Future<String?> token(String puuid, {bool signIn = true}) async {
+    // Not joined: no token is used or created (public reads stay anonymous).
+    if (!_hasConsent(puuid)) {
+      if (!signIn) return null;
+      throw const CommunityException(CommunityException.consentRequired);
+    }
     final cached = await cachedSession(puuid);
     if (cached != null) return cached.token;
     if (!signIn) return null;

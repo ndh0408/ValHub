@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../data/community_models.dart';
 import 'community_providers.dart';
+import 'consent_providers.dart';
 
 /// Leaderboard filters.
 @immutable
@@ -102,8 +103,10 @@ typedef TopSkinsQuery = ({
 
 /// The leaderboard for [TopSkinsFilter] (`GET /v1/skins/top`).
 final topSkinsProvider = FutureProvider.autoDispose
-    .family<List<TopSkin>, TopSkinsQuery>(
-      (ref, q) => ref
+    .family<List<TopSkin>, TopSkinsQuery>((ref, q) {
+      // Joining changes oted (and the token sent): reload.
+      ref.watch(communityConsentProvider(q.puuid));
+      return ref
           .watch(communityApiProvider)
           .topSkins(
             puuid: q.puuid,
@@ -111,8 +114,8 @@ final topSkinsProvider = FutureProvider.autoDispose
             period: q.period,
             sort: q.sort,
             scope: q.scope,
-          ),
-    );
+          );
+    });
 
 /// Vote states changed on this device (optimistic, then the server's
 /// answer), per account. They win over fetched values so the leaderboard,
@@ -163,6 +166,8 @@ typedef SkinVoteKey = ({String? puuid, String skinUuid});
 final skinVoteProvider = FutureProvider.autoDispose
     .family<SkinStats?, SkinVoteKey>((ref, key) async {
       if (!ref.watch(communityEnabledProvider)) return null;
+      final viewer = key.puuid;
+      if (viewer != null) ref.watch(communityConsentProvider(viewer));
       final id = key.skinUuid.toLowerCase();
       try {
         final stats = await ref.watch(communityApiProvider).skinVotes([

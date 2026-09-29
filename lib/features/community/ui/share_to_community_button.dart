@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/accounts/account_providers.dart';
@@ -10,10 +9,10 @@ import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/util/clock.dart';
-import '../community_routes.dart';
 import '../community_strings.dart';
 import '../data/compose_draft.dart';
 import '../providers/community_providers.dart';
+import 'feed/feed_section.dart' show openComposer;
 
 /// "Khoe lên Cộng đồng" for the store's daily offers or Night Market: opens
 /// the composer prefilled with a store / Night Market attachment. Renders
@@ -128,6 +127,7 @@ class ShareToCommunityButton extends ConsumerWidget {
         ? ComposeDraft.fromNightMarket(nm, db: db, now: now)
         : (d == null ? null : ComposeDraft.fromDaily(d, db: db, now: now));
     if (draft == null) return;
-    unawaited(context.push(CommunityRoutes.compose, extra: draft));
+    // Writing needs a session: the consent sheet comes first when needed.
+    unawaited(openComposer(context, draft: draft));
   }
 }

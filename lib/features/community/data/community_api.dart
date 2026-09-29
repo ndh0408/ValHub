@@ -409,7 +409,7 @@ class CommunityApi {
 
   /// `GET /v1/posts` (newest first).
   Future<CommunityPage<CommunityPost>> posts(
-    String puuid, {
+    String? puuid, {
     PostKind? kind,
     ScopeFilter? scope,
     String? cursor,
@@ -419,6 +419,7 @@ class CommunityApi {
       'GET',
       '/v1/posts',
       puuid: puuid,
+      auth: _Auth.optional,
       query: {
         ...?scope?.query,
         'kind': kind?.name,
@@ -430,12 +431,13 @@ class CommunityApi {
   );
 
   /// `GET /v1/posts/{id}`.
-  Future<CommunityPost> post(String puuid, String id) async =>
+  Future<CommunityPost> post(String? puuid, String id) async =>
       CommunityPost.fromJson(
         await _send(
           'GET',
           '/v1/posts/${Uri.encodeComponent(id)}',
           puuid: puuid,
+          auth: _Auth.optional,
         ),
       ) ??
       (throw const CommunityException(CommunityException.notFound));
@@ -490,7 +492,7 @@ class CommunityApi {
 
   /// `GET /v1/posts/{id}/comments` (oldest first).
   Future<CommunityPage<CommunityComment>> comments(
-    String puuid,
+    String? puuid,
     String postId, {
     String? cursor,
     int limit = 30,
@@ -499,6 +501,7 @@ class CommunityApi {
       'GET',
       '/v1/posts/${Uri.encodeComponent(postId)}/comments',
       puuid: puuid,
+      auth: _Auth.optional,
       query: {'cursor': cursor, 'limit': limit.clamp(1, 50)},
     ),
     CommunityComment.fromJson,
@@ -585,8 +588,10 @@ class CommunityApi {
     Future<String?> tokenFor() async {
       if (puuid == null) return null;
       if (auth == _Auth.required) return _auth.token(puuid);
-      // Optional auth: a failed sign-in (e.g. Riot needs login) must not
-      // hide public data; read anonymously instead.
+      // Optional auth: without the user's consent nothing is sent (no token,
+      // no Authorization header). A failed sign-in (e.g. Riot needs
+      // login) must not hide public data either: read anonymously.
+      if (!_auth.hasConsent(puuid)) return null;
       try {
         return await _auth.token(puuid, signIn: signIn);
       } on Object {

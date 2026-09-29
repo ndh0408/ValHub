@@ -12,6 +12,7 @@ import '../../../core/ui/tab_page_scaffold.dart';
 import '../community_strings.dart';
 import '../providers/community_providers.dart';
 import '../providers/consent_providers.dart';
+import 'consent/anonymous_banner.dart';
 import 'consent/consent_sheet.dart';
 import '../providers/feed_providers.dart';
 import '../providers/lfg_providers.dart';
@@ -65,15 +66,27 @@ class CommunityScreen extends ConsumerStatefulWidget {
 }
 
 class _CommunityScreenState extends ConsumerState<CommunityScreen> {
-  late CommunitySection _section =
-      widget.initialSection ??
-      ref
-          .read(uiMemoryProvider)
-          .readEnum(
-            kSectionMemoryKey,
-            CommunitySection.values,
-            CommunitySection.feed,
-          );
+  late CommunitySection _section = widget.initialSection ?? _remembered();
+
+  /// The section used last time; without an account that joined, the LFG
+  /// lists are not available, so the tab opens on the feed.
+  CommunitySection _remembered() {
+    final last = ref
+        .read(uiMemoryProvider)
+        .readEnum(
+          kSectionMemoryKey,
+          CommunitySection.values,
+          CommunitySection.feed,
+        );
+    final account = ref.read(activeAccountProvider);
+    final joined =
+        account != null &&
+        ref.read(communityConsentProvider(account.puuid)) ==
+            CommunityConsent.granted;
+    return last == CommunitySection.lfg && !joined
+        ? CommunitySection.feed
+        : last;
+  }
 
   @override
   void didUpdateWidget(CommunityScreen oldWidget) {
@@ -109,61 +122,62 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
         ),
       );
     }
-    if (ref.watch(communityConsentProvider(account.puuid)) !=
-        CommunityConsent.granted) {
-      return _ConsentGate(
-        key: ValueKey('consent-${account.puuid}'),
-        account: account,
-      );
-    }
-    return LfgPosterSync(
-      account: account,
-      child: TabPageScaffold(
-        title: CommunityStrings.title,
-        showMaintenanceBanner: false,
-        header: SegmentedTabs<CommunitySection>(
-          expand: true,
-          tabs: [
-            for (final s in CommunitySection.values)
-              SegmentedTab(value: s, label: s.label),
-          ],
-          selected: _section,
-          onChanged: (s) {
-            setState(() => _section = s);
-            ref.read(uiMemoryProvider).writeEnum(kSectionMemoryKey, s);
-          },
-        ),
-        onRefresh: () => _refresh(account),
-        floatingActionButton: _fab(account),
-        slivers: [
-          switch (_section) {
-            CommunitySection.feed => FeedSliver(
-              key: ValueKey('feed-${account.puuid}'),
-              puuid: account.puuid,
-            ),
-            CommunitySection.lfg => LfgSliver(
-              key: ValueKey('lfg-${account.puuid}'),
-              account: account,
-            ),
-            CommunitySection.skins => TopSkinsSliver(
-              key: ValueKey('skins-${account.puuid}'),
-              puuid: account.puuid,
-            ),
-          },
-          const SliverToBoxAdapter(child: _PrivacyNote()),
-          const SliverToBoxAdapter(child: SizedBox(height: 96)),
+    // Browsing never needs a session: only writes and the LFG lists do.
+    final joined =
+        ref.watch(communityConsentProvider(account.puuid)) ==
+        CommunityConsent.granted;
+    final page = TabPageScaffold(
+      title: CommunityStrings.title,
+      showMaintenanceBanner: false,
+      header: SegmentedTabs<CommunitySection>(
+        expand: true,
+        tabs: [
+          for (final s in CommunitySection.values)
+            SegmentedTab(value: s, label: s.label),
         ],
+        selected: _section,
+        onChanged: (s) {
+          setState(() => _section = s);
+          ref.read(uiMemoryProvider).writeEnum(kSectionMemoryKey, s);
+        },
       ),
+      onRefresh: () => _refresh(account, joined: joined),
+      floatingActionButton: _fab(account, joined: joined),
+      slivers: [
+        if (!joined && _section != CommunitySection.lfg)
+          SliverToBoxAdapter(child: AnonymousBanner(account: account)),
+        switch (_section) {
+          CommunitySection.feed => FeedSliver(
+            key: ValueKey('feed-${account.puuid}'),
+            puuid: account.puuid,
+          ),
+          CommunitySection.lfg when !joined => SliverToBoxAdapter(
+            child: _LfgJoinGate(account: account),
+          ),
+          CommunitySection.lfg => LfgSliver(
+            key: ValueKey('lfg-${account.puuid}'),
+            account: account,
+          ),
+          CommunitySection.skins => TopSkinsSliver(
+            key: ValueKey('skins-${account.puuid}'),
+            puuid: account.puuid,
+          ),
+        },
+        const SliverToBoxAdapter(child: _PrivacyNote()),
+        const SliverToBoxAdapter(child: SizedBox(height: 96)),
+      ],
     );
+    return joined ? LfgPosterSync(account: account, child: page) : page;
   }
 
-  Widget? _fab(Account account) {
+  Widget? _fab(Account account, {required bool joined}) {
     final (label, icon, onPressed) = switch (_section) {
       CommunitySection.feed => (
         CommunityStrings.newPost,
         Icons.edit_rounded,
         () => unawaited(openComposer(context)),
       ),
+      CommunitySection.lfg when !joined => (null, null, null),
       CommunitySection.lfg => (
         CommunityStrings.createLfgShort,
         Icons.group_add_rounded,
@@ -188,13 +202,14 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
     );
   }
 
-  Future<void> _refresh(Account account) async {
+  Future<void> _refresh(Account account, {required bool joined}) async {
     final puuid = account.puuid;
     try {
       switch (_section) {
         case CommunitySection.feed:
           await ref.read(feedProvider(puuid).notifier).refresh();
         case CommunitySection.lfg:
+          if (!joined) return;
           final q = lfgQueryFor(account, ref.read(lfgFilterProvider));
           await ref.read(lfgProvider(q).notifier).refresh();
         case CommunitySection.skins:
@@ -246,45 +261,23 @@ class _PrivacyNote extends StatelessWidget {
   }
 }
 
-/// Shown until the account agreed to share its Riot ID (asked once, before
-/// any network call): the consent sheet opens by itself the first time; after
-/// "Để sau" the user can reopen it from here. Nothing is loaded meanwhile.
-class _ConsentGate extends StatefulWidget {
-  const _ConsentGate({super.key, required this.account});
+/// The LFG lists need a session: invite to join instead of loading them.
+class _LfgJoinGate extends StatelessWidget {
+  const _LfgJoinGate({required this.account});
 
   final Account account;
 
   @override
-  State<_ConsentGate> createState() => _ConsentGateState();
-}
-
-class _ConsentGateState extends State<_ConsentGate> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) unawaited(ensureCommunityConsent(context, widget.account));
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return TabPageScaffold(
-      title: CommunityStrings.title,
-      showMaintenanceBanner: false,
-      body: Center(
-        child: CommunityEmptyState(
-          icon: Icons.verified_user_outlined,
-          title: CommunityStrings.consentGateTitle,
-          message: CommunityStrings.consentGateBody,
-          action: FilledButton(
-            key: const ValueKey('consent-gate-action'),
-            onPressed: () => unawaited(
-              ensureCommunityConsent(context, widget.account, askAgain: true),
-            ),
-            child: const Text(CommunityStrings.consentGateAction),
-          ),
-        ),
+    return CommunityEmptyState(
+      icon: Icons.groups_2_outlined,
+      title: CommunityStrings.lfgGateTitle,
+      message: CommunityStrings.lfgGateBody,
+      action: FilledButton(
+        key: const ValueKey('lfg-join-gate-action'),
+        onPressed: () =>
+            unawaited(ensureCommunityConsent(context, account, askAgain: true)),
+        child: const Text(CommunityStrings.consentGateAction),
       ),
     );
   }
