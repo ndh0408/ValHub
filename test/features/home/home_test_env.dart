@@ -13,6 +13,7 @@ import 'package:valvn/core/content/content_repository.dart';
 import 'package:valvn/core/domain/competitive/competitive.dart';
 import 'package:valvn/core/domain/economy/economy.dart';
 import 'package:valvn/core/logging/session_log.dart';
+import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/core/riot/pvp_api.dart';
 import 'package:valvn/core/storage/json_file_cache.dart';
@@ -43,7 +44,8 @@ import '../profile/profile_test_env.dart' show actV, testContent, updateRow;
 
 export 'home_test_data.dart';
 export 'home_test_pump.dart';
-export '../battlepass/bp_fixtures.dart' show Bp;
+export '../battlepass/bp_fixtures.dart'
+    show Bp, activeMission, bpContent, contractsJson, dailyTicketJson;
 export '../../core/domain/economy/economy_fixtures.dart' show Fx;
 
 class HomeMockApi extends Mock implements PvpApi {}
@@ -160,6 +162,9 @@ class HomeTestEnv {
     }
     final env = HomeTestEnv._(prefs, accounts);
     when(() => env.api.platformStatus(any())).thenAnswer((_) async => {});
+    // Entitlements (skin sheets, Battle Pass premium): none.
+    when(() => env.api.entitlements(any(), any()))
+        .thenAnswer((_) async => throw const NotFoundException());
     when(() => env.sessions.events).thenAnswer((_) => const Stream.empty());
     return env;
   }
@@ -246,8 +251,11 @@ List<Override> vmWith({
   /// Replaces [store] (a provider can only be overridden once).
   Override? storeOverride,
   Override? liveOverride,
+
+  /// Leaves the live card to the real live-game provider.
+  bool realLive = false,
 }) => [
-  liveOverride ?? vmLive(live),
+  if (!realLive) liveOverride ?? vmLive(live),
   storeOverride ?? vmStore(store),
   vmRank(rank),
   vmBp(bp),
@@ -264,7 +272,9 @@ List<Override> vmFull({
   bool friends = true,
   Override? storeOverride,
   Override? liveOverride,
+  bool realLive = false,
 }) => vmWith(
+  realLive: realLive,
   storeOverride: storeOverride,
   liveOverride: liveOverride,
   live: live,
@@ -320,56 +330,90 @@ CompetitiveUpdate _row(String id, DateTime start, int earned) =>
     )!;
 
 /// Kim Cương 1, 6 RR, +37 RR today (3 wins, 1 loss), a win streak.
+/// [daysAgo] moves the four games back (then it is the "last day").
 HomeRankSnapshot homeRankSnapshot({
   int tier = 18,
   int rr = 6,
-  bool today = true,
+  int daysAgo = 0,
   bool streak = true,
+  bool lossStreak = false,
+  bool noGames = false,
   int? matches = 9,
   int? leaderboard,
+  int gamesNeeded = 0,
+  RankInfo? previousAct,
 }) {
   final db = testContent();
-  final current = RankInfo.resolve(db, tier: tier, rr: rr, actUuid: actV);
-  final rows = [
-    _row(
-      'e0000000-0000-4000-8000-000000000001',
-      homeNow.subtract(const Duration(hours: 1)),
-      22,
-    ),
-    _row(
-      'e0000000-0000-4000-8000-000000000002',
-      homeNow.subtract(const Duration(hours: 2)),
-      20,
-    ),
-    _row(
-      'e0000000-0000-4000-8000-000000000003',
-      homeNow.subtract(const Duration(hours: 3)),
-      -15,
-    ),
-    _row(
-      'e0000000-0000-4000-8000-000000000004',
-      homeNow.subtract(const Duration(hours: 4)),
-      10,
-    ),
-  ];
+  final current = RankInfo.resolve(
+    db,
+    tier: tier,
+    rr: rr,
+    actUuid: actV,
+    gamesNeeded: gamesNeeded,
+  );
+  DateTime at(int hoursAgo) =>
+      homeNow.subtract(Duration(days: daysAgo, hours: hoursAgo));
+  final rows = noGames
+      ? <CompetitiveUpdate>[]
+      : [
+          _row('e0000000-0000-4000-8000-000000000001', at(1), 22),
+          _row('e0000000-0000-4000-8000-000000000002', at(2), 20),
+          _row('e0000000-0000-4000-8000-000000000003', at(3), -15),
+          _row('e0000000-0000-4000-8000-000000000004', at(4), 10),
+        ];
   final days = groupDailyRr(rows);
-  final belowImmortal = tier < 24;
+  final ranked = !current.isUnranked;
+  final belowImmortal = ranked && tier < 24;
   return HomeRankSnapshot(
     current: current,
     progress: belowImmortal ? rr / 100 : null,
     rrToNext: belowImmortal ? 100 - rr : null,
-    today: today ? dailyRrOn(days, homeNow) : null,
-    streak: streak ? const RankedStreak(StreakKind.win, 2) : null,
+    today: daysAgo == 0 ? dailyRrOn(days, homeNow) : null,
+    lastDay: daysAgo == 0 || days.isEmpty ? null : days.first,
+    streak: streak
+        ? RankedStreak(lossStreak ? StreakKind.loss : StreakKind.win, 2)
+        : null,
     matchesToNext: belowImmortal ? matches : null,
     nextTierName: belowImmortal ? 'Kim Cương 2' : null,
     leaderboard: leaderboard,
+    previousAct: previousAct,
   );
 }
 
-HomeBpSnapshot homeBpSnapshot({bool withEvent = true}) {
+HomeBpSnapshot homeBpSnapshot({
+  bool withEvent = true,
+  bool complete = false,
+  bool allMissionsDone = false,
+  bool cache = false,
+}) {
   final overview = BattlePassOverview.build(
     db: bpContent(withEvent: withEvent),
-    contracts: PlayerContracts.fromJson(contractsJson(), receivedAt: homeNow),
+    contracts: PlayerContracts.fromJson(
+      contractsJson(
+        level: complete ? 55 : 46,
+        inLevel: complete ? 0 : 7966,
+        total: complete ? 1162500 : 840466,
+        missions: allMissionsDone
+            ? [
+                activeMission(Bp.missionUlt, Bp.objUlt, 15, complete: true),
+                activeMission(
+                  Bp.missionDamage,
+                  Bp.objDamage,
+                  18000,
+                  complete: true,
+                ),
+                activeMission(
+                  Bp.missionHeadshots,
+                  Bp.objHeadshots,
+                  40,
+                  complete: true,
+                ),
+              ]
+            : null,
+      ),
+      receivedAt: homeNow,
+      isFromCache: cache,
+    ),
     now: homeNow,
     premiumContracts: {Bp.bpId},
   );

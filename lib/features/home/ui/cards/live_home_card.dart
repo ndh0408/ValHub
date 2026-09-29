@@ -113,7 +113,7 @@ class _MatchTitle extends StatelessWidget {
       children: [
         if (map != null)
           Text(
-            map.toUpperCase(),
+            map,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: ValText.display(24, color: theme.colorScheme.onSurface),
@@ -257,7 +257,8 @@ class _PregameBody extends StatelessWidget {
                       ExcludeSemantics(
                         child: CountdownText(
                           expiresAt: ends,
-                          format: (d) => formatMinutesSeconds(d),
+                          format: (d) =>
+                              formatMinutesSeconds(d, padMinutes: false),
                           builder: LiveGameStrings.timeLeft,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: valColorsOf(context).warning,

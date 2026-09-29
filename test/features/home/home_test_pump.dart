@@ -44,7 +44,7 @@ List<GoRoute> homeProbeRoutes() => [
 /// destinations of [homeProbeRoutes].
 Future<GoRouter> pumpHomeCard(
   WidgetTester tester,
-  HomeTestEnv env,
+  HomeTestEnv? env,
   Widget child, {
   List<Override> overrides = const [],
   Size size = const Size(360, 900),
@@ -77,7 +77,7 @@ Future<GoRouter> pumpHomeCard(
   addTearDown(router.dispose);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [...env.overrides, ...overrides],
+      overrides: [...?env?.overrides, ...overrides],
       retry: (_, _) => null,
       child: MaterialApp.router(
         theme: theme ?? buildDarkTheme(),
@@ -102,7 +102,7 @@ Future<GoRouter> pumpHomeCard(
 /// navigation from the header and the cards can be observed.
 Future<GoRouter> pumpHomeScreen(
   WidgetTester tester,
-  HomeTestEnv env, {
+  HomeTestEnv? env, {
   List<Override> overrides = const [],
   Size size = const Size(360, 780),
   double textScale = 1,
@@ -142,7 +142,7 @@ Future<GoRouter> pumpHomeScreen(
   addTearDown(router.dispose);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [...env.overrides, ...overrides],
+      overrides: [...?env?.overrides, ...overrides],
       retry: (_, _) => null,
       child: MaterialApp.router(
         theme: theme ?? buildDarkTheme(),
@@ -175,7 +175,7 @@ Future<GoRouter> pumpHomeScreen(
 /// Pumps the real app router (the five-tab shell) starting at [initial].
 Future<GoRouter> pumpHomeApp(
   WidgetTester tester,
-  HomeTestEnv env, {
+  HomeTestEnv? env, {
   List<Override> overrides = const [],
   Size size = const Size(360, 780),
   double textScale = 1,
@@ -200,7 +200,7 @@ Future<GoRouter> pumpHomeApp(
   addTearDown(router.dispose);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [...env.overrides, ...overrides],
+      overrides: [...?env?.overrides, ...overrides],
       retry: (_, _) => null,
       child: MaterialApp.router(
         theme: theme ?? buildDarkTheme(),
@@ -231,7 +231,7 @@ Future<GoRouter> pumpHomeApp(
 }
 
 /// Lets futures and frames run (shimmers and countdowns never settle).
-Future<void> homeSettle(WidgetTester tester, {int frames = 10}) async {
+Future<void> homeSettle(WidgetTester tester, {int frames = 16}) async {
   for (var i = 0; i < frames; i++) {
     await tester.pump(const Duration(milliseconds: 50));
   }
