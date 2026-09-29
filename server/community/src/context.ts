@@ -30,6 +30,9 @@ export const LIMITS = {
   reports: { limit: 20, windowMs: 60 * 60_000 },
   votes: { limit: 120, windowMs: 60 * 60_000 },
   likes: { limit: 120, windowMs: 60 * 60_000 },
+  reviews: { limit: 30, windowMs: 60 * 60_000 },
+  lfgPatch: { limit: 120, windowMs: 10 * 60_000 },
+  lfgJoin: { limit: 30, windowMs: 10 * 60_000 },
   authIp: { limit: 30, windowMs: 10 * 60_000 },
 } as const;
 export type LimitName = keyof typeof LIMITS;
