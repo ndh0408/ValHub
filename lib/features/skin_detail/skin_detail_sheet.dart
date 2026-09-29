@@ -11,12 +11,14 @@ import '../../core/domain/economy/economy.dart';
 import '../../core/l10n/common_strings.dart';
 import '../../core/l10n/content_strings.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/ui/adaptive.dart';
 import '../../core/ui/content_tier_badge.dart';
 import '../../core/ui/currency_amount.dart';
 import '../../core/ui/empty_view.dart';
 import '../../core/ui/error_view.dart';
 import '../../core/ui/net_image.dart';
 import '../../core/ui/skeleton.dart';
+import '../../core/ui/val_widgets.dart';
 import '../store/ui/widgets/store_ui_bits.dart';
 import 'providers/skin_availability.dart';
 import 'skin_detail_strings.dart';
@@ -183,22 +185,34 @@ class _LoadingBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Never scrolls, but clips instead of overflowing on short sheets.
     return const SkeletonShimmer(
-      child: Padding(
+      child: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
         padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Skeleton(height: null, shimmer: false),
+              aspectRatio: 16 / 10,
+              child: Skeleton(height: null, radius: 16, shimmer: false),
             ),
-            SizedBox(height: 16),
-            Skeleton(width: 200, height: 20, shimmer: false),
+            SizedBox(height: 14),
+            Skeleton(height: 64, radius: 16, shimmer: false),
             SizedBox(height: 20),
             Skeleton(width: 120, height: 16, shimmer: false),
             SizedBox(height: 12),
-            Skeleton(height: 48, shimmer: false),
+            Row(
+              children: [
+                Skeleton(width: 52, height: 52, radius: 26, shimmer: false),
+                SizedBox(width: 12),
+                Skeleton(width: 52, height: 52, radius: 26, shimmer: false),
+                SizedBox(width: 12),
+                Skeleton(width: 52, height: 52, radius: 26, shimmer: false),
+              ],
+            ),
+            SizedBox(height: 24),
+            Skeleton(height: 48, radius: 12, shimmer: false),
           ],
         ),
       ),
@@ -257,44 +271,61 @@ class _SkinBody extends ConsumerWidget {
       children: [
         _Media(render: media.render, video: media.video, tint: tint),
         const SizedBox(height: 14),
-        Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 12,
-          runSpacing: 6,
-          children: [
-            TierLabel(
-              contentTierUuid: skin.contentTierUuid,
-              fullName: true,
-              iconSize: 20,
-              style: theme.textTheme.titleSmall,
-            ),
-            _PriceLabel(quote: quote),
-          ],
+        ValCard(
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 12,
+                runSpacing: 6,
+                children: [
+                  TierLabel(
+                    contentTierUuid: skin.contentTierUuid,
+                    fullName: true,
+                    iconSize: 20,
+                    style: theme.textTheme.titleSmall,
+                  ),
+                  _PriceLabel(quote: quote),
+                ],
+              ),
+              if (reward != null) ...[
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(Icons.military_tech_outlined, size: 16, color: muted),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        SkinDetailStrings.rewardDetail(
+                          reward.contractName,
+                          reward.level == null
+                              ? null
+                              : ContentStrings.level(reward.level!),
+                        ),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: muted,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ] else if (quote.isEstimate) ...[
+                const SizedBox(height: 6),
+                Text(
+                  quote.source.label,
+                  style: theme.textTheme.bodySmall?.copyWith(color: muted),
+                ),
+              ],
+              if (isOwned) ...[
+                const SizedBox(height: 10),
+                const OwnedBadge(label: SkinDetailStrings.owned),
+              ],
+            ],
+          ),
         ),
-        if (reward != null) ...[
-          const SizedBox(height: 4),
-          Text(
-            SkinDetailStrings.rewardDetail(
-              reward.contractName,
-              reward.level == null ? null : ContentStrings.level(reward.level!),
-            ),
-            style: theme.textTheme.bodySmall?.copyWith(color: muted),
-          ),
-        ] else if (quote.isEstimate) ...[
-          const SizedBox(height: 4),
-          Text(
-            quote.source.label,
-            style: theme.textTheme.bodySmall?.copyWith(color: muted),
-          ),
-        ],
-        if (isOwned) ...[
-          const SizedBox(height: 10),
-          const Align(
-            alignment: Alignment.centerLeft,
-            child: OwnedBadge(label: SkinDetailStrings.owned),
-          ),
-        ],
         if (elsewhere.isNotEmpty) ...[
           const SizedBox(height: 10),
           Row(
@@ -331,7 +362,10 @@ class _SkinBody extends ConsumerWidget {
                   locked:
                       ownedForLocks != null &&
                       !ownedForLocks.isChromaOwned(c.uuid),
-                  onTap: () => onChromaSelected(c),
+                  onTap: () {
+                    if (c.uuid != chroma?.uuid) Haptics.selection();
+                    onChromaSelected(c);
+                  },
                 ),
             ],
           ),
@@ -358,11 +392,14 @@ class _SkinBody extends ConsumerWidget {
           const SizedBox(height: 24),
           _WishlistButton(
             active: inWishlist,
-            onPressed: () => unawaited(
-              ref
-                  .read(wishlistProvider(puuid).notifier)
-                  .toggleSkin(skin.uuid, db),
-            ),
+            onPressed: () {
+              Haptics.light();
+              unawaited(
+                ref
+                    .read(wishlistProvider(puuid).notifier)
+                    .toggleSkin(skin.uuid, db),
+              );
+            },
           ),
         ],
       ],
@@ -379,14 +416,20 @@ class _Media extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final dark = theme.brightness == Brightness.dark;
+    final solid = tint.withValues(alpha: 1);
     final v = video;
     return Semantics(
       button: v != null,
       label: v == null ? null : SkinDetailStrings.playVideo,
       child: Material(
         color: scheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ValRadius.card),
+          side: BorderSide(color: solid.withValues(alpha: 0.35)),
+        ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: v == null
@@ -395,53 +438,70 @@ class _Media extends StatelessWidget {
           child: Ink(
             decoration: BoxDecoration(
               gradient: RadialGradient(
-                radius: 1.1,
+                radius: 0.9,
                 colors: [
-                  tint.withValues(alpha: 0.45),
-                  tint.withValues(alpha: 0.05),
+                  solid.withValues(alpha: dark ? 0.5 : 0.3),
+                  solid.withValues(alpha: dark ? 0.04 : 0.02),
                 ],
               ),
+              border: Border(bottom: BorderSide(color: solid, width: 3)),
             ),
             child: AspectRatio(
-              aspectRatio: 16 / 9,
+              aspectRatio: 16 / 10,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: NetImage(
-                      render,
-                      key: ValueKey(render),
-                      fit: BoxFit.contain,
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                    child: AnimatedSwitcher(
+                      duration: ValMotion.medium,
+                      switchInCurve: ValMotion.curve,
+                      transitionBuilder: (child, animation) => FadeTransition(
+                        opacity: animation,
+                        child: ScaleTransition(
+                          scale: Tween(
+                            begin: 0.94,
+                            end: 1.0,
+                          ).animate(animation),
+                          child: child,
+                        ),
+                      ),
+                      child: NetImage(
+                        render,
+                        key: ValueKey(render),
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                   if (v != null)
-                    Positioned(
-                      right: 10,
-                      bottom: 10,
+                    PositionedDirectional(
+                      end: 10,
+                      bottom: 12,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.6),
-                          borderRadius: BorderRadius.circular(6),
+                          color: Colors.black.withValues(alpha: 0.62),
+                          borderRadius: BorderRadius.circular(ValRadius.pill),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.18),
+                          ),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
-                          ),
+                          padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               const Icon(
-                                Icons.play_arrow,
-                                color: Colors.white,
-                                size: 18,
+                                Icons.play_circle_fill,
+                                color: ValColors.red,
+                                size: 20,
                               ),
-                              const SizedBox(width: 4),
+                              const SizedBox(width: 6),
                               Text(
                                 SkinDetailStrings.playVideo,
-                                style: Theme.of(context).textTheme.labelMedium
-                                    ?.copyWith(color: Colors.white),
+                                style: theme.textTheme.labelMedium?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ],
                           ),
@@ -548,16 +608,26 @@ class _ChromaSwatch extends StatelessWidget {
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: onTap,
-          child: Container(
-            width: 48,
-            height: 48,
-            padding: const EdgeInsets.all(3),
+          child: AnimatedContainer(
+            duration: ValMotion.fast,
+            curve: ValMotion.curve,
+            width: 52,
+            height: 52,
+            padding: EdgeInsets.all(selected ? 4 : 3),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
                 color: selected ? scheme.primary : scheme.outline,
-                width: selected ? 2 : 1,
+                width: selected ? 2.5 : 1,
               ),
+              boxShadow: selected
+                  ? [
+                      BoxShadow(
+                        color: scheme.primary.withValues(alpha: 0.35),
+                        blurRadius: 10,
+                      ),
+                    ]
+                  : null,
             ),
             child: ClipOval(
               child: Stack(
@@ -611,7 +681,11 @@ class _LevelChip extends StatelessWidget {
       ].join(', '),
       excludeSemantics: true,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 100, maxWidth: 156),
+        constraints: const BoxConstraints(
+          minWidth: 100,
+          maxWidth: 156,
+          minHeight: 48,
+        ),
         child: Material(
           color: theme.colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(12),
@@ -629,11 +703,15 @@ class _LevelChip extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        levelText,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: locked ? muted : null,
+                      Flexible(
+                        child: Text(
+                          levelText,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: locked ? muted : null,
+                          ),
                         ),
                       ),
                       if (video != null) ...[
@@ -675,9 +753,15 @@ class _WishlistButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final icon = Icon(
-      active ? Icons.favorite : Icons.favorite_border,
-      color: active ? ValColors.red : null,
+    final icon = AnimatedSwitcher(
+      duration: ValMotion.fast,
+      transitionBuilder: (child, animation) =>
+          ScaleTransition(scale: animation, child: child),
+      child: Icon(
+        active ? Icons.favorite : Icons.favorite_border,
+        key: ValueKey(active),
+        color: active ? ValColors.red : null,
+      ),
     );
     final label = Text(
       active ? SkinDetailStrings.inWishlist : SkinDetailStrings.addToWishlist,

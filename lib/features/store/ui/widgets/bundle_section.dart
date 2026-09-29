@@ -15,6 +15,7 @@ class BundleSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (bundles.isEmpty) {
       return const EmptyView(
+        title: StoreStrings.bundlesEmptyTitle,
         message: StoreStrings.bundlesEmpty,
         icon: Icons.inventory_2_outlined,
       );
@@ -26,7 +27,7 @@ class BundleSection extends StatelessWidget {
         children: [
           for (var i = 0; i < bundles.length; i++) ...[
             if (i > 0) const SizedBox(height: 12),
-            BundleBanner(bundle: bundles[i]),
+            BundleBanner(key: ValueKey(bundles[i].id), bundle: bundles[i]),
           ],
         ],
       ),

@@ -10,6 +10,7 @@ import '../../../core/domain/economy/economy.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/content_tier_badge.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/currency_amount.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
@@ -50,7 +51,7 @@ class BundleDetailScreen extends ConsumerWidget {
     void retry() => ref.invalidate(storefrontProvider(puuid));
 
     return Scaffold(
-      body: RefreshIndicator(
+      body: AdaptiveRefresh(
         onRefresh: () async {
           try {
             ref.invalidate(storefrontProvider(puuid));
@@ -100,6 +101,7 @@ class BundleDetailScreen extends ConsumerWidget {
               const SliverFillRemaining(
                 hasScrollBody: false,
                 child: EmptyView(
+                  title: StoreStrings.bundleNotFoundTitle,
                   message: StoreStrings.bundleNotFound,
                   icon: Icons.inventory_2_outlined,
                 ),
@@ -126,6 +128,12 @@ class _BundleBody extends ConsumerWidget {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
     final name = content?.displayName ?? CommonStrings.unknownItem;
+    final owned = ref.watch(ownedItemsProvider(puuid)).value;
+    final ownedCount = owned == null
+        ? 0
+        : bundle.items
+              .where((i) => owned.owns(i.item.itemTypeId, i.item.itemId))
+              .length;
     // valorant-api often repeats the name as the description.
     final description = {
       for (final d in [content?.description, content?.extraDescription])
@@ -141,12 +149,31 @@ class _BundleBody extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(ValRadius.card),
             child: AspectRatio(
               aspectRatio: 16 / 9,
-              child: ColoredBox(
-                color: theme.colorScheme.surfaceContainer,
-                child: NetImage(content?.cardImage, fit: BoxFit.cover),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ColoredBox(
+                    color: theme.colorScheme.surfaceContainer,
+                    child: NetImage(content?.cardImage, fit: BoxFit.cover),
+                  ),
+                  // Soft bottom fade into the page.
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        stops: const [0.55, 1],
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.45),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -170,7 +197,18 @@ class _BundleBody extends ConsumerWidget {
         CountdownRow(
           expiresAt: bundle.expiresAt,
           builder: StoreStrings.bundleEndsIn,
+          period: const Duration(days: 14),
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          trailing: ownedCount > 0
+              ? StoreStatChip(
+                  icon: Icons.check_circle_outline,
+                  label: StoreStrings.bundleOwnedCount(
+                    ownedCount,
+                    bundle.items.length,
+                  ),
+                  color: valColorsOf(context).win,
+                )
+              : null,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -213,7 +251,11 @@ class _BundleBody extends ConsumerWidget {
         TwoColumnGrid(
           children: [
             for (final item in bundle.items)
-              _BundleItemTile(item: item, puuid: puuid),
+              _BundleItemTile(
+                key: ValueKey('${item.item.itemTypeId}/${item.item.itemId}'),
+                item: item,
+                puuid: puuid,
+              ),
           ],
         ),
         const SizedBox(height: 32),
@@ -265,11 +307,15 @@ class _PriceSummary extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(ValRadius.card),
+        border: Border.all(
+          color: bundle.savings > 0
+              ? win.withValues(alpha: 0.35)
+              : valColorsOf(context).hairline,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,7 +336,7 @@ class _PriceSummary extends StatelessWidget {
 }
 
 class _BundleItemTile extends ConsumerWidget {
-  const _BundleItemTile({required this.item, required this.puuid});
+  const _BundleItemTile({super.key, required this.item, required this.puuid});
 
   final BundleItem item;
   final String puuid;
@@ -337,7 +383,11 @@ class _BundleItemTile extends ConsumerWidget {
               aspectRatio: 16 / 9,
               child: itemRef?.image == null && itemRef != null
                   ? Icon(Icons.text_fields, color: muted, size: 32)
-                  : NetImage(itemRef?.image, fit: BoxFit.contain),
+                  : SkinGlowArt(
+                      imageUrl: itemRef?.image,
+                      tint: tint,
+                      padding: const EdgeInsets.all(6),
+                    ),
             ),
             const SizedBox(height: 8),
             Text(

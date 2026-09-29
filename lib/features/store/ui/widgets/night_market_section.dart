@@ -24,6 +24,7 @@ class NightMarketSection extends StatelessWidget {
     final nm = nightMarket;
     if (nm == null || nm.offers.isEmpty) {
       return const EmptyView(
+        title: StoreStrings.nightMarketEmptyTitle,
         message: StoreStrings.nightMarketEmpty,
         icon: Icons.nightlight_outlined,
       );
@@ -36,10 +37,16 @@ class NightMarketSection extends StatelessWidget {
         CountdownRow(
           expiresAt: nm.expiresAt,
           builder: StoreStrings.nightMarketEndsIn,
+          period: const Duration(days: 14),
         ),
         TwoColumnGrid(
           children: [
-            for (final o in nm.offers) NightMarketCard(offer: o, puuid: puuid),
+            for (final o in nm.offers)
+              NightMarketCard(
+                key: ValueKey(o.bonusOfferId),
+                offer: o,
+                puuid: puuid,
+              ),
           ],
         ),
         if (nm.totalSavings > 0)
@@ -47,8 +54,14 @@ class NightMarketSection extends StatelessWidget {
             margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: win.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
+              gradient: LinearGradient(
+                colors: [
+                  win.withValues(alpha: 0.20),
+                  win.withValues(alpha: 0.06),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(ValRadius.small),
+              border: Border.all(color: win.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [

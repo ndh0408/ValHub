@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/ui/empty_view.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../store_strings.dart';
 import 'accessory_row.dart';
 import 'store_ui_bits.dart';
@@ -22,6 +23,7 @@ class AccessorySection extends StatelessWidget {
     final store = accessoryStore;
     if (store == null || store.offers.isEmpty) {
       return const EmptyView(
+        title: StoreStrings.accessoryEmptyTitle,
         message: StoreStrings.accessoryEmpty,
         icon: Icons.style_outlined,
       );
@@ -32,21 +34,17 @@ class AccessorySection extends StatelessWidget {
         CountdownRow(
           expiresAt: store.expiresAt,
           builder: StoreStrings.accessoryRefreshIn,
+          period: const Duration(days: 7),
         ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainer,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            children: [
-              for (var i = 0; i < store.offers.length; i++) ...[
-                if (i > 0) const Divider(height: 1, indent: 84),
-                AccessoryRow(offer: store.offers[i], puuid: puuid),
-              ],
-            ],
-          ),
+        GroupedSection(
+          children: [
+            for (final o in store.offers)
+              AccessoryRow(
+                key: ValueKey(o.offer.offerId),
+                offer: o,
+                puuid: puuid,
+              ),
+          ],
         ),
       ],
     );
