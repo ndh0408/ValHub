@@ -1,51 +1,157 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/notifications/notification_service.dart';
 import '../settings_strings.dart';
 
-/// Opens S04: a priming card shown BEFORE the OS permission prompt. Returns
-/// `true` when the user tapped "Bật thông báo" (the caller then calls
-/// `NotificationService.requestPermission()`).
-Future<bool> showNotificationPrimingSheet(BuildContext context) async =>
-    await showModalBottomSheet<bool>(
-      context: context,
-      useSafeArea: true,
-      builder: (_) => const NotificationPrimingSheet(),
-    ) ??
-    false;
+/// Outcome of the notification priming flow (S04).
+enum NotificationPrimingResult {
+  /// Notifications are allowed (already, or after the OS prompt).
+  granted,
 
-/// S04 "Bật thông báo" / "Để sau".
-class NotificationPrimingSheet extends StatelessWidget {
+  /// The user tapped "Bật thông báo" but the OS refused (denied now or
+  /// earlier, so the prompt no longer appears).
+  denied,
+
+  /// The user tapped "Để sau" or dismissed the sheet.
+  dismissed,
+}
+
+/// Opens S04, a priming card shown BEFORE the OS permission prompt.
+///
+/// Skips the sheet when notifications are already allowed. When the user
+/// taps "Bật thông báo" the sheet itself calls
+/// `NotificationService.requestPermission()`. Returns `true` when
+/// notifications are allowed afterwards.
+Future<bool> showNotificationPrimingSheet(BuildContext context) async =>
+    await runNotificationPriming(context) == NotificationPrimingResult.granted;
+
+/// Same as [showNotificationPrimingSheet] but tells "Để sau" apart from an
+/// OS refusal.
+Future<NotificationPrimingResult> runNotificationPriming(
+  BuildContext context,
+) async {
+  final service = ProviderScope.containerOf(
+    context,
+    listen: false,
+  ).read(notificationServiceProvider);
+  if (await service.areEnabled()) return NotificationPrimingResult.granted;
+  if (!context.mounted) return NotificationPrimingResult.dismissed;
+  return await showModalBottomSheet<NotificationPrimingResult>(
+        context: context,
+        useSafeArea: true,
+        isScrollControlled: true,
+        builder: (_) => const NotificationPrimingSheet(),
+      ) ??
+      NotificationPrimingResult.dismissed;
+}
+
+/// S04 "Bật thông báo" / "Để sau". Pops a [NotificationPrimingResult].
+class NotificationPrimingSheet extends ConsumerStatefulWidget {
   const NotificationPrimingSheet({super.key});
+
+  @override
+  ConsumerState<NotificationPrimingSheet> createState() =>
+      _NotificationPrimingSheetState();
+}
+
+class _NotificationPrimingSheetState
+    extends ConsumerState<NotificationPrimingSheet> {
+  bool _requesting = false;
+
+  Future<void> _enable() async {
+    setState(() => _requesting = true);
+    final granted = await ref
+        .read(notificationServiceProvider)
+        .requestPermission();
+    if (!mounted) return;
+    Navigator.of(context).pop(
+      granted
+          ? NotificationPrimingResult.granted
+          : NotificationPrimingResult.denied,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
+    final scheme = theme.colorScheme;
+    return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Icon(
-            Icons.notifications_active_outlined,
-            size: 40,
-            color: theme.colorScheme.primary,
+          Center(
+            child: Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: scheme.primary.withValues(alpha: 0.14),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.notifications_active_outlined,
+                size: 32,
+                color: scheme.primary,
+              ),
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(
             SettingsStrings.primingTitle,
             style: theme.textTheme.titleLarge,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          Text(SettingsStrings.primingBody, textAlign: TextAlign.center),
+          Text(
+            SettingsStrings.primingBody,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 16),
+          for (final (icon, text) in const [
+            (Icons.storefront_outlined, SettingsStrings.primingPointStore),
+            (Icons.favorite_border, SettingsStrings.primingPointWishlist),
+            (
+              Icons.nightlight_outlined,
+              SettingsStrings.primingPointNightMarket,
+            ),
+          ])
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(
+                children: [
+                  Icon(icon, size: 20, color: scheme.primary),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(text, style: theme.textTheme.bodyMedium),
+                  ),
+                ],
+              ),
+            ),
           const SizedBox(height: 20),
           FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text(SettingsStrings.primingEnable),
+            style: FilledButton.styleFrom(minimumSize: const Size(0, 48)),
+            onPressed: _requesting ? null : () => unawaited(_enable()),
+            child: _requesting
+                ? const SizedBox.square(
+                    dimension: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text(SettingsStrings.primingEnable),
           ),
+          const SizedBox(height: 4),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: _requesting
+                ? null
+                : () =>
+                      Navigator.of(context)
+                          .pop(NotificationPrimingResult.dismissed),
             child: const Text(SettingsStrings.primingLater),
           ),
         ],
