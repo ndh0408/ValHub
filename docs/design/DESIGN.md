@@ -1,7 +1,7 @@
 # Thiết kế giao diện ValVN (Figma)
 
 File Figma: https://www.figma.com/design/AwxGtJGhawAIv4xqapRc1f
-Ảnh tổng quan: `figma-screens.png` (Hệ thống thiết kế, Cửa hàng, Hồ sơ, Battle Pass, Trận hiện tại).
+Ảnh tổng quan: `figma-screens.png` (Hệ thống thiết kế, Cửa hàng, Hồ sơ, Battle Pass, Trận hiện tại, Bộ sưu tập, Cài đặt).
 
 ## Token màu (Figma collection "ValVN Tokens")
 
@@ -33,3 +33,9 @@ File Figma: https://www.figma.com/design/AwxGtJGhawAIv4xqapRc1f
 - Cột mốc hằng ngày: hình thoi đỏ/xám.
 - Trận hiện tại: phần đầu gradient teal → nền, pill "Đang diễn ra", tên map Anton, tỉ số lớn xanh–đỏ, hàng người chơi (hàng của bạn viền đỏ + huy hiệu "BẠN"), người ẩn danh hiện "Người chơi ẩn danh" chữ muted, nút "Rời trận" viền đỏ.
 - Thanh điều hướng: nền #131E29, viền trên 6% trắng, mục đang chọn màu đỏ.
+- Bộ sưu tập: thẻ đang trang bị (gradient tím → đỏ, tên thẻ Anton), nhóm "TRANG BỊ" dạng danh sách
+  có icon màu + giá trị hiện tại + ›, lưới 2 cột "DUYỆT BỘ SƯU TẬP" (hình thoi màu + tên + số món),
+  thẻ "Giá trị bộ sưu tập" viền vàng với số VP Anton màu vàng.
+- Cài đặt: nhãn nhóm viết HOA muted; nhóm nền s1 bo 16, hàng ngăn bằng viền 6% trắng; hàng tài khoản
+  có dải đỏ 4px cho tài khoản đang dùng + ✓, huy hiệu vàng "Đăng nhập lại"; "+ Thêm tài khoản" chữ đỏ;
+  công tắc bật màu đỏ, tắt #2E3F4E.
