@@ -68,9 +68,17 @@ StoreSegment effectiveStoreSegment(StoreSegment wanted, Storefront? store) =>
 /// the wallet. Every new storefront (re)schedules the "Cửa hàng đã làm mới"
 /// reminder when that setting is on (VF §6.9).
 class StoreScreen extends ConsumerStatefulWidget {
-  const StoreScreen({super.key, this.initialSegment = StoreSegment.daily});
+  const StoreScreen({
+    super.key,
+    this.initialSegment = StoreSegment.daily,
+    this.linkNonce,
+  });
 
   final StoreSegment initialSegment;
+
+  /// Changes on every notification tap (see `AppConstants.linkNonceParam`):
+  /// the segment is re-applied even when it equals the previous link's.
+  final String? linkNonce;
 
   @override
   ConsumerState<StoreScreen> createState() => _StoreScreenState();
@@ -89,7 +97,8 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
   void didUpdateWidget(StoreScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     // A deep link (`/store?segment=nightmarket`) while the tab is alive.
-    if (oldWidget.initialSegment != widget.initialSegment) {
+    if (oldWidget.initialSegment != widget.initialSegment ||
+        (widget.linkNonce != null && widget.linkNonce != oldWidget.linkNonce)) {
       _segment = widget.initialSegment;
     }
   }

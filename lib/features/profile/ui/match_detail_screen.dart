@@ -13,6 +13,7 @@ import '../../../core/network/riot_exception.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/net_image.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/util/format.dart';
@@ -423,7 +424,9 @@ class _MvpBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = match ? const Color(0xFFF5C451) : theme.colorScheme.secondary;
+    final color = match
+        ? valColorsOf(context).gold
+        : theme.colorScheme.secondary;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(

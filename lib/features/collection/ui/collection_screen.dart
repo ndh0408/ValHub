@@ -153,7 +153,7 @@ class _Header extends ConsumerWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: theme.textTheme.labelMedium?.copyWith(
-                                  color: ValColors.teal,
+                                  color: valColorsOf(context).win,
                                 ),
                               ),
                           ],

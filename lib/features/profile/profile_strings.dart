@@ -161,7 +161,7 @@ abstract final class ProfileStrings {
   static const mvp = 'MVP';
   static const teamMvp = 'MVP đội';
   static const yourTeam = 'Đội của bạn';
-  static const enemyTeam = 'Đội đối thủ';
+  static const enemyTeam = 'Đội địch';
   static const teamBlue = 'Đội Xanh';
   static const teamRed = 'Đội Đỏ';
   static const allPlayers = 'Tất cả người chơi';

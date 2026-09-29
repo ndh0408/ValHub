@@ -154,7 +154,7 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
                                       style: theme.textTheme.labelSmall
                                           ?.copyWith(
                                             color: o.free > 0
-                                                ? ValColors.teal
+                                                ? valColorsOf(context).win
                                                 : theme
                                                       .colorScheme
                                                       .onSurfaceVariant,

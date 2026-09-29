@@ -209,6 +209,35 @@ void main() {
     await unmount(tester);
   });
 
+  testWidgets('a new tap on the same segment link switches back to it', (
+    tester,
+  ) async {
+    final prefs = await createTestPrefs();
+    final link = ValueNotifier<String?>(null);
+    addTearDown(link.dispose);
+    usePhoneViewport(tester);
+    await tester.pumpWidget(
+      testApp(
+        overrides: storeOverrides(api: fixtureApi(), prefs: prefs),
+        home: ValueListenableBuilder<String?>(
+          valueListenable: link,
+          builder: (_, nonce, _) => StoreScreen(linkNonce: nonce),
+        ),
+      ),
+    );
+    await settle(tester);
+    await tester.tap(find.text(StoreStrings.segmentBundles));
+    await settle(tester);
+    expect(find.text('Ares Prism'), findsNothing);
+
+    // "Cửa hàng đã làm mới" tapped: /store again (daily), new nonce.
+    link.value = '1';
+    await settle(tester);
+    expect(find.text('Ares Prism'), findsOneWidget);
+
+    await unmount(tester);
+  });
+
   testWidgets('without a BonusStore the Night Market segment is hidden', (
     tester,
   ) async {

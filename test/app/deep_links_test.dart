@@ -25,4 +25,12 @@ void main() {
     expect(parseDeepLink('store').location, '/store');
     expect(parseDeepLink('').location, '/store');
   });
+
+  test('a nonce makes every tap a distinct location', () {
+    final a = parseDeepLink('/store?segment=daily&nav=old', nonce: '1');
+    final b = parseDeepLink('/store?segment=daily', nonce: '2');
+    expect(a.location, '/store?segment=daily&nav=1');
+    expect(b.location, '/store?segment=daily&nav=2');
+    expect(parseDeepLink('/store').location, '/store');
+  });
 }

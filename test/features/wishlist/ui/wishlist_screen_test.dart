@@ -316,6 +316,37 @@ void main() {
       await unmount(tester);
     });
 
+    testWidgets('the same skin link reopens the sheet on a new tap', (
+      tester,
+    ) async {
+      final prefs = await _prefs();
+      final link = ValueNotifier<String>('1');
+      addTearDown(link.dispose);
+      usePhoneViewport(tester);
+      await tester.pumpWidget(
+        testApp(
+          overrides: wishlistOverrides(api: fixtureApi(), prefs: prefs),
+          home: ValueListenableBuilder<String>(
+            valueListenable: link,
+            builder: (_, nonce, _) => WishlistScreen(
+              initialSkinUuid: Fx.aresSentinels,
+              linkNonce: nonce,
+            ),
+          ),
+        ),
+      );
+      await settle(tester);
+      expect(find.byType(SkinDetailSheet), findsOneWidget);
+      Navigator.of(tester.element(find.byType(SkinDetailSheet))).pop();
+      await settle(tester);
+      expect(find.byType(SkinDetailSheet), findsNothing);
+
+      link.value = '2';
+      await settle(tester);
+      expect(find.byType(SkinDetailSheet), findsOneWidget);
+      await unmount(tester);
+    });
+
     testWidgets('?skin= deep link opens the skin sheet', (tester) async {
       await pumpRouter(
         tester,

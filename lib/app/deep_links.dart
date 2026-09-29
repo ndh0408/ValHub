@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../core/config/app_constants.dart';
+
 /// A notification payload resolved into a route and an optional account.
 @immutable
 class DeepLink {
@@ -28,13 +30,20 @@ class DeepLink {
 /// `/store?account=<puuid>&segment=nightmarket`. The `account` parameter is
 /// removed from the location. Anything that is not an absolute app path
 /// falls back to `/store`.
-DeepLink parseDeepLink(String payload) {
+///
+/// [nonce] (a fresh value per tap) is added as
+/// [AppConstants.linkNonceParam], so tapping the same link twice still
+/// switches the Store segment / reopens the wishlist skin sheet.
+DeepLink parseDeepLink(String payload, {String? nonce}) {
   final uri = Uri.tryParse(payload.trim());
   if (uri == null || uri.hasScheme || !uri.path.startsWith('/')) {
     return const DeepLink(location: '/store');
   }
   final account = uri.queryParameters['account']?.toLowerCase();
-  final rest = Map.of(uri.queryParameters)..remove('account');
+  final rest = Map.of(uri.queryParameters)
+    ..remove('account')
+    ..remove(AppConstants.linkNonceParam);
+  if (nonce != null) rest[AppConstants.linkNonceParam] = nonce;
   final clean = Uri(
     path: uri.path,
     queryParameters: rest.isEmpty ? null : rest,

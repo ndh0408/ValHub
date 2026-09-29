@@ -7,6 +7,8 @@ import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/notifications/notification_service.dart';
 import '../../../../core/settings/app_settings.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/util/clock.dart';
+import '../../../../core/util/format.dart';
 import '../../providers/settings_providers.dart';
 import '../../settings_strings.dart';
 import '../notification_priming_sheet.dart';
@@ -16,6 +18,13 @@ import '../widgets/settings_widgets.dart';
 /// Night Market. Turning a switch on primes the OS permission first (S04);
 /// a warning row appears while a switch is on but the OS blocks
 /// notifications (VF §8.5 notifPermissionMissing).
+/// The daily store resets at 00:00 UTC: the next reset after [now] (shown
+/// in the device's local time, e.g. 07:00 in Vietnam, 08:00 in UTC+8).
+DateTime nextDailyStoreReset(DateTime now) {
+  final utc = now.toUtc();
+  return DateTime.utc(utc.year, utc.month, utc.day + 1);
+}
+
 class SettingsNotificationsSection extends ConsumerStatefulWidget {
   const SettingsNotificationsSection({super.key});
 
@@ -64,12 +73,14 @@ class _SettingsNotificationsSectionState
       title: SettingsStrings.notificationsHeader,
       children: [
         if (showWarning) const _PermissionWarning(),
-        for (final (toggle, icon, title, subtitle) in const [
+        for (final (toggle, icon, title, subtitle) in [
           (
             NotificationToggle.storeReset,
             Icons.storefront_outlined,
             SettingsStrings.notifStoreReset,
-            SettingsStrings.notifStoreResetSubtitle,
+            SettingsStrings.notifStoreResetSubtitle(
+              formatTime(nextDailyStoreReset(ref.watch(clockProvider).now())),
+            ),
           ),
           (
             NotificationToggle.wishlist,

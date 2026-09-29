@@ -7,6 +7,7 @@ import '../../../../core/domain/competitive/competitive.dart';
 import '../../../../core/ui/empty_view.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/rank_badge.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/util/format.dart';
 import '../../profile_strings.dart';
 import 'profile_widgets.dart';
@@ -358,7 +359,7 @@ class _PlayerRow extends ConsumerWidget {
                         maxLines: 1,
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: s.isMatchMvp
-                              ? const Color(0xFFF5C451)
+                              ? valColorsOf(context).gold
                               : theme.colorScheme.secondary,
                           fontWeight: FontWeight.w700,
                         ),

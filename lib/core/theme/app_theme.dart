@@ -46,6 +46,8 @@ class ValThemeColors extends ThemeExtension<ValThemeColors> {
     required this.muted,
     required this.skeletonBase,
     required this.skeletonHighlight,
+    required this.away,
+    required this.gold,
   });
 
   static const dark = ValThemeColors(
@@ -56,6 +58,8 @@ class ValThemeColors extends ThemeExtension<ValThemeColors> {
     muted: ValColors.muted,
     skeletonBase: ValColors.surface,
     skeletonHighlight: ValColors.surfaceHigh,
+    away: Color(0xFFE3C567),
+    gold: Color(0xFFF5C451),
   );
 
   static const light = ValThemeColors(
@@ -66,6 +70,9 @@ class ValThemeColors extends ThemeExtension<ValThemeColors> {
     muted: Color(0xFF6B7570),
     skeletonBase: Color(0xFFE3E0DA),
     skeletonHighlight: Color(0xFFF1EFEA),
+    // Darker than the dark-theme yellows: readable on #F4F2EE.
+    away: Color(0xFF9A7A12),
+    gold: Color(0xFFA07800),
   );
 
   final Color win;
@@ -76,6 +83,12 @@ class ValThemeColors extends ThemeExtension<ValThemeColors> {
   final Color skeletonBase;
   final Color skeletonHighlight;
 
+  /// Friend status "Vắng mặt".
+  final Color away;
+
+  /// Match MVP label.
+  final Color gold;
+
   @override
   ValThemeColors copyWith({
     Color? win,
@@ -85,6 +98,8 @@ class ValThemeColors extends ThemeExtension<ValThemeColors> {
     Color? muted,
     Color? skeletonBase,
     Color? skeletonHighlight,
+    Color? away,
+    Color? gold,
   }) => ValThemeColors(
     win: win ?? this.win,
     loss: loss ?? this.loss,
@@ -93,6 +108,8 @@ class ValThemeColors extends ThemeExtension<ValThemeColors> {
     muted: muted ?? this.muted,
     skeletonBase: skeletonBase ?? this.skeletonBase,
     skeletonHighlight: skeletonHighlight ?? this.skeletonHighlight,
+    away: away ?? this.away,
+    gold: gold ?? this.gold,
   );
 
   @override
@@ -110,9 +127,18 @@ class ValThemeColors extends ThemeExtension<ValThemeColors> {
         other.skeletonHighlight,
         t,
       )!,
+      away: Color.lerp(away, other.away, t)!,
+      gold: Color.lerp(gold, other.gold, t)!,
     );
   }
 }
+
+/// Text / icon color readable on a solid [background] (e.g. a filled badge):
+/// dark ink on bright colors (teal, amber), white on dark ones.
+Color readableOn(Color background) =>
+    ThemeData.estimateBrightnessForColor(background) == Brightness.light
+    ? ValColors.ink
+    : Colors.white;
 
 /// Semantic colors of the current theme.
 ValThemeColors valColorsOf(BuildContext context) =>

@@ -36,10 +36,13 @@ import 'widgets/wishlist_row.dart';
 /// storefront (W2), swipe → "Xóa khỏi wishlist" with undo, "+" → S3B, and
 /// the "Thông báo wishlist" switch. Pull-to-refresh reloads the storefront.
 class WishlistScreen extends ConsumerStatefulWidget {
-  const WishlistScreen({super.key, this.initialSkinUuid});
+  const WishlistScreen({super.key, this.initialSkinUuid, this.linkNonce});
 
   /// Skin (any skin / level / chroma uuid) whose sheet opens on arrival.
   final String? initialSkinUuid;
+
+  /// Changes on every notification tap: the same skin's sheet reopens.
+  final String? linkNonce;
 
   @override
   ConsumerState<WishlistScreen> createState() => _WishlistScreenState();
@@ -65,7 +68,10 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
   @override
   void didUpdateWidget(WishlistScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.initialSkinUuid != oldWidget.initialSkinUuid) {
+    final newTap =
+        widget.linkNonce != null && widget.linkNonce != oldWidget.linkNonce;
+    if (widget.initialSkinUuid != oldWidget.initialSkinUuid || newTap) {
+      if (newTap) _openedSkin = null;
       _openInitialSkin();
     }
   }
@@ -81,7 +87,10 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
           context,
           skinOrLevelUuid: uuid,
           mode: SkinDetailMode.catalog,
-        ),
+        ).whenComplete(() {
+          // Closed: the same skin may be linked again later.
+          if (_openedSkin == uuid) _openedSkin = null;
+        }),
       );
     });
   }

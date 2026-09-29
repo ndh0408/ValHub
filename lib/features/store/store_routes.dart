@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 
+import '../../core/config/app_constants.dart';
+
 import 'ui/bundle_detail_screen.dart';
 import 'ui/store_screen.dart';
 
@@ -21,6 +23,7 @@ List<RouteBase> get storeBranchRoutes => [
     path: StoreRoutes.root,
     builder: (context, state) => StoreScreen(
       initialSegment: StoreSegment.parse(state.uri.queryParameters['segment']),
+      linkNonce: state.uri.queryParameters[AppConstants.linkNonceParam],
     ),
     routes: [
       GoRoute(

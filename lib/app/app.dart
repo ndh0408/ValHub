@@ -51,7 +51,10 @@ class _ValVnAppState extends ConsumerState<ValVnApp> {
   }
 
   void _openDeepLink(String payload) {
-    final link = parseDeepLink(payload);
+    final link = parseDeepLink(
+      payload,
+      nonce: '${DateTime.now().microsecondsSinceEpoch}',
+    );
     final account = link.accountPuuid;
     if (account != null &&
         ref.read(accountsProvider).any((a) => a.puuid == account)) {

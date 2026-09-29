@@ -39,7 +39,7 @@ abstract final class SocialStrings {
       : 'Đang ở sảnh chờ';
   static const shootingRange = 'Đang ở trường bắn';
   static String customGame(String? map) =>
-      map == null ? 'Đang chơi tùy chỉnh' : 'Đang chơi tùy chỉnh · $map';
+      map == null ? 'Đang chơi tự do' : 'Đang chơi tự do · $map';
   static const inValorant = 'Đang trong VALORANT';
   static const away = 'Vắng mặt';
   static const onlineStatus = 'Trực tuyến';
@@ -87,7 +87,7 @@ abstract final class SocialStrings {
   static const cancelQueueShort = 'Hủy tìm trận';
   static String searching(String elapsed) => 'Đang tìm trận · $elapsed';
   static const matchFound = 'Đã tìm thấy trận!';
-  static const customGameLobby = 'Tổ đội đang ở phòng tùy chỉnh.';
+  static const customGameLobby = 'Tổ đội đang ở phòng chơi tự do.';
   static const onlyLeaderQueue = 'Chỉ trưởng nhóm mới có thể bắt đầu tìm trận.';
   static const onlyLeaderChangeQueue =
       'Chỉ trưởng nhóm mới có thể đổi hàng chờ.';

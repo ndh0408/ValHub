@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 
+import '../../core/config/app_constants.dart';
+
 import 'ui/catalog_screen.dart';
 import 'ui/wishlist_screen.dart';
 
@@ -24,6 +26,7 @@ List<RouteBase> get wishlistRoutes => [
     path: 'wishlist',
     builder: (context, state) => WishlistScreen(
       initialSkinUuid: state.uri.queryParameters[WishlistRoutes.skinParam],
+      linkNonce: state.uri.queryParameters[AppConstants.linkNonceParam],
     ),
   ),
   GoRoute(path: 'catalog', builder: (context, state) => const CatalogScreen()),

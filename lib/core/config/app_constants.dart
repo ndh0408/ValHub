@@ -75,6 +75,11 @@ abstract final class RiotClientConstants {
 
 /// App-level constants.
 abstract final class AppConstants {
+  /// Query parameter added to every notification deep link with a fresh
+  /// value, so a screen already showing the same location (e.g. `/store`
+  /// on the Bundle segment) still reacts to the new tap.
+  static const linkNonceParam = 'nav';
+
   /// Maximum number of signed-in accounts (SUMMARY §3.1).
   static const maxAccounts = 10;
 

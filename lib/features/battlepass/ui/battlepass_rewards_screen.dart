@@ -403,17 +403,17 @@ class _ChapterSection extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.card_giftcard,
                   size: 14,
-                  color: ValColors.teal,
+                  color: valColorsOf(context).win,
                 ),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     BattlePassStrings.freeTrack,
                     style: theme.textTheme.labelMedium?.copyWith(
-                      color: ValColors.teal,
+                      color: valColorsOf(context).win,
                     ),
                   ),
                 ),

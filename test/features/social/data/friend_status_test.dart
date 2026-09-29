@@ -68,7 +68,7 @@ void main() {
           matchMap: '/Game/Maps/Ascent/Ascent',
         ),
       ).text,
-      'Đang chơi tùy chỉnh · Ascent',
+      'Đang chơi tự do · Ascent',
     );
   });
 

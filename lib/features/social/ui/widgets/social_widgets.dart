@@ -17,7 +17,7 @@ Color statusColor(BuildContext context, StatusTone tone) {
     StatusTone.busy => colors.warning,
     StatusTone.active => colors.win,
     StatusTone.online => colors.win,
-    StatusTone.away => const Color(0xFFE3C567),
+    StatusTone.away => colors.away,
     StatusTone.offline => colors.muted,
   };
 }
