@@ -9,6 +9,7 @@ import '../../../../core/ui/error_view.dart';
 import '../../../../core/ui/skeleton.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
+import '../../../../core/util/format.dart';
 import '../../battlepass_strings.dart';
 import '../../data/daily_ticket.dart';
 import '../../providers/battlepass_providers.dart';
@@ -35,7 +36,13 @@ class DailyCheckpointsSection extends ConsumerWidget {
       children: [
         BpSectionTitle(
           title: BattlePassStrings.dailyMissions,
-          subtitle: BattlePassStrings.dailyCaption,
+          subtitle: live && expiresAt != null
+              ? BattlePassStrings.dailyCaptionReset(
+                  BattlePassStrings.resetsAtWall(
+                    formatWallTime(expiresAt, now),
+                  ),
+                )
+              : BattlePassStrings.dailyCaption,
           trailing: live && expiresAt != null
               ? BpHeaderCountdown(
                   expiresAt: expiresAt,

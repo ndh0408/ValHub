@@ -23,6 +23,7 @@ class PassCard extends StatelessWidget {
     this.isPremium,
     this.endsAt,
     this.endsAtFormatter = formatActEnd,
+    this.endsAtWall = BattlePassStrings.endsAtWall,
     this.kicker,
     this.onTap,
     this.onExpired,
@@ -36,6 +37,10 @@ class PassCard extends StatelessWidget {
 
   /// Builds the whole end-of-pass sentence from the remaining time.
   final String Function(Duration remaining) endsAtFormatter;
+
+  /// Wraps the local wall-clock time of the end ("Kết thúc lúc 23:59 thứ
+  /// Hai 06/10") shown under the countdown.
+  final String Function(String wall) endsAtWall;
 
   /// Small caption above the name ("Vé sự kiện").
   final String? kicker;
@@ -185,6 +190,11 @@ class PassCard extends StatelessWidget {
                   const Spacer(),
               ],
             ),
+            if (end != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4, left: 21),
+                child: BpWallTimeText(at: end, builder: endsAtWall),
+              ),
           ],
         ],
       ),

@@ -150,6 +150,7 @@ class BattlePassOverviewView extends ConsumerWidget {
               endsAt: e.endsAt,
               endsAtFormatter: (d) =>
                   BattlePassStrings.eventEndsIn(formatCountdown(d)),
+              endsAtWall: BattlePassStrings.endsAtWall,
               onTap: () => context.push(
                 BattlePassRoutes.rewardsFor(e.progress.contract.uuid),
               ),

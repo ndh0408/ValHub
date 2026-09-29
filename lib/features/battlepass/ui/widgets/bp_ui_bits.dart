@@ -1,9 +1,11 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/val_widgets.dart';
+import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 
 /// Thin design-system progress bar (theme accent fill on the track color);
@@ -135,6 +137,38 @@ class BpCountdownLine extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// The local wall-clock moment of [at] in the device time zone with a
+/// sentence around it ("Làm mới lúc 07:00 ngày mai"), read against the app
+/// clock so it changes from "ngày mai" to "hôm nay" at midnight.
+class BpWallTimeText extends ConsumerWidget {
+  const BpWallTimeText({
+    super.key,
+    required this.at,
+    required this.builder,
+    this.style,
+    this.color,
+  });
+
+  final DateTime at;
+
+  /// Wraps the formatted moment, e.g. `BattlePassStrings.resetsAtWall`.
+  final String Function(String wall) builder;
+  final TextStyle? style;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final now = ref.watch(clockProvider).now();
+    return Text(
+      builder(formatWallTime(at, now)),
+      style: (style ?? theme.textTheme.bodySmall)?.copyWith(
+        color: color ?? theme.colorScheme.onSurfaceVariant,
+      ),
     );
   }
 }

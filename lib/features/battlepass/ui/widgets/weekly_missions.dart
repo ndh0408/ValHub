@@ -1,8 +1,10 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/val_widgets.dart';
+import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 import '../../battlepass_strings.dart';
 import '../../data/battlepass_models.dart';
@@ -10,7 +12,7 @@ import 'bp_ui_bits.dart';
 
 /// P3 "Nhiệm vụ hằng tuần" (S20) with the P5 completed state: header with
 /// the refill countdown and "1/3 hoàn thành", then one card per mission.
-class WeeklyMissionsSection extends StatelessWidget {
+class WeeklyMissionsSection extends ConsumerWidget {
   const WeeklyMissionsSection({
     super.key,
     required this.weekly,
@@ -28,20 +30,24 @@ class WeeklyMissionsSection extends StatelessWidget {
   final VoidCallback? onRefill;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final refill = weekly.refillAt;
     final total = weekly.missions.length;
+    final now = ref.watch(clockProvider).now();
+    final done = weekly.isEmpty
+        ? null
+        : BattlePassStrings.missionsCompleted(weekly.completedCount, total);
+    final reset = refill == null
+        ? null
+        : BattlePassStrings.resetsAtWall(formatWallTime(refill, now));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         BpSectionTitle(
           title: BattlePassStrings.weeklyMissions,
-          subtitle: weekly.isEmpty
+          subtitle: done == null && reset == null
               ? null
-              : BattlePassStrings.missionsCompleted(
-                  weekly.completedCount,
-                  total,
-                ),
+              : [?done, ?reset].join(BattlePassStrings.dot),
           trailing: refill == null
               ? null
               : BpHeaderCountdown(expiresAt: refill, onExpired: onRefill),
@@ -252,6 +258,10 @@ class MissionsDoneCard extends StatelessWidget {
                       fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
+                  BpWallTimeText(
+                    at: refill,
+                    builder: BattlePassStrings.newMissionsAtWall,
+                  ),
                 ],
               ],
             ),
@@ -285,7 +295,7 @@ class _NoMissionsCard extends StatelessWidget {
                   BattlePassStrings.noWeeklyMissions,
                   style: theme.textTheme.bodyMedium,
                 ),
-                if (refill != null)
+                if (refill != null) ...[
                   CountdownText(
                     expiresAt: refill,
                     builder: BattlePassStrings.newMissionsIn,
@@ -294,6 +304,11 @@ class _NoMissionsCard extends StatelessWidget {
                       fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
+                  BpWallTimeText(
+                    at: refill,
+                    builder: BattlePassStrings.newMissionsAtWall,
+                  ),
+                ],
               ],
             ),
           ),

@@ -74,12 +74,21 @@ class ResolvedReward {
 /// name, lock/✓ and the "Miễn phí" tag. Locked art is faded at paint time
 /// (no `Opacity` layer).
 class RewardTile extends StatelessWidget {
-  const RewardTile({super.key, required this.reward, this.onTap});
+  const RewardTile({
+    super.key,
+    required this.reward,
+    this.onTap,
+    this.isNext = false,
+  });
 
   static const imageHeight = 88.0;
 
   final ResolvedReward reward;
   final VoidCallback? onTap;
+
+  /// The reward of the next level to unlock: accent frame and a
+  /// "Tiếp theo" tag.
+  final bool isNext;
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +117,7 @@ class RewardTile extends StatelessWidget {
         reward.name,
         if (tier.isFree) BattlePassStrings.free,
         stateLabel,
+        if (isNext) BattlePassStrings.nextReward,
       ].join(BattlePassStrings.dot),
       excludeSemantics: true,
       child: Material(
@@ -116,9 +126,12 @@ class RewardTile extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
           side: BorderSide(
-            color: state == RewardState.locked
+            color: isNext
+                ? scheme.primary
+                : state == RewardState.locked
                 ? colors.hairline
                 : stateColor.withValues(alpha: 0.5),
+            width: isNext ? 1.5 : 1,
           ),
         ),
         child: InkWell(
@@ -183,6 +196,16 @@ class RewardTile extends StatelessWidget {
                         child: BpBadge(
                           BattlePassStrings.free,
                           color: colors.win,
+                          filled: true,
+                        ),
+                      )
+                    else if (isNext)
+                      Positioned(
+                        left: 6,
+                        bottom: 6,
+                        child: BpBadge(
+                          BattlePassStrings.nextReward,
+                          color: scheme.primary,
                           filled: true,
                         ),
                       ),
