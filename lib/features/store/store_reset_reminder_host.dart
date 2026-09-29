@@ -1,0 +1,92 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
+
+import '../../core/accounts/account_providers.dart';
+import '../../core/domain/economy/economy.dart';
+import '../../core/notifications/notification_service.dart';
+import '../../core/settings/app_settings.dart';
+import '../../core/util/clock.dart';
+import 'providers/store_reset_reminder.dart';
+
+/// Keeps the "Cửa hàng đã làm mới" reminder scheduled whether or not the
+/// Store tab was ever built (Home is the landing tab now, so nothing else
+/// would fetch the storefront and the reminder would silently stop after
+/// its first day).
+///
+/// While the setting is on:
+/// - the **active** account's storefront is watched (it refetches by itself
+///   at every reset), and every new storefront reschedules that account's
+///   reminder (same notification id, so it replaces the pending one);
+/// - the **other** accounts are scheduled from the storefront copy saved on
+///   the device (no network) while its reset is still ahead.
+///
+/// Mounted once by the app shell, around the tab content.
+class StoreResetReminderHost extends ConsumerStatefulWidget {
+  const StoreResetReminderHost({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  ConsumerState<StoreResetReminderHost> createState() =>
+      _StoreResetReminderHostState();
+}
+
+class _StoreResetReminderHostState
+    extends ConsumerState<StoreResetReminderHost> {
+  /// Last storefront a reminder was scheduled for, per account (one per
+  /// fetch, so rebuilds do not reschedule).
+  final Map<String, Storefront> _scheduled = {};
+
+  void _onStorefront(String puuid, Storefront? store) {
+    if (store == null || identical(_scheduled[puuid], store)) return;
+    _scheduled[puuid] = store;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final account = ref.read(accountProvider(puuid));
+      if (account == null || account.needsLogin) return;
+      unawaited(
+        scheduleStoreResetReminder(
+          ref.read(notificationServiceProvider),
+          account: account,
+          store: store,
+          now: ref.read(clockProvider).now(),
+        ),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final on = ref.watch(
+      appSettingsProvider.select((s) => s.storeResetNotifications),
+    );
+    if (!on) {
+      _scheduled.clear();
+      return widget.child;
+    }
+    final active = ref.watch(
+      activeAccountProvider.select(
+        (a) => a == null || a.needsLogin ? null : a.puuid,
+      ),
+    );
+    if (active != null) {
+      _onStorefront(active, ref.watch(storefrontProvider(active)).value);
+    }
+    // Everyone else: their saved copy, no network.
+    final others = ref.watch(
+      accountsProvider.select(
+        (list) => [
+          for (final a in list)
+            if (!a.needsLogin && a.puuid != active) a.puuid,
+        ].join(','),
+      ),
+    );
+    for (final puuid in others.split(',')) {
+      if (puuid.isEmpty) continue;
+      _onStorefront(puuid, ref.watch(savedStorefrontProvider(puuid)).value);
+    }
+    return widget.child;
+  }
+}

@@ -6,5 +6,6 @@ export 'economy_strings.dart';
 export 'owned_items.dart';
 export 'prices.dart';
 export 'reward_sources.dart';
+export 'saved_storefront.dart';
 export 'storefront.dart';
 export 'wishlist.dart';

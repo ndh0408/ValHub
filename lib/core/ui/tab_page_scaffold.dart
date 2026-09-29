@@ -33,6 +33,7 @@ class TabPageScaffold extends StatelessWidget {
     this.showMaintenanceBanner = true,
     this.floatingActionButton,
     this.headerHeight = 60,
+    this.controller,
   }) : assert(slivers != null || body != null, 'Provide slivers or body');
 
   final String title;
@@ -51,6 +52,11 @@ class TabPageScaffold extends StatelessWidget {
 
   /// Height of the pinned [header] strip (frosted glass background).
   final double headerHeight;
+
+  /// Scroll controller of the page (a screen that scrolls or measures its
+  /// own content, e.g. Home). Installed as the primary scroll controller of
+  /// the subtree, so the iOS status-bar tap still scrolls to the top.
+  final ScrollController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -92,11 +98,15 @@ class TabPageScaffold extends StatelessWidget {
       ],
     );
     final refresh = onRefresh;
+    final controller = this.controller;
+    final page = controller == null
+        ? scroll
+        : PrimaryScrollController(controller: controller, child: scroll);
     return Scaffold(
       floatingActionButton: floatingActionButton,
       body: refresh == null
-          ? scroll
-          : AdaptiveRefresh(onRefresh: refresh, child: scroll),
+          ? page
+          : AdaptiveRefresh(onRefresh: refresh, child: page),
     );
   }
 }

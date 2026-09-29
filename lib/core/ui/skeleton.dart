@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/app_theme.dart';
@@ -21,7 +23,21 @@ class _SkeletonShimmerState extends State<SkeletonShimmer>
   late final AnimationController _controller = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1400),
-  )..repeat();
+  );
+
+  bool _reduced = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // "Reduce motion": static boxes, no running animation.
+    _reduced = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+    if (_reduced) {
+      _controller.stop();
+    } else if (!_controller.isAnimating) {
+      unawaited(_controller.repeat());
+    }
+  }
 
   @override
   void dispose() {
@@ -30,8 +46,9 @@ class _SkeletonShimmerState extends State<SkeletonShimmer>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      _ShimmerScope(controller: _controller, child: widget.child);
+  Widget build(BuildContext context) => _reduced
+      ? widget.child
+      : _ShimmerScope(controller: _controller, child: widget.child);
 }
 
 class _ShimmerScope extends InheritedNotifier<AnimationController> {

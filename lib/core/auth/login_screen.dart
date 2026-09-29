@@ -224,7 +224,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       )) {
         context.pop(true);
       } else {
-        context.go('/store');
+        // The default tab (`/` redirects to the landing page).
+        context.go('/');
       }
     } on MaxAccountsException catch (e) {
       _fail(e.message, logDetail: 'max_accounts');

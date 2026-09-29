@@ -27,7 +27,7 @@ import 'widgets/weekly_missions.dart';
 /// Riot queue id of Unrated ("Đấu thường"), used by the XP estimate.
 const kUnratedQueueId = 'unrated';
 
-/// TAB 2 "Battle Pass" (S20). Route `/battlepass`.
+/// "Battle Pass" (S20), hosted by the Hồ sơ tab. Route `/battlepass`.
 ///
 /// Pass card (P1), "Xem tất cả phần thưởng" (P2), the XP estimate, active
 /// event passes, daily checkpoints (P4) and weekly missions (P3/P5).

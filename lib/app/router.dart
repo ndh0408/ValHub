@@ -11,6 +11,7 @@ import '../core/ui/empty_view.dart';
 import '../features/battlepass/battlepass_routes.dart';
 import '../features/collection/collection_routes.dart';
 import '../features/community/community_routes.dart';
+import '../features/home/home_routes.dart';
 import '../features/profile/profile_routes.dart';
 import '../features/settings/settings_routes.dart';
 import '../features/social/social_routes.dart';
@@ -28,13 +29,15 @@ const _publicPaths = {SettingsRoutes.welcome, AuthRoutes.login};
 /// Pure redirect rule (unit-tested):
 /// - no accounts → everything except `/welcome` and `/login` goes to
 ///   `/welcome`;
-/// - accounts → `/welcome` and `/` go to `/store`.
+/// - accounts → `/welcome` and `/` (the "default tab", which core code such
+///   as the login screen and the error page can name without knowing feature
+///   paths) go to `/home`.
 String? appRedirect({required bool hasAccounts, required Uri location}) {
   final path = location.path.isEmpty ? '/' : location.path;
   if (!hasAccounts) {
     return _publicPaths.contains(path) ? null : SettingsRoutes.welcome;
   }
-  if (path == SettingsRoutes.welcome || path == '/') return StoreRoutes.root;
+  if (path == SettingsRoutes.welcome || path == '/') return HomeRoutes.root;
   return null;
 }
 
@@ -51,15 +54,25 @@ List<RouteBase> buildAppRoutes() => [
   ...communityTopLevelRoutes,
   StatefulShellRoute.indexedStack(
     builder: (context, state, shell) => AppShell(navigationShell: shell),
+    // The order is [AppTab]'s: Trang chủ · Cửa hàng · Cộng đồng · Bộ sưu tập
+    // · Hồ sơ. Battle Pass and Cài đặt are not tabs: their routes keep their
+    // paths and live in the Hồ sơ branch (a Home or Profile button pushes
+    // them on top of the current tab).
     branches: [
+      StatefulShellBranch(routes: homeBranchRoutes),
       StatefulShellBranch(routes: storeBranchRoutes),
-      StatefulShellBranch(routes: battlepassBranchRoutes),
       StatefulShellBranch(routes: communityBranchRoutes),
       StatefulShellBranch(
         routes: collectionBranchRoutes(nested: wishlistRoutes),
       ),
-      StatefulShellBranch(routes: profileBranchRoutes(nested: socialRoutes)),
-      StatefulShellBranch(routes: settingsBranchRoutes),
+      StatefulShellBranch(
+        // The first route is the branch's initial location: /profile.
+        routes: [
+          ...profileBranchRoutes(nested: socialRoutes),
+          ...battlepassBranchRoutes,
+          ...settingsBranchRoutes,
+        ],
+      ),
     ],
   ),
 ];
@@ -68,7 +81,7 @@ List<RouteBase> buildAppRoutes() => [
 /// whenever it notifies.
 GoRouter createAppRouter({
   required ValueListenable<bool> hasAccounts,
-  String initialLocation = StoreRoutes.root,
+  String initialLocation = HomeRoutes.root,
   GlobalKey<NavigatorState>? navigatorKey,
 }) => GoRouter(
   navigatorKey: navigatorKey ?? rootNavigatorKey,
@@ -83,7 +96,7 @@ GoRouter createAppRouter({
       message: CommonStrings.pageNotFound,
       icon: Icons.explore_off_outlined,
       action: FilledButton(
-        onPressed: () => context.go(StoreRoutes.root),
+        onPressed: () => context.go('/'),
         child: const Text(CommonStrings.goHome),
       ),
     ),
