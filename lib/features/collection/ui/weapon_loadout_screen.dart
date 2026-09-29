@@ -4,105 +4,184 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
+import '../../../core/content/content_repository.dart';
 import '../../../core/domain/loadout/loadout.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
-import '../../../core/ui/section_header.dart';
+import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/sub_page.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../collection_routes.dart';
 import '../collection_strings.dart';
+import '../data/collection_search.dart';
 import '../data/loadout_view.dart';
 import '../data/weapon_sections.dart';
 import '../providers/collection_providers.dart';
 import 'widgets/collection_widgets.dart';
 
-/// S33 "Trang bị vũ khí": weapons by category with the equipped skin and
-/// buddy. Route `/collection/weapons`.
-class WeaponLoadoutScreen extends ConsumerWidget {
+/// Weapon grid: tile width limit and render height.
+const _weaponMaxExtent = 220.0;
+const _weaponArtHeight = 80.0;
+
+/// S33 "Trang bị vũ khí": weapons by category (buy-menu order) with the
+/// equipped skin render, rarity edge and buddy; searchable by weapon,
+/// category, skin or buddy name. Route `/collection/weapons`.
+class WeaponLoadoutScreen extends ConsumerStatefulWidget {
   const WeaponLoadoutScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(title: const Text(CollectionStrings.weaponLoadoutTitle)),
-      body: CollectionAccountGate(
-        builder: (context, account) => LoadoutDataBuilder(
-          puuid: account.puuid,
-          loading: const CollectionGridSkeleton(
-            crossAxisCount: 2,
-            childAspectRatio: 1.4,
-          ),
-          builder: (context, snapshot, owned, db) {
-            final loadout = snapshot.loadout;
-            final sections = weaponSections(
+  ConsumerState<WeaponLoadoutScreen> createState() =>
+      _WeaponLoadoutScreenState();
+}
+
+class _WeaponLoadoutScreenState extends ConsumerState<WeaponLoadoutScreen> {
+  String _search = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final account = ref.watch(activeAccountProvider);
+    if (account == null) {
+      return const NoAccountPage(title: CollectionStrings.weaponLoadoutTitle);
+    }
+    final puuid = account.puuid;
+    final snapshot = ref.watch(loadoutProvider(puuid)).value;
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
+    String? subtitle;
+    if (snapshot != null) {
+      final guns = snapshot.loadout.guns;
+      final custom = guns.where((g) {
+        final skin = equippedSkin(g, db);
+        return skin != null && !skin.isStandard;
+      }).length;
+      subtitle = CollectionStrings.weaponLoadoutSubtitle(custom, guns.length);
+    }
+    return SubPageScaffold(
+      title: CollectionStrings.weaponLoadoutTitle,
+      subtitle: subtitle,
+      onRefresh: () => refreshCollection(ref, puuid),
+      header: SearchStrip(
+        search: CollectionSearchField(
+          hint: CollectionStrings.searchWeapons,
+          initialValue: _search,
+          onChanged: (v) => setState(() => _search = v),
+        ),
+      ),
+      headerHeight: searchStripHeight(context),
+      slivers: loadoutSlivers(
+        ref,
+        puuid: puuid,
+        loading: const _WeaponsSkeleton(),
+        data: (snapshot, owned, db) {
+          final loadout = snapshot.loadout;
+          bool matches(Weapon w) {
+            final gun = loadout.gun(w.uuid);
+            return matchesSearch(_search, [
+              w.displayName,
+              w.category.label,
+              equippedSkin(gun, db)?.displayName,
+              equippedBuddy(gun, db)?.displayName,
+            ]);
+          }
+
+          final sections = [
+            for (final s in weaponSections(
               db.weapons,
               onlyIds: {for (final g in loadout.guns) g.weaponId},
-            );
-            return AdaptiveRefresh(
-              onRefresh: () => refreshCollection(ref, account.puuid),
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        if (snapshot.isFromCache) const CachedLoadoutBanner(),
-                        SavingBar(visible: snapshot.isPending),
-                      ],
+            ))
+              if (s.weapons.where(matches).toList() case final list
+                  when list.isNotEmpty)
+                WeaponSection(s.category, list),
+          ];
+          return [
+            if (snapshot.isFromCache)
+              const SliverToBoxAdapter(child: CachedLoadoutBanner()),
+            SliverToBoxAdapter(child: SavingBar(visible: snapshot.isPending)),
+            if (sections.isEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: _search.trim().isEmpty
+                    ? const EmptyView(
+                        message: CollectionStrings.weaponNotFound,
+                        icon: Icons.gps_off_outlined,
+                      )
+                    : const EmptyView(
+                        title: CollectionStrings.noResultsTitle,
+                        message: CollectionStrings.noResults,
+                        icon: Icons.search_off,
+                      ),
+              ),
+            for (final section in sections) ...[
+              SliverToBoxAdapter(
+                child: SectionLabel(
+                  section.category.label.isEmpty
+                      ? CollectionStrings.otherWeapons
+                      : section.category.label,
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                sliver: SliverGrid(
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: _weaponMaxExtent,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    mainAxisExtent: tileExtent(
+                      context,
+                      image: _weaponArtHeight,
                     ),
                   ),
-                  if (sections.isEmpty)
-                    const SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: EmptyView(
-                        message: CollectionStrings.weaponNotFound,
-                      ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, i) => WeaponTile(
+                      key: ValueKey(section.weapons[i].uuid),
+                      weapon: section.weapons[i],
+                      gun: loadout.gun(section.weapons[i].uuid),
+                      db: db,
                     ),
-                  for (final section in sections) ...[
-                    SliverToBoxAdapter(
-                      child: SectionHeader(
-                        section.category.label.isEmpty
-                            ? CollectionStrings.otherWeapons
-                            : section.category.label,
-                        uppercase: true,
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                      ),
-                    ),
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      sliver: SliverGrid(
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 220,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                          mainAxisExtent: tileExtent(context, image: 80),
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (context, i) => WeaponTile(
-                            key: ValueKey(section.weapons[i].uuid),
-                            weapon: section.weapons[i],
-                            gun: loadout.gun(section.weapons[i].uuid),
-                            db: db,
-                          ),
-                          childCount: section.weapons.length,
-                        ),
-                      ),
-                    ),
-                  ],
-                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
-                ],
+                    childCount: section.weapons.length,
+                  ),
+                ),
               ),
-            );
-          },
-        ),
+            ],
+          ];
+        },
       ),
     );
   }
 }
 
-/// One weapon: name, equipped skin render and name, buddy icon.
+class _WeaponsSkeleton extends StatelessWidget {
+  const _WeaponsSkeleton();
+
+  @override
+  Widget build(BuildContext context) => SkeletonShimmer(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 0; i < 2; i++) ...[
+          const Padding(
+            padding: EdgeInsets.fromLTRB(20, 16, 20, 10),
+            child: Skeleton(width: 96, height: 12, shimmer: false),
+          ),
+          SkeletonTileGrid(
+            maxExtent: _weaponMaxExtent,
+            tileHeight: tileExtent(context, image: _weaponArtHeight),
+            rows: 2,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            shimmer: false,
+          ),
+        ],
+      ],
+    ),
+  );
+}
+
+/// One weapon: name, equipped skin render (Hero into its skin list) and
+/// name, buddy icon, rarity glow and edge.
 class WeaponTile extends ConsumerWidget {
   const WeaponTile({
     super.key,
@@ -144,8 +223,10 @@ class WeaponTile extends ConsumerWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          onTap: () =>
-              unawaited(context.push(CollectionRoutes.weapon(weapon.uuid))),
+          onTap: () {
+            Haptics.selection();
+            unawaited(context.push(CollectionRoutes.weapon(weapon.uuid)));
+          },
           child: Ink(
             decoration: BoxDecoration(
               gradient: color == null
@@ -198,9 +279,12 @@ class WeaponTile extends ConsumerWidget {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: NetImage(
-                        gunRender(gun, db, weapon: weapon),
-                        fit: BoxFit.contain,
+                      child: Hero(
+                        tag: CollectionHeroTags.gun(weapon.uuid),
+                        child: NetImage(
+                          gunRender(gun, db, weapon: weapon),
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
                   ),

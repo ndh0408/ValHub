@@ -5,9 +5,13 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account.dart';
 import '../../../../core/accounts/account_providers.dart';
+import '../../../../core/config/local_price.dart';
 import '../../../../core/settings/app_settings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
+import '../../../../core/ui/price_estimate.dart';
+import '../../../../core/ui/sub_page.dart';
+import '../../../../core/util/format.dart';
 import '../../settings_strings.dart';
 import '../widgets/settings_widgets.dart';
 
@@ -24,8 +28,9 @@ String itemLanguageLabel(ItemLanguage language) => switch (language) {
   ItemLanguage.en => SettingsStrings.itemLanguageEn,
 };
 
-/// "TÙY CHỌN" (S70, X1): live-game switches and the platform of the
-/// active account.
+/// "TÙY CHỌN" (S70, X1): live-game switches, the platform of the active
+/// account, the local-currency estimate next to VP prices and the user's
+/// own pack price (ValVN extras).
 class SettingsOptionsSection extends ConsumerWidget {
   const SettingsOptionsSection({super.key});
 
@@ -56,6 +61,11 @@ class SettingsOptionsSection extends ConsumerWidget {
     final settings = ref.watch(appSettingsProvider);
     final account = ref.watch(activeAccountProvider);
     final notifier = ref.read(appSettingsProvider.notifier);
+    // Estimates need a verified table for the device's country or the
+    // user's own pack price.
+    final price = ref.watch(localPriceSourceProvider);
+    final hasPrices = price != null;
+    final override = ref.watch(vpPriceOverrideProvider);
     return SettingsGroup(
       title: SettingsStrings.optionsHeader,
       children: [
@@ -95,6 +105,38 @@ class SettingsOptionsSection extends ConsumerWidget {
               ? null
               : () => unawaited(_pickPlatform(context, ref, account)),
         ),
+        SettingsSwitchTile(
+          icon: Icons.payments_outlined,
+          title: SettingsStrings.optionShowPrice,
+          subtitle: price == null
+              ? SettingsStrings.optionShowPriceUnavailable
+              : SettingsStrings.optionShowPriceSubtitle(
+                  formatVp(1775),
+                  price.format(1775) ?? '',
+                ),
+          value: hasPrices && settings.showPriceEstimate,
+          onChanged: hasPrices
+              ? (v) => unawaited(
+                  notifier.update((s) => s.copyWith(showPriceEstimate: v)),
+                )
+              : null,
+          infoTooltip: SettingsStrings.optionShowPriceInfo,
+          onInfo: () => unawaited(showPriceEstimateInfoSheet(context)),
+        ),
+        ListTile(
+          leading: const SettingsIcon(Icons.edit_note_outlined),
+          title: const Text(SettingsStrings.optionOwnPrice),
+          subtitle: Text(
+            override == null
+                ? SettingsStrings.optionOwnPriceEmpty
+                : SettingsStrings.optionOwnPriceValue(
+                    formatVp(override.vp),
+                    formatCurrency(override.price, override.currency),
+                  ),
+          ),
+          trailing: const SettingsChevron(),
+          onTap: () => unawaited(showVpPriceOverrideSheet(context)),
+        ),
       ],
     );
   }
@@ -118,18 +160,16 @@ class SettingsAppearanceSection extends ConsumerWidget {
       );
     } else {
       // Material: a live preview of each theme above the list.
-      chosen = await showModalBottomSheet<ThemeMode>(
-        context: context,
-        useSafeArea: true,
-        isScrollControlled: true,
-        builder: (sheetContext) {
+      chosen = await showValSheet<ThemeMode>(
+        context,
+        title: SettingsStrings.themePickerTitle,
+        builder: (sheetContext, _) {
           void pick(ThemeMode m) => Navigator.of(sheetContext).pop(m);
           return SettingsChoiceList<ThemeMode>(
-            title: SettingsStrings.themePickerTitle,
             selected: current,
             onPicked: pick,
             header: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Row(
                 children: [
                   for (final m in modes) ...[

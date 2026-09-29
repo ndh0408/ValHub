@@ -277,33 +277,38 @@ class RewardsSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SkeletonShimmer(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Skeleton(height: 104, radius: 16, shimmer: false),
-            const SizedBox(height: 12),
+            // Pinned filter strip, then the summary card.
             const Skeleton(height: 48, radius: 24, shimmer: false),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
+            const Skeleton(height: 96, radius: 16, shimmer: false),
             for (var c = 0; c < 2; c++) ...[
-              const Skeleton(width: 120, height: 18, shimmer: false),
+              const SizedBox(height: 24),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Skeleton(width: 120, height: 18, shimmer: false),
+              ),
+              const SizedBox(height: 8),
+              const Skeleton(height: 3, radius: 2, shimmer: false),
               const SizedBox(height: 12),
               const Row(
                 children: [
                   Expanded(
-                    child: Skeleton(height: 150, radius: 16, shimmer: false),
+                    child: Skeleton(height: 150, radius: 14, shimmer: false),
                   ),
                   SizedBox(width: 8),
                   Expanded(
-                    child: Skeleton(height: 150, radius: 16, shimmer: false),
+                    child: Skeleton(height: 150, radius: 14, shimmer: false),
                   ),
                   SizedBox(width: 8),
                   Expanded(
-                    child: Skeleton(height: 150, radius: 16, shimmer: false),
+                    child: Skeleton(height: 150, radius: 14, shimmer: false),
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
             ],
           ],
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/riot/riot_ids.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/features/collection/collection_routes.dart';
@@ -97,6 +98,43 @@ void main() {
     await settle(tester);
     expect(find.text(CollectionStrings.equip), findsOneWidget);
     expect(tester.takeException(), isNull);
+    await unmount(tester);
+  });
+
+  testWidgets('a spray opens a preview sheet with a close button', (
+    tester,
+  ) async {
+    await pumpCollection(
+      tester,
+      const BrowseCollectionScreen(type: CollectionBrowseType.spray),
+      riot: riot,
+      prefs: prefs,
+    );
+    await tester.tap(find.text('Hình Phun Sơn Tình Nguyện'));
+    await settle(tester);
+    // Sheet header: name (also in the grid) + type, and the round close.
+    expect(find.text('Hình Phun Sơn Tình Nguyện'), findsNWidgets(2));
+    expect(find.byTooltip(CommonStrings.close), findsOneWidget);
+    await tester.tap(find.byTooltip(CommonStrings.close));
+    await settle(tester);
+    expect(find.byTooltip(CommonStrings.close), findsNothing);
+    await unmount(tester);
+  });
+
+  testWidgets('each type shows its subtitle under the large title', (
+    tester,
+  ) async {
+    await pumpCollection(
+      tester,
+      const BrowseCollectionScreen(type: CollectionBrowseType.title),
+      riot: riot,
+      prefs: prefs,
+    );
+    expect(find.text(CollectionStrings.browseTitles), findsOneWidget);
+    expect(
+      find.text(CollectionStrings.browseSubtitle('title')),
+      findsOneWidget,
+    );
     await unmount(tester);
   });
 

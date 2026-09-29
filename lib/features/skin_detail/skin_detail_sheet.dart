@@ -18,7 +18,9 @@ import '../../core/ui/empty_view.dart';
 import '../../core/ui/error_view.dart';
 import '../../core/ui/net_image.dart';
 import '../../core/ui/skeleton.dart';
+import '../../core/ui/sub_page.dart';
 import '../../core/ui/val_widgets.dart';
+import '../../core/ui/price_estimate.dart';
 import '../community/ui/skins/skin_vote_button.dart';
 import '../store/ui/widgets/store_ui_bits.dart';
 import 'providers/skin_availability.dart';
@@ -133,11 +135,24 @@ class _SkinDetailSheetState extends ConsumerState<SkinDetailSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _SheetHeader(title: skin?.displayName ?? SkinDetailStrings.title),
+          SheetHeader(
+            title: skin?.displayName ?? SkinDetailStrings.title,
+            subtitle: skin == null ? null : _subtitle(db!, skin),
+          ),
           Expanded(child: body),
         ],
       ),
     );
+  }
+
+  /// "Vandal · Cao Cấp" under the name.
+  static String? _subtitle(ContentDb db, WeaponSkin skin) {
+    final tierId = skin.contentTierUuid;
+    final parts = [
+      ?db.weapon(skin.weaponUuid)?.displayName,
+      if (tierId != null) ?db.contentTier(tierId)?.shortName,
+    ].where((p) => p.trim().isNotEmpty).toList();
+    return parts.isEmpty ? null : parts.join(' · ');
   }
 
   /// A skin uuid missing from the content (new patch): ask for a
@@ -148,36 +163,6 @@ class _SkinDetailSheetState extends ConsumerState<SkinDetailSheet> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) unawaited(ref.read(contentMissReporterProvider).report());
     });
-  }
-}
-
-class _SheetHeader extends StatelessWidget {
-  const _SheetHeader({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 4, 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.close),
-            tooltip: CommonStrings.close,
-            onPressed: () => Navigator.of(context).maybePop(),
-          ),
-        ],
-      ),
-    );
   }
 }
 
@@ -542,11 +527,18 @@ class _PriceLabel extends StatelessWidget {
     }
     final vp = quote.vp;
     if (vp == null) return Text(CommonStrings.dash, style: style);
-    return CurrencyAmount.vp(
-      vp,
-      iconSize: 18,
-      estimate: quote.isEstimate,
-      style: style,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CurrencyAmount.vp(
+          vp,
+          iconSize: 18,
+          estimate: quote.isEstimate,
+          style: style,
+        ),
+        PriceEstimate(vp),
+      ],
     );
   }
 }
@@ -563,7 +555,13 @@ class _SectionTitle extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text(title, style: theme.textTheme.titleSmall),
+        Text(
+          title,
+          style: ValText.sectionTitle.copyWith(
+            fontSize: 17,
+            color: theme.colorScheme.onSurface,
+          ),
+        ),
         if (trailing != null) ...[
           const SizedBox(width: 8),
           Expanded(

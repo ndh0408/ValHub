@@ -7,9 +7,10 @@ abstract final class AuthStrings {
       'bạn tự thêm ghi chú đăng nhập; token và ghi chú chỉ nằm trên thiết bị '
       'của bạn.';
   static const rememberMeHint =
-      'Hãy tick "Duy trì đăng nhập" để không phải đăng nhập lại.';
+      'Hãy bật "Duy trì đăng nhập" để không phải đăng nhập lại.';
   static const socialLoginHint =
-      'Nếu đăng nhập Google/Facebook không hoạt động, hãy dùng Riot ID.';
+      'Nếu đăng nhập bằng Google hoặc Facebook không được, hãy dùng tên '
+      'đăng nhập Riot.';
   static const loadingAccount = 'Đang tải tài khoản…';
   static const preparing = 'Đang chuẩn bị trang đăng nhập…';
   static const loginFailed = 'Không thể hoàn tất đăng nhập';

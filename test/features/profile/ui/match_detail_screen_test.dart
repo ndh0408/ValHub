@@ -37,8 +37,9 @@ void main() {
     );
     await settle(tester);
 
-    // Header: map, score, result.
-    expect(find.text('ASCENT'), findsOneWidget);
+    // Header: map (also the art placeholder's caption in tests), score,
+    // result.
+    expect(find.text('ASCENT'), findsWidgets);
     expect(find.text(ProfileStrings.score(2, 1)), findsOneWidget);
     expect(find.byType(OutcomeTag), findsWidgets);
     expect(find.text(CompetitiveStrings.victory), findsWidgets);

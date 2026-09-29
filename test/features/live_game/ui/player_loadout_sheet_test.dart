@@ -1,6 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/network/riot_exception.dart';
+import 'package:valvn/core/theme/app_theme.dart';
+import 'package:valvn/features/live_game/live_game_strings.dart';
 import 'package:valvn/features/live_game/player_loadout_sheet.dart';
 
 import '../live_game_test_env.dart';
@@ -20,6 +23,7 @@ void main() {
     bool pregame = false,
     double width = 360,
     double textScale = 1,
+    ThemeData? theme,
   }) async {
     await pumpLive(
       tester,
@@ -32,6 +36,7 @@ void main() {
       ),
       width: width,
       textScale: textScale,
+      theme: theme,
     );
     await settle(tester);
   }
@@ -81,5 +86,20 @@ void main() {
   testWidgets('no overflow at 320 dp with 130 % text', (tester) async {
     await pumpLoadout(tester, width: 320, textScale: 1.3);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('says where the loadout comes from', (tester) async {
+    await pumpLoadout(tester);
+    expect(find.text(LiveGameStrings.loadoutFromMatch), findsOneWidget);
+    await pumpLoadout(tester, pregame: true);
+    expect(find.text(LiveGameStrings.loadoutFromAgentSelect), findsOneWidget);
+  });
+
+  testWidgets('fits 360 dp at 200 % text, dark and light', (tester) async {
+    await pumpLoadout(tester, textScale: 2);
+    expect(tester.takeException(), isNull);
+    await pumpLoadout(tester, textScale: 2, theme: buildLightTheme());
+    expect(tester.takeException(), isNull);
+    expect(find.text('Vandal Reaver'), findsOneWidget);
   });
 }

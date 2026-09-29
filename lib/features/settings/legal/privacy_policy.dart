@@ -8,8 +8,12 @@ const _email = LegalInfo.contactEmail;
 ///
 /// Facts must match the code: Riot secrets only in secure storage
 /// (`SecureStore`), the only Riot token that leaves the device goes to
-/// `POST /v1/auth/riot` (docs/community-api.md), no analytics / ads / crash
-/// SDK, local notifications only, scrubbed session log.
+/// `POST /v1/auth/riot` (docs/community-api.md) after a one-time consent,
+/// no analytics / ads / crash SDK, local notifications only, scrubbed session
+/// log. The community server is a self-hosted Docker container (Node +
+/// SQLite + files on disk) reached through a Cloudflare Tunnel; features the
+/// server does not implement yet (deleting images with a post, data export)
+/// are written as commitments with a response time, never as done.
 const privacyPolicy = LegalDocument(
   id: 'privacy',
   title: 'Chính sách quyền riêng tư',
@@ -19,17 +23,20 @@ const privacyPolicy = LegalDocument(
     LegalParagraph(
       'Chính sách này giải thích cách ValVN thu thập, sử dụng, lưu trữ và bảo '
       'vệ dữ liệu cá nhân của bạn, và các quyền của bạn đối với dữ liệu đó. '
-      'Chính sách được xây dựng theo Luật Bảo vệ dữ liệu cá nhân, Nghị định '
-      '13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân và các văn bản pháp luật Việt '
-      'Nam có liên quan.',
+      'Chính sách được xây dựng theo pháp luật Việt Nam về bảo vệ dữ liệu cá '
+      'nhân (Nghị định 13/2023/NĐ-CP), đồng thời tính đến các quy định bạn có '
+      'thể được hưởng ở nơi bạn sống như GDPR, UK GDPR, CCPA/CPRA hay LGPD '
+      '(xem mục "Quyền của bạn theo luật nơi bạn sống"). ValVN dành cho người '
+      'chơi VALORANT ở mọi quốc gia.',
     ),
     LegalCallout(
       'Tóm tắt: Phần lớn dữ liệu của bạn chỉ nằm trên thiết bị. Token và '
       'cookie Riot được lưu trong vùng lưu trữ bảo mật của hệ điều hành và '
-      'không gửi cho chúng tôi, với một ngoại lệ duy nhất: khi bạn kết nối '
-      'Cộng đồng, access token được gửi tới máy chủ ValVN để xác minh Riot ID '
-      'rồi bị hủy ngay. Máy chủ không lưu PUUID. ValVN không có quảng cáo, '
-      'không dùng công cụ phân tích hay theo dõi và không bán dữ liệu của bạn.',
+      'không gửi cho chúng tôi, với một ngoại lệ duy nhất: khi bạn lần đầu mở '
+      'Cộng đồng và xác nhận hộp thoại đồng ý một lần, access token được gửi '
+      'tới máy chủ ValVN để xác minh Riot ID rồi bị hủy ngay. Máy chủ không '
+      'lưu PUUID. ValVN không có quảng cáo, không dùng công cụ phân tích hay '
+      'theo dõi và không bán dữ liệu của bạn.',
     ),
   ],
   sections: [
@@ -42,8 +49,9 @@ const privacyPolicy = LegalDocument(
     ]),
     LegalSection('Phạm vi áp dụng', [
       LegalParagraph(
-        'Chính sách áp dụng cho ứng dụng ValVN trên iOS và Android, bao gồm '
-        'các tính năng Cộng đồng. Chính sách không áp dụng cho dịch vụ của Riot '
+        'Chính sách áp dụng cho ứng dụng ValVN trên iOS và Android ở mọi quốc '
+        'gia, bao gồm các tính năng Cộng đồng. Chính sách không áp dụng cho '
+        'dịch vụ của Riot '
         'Games, valorant-api.com, Apple, Google hay các bên thứ ba khác; việc '
         'xử lý dữ liệu của họ tuân theo chính sách riêng của từng bên.',
       ),
@@ -101,15 +109,24 @@ const privacyPolicy = LegalDocument(
     ]),
     LegalSection('Dữ liệu được xử lý trên máy chủ Cộng đồng', [
       LegalParagraph(
-        'Chỉ khi bạn sử dụng tính năng Cộng đồng, các dữ liệu sau được gửi tới '
-        'và lưu trên máy chủ cộng đồng của ValVN:',
+        'Máy chủ Cộng đồng là một máy chủ do nhà phát hành tự vận hành (chạy '
+        'trong container Docker, dữ liệu lưu trong cơ sở dữ liệu SQLite và tệp '
+        'trên ổ đĩa của máy chủ đó). Lưu lượng từ Ứng dụng tới máy chủ đi qua '
+        'mạng của Cloudflare (Cloudflare Tunnel), Cloudflare chỉ chuyển tiếp '
+        'lưu lượng. Chỉ khi bạn sử dụng tính năng Cộng đồng, các dữ liệu sau '
+        'được gửi tới và lưu trên máy chủ này:',
       ),
       LegalList([
         LegalItem(
-          'Riot ID (tên và tag), khu vực, thẻ người chơi và rank do Ứng dụng '
-          'gửi lên. Đây là thông tin công khai với người dùng khác trong Cộng '
-          'đồng.',
+          'Riot ID (tên và tag), khu vực, thẻ người chơi, rank và ngôn ngữ '
+          'ứng dụng do Ứng dụng gửi lên. Đây là thông tin công khai với người '
+          'dùng khác trong Cộng đồng.',
           lead: 'Hồ sơ Cộng đồng:',
+        ),
+        LegalItem(
+          'quốc gia của Tài khoản Riot của bạn (do Riot cung cấp khi xác minh, '
+          'bạn không thể chỉnh sửa), dùng để hiển thị Cộng đồng theo quốc gia.',
+          lead: 'Quốc gia:',
         ),
         LegalItem(
           'một mã băm một chiều (SHA-256 kèm khóa bí mật) được tạo từ PUUID. '
@@ -122,14 +139,23 @@ const privacyPolicy = LegalDocument(
           lead: 'Bài đăng và bình luận:',
         ),
         LegalItem(
-          'khu vực, chế độ chơi, mã tổ đội, số chỗ trống, rank và ghi chú. Bài '
-          'tự hết hạn sau 30 phút; mỗi người chỉ có một bài đang hoạt động.',
+          'số sao, nội dung nhận xét và lượt "hữu ích" bạn dành cho đánh giá '
+          'của người khác, hiển thị công khai cùng Riot ID của bạn.',
+          lead: 'Đánh giá skin:',
+        ),
+        LegalItem(
+          'mã tổ đội, chế độ chơi, khu vực, giới hạn rank, vai trò cần tìm, có '
+          'yêu cầu micro hay không, ngôn ngữ, quy mô tổ đội, số chỗ trống, ghi '
+          'chú, trạng thái (mở, đủ người, đang chơi), số lượt bấm vào tổ đội và '
+          'tín hiệu "còn hoạt động" mà Ứng dụng gửi định kỳ khi bài đang mở. Bài '
+          'tự hết hạn 30 phút sau tín hiệu cuối cùng; mỗi người chỉ có một bài '
+          'đang hoạt động.',
           lead: 'Bài tìm đồng đội (LFG):',
         ),
         LegalItem(
-          'skin bạn bình chọn và thời điểm bình chọn, dùng để xếp hạng skin '
-          'được yêu thích.',
-          lead: 'Bình chọn skin:',
+          'skin bạn bình chọn, lượt thích và thời điểm thực hiện, dùng để xếp '
+          'hạng skin được yêu thích.',
+          lead: 'Bình chọn và lượt thích:',
         ),
         LegalItem(
           'nội dung bị báo cáo, lý do và người báo cáo (dưới dạng mã người '
@@ -137,9 +163,23 @@ const privacyPolicy = LegalDocument(
           lead: 'Báo cáo vi phạm:',
         ),
         LegalItem(
-          'địa chỉ IP, loại yêu cầu và thời điểm được hạ tầng Cloudflare xử lý '
-          'để truyền tải, bảo mật, chống lạm dụng và giới hạn tần suất.',
-          lead: 'Dữ liệu kỹ thuật:',
+          'máy chủ ghi lại phương thức, đường dẫn, mã trạng thái và thời gian '
+          'xử lý của mỗi yêu cầu để vận hành và chẩn đoán lỗi. Địa chỉ IP chỉ '
+          'được dùng dưới dạng mã băm có muối để giới hạn tần suất yêu cầu, '
+          'không được ghi ở dạng đọc được. Cloudflare có thể xử lý địa chỉ IP '
+          'khi chuyển tiếp lưu lượng theo chính sách riêng của họ.',
+          lead: 'Nhật ký truy cập của máy chủ:',
+        ),
+        LegalItem(
+          'hình ảnh bạn đăng được lưu dưới dạng tệp trên ổ đĩa của máy chủ '
+          'Cộng đồng và có thể truy cập qua đường dẫn công khai. Việc xóa ảnh '
+          'được nêu ở mục "Xóa dữ liệu".',
+          lead: 'Ảnh tải lên:',
+        ),
+        LegalItem(
+          'máy chủ được sao lưu hằng ngày; các bản sao lưu được giữ 14 ngày '
+          'trên máy chủ của nhà phát hành.',
+          lead: 'Sao lưu:',
         ),
       ]),
     ]),
@@ -150,8 +190,11 @@ const privacyPolicy = LegalDocument(
       ),
       LegalList([
         LegalItem(
-          'Khi bạn kết nối (hoặc kết nối lại) Cộng đồng, Ứng dụng gửi access '
-          'token Riot qua kết nối mã hóa HTTPS tới máy chủ ValVN.',
+          'Ứng dụng chỉ gửi access token khi bạn lần đầu mở tính năng Cộng '
+          'đồng và xác nhận hộp thoại đồng ý một lần (và khi bạn kết nối lại '
+          'sau khi phiên Cộng đồng hết hạn). Nếu bạn không đồng ý, Cộng đồng '
+          'không hoạt động và không có token nào được gửi đi. Token được gửi '
+          'qua kết nối mã hóa HTTPS tới máy chủ ValVN.',
         ),
         LegalItem(
           'Máy chủ dùng token này đúng một lần để hỏi máy chủ của Riot Games '
@@ -201,15 +244,21 @@ const privacyPolicy = LegalDocument(
       LegalList([
         LegalItem(
           'bạn đồng ý khi tiếp tục sử dụng Ứng dụng sau khi được thông báo về '
-          'Chính sách này, và đồng ý riêng khi bạn kết nối Cộng đồng, bật thông '
-          'báo hay lưu ghi chú đăng nhập. Bạn có thể rút lại sự đồng ý bất cứ '
-          'lúc nào.',
+          'Chính sách này, và đồng ý riêng khi bạn xác nhận hộp thoại kết nối '
+          'Cộng đồng, bật thông báo hay lưu ghi chú đăng nhập. Bạn có thể rút '
+          'lại sự đồng ý bất cứ lúc nào.',
           lead: 'Sự đồng ý của bạn:',
         ),
         LegalItem(
           'xử lý cần thiết để cung cấp các tính năng bạn yêu cầu theo Điều '
           'khoản sử dụng.',
           lead: 'Thực hiện thỏa thuận:',
+        ),
+        LegalItem(
+          'bảo vệ Cộng đồng khỏi spam, lạm dụng và gian lận, kiểm duyệt nội '
+          'dung bị báo cáo và duy trì an ninh của máy chủ, với dữ liệu ở mức '
+          'tối thiểu cần thiết.',
+          lead: 'Lợi ích chính đáng:',
         ),
         LegalItem(
           'khi pháp luật yêu cầu, ví dụ phản hồi yêu cầu hợp pháp của cơ quan '
@@ -238,8 +287,10 @@ const privacyPolicy = LegalDocument(
           lead: 'Tệp công khai:',
         ),
         LegalItem(
-          'nhà cung cấp hạ tầng (Cloudflare Workers, cơ sở dữ liệu D1, lưu trữ '
-          'R2) xử lý dữ liệu Cộng đồng thay mặt chúng tôi theo hợp đồng dịch vụ.',
+          'cung cấp mạng chuyển tiếp (Cloudflare Tunnel) cho lưu lượng tới máy '
+          'chủ Cộng đồng. Cloudflare không lưu dữ liệu Cộng đồng của chúng tôi '
+          'nhưng có thể xử lý dữ liệu kỹ thuật như địa chỉ IP theo chính sách '
+          'riêng của họ.',
           lead: 'Cloudflare, Inc.:',
         ),
         LegalItem(
@@ -249,20 +300,22 @@ const privacyPolicy = LegalDocument(
           lead: 'Người dùng khác:',
         ),
         LegalItem(
-          'khi có yêu cầu hợp pháp theo quy định của pháp luật Việt Nam.',
+          'khi có yêu cầu hợp pháp theo quy định của pháp luật áp dụng cho nhà '
+          'phát hành.',
           lead: 'Cơ quan nhà nước có thẩm quyền:',
         ),
       ]),
     ]),
-    LegalSection('Chuyển dữ liệu ra nước ngoài', [
+    LegalSection('Chuyển dữ liệu qua biên giới', [
       LegalParagraph(
-        'Máy chủ Cộng đồng chạy trên mạng lưới toàn cầu của Cloudflare, Inc. '
-        '(Hoa Kỳ), nên dữ liệu Cộng đồng có thể được xử lý và lưu trữ tại các '
-        'trung tâm dữ liệu ngoài Việt Nam. Tương tự, khi bạn sử dụng Ứng dụng, '
-        'thiết bị của bạn kết nối trực tiếp tới máy chủ của Riot Games ở nước '
-        'ngoài. Chúng tôi áp dụng các biện pháp bảo vệ phù hợp và thực hiện '
-        'nghĩa vụ liên quan đến chuyển dữ liệu cá nhân ra nước ngoài theo quy '
-        'định của pháp luật Việt Nam.',
+        'Máy chủ Cộng đồng do nhà phát hành tự vận hành; lưu lượng tới máy chủ '
+        'đi qua mạng toàn cầu của Cloudflare, Inc. nên có thể đi qua nhiều quốc '
+        'gia. Dữ liệu Cộng đồng bạn đăng hiển thị với người dùng ValVN ở mọi '
+        'nơi. Khi bạn sử dụng Ứng dụng, thiết bị của bạn cũng kết nối trực tiếp '
+        'tới máy chủ của Riot Games. Chúng tôi áp dụng các biện pháp bảo vệ phù '
+        'hợp và thực hiện nghĩa vụ liên quan đến chuyển dữ liệu cá nhân qua '
+        'biên giới theo pháp luật Việt Nam và, khi bạn ở nơi có quy định tương '
+        'ứng, theo pháp luật nơi bạn sống.',
       ),
     ]),
     LegalSection('Thời gian lưu trữ', [
@@ -273,19 +326,30 @@ const privacyPolicy = LegalDocument(
           lead: 'Dữ liệu trên thiết bị:',
         ),
         LegalItem(
-          'tự hết hạn và ngừng hiển thị sau 30 phút; dữ liệu hết hạn được xóa '
-          'định kỳ.',
+          'tự hết hạn và ngừng hiển thị 30 phút sau tín hiệu "còn hoạt động" '
+          'cuối cùng; dữ liệu hết hạn được xóa định kỳ.',
           lead: 'Bài tìm đồng đội:',
         ),
         LegalItem(
           'lưu cho đến khi bạn xóa, hoặc khi chúng tôi gỡ do vi phạm, hoặc khi '
           'bạn yêu cầu xóa dữ liệu Cộng đồng.',
-          lead: 'Bài đăng, hình ảnh, bình luận, bình chọn:',
+          lead: 'Bài đăng, đánh giá, bình luận, bình chọn:',
         ),
         LegalItem(
-          'lưu trong thời gian cần thiết để xử lý vi phạm và phòng chống lạm '
-          'dụng, tối đa 12 tháng, trừ khi pháp luật yêu cầu lâu hơn.',
+          'chúng tôi cam kết chỉ giữ báo cáo trong thời gian cần thiết để xử '
+          'lý vi phạm và phòng chống lạm dụng, và xóa hoặc ẩn danh chúng khi '
+          'không còn cần thiết, trừ khi pháp luật yêu cầu giữ lâu hơn.',
           lead: 'Báo cáo vi phạm:',
+        ),
+        LegalItem(
+          'chỉ mã băm có muối phục vụ giới hạn tần suất; nhật ký kỹ thuật chỉ '
+          'giữ trong thời gian cần để chẩn đoán lỗi và bảo mật.',
+          lead: 'Nhật ký truy cập của máy chủ:',
+        ),
+        LegalItem(
+          'giữ 14 ngày rồi bị ghi đè; nội dung đã xóa vì thế có thể còn trong '
+          'bản sao lưu tối đa 14 ngày.',
+          lead: 'Bản sao lưu:',
         ),
         LegalItem(
           'hết hiệu lực sau 30 ngày và bị xóa khỏi thiết bị khi bạn đăng xuất.',
@@ -313,14 +377,25 @@ const privacyPolicy = LegalDocument(
       LegalSubheading('Trên máy chủ Cộng đồng'),
       LegalList([
         LegalItem(
-          'Bạn có thể tự xóa bài đăng, bình luận, bài tìm đồng đội và bỏ bình '
-          'chọn ngay trong Ứng dụng.',
+          'Bạn có thể tự xóa bài đăng, đánh giá, bình luận, bài tìm đồng đội và '
+          'bỏ bình chọn ngay trong Ứng dụng.',
         ),
         LegalItem(
           'Để xóa toàn bộ dữ liệu Cộng đồng gắn với Riot ID của bạn, hãy gửi '
           'email tới $_email kèm Riot ID. Chúng tôi có thể yêu cầu xác minh '
-          'bạn là chủ tài khoản trước khi xử lý và sẽ phản hồi trong thời hạn '
-          'pháp luật quy định.',
+          'bạn là chủ tài khoản trước khi xử lý và xử lý yêu cầu trong vòng 30 '
+          'ngày.',
+        ),
+        LegalItem(
+          'Hình ảnh: hiện máy chủ chưa tự động xóa tệp ảnh khi bạn xóa bài '
+          'đăng. Chúng tôi cam kết xóa ảnh của bạn trong vòng 30 ngày kể từ khi '
+          'nhận được yêu cầu qua email. Nếu và khi chức năng này được triển '
+          'khai, ảnh sẽ được xóa cùng bài đăng hoặc tài khoản và Chính sách sẽ '
+          'được cập nhật.',
+        ),
+        LegalItem(
+          'Nội dung đã xóa có thể còn trong bản sao lưu tối đa 14 ngày trước '
+          'khi bị ghi đè.',
         ),
         LegalItem(
           'Lưu ý: đăng xuất khỏi Ứng dụng không tự động xóa nội dung bạn đã '
@@ -362,8 +437,9 @@ const privacyPolicy = LegalDocument(
         ),
         LegalItem(
           'Máy chủ Cộng đồng chỉ lưu mã băm của PUUID, giới hạn tần suất yêu '
-          'cầu, chỉ cho phép bạn xóa nội dung của chính mình và kiểm soát '
-          'quyền truy cập vào khóa bí mật.',
+          'cầu (dựa trên mã băm có muối của địa chỉ IP), chỉ cho phép bạn xóa '
+          'nội dung của chính mình và giữ khóa bí mật trong cấu hình máy chủ, '
+          'không đưa vào mã nguồn.',
         ),
         LegalItem(
           'Chúng tôi chỉ thu thập dữ liệu ở mức tối thiểu cần thiết cho tính '
@@ -378,12 +454,14 @@ const privacyPolicy = LegalDocument(
     ]),
     LegalSection('Trẻ em', [
       LegalParagraph(
-        'Ứng dụng không dành cho trẻ em dưới 13 tuổi. Người dùng dưới 16 tuổi '
-        'chỉ được sử dụng Ứng dụng, đặc biệt là tính năng Cộng đồng, khi có sự '
-        'đồng ý và giám sát của cha, mẹ hoặc người giám hộ hợp pháp theo quy '
-        'định của pháp luật. Nếu bạn là phụ huynh và cho rằng con mình đã cung '
-        'cấp dữ liệu cho Cộng đồng khi chưa có sự đồng ý, vui lòng liên hệ để '
-        'chúng tôi xóa dữ liệu đó.',
+        'Ứng dụng không dành cho trẻ em dưới 13 tuổi. Ở những nơi pháp luật '
+        'quy định độ tuổi tối thiểu để tự đồng ý xử lý dữ liệu cao hơn (ví dụ '
+        '16 tuổi ở một số nước thuộc Liên minh châu Âu), bạn chỉ được sử dụng '
+        'Ứng dụng, đặc biệt là tính năng Cộng đồng, khi đã đủ tuổi đó hoặc khi '
+        'có sự đồng ý và giám sát của cha, mẹ hoặc người giám hộ hợp pháp. '
+        'Nếu bạn là phụ huynh và cho rằng con mình đã cung cấp dữ liệu cho '
+        'Cộng đồng khi chưa có sự đồng ý, vui lòng liên hệ để chúng tôi xóa dữ '
+        'liệu đó.',
       ),
     ]),
     LegalSection('Quyền của bạn', [
@@ -434,8 +512,87 @@ const privacyPolicy = LegalDocument(
       LegalParagraph(
         'Phần lớn dữ liệu nằm trên thiết bị và bạn có thể tự xem hoặc xóa ngay '
         'trong Ứng dụng. Với dữ liệu trên máy chủ Cộng đồng, hãy gửi yêu cầu '
-        'tới $_email. Chúng tôi sẽ phản hồi trong thời hạn pháp luật quy định '
-        'và có thể cần xác minh danh tính của bạn trước khi xử lý.',
+        'tới $_email. Chúng tôi xử lý yêu cầu trong vòng 30 ngày và có thể cần '
+        'xác minh danh tính của bạn trước khi xử lý. Hiện chúng tôi chưa có '
+        'công cụ tự động xuất dữ liệu: yêu cầu cung cấp bản sao dữ liệu được '
+        'xử lý thủ công và trả lời bằng tệp văn bản thông dụng trong cùng thời '
+        'hạn.',
+      ),
+    ]),
+    LegalSection('Quyền của bạn theo luật nơi bạn sống', [
+      LegalParagraph(
+        'Tùy nơi bạn sống, pháp luật địa phương có thể cho bạn thêm quyền. '
+        'Dù bạn ở đâu, bạn đều có thể thực hiện các quyền thực tế dưới đây '
+        'bằng cách gửi email tới $_email; chúng tôi xử lý yêu cầu trong vòng '
+        '30 ngày và không phân biệt đối xử với bạn vì đã thực hiện quyền của '
+        'mình.',
+      ),
+      LegalList([
+        LegalItem(
+          'biết chúng tôi giữ dữ liệu gì về bạn và nhận một bản sao;',
+          lead: 'Truy cập:',
+        ),
+        LegalItem(
+          'yêu cầu xóa dữ liệu Cộng đồng gắn với Riot ID của bạn (xem mục '
+          '"Xóa dữ liệu");',
+          lead: 'Xóa:',
+        ),
+        LegalItem(
+          'sửa dữ liệu không chính xác (hồ sơ Cộng đồng được làm mới từ tài '
+          'khoản Riot mỗi lần bạn kết nối);',
+          lead: 'Chỉnh sửa:',
+        ),
+        LegalItem(
+          'nhận dữ liệu của bạn ở định dạng thông dụng;',
+          lead: 'Di chuyển dữ liệu:',
+        ),
+        LegalItem(
+          'phản đối hoặc yêu cầu hạn chế việc xử lý, và rút lại sự đồng ý bất '
+          'cứ lúc nào;',
+          lead: 'Phản đối, hạn chế và rút lại đồng ý:',
+        ),
+        LegalItem(
+          'khiếu nại tới cơ quan bảo vệ dữ liệu có thẩm quyền ở nơi bạn sống.',
+          lead: 'Khiếu nại:',
+        ),
+      ]),
+      LegalParagraph('Một số ví dụ về luật có thể áp dụng cho bạn:'),
+      LegalList([
+        LegalItem(
+          'nếu bạn ở Liên minh châu Âu, Khu vực kinh tế châu Âu hoặc Vương quốc '
+          'Anh: bạn có các quyền truy cập, chỉnh sửa, xóa, hạn chế, di chuyển '
+          'dữ liệu, phản đối và rút lại sự đồng ý, cùng quyền khiếu nại tới cơ '
+          'quan giám sát dữ liệu tại quốc gia bạn sống. Cơ sở xử lý dữ liệu '
+          'được nêu ở mục "Cơ sở pháp lý".',
+          lead: 'GDPR / UK GDPR:',
+        ),
+        LegalItem(
+          'nếu bạn là cư dân California: bạn có quyền biết, xóa, sửa dữ liệu '
+          'và từ chối việc "bán" hay "chia sẻ" dữ liệu. ValVN không bán và '
+          'không chia sẻ dữ liệu cá nhân cho quảng cáo theo ngữ cảnh khác.',
+          lead: 'CCPA / CPRA:',
+        ),
+        LegalItem(
+          'nếu bạn ở Brazil: bạn có các quyền truy cập, chỉnh sửa, ẩn danh, '
+          'xóa, di chuyển dữ liệu và thông tin về việc chia sẻ dữ liệu.',
+          lead: 'LGPD:',
+        ),
+        LegalItem(
+          'nếu bạn ở Trung Quốc đại lục hoặc nơi có luật tương tự: bạn có '
+          'quyền biết, quyết định, hạn chế, từ chối, truy cập, sao chép, '
+          'chỉnh sửa, xóa dữ liệu và yêu cầu giải thích về việc xử lý.',
+          lead: 'PIPL và luật tương tự:',
+        ),
+        LegalItem(
+          'nếu bạn ở Việt Nam: các quyền nêu ở mục "Quyền của bạn" ở trên.',
+          lead: 'Nghị định 13/2023/NĐ-CP:',
+        ),
+      ]),
+      LegalParagraph(
+        'Chúng tôi không thu thập nhiều dữ liệu hơn mức cần thiết và không '
+        'thực hiện quyết định tự động có ảnh hưởng pháp lý tới bạn. Nếu bạn '
+        'không hài lòng với phản hồi của chúng tôi, bạn có quyền khiếu nại tới '
+        'cơ quan có thẩm quyền ở nơi bạn sống.',
       ),
     ]),
     LegalSection('Thay đổi Chính sách', [

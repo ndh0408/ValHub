@@ -131,7 +131,11 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    await tester.fling(find.byType(ListView), const Offset(0, -20000), 4000);
+    await tester.fling(
+      find.byType(CustomScrollView),
+      const Offset(0, -20000),
+      4000,
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });

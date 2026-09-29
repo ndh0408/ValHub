@@ -6,6 +6,7 @@ import 'package:cupertino_ui/cupertino_ui.dart'
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
@@ -17,7 +18,7 @@ import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/net_image.dart';
-import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../collection_strings.dart';
@@ -25,19 +26,21 @@ import '../providers/collection_providers.dart';
 import 'widgets/collection_widgets.dart';
 import 'widgets/loadout_actions.dart';
 
-/// S38 "Bộ trang bị đã lưu" (local presets per account). Route
+/// S38 "Bộ trang bị đã lưu" (local presets per account): large title with
+/// the "only on this device" note, one card per preset (card art, name,
+/// saved date, the Vandal / Phantom skins, "Áp dụng" behind a confirmation),
+/// and "Lưu trang bị hiện tại" pinned at the bottom. Route
 /// `/collection/presets`.
 class LoadoutPresetsScreen extends ConsumerWidget {
   const LoadoutPresetsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(title: const Text(CollectionStrings.presetsTitle)),
-      body: CollectionAccountGate(
-        builder: (context, account) => _PresetsBody(puuid: account.puuid),
-      ),
-    );
+    final account = ref.watch(activeAccountProvider);
+    if (account == null) {
+      return const NoAccountPage(title: CollectionStrings.presetsTitle);
+    }
+    return _PresetsBody(puuid: account.puuid);
   }
 }
 
@@ -48,13 +51,13 @@ class _PresetsBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final presets = ref.watch(loadoutPresetsProvider(puuid));
     final notifier = ref.read(loadoutPresetsProvider(puuid).notifier);
     final loadout = ref.watch(loadoutProvider(puuid));
     final snapshot = loadout.value;
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final saving = snapshot?.isPending ?? false;
+    final loading = snapshot == null && loadout.isLoading;
 
     Future<void> save() async {
       final messenger = ScaffoldMessenger.maybeOf(context);
@@ -78,93 +81,95 @@ class _PresetsBody extends ConsumerWidget {
       );
     }
 
-    return AdaptiveRefresh(
+    return SubPageScaffold(
+      title: CollectionStrings.presetsTitle,
+      subtitle: CollectionStrings.presetsNote,
       onRefresh: () => refreshCollection(ref, puuid),
-      child: ListView(
-        padding: const EdgeInsets.only(bottom: 24),
-        children: [
-          SavingBar(visible: saving),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-            child: FilledButton.icon(
-              style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(48),
-              ),
-              onPressed: snapshot == null || notifier.isFull || saving
-                  ? null
-                  : () => unawaited(save()),
-              icon: const Icon(Icons.bookmark_add_outlined),
-              label: const Text(CollectionStrings.savePreset),
-            ),
-          ),
-          if (snapshot == null && loadout.hasError && !loadout.isLoading)
-            ErrorView(
+      bottomBar: FilledButton.icon(
+        style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+        onPressed: snapshot == null || notifier.isFull || saving
+            ? null
+            : () => unawaited(save()),
+        icon: const Icon(Icons.bookmark_add_outlined),
+        label: const Text(CollectionStrings.savePreset),
+      ),
+      slivers: [
+        SliverToBoxAdapter(child: SavingBar(visible: saving || loading)),
+        if (snapshot == null && loadout.hasError && !loadout.isLoading)
+          SliverToBoxAdapter(
+            child: ErrorView(
               error: loadout.error!,
               puuid: puuid,
               compact: true,
               onRetry: () => ref.invalidate(loadoutProvider(puuid)),
-            )
-          else if (snapshot == null)
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Skeleton(height: 4),
-            ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-            child: Text(
-              notifier.isFull
-                  ? CollectionStrings.presetsFull
-                  : CollectionStrings.presetsNote,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: notifier.isFull
-                    ? valColorsOf(context).warning
-                    : theme.colorScheme.onSurfaceVariant,
-              ),
             ),
           ),
-          if (presets.isEmpty)
-            const EmptyView(
+        if (notifier.isFull)
+          const SliverToBoxAdapter(
+            child: CollectionNotice(
+              icon: Icons.inventory_2_outlined,
+              text: CollectionStrings.presetsFull,
+            ),
+          ),
+        if (presets.isEmpty)
+          const SliverFillRemaining(
+            hasScrollBody: false,
+            child: EmptyView(
+              title: CollectionStrings.presetsEmptyTitle,
               message: CollectionStrings.presetsEmpty,
               icon: Icons.inventory_2_outlined,
             ),
-          for (final (index, preset) in presets.indexed)
-            Dismissible(
-              key: ValueKey(preset.id),
-              direction: DismissDirection.endToStart,
-              background: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 6,
-                ),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.error,
-                    borderRadius: BorderRadius.circular(ValRadius.card),
-                  ),
-                  child: const Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
-                      child: Icon(Icons.delete_outline, color: Colors.white),
+          )
+        else
+          SliverPadding(
+            padding: const EdgeInsets.only(top: 4, bottom: 8),
+            sliver: SliverList.builder(
+              itemCount: presets.length,
+              itemBuilder: (context, index) {
+                final preset = presets[index];
+                return Dismissible(
+                  key: ValueKey(preset.id),
+                  direction: DismissDirection.endToStart,
+                  background: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.error,
+                        borderRadius: BorderRadius.circular(ValRadius.card),
+                      ),
+                      child: const Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          child: Icon(
+                            Icons.delete_outline,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              onDismissed: (_) {
-                Haptics.medium();
-                unawaited(_delete(context, ref, preset, index));
+                  onDismissed: (_) {
+                    Haptics.medium();
+                    unawaited(_delete(context, ref, preset, index));
+                  },
+                  child: PresetCard(
+                    preset: preset,
+                    db: db,
+                    busy: saving || snapshot == null,
+                    onApply: () => unawaited(_apply(context, ref, preset)),
+                    onRename: () => unawaited(_rename(context, ref, preset)),
+                    onDelete: () =>
+                        unawaited(_delete(context, ref, preset, index)),
+                  ),
+                );
               },
-              child: PresetCard(
-                preset: preset,
-                db: db,
-                busy: saving || snapshot == null,
-                onApply: () => unawaited(_apply(context, ref, preset)),
-                onRename: () => unawaited(_rename(context, ref, preset)),
-                onDelete: () => unawaited(_delete(context, ref, preset, index)),
-              ),
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 
@@ -473,13 +478,29 @@ class PresetCard extends StatelessWidget {
                   if (i > 0) const SizedBox(width: 8),
                   Expanded(
                     child: Container(
-                      height: 56,
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
                       decoration: BoxDecoration(
                         color: scheme.surfaceContainerHigh,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: NetImage(_render(w), fit: BoxFit.contain),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: 44,
+                            child: NetImage(_render(w), fit: BoxFit.contain),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            db.weapon(w)?.displayName ?? CommonStrings.dash,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: muted,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

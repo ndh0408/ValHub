@@ -142,55 +142,140 @@ class UnreadBadge extends StatelessWidget {
   }
 }
 
-/// Thin banner while the chat socket is not connected (data stays visible).
+/// Rounded notice while the chat socket is not connected (data stays
+/// visible under it): a spinner while (re)connecting, a cloud and "Thử lại"
+/// once it gave up.
 class ConnectionBanner extends StatelessWidget {
-  const ConnectionBanner({super.key, required this.state, this.onRetry});
+  const ConnectionBanner({
+    super.key,
+    required this.state,
+    this.onRetry,
+    this.margin = const EdgeInsets.fromLTRB(16, 4, 16, 4),
+  });
 
   final XmppConnectionState state;
   final VoidCallback? onRetry;
+  final EdgeInsetsGeometry margin;
 
   @override
   Widget build(BuildContext context) {
     if (state.isConnected) return const SizedBox.shrink();
     final theme = Theme.of(context);
     final busy = state.isBusy || state.status == XmppStatus.idle;
+    final tint = busy ? valColorsOf(context).warning : theme.colorScheme.error;
     final text = switch (state.status) {
       XmppStatus.connecting || XmppStatus.idle => SocialStrings.connecting,
       XmppStatus.reconnecting => SocialStrings.reconnecting,
       _ => SocialStrings.chatUnavailable,
     };
-    return Material(
-      color: theme.colorScheme.surfaceContainerHigh,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-        child: Row(
-          children: [
-            if (busy)
-              const SizedBox.square(
-                dimension: 16,
-                child: CircularProgressIndicator.adaptive(strokeWidth: 2),
-              )
-            else
-              Icon(
-                Icons.cloud_off_outlined,
-                size: 18,
-                color: theme.colorScheme.error,
+    return Padding(
+      padding: margin,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: tint.withValues(alpha: 0.10),
+          borderRadius: BorderRadius.circular(ValRadius.small),
+          border: Border.all(color: tint.withValues(alpha: 0.25)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
+          child: Row(
+            children: [
+              if (busy)
+                SizedBox.square(
+                  dimension: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: legibleAccent(context, tint, min: 3),
+                  ),
+                )
+              else
+                Icon(Icons.cloud_off_outlined, size: 18, color: tint),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    text,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                text,
-                style: theme.textTheme.bodySmall,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            if (!busy && onRetry != null)
-              TextButton(
-                onPressed: onRetry,
-                child: const Text(CommonStrings.retry),
-              ),
-          ],
+              if (!busy && onRetry != null)
+                TextButton(
+                  onPressed: onRetry,
+                  child: const Text(CommonStrings.retry),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A lazy [GroupedSection]: the rows of one rounded `s1` card built on
+/// demand (long friend lists), with hairlines between rows, ink clipped to
+/// the card corners and a hairline edge on the light theme.
+class GroupedSliverList extends StatelessWidget {
+  const GroupedSliverList({
+    super.key,
+    required this.itemCount,
+    required this.itemBuilder,
+    this.margin = const EdgeInsets.symmetric(horizontal: 16),
+  });
+
+  final int itemCount;
+  final IndexedWidgetBuilder itemBuilder;
+  final EdgeInsetsGeometry margin;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final hairline = valColorsOf(context).hairline;
+    const radius = Radius.circular(ValRadius.card);
+    return SliverPadding(
+      padding: margin,
+      sliver: DecoratedSliver(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainer,
+          borderRadius: const BorderRadius.all(radius),
+          border: theme.brightness == Brightness.light
+              ? Border.all(color: hairline)
+              : null,
+        ),
+        sliver: SliverList.builder(
+          itemCount: itemCount,
+          itemBuilder: (context, i) {
+            final first = i == 0;
+            final last = i == itemCount - 1;
+            // Own ink layer above the card color.
+            Widget row = Material(
+              type: MaterialType.transparency,
+              child: itemBuilder(context, i),
+            );
+            if (first || last) {
+              row = ClipRRect(
+                borderRadius: BorderRadius.vertical(
+                  top: first ? radius : Radius.zero,
+                  bottom: last ? radius : Radius.zero,
+                ),
+                child: row,
+              );
+            }
+            if (first) return row;
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Divider(height: 1, thickness: 1, color: hairline),
+                row,
+              ],
+            );
+          },
         ),
       ),
     );

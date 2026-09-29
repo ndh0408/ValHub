@@ -144,6 +144,33 @@ void main() {
     await tester.tap(tile);
     await settle(tester);
     expect(find.byType(RewardPreviewSheet), findsOneWidget);
+    // Sheet chrome: level, type, track and state rows plus the close button.
+    expect(find.text(BattlePassStrings.rewardLevelLabel), findsOneWidget);
+    expect(find.text(BattlePassStrings.rewardTrackLabel), findsOneWidget);
+    expect(find.text(BattlePassStrings.rewardStatusLabel), findsOneWidget);
+    expect(find.byTooltip(CommonStrings.close), findsOneWidget);
+    await unmount(tester);
+  });
+
+  testWidgets('the next reward to unlock is marked', (tester) async {
+    await _pump(tester, bpApi());
+    // Level 46 reached: level 47 is next, in the current chapter.
+    expect(find.text(BattlePassStrings.nextReward), findsOneWidget);
+    final next = tester.widget<RewardTile>(
+      find.ancestor(
+        of: find.text(BattlePassStrings.nextReward),
+        matching: find.byType(RewardTile),
+      ),
+    );
+    expect(next.reward.tier.level, 47);
+    await unmount(tester);
+  });
+
+  testWidgets('fits 360 dp at 200 % text', (tester) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pump(tester, bpApi());
+    expect(tester.takeException(), isNull);
     await unmount(tester);
   });
 

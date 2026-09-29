@@ -98,17 +98,3 @@ class StateIcon extends StatelessWidget {
     );
   }
 }
-
-/// Placeholder body for screens that are not implemented yet.
-class FeaturePlaceholder extends StatelessWidget {
-  const FeaturePlaceholder({
-    super.key,
-    this.message = CommonStrings.featureInProgress,
-  });
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) =>
-      EmptyView(message: message, icon: Icons.construction_outlined);
-}

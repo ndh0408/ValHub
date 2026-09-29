@@ -9,11 +9,12 @@ import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive.dart';
 import '../../../core/l10n/common_strings.dart';
-import '../../../core/ui/adaptive.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
@@ -23,28 +24,43 @@ import 'widgets/profile_widgets.dart';
 import 'widgets/rr_trend_chart.dart';
 
 /// S42 "RR theo ngày". Route `/profile/daily-rr`.
+///
+/// A 7-day summary (net RR, record, RR trend), then one card per local day
+/// (newest first; days cut at midnight in the device's time zone) that
+/// expands to its ranked matches.
 class DailyRrScreen extends ConsumerWidget {
   const DailyRrScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final account = ref.watch(activeAccountProvider);
-    return Scaffold(
-      appBar: AppBar(title: const Text(ProfileStrings.dailyRrTitle)),
-      body: account == null
-          ? const EmptyView(message: CommonStrings.errorNoAccount)
-          : _DailyRrBody(puuid: account.puuid),
+    final now = ref.watch(clockProvider).now();
+    final zone = ProfileStrings.dayBoundary(
+      ProfileStrings.timeZoneLabel(now.timeZoneOffset),
+    );
+    if (account == null) {
+      return const SubPageScaffold(
+        title: ProfileStrings.dailyRrTitle,
+        body: EmptyView(message: CommonStrings.errorNoAccount),
+      );
+    }
+    final puuid = account.puuid;
+    return SubPageScaffold(
+      title: ProfileStrings.dailyRrTitle,
+      subtitle: zone,
+      onRefresh: () => ref
+          .refresh(competitiveUpdatesProvider(puuid).future)
+          .then<void>((_) {}, onError: (Object _) {}),
+      slivers: _slivers(context, ref, puuid, now),
     );
   }
-}
 
-class _DailyRrBody extends ConsumerWidget {
-  const _DailyRrBody({required this.puuid});
-
-  final String puuid;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  List<Widget> _slivers(
+    BuildContext context,
+    WidgetRef ref,
+    String puuid,
+    DateTime now,
+  ) {
     final days = ref.watch(dailyRrProvider(puuid));
     final updates = ref.watch(competitiveUpdatesProvider(puuid));
     final list = days.value;
@@ -77,7 +93,9 @@ class _DailyRrBody extends ConsumerWidget {
       } else if (updatesError == null) {
         slivers.add(const SliverToBoxAdapter(child: _DaysSkeleton()));
       }
-    } else if (list.isEmpty) {
+      return slivers;
+    }
+    if (list.isEmpty) {
       if (updatesError == null) {
         slivers.add(
           SliverFillRemaining(
@@ -91,87 +109,192 @@ class _DailyRrBody extends ConsumerWidget {
           ),
         );
       }
-    } else {
-      final trend = [for (final d in list.take(14)) d.netRr].reversed.toList();
-      slivers
-        ..add(
-          SliverToBoxAdapter(
-            child: trend.length >= 2
-                ? _TrendCard(changes: trend)
-                : const SizedBox(height: 8),
-          ),
-        )
-        ..add(
-          SliverList.builder(
-            itemCount: list.length,
-            itemBuilder: (context, i) => _DayCard(
-              key: ValueKey(list[i].date),
-              day: list[i],
-              initiallyExpanded: i == 0,
-            ),
-          ),
-        )
-        ..add(
-          SliverToBoxAdapter(
-            child: _Footer(puuid: puuid, state: updates.value),
-          ),
-        );
+      return slivers;
     }
-
-    return AdaptiveRefresh(
-      onRefresh: () => ref
-          .refresh(competitiveUpdatesProvider(puuid).future)
-          .then<void>((_) {}, onError: (Object _) {}),
-      child: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: slivers,
-      ),
-    );
+    final trend = [for (final d in list.take(14)) d.netRr].reversed.toList();
+    return slivers
+      ..add(
+        SliverToBoxAdapter(
+          child: _WeekCard(days: list, trend: trend, now: now),
+        ),
+      )
+      ..add(const SliverToBoxAdapter(child: SizedBox(height: 4)))
+      ..add(
+        SliverList.builder(
+          itemCount: list.length,
+          itemBuilder: (context, i) => _DayCard(
+            key: ValueKey(list[i].date),
+            day: list[i],
+            initiallyExpanded: i == 0,
+          ),
+        ),
+      )
+      ..add(
+        SliverToBoxAdapter(
+          child: _Footer(puuid: puuid, state: updates.value),
+        ),
+      );
   }
 }
 
+/// Loading skeleton shaped like the summary card and three day cards.
 class _DaysSkeleton extends StatelessWidget {
   const _DaysSkeleton();
 
   @override
-  Widget build(BuildContext context) =>
-      const SkeletonList(itemCount: 4, itemHeight: 96);
+  Widget build(BuildContext context) => const SkeletonShimmer(
+    child: Padding(
+      padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Skeleton(height: 168, radius: ValRadius.card, shimmer: false),
+          SizedBox(height: 16),
+          Skeleton(height: 92, radius: ValRadius.card, shimmer: false),
+          SizedBox(height: 8),
+          Skeleton(height: 92, radius: ValRadius.card, shimmer: false),
+          SizedBox(height: 8),
+          Skeleton(height: 92, radius: ValRadius.card, shimmer: false),
+        ],
+      ),
+    ),
+  );
 }
 
-class _TrendCard extends StatelessWidget {
-  const _TrendCard({required this.changes});
+/// "7 ngày qua": net RR, record and matches over the last seven local days,
+/// plus the RR trend of the listed days.
+class _WeekCard extends StatelessWidget {
+  const _WeekCard({required this.days, required this.trend, required this.now});
 
-  final List<int> changes;
+  final List<DailyRr> days;
+  final List<int> trend;
+  final DateTime now;
+
+  static const _window = 7;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final net = changes.fold<int>(0, (a, b) => a + b);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    final local = now.toLocal();
+    final from = DateTime(local.year, local.month, local.day - (_window - 1));
+    final week = [
+      for (final d in days)
+        if (!d.date.isBefore(from)) d,
+    ];
+    final net = week.fold<int>(0, (a, d) => a + d.netRr);
+    final wins = week.fold<int>(0, (a, d) => a + d.wins);
+    final losses = week.fold<int>(0, (a, d) => a + d.losses);
+    final draws = week.fold<int>(0, (a, d) => a + d.draws);
+    final matches = week.fold<int>(0, (a, d) => a + d.matches.length);
+    final trendNet = trend.fold<int>(0, (a, b) => a + b);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: ValCard(
-        padding: EdgeInsets.zero,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        ProfileStrings.lastDays(_window).toUpperCase(),
+                        style: ValText.label.copyWith(color: muted),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        week.isEmpty
+                            ? ProfileStrings.todayNone
+                            : ProfileStrings.joined([
+                                ProfileStrings.winsLosses(wins, losses, draws),
+                                ProfileStrings.matchCount(matches),
+                                ProfileStrings.daysPlayed(week.length),
+                              ]),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: muted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  formatSignedRr(net),
+                  maxLines: 1,
+                  style: ValText.display(30, color: rrColor(context, net)),
+                ),
+              ],
+            ),
+            if (trend.length >= 2) ...[
+              const SizedBox(height: 12),
+              Divider(height: 1, color: valColorsOf(context).hairline),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
                     child: Text(
                       ProfileStrings.rrTrendTitle,
-                      style: theme.textTheme.titleSmall,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: muted,
+                      ),
                     ),
                   ),
-                  SignedRrText(net),
+                  SignedRrText(trendNet, style: theme.textTheme.labelMedium),
                 ],
               ),
-              const SizedBox(height: 8),
-              RrTrendChart(changes: changes, height: 80),
+              const SizedBox(height: 6),
+              RrTrendChart(changes: trend, height: 80),
             ],
-          ),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+/// Calendar-style badge of a day: short weekday over the day number.
+class _DayBadge extends StatelessWidget {
+  const _DayBadge({required this.date, required this.accent});
+
+  final DateTime date;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: 46,
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(ValRadius.small),
+        border: Border.all(color: accent.withValues(alpha: 0.35)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            ProfileStrings.weekdayShort[date.weekday - 1],
+            maxLines: 1,
+            style: ValText.label.copyWith(
+              fontSize: 10,
+              color: legibleAccent(context, accent, min: 3.5),
+            ),
+          ),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              date.day.toString().padLeft(2, '0'),
+              maxLines: 1,
+              style: ValText.display(20, color: theme.colorScheme.onSurface),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -213,10 +336,14 @@ class _DayCard extends ConsumerWidget {
           data: theme.copyWith(dividerColor: Colors.transparent),
           child: ExpansionTile(
             initiallyExpanded: initiallyExpanded,
-            tilePadding: const EdgeInsets.fromLTRB(16, 4, 12, 4),
+            tilePadding: const EdgeInsets.fromLTRB(12, 6, 10, 6),
             childrenPadding: const EdgeInsets.only(bottom: 8),
             shape: const Border(),
             collapsedShape: const Border(),
+            leading: _DayBadge(
+              date: day.date,
+              accent: rrColor(context, day.netRr),
+            ),
             title: Row(
               children: [
                 Expanded(
@@ -227,7 +354,8 @@ class _DayCard extends ConsumerWidget {
                     style: theme.textTheme.titleMedium,
                   ),
                 ),
-                SignedRrText(day.netRr, style: theme.textTheme.titleMedium),
+                const SizedBox(width: 8),
+                RrPill(day.netRr),
               ],
             ),
             subtitle: Column(
@@ -278,7 +406,9 @@ class _DayCard extends ConsumerWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: end.isUnranked ? null : end.color,
+                            color: end.isUnranked
+                                ? null
+                                : legibleAccent(context, end.color, min: 3.5),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -289,6 +419,13 @@ class _DayCard extends ConsumerWidget {
               ],
             ),
             children: [
+              Divider(
+                height: 1,
+                indent: 12,
+                endIndent: 12,
+                color: valColorsOf(context).hairline,
+              ),
+              const SizedBox(height: 4),
               for (final u in day.matches.reversed) _MatchRow(update: u),
             ],
           ),
@@ -318,18 +455,20 @@ class _MatchRow extends ConsumerWidget {
     return InkWell(
       onTap: () => unawaited(context.push(ProfileRoutes.match(update.matchId))),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(8),
               child: SizedBox(
-                width: 56,
-                height: 28,
-                child: NetImage(
-                  map?.listViewIcon ?? map?.splash,
-                  fit: BoxFit.cover,
-                  showSkeleton: false,
+                width: 64,
+                height: 36,
+                child: Hero(
+                  tag: matchMapHeroTag(update.matchId),
+                  child: MapArtImage(
+                    map: map,
+                    tint: rrColor(context, update.rrEarned),
+                  ),
                 ),
               ),
             ),
@@ -342,7 +481,9 @@ class _MatchRow extends ConsumerWidget {
                     map?.displayName ?? CommonStrings.dash,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyMedium,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   Text(
                     ProfileStrings.joined([
@@ -363,6 +504,12 @@ class _MatchRow extends ConsumerWidget {
             ),
             const SizedBox(width: 8),
             SignedRrText(update.rrEarned),
+            const SizedBox(width: 2),
+            Icon(
+              Icons.chevron_right,
+              size: 18,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ],
         ),
       ),
@@ -383,7 +530,7 @@ class _Footer extends ConsumerWidget {
     final s = state;
     final error = s?.loadMoreError;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -408,19 +555,32 @@ class _Footer extends ConsumerWidget {
               ),
             )
           else if (s != null && s.hasMore)
-            OutlinedButton(
+            OutlinedButton.icon(
               onPressed: () => unawaited(
                 ref.read(competitiveUpdatesProvider(puuid).notifier).loadMore(),
               ),
-              child: const Text(CommonStrings.loadMore),
+              icon: const Icon(Icons.history_rounded, size: 18),
+              label: const Text(CommonStrings.loadMore),
             ),
           const SizedBox(height: 12),
-          Text(
-            ProfileStrings.dailyRrFootnote,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.phone_android_rounded,
+                size: 16,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  ProfileStrings.dailyRrFootnote,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

@@ -77,15 +77,38 @@ void main() {
       expect(privacy, contains('30 phút'));
       expect(privacy, contains('Cloudflare'));
 
-      final license = legalDocumentToMarkdown(LegalDocuments.license);
-      expect(license, contains('không phải phần mềm mã nguồn mở'));
-      expect(license, contains(LegalInfo.copyrightNotice));
-
       final terms = legalDocumentToMarkdown(LegalDocuments.terms);
       expect(
         terms,
         contains('pháp luật nước Cộng hòa xã hội chủ nghĩa Việt Nam'),
       );
+    });
+
+    test('the app shows only privacy, terms, community and notice', () {
+      // The proprietary licence stays in the repository only (IA "Pháp lý").
+      expect(LegalDocuments.all.map((d) => d.id), [
+        'privacy',
+        'terms',
+        'community',
+        'notice',
+      ]);
+      for (final doc in LegalDocuments.all) {
+        expect(
+          legalDocumentToMarkdown(doc),
+          isNot(contains('Giấy phép phần mềm')),
+          reason:
+              '${doc.id} must not point to a document the app no longer '
+              'shows',
+        );
+      }
+      final terms = legalDocumentToMarkdown(LegalDocuments.terms);
+      expect(terms, contains('không phải phần mềm mã nguồn mở'));
+      expect(terms, contains(LegalInfo.copyrightNotice));
+    });
+
+    test('the licence Markdown is kept in the repository', () {
+      final md = _normalize(File('docs/legal/license.md').readAsStringSync());
+      expect(md, contains('Giấy phép phần mềm'));
     });
 
     test('the repository LICENSE is proprietary, not open source', () {

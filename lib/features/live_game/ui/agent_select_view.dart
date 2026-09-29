@@ -14,6 +14,7 @@ import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../data/live_game_logic.dart';
 import '../data/live_game_models.dart';
@@ -113,7 +114,7 @@ class _AgentSelectViewState extends ConsumerState<AgentSelectView> {
     } else {
       grid = SliverPadding(
         // Room under the last row so it can scroll clear of a snackbar.
-        padding: const EdgeInsets.fromLTRB(12, 4, 12, 88),
+        padding: const EdgeInsets.fromLTRB(12, 6, 12, 72),
         sliver: SliverLayoutBuilder(
           builder: (context, constraints) {
             const columns = 5;
@@ -200,8 +201,34 @@ class _AgentSelectInfo extends StatelessWidget {
     final endsAt = match.phaseEndsAt;
     final enemySize = match.enemyTeamSize ?? 0;
     final agent = myAgent;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+    final timer = endsAt == null
+        ? null
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CountdownRing(
+                expiresAt: endsAt,
+                period: kAgentSelectPeriod,
+                size: 18,
+                color: colors.warning,
+              ),
+              const SizedBox(width: 6),
+              CountdownText(
+                expiresAt: endsAt,
+                format: (d) => formatMinutesSeconds(d, padMinutes: false),
+                builder: LiveGameStrings.timeLeft,
+                onExpired: onExpired,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: colors.warning,
+                  fontWeight: FontWeight.w700,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
+              ),
+            ],
+          );
+    return ValCard(
+      margin: const EdgeInsets.fromLTRB(12, 8, 12, 6),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -217,30 +244,29 @@ class _AgentSelectInfo extends StatelessWidget {
               Expanded(
                 child: Text(LiveGameStrings.hoverLockHint, style: muted),
               ),
-              if (endsAt != null) ...[
-                const SizedBox(width: 8),
-                CountdownRing(
-                  expiresAt: endsAt,
-                  period: kAgentSelectPeriod,
-                  size: 18,
-                  color: colors.warning,
-                ),
-                const SizedBox(width: 6),
-                CountdownText(
-                  expiresAt: endsAt,
-                  format: (d) => formatMinutesSeconds(d, padMinutes: false),
-                  builder: LiveGameStrings.timeLeft,
-                  onExpired: onExpired,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    color: colors.warning,
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
-                ),
-              ],
             ],
           ),
+          if (timer != null || enemySize > 0) ...[
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 16,
+              runSpacing: 6,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                ?timer,
+                if (enemySize > 0)
+                  Text(
+                    LiveGameStrings.enemyLocked(
+                      (match.enemyTeamLockCount ?? 0).clamp(0, enemySize),
+                      enemySize,
+                    ),
+                    style: muted,
+                  ),
+              ],
+            ),
+          ],
           if (agent != null) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Icon(
@@ -263,16 +289,6 @@ class _AgentSelectInfo extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ],
-          if (enemySize > 0) ...[
-            const SizedBox(height: 6),
-            Text(
-              LiveGameStrings.enemyLocked(
-                (match.enemyTeamLockCount ?? 0).clamp(0, enemySize),
-                enemySize,
-              ),
-              style: muted,
             ),
           ],
         ],

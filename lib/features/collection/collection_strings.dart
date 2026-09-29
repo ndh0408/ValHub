@@ -47,6 +47,16 @@ abstract final class CollectionStrings {
   // --------------------------------------------------- S31 / S32 pickers
   static const playerCardTitle = 'Đổi thẻ người chơi';
   static const playerTitleTitle = 'Đổi danh hiệu';
+  static const playerCardSubtitle =
+      'Hiện ở sảnh chờ, bảng điểm và khi bạn hạ gục đối thủ.';
+  static const playerTitleSubtitle =
+      'Hiện dưới tên của bạn ở sảnh chờ và trong trận.';
+  static String equippedCardLabel(String name) => 'Thẻ đang dùng: $name';
+  static const unknownCard = 'Thẻ không xác định';
+  static String cardsCount(String n) => '$n thẻ đã sở hữu';
+  static String titlesCount(String n) => '$n danh hiệu đã sở hữu';
+  static const lobbyBanner = 'Ảnh ở sảnh chờ';
+  static const preview = 'Xem trước';
   static const searchCards = 'Tìm thẻ người chơi…';
   static const searchTitles = 'Tìm danh hiệu…';
   static const noTitle = ContentStrings.noTitle;
@@ -60,6 +70,12 @@ abstract final class CollectionStrings {
   // ------------------------------------------------ S33 / S34 weapons
   static const weaponLoadoutTitle = 'Trang bị vũ khí';
   static const weaponSkinsTitle = 'Chọn skin';
+  static String weaponLoadoutSubtitle(int custom, int total) =>
+      '$custom/$total vũ khí đang dùng skin';
+  static const searchWeapons = 'Tìm vũ khí, skin hoặc phụ kiện…';
+  static String equippedLine(String skin) => 'Đang dùng: $skin';
+  static String ownedForWeapon(int n) =>
+      n == 0 ? 'Chưa có skin nào' : '$n skin đã sở hữu';
   static const defaultSkin = ContentStrings.defaultSkin;
   static const searchSkins = 'Tìm skin…';
   static const sortLabel = 'Sắp xếp';
@@ -84,6 +100,7 @@ abstract final class CollectionStrings {
   static const changeBuddy = 'Đổi';
   static const locked = 'Chưa mở khóa';
   static const playVideo = 'Xem video';
+  static const playLevelVideo = 'Xem video cấp này';
   static const skinNotOwned = 'Bạn chưa sở hữu skin này.';
   static const skinNotFound = 'Không tìm thấy skin này.';
   static const meleeNoBuddy = 'Vũ khí cận chiến không gắn được phụ kiện.';
@@ -112,6 +129,7 @@ abstract final class CollectionStrings {
   static String slotName(int slot) =>
       slot >= 0 && slot < slotNames.length ? slotNames[slot] : '${slot + 1}';
   static String slotTitle(int slot) => 'Ô ${slotName(slot).toLowerCase()}';
+  static const expressionsSlots = 'Các ô trên vòng';
   static const tabSprays = 'Hình phun sơn';
   static const tabFlex = 'Flex';
   static const searchSprays = 'Tìm hình phun sơn…';
@@ -140,8 +158,10 @@ abstract final class CollectionStrings {
   static const applyPresetBody =
       'Skin, phụ kiện súng, tổ hợp cảm xúc, thẻ và danh hiệu đang dùng sẽ được '
       'thay bằng bộ này.';
+  static const presetsEmptyTitle = 'Chưa có bộ trang bị';
   static const presetsEmpty =
-      'Chưa có bộ trang bị nào.\nLưu trang bị hiện tại để đổi nhanh sau này.';
+      'Lưu trang bị đang dùng để đổi nhanh giữa các bộ skin, thẻ và tổ hợp '
+      'cảm xúc sau này.';
   static const presetsFull =
       'Đã đạt tối đa 50 bộ trang bị. Hãy xóa bớt để lưu thêm.';
   static const presetsNote =
@@ -149,6 +169,10 @@ abstract final class CollectionStrings {
 
   // --------------------------------------------------- level border
   static const levelBorderTitle = 'Chọn khung cấp';
+
+  /// "Tài khoản cấp 474" under the sheet title.
+  static String levelBorderSubtitle(int level) => 'Tài khoản cấp $level';
+  static const levelBorderEmpty = 'Chưa có khung cấp nào cho cấp của bạn.';
   static String levelBorderFrom(int level) => 'Từ cấp $level';
 
   // ------------------------------------------------------- S39 browse
@@ -160,6 +184,17 @@ abstract final class CollectionStrings {
   static const browseTitles = 'Danh hiệu';
   static const browseFlex = 'Flex';
   static const searchItems = 'Tìm kiếm…';
+
+  /// One line under the large title of "Duyệt bộ sưu tập" by type path.
+  static String browseSubtitle(String type) => switch (type) {
+    'skin' => 'Mọi skin bạn sở hữu, tính giá trị theo giá cửa hàng',
+    'buddy' => 'Phụ kiện súng đã sở hữu và số bản sao',
+    'spray' => 'Hình phun sơn bạn có thể gắn vào tổ hợp cảm xúc',
+    'card' => 'Thẻ người chơi đã mở khóa, chạm để xem và trang bị',
+    'title' => 'Danh hiệu bạn có thể hiển thị dưới tên',
+    'flex' => 'Flex đã sở hữu',
+    _ => browseTitle,
+  };
   static String summarySkins(int count, String value) => '$count skin · $value';
   static String summaryFiltered(int count, String value) =>
       'Đang lọc: $count skin · $value';

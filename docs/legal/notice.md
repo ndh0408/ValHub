@@ -24,11 +24,11 @@ Tên, hình ảnh, video và dữ liệu của skin, đặc vụ, bản đồ, r
 
 - **valorant-api.com:** dữ liệu và hình ảnh công khai về vật phẩm, đặc vụ, bản đồ và rank (bản tiếng Việt). valorant-api.com là dự án cộng đồng độc lập, không liên kết với ValVN hay Riot Games.
 - **techchrism/valorant-api-docs:** tài liệu kỹ thuật do cộng đồng nhà phát triển VALORANT biên soạn.
-- **Thư viện mã nguồn mở:** ValVN được xây dựng bằng Flutter cùng nhiều thư viện mã nguồn mở. Danh sách và giấy phép của từng thư viện có tại mục "Giấy phép thư viện bên thứ ba".
+- **Thư viện mã nguồn mở:** ValVN được xây dựng bằng Flutter cùng nhiều thư viện mã nguồn mở. Danh sách và giấy phép của từng thư viện có tại mục "Thư viện bên thứ ba" trong trang Giới thiệu & pháp lý.
 
 ## 5. Bản quyền ValVN
 
-© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền. ValVN là phần mềm độc quyền; việc sử dụng tuân theo Giấy phép phần mềm và Điều khoản sử dụng.
+© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền. ValVN là phần mềm độc quyền; việc sử dụng tuân theo Điều khoản sử dụng.
 
 ## 6. Báo cáo vi phạm quyền sở hữu trí tuệ
 

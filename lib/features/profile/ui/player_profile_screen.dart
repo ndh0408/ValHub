@@ -7,8 +7,8 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/domain/competitive/competitive.dart';
 import '../../../core/l10n/common_strings.dart';
-import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
+import '../../../core/ui/sub_page.dart';
 import '../profile_routes.dart';
 import '../profile_strings.dart';
 import '../providers/profile_providers.dart';
@@ -38,44 +38,40 @@ class PlayerProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final id = puuid.trim().toLowerCase();
-    return Scaffold(
-      appBar: AppBar(title: const Text(ProfileStrings.playerProfileTitle)),
-      body: id.isEmpty
-          ? const EmptyView(
-              icon: Icons.person_search_outlined,
-              message: CommonStrings.errorNotFound,
-            )
-          : AdaptiveRefresh(
-              onRefresh: () => _refresh(ref, id),
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: _Header(puuid: id, hideName: hideName),
-                  ),
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-                    sliver: SliverList.list(
-                      children: [
-                        RankCard(puuid: id),
-                        const SizedBox(height: 12),
-                        RecentFormCard(puuid: id),
-                      ],
-                    ),
-                  ),
-                  MatchHistorySliver(
-                    puuid: id,
-                    title: ProfileStrings.recentMatches,
-                    onOpenMatch: (m) => unawaited(
-                      context.push(
-                        ProfileRoutes.matchFullScreen(m, player: id),
-                      ),
-                    ),
-                  ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
-                ],
-              ),
-            ),
+    if (id.isEmpty) {
+      return const SubPageScaffold(
+        title: ProfileStrings.playerProfileTitle,
+        body: EmptyView(
+          icon: Icons.person_search_outlined,
+          message: CommonStrings.errorNotFound,
+        ),
+      );
+    }
+    return SubPageScaffold(
+      title: ProfileStrings.playerProfileTitle,
+      onRefresh: () => _refresh(ref, id),
+      slivers: [
+        SliverToBoxAdapter(
+          child: _Header(puuid: id, hideName: hideName),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+          sliver: SliverList.list(
+            children: [
+              RankCard(puuid: id),
+              const SizedBox(height: 12),
+              RecentFormCard(puuid: id),
+            ],
+          ),
+        ),
+        MatchHistorySliver(
+          puuid: id,
+          title: ProfileStrings.recentMatches,
+          onOpenMatch: (m) => unawaited(
+            context.push(ProfileRoutes.matchFullScreen(m, player: id)),
+          ),
+        ),
+      ],
     );
   }
 

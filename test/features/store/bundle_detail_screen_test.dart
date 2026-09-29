@@ -31,8 +31,9 @@ void main() {
   testWidgets('shows name, countdown, price summary and items', (tester) async {
     await _pump(tester, api: fixtureApi());
 
-    expect(find.text('Neo Frontier'), findsWidgets, reason: 'app bar');
+    // Big name under the hero; the bar title appears once it collapses.
     expect(find.text('NEO FRONTIER'), findsOneWidget);
+    expect(find.text('Neo Frontier'), findsNothing);
     // 1821001 s = 21 d 01:50:01.
     expect(
       find.text(StoreStrings.bundleEndsIn('21 ngày 01:50:01')),
@@ -52,6 +53,10 @@ void main() {
     );
     expect(find.text(StoreStrings.bundleItemCount(4)), findsOneWidget);
     expect(find.text('Odin Neo Frontier'), findsOneWidget);
+    // Scrolled past the hero: the bar now carries the small title.
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -200));
+    await settle(tester, 12);
+    expect(find.text('Neo Frontier'), findsOneWidget, reason: 'bar title');
     // Buddy ×2, card and spray are free; the Odin is discounted to 1.457.
     await tester.scrollUntilVisible(
       find.text(StoreStrings.bundleItemFree).last,

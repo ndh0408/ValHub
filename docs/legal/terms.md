@@ -10,7 +10,7 @@ Chào mừng bạn đến với ValVN. Điều khoản sử dụng này ("Điề
 
 ## 1. Chấp nhận Điều khoản
 
-Bằng việc tải, cài đặt, đăng nhập hoặc tiếp tục sử dụng Ứng dụng, bạn xác nhận đã đọc, hiểu và đồng ý với Điều khoản này, Chính sách quyền riêng tư, Tiêu chuẩn cộng đồng và Giấy phép phần mềm của ValVN. Các văn bản này là một phần không tách rời của Điều khoản.
+Bằng việc tải, cài đặt, đăng nhập hoặc tiếp tục sử dụng Ứng dụng, bạn xác nhận đã đọc, hiểu và đồng ý với Điều khoản này, Chính sách quyền riêng tư và Tiêu chuẩn cộng đồng của ValVN. Các văn bản này là một phần không tách rời của Điều khoản.
 
 Nếu bạn không đồng ý với bất kỳ nội dung nào, vui lòng không sử dụng Ứng dụng và gỡ Ứng dụng khỏi thiết bị.
 
@@ -23,8 +23,8 @@ Nếu bạn không đồng ý với bất kỳ nội dung nào, vui lòng không
 
 ## 3. Điều kiện sử dụng
 
-- Bạn phải đủ điều kiện sở hữu và sử dụng Tài khoản Riot theo điều khoản của Riot Games, và từ đủ 13 tuổi trở lên.
-- Nếu bạn dưới 16 tuổi, bạn chỉ được sử dụng Ứng dụng khi cha, mẹ hoặc người giám hộ hợp pháp đã đọc, đồng ý với Điều khoản này và Chính sách quyền riêng tư, đồng thời giám sát việc sử dụng của bạn.
+- Bạn phải đủ điều kiện sở hữu và sử dụng Tài khoản Riot theo điều khoản của Riot Games, và từ đủ 13 tuổi trở lên (hoặc độ tuổi cao hơn mà luật nơi bạn sống yêu cầu, ví dụ 16 tuổi ở một số nước Liên minh châu Âu).
+- Nếu bạn chưa đủ tuổi tự đồng ý theo luật nơi bạn sống (16 tuổi ở một số nơi), bạn chỉ được sử dụng Ứng dụng khi cha, mẹ hoặc người giám hộ hợp pháp đã đọc, đồng ý với Điều khoản này và Chính sách quyền riêng tư, đồng thời giám sát việc sử dụng của bạn.
 - Bạn không thuộc đối tượng bị pháp luật hiện hành cấm sử dụng dịch vụ và chưa từng bị chúng tôi chấm dứt quyền sử dụng Ứng dụng.
 - Bạn tự chịu trách nhiệm về thiết bị, kết nối mạng và chi phí dữ liệu di động phát sinh khi sử dụng Ứng dụng.
 
@@ -42,7 +42,7 @@ Bạn đăng nhập trong một cửa sổ web hiển thị trang đăng nhập 
 
 Với điều kiện bạn tuân thủ Điều khoản này, chúng tôi cấp cho bạn quyền có giới hạn, không độc quyền, không thể chuyển nhượng, không thể cấp phép lại và có thể thu hồi để cài đặt và sử dụng Ứng dụng trên các thiết bị mà bạn sở hữu hoặc kiểm soát, cho mục đích cá nhân, phi thương mại.
 
-ValVN là phần mềm độc quyền, không phải phần mềm mã nguồn mở. Chúng tôi cấp phép sử dụng chứ không bán Ứng dụng cho bạn; mọi quyền không được cấp rõ ràng trong Điều khoản này đều được bảo lưu. Chi tiết xem Giấy phép phần mềm.
+ValVN là phần mềm độc quyền, không phải phần mềm mã nguồn mở. Chúng tôi cấp phép sử dụng chứ không bán Ứng dụng cho bạn; mọi quyền không được cấp rõ ràng trong Điều khoản này đều được bảo lưu.
 
 ## 6. Các hành vi bị cấm
 
@@ -73,7 +73,7 @@ Một số tính năng cho phép thay đổi trạng thái Tài khoản Riot c�
 ### Trách nhiệm với nội dung
 
 - Bạn chịu trách nhiệm về mọi Nội dung người dùng bạn đăng và cam kết có đủ quyền đối với nội dung đó (ví dụ quyền sử dụng ảnh chụp màn hình, hình ảnh bạn tải lên).
-- Nội dung của bạn phải tuân thủ Tiêu chuẩn cộng đồng và pháp luật. Nghiêm cấm nội dung vi phạm pháp luật Việt Nam, xúc phạm, quấy rối, thù ghét, khiêu dâm, bạo lực, lừa đảo, spam, quảng cáo trái phép, mua bán tài khoản, dịch vụ cày thuê hoặc phần mềm gian lận, và nội dung tiết lộ thông tin cá nhân của người khác.
+- Nội dung của bạn phải tuân thủ Tiêu chuẩn cộng đồng và pháp luật. Nghiêm cấm nội dung vi phạm pháp luật áp dụng, xúc phạm, quấy rối, thù ghét, khiêu dâm, bạo lực, lừa đảo, spam, quảng cáo trái phép, mua bán tài khoản, dịch vụ cày thuê hoặc phần mềm gian lận, và nội dung tiết lộ thông tin cá nhân của người khác.
 - Bài tìm đồng đội có thể chứa mã tổ đội; bất kỳ ai xem bài đều có thể dùng mã đó để vào tổ đội của bạn cho đến khi bài hết hạn (30 phút) hoặc bạn tắt mã trong trò chơi.
 
 ### Quyền bạn cấp cho chúng tôi
@@ -99,7 +99,7 @@ VALORANT, Riot Games cùng tên, hình ảnh, biểu tượng và nội dung tro
 
 - **Riot Games:** đăng nhập, dữ liệu tài khoản, cửa hàng, bộ sưu tập, trận đấu, bạn bè và trò chuyện được lấy trực tiếp từ máy chủ của Riot Games.
 - **valorant-api.com:** tên, hình ảnh và dữ liệu công khai của vật phẩm, đặc vụ, bản đồ, rank do một dự án cộng đồng độc lập cung cấp.
-- **Cloudflare:** hạ tầng lưu trữ và vận hành máy chủ cộng đồng của ValVN.
+- **Cloudflare:** mạng chuyển tiếp (Cloudflare Tunnel) cho lưu lượng tới máy chủ cộng đồng do chúng tôi tự vận hành.
 - **App Store và Google Play:** phân phối Ứng dụng và cập nhật.
 
 Các dịch vụ này có điều khoản và chính sách riêng mà bạn cần tuân thủ. Chúng tôi không kiểm soát và không chịu trách nhiệm về tính sẵn sàng, độ chính xác hay thay đổi của các dịch vụ đó. Nếu Riot Games thay đổi hoặc ngừng cung cấp giao diện kỹ thuật mà Ứng dụng sử dụng, một số tính năng có thể tạm thời hoặc vĩnh viễn không hoạt động.
@@ -118,7 +118,7 @@ Chúng tôi không bảo đảm Ứng dụng hoạt động liên tục, không 
 
 Trong phạm vi tối đa pháp luật cho phép, chúng tôi không chịu trách nhiệm đối với bất kỳ thiệt hại gián tiếp, ngẫu nhiên, đặc biệt hay hệ quả nào, bao gồm mất dữ liệu, mất vật phẩm hay tiền ảo trong trò chơi, mất điểm xếp hạng, hình phạt hoặc việc Tài khoản Riot bị hạn chế hay khóa, phát sinh từ hoặc liên quan đến việc bạn sử dụng hay không thể sử dụng Ứng dụng.
 
-Vì Ứng dụng được cung cấp miễn phí, tổng trách nhiệm của chúng tôi đối với mọi khiếu nại liên quan đến Ứng dụng, trong phạm vi pháp luật cho phép, không vượt quá số tiền bạn đã trả trực tiếp cho chúng tôi để sử dụng Ứng dụng trong 12 tháng trước sự kiện phát sinh khiếu nại (nếu có). Điều khoản này không loại trừ trách nhiệm mà pháp luật Việt Nam không cho phép loại trừ, bao gồm quyền của người tiêu dùng theo Luật Bảo vệ quyền lợi người tiêu dùng.
+Vì Ứng dụng được cung cấp miễn phí, tổng trách nhiệm của chúng tôi đối với mọi khiếu nại liên quan đến Ứng dụng, trong phạm vi pháp luật cho phép, không vượt quá số tiền bạn đã trả trực tiếp cho chúng tôi để sử dụng Ứng dụng trong 12 tháng trước sự kiện phát sinh khiếu nại (nếu có). Điều khoản này không loại trừ trách nhiệm mà pháp luật áp dụng không cho phép loại trừ, bao gồm quyền của người tiêu dùng theo pháp luật Việt Nam hoặc pháp luật nơi bạn cư trú.
 
 ## 14. Trách nhiệm bồi hoàn
 
@@ -139,7 +139,7 @@ Chúng tôi có thể cập nhật Điều khoản theo thời gian. Phiên bả
 
 Điều khoản này được điều chỉnh và giải thích theo pháp luật nước Cộng hòa xã hội chủ nghĩa Việt Nam.
 
-Mọi tranh chấp phát sinh trước hết được giải quyết thông qua thương lượng, hòa giải thiện chí. Bạn vui lòng liên hệ chúng tôi qua email để cùng giải quyết. Nếu không thể giải quyết trong vòng 30 ngày kể từ ngày một bên thông báo tranh chấp, tranh chấp sẽ được đưa ra Tòa án nhân dân có thẩm quyền tại Việt Nam, trừ khi pháp luật về bảo vệ quyền lợi người tiêu dùng cho phép bạn lựa chọn cơ chế khác.
+Mọi tranh chấp phát sinh trước hết được giải quyết thông qua thương lượng, hòa giải thiện chí. Bạn vui lòng liên hệ chúng tôi qua email để cùng giải quyết. Nếu không thể giải quyết trong vòng 30 ngày kể từ ngày một bên thông báo tranh chấp, tranh chấp sẽ được đưa ra Tòa án nhân dân có thẩm quyền tại Việt Nam, trừ khi pháp luật về bảo vệ quyền lợi người tiêu dùng ở nơi bạn cư trú cho phép bạn lựa chọn cơ chế khác. Điều khoản này không làm mất các quyền bắt buộc mà pháp luật nơi bạn sống dành cho người tiêu dùng và người dùng dịch vụ.
 
 ## 18. Điều khoản chung
 

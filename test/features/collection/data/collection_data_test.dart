@@ -27,8 +27,8 @@ void main() {
 
   group('search', () {
     test('folds Vietnamese diacritics and case', () {
-      expect(foldSearchText('Vandal Cafe Xanh Mát'), 'vandal cafe xanh mat');
-      expect(foldSearchText('  ĐỘC   Quyền '), 'doc quyen');
+      expect(foldForSearch('Vandal Cafe Xanh Mát'), 'vandal cafe xanh mat');
+      expect(foldForSearch('  ĐỘC   Quyền '), 'doc quyen');
       expect(matchesSearch('cafe mat', ['Vandal Cafe Xanh Mát']), isTrue);
       expect(matchesSearch('XANH', ['vandal cafe xanh mát']), isTrue);
       expect(matchesSearch('reaver', ['Vandal Cafe', null, 'Vandal']), isFalse);

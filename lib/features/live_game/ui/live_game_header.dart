@@ -5,6 +5,7 @@ import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/net_image.dart';
+import '../../../core/ui/sub_page.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/xmpp/xmpp.dart';
 import '../data/live_game_logic.dart';
@@ -13,11 +14,12 @@ import '../live_game_strings.dart';
 import '../providers/live_game_providers.dart';
 import 'live_widgets.dart';
 
-/// Header of the "Chi tiết trận" sheet (G3, ValBuddy "Game Details"):
-/// bold title + round close button, a large rounded map splash, then map
-/// name / mode with the refresh ring and the status chip, and the live
-/// score. Screens shorter than this get the compact header (small phones,
-/// large text): a slimmer splash and an inline live score.
+/// Header of the "Chi tiết trận" sheet (G3, ValBuddy "Game Details"): the
+/// shared sheet header (bold title + round close button), a large rounded
+/// map splash carrying the status chip, the refresh ring, the map name and
+/// the mode, then the live score. Screens shorter than this get the compact
+/// header (small phones, large text): a slimmer splash and an inline live
+/// score.
 const kCompactLiveHeaderHeight = 720.0;
 
 class LiveSheetHeader extends ConsumerWidget {
@@ -28,7 +30,6 @@ class LiveSheetHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final compact =
         MediaQuery.sizeOf(context).height < kCompactLiveHeaderHeight;
@@ -42,48 +43,20 @@ class LiveSheetHeader extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Center(
-          child: Container(
-            margin: const EdgeInsets.only(top: 8),
-            width: 36,
-            height: 4,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 4, 8, 4),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  LiveGameStrings.sheetTitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              // Outside a match there is no status row: keep the ring here.
-              if (status == null) LiveRefreshRing(puuid: puuid),
-              IconButton.filledTonal(
-                tooltip: LiveGameStrings.close,
-                style: IconButton.styleFrom(
-                  backgroundColor: theme.colorScheme.surfaceContainerHigh,
-                  foregroundColor: theme.colorScheme.onSurface,
-                ),
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context).maybePop(),
-              ),
+        SheetHeader(
+          title: LiveGameStrings.sheetTitle,
+          // Outside a match there is no hero: keep the ring here.
+          actions: [
+            if (status == null) ...[
+              LiveRefreshRing(puuid: puuid, size: 36),
+              const SizedBox(width: 8),
             ],
-          ),
+          ],
+          padding: const EdgeInsets.fromLTRB(20, 0, 12, 10),
         ),
         if (status != null)
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: LiveMapBanner(
               mapName: liveMapName(db, mapId),
               splash: db.mapByUrl(mapId)?.splash,
@@ -94,7 +67,7 @@ class LiveSheetHeader extends ConsumerWidget {
               ),
               status: status,
               compact: compact,
-              trailing: LiveRefreshRing(puuid: puuid, size: 36),
+              trailing: LiveRefreshRing(puuid: puuid, size: 36, onImage: true),
             ),
           ),
         if (match != null && !match.isPregame)
@@ -104,8 +77,10 @@ class LiveSheetHeader extends ConsumerWidget {
   }
 }
 
-/// Large rounded map splash, then the map name (bold) and mode (muted)
-/// with an optional [trailing] (refresh ring) and the status chip.
+/// Large rounded map splash with the status chip (top start), the refresh
+/// ring ([trailing], top end) and the map name + mode over a bottom scrim.
+/// Without art (unknown map, offline) a teal gradient carries the same
+/// text, so the header is never a blank box.
 class LiveMapBanner extends StatelessWidget {
   const LiveMapBanner({
     super.key,
@@ -125,7 +100,7 @@ class LiveMapBanner extends StatelessWidget {
   /// Slimmer splash for short screens.
   final bool compact;
 
-  /// Shown before the status chip (the refresh ring).
+  /// Top-end widget (the refresh ring, built for use over images).
   final Widget? trailing;
 
   @override
@@ -133,59 +108,104 @@ class LiveMapBanner extends StatelessWidget {
     final theme = Theme.of(context);
     final art = splash;
     final hasArt = art != null && art.isNotEmpty;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (hasArt) ...[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(ValRadius.card),
-            child: AspectRatio(
-              aspectRatio: compact ? 3.6 : 2.5,
-              child: ColoredBox(
-                color: theme.colorScheme.surfaceContainerHigh,
-                child: NetImage(
-                  art,
-                  fit: BoxFit.cover,
-                  error: const SizedBox.shrink(),
+    final name = (mapName ?? LiveGameStrings.sheetTitle).toUpperCase();
+    return Semantics(
+      container: true,
+      label: LiveGameStrings.joinParts([name, mode, status.label]),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(ValRadius.card + 4),
+        child: AspectRatio(
+          aspectRatio: compact ? 3.4 : 2.3,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [ValColors.liveTeal, ValColors.nearBlack],
+                  ),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 10),
-        ],
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    mapName ?? LiveGameStrings.sheetTitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+              if (hasArt)
+                NetImage(
+                  art,
+                  fit: BoxFit.cover,
+                  showSkeleton: false,
+                  error: const SizedBox.shrink(),
+                ),
+              // Scrims over the image (a gradient, never an Opacity layer):
+              // dark at the top for the chip / ring, at the bottom for text.
+              const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: [0, 0.3, 0.45, 1],
+                    colors: [
+                      Color(0x66000000),
+                      Color(0x00000000),
+                      Color(0x14000000),
+                      Color(0xE6000000),
+                    ],
                   ),
-                  Text(
-                    mode,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-            if (trailing != null) ...[const SizedBox(width: 4), trailing!],
-            const SizedBox(width: 4),
-            Flexible(child: LiveStatusPill(status)),
-          ],
+              Positioned(
+                left: 12,
+                right: 12,
+                top: 12,
+                child: Row(
+                  children: [
+                    Flexible(child: LiveStatusPill(status, onImage: true)),
+                    const Spacer(),
+                    if (trailing != null) ...[
+                      const SizedBox(width: 8),
+                      trailing!,
+                    ],
+                  ],
+                ),
+              ),
+              Positioned(
+                left: 16,
+                right: 16,
+                bottom: 12,
+                child: ExcludeSemantics(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          name,
+                          maxLines: 1,
+                          style: ValText.display(
+                            compact ? 26 : 34,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      if (mode.isNotEmpty)
+                        Text(
+                          mode,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: Colors.white.withValues(alpha: 0.82),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ],
+      ),
     );
   }
 }
@@ -206,31 +226,25 @@ class LiveScoreBanner extends ConsumerWidget {
     if (score == null) return const SizedBox.shrink();
     final theme = Theme.of(context);
     final colors = valColorsOf(context);
-    final style = TextStyle(
-      fontSize: compact ? 28 : 52,
-      height: 1.05,
-      fontWeight: FontWeight.w800,
-      fontFeatures: const [FontFeature.tabularFigures()],
+    final style = ValText.display(
+      compact ? 30 : 46,
       color: theme.colorScheme.onSurface,
-    );
+    ).copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
     final label = Text(
       LiveGameStrings.liveScore.toUpperCase(),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: theme.textTheme.labelSmall?.copyWith(
-        color: colors.muted,
-        letterSpacing: 1.2,
-      ),
+      style: ValText.label.copyWith(color: colors.muted, fontSize: 11),
     );
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+      padding: const EdgeInsets.fromLTRB(16, 2, 16, 10),
       child: Flex(
         direction: compact ? Axis.horizontal : Axis.vertical,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (compact) Flexible(child: label) else label,
-          const SizedBox(width: 12, height: 4),
+          const SizedBox(width: 12, height: 2),
           Semantics(
             label: '${LiveGameStrings.liveScore} ${score.text}',
             excludeSemantics: true,

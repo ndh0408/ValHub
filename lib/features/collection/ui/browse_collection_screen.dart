@@ -4,19 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/content/content_db.dart';
-import '../../../core/content/content_repository.dart';
+import '../../../core/accounts/account_providers.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/l10n/content_strings.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
-import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/currency_amount.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
+import '../../../core/ui/price_estimate.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/skin_art_card.dart';
+import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../../skin_detail/skin_detail_sheet.dart';
@@ -88,56 +89,63 @@ class _BrowseCollectionScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(_type.label)),
-      body: CollectionAccountGate(
-        builder: (context, account) {
-          final puuid = account.puuid;
-          return Column(
-            children: [
-              CollectionSearchField(
-                hint: _type == CollectionBrowseType.skin
-                    ? CollectionStrings.searchSkins
-                    : CollectionStrings.searchItems,
-                onChanged: (v) =>
-                    setState(() => _query = _query.copyWith(search: v)),
-              ),
-              if (_type == CollectionBrowseType.skin)
-                SkinFilterBar(query: _query, onChanged: _setQuery),
-              Expanded(
-                child: AsyncValueView(
-                  value: ref.watch(ownedItemsProvider(puuid)),
-                  puuid: puuid,
-                  onRetry: () => ref.invalidate(entitlementsProvider(puuid)),
-                  loading: switch (_type) {
-                    CollectionBrowseType.title => const SkeletonList(
-                      itemHeight: 56,
-                    ),
-                    CollectionBrowseType.skin => const CollectionGridSkeleton(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.95,
-                    ),
-                    _ => const CollectionGridSkeleton(),
-                  },
-                  data: (owned) => AdaptiveRefresh(
-                    onRefresh: () => refreshCollection(ref, puuid),
-                    child: _buildContent(
-                      context,
-                      puuid,
-                      owned,
-                      ref.watch(contentProvider).value ?? ContentDb.empty(),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
+    final account = ref.watch(activeAccountProvider);
+    if (account == null) return NoAccountPage(title: _type.label);
+    final puuid = account.puuid;
+    final isSkin = _type == CollectionBrowseType.skin;
+    return SubPageScaffold(
+      title: _type.label,
+      subtitle: CollectionStrings.browseSubtitle(_type.path),
+      onRefresh: () => refreshCollection(ref, puuid),
+      header: SearchStrip(
+        search: CollectionSearchField(
+          hint: isSkin
+              ? CollectionStrings.searchSkins
+              : CollectionStrings.searchItems,
+          onChanged: (v) => setState(() => _query = _query.copyWith(search: v)),
+        ),
+        filters: isSkin
+            ? SkinFilterBar(query: _query, onChanged: _setQuery)
+            : null,
+      ),
+      headerHeight: searchStripHeight(context, filters: isSkin),
+      slivers: ownedSlivers(
+        ref,
+        puuid: puuid,
+        loading: _skeleton(context),
+        data: (owned, db) => _slivers(context, puuid, owned, db),
       ),
     );
   }
 
-  Widget _buildContent(
+  /// Loading state with the same tile size / count of columns as the grid.
+  Widget _skeleton(BuildContext context) => switch (_type) {
+    CollectionBrowseType.title => const SkeletonList(
+      itemCount: 6,
+      itemHeight: 58,
+      spacing: 8,
+    ),
+    CollectionBrowseType.skin => SkeletonTileGrid(
+      maxExtent: 220,
+      tileHeight: skinCardExtent(context),
+      spacing: 12,
+      rows: 3,
+    ),
+    CollectionBrowseType.card => SkeletonTileGrid(
+      maxExtent: 130,
+      tileHeight: tileExtent(context, image: 200),
+    ),
+    CollectionBrowseType.buddy => SkeletonTileGrid(
+      maxExtent: 120,
+      tileHeight: tileExtent(context, image: 72, footer: true),
+    ),
+    _ => SkeletonTileGrid(
+      maxExtent: 120,
+      tileHeight: tileExtent(context, image: 80),
+    ),
+  };
+
+  List<Widget> _slivers(
     BuildContext context,
     String puuid,
     OwnedItems owned,
@@ -152,15 +160,15 @@ class _BrowseCollectionScreenState
           for (final t in all)
             if (matchesSearch(_query.search, [t.text, t.displayName])) t,
         ];
-        return _scroll(
+        return _list(
           summary: _itemsSummary(titles.length, all.length),
           empty: all.isEmpty,
+          noMatches: titles.isEmpty,
           sliver: SliverList.separated(
             itemCount: titles.length,
             separatorBuilder: (_, _) => const SizedBox(height: 8),
             itemBuilder: (context, i) => _TitleRow(text: titles[i].text),
           ),
-          noMatches: titles.isEmpty,
         );
       case CollectionBrowseType.card:
         final all = ownedCards(owned, db);
@@ -168,7 +176,7 @@ class _BrowseCollectionScreenState
           for (final c in all)
             if (matchesSearch(_query.search, [c.displayName])) c,
         ];
-        return _scroll(
+        return _list(
           summary: _itemsSummary(cards.length, all.length),
           empty: all.isEmpty,
           noMatches: cards.isEmpty,
@@ -194,7 +202,7 @@ class _BrowseCollectionScreenState
           for (final s in all)
             if (matchesSearch(_query.search, [s.displayName])) s,
         ];
-        return _scroll(
+        return _list(
           summary: _itemsSummary(sprays.length, all.length),
           empty: all.isEmpty,
           noMatches: sprays.isEmpty,
@@ -223,7 +231,7 @@ class _BrowseCollectionScreenState
           for (final f in all)
             if (matchesSearch(_query.search, [f.displayName])) f,
         ];
-        return _scroll(
+        return _list(
           summary: _itemsSummary(items.length, all.length),
           empty: all.isEmpty,
           noMatches: items.isEmpty,
@@ -252,7 +260,7 @@ class _BrowseCollectionScreenState
           for (final b in all)
             if (matchesSearch(_query.search, [b.buddy.displayName])) b,
         ];
-        return _scroll(
+        return _list(
           summary: _itemsSummary(items.length, all.length),
           empty: all.isEmpty,
           noMatches: items.isEmpty,
@@ -285,7 +293,7 @@ class _BrowseCollectionScreenState
     }
   }
 
-  Widget _skins(BuildContext context, OwnedItems owned, ContentDb db) {
+  List<Widget> _skins(BuildContext context, OwnedItems owned, ContentDb db) {
     final prices = ref.watch(priceServiceProvider);
     final all = owned.ownedCollectibleSkins;
     final skins = querySkins(all, _query, db: db, prices: prices);
@@ -294,7 +302,7 @@ class _BrowseCollectionScreenState
         ? formatEstimatedVp(value.totalVp)
         : formatVp(value.totalVp);
     final imageFlex = skinCardImageFlex(context);
-    return _scroll(
+    return _list(
       summary: SummaryStrip(
         text: _query.isFiltering
             ? CollectionStrings.summaryFiltered(skins.length, amount)
@@ -303,6 +311,7 @@ class _BrowseCollectionScreenState
             ? CollectionStrings.excludedRewards
             : null,
         highlighted: _query.isFiltering,
+        trailing: value.totalVp > 0 ? PriceEstimate(value.totalVp) : null,
       ),
       empty: all.isEmpty,
       noMatches: skins.isEmpty,
@@ -333,48 +342,42 @@ class _BrowseCollectionScreenState
     highlighted: _query.search.trim().isNotEmpty,
   );
 
-  Widget _scroll({
+  /// Summary line, then the items — or the empty / no-match state.
+  List<Widget> _list({
     required Widget summary,
     required Widget sliver,
     required bool empty,
     required bool noMatches,
-  }) {
-    return CustomScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      slivers: [
-        SliverToBoxAdapter(child: summary),
-        if (empty || noMatches)
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: empty
-                ? const EmptyView(
-                    title: CollectionStrings.browseEmptyTitle,
-                    message: CollectionStrings.browseEmpty,
-                    icon: Icons.inventory_2_outlined,
-                  )
-                : EmptyView(
-                    title: CollectionStrings.noResultsTitle,
-                    message: CollectionStrings.noResults,
-                    icon: Icons.search_off,
-                    action: _query.tiers.isEmpty
-                        ? null
-                        : OutlinedButton.icon(
-                            onPressed: () =>
-                                _setQuery(_query.copyWith(tiers: {})),
-                            icon: const Icon(Icons.filter_alt_off_outlined),
-                            label: const Text(CollectionStrings.clearTiers),
-                          ),
-                  ),
-          )
-        else
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-            sliver: sliver,
-          ),
-      ],
-    );
-  }
+  }) => [
+    SliverToBoxAdapter(child: summary),
+    if (empty || noMatches)
+      SliverFillRemaining(
+        hasScrollBody: false,
+        child: empty
+            ? const EmptyView(
+                title: CollectionStrings.browseEmptyTitle,
+                message: CollectionStrings.browseEmpty,
+                icon: Icons.inventory_2_outlined,
+              )
+            : EmptyView(
+                title: CollectionStrings.noResultsTitle,
+                message: CollectionStrings.noResults,
+                icon: Icons.search_off,
+                action: _query.tiers.isEmpty
+                    ? null
+                    : OutlinedButton.icon(
+                        onPressed: () => _setQuery(_query.copyWith(tiers: {})),
+                        icon: const Icon(Icons.filter_alt_off_outlined),
+                        label: const Text(CollectionStrings.clearTiers),
+                      ),
+              ),
+      )
+    else
+      SliverPadding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+        sliver: sliver,
+      ),
+  ];
 
   Widget _grid(
     BuildContext context, {
@@ -509,59 +512,45 @@ class SkinGridTile extends ConsumerWidget {
   }
 }
 
-/// Large preview of a spray / Flex / buddy on a soft glow.
+/// Large preview of a spray / Flex / buddy on a soft glow, in the shared
+/// sheet chrome (name + type, close button).
 Future<void> _showItemPreview(
   BuildContext context, {
   required String? image,
   required String name,
   required String type,
-}) => showModalBottomSheet<void>(
-  context: context,
-  useSafeArea: true,
-  builder: (context) {
-    final theme = Theme.of(context);
-    final accent = theme.colorScheme.primary;
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  radius: 0.7,
-                  colors: [
-                    accent.withValues(alpha: 0.18),
-                    accent.withValues(alpha: 0),
-                  ],
-                ),
-              ),
-              child: SizedBox(
-                height: 220,
-                width: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: NetImage(image, fit: BoxFit.contain),
-                ),
-              ),
+}) => showValSheet<void>(
+  context,
+  title: name,
+  subtitle: type,
+  builder: (context, _) {
+    final accent = Theme.of(context).colorScheme.primary;
+    return ListView(
+      shrinkWrap: true,
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      children: [
+        DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(ValRadius.card),
+            gradient: RadialGradient(
+              radius: 0.85,
+              colors: [
+                accent.withValues(alpha: 0.2),
+                accent.withValues(alpha: 0.02),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              name,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.titleLarge,
+            border: Border.all(color: accent.withValues(alpha: 0.25)),
+          ),
+          child: SizedBox(
+            height: 240,
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: NetImage(image, fit: BoxFit.contain),
             ),
-            const SizedBox(height: 6),
-            Text(
-              type.toUpperCase(),
-              style: ValText.label.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   },
 );

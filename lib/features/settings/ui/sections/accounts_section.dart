@@ -22,7 +22,8 @@ import '../widgets/settings_widgets.dart';
 
 /// "TÀI KHOẢN (n/10) · 2 ĐANG TRỰC TUYẾN" (S70, A4/A11): rows with the
 /// active marker and each account's live status, tap to switch (or re-login
-/// when the session expired), trash with confirmation, "+ Thêm tài khoản".
+/// when the session expired), trash with confirmation, "+ Thêm tài khoản"
+/// and the red "Đăng xuất tất cả tài khoản" row (with confirmation).
 class SettingsAccountsSection extends ConsumerWidget {
   const SettingsAccountsSection({super.key});
 
@@ -43,6 +44,7 @@ class SettingsAccountsSection extends ConsumerWidget {
       message: AccountStrings.removeAccountConfirm(a.riotId),
       confirmLabel: CommonStrings.delete,
       destructive: true,
+      icon: Icons.person_remove_outlined,
     );
     if (!ok || !context.mounted) return;
     // Capture before the await: removing the last account redirects to
@@ -113,6 +115,7 @@ class SettingsAccountsSection extends ConsumerWidget {
                       showAppSnackBar(context, AccountStrings.maxAccounts(max))
                 : () => unawaited(context.push(AuthRoutes.login)),
           ),
+          if (accounts.isNotEmpty) const SettingsSignOutAllRow(),
         ],
       ),
     );
@@ -221,9 +224,10 @@ class _AccountRow extends ConsumerWidget {
   }
 }
 
-/// Destructive "Đăng xuất tất cả tài khoản" button with confirmation.
-class SettingsSignOutAllButton extends ConsumerWidget {
-  const SettingsSignOutAllButton({super.key});
+/// Destructive "Đăng xuất tất cả tài khoản" row (red, iOS-settings style)
+/// at the end of the accounts card; asks for confirmation first.
+class SettingsSignOutAllRow extends ConsumerWidget {
+  const SettingsSignOutAllRow({super.key});
 
   Future<void> _signOutAll(BuildContext context, WidgetRef ref) async {
     final ok = await confirmSettingsAction(
@@ -232,6 +236,7 @@ class SettingsSignOutAllButton extends ConsumerWidget {
       message: AccountStrings.signOutAllConfirm,
       confirmLabel: AccountStrings.signOutAll,
       destructive: true,
+      icon: Icons.logout,
     );
     if (!ok || !context.mounted) return;
     final messenger = ScaffoldMessenger.maybeOf(context);
@@ -245,23 +250,15 @@ class SettingsSignOutAllButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (!ref.watch(hasAccountsProvider)) return const SizedBox.shrink();
-    final scheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: OutlinedButton.icon(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: scheme.error,
-          side: BorderSide(color: scheme.error.withValues(alpha: 0.6)),
-          minimumSize: const Size.fromHeight(48),
-        ),
-        icon: const Icon(Icons.logout),
-        label: const Text(
-          AccountStrings.signOutAll,
-          textAlign: TextAlign.center,
-        ),
-        onPressed: () => unawaited(_signOutAll(context, ref)),
+    final error = Theme.of(context).colorScheme.error;
+    return ListTile(
+      minTileHeight: 56,
+      leading: SizedBox(width: 44, child: Icon(Icons.logout, color: error)),
+      title: Text(
+        AccountStrings.signOutAll,
+        style: TextStyle(color: error, fontWeight: FontWeight.w600),
       ),
+      onTap: () => unawaited(_signOutAll(context, ref)),
     );
   }
 }

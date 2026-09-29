@@ -8,67 +8,31 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/sub_page.dart';
 import '../legal/legal_documents.dart';
 import '../legal/legal_strings.dart';
 import '../providers/settings_providers.dart';
 import '../settings_routes.dart';
 import '../settings_strings.dart';
+import 'sections/app_info_sections.dart';
+import 'widgets/app_icon_mark.dart';
 import 'widgets/legal_widgets.dart';
 import 'widgets/settings_widgets.dart';
 
-/// S72 "Giới thiệu & pháp lý" hub: app identity (icon, name, version,
-/// tagline), short intro, key features, every legal document, data-source
-/// credits, third-party licences and contact. Route `/settings/about`.
+/// S72 "Giới thiệu & pháp lý" hub (docs/design/IA.md "Pháp lý"): the app
+/// icon, name, version and a one-line intro; PHÁP LÝ (privacy policy, terms,
+/// community standards, Riot legal notice, third-party libraries); LIÊN HỆ
+/// (email, feedback); data-source credits; the copyright line and the Riot
+/// disclaimer at the bottom. Route `/settings/about`.
 class AboutScreen extends ConsumerWidget {
   const AboutScreen({super.key});
 
-  static const _features = <(IconData, String, String)>[
-    (
-      Icons.storefront_outlined,
-      LegalStrings.featureStore,
-      LegalStrings.featureStoreBody,
-    ),
-    (
-      Icons.favorite_border,
-      LegalStrings.featureWishlist,
-      LegalStrings.featureWishlistBody,
-    ),
-    (
-      Icons.military_tech_outlined,
-      LegalStrings.featureProfile,
-      LegalStrings.featureProfileBody,
-    ),
-    (
-      Icons.inventory_2_outlined,
-      LegalStrings.featureCollection,
-      LegalStrings.featureCollectionBody,
-    ),
-    (
-      Icons.groups_outlined,
-      LegalStrings.featureSocial,
-      LegalStrings.featureSocialBody,
-    ),
-  ];
-
   static IconData _iconOf(LegalDocument doc) => switch (doc.id) {
-    'terms' => Icons.gavel_outlined,
     'privacy' => Icons.privacy_tip_outlined,
+    'terms' => Icons.gavel_outlined,
     'community' => Icons.diversity_3_outlined,
-    'license' => Icons.verified_user_outlined,
     _ => Icons.policy_outlined,
   };
-
-  Future<void> _open(BuildContext context, WidgetRef ref, Uri uri) async {
-    final messenger = ScaffoldMessenger.maybeOf(context);
-    final ok = await ref.read(externalUrlOpenerProvider)(uri);
-    if (!ok) {
-      messenger
-        ?..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(content: Text(SettingsStrings.linkOpenFailed)),
-        );
-    }
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -76,132 +40,122 @@ class AboutScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
     final mailto = LegalInfo.contactMailto;
-    return Scaffold(
-      appBar: AppBar(title: const Text(SettingsStrings.aboutTitle)),
-      body: ListView(
-        padding: const EdgeInsets.only(bottom: 32),
-        children: [
-          _Identity(packageInfo: packageInfo),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-            child: Text(
-              LegalStrings.aboutIntro,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: muted,
-                height: 1.55,
-              ),
-            ),
-          ),
-          SettingsGroup(
-            title: LegalStrings.featuresHeader,
-            children: [
-              for (final (icon, title, body) in _features)
-                ListTile(
-                  leading: SettingsIcon(icon, color: ValColors.red),
-                  title: Text(title),
-                  subtitle: Text(body),
-                ),
-            ],
-          ),
-          SettingsGroup(
-            title: LegalStrings.legalHeader,
-            children: [
-              for (final doc in LegalDocuments.all)
-                ListTile(
-                  leading: SettingsIcon(_iconOf(doc)),
-                  title: Text(doc.title),
-                  subtitle: Text(doc.summary),
-                  trailing: const SettingsChevron(),
-                  onTap: () =>
-                      unawaited(context.push(SettingsRoutes.legal(doc))),
-                ),
-            ],
-          ),
-          SettingsGroup(
-            title: LegalStrings.creditsHeader,
-            children: [
-              ListTile(
-                leading: const SettingsIcon(Icons.data_object_outlined),
-                title: const Text(SettingsStrings.aboutCreditContent),
-                subtitle: const Text(SettingsStrings.aboutCreditContentBody),
-                trailing: const SettingsChevron(icon: Icons.open_in_new),
-                onTap: () =>
-                    unawaited(_open(context, ref, SettingsLinks.valorantApi)),
-              ),
-              const ListTile(
-                leading: SettingsIcon(Icons.videogame_asset_outlined),
-                title: Text(SettingsStrings.aboutCreditRiot),
-                subtitle: Text(SettingsStrings.aboutCreditRiotBody),
-              ),
-              ListTile(
-                leading: const SettingsIcon(Icons.menu_book_outlined),
-                title: const Text(SettingsStrings.aboutCreditDocs),
-                subtitle: const Text(SettingsStrings.aboutCreditDocsBody),
-                trailing: const SettingsChevron(icon: Icons.open_in_new),
-                onTap: () =>
-                    unawaited(_open(context, ref, SettingsLinks.apiDocs)),
-              ),
-              ListTile(
-                leading: const SettingsIcon(Icons.description_outlined),
-                title: const Text(LegalStrings.thirdPartyLicenses),
-                subtitle: const Text(LegalStrings.thirdPartyLicensesBody),
-                trailing: const SettingsChevron(),
-                onTap: () => showThirdPartyLicenses(
-                  context,
-                  version: packageInfo.value?.version,
-                ),
-              ),
-            ],
-          ),
-          SettingsGroup(
-            title: LegalStrings.supportHeader,
-            children: [
-              ListTile(
-                leading: const SettingsIcon(Icons.mail_outline),
-                title: const Text(LegalStrings.contact),
-                subtitle: const Text(LegalStrings.contactBody),
-                trailing: mailto == null
-                    ? null
-                    : const SettingsChevron(icon: Icons.open_in_new),
-                onTap: mailto == null
-                    ? null
-                    : () => unawaited(_open(context, ref, mailto)),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+    return SubPageScaffold(
+      title: SettingsStrings.aboutTitle,
+      slivers: [
+        SliverList.list(
+          children: [
+            _Identity(packageInfo: packageInfo),
+            SettingsGroup(
+              title: LegalStrings.legalHeader,
               children: [
-                Text(
-                  LegalInfo.copyrightNotice,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: muted,
-                    fontWeight: FontWeight.w600,
+                for (final doc in LegalDocuments.all)
+                  ListTile(
+                    leading: SettingsIcon(_iconOf(doc)),
+                    title: Text(doc.title),
+                    subtitle: Text(doc.summary),
+                    trailing: const SettingsChevron(),
+                    onTap: () =>
+                        unawaited(context.push(SettingsRoutes.legal(doc))),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  CommonStrings.riotDisclaimer,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: muted,
-                    height: 1.45,
+                ListTile(
+                  leading: const SettingsIcon(Icons.library_books_outlined),
+                  title: const Text(LegalStrings.thirdPartyLicenses),
+                  subtitle: const Text(LegalStrings.thirdPartyLicensesBody),
+                  trailing: const SettingsChevron(),
+                  onTap: () => showThirdPartyLicenses(
+                    context,
+                    version: packageInfo.value?.version,
                   ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
+            SettingsGroup(
+              title: LegalStrings.contactHeader,
+              children: [
+                ListTile(
+                  leading: const SettingsIcon(Icons.mail_outline),
+                  title: const Text(LegalStrings.contact),
+                  subtitle: const Text(LegalStrings.contactBody),
+                  trailing: mailto == null
+                      ? null
+                      : const SettingsChevron(icon: Icons.open_in_new),
+                  onTap: mailto == null
+                      ? null
+                      : () => unawaited(openSettingsLink(context, ref, mailto)),
+                ),
+                ListTile(
+                  leading: const SettingsIcon(Icons.forum_outlined),
+                  title: const Text(SettingsStrings.feedback),
+                  subtitle: const Text(SettingsStrings.feedbackSubtitle),
+                  trailing: const SettingsChevron(icon: Icons.open_in_new),
+                  onTap: () => unawaited(
+                    openSettingsLink(context, ref, SettingsLinks.feedback),
+                  ),
+                ),
+              ],
+            ),
+            SettingsGroup(
+              title: LegalStrings.creditsHeader,
+              children: [
+                ListTile(
+                  leading: const SettingsIcon(Icons.data_object_outlined),
+                  title: const Text(SettingsStrings.aboutCreditContent),
+                  subtitle: const Text(SettingsStrings.aboutCreditContentBody),
+                  trailing: const SettingsChevron(icon: Icons.open_in_new),
+                  onTap: () => unawaited(
+                    openSettingsLink(context, ref, SettingsLinks.valorantApi),
+                  ),
+                ),
+                const ListTile(
+                  leading: SettingsIcon(Icons.videogame_asset_outlined),
+                  title: Text(SettingsStrings.aboutCreditRiot),
+                  subtitle: Text(SettingsStrings.aboutCreditRiotBody),
+                ),
+                ListTile(
+                  leading: const SettingsIcon(Icons.menu_book_outlined),
+                  title: const Text(SettingsStrings.aboutCreditDocs),
+                  subtitle: const Text(SettingsStrings.aboutCreditDocsBody),
+                  trailing: const SettingsChevron(icon: Icons.open_in_new),
+                  onTap: () => unawaited(
+                    openSettingsLink(context, ref, SettingsLinks.apiDocs),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    LegalInfo.copyrightNotice,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    CommonStrings.riotDisclaimer,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: muted,
+                      height: 1.45,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
 
-/// Icon tile, name, tagline and "Phiên bản 1.2.3 · Bản dựng 42".
+/// App icon, "ValVN" wordmark, tagline, version pill and a short intro.
 class _Identity extends StatelessWidget {
   const _Identity({required this.packageInfo});
 
@@ -210,44 +164,35 @@ class _Identity extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final muted = theme.colorScheme.onSurfaceVariant;
-    final versionStyle = theme.textTheme.labelMedium?.copyWith(color: muted);
+    final scheme = theme.colorScheme;
+    final muted = scheme.onSurfaceVariant;
+    final versionStyle = theme.textTheme.labelMedium?.copyWith(
+      color: muted,
+      fontWeight: FontWeight.w600,
+    );
     return Padding(
-      padding: const EdgeInsets.only(top: 24),
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 4),
       child: Column(
         children: [
-          Container(
-            width: 84,
-            height: 84,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [ValColors.red, Color(0xFFBD3944)],
-              ),
-              borderRadius: BorderRadius.circular(22),
-              boxShadow: [
-                BoxShadow(
-                  color: ValColors.red.withValues(alpha: 0.35),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Text(
-              SettingsStrings.logoSuffix,
-              style: theme.textTheme.headlineMedium?.copyWith(
-                color: Colors.white,
-              ),
-            ),
-          ),
-          const SizedBox(height: 14),
+          const AppIconMark(size: 88),
+          const SizedBox(height: 16),
           Semantics(
             header: true,
-            child: Text(
-              CommonStrings.appName,
-              style: theme.textTheme.headlineMedium,
+            label: CommonStrings.appName,
+            excludeSemantics: true,
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  const TextSpan(text: SettingsStrings.logoPrefix),
+                  TextSpan(
+                    text: SettingsStrings.logoSuffix,
+                    style: TextStyle(
+                      color: legibleAccent(context, ValColors.red),
+                    ),
+                  ),
+                ],
+              ),
+              style: ValText.screenTitle.copyWith(color: scheme.onSurface),
             ),
           ),
           const SizedBox(height: 4),
@@ -256,14 +201,14 @@ class _Identity extends StatelessWidget {
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(color: muted),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           DecoratedBox(
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHigh,
+              color: scheme.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(ValRadius.pill),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: switch (packageInfo) {
                 AsyncData(:final value) => Text(
                   value.buildNumber.isEmpty
@@ -279,6 +224,15 @@ class _Identity extends StatelessWidget {
                 ),
                 _ => const Skeleton(width: 120, height: 12),
               },
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            LegalStrings.aboutIntro,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: muted,
+              height: 1.5,
             ),
           ),
         ],

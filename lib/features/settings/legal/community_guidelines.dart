@@ -41,8 +41,9 @@ const communityGuidelines = LegalDocument(
     LegalSection('Nội dung không được phép', [
       LegalList([
         LegalItem(
-          'Nội dung vi phạm pháp luật Việt Nam, xuyên tạc, gây phương hại đến '
-          'an ninh quốc gia, trật tự an toàn xã hội hoặc thuần phong mỹ tục.',
+          'Nội dung vi phạm pháp luật áp dụng (pháp luật Việt Nam và pháp luật '
+          'nơi bạn sống), kích động bạo lực hay thù ghét, gây phương hại đến '
+          'an toàn của người khác hoặc trật tự an toàn xã hội.',
         ),
         LegalItem(
           'Nội dung khiêu dâm, gợi dục, đặc biệt là liên quan đến trẻ em.',

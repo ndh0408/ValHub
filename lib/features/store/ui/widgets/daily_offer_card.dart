@@ -10,6 +10,7 @@ import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/currency_amount.dart';
+import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
 import '../../store_strings.dart';
@@ -48,6 +49,7 @@ class DailyOfferCard extends ConsumerWidget {
     );
     final name = skin?.displayName ?? CommonStrings.unknownItem;
     final price = offer.vpCost;
+    final roomyText = MediaQuery.textScalerOf(context).scale(1) <= 1.35;
 
     return TierCard(
       tint: tint,
@@ -124,20 +126,34 @@ class DailyOfferCard extends ConsumerWidget {
                   // Intrinsic width, pinned right: the name takes the rest.
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 120),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: price == null
-                          ? Text(
-                              CommonStrings.dash,
-                              style: theme.textTheme.bodyLarge,
-                            )
-                          : CurrencyAmount.vp(
-                              price,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: AlignmentDirectional.centerEnd,
+                          child: price == null
+                              ? Text(
+                                  CommonStrings.dash,
+                                  style: theme.textTheme.bodyLarge,
+                                )
+                              : CurrencyAmount.vp(
+                                  price,
+                                  style: theme.textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                        ),
+                        // The fixed 2.8:1 card has no room for a second
+                        // line at very large text sizes.
+                        if (price != null && roomyText)
+                          PriceEstimate(
+                            price,
+                            interactive: false,
+                            style: theme.textTheme.labelSmall,
+                          ),
+                      ],
                     ),
                   ),
                 ],

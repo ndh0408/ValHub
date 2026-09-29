@@ -10,6 +10,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/ui/error_view.dart';
 import '../../core/ui/net_image.dart';
 import '../../core/ui/skeleton.dart';
+import '../../core/ui/val_widgets.dart';
 import '../../core/util/clock.dart';
 import '../../core/xmpp/xmpp.dart';
 import 'data/live_game_logic.dart';
@@ -57,46 +58,92 @@ class CurrentGameCard extends ConsumerWidget {
       );
     }
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => unawaited(showLiveGameSheet(context)),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 12, 4, 12),
-          child: Row(
-            children: [
-              _Leading(
-                phase: state?.phase,
-                mapIcon: db.mapByUrl(match?.mapId)?.listViewIcon,
+    final mapArt = match == null ? null : db.mapByUrl(match.mapId)?.splash;
+    final chip = switch (state?.phase) {
+      LivePhase.pregame => const LiveStatusPill(LiveStatus.agentSelect),
+      LivePhase.ingame => const LiveStatusPill(LiveStatus.inProgress),
+      _ => null,
+    };
+    final surface = theme.colorScheme.surfaceContainer;
+    return ValCard(
+      padding: EdgeInsets.zero,
+      onTap: () => unawaited(showLiveGameSheet(context)),
+      child: Stack(
+        children: [
+          // In a match the map splash shows through on the right; a surface
+          // gradient over it keeps the text on the left readable (a
+          // gradient, never an Opacity layer).
+          if (mapArt != null && (state?.phase.inMatch ?? false)) ...[
+            Positioned.fill(
+              child: NetImage(
+                mapArt,
+                fit: BoxFit.cover,
+                showSkeleton: false,
+                error: const SizedBox.shrink(),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      LiveGameStrings.currentGame.toUpperCase(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    subtitle,
-                  ],
+            ),
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    stops: const [0, 0.5, 1],
+                    colors: [
+                      surface,
+                      surface.withValues(alpha: 0.92),
+                      surface.withValues(alpha: 0.35),
+                    ],
+                  ),
                 ),
               ),
-              LiveRefreshRing(puuid: puuid, size: 36),
-              Icon(
-                Icons.chevron_right,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ],
+            ),
+          ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 4, 12),
+            child: Row(
+              children: [
+                _Leading(
+                  phase: state?.phase,
+                  mapIcon: mapArt == null
+                      ? db.mapByUrl(match?.mapId)?.listViewIcon
+                      : null,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Text(
+                            LiveGameStrings.currentGame.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: ValText.label.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                              fontSize: 11,
+                            ),
+                          ),
+                          ?chip,
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      subtitle,
+                    ],
+                  ),
+                ),
+                LiveRefreshRing(puuid: puuid, size: 36),
+                Icon(
+                  Icons.chevron_right,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -24,6 +24,8 @@ import '../theme/app_theme.dart';
 import '../ui/adaptive.dart';
 import '../ui/empty_view.dart';
 import '../ui/error_view.dart';
+import '../ui/sub_page.dart';
+import '../ui/val_widgets.dart';
 import 'auth_callback.dart';
 import 'cookie_jar.dart';
 
@@ -301,48 +303,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<LoginNote?> _pickNote(List<(Account, LoginNote)> saved) =>
-      showModalBottomSheet<LoginNote>(
-        context: context,
-        useSafeArea: true,
-        builder: (context) => SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                child: Text(
-                  AccountStrings.quickFillTitle,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-              Flexible(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    for (final (account, note) in saved)
-                      ListTile(
-                        leading: AccountAvatar(
-                          account: account,
-                          size: 36,
-                          circle: true,
-                        ),
-                        title: Text(
-                          account.riotId,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        subtitle: Text(
-                          note.username,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        onTap: () => Navigator.of(context).pop(note),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
-            ],
-          ),
+      showValSheet<LoginNote>(
+        context,
+        title: AccountStrings.quickFillTitle,
+        subtitle: AccountStrings.quickFillSubtitle,
+        builder: (context, _) => ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
+          children: [
+            GroupedSection(
+              children: [
+                for (final (account, note) in saved)
+                  GroupedRow(
+                    title: account.riotId,
+                    subtitle: note.username,
+                    leading: AccountAvatar(
+                      account: account,
+                      size: 40,
+                      circle: true,
+                    ),
+                    onTap: () => Navigator.of(context).pop(note),
+                  ),
+              ],
+            ),
+          ],
         ),
       );
 
@@ -357,11 +341,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const _LoginTitle(),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          tooltip: CommonStrings.close,
-          onPressed: () =>
-              context.canPop() ? context.pop() : context.go('/welcome'),
+        leadingWidth: 64,
+        leading: Center(
+          child: SheetCloseButton(
+            onPressed: () =>
+                context.canPop() ? context.pop() : context.go('/welcome'),
+          ),
         ),
         bottom: _phase == _Phase.web && _progress < 1
             ? PreferredSize(
@@ -393,7 +378,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               secondary: socialHint ? AuthStrings.socialLoginHint : null,
               action: saved.isEmpty
                   ? null
-                  : TextButton.icon(
+                  : FilledButton.tonalIcon(
                       onPressed: () => unawaited(_quickFill(saved)),
                       icon: const Icon(Icons.key, size: 18),
                       label: const Text(AccountStrings.quickFill),
@@ -460,39 +445,65 @@ class _Hint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final light = theme.brightness == Brightness.light;
     return Container(
-      margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+      margin: const EdgeInsets.fromLTRB(12, 4, 12, 8),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(ValRadius.small),
+        color: scheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(ValRadius.card),
+        border: light ? Border.all(color: valColorsOf(context).hairline) : null,
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Icon(
-              Icons.info_outline,
-              size: 18,
-              color: theme.colorScheme.primary,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(text, style: theme.textTheme.bodySmall),
-                  if (secondary != null)
-                    Text(
-                      secondary!,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: scheme.primary.withValues(alpha: 0.12),
+                  ),
+                  child: Icon(
+                    Icons.lightbulb_outline,
+                    size: 18,
+                    color: legibleAccent(context, scheme.primary, min: 3),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        text,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                ],
-              ),
+                      if (secondary != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Text(
+                            secondary!,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            if (action != null) ...[const SizedBox(width: 8), action!],
+            if (action != null)
+              Align(alignment: AlignmentDirectional.centerEnd, child: action),
           ],
         ),
       ),
@@ -554,9 +565,18 @@ class _CenteredStatus extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox.square(
-              dimension: 36,
-              child: CircularProgressIndicator.adaptive(),
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: theme.colorScheme.primary.withValues(alpha: 0.12),
+              ),
+              alignment: Alignment.center,
+              child: const SizedBox.square(
+                dimension: 32,
+                child: CircularProgressIndicator.adaptive(),
+              ),
             ),
             const SizedBox(height: 20),
             Text(
@@ -598,7 +618,9 @@ class _FailedView extends StatelessWidget {
               Text(
                 AuthStrings.loginFailed,
                 textAlign: TextAlign.center,
-                style: theme.textTheme.titleMedium,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               const SizedBox(height: 6),
               Text(

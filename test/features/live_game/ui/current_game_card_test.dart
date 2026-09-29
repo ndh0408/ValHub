@@ -2,8 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/settings/app_settings.dart';
 import 'package:valvn/core/storage/prefs.dart';
+import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/features/live_game/current_game_card.dart';
 import 'package:valvn/features/live_game/live_game_sheet.dart';
+import 'package:valvn/features/live_game/live_game_strings.dart';
 
 import '../live_game_test_env.dart';
 
@@ -103,5 +105,44 @@ void main() {
     await pumpCard(tester, width: 320, textScale: 1.3);
     expect(tester.takeException(), isNull);
     expect(find.textContaining('Đang đấu'), findsOneWidget);
+  });
+
+  testWidgets('a status chip names a running match', (tester) async {
+    env
+      ..loop = 'INGAME'
+      ..core = coreMatchJson();
+    await pumpCard(tester);
+    expect(find.text(LiveGameStrings.statusInProgress), findsOneWidget);
+  });
+
+  testWidgets('a status chip names agent select', (tester) async {
+    env
+      ..loop = 'PREGAME'
+      ..pregame = pregameMatchJson();
+    await pumpCard(tester);
+    expect(find.text(LiveGameStrings.statusAgentSelect), findsOneWidget);
+  });
+
+  testWidgets('no chip outside a match', (tester) async {
+    await pumpCard(tester);
+    expect(find.text(LiveGameStrings.statusInProgress), findsNothing);
+    expect(find.text(LiveGameStrings.statusAgentSelect), findsNothing);
+  });
+
+  testWidgets('fits 320 dp at 200 % text on the light theme', (tester) async {
+    env
+      ..loop = 'INGAME'
+      ..core = coreMatchJson()
+      ..presence = scorePresence(env.clock.now());
+    await pumpLive(
+      tester,
+      env,
+      const Padding(padding: EdgeInsets.all(16), child: CurrentGameCard()),
+      width: 320,
+      textScale: 2,
+      theme: buildLightTheme(),
+    );
+    await settle(tester);
+    expect(tester.takeException(), isNull);
   });
 }

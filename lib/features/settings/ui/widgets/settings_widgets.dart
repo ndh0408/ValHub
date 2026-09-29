@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/section_header.dart';
+import '../../../../core/ui/sub_page.dart';
 
 /// One settings section: an uppercase header ("TÙY CHỌN") above a rounded
 /// card holding the rows, separated by hairlines. [footer] is rendered
@@ -144,6 +145,9 @@ class SettingsChevron extends StatelessWidget {
 /// A switch row with an icon, a title and an optional subtitle. Adaptive:
 /// an iOS switch (red when on) on iOS, the Material switch elsewhere, with a
 /// light haptic on every flip.
+///
+/// With [onInfo] an (i) button sits before the switch (e.g. "Cách tính giá
+/// VND"); tapping the row still flips the switch.
 class SettingsSwitchTile extends StatelessWidget {
   const SettingsSwitchTile({
     super.key,
@@ -153,6 +157,8 @@ class SettingsSwitchTile extends StatelessWidget {
     required this.onChanged,
     this.subtitle,
     this.showIcon = false,
+    this.onInfo,
+    this.infoTooltip,
   });
 
   /// Leading icon, drawn only when [showIcon] (preference rows are plain
@@ -164,32 +170,68 @@ class SettingsSwitchTile extends StatelessWidget {
   final ValueChanged<bool>? onChanged;
   final bool showIcon;
 
+  /// Opens an explanation of the option.
+  final VoidCallback? onInfo;
+  final String? infoTooltip;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final changed = onChanged;
-    return SwitchListTile.adaptive(
-      secondary: showIcon ? SettingsIcon(icon) : null,
-      title: Text(
-        title,
-        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
-      ),
-      subtitle: subtitle == null
-          ? null
-          : Text(
-              subtitle!,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+    final titleText = Text(
+      title,
+      style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+    );
+    final subtitleText = subtitle == null
+        ? null
+        : Text(
+            subtitle!,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
-      value: value,
-      activeTrackColor: theme.colorScheme.primary,
-      onChanged: changed == null
-          ? null
-          : (v) {
-              Haptics.light();
-              changed(v);
-            },
+          );
+    void flip(bool v) {
+      Haptics.light();
+      changed!(v);
+    }
+
+    final info = onInfo;
+    if (info == null) {
+      return SwitchListTile.adaptive(
+        secondary: showIcon ? SettingsIcon(icon) : null,
+        title: titleText,
+        subtitle: subtitleText,
+        value: value,
+        activeTrackColor: theme.colorScheme.primary,
+        onChanged: changed == null ? null : flip,
+      );
+    }
+    return ListTile(
+      leading: showIcon ? SettingsIcon(icon) : null,
+      title: titleText,
+      subtitle: subtitleText,
+      enabled: changed != null,
+      onTap: changed == null ? null : () => flip(!value),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.info_outline, size: 20),
+            color: theme.colorScheme.onSurfaceVariant,
+            tooltip: infoTooltip,
+            visualDensity: VisualDensity.compact,
+            onPressed: info,
+          ),
+          Semantics(
+            label: title,
+            child: Switch.adaptive(
+              value: value,
+              activeTrackColor: theme.colorScheme.primary,
+              onChanged: changed == null ? null : flip,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -197,9 +239,10 @@ class SettingsSwitchTile extends StatelessWidget {
 /// Simple choice picker (theme, item language, platform). Returns the
 /// picked value, or `null` when dismissed.
 ///
-/// iOS: a native action sheet (current option marked ✓, [hint] as the
-/// message). Elsewhere: a bottom sheet of rows with a check on the current
-/// option.
+/// iOS: a native action sheet (current option marked with a check, [hint]
+/// as the message). Elsewhere: a ValVN sheet ([showValSheet]: title, close
+/// button) with the options on one grouped card and a red check on the
+/// current one.
 Future<T?> showSettingsChoiceSheet<T>({
   required BuildContext context,
   required String title,
@@ -223,12 +266,10 @@ Future<T?> showSettingsChoiceSheet<T>({
     if (picked != null && picked != selected) Haptics.selection();
     return picked;
   }
-  final picked = await showModalBottomSheet<T>(
-    context: context,
-    useSafeArea: true,
-    isScrollControlled: true,
-    builder: (sheetContext) => SettingsChoiceList<T>(
-      title: title,
+  final picked = await showValSheet<T>(
+    context,
+    title: title,
+    builder: (sheetContext, _) => SettingsChoiceList<T>(
       hint: hint,
       options: [
         for (final (value, label) in options)
@@ -245,12 +286,12 @@ Future<T?> showSettingsChoiceSheet<T>({
 /// One option of [SettingsChoiceList].
 typedef SettingsChoice<T> = ({T value, String label, Widget? leading});
 
-/// Body of the Material choice sheet: title, optional hint, then one row
-/// per option with a red check on the current one (48 dp+ rows).
+/// Body of the Material choice sheet (under its [SheetHeader]): optional
+/// hint, an optional [header] (theme previews), then the options on one
+/// grouped card with a red check on the current one (52 dp rows).
 class SettingsChoiceList<T> extends StatelessWidget {
   const SettingsChoiceList({
     super.key,
-    required this.title,
     required this.options,
     required this.selected,
     required this.onPicked,
@@ -258,7 +299,6 @@ class SettingsChoiceList<T> extends StatelessWidget {
     this.header,
   });
 
-  final String title;
   final String? hint;
   final List<SettingsChoice<T>> options;
   final T selected;
@@ -271,19 +311,16 @@ class SettingsChoiceList<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final hairline = valColorsOf(context).hairline;
     return SingleChildScrollView(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 4),
-            child: Text(title, style: theme.textTheme.titleLarge),
-          ),
           if (hint != null)
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+              padding: const EdgeInsets.fromLTRB(4, 0, 4, 12),
               child: Text(
                 hint!,
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -292,30 +329,74 @@ class SettingsChoiceList<T> extends StatelessWidget {
                 ),
               ),
             ),
-          ?header,
-          const SizedBox(height: 4),
-          for (final o in options)
-            Semantics(
-              selected: o.value == selected,
-              child: ListTile(
-                minTileHeight: 52,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: o.leading,
-                title: Text(
-                  o.label,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: o.value == selected
-                        ? FontWeight.w700
-                        : FontWeight.w500,
-                  ),
-                ),
-                trailing: o.value == selected
-                    ? Icon(Icons.check_rounded, color: scheme.primary)
-                    : null,
-                onTap: () => onPicked(o.value),
-              ),
+          if (header != null) ...[header!, const SizedBox(height: 12)],
+          Material(
+            color: scheme.surfaceContainer,
+            clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(ValRadius.card),
+              side: theme.brightness == Brightness.light
+                  ? BorderSide(color: hairline)
+                  : BorderSide.none,
             ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var i = 0; i < options.length; i++) ...[
+                  if (i > 0) Divider(height: 1, thickness: 1, color: hairline),
+                  _ChoiceRow<T>(
+                    option: options[i],
+                    selected: options[i].value == selected,
+                    onTap: () => onPicked(options[i].value),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class _ChoiceRow<T> extends StatelessWidget {
+  const _ChoiceRow({
+    required this.option,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final SettingsChoice<T> option;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Semantics(
+      selected: selected,
+      child: ListTile(
+        minTileHeight: 52,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        leading: option.leading,
+        title: Text(
+          option.label,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          ),
+        ),
+        trailing: AnimatedSwitcher(
+          duration: ValMotion.fast,
+          child: selected
+              ? Icon(
+                  Icons.check_rounded,
+                  key: const ValueKey('on'),
+                  color: legibleAccent(context, scheme.primary, min: 3),
+                )
+              : const SizedBox(key: ValueKey('off'), width: 24),
+        ),
+        onTap: onTap,
       ),
     );
   }
@@ -329,39 +410,12 @@ Future<bool> confirmSettingsAction(
   required String message,
   required String confirmLabel,
   bool destructive = false,
+  IconData? icon,
 }) => showConfirmDialog(
   context,
   title: title,
   message: message,
   confirmLabel: confirmLabel,
   destructive: destructive,
-);
-
-/// Scrollable text sheet for the privacy policy / terms.
-Future<void> showSettingsTextSheet(
-  BuildContext context, {
-  required String title,
-  required String body,
-}) => showModalBottomSheet<void>(
-  context: context,
-  useSafeArea: true,
-  isScrollControlled: true,
-  builder: (sheetContext) => DraggableScrollableSheet(
-    expand: false,
-    initialChildSize: 0.7,
-    minChildSize: 0.4,
-    maxChildSize: 0.95,
-    builder: (innerContext, controller) {
-      final theme = Theme.of(innerContext);
-      return ListView(
-        controller: controller,
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-        children: [
-          Text(title, style: theme.textTheme.titleLarge),
-          const SizedBox(height: 12),
-          Text(body, style: theme.textTheme.bodyMedium?.copyWith(height: 1.5)),
-        ],
-      );
-    },
-  ),
+  icon: icon,
 );

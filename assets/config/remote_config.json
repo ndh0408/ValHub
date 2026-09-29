@@ -11,5 +11,35 @@
   },
   "webViewUserAgent": null,
   "apiUserAgent": null,
-  "clientVersionOverride": null
+  "clientVersionOverride": null,
+  "vpPrices": {
+    "VN": {
+      "currency": "VND",
+      "source": "https://viettelstore.vn/tin-tuc/cach-nap-valorant-vp-an-toan-nhanh-chong-va-bang-gia-moi-nhat-2026",
+      "updated": "2026-08-07",
+      "packs": [
+        { "vp": 52, "price": 10000 },
+        { "vp": 110, "price": 20000 },
+        { "vp": 275, "price": 50000 },
+        { "vp": 610, "price": 100000 },
+        { "vp": 1220, "price": 200000 },
+        { "vp": 3040, "price": 500000 },
+        { "vp": 6550, "price": 1000000 },
+        { "vp": 13250, "price": 2000000 }
+      ]
+    },
+    "US": {
+      "currency": "USD",
+      "source": "https://www.setup.gg/game/valorant/points/",
+      "updated": "2026-09-10",
+      "packs": [
+        { "vp": 475, "price": 4.99 },
+        { "vp": 1000, "price": 9.99 },
+        { "vp": 2050, "price": 19.99 },
+        { "vp": 3650, "price": 34.99 },
+        { "vp": 5350, "price": 49.99 },
+        { "vp": 11000, "price": 99.99 }
+      ]
+    }
+  }
 }

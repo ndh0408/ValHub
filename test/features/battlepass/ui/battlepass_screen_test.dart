@@ -7,6 +7,7 @@ import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/theme/app_theme.dart';
+import 'package:valvn/core/util/format.dart';
 import 'package:valvn/features/battlepass/battlepass_strings.dart';
 import 'package:valvn/features/battlepass/ui/battlepass_rewards_screen.dart';
 import 'package:valvn/features/battlepass/ui/widgets/daily_checkpoints.dart';
@@ -57,6 +58,14 @@ void main() {
     expect(find.text('840.466 / 1.162.500 XP'), findsOneWidget);
     expect(find.text(BattlePassStrings.premium.toUpperCase()), findsOneWidget);
     expect(find.text('Phần kết thúc sau 15 ngày'), findsOneWidget);
+    expect(
+      find.text(
+        BattlePassStrings.endsAtWall(
+          formatWallTime(DateTime.utc(2026, 10, 14), t0),
+        ),
+      ),
+      findsWidgets,
+    );
     expect(find.text(BattlePassStrings.viewAllRewards), findsOneWidget);
     expect(find.text('46/55 đã mở khóa'), findsOneWidget);
     expect(_rich('Còn cần 322.034 XP'), findsOneWidget);
@@ -82,7 +91,11 @@ void main() {
     expect(_rich('Cột mốc tiếp theo: 3/4'), findsOneWidget);
 
     expect(find.text(BattlePassStrings.weeklyMissions), findsOneWidget);
-    expect(find.text('1/3 hoàn thành'), findsOneWidget);
+    // Weekly reset (2026-09-30 00:00 UTC) also as local wall time.
+    final weeklyReset = BattlePassStrings.resetsAtWall(
+      formatWallTime(DateTime.utc(2026, 9, 30), t0),
+    );
+    expect(find.text('1/3 hoàn thành · $weeklyReset'), findsOneWidget);
     expect(find.text('1 ngày 12:00:00'), findsOneWidget);
     expect(find.byType(WeeklyMissionTile), findsNWidgets(3));
     expect(find.text(Bp.ultTitle), findsOneWidget);
@@ -110,6 +123,14 @@ void main() {
     expect(find.text(BattlePassStrings.dailyAllDone), findsOneWidget);
     expect(find.text(BattlePassStrings.allMissionsDone), findsOneWidget);
     expect(find.text('Nhiệm vụ mới sau 1 ngày 12:00:00'), findsOneWidget);
+    expect(
+      find.text(
+        BattlePassStrings.newMissionsAtWall(
+          formatWallTime(DateTime.utc(2026, 9, 30), t0),
+        ),
+      ),
+      findsOneWidget,
+    );
     await unmount(tester);
   });
 

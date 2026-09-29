@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../domain/competitive/names.dart';
+import '../util/search_text.dart';
 import 'xmpp_models.dart';
 import 'xmpp_store.dart';
 
@@ -86,12 +87,12 @@ class Friend {
 
   /// Case-insensitive, diacritic-insensitive Riot ID match.
   bool matches(String query) {
-    final q = foldVietnamese(query.trim());
+    final q = foldForSearch(query.trim());
     if (q.isEmpty) return true;
     final riotId = name?.riotId;
     if (riotId == null) return false;
-    return foldVietnamese(riotId).contains(q) ||
-        (note != null && foldVietnamese(note!).contains(q));
+    return foldForSearch(riotId).contains(q) ||
+        (note != null && foldForSearch(note!).contains(q));
   }
 
   @override
@@ -190,20 +191,4 @@ FriendsView buildFriendsView(
     offline: List.unmodifiable(offline),
     connection: s.connection,
   );
-}
-
-const _viFrom =
-    'àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ';
-const _viTo =
-    'aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyd';
-
-/// Lowercase without Vietnamese diacritics ("Đức" → "duc") for search.
-String foldVietnamese(String input) {
-  final lower = input.toLowerCase();
-  final out = StringBuffer();
-  for (final ch in lower.split('')) {
-    final i = _viFrom.indexOf(ch);
-    out.write(i < 0 ? ch : _viTo[i]);
-  }
-  return out.toString();
 }

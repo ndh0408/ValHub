@@ -98,7 +98,8 @@ void main() {
       expect(find.text(SettingsStrings.version('1.2.3')), findsOneWidget);
       expect(find.text(SettingsStrings.buildNumber('42')), findsOneWidget);
       expect(find.text('5,0 MB'), findsOneWidget);
-      expect(find.text(CommonStrings.riotDisclaimer), findsOneWidget);
+      // The Riot disclaimer lives in the "Giới thiệu & pháp lý" hub now.
+      expect(find.text(CommonStrings.riotDisclaimer), findsNothing);
       expect(find.text(AccountStrings.signOutAll), findsOneWidget);
     });
 
@@ -427,12 +428,14 @@ void main() {
       await _drainSnackBars(tester);
     });
 
-    testWidgets('privacy policy and terms open the legal document screen', (
+    testWidgets('privacy policy and terms open from the About hub', (
       tester,
     ) async {
       await pumpSettings(tester, accounts: [testAccount(1)]);
 
-      await tester.tap(find.text(SettingsStrings.privacyPolicy));
+      await tester.tap(find.text(SettingsStrings.aboutTitle));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(LegalDocuments.privacy.title));
       await tester.pumpAndSettle();
       expect(
         tester
@@ -443,7 +446,7 @@ void main() {
 
       await tester.pageBack();
       await tester.pumpAndSettle();
-      await tester.tap(find.text(SettingsStrings.terms));
+      await tester.tap(find.text(LegalDocuments.terms.title));
       await tester.pumpAndSettle();
       expect(
         tester

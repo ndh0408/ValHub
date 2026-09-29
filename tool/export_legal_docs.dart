@@ -3,8 +3,12 @@
 //
 //   dart run tool/export_legal_docs.dart
 //
-// test/features/settings/legal/legal_markdown_sync_test.dart fails when the
+// test/features/settings/legal/legal_documents_test.dart fails when the
 // Markdown is out of date.
+//
+// Only the documents shown in the app are exported (privacy, terms,
+// community, notice). The proprietary software licence is maintained by hand
+// in the repository (LICENSE, docs/legal/license.md) and is not touched here.
 import 'dart:io';
 
 import 'package:valvn/features/settings/legal/legal_documents.dart';

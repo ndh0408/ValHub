@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:valvn/core/domain/competitive/names.dart';
 import 'package:valvn/core/xmpp/xmpp.dart';
 import 'package:valvn/features/social/data/friend_sections.dart';
 
@@ -81,5 +82,39 @@ void main() {
 
   test('empty view → no sections', () {
     expect(friendSections(const FriendsView()), isEmpty);
+  });
+
+  group('searchFriends', () {
+    Friend named(String id, String name, String tag, {String? note}) => Friend(
+      puuid: id,
+      name: RiotName(gameName: name, tagLine: tag),
+      note: note,
+    );
+    final roster = FriendsView(
+      online: [named('duc', 'Đức', 'VN1'), named('cu', 'Cú Đêm', 'OWL')],
+      offline: [
+        named('hoa', 'Hoa', 'VN2', note: 'Bạn đại học'),
+        const Friend(puuid: 'nameless'),
+      ],
+    );
+    List<String> ids(FriendsView v) => [for (final f in v.all) f.puuid];
+
+    test('"duc", "ĐỨC" and "đức" all find "Đức"', () {
+      for (final q in ['duc', 'ĐỨC', 'đức', 'DUC', '  Duc ']) {
+        expect(ids(searchFriends(roster, q)), ['duc'], reason: q);
+      }
+    });
+
+    test('every word must match, in any order, tag and note included', () {
+      expect(ids(searchFriends(roster, 'dem cu')), ['cu']);
+      expect(ids(searchFriends(roster, 'owl')), ['cu']);
+      expect(ids(searchFriends(roster, 'dai hoc')), ['hoa']);
+      expect(ids(searchFriends(roster, 'cu vn1')), isEmpty);
+    });
+
+    test('a blank query keeps everyone (and the connection state)', () {
+      expect(identical(searchFriends(roster, '  '), roster), isTrue);
+      expect(searchFriends(roster, 'x').connection, roster.connection);
+    });
   });
 }

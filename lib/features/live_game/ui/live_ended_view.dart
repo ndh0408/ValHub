@@ -16,6 +16,8 @@ import '../../../core/ui/error_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/section_header.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/sub_page.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../../profile/profile_routes.dart';
 import '../data/live_game_models.dart';
@@ -25,8 +27,9 @@ import '../live_game_strings.dart';
 const kEndedRetryEvery = Duration(seconds: 20);
 const kEndedMaxRetries = 30;
 
-/// Ended state of the sheet (G11): the final scoreboard (K/D/A) once Riot
-/// publishes the match, and "Xem chi tiết trận ›" → S43.
+/// Ended state of the sheet (G11): a result summary and the final
+/// scoreboard (K/D/A) once Riot publishes the match, and a pinned "Xem chi
+/// tiết trận ›" → S43.
 class LiveEndedView extends ConsumerStatefulWidget {
   const LiveEndedView({super.key, required this.puuid, required this.ended});
 
@@ -88,11 +91,7 @@ class _LiveEndedViewState extends ConsumerState<LiveEndedView> {
 
     final Widget child;
     if (value != null) {
-      child = _Scoreboard(
-        details: value,
-        puuid: widget.puuid,
-        onOpenDetails: _openDetails,
-      );
+      child = _Scoreboard(details: value, puuid: widget.puuid);
     } else if (error is NotFoundException) {
       child = ListView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -121,22 +120,64 @@ class _LiveEndedViewState extends ConsumerState<LiveEndedView> {
         ],
       );
     } else {
-      child = const SkeletonList(itemCount: 6, itemHeight: 52);
+      child = const _EndedSkeleton();
     }
-    return AdaptiveRefresh(onRefresh: _refresh, child: child);
+    return Column(
+      children: [
+        Expanded(
+          child: AdaptiveRefresh(onRefresh: _refresh, child: child),
+        ),
+        // The one thing to do next, pinned like the "Rời trận" bar of a
+        // running match.
+        if (value != null)
+          SubPageBottomBar(
+            child: FilledButton.icon(
+              onPressed: _openDetails,
+              icon: const Icon(Icons.chevron_right),
+              iconAlignment: IconAlignment.end,
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(52),
+                shape: const StadiumBorder(),
+              ),
+              label: const Text(
+                LiveGameStrings.viewMatchDetails,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+      ],
+    );
   }
 }
 
+/// Loading state mirroring the summary card and the team lists.
+class _EndedSkeleton extends StatelessWidget {
+  const _EndedSkeleton();
+
+  @override
+  Widget build(BuildContext context) => const SkeletonShimmer(
+    child: SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+      child: Column(
+        children: [
+          Skeleton(height: 96, radius: 16, shimmer: false),
+          SizedBox(height: 16),
+          Skeleton(height: 12, width: 100, shimmer: false),
+          SizedBox(height: 10),
+          Skeleton(height: 200, radius: 16, shimmer: false),
+        ],
+      ),
+    ),
+  );
+}
+
 class _Scoreboard extends ConsumerWidget {
-  const _Scoreboard({
-    required this.details,
-    required this.puuid,
-    required this.onOpenDetails,
-  });
+  const _Scoreboard({required this.details, required this.puuid});
 
   final MatchDetails details;
   final String puuid;
-  final VoidCallback onOpenDetails;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -162,69 +203,95 @@ class _Scoreboard extends ConsumerWidget {
     if (ffa) {
       sections
         ..add(const SectionHeader(LiveGameStrings.tabAllPlayers))
-        ..addAll([
-          for (final s in details.scoreboard)
-            if (details.player(s.subject) case final p?)
-              _ScoreRow(
-                player: p,
-                stats: s,
-                db: db,
-                isSelf: p.subject == puuid,
-                hidden: hidden.contains(p.subject),
-              ),
-        ]);
+        ..add(
+          GroupedSection(
+            children: [
+              for (final s in details.scoreboard)
+                if (details.player(s.subject) case final p?)
+                  _ScoreRow(
+                    player: p,
+                    stats: s,
+                    db: db,
+                    isSelf: p.subject == puuid,
+                    hidden: hidden.contains(p.subject),
+                  ),
+            ],
+          ),
+        );
     } else {
       final sides = [...details.sideIds]
         ..sort((a, b) => (a == myTeam ? 0 : 1).compareTo(b == myTeam ? 0 : 1));
       for (final side in sides) {
-        sections.add(
-          SectionHeader(
-            side == myTeam
-                ? LiveGameStrings.tabYourTeam
-                : LiveGameStrings.tabEnemyTeam,
-          ),
-        );
-        for (final p in details.playersOfTeam(side)) {
-          sections.add(
-            _ScoreRow(
-              player: p,
-              stats: details.statsFor(p.subject),
-              db: db,
-              isSelf: p.subject == puuid,
-              hidden: hidden.contains(p.subject),
+        sections
+          ..add(
+            SectionHeader(
+              side == myTeam
+                  ? LiveGameStrings.tabYourTeam
+                  : LiveGameStrings.tabEnemyTeam,
+            ),
+          )
+          ..add(
+            GroupedSection(
+              children: [
+                for (final p in details.playersOfTeam(side))
+                  _ScoreRow(
+                    player: p,
+                    stats: details.statsFor(p.subject),
+                    db: db,
+                    isSelf: p.subject == puuid,
+                    hidden: hidden.contains(p.subject),
+                  ),
+              ],
             ),
           );
-        }
       }
     }
 
+    final mine = details.statsFor(puuid);
+    final statsLine = mine == null
+        ? null
+        : LiveGameStrings.yourStats(
+            '${formatNumber(mine.kills)}/${formatNumber(mine.deaths)}/'
+            '${formatNumber(mine.assists)}',
+            mine.acs == null ? null : formatNumber(mine.acs!.round()),
+          );
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.only(bottom: 16),
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+        ValCard(
+          margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+          borderColor: outcomeColor.withValues(alpha: 0.55),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              outcomeColor.withValues(alpha: 0.20),
+              outcomeColor.withValues(alpha: 0),
+            ],
+          ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 LiveGameStrings.finalScoreboard.toUpperCase(),
-                style: theme.textTheme.labelSmall?.copyWith(
+                style: ValText.label.copyWith(
                   color: colors.muted,
-                  letterSpacing: 1.2,
+                  fontSize: 11,
                 ),
               ),
               const SizedBox(height: 6),
               Wrap(
-                alignment: WrapAlignment.center,
                 crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 12,
-                runSpacing: 4,
+                spacing: 14,
+                runSpacing: 2,
                 children: [
                   Text(
                     result.outcome.label,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      color: outcomeColor,
-                      fontWeight: FontWeight.w800,
+                    style: ValText.display(
+                      34,
+                      color: legibleAccent(context, outcomeColor),
                     ),
                   ),
                   if (result.hasScore)
@@ -233,37 +300,34 @@ class _Scoreboard extends ConsumerWidget {
                         result.myScore!,
                         result.otherScore!,
                       ),
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
+                      style: ValText.display(34).copyWith(
+                        color: theme.colorScheme.onSurface,
                         fontFeatures: const [FontFeature.tabularFigures()],
                       ),
                     ),
                 ],
               ),
+              if (statsLine != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  statsLine,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ],
           ),
         ),
         const _ColumnsHeader(),
         ...sections,
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: FilledButton.tonalIcon(
-            onPressed: onOpenDetails,
-            icon: const Icon(Icons.chevron_right),
-            iconAlignment: IconAlignment.end,
-            label: const Text(
-              LiveGameStrings.viewMatchDetails,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ),
       ],
     );
   }
 }
 
-/// "K/D/A · ACS" column labels.
+/// "K/D/A · ACS" column labels, aligned with the rows of the groups below.
 class _ColumnsHeader extends StatelessWidget {
   const _ColumnsHeader();
 
@@ -275,7 +339,7 @@ class _ColumnsHeader extends StatelessWidget {
       letterSpacing: 0.6,
     );
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: const EdgeInsets.fromLTRB(32, 12, 32, 0),
       child: Row(
         children: [
           const Spacer(),
@@ -339,7 +403,7 @@ class _ScoreRow extends StatelessWidget {
               )
             : null,
       ),
-      constraints: const BoxConstraints(minHeight: 48),
+      constraints: const BoxConstraints(minHeight: 52),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Row(
         children: [

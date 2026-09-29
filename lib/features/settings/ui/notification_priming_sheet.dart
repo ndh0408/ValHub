@@ -5,10 +5,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/notifications/notification_service.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/ui/empty_view.dart';
-import '../../../core/ui/val_widgets.dart';
+import '../../../core/ui/sub_page.dart';
 import '../settings_strings.dart';
-import 'widgets/settings_widgets.dart';
 
 /// Outcome of the notification priming flow (S04).
 enum NotificationPrimingResult {
@@ -43,11 +41,10 @@ Future<NotificationPrimingResult> runNotificationPriming(
   ).read(notificationServiceProvider);
   if (await service.areEnabled()) return NotificationPrimingResult.granted;
   if (!context.mounted) return NotificationPrimingResult.dismissed;
-  return await showModalBottomSheet<NotificationPrimingResult>(
-        context: context,
-        useSafeArea: true,
-        isScrollControlled: true,
-        builder: (_) => const NotificationPrimingSheet(),
+  return await showValSheet<NotificationPrimingResult>(
+        context,
+        title: SettingsStrings.primingTitle,
+        builder: (_, _) => const NotificationPrimingSheet(),
       ) ??
       NotificationPrimingResult.dismissed;
 }
@@ -82,97 +79,218 @@ class _NotificationPrimingSheetState
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+    final hairline = valColorsOf(context).hairline;
+    const points = [
+      (
+        Icons.storefront_outlined,
+        ValColors.red,
+        SettingsStrings.primingPointStore,
+        SettingsStrings.primingPointStoreDetail,
+      ),
+      (
+        Icons.favorite_border,
+        TierColors.premium,
+        SettingsStrings.primingPointWishlist,
+        SettingsStrings.primingPointWishlistDetail,
+      ),
+      (
+        Icons.nightlight_outlined,
+        Color(0xFF9B7BFF),
+        SettingsStrings.primingPointNightMarket,
+        SettingsStrings.primingPointNightMarketDetail,
+      ),
+    ];
+    final scrollable = SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Center(
-            child: StateIcon(
-              icon: Icons.notifications_active_outlined,
-              color: scheme.primary,
+          const Center(child: _BellArt()),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              SettingsStrings.primingBody,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+                height: 1.45,
+              ),
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            SettingsStrings.primingTitle,
-            style: theme.textTheme.titleLarge,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            SettingsStrings.primingBody,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.onSurfaceVariant,
+          Material(
+            color: scheme.surfaceContainer,
+            clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(ValRadius.card),
+              side: theme.brightness == Brightness.light
+                  ? BorderSide(color: hairline)
+                  : BorderSide.none,
             ),
-          ),
-          const SizedBox(height: 16),
-          ValCard(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             child: Column(
               children: [
-                for (final (icon, color, text) in const [
-                  (
-                    Icons.storefront_outlined,
-                    ValColors.red,
-                    SettingsStrings.primingPointStore,
+                for (var i = 0; i < points.length; i++) ...[
+                  if (i > 0) Divider(height: 1, thickness: 1, color: hairline),
+                  _Benefit(
+                    icon: points[i].$1,
+                    color: points[i].$2,
+                    title: points[i].$3,
+                    detail: points[i].$4,
                   ),
-                  (
-                    Icons.favorite_border,
-                    TierColors.premium,
-                    SettingsStrings.primingPointWishlist,
-                  ),
-                  (
-                    Icons.nightlight_outlined,
-                    Color(0xFF9B7BFF),
-                    SettingsStrings.primingPointNightMarket,
-                  ),
-                ])
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      children: [
-                        SettingsIcon(icon, color: color),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            text,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                ],
               ],
             ),
           ),
-          const SizedBox(height: 20),
-          FilledButton(
-            style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
-            onPressed: _requesting ? null : () => unawaited(_enable()),
-            child: _requesting
-                ? const SizedBox.square(
-                    dimension: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Text(SettingsStrings.primingEnable),
+          const SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.tune, size: 16, color: scheme.onSurfaceVariant),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  SettingsStrings.primingFootnote,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          TextButton(
-            style: TextButton.styleFrom(minimumSize: const Size(0, 48)),
-            onPressed: _requesting
-                ? null
-                : () =>
-                      Navigator.of(context)
-                          .pop(NotificationPrimingResult.dismissed),
-            child: const Text(SettingsStrings.primingLater),
+        ],
+      ),
+    );
+    // The buttons stay pinned under the scrolling explanation, so they are
+    // reachable on short screens and at large text sizes.
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Flexible(child: scrollable),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              FilledButton(
+                style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
+                onPressed: _requesting ? null : () => unawaited(_enable()),
+                child: _requesting
+                    ? const SizedBox.square(
+                        dimension: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text(SettingsStrings.primingEnable),
+              ),
+              const SizedBox(height: 4),
+              TextButton(
+                style: TextButton.styleFrom(minimumSize: const Size(0, 48)),
+                onPressed: _requesting
+                    ? null
+                    : () =>
+                          Navigator.of(context)
+                              .pop(NotificationPrimingResult.dismissed),
+                child: const Text(SettingsStrings.primingLater),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The bell in two concentric tinted rings (illustration of the sheet).
+class _BellArt extends StatelessWidget {
+  const _BellArt();
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = legibleAccent(context, ValColors.red, min: 3);
+    return ExcludeSemantics(
+      child: Container(
+        width: 104,
+        height: 104,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: accent.withValues(alpha: 0.08),
+        ),
+        alignment: Alignment.center,
+        child: Container(
+          width: 72,
+          height: 72,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: accent.withValues(alpha: 0.16),
+          ),
+          child: Icon(
+            Icons.notifications_active_rounded,
+            size: 36,
+            color: accent,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// One benefit: tinted icon tile, bold title, muted detail.
+class _Benefit extends StatelessWidget {
+  const _Benefit({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.detail,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String detail;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tint = legibleAccent(context, color, min: 3);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 20, color: tint),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  detail,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -34,6 +34,7 @@ class AppSettings {
     this.wishlistNotifications = false,
     this.wishlistNotificationsByAccount = const {},
     this.nightMarketNotifications = false,
+    this.showPriceEstimate = true,
   });
 
   factory AppSettings.fromJson(Object? json) {
@@ -63,6 +64,7 @@ class AppSettings {
       },
       nightMarketNotifications:
           asBool(m['nightMarketNotifications']) ?? d.nightMarketNotifications,
+      showPriceEstimate: asBool(m['showPriceEstimate']) ?? d.showPriceEstimate,
     );
   }
 
@@ -96,6 +98,10 @@ class AppSettings {
   /// "Khi Chợ Đêm mở" (ValVN extra).
   final bool nightMarketNotifications;
 
+  /// "Hiện giá quy đổi ước tính": the local-currency estimate next to VP
+  /// prices (ValVN extra).
+  final bool showPriceEstimate;
+
   JsonMap toJson() => {
     'themeMode': themeMode.name,
     'itemLanguage': itemLanguage.name,
@@ -106,6 +112,7 @@ class AppSettings {
     'wishlistNotifications': wishlistNotifications,
     'wishlistNotificationsByAccount': wishlistNotificationsByAccount,
     'nightMarketNotifications': nightMarketNotifications,
+    'showPriceEstimate': showPriceEstimate,
   };
 
   AppSettings copyWith({
@@ -118,6 +125,7 @@ class AppSettings {
     bool? wishlistNotifications,
     Map<String, bool>? wishlistNotificationsByAccount,
     bool? nightMarketNotifications,
+    bool? showPriceEstimate,
   }) => AppSettings(
     themeMode: themeMode ?? this.themeMode,
     itemLanguage: itemLanguage ?? this.itemLanguage,
@@ -131,6 +139,7 @@ class AppSettings {
         wishlistNotificationsByAccount ?? this.wishlistNotificationsByAccount,
     nightMarketNotifications:
         nightMarketNotifications ?? this.nightMarketNotifications,
+    showPriceEstimate: showPriceEstimate ?? this.showPriceEstimate,
   );
 
   @override
@@ -147,7 +156,8 @@ class AppSettings {
         other.wishlistNotificationsByAccount,
         wishlistNotificationsByAccount,
       ) &&
-      other.nightMarketNotifications == nightMarketNotifications;
+      other.nightMarketNotifications == nightMarketNotifications &&
+      other.showPriceEstimate == showPriceEstimate;
 
   @override
   int get hashCode => Object.hash(
@@ -164,6 +174,7 @@ class AppSettings {
       ),
     ),
     nightMarketNotifications,
+    showPriceEstimate,
   );
 }
 

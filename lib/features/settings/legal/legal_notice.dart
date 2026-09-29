@@ -55,8 +55,8 @@ const legalNotice = LegalDocument(
         ),
         LegalItem(
           'ValVN được xây dựng bằng Flutter cùng nhiều thư viện mã nguồn mở. '
-          'Danh sách và giấy phép của từng thư viện có tại mục "Giấy phép thư '
-          'viện bên thứ ba".',
+          'Danh sách và giấy phép của từng thư viện có tại mục "Thư viện bên '
+          'thứ ba" trong trang Giới thiệu & pháp lý.',
           lead: 'Thư viện mã nguồn mở:',
         ),
       ]),
@@ -64,7 +64,7 @@ const legalNotice = LegalDocument(
     LegalSection('Bản quyền ValVN', [
       LegalParagraph(
         '${LegalInfo.copyrightNotice} ValVN là phần mềm độc quyền; việc sử dụng '
-        'tuân theo Giấy phép phần mềm và Điều khoản sử dụng.',
+        'tuân theo Điều khoản sử dụng.',
       ),
     ]),
     LegalSection('Báo cáo vi phạm quyền sở hữu trí tuệ', [

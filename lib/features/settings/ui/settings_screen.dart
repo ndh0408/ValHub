@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/accounts/account_providers.dart';
+import '../../../core/riot/platform_status.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../providers/settings_providers.dart';
 import '../settings_strings.dart';
@@ -11,10 +13,11 @@ import 'sections/preferences_sections.dart';
 
 /// TAB 5 "Cài đặt" (S70). Route `/settings`.
 ///
-/// Sections: TÀI KHOẢN, TÙY CHỌN, THÔNG BÁO, GIAO DIỆN, ỨNG DỤNG, THÔNG TIN,
-/// then "Đăng xuất tất cả tài khoản". Everything is local except the
-/// maintenance banner, so pull-to-refresh only re-measures the cache and
-/// re-reads the notification permission.
+/// Sections: TÀI KHOẢN (ending with "Đăng xuất tất cả tài khoản"), TÙY CHỌN,
+/// THÔNG BÁO, GIAO DIỆN, HỖ TRỢ (server status, session log, feedback),
+/// ỨNG DỤNG, and finally THÔNG TIN with the single "Giới thiệu & pháp lý"
+/// row (docs/design/IA.md). Pull-to-refresh re-measures the cache,
+/// re-reads the notification permission and the server status.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -23,9 +26,11 @@ class SettingsScreen extends ConsumerWidget {
     return TabPageScaffold(
       title: SettingsStrings.title,
       onRefresh: () async {
+        final region = ref.read(activeAccountProvider)?.region;
         ref
           ..invalidate(notificationsAllowedProvider)
           ..invalidate(cacheSizeBytesProvider);
+        if (region != null) ref.invalidate(platformStatusProvider(region));
         try {
           await ref.read(cacheSizeBytesProvider.future);
         } on Object {
@@ -41,10 +46,9 @@ class SettingsScreen extends ConsumerWidget {
               SettingsOptionsSection(),
               SettingsNotificationsSection(),
               SettingsAppearanceSection(),
+              SettingsSupportSection(),
               SettingsAppSection(),
               SettingsAboutSection(),
-              SizedBox(height: 28),
-              SettingsSignOutAllButton(),
               SizedBox(height: 32),
             ]),
           ),

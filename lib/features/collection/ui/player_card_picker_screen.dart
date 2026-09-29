@@ -3,20 +3,35 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/models/cosmetic_models.dart';
 import '../../../core/domain/loadout/loadout.dart';
+import '../../../core/l10n/content_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
+import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/sub_page.dart';
+import '../../../core/ui/val_widgets.dart';
+import '../../../core/util/format.dart';
 import '../collection_strings.dart';
 import '../data/collection_items.dart';
 import '../data/collection_search.dart';
 import '../providers/collection_providers.dart';
 import 'widgets/collection_widgets.dart';
+import 'widgets/identity_preview.dart';
 import 'widgets/loadout_actions.dart';
 
-/// S31 "Chọn thẻ người chơi". Route `/collection/card`.
+/// Tall card art grid: tile width limit and art height.
+const _cardMaxExtent = 130.0;
+const _cardArtHeight = 200.0;
+
+/// S31 "Đổi thẻ người chơi". Route `/collection/card`.
+///
+/// The equipped card as the in-game lobby banner (name + title over the
+/// art; the hub banner flies into it), a pinned search and the grid of owned
+/// cards. A tap opens the preview sheet with "Trang bị".
 class PlayerCardPickerScreen extends ConsumerStatefulWidget {
   const PlayerCardPickerScreen({super.key});
 
@@ -31,104 +46,190 @@ class _PlayerCardPickerScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text(CollectionStrings.playerCardTitle)),
-      body: CollectionAccountGate(
-        builder: (context, account) => Column(
-          children: [
-            CollectionSearchField(
-              hint: CollectionStrings.searchCards,
-              onChanged: (v) => setState(() => _search = v),
-            ),
-            Expanded(
-              child: LoadoutDataBuilder(
-                puuid: account.puuid,
-                loading: const CollectionGridSkeleton(childAspectRatio: 0.5),
-                builder: (context, snapshot, owned, db) {
-                  final equipped = snapshot.loadout.identity.playerCardId;
-                  final cards = [
-                    for (final c in ownedCards(owned, db))
-                      if (matchesSearch(_search, [c.displayName])) c,
-                  ];
-                  return AdaptiveRefresh(
-                    onRefresh: () => refreshCollection(ref, account.puuid),
-                    child: Column(
-                      children: [
-                        SavingBar(visible: snapshot.isPending),
-                        Expanded(
-                          child: cards.isEmpty
-                              ? ListView(
-                                  children: const [
-                                    EmptyView(
-                                      title: CollectionStrings.noResultsTitle,
-                                      message: CollectionStrings.noResults,
-                                      icon: Icons.search_off,
-                                    ),
-                                  ],
-                                )
-                              : GridView.builder(
-                                  keyboardDismissBehavior:
-                                      ScrollViewKeyboardDismissBehavior.onDrag,
-                                  padding: const EdgeInsets.fromLTRB(
-                                    16,
-                                    4,
-                                    16,
-                                    24,
-                                  ),
-                                  gridDelegate:
-                                      SliverGridDelegateWithMaxCrossAxisExtent(
-                                        maxCrossAxisExtent: 130,
-                                        mainAxisSpacing: 10,
-                                        crossAxisSpacing: 10,
-                                        mainAxisExtent: tileExtent(
-                                          context,
-                                          image: 200,
-                                        ),
-                                      ),
-                                  itemCount: cards.length,
-                                  itemBuilder: (context, i) {
-                                    final card = cards[i];
-                                    return ArtTile(
-                                      key: ValueKey(card.uuid),
-                                      image: card.largeArt ?? card.smallArt,
-                                      label: card.displayName,
-                                      imageFit: BoxFit.cover,
-                                      imagePadding: EdgeInsets.zero,
-                                      selected: card.uuid == equipped,
-                                      onTap: () => unawaited(
-                                        showCardPreview(
-                                          context,
-                                          puuid: account.puuid,
-                                          card: card,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
+    final account = ref.watch(activeAccountProvider);
+    if (account == null) {
+      return const NoAccountPage(title: CollectionStrings.playerCardTitle);
+    }
+    final puuid = account.puuid;
+    final search = CollectionSearchField(
+      hint: CollectionStrings.searchCards,
+      initialValue: _search,
+      onChanged: (v) => setState(() => _search = v),
+    );
+    return SubPageScaffold(
+      title: CollectionStrings.playerCardTitle,
+      subtitle: CollectionStrings.playerCardSubtitle,
+      onRefresh: () => refreshCollection(ref, puuid),
+      slivers: loadoutSlivers(
+        ref,
+        puuid: puuid,
+        loading: const _CardPickerSkeleton(),
+        data: (snapshot, owned, db) {
+          final identity = snapshot.loadout.identity;
+          final equippedId = identity.playerCardId;
+          final equipped = equippedId == null ? null : db.card(equippedId);
+          final title = db.title(identity.titleOrNone);
+          final all = ownedCards(owned, db);
+          final cards = [
+            for (final c in all)
+              if (matchesSearch(_search, [c.displayName])) c,
+          ];
+          final filtering = _search.trim().isNotEmpty;
+          return [
+            if (snapshot.isFromCache)
+              const SliverToBoxAdapter(child: CachedLoadoutBanner()),
+            SliverToBoxAdapter(child: SavingBar(visible: snapshot.isPending)),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                child: IdentityPreview(
+                  heroTag: CollectionHeroTags.equippedCard,
+                  cardArt: equipped?.wideArt,
+                  name: account.gameName,
+                  title: title == null || title.isNoTitle ? null : title.text,
+                  badge: const ArtPill(
+                    label: CollectionStrings.equipped,
+                    icon: Icons.check,
+                  ),
+                  semanticsLabel: CollectionStrings.equippedCardLabel(
+                    equipped?.displayName ?? CollectionStrings.unknownCard,
+                  ),
+                  onTap: equipped == null
+                      ? null
+                      : () => unawaited(
+                          showCardPreview(
+                            context,
+                            puuid: puuid,
+                            card: equipped,
+                          ),
                         ),
-                      ],
-                    ),
-                  );
-                },
+                ),
               ),
             ),
-          ],
-        ),
+            if (equipped != null)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 2, 24, 6),
+                  child: Text(
+                    equipped.displayName,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ),
+            pinnedSearchSliver(
+              context,
+              key: const ValueKey('card-search'),
+              search: search,
+            ),
+            SliverToBoxAdapter(
+              child: SummaryStrip(
+                text: filtering
+                    ? CollectionStrings.summaryFilteredItems(
+                        cards.length,
+                        all.length,
+                      )
+                    : CollectionStrings.cardsCount(formatNumber(all.length)),
+                highlighted: filtering,
+              ),
+            ),
+            if (cards.isEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: all.isEmpty
+                    ? const EmptyView(
+                        title: CollectionStrings.browseEmptyTitle,
+                        message: CollectionStrings.browseEmpty,
+                        icon: Icons.style_outlined,
+                      )
+                    : const EmptyView(
+                        title: CollectionStrings.noResultsTitle,
+                        message: CollectionStrings.noResults,
+                        icon: Icons.search_off,
+                      ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                sliver: SliverGrid.builder(
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: _cardMaxExtent,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    mainAxisExtent: tileExtent(context, image: _cardArtHeight),
+                  ),
+                  itemCount: cards.length,
+                  itemBuilder: (context, i) {
+                    final card = cards[i];
+                    return ArtTile(
+                      key: ValueKey(card.uuid),
+                      image: card.largeArt ?? card.smallArt,
+                      label: card.displayName,
+                      imageFit: BoxFit.cover,
+                      imagePadding: EdgeInsets.zero,
+                      selected: card.uuid == equippedId,
+                      onTap: () {
+                        Haptics.selection();
+                        unawaited(
+                          showCardPreview(context, puuid: puuid, card: card),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+          ];
+        },
       ),
     );
   }
 }
 
-/// Preview of a card with "Trang bị" (S31 tap → preview).
+class _CardPickerSkeleton extends StatelessWidget {
+  const _CardPickerSkeleton();
+
+  @override
+  Widget build(BuildContext context) => SkeletonShimmer(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 6, 16, 12),
+          child: AspectRatio(
+            aspectRatio: kWideCardRatio,
+            child: Skeleton(radius: ValRadius.card, shimmer: false),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 4, 16, 12),
+          child: Skeleton(height: 44, radius: ValRadius.pill, shimmer: false),
+        ),
+        SkeletonTileGrid(
+          maxExtent: _cardMaxExtent,
+          tileHeight: tileExtent(context, image: _cardArtHeight),
+          rows: 2,
+          shimmer: false,
+        ),
+      ],
+    ),
+  );
+}
+
+/// Preview of a card with "Trang bị" (S31 tap → preview): the tall art,
+/// the wide lobby banner and the equip button.
 Future<void> showCardPreview(
   BuildContext context, {
   required String puuid,
   required PlayerCard card,
-}) => showModalBottomSheet<void>(
-  context: context,
-  isScrollControlled: true,
-  useSafeArea: true,
-  builder: (_) => _CardPreviewSheet(puuid: puuid, card: card),
+}) => showValSheet<void>(
+  context,
+  title: card.displayName,
+  subtitle: ContentStrings.itemCard,
+  builder: (context, _) => _CardPreviewSheet(puuid: puuid, card: card),
 );
 
 class _CardPreviewSheet extends ConsumerWidget {
@@ -144,74 +245,86 @@ class _CardPreviewSheet extends ConsumerWidget {
     final isEquipped = snapshot?.loadout.identity.playerCardId == card.uuid;
     final saving = snapshot?.isPending ?? false;
     final height = MediaQuery.sizeOf(context).height;
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: height * 0.5),
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(
+        16,
+        0,
+        16,
+        16 + MediaQuery.paddingOf(context).bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: height * 0.42),
               child: AspectRatio(
                 aspectRatio: 268 / 640,
-                child: NetImage(
-                  card.largeArt ?? card.smallArt,
-                  fit: BoxFit.contain,
-                  borderRadius: BorderRadius.circular(12),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(ValRadius.small),
+                    boxShadow: const [
+                      BoxShadow(color: Color(0x44000000), blurRadius: 16),
+                    ],
+                  ),
+                  child: NetImage(
+                    card.largeArt ?? card.smallArt,
+                    fit: BoxFit.cover,
+                    borderRadius: BorderRadius.circular(ValRadius.small),
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 12),
-            Text(
-              card.displayName,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.titleMedium,
+          ),
+          const SizedBox(height: 16),
+          const SectionLabel(
+            CollectionStrings.lobbyBanner,
+            padding: EdgeInsets.zero,
+          ),
+          const SizedBox(height: 6),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(ValRadius.card),
+            child: AspectRatio(
+              aspectRatio: kWideCardRatio,
+              child: NetImage(card.wideArt, fit: BoxFit.cover),
             ),
-            const SizedBox(height: 8),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(ValRadius.card),
-              child: AspectRatio(
-                aspectRatio: 452 / 128,
-                child: NetImage(card.wideArt, fit: BoxFit.cover),
-              ),
+          ),
+          const SizedBox(height: 16),
+          FilledButton.icon(
+            onPressed: isEquipped || saving || snapshot == null
+                ? null
+                : () async {
+                    final navigator = Navigator.of(context);
+                    final ok = await applyLoadoutChange(
+                      context,
+                      ref,
+                      puuid: puuid,
+                      change: SetPlayerCard(card.uuid),
+                      successMessage: CollectionStrings.equippedItem(
+                        card.displayName,
+                      ),
+                    );
+                    if (ok) Haptics.medium();
+                    if (ok && navigator.mounted) navigator.pop();
+                  },
+            icon: Icon(isEquipped ? Icons.check : Icons.style_outlined),
+            label: Text(
+              isEquipped
+                  ? CollectionStrings.equipped
+                  : (saving
+                        ? CollectionStrings.saving
+                        : CollectionStrings.equip),
             ),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: isEquipped || saving || snapshot == null
-                  ? null
-                  : () async {
-                      final navigator = Navigator.of(context);
-                      final ok = await applyLoadoutChange(
-                        context,
-                        ref,
-                        puuid: puuid,
-                        change: SetPlayerCard(card.uuid),
-                        successMessage: CollectionStrings.equippedItem(
-                          card.displayName,
-                        ),
-                      );
-                      if (ok) Haptics.medium();
-                      if (ok && navigator.mounted) navigator.pop();
-                    },
-              icon: Icon(isEquipped ? Icons.check : Icons.style_outlined),
-              label: Text(
-                isEquipped
-                    ? CollectionStrings.equipped
-                    : (saving
-                          ? CollectionStrings.saving
-                          : CollectionStrings.equip),
-              ),
-              style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(48),
-                disabledBackgroundColor: isEquipped
-                    ? theme.colorScheme.primary.withValues(alpha: 0.35)
-                    : null,
-                disabledForegroundColor: isEquipped ? Colors.white : null,
-              ),
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+              disabledBackgroundColor: isEquipped
+                  ? theme.colorScheme.primary.withValues(alpha: 0.35)
+                  : null,
+              disabledForegroundColor: isEquipped ? Colors.white : null,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

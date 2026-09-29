@@ -12,14 +12,15 @@ import '../../../core/domain/competitive/competitive.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
-import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/xmpp/friends.dart';
 import '../../../core/xmpp/xmpp_providers.dart';
 import '../data/party_models.dart';
+import '../data/riot_id_input.dart';
 import '../providers/party_providers.dart';
 import '../social_strings.dart';
 import 'widgets/party_widgets.dart';
@@ -28,11 +29,13 @@ import 'widgets/social_widgets.dart';
 /// S55 "Tổ đội & hàng chờ". Route `/profile/party`.
 ///
 /// Remote party control while VALORANT runs on PC / console (GLZ
-/// G-12…G-24): queue picker, start / cancel matchmaking with a timer,
-/// ready, members (rank, ready, leader crown, remove), one-tap invites of
-/// online friends, party code, join by code, incoming invites. Polls every
-/// [pollInterval] (ring in the app bar). Every change is a user action;
-/// removing / leaving / switching party asks first.
+/// G-12…G-24): a status card (queue, matchmaking timer, why the party cannot
+/// queue), the queue picker sheet, members (rank, RR, level, ping, ready,
+/// leader, remove), invites (online friends in one tap, any Riot ID), the
+/// party code, joining by code and incoming invites; start / cancel
+/// matchmaking and ready sit in the bottom bar. Polls every [pollInterval]
+/// (ring in the bar). Every change is a user action; removing / leaving /
+/// switching party asks first.
 class PartyScreen extends ConsumerStatefulWidget {
   const PartyScreen({
     super.key,
@@ -91,9 +94,9 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text(SocialStrings.partyTitle)),
-        body: const EmptyView(message: CommonStrings.errorNoAccount),
+      return const SubPageScaffold(
+        title: SocialStrings.partyTitle,
+        body: EmptyView(message: CommonStrings.errorNoAccount),
       );
     }
     final puuid = account.puuid;
@@ -101,125 +104,147 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
     final value = ref.watch(provider);
     final view = value.value;
     final party = view?.party;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(SocialStrings.partyTitle),
-        actions: [
-          RefreshRing(
-            period: widget.pollInterval,
-            tooltip: SocialStrings.autoRefresh,
-            onCycle: () => _notifier(puuid).refresh(),
-          ),
-          if (party != null && view!.gameRunning)
-            _MoreMenu(
-              party: party,
-              isOwner: party.isOwner(puuid),
-              onLeave: () => _leave(puuid, party),
-              onToggleOpen: () =>
-                  _run('open', () => _notifier(puuid).setOpen(!party.isOpen)),
+
+    final List<Widget> slivers;
+    if (view != null) {
+      slivers = [
+        if (value.hasError && !value.isLoading)
+          SliverToBoxAdapter(
+            child: ErrorView(
+              error: value.error!,
+              puuid: puuid,
+              compact: true,
+              onRetry: () => unawaited(_notifier(puuid).refresh()),
             ),
-        ],
-      ),
-      body: AdaptiveRefresh(
-        onRefresh: () => _notifier(puuid).refresh(),
-        child: AsyncValueView<PartyView>(
-          value: value,
-          puuid: puuid,
-          onRetry: () => ref.invalidate(provider),
-          loading: const _PartySkeleton(),
-          data: (v) => v.gameRunning
-              ? _body(v, puuid)
-              : _GameNotRunning(onRetry: () => _notifier(puuid).refresh()),
+          ),
+        if (view.gameRunning)
+          SliverList.list(children: _content(view, puuid))
+        else
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: _GameNotRunning(onRetry: () => _notifier(puuid).refresh()),
+          ),
+      ];
+    } else if (value.hasError && !value.isLoading) {
+      slivers = [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: ErrorView(
+            error: value.error!,
+            puuid: puuid,
+            onRetry: () => ref.invalidate(provider),
+          ),
         ),
-      ),
+      ];
+    } else {
+      slivers = const [SliverToBoxAdapter(child: _PartySkeleton())];
+    }
+
+    return SubPageScaffold(
+      title: SocialStrings.partyTitle,
+      subtitle: party == null || !(view?.gameRunning ?? false)
+          ? null
+          : SocialStrings.partySummary(party.size, 5, open: party.isOpen),
+      actions: [
+        RefreshRing(
+          period: widget.pollInterval,
+          tooltip: SocialStrings.autoRefresh,
+          onCycle: () => _notifier(puuid).refresh(),
+        ),
+        if (party != null && view!.gameRunning)
+          _MoreMenu(
+            party: party,
+            isOwner: party.isOwner(puuid),
+            onLeave: () => _leave(puuid, party),
+            onToggleOpen: () =>
+                _run('open', () => _notifier(puuid).setOpen(!party.isOpen)),
+          ),
+      ],
+      onRefresh: () => _notifier(puuid).refresh(),
+      slivers: slivers,
+      bottomBar: party != null && view!.gameRunning
+          ? _queueActions(view, party, puuid)
+          : null,
     );
   }
 
-  Widget _body(PartyView v, String me) {
+  List<Widget> _content(PartyView v, String me) {
     final p = v.party;
-    final theme = Theme.of(context);
-    return ListView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-      children: [
-        if (v.inMatch)
-          Card(
-            margin: const EdgeInsets.only(top: 8),
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: PartyNotice(
-                icon: Icons.sports_esports_outlined,
-                text: SocialStrings.inMatchBanner,
-                color: valColorsOf(context).warning,
+    return [
+      if (v.inMatch)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+          child: _Banner(
+            icon: Icons.sports_esports_outlined,
+            text: SocialStrings.inMatchBanner,
+            color: valColorsOf(context).warning,
+          ),
+        ),
+      if (v.invites.isNotEmpty) ...[
+        const SectionLabel(SocialStrings.invitesSection),
+        GroupedSection(
+          children: [
+            for (final invite in v.invites)
+              _InviteRow(
+                invite: invite,
+                busy: _isBusy('accept-${invite.partyId}'),
+                onAccept: () => _accept(me, invite),
+                onDecline: () => _notifier(me).dismissInvite(invite),
               ),
-            ),
-          ),
-        if (v.invites.isNotEmpty)
-          PartySection(
-            title: SocialStrings.invitesSection,
-            child: Column(
-              children: [
-                for (final invite in v.invites)
-                  _InviteRow(
-                    invite: invite,
-                    busy: _isBusy('accept-${invite.partyId}'),
-                    onAccept: () => _accept(me, invite),
-                    onDecline: () => _notifier(me).dismissInvite(invite),
-                  ),
-              ],
-            ),
-          ),
-        if (p != null) ...[
-          _matchmakingCard(v, p, me),
-          _queueSection(v, p, me),
-          PartySection(
-            title: SocialStrings.membersSection(p.size, 5),
-            child: Column(
-              children: [
-                for (final (i, m) in _ordered(p.members, me).indexed) ...[
-                  if (i > 0) const Divider(height: 1, indent: 72),
-                  PartyMemberTile(
-                    key: ValueKey(m.puuid),
-                    member: m,
-                    isSelf: m.puuid == me,
-                    onRemove: p.isOwner(me) && m.puuid != me && !v.inMatch
-                        ? () => _kick(me, m)
-                        : null,
-                  ),
-                ],
-              ],
-            ),
-          ),
-          if (p.isOwner(me) && p.requests.isNotEmpty)
-            PartySection(
-              title: SocialStrings.requestsSection,
-              child: Column(
-                children: [
-                  for (final r in p.requests)
-                    _RequestRow(
-                      request: r,
-                      busy: _isBusy('decline-${r.id}'),
-                      onDecline: () => _run(
-                        'decline-${r.id}',
-                        () => _notifier(me).declineRequest(r),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          _inviteSection(v, p, me),
-          _codeSection(p, me),
-        ] else
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Text(
-              CommonStrings.errorNotFound,
-              style: theme.textTheme.bodyMedium,
-            ),
-          ),
-        _joinSection(p, me),
+          ],
+        ),
       ],
-    );
+      if (p != null) ...[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: _statusCard(v, p, me),
+        ),
+        SectionLabel(SocialStrings.membersSection(p.size, 5)),
+        GroupedSection(
+          children: [
+            for (final m in _ordered(p.members, me))
+              PartyMemberTile(
+                key: ValueKey(m.puuid),
+                member: m,
+                isSelf: m.puuid == me,
+                onRemove: p.isOwner(me) && m.puuid != me && !v.inMatch
+                    ? () => _kick(me, m)
+                    : null,
+              ),
+          ],
+        ),
+        if (p.isOwner(me) && p.requests.isNotEmpty) ...[
+          const SectionLabel(SocialStrings.requestsSection),
+          GroupedSection(
+            children: [
+              for (final r in p.requests)
+                _RequestRow(
+                  request: r,
+                  busy: _isBusy('decline-${r.id}'),
+                  onDecline: () => _run(
+                    'decline-${r.id}',
+                    () => _notifier(me).declineRequest(r),
+                  ),
+                ),
+            ],
+          ),
+        ],
+        const SectionLabel(SocialStrings.inviteFriends),
+        _inviteSection(v, p, me),
+        const SectionLabel(SocialStrings.partyCode),
+        _codeSection(p, me),
+      ] else
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: _Banner(
+            icon: Icons.group_off_outlined,
+            text: CommonStrings.errorNotFound,
+          ),
+        ),
+      const SectionLabel(SocialStrings.joinSection),
+      _joinSection(p, me),
+      const _RemoteNote(),
+    ];
   }
 
   /// Leader first, then the viewer, then everyone else in Riot's order.
@@ -229,12 +254,204 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
     ...members.where((m) => !m.isOwner && m.puuid != me),
   ];
 
-  // ---------------------------------------------------------- matchmaking
+  // ---------------------------------------------------------- status card
 
-  Widget _matchmakingCard(PartyView v, Party p, String me) {
+  Widget _statusCard(PartyView v, Party p, String me) {
     final theme = Theme.of(context);
     final colors = valColorsOf(context);
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
+    final isOwner = p.isOwner(me);
+    final canChange =
+        isOwner &&
+        !v.inMatch &&
+        !p.isMatchmaking &&
+        !p.isCustomGame &&
+        !_isBusy('queue');
+    final choice = queueChoices(p)
+        .where((c) => c.queueId == p.queueId)
+        .firstOrNull;
+    final since = p.queueEntryTime;
+    final accent = p.isMatchFound
+        ? colors.win
+        : p.isMatchmaking
+        ? colors.warning
+        : theme.colorScheme.primary;
+    final muted = theme.colorScheme.onSurfaceVariant;
+
+    final queueRow = Row(
+      children: [
+        Container(
+          width: 46,
+          height: 46,
+          decoration: BoxDecoration(
+            color: accent.withValues(alpha: 0.16),
+            borderRadius: BorderRadius.circular(ValRadius.small),
+          ),
+          child: Icon(
+            p.isMatchmaking ? Icons.radar : Icons.sports_esports_outlined,
+            color: legibleAccent(context, accent, min: 3),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                SocialStrings.queueLabel.toUpperCase(),
+                style: ValText.label.copyWith(color: muted, fontSize: 11),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                p.queueId == null
+                    ? SocialStrings.queueLabel
+                    : db.queueName(p.queueId),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: ValText.sectionTitle.copyWith(
+                  fontSize: 20,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (canChange) ...[
+          const SizedBox(width: 8),
+          Icon(Icons.unfold_more_rounded, color: muted),
+        ],
+      ],
+    );
+
+    return ValCard(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          accent.withValues(
+            alpha: theme.brightness == Brightness.dark ? 0.20 : 0.10,
+          ),
+          accent.withValues(alpha: 0),
+        ],
+      ),
+      borderColor: accent.withValues(alpha: 0.35),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Flexible(
+                child: StatusPill(
+                  label: p.isMatchFound
+                      ? SocialStrings.matchFound
+                      : p.isMatchmaking
+                      ? SocialStrings.inQueue(null)
+                      : SocialStrings.idleQueue,
+                  color: accent,
+                ),
+              ),
+              const SizedBox(width: 8),
+              const Spacer(),
+              Text(
+                SocialStrings.readyCount(
+                  p.members.where((m) => m.isReady || m.isOwner).length,
+                  p.size,
+                ),
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: muted,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (canChange)
+            Tooltip(
+              message: SocialStrings.changeQueue,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(ValRadius.small),
+                onTap: () => unawaited(_pickQueue(me, p)),
+                child: queueRow,
+              ),
+            )
+          else
+            queueRow,
+          if (p.isMatchmaking && since != null) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                SizedBox.square(
+                  dimension: 14,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: legibleAccent(context, colors.warning, min: 3),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElapsedText(
+                    since: since,
+                    builder: SocialStrings.searching,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: legibleAccent(context, colors.warning),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          if (p.isMatchFound) ...[
+            const SizedBox(height: 10),
+            Text(
+              SocialStrings.matchFound,
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: legibleAccent(context, colors.win),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+          if (p.isCustomGame || choice != null && !choice.eligible)
+            const SizedBox(height: 8),
+          if (p.isCustomGame)
+            const PartyNotice(
+              icon: Icons.tune,
+              text: SocialStrings.customGameLobby,
+            ),
+          if (choice != null && !choice.eligible)
+            PartyNotice(
+              icon: Icons.block,
+              color: theme.colorScheme.error,
+              text: SocialStrings.cantQueue(
+                db.queueName(choice.queueId),
+                queueBlockReason(choice, p),
+              ),
+            ),
+          if (v.inMatch)
+            const PartyNotice(
+              icon: Icons.lock_outline,
+              text: SocialStrings.queueLocked,
+            )
+          else if (!isOwner)
+            const PartyNotice(
+              icon: Icons.info_outline,
+              text: SocialStrings.onlyLeader,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickQueue(String me, Party p) async {
+    final picked = await showQueuePickerSheet(context, p);
+    if (picked == null || picked == p.queueId || !mounted) return;
+    await _run('queue', () => _notifier(me).changeQueue(picked));
+  }
+
+  /// Bottom bar: ready toggle + start / cancel matchmaking.
+  Widget _queueActions(PartyView v, Party p, String me) {
     final isOwner = p.isOwner(me);
     final choice = queueChoices(p)
         .where((c) => c.queueId == p.queueId)
@@ -254,13 +471,17 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
     final Widget primary;
     if (p.isMatchmaking) {
       primary = FilledButton.icon(
+        style: FilledButton.styleFrom(
+          backgroundColor: valColorsOf(context).warning,
+          foregroundColor: readableOn(valColorsOf(context).warning),
+        ),
         onPressed: _isBusy('mm')
             ? null
             : () {
                 Haptics.medium();
                 unawaited(_run('mm', () => _notifier(me).cancelMatchmaking()));
               },
-        icon: const Icon(Icons.close),
+        icon: const Icon(Icons.close_rounded),
         label: since == null
             ? const Text(SocialStrings.cancelQueueShort)
             : ElapsedText(since: since, builder: SocialStrings.cancelQueue),
@@ -282,156 +503,22 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
         label: const Text(SocialStrings.startQueue),
       );
     }
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 12),
-      child: Card(
-        margin: EdgeInsets.zero,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Flexible(
-                    child: StatusPill(
-                      label: p.isMatchFound
-                          ? SocialStrings.matchFound
-                          : p.isMatchmaking
-                          ? SocialStrings.inQueue(null)
-                          : SocialStrings.idleQueue,
-                      color: p.isMatchFound
-                          ? colors.win
-                          : p.isMatchmaking
-                          ? colors.warning
-                          : theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    SocialStrings.readyCount(
-                      p.members.where((m) => m.isReady || m.isOwner).length,
-                      p.size,
-                    ),
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Text(
-                p.queueId == null
-                    ? SocialStrings.queueSection
-                    : db.queueName(p.queueId),
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              if (p.isMatchmaking && since != null) ...[
-                const SizedBox(height: 6),
-                DefaultTextStyle.merge(
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colors.warning,
-                  ),
-                  child: ElapsedText(
-                    since: since,
-                    builder: SocialStrings.searching,
-                  ),
-                ),
-              ],
-              if (p.isMatchFound) ...[
-                const SizedBox(height: 6),
-                Text(
-                  SocialStrings.matchFound,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    color: colors.win,
-                  ),
-                ),
-              ],
-              if (p.isCustomGame)
-                const PartyNotice(
-                  icon: Icons.tune,
-                  text: SocialStrings.customGameLobby,
-                ),
-              const SizedBox(height: 12),
-              primary,
-              const SizedBox(height: 8),
-              OutlinedButton.icon(
-                onPressed: self == null || _isBusy('ready') || p.isMatchmaking
-                    ? null
-                    : () {
-                        Haptics.light();
-                        unawaited(
-                          _run('ready', () => _notifier(me).setReady(!ready)),
-                        );
-                      },
-                icon: Icon(ready ? Icons.remove_done : Icons.done_all),
-                label: Text(
-                  ready ? SocialStrings.unready : SocialStrings.ready,
-                ),
-              ),
-              if (!isOwner && !p.isMatchmaking)
-                const PartyNotice(
-                  icon: Icons.info_outline,
-                  text: SocialStrings.onlyLeaderQueue,
-                ),
-            ],
-          ),
-        ),
-      ),
+    final readyButton = OutlinedButton.icon(
+      onPressed: self == null || _isBusy('ready') || p.isMatchmaking
+          ? null
+          : () {
+              Haptics.light();
+              unawaited(_run('ready', () => _notifier(me).setReady(!ready)));
+            },
+      icon: Icon(ready ? Icons.remove_done : Icons.done_all),
+      label: Text(ready ? SocialStrings.unready : SocialStrings.ready),
     );
-  }
-
-  Widget _queueSection(PartyView v, Party p, String me) {
-    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
-    final isOwner = p.isOwner(me);
-    final canChange =
-        isOwner && !v.inMatch && !p.isMatchmaking && !p.isCustomGame;
-    final choice = queueChoices(p)
-        .where((c) => c.queueId == p.queueId)
-        .firstOrNull;
-    return PartySection(
-      title: SocialStrings.queueSection,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            QueuePicker(
-              party: p,
-              canChange: canChange && !_isBusy('queue'),
-              onSelect: (q) =>
-                  _run('queue', () => _notifier(me).changeQueue(q)),
-              onBlocked: (msg) => showAppSnackBar(context, msg),
-            ),
-            if (choice != null && !choice.eligible) ...[
-              const SizedBox(height: 8),
-              PartyNotice(
-                icon: Icons.block,
-                color: Theme.of(context).colorScheme.error,
-                text: SocialStrings.cantQueue(
-                  db.queueName(choice.queueId),
-                  queueBlockReason(choice, p),
-                ),
-              ),
-            ],
-            if (v.inMatch)
-              const PartyNotice(
-                icon: Icons.lock_outline,
-                text: SocialStrings.queueLocked,
-              )
-            else if (!isOwner)
-              const PartyNotice(
-                icon: Icons.info_outline,
-                text: SocialStrings.onlyLeaderChangeQueue,
-              ),
-          ],
-        ),
-      ),
+    return Row(
+      children: [
+        Expanded(flex: 2, child: readyButton),
+        const SizedBox(width: 10),
+        Expanded(flex: 3, child: primary),
+      ],
     );
   }
 
@@ -442,9 +529,9 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
     final online = (friends.value?.online ?? const <Friend>[])
         .where((f) => f.valorant != null)
         .toList();
-    final Widget child;
+    final Widget strip;
     if (friends.hasValue && online.isNotEmpty) {
-      child = InviteStrip(
+      strip = InviteStrip(
         friends: online,
         enabled: !v.inMatch,
         isTicked: (f) =>
@@ -454,36 +541,48 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
         onInvite: (f) => _invite(me, p, f),
       );
     } else if (friends.hasValue) {
-      child = const Padding(
-        padding: EdgeInsets.all(12),
+      strip = const Padding(
+        padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
         child: PartyNotice(
           icon: Icons.person_search_outlined,
           text: SocialStrings.noOnlineFriends,
         ),
       );
     } else if (friends.hasError) {
-      child = const Padding(
-        padding: EdgeInsets.all(12),
+      strip = const Padding(
+        padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
         child: PartyNotice(
           icon: Icons.cloud_off_outlined,
           text: SocialStrings.chatUnavailable,
         ),
       );
     } else {
-      child = const Padding(
-        padding: EdgeInsets.all(12),
-        child: Row(
-          children: [
-            Skeleton(width: 48, height: 48, radius: 10),
-            SizedBox(width: 12),
-            Skeleton(width: 48, height: 48, radius: 10),
-            SizedBox(width: 12),
-            Skeleton(width: 48, height: 48, radius: 10),
-          ],
+      strip = const SkeletonShimmer(
+        child: Padding(
+          padding: EdgeInsets.all(14),
+          child: Row(
+            children: [
+              Skeleton(width: 50, height: 50, radius: 25, shimmer: false),
+              SizedBox(width: 18),
+              Skeleton(width: 50, height: 50, radius: 25, shimmer: false),
+              SizedBox(width: 18),
+              Skeleton(width: 50, height: 50, radius: 25, shimmer: false),
+            ],
+          ),
         ),
       );
     }
-    return PartySection(title: SocialStrings.inviteFriends, child: child);
+    return GroupedSection(
+      children: [
+        strip,
+        GroupedRow(
+          icon: Icons.person_add_alt_1_outlined,
+          title: SocialStrings.inviteByRiotId,
+          subtitle: SocialStrings.inviteByRiotIdHint,
+          onTap: v.inMatch ? null : () => unawaited(_inviteByRiotId(me, p)),
+        ),
+      ],
+    );
   }
 
   void _invite(String me, Party p, Friend f) {
@@ -498,6 +597,22 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
             .invite(gameName: name.gameName, tagLine: name.tagLine);
         if (mounted) setState(() => _invited.add('${p.id}/${f.puuid}'));
       }, success: SocialStrings.inviteSent(name.riotId)),
+    );
+  }
+
+  Future<void> _inviteByRiotId(String me, Party p) async {
+    final name = await showValSheet<RiotName>(
+      context,
+      title: SocialStrings.inviteByRiotId,
+      subtitle: SocialStrings.inviteByRiotIdHint,
+      builder: (context, _) => const _RiotIdForm(),
+    );
+    if (name == null || !mounted) return;
+    await _run(
+      'invite-id',
+      () =>
+          _notifier(me).invite(gameName: name.gameName, tagLine: name.tagLine),
+      success: SocialStrings.inviteSent(name.riotId),
     );
   }
 
@@ -520,120 +635,143 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
     final theme = Theme.of(context);
     final code = p.inviteCode;
     final isOwner = p.isOwner(me);
-    return PartySection(
-      title: SocialStrings.partyCode,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
+    final muted = theme.colorScheme.onSurfaceVariant;
+    final Widget content;
+    if (code != null) {
+      content = Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (code != null)
-              Semantics(
-                label: SocialStrings.partyCodeValue(code),
-                excludeSemantics: true,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(ValRadius.small),
-                  ),
-                  alignment: Alignment.center,
-                  child: SelectableText(
-                    code,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      letterSpacing: 4,
-                      fontWeight: FontWeight.w800,
-                      fontFeatures: const [FontFeature.tabularFigures()],
+            Semantics(
+              label: SocialStrings.partyCodeValue(code),
+              excludeSemantics: true,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: valColorsOf(context).surface2,
+                  borderRadius: BorderRadius.circular(ValRadius.small),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  child: Center(
+                    child: SelectableText(
+                      code,
+                      style: ValText.display(
+                        30,
+                        color: theme.colorScheme.onSurface,
+                      ).copyWith(letterSpacing: 6),
                     ),
                   ),
                 ),
-              )
-            else
-              Text(SocialStrings.noCode, style: theme.textTheme.bodyMedium),
-            const SizedBox(height: 8),
+              ),
+            ),
+            const SizedBox(height: 12),
             Wrap(
               spacing: 8,
               runSpacing: 8,
+              alignment: WrapAlignment.center,
               children: [
-                if (code != null) ...[
-                  FilledButton.tonalIcon(
-                    onPressed: () async {
-                      await Clipboard.setData(ClipboardData(text: code));
-                      Haptics.light();
-                      if (mounted) {
-                        showAppSnackBar(context, SocialStrings.codeCopied);
-                      }
-                    },
-                    icon: const Icon(Icons.copy),
-                    label: const Text(SocialStrings.copyCode),
-                  ),
-                  FilledButton.tonalIcon(
-                    onPressed: () => unawaited(
-                      ref.read(partyShareProvider)(
-                        SocialStrings.shareCodeText(code),
-                      ),
+                FilledButton.tonalIcon(
+                  onPressed: () async {
+                    await Clipboard.setData(ClipboardData(text: code));
+                    Haptics.light();
+                    if (mounted) {
+                      showAppSnackBar(context, CommonStrings.copied);
+                    }
+                  },
+                  icon: const Icon(Icons.copy_rounded, size: 18),
+                  label: const Text(SocialStrings.copyCode),
+                ),
+                FilledButton.tonalIcon(
+                  onPressed: () => unawaited(
+                    ref.read(partyShareProvider)(
+                      SocialStrings.shareCodeText(code),
                     ),
-                    icon: Icon(Icons.adaptive.share),
-                    label: const Text(SocialStrings.shareCode),
                   ),
-                  if (isOwner)
-                    OutlinedButton(
-                      onPressed: _isBusy('code')
-                          ? null
-                          : () =>
-                                _run('code', () => _notifier(me).disableCode()),
-                      child: const Text(SocialStrings.disableCode),
+                  icon: Icon(Icons.adaptive.share, size: 18),
+                  label: const Text(SocialStrings.shareCode),
+                ),
+                if (isOwner)
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: theme.colorScheme.error,
                     ),
-                ] else if (isOwner)
-                  FilledButton.tonalIcon(
                     onPressed: _isBusy('code')
                         ? null
-                        : () =>
-                              _run('code', () => _notifier(me).generateCode()),
-                    icon: const Icon(Icons.qr_code_2),
-                    label: const Text(SocialStrings.generateCode),
+                        : () => _run('code', () => _notifier(me).disableCode()),
+                    child: const Text(SocialStrings.disableCode),
                   ),
               ],
             ),
           ],
         ),
-      ),
-    );
+      );
+    } else {
+      content = Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
+        child: Row(
+          children: [
+            Icon(Icons.qr_code_2_rounded, color: muted),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                isOwner ? SocialStrings.noCode : SocialStrings.noCodeMember,
+                style: theme.textTheme.bodyMedium?.copyWith(color: muted),
+              ),
+            ),
+            if (isOwner) ...[
+              const SizedBox(width: 8),
+              FilledButton.tonal(
+                onPressed: _isBusy('code')
+                    ? null
+                    : () => _run('code', () => _notifier(me).generateCode()),
+                child: const Text(SocialStrings.generateCode),
+              ),
+            ],
+          ],
+        ),
+      );
+    }
+    return GroupedSection(children: [content]);
   }
 
   Widget _joinSection(Party? p, String me) {
-    return PartySection(
-      title: SocialStrings.joinWithCode,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _code,
-                textCapitalization: TextCapitalization.characters,
-                maxLength: 16,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]')),
-                ],
-                textInputAction: TextInputAction.go,
-                onSubmitted: (_) => unawaited(_join(me, p)),
-                decoration: const InputDecoration(
-                  hintText: SocialStrings.joinWithCode,
-                  counterText: '',
-                  isDense: true,
+    return GroupedSection(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _code,
+                  textCapitalization: TextCapitalization.characters,
+                  maxLength: 16,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]')),
+                  ],
+                  textInputAction: TextInputAction.go,
+                  onSubmitted: (_) => unawaited(_join(me, p)),
+                  decoration: InputDecoration(
+                    hintText: SocialStrings.joinWithCode,
+                    counterText: '',
+                    isDense: true,
+                    prefixIcon: const Icon(Icons.tag_rounded, size: 20),
+                    fillColor: valColorsOf(context).surface2,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 8),
-            FilledButton(
-              onPressed: _isBusy('join') ? null : () => unawaited(_join(me, p)),
-              child: const Text(SocialStrings.join),
-            ),
-          ],
+              const SizedBox(width: 8),
+              FilledButton(
+                onPressed: _isBusy('join')
+                    ? null
+                    : () => unawaited(_join(me, p)),
+                child: const Text(SocialStrings.join),
+              ),
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -689,6 +827,74 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
   }
 }
 
+/// Riot ID field of the "Mời bằng Riot ID" sheet; pops the parsed name.
+class _RiotIdForm extends StatefulWidget {
+  const _RiotIdForm();
+
+  @override
+  State<_RiotIdForm> createState() => _RiotIdFormState();
+}
+
+class _RiotIdFormState extends State<_RiotIdForm> {
+  final _field = TextEditingController();
+  String? _error;
+
+  @override
+  void dispose() {
+    _field.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final name = parseRiotIdInput(_field.text);
+    if (name == null) {
+      setState(() => _error = SocialStrings.riotIdInvalid);
+      return;
+    }
+    Haptics.light();
+    Navigator.of(context).pop(name);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(
+        16,
+        0,
+        16,
+        16 + MediaQuery.viewInsetsOf(context).bottom,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _field,
+            autofocus: true,
+            textInputAction: TextInputAction.send,
+            onSubmitted: (_) => _submit(),
+            onChanged: (_) {
+              if (_error != null) setState(() => _error = null);
+            },
+            decoration: InputDecoration(
+              hintText: SocialStrings.riotIdFieldHint,
+              prefixIcon: const Icon(Icons.person_search_outlined),
+              errorText: _error,
+              errorMaxLines: 3,
+            ),
+          ),
+          const SizedBox(height: 12),
+          FilledButton.icon(
+            onPressed: _submit,
+            icon: const Icon(Icons.send_rounded, size: 18),
+            label: const Text(SocialStrings.sendInvite),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _MoreMenu extends StatelessWidget {
   const _MoreMenu({
     required this.party,
@@ -739,6 +945,32 @@ class _MoreMenu extends StatelessWidget {
   }
 }
 
+/// Tinted rounded notice (in a match, no party).
+class _Banner extends StatelessWidget {
+  const _Banner({required this.icon, required this.text, this.color});
+
+  final IconData icon;
+  final String text;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tint = color ?? theme.colorScheme.onSurfaceVariant;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: tint.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(ValRadius.small),
+        border: Border.all(color: tint.withValues(alpha: 0.3)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+        child: PartyNotice(icon: icon, text: text, color: color),
+      ),
+    );
+  }
+}
+
 class _InviteRow extends ConsumerWidget {
   const _InviteRow({
     required this.invite,
@@ -754,25 +986,40 @@ class _InviteRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final from = invite.invitedBy;
     final name = from == null
         ? null
         : ref.watch(playerNameProvider(from)).value;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 12, 8),
+      padding: const EdgeInsets.fromLTRB(14, 12, 12, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.mail_outline),
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.14),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.mail_outline_rounded,
+                  size: 20,
+                  color: legibleAccent(context, theme.colorScheme.primary),
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   name == null
                       ? SocialStrings.partyInvite
                       : SocialStrings.inviteFrom(name.riotId),
-                  style: Theme.of(context).textTheme.titleSmall,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -820,6 +1067,11 @@ class _RequestRow extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
       child: Row(
         children: [
+          Icon(
+            Icons.person_add_alt_outlined,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               SocialStrings.requestFrom(
@@ -839,6 +1091,32 @@ class _RequestRow extends ConsumerWidget {
   }
 }
 
+class _RemoteNote extends StatelessWidget {
+  const _RemoteNote();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.verified_user_outlined, size: 16, color: muted),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              SocialStrings.remoteNote,
+              style: theme.textTheme.bodySmall?.copyWith(color: muted),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _GameNotRunning extends StatelessWidget {
   const _GameNotRunning({required this.onRetry});
 
@@ -846,48 +1124,70 @@ class _GameNotRunning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.only(top: 32),
-      children: [
-        EmptyView(
-          icon: Icons.desktop_windows_outlined,
-          title: SocialStrings.gameNotRunningTitle,
-          message: SocialStrings.gameNotRunningBody,
-          action: OutlinedButton.icon(
-            onPressed: () => unawaited(onRetry()),
-            icon: const Icon(Icons.refresh),
-            label: const Text(CommonStrings.retry),
-          ),
-        ),
-      ],
+    return EmptyView(
+      icon: Icons.desktop_windows_outlined,
+      title: SocialStrings.gameNotRunningTitle,
+      message: SocialStrings.gameNotRunningBody,
+      action: OutlinedButton.icon(
+        onPressed: () => unawaited(onRetry()),
+        icon: const Icon(Icons.refresh),
+        label: const Text(CommonStrings.retry),
+      ),
     );
   }
 }
 
+/// Mirrors the loaded layout: status card, members card, invite strip.
 class _PartySkeleton extends StatelessWidget {
   const _PartySkeleton();
 
   @override
   Widget build(BuildContext context) {
-    return SkeletonShimmer(
-      child: ListView(
-        physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(16),
+    final card = BoxDecoration(
+      color: Theme.of(context).colorScheme.surfaceContainer,
+      borderRadius: BorderRadius.circular(ValRadius.card),
+    );
+    Widget member() => const Padding(
+      padding: EdgeInsets.all(14),
+      child: Row(
         children: [
-          const Skeleton(height: 150, radius: 12, shimmer: false),
-          const SizedBox(height: 24),
-          const Skeleton(width: 90, height: 14, shimmer: false),
-          const SizedBox(height: 10),
-          const Skeleton(height: 84, radius: 12, shimmer: false),
-          const SizedBox(height: 24),
-          const Skeleton(width: 120, height: 14, shimmer: false),
-          const SizedBox(height: 10),
-          for (var i = 0; i < 3; i++) ...[
-            const Skeleton(height: 64, radius: 12, shimmer: false),
-            const SizedBox(height: 8),
-          ],
+          Skeleton(width: 48, height: 48, radius: 24, shimmer: false),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Skeleton(width: 150, height: 14, shimmer: false),
+                SizedBox(height: 8),
+                Skeleton(width: 110, height: 12, shimmer: false),
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+    return SkeletonShimmer(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Skeleton(height: 150, radius: ValRadius.card, shimmer: false),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(4, 24, 0, 10),
+              child: Skeleton(width: 120, height: 12, shimmer: false),
+            ),
+            DecoratedBox(
+              decoration: card,
+              child: Column(children: [member(), member()]),
+            ),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(4, 24, 0, 10),
+              child: Skeleton(width: 90, height: 12, shimmer: false),
+            ),
+            const Skeleton(height: 104, radius: ValRadius.card, shimmer: false),
+          ],
+        ),
       ),
     );
   }

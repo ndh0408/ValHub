@@ -17,7 +17,9 @@ import '../../../core/ui/currency_amount.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
+import '../../../core/ui/price_estimate.dart';
 import '../../../core/util/format.dart';
 import '../../skin_detail/skin_detail_sheet.dart';
 import '../../store/store_routes.dart';
@@ -205,9 +207,9 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text(WishlistStrings.title)),
-        body: const EmptyView(
+      return const SubPageScaffold(
+        title: WishlistStrings.title,
+        body: EmptyView(
           message: CommonStrings.errorNoAccount,
           icon: Icons.person_off_outlined,
         ),
@@ -220,23 +222,11 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
     final owned = ref.watch(ownedItemsProvider(puuid)).value;
 
     final slivers = <Widget>[
-      SliverAppBar(
-        pinned: true,
-        toolbarHeight: 64,
-        title: _TitleBlock(riotId: account.riotId),
-        actions: [
-          IconButton(
-            tooltip: WishlistStrings.addSkins,
-            icon: const Icon(Icons.add),
-            onPressed: _openCatalog,
-          ),
-          const SizedBox(width: 4),
-        ],
-      ),
       const SliverToBoxAdapter(child: WishlistNotificationToggle()),
     ];
 
     final catalog = catalogValue.value;
+    final showSearch = catalog != null && wishlist.isNotEmpty;
     if (catalog == null) {
       if (catalogValue.hasError && !catalogValue.isLoading) {
         slivers.add(
@@ -276,7 +266,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
       _reportMisses(view);
       slivers.addAll([
         SliverToBoxAdapter(
-          child: SkinFilterBar(
+          child: SkinFilterChips(
             query: _query,
             onChanged: _setQuery,
             tiers: catalog.tiers,
@@ -309,7 +299,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
           )
         else
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
             sliver: SliverList.separated(
               itemCount: view.visible.length,
               separatorBuilder: (_, _) => const SizedBox(height: 10),
@@ -329,45 +319,22 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
       ]);
     }
 
-    return Scaffold(
-      body: AdaptiveRefresh(
-        onRefresh: () => _refresh(puuid),
-        child: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: slivers,
-        ),
-      ),
-    );
-  }
-}
-
-class _TitleBlock extends StatelessWidget {
-  const _TitleBlock({required this.riotId});
-
-  final String riotId;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          WishlistStrings.title,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: theme.textTheme.titleLarge,
-        ),
-        Text(
-          WishlistStrings.ofAccount(riotId),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: valColorsOf(context).muted,
-          ),
+    return SubPageScaffold(
+      title: WishlistStrings.title,
+      subtitle: WishlistStrings.ofAccount(account.riotId),
+      actions: [
+        IconButton(
+          tooltip: WishlistStrings.addSkins,
+          icon: const Icon(Icons.add),
+          onPressed: _openCatalog,
         ),
       ],
+      onRefresh: () => _refresh(puuid),
+      header: showSearch
+          ? SkinSearchField(query: _query, onChanged: _setQuery)
+          : null,
+      headerHeight: skinSearchHeaderHeight(context),
+      slivers: slivers,
     );
   }
 }
@@ -489,6 +456,7 @@ class _SummaryStrip extends StatelessWidget {
               ),
             ],
           ),
+          PriceEstimate(total.totalVp),
           if (view.query.isFiltering) ...[
             const SizedBox(height: 6),
             Text(
@@ -576,8 +544,6 @@ class _WishlistSkeleton extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Skeleton(height: 44, radius: 22, shimmer: false),
-            const SizedBox(height: 10),
             const Skeleton(height: 36, width: 220, radius: 18, shimmer: false),
             const SizedBox(height: 12),
             const Skeleton(height: 76, radius: 16, shimmer: false),

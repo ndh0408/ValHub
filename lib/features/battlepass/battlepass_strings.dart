@@ -3,7 +3,7 @@
 /// Numbers arrive already formatted (`formatNumber`), so "1.162.500" etc.
 abstract final class BattlePassStrings {
   static const title = 'Battle Pass';
-  static const rewardsTitle = 'Phần thưởng Battle Pass';
+  static const rewardsTitle = 'Phần thưởng';
 
   // Pass card (S20)
   static const premium = 'Premium';
@@ -26,6 +26,12 @@ abstract final class BattlePassStrings {
   /// "Phần kết thúc sau 11:54:37" (last day).
   static String actEndsIn(String time) => 'Phần kết thúc sau $time';
   static const actEnded = 'Phần này đã kết thúc';
+
+  // Local wall-clock times (device time zone, 24 h): "Kết thúc lúc 23:59
+  // thứ Hai 06/10", "Làm mới lúc 07:00 ngày mai".
+  static String endsAtWall(String wall) => 'Kết thúc lúc $wall';
+  static String resetsAtWall(String wall) => 'Làm mới lúc $wall';
+  static String newMissionsAtWall(String wall) => 'Nhiệm vụ mới lúc $wall';
   static const noBattlePass =
       'Chưa có thông tin Battle Pass của Phần hiện tại. Hãy thử lại sau.';
 
@@ -66,6 +72,9 @@ abstract final class BattlePassStrings {
   // Daily checkpoints (P4)
   static const dailyMissions = 'Nhiệm vụ hằng ngày';
   static const dailyCaption = 'Phần thưởng ngày';
+
+  /// "Phần thưởng ngày · Làm mới lúc 07:00 ngày mai".
+  static String dailyCaptionReset(String reset) => '$dailyCaption$dot$reset';
   static const checkpoint = 'Cột mốc';
 
   /// "Đã đạt 2/4 cột mốc".
@@ -139,6 +148,11 @@ abstract final class BattlePassStrings {
   static String chapterProgress(int reached, int total) => '$reached/$total';
   static const currentChapter = 'Hiện tại';
   static const freeTrack = 'Phần thưởng miễn phí';
+  static const nextReward = 'Tiếp theo';
+  static const rewardLevelLabel = 'Cấp';
+  static const rewardTypeLabel = 'Loại';
+  static const rewardTrackLabel = 'Đường thưởng';
+  static const rewardStatusLabel = 'Trạng thái';
   static const rewardUnlocked = 'Đã mở khóa';
   static const rewardLocked = 'Chưa mở khóa';
   static const rewardNeedsPremium = 'Cần Premium';

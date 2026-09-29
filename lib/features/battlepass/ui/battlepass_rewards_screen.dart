@@ -9,13 +9,13 @@ import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/storage/ui_memory.dart';
 import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
-import '../../../core/storage/ui_memory.dart';
-import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/segmented_tabs.dart';
+import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../../skin_detail/skin_detail_sheet.dart';
@@ -88,9 +88,9 @@ class _BattlePassRewardsScreenState
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text(BattlePassStrings.rewardsTitle)),
-        body: const EmptyView(
+      return const SubPageScaffold(
+        title: BattlePassStrings.rewardsTitle,
+        body: EmptyView(
           message: CommonStrings.errorNoAccount,
           icon: Icons.person_off_outlined,
         ),
@@ -103,6 +103,7 @@ class _BattlePassRewardsScreenState
     final pass = overview == null ? null : _passOf(overview, db);
 
     final slivers = <Widget>[];
+    Widget? header;
     if (overview != null) {
       if (value.hasError && !value.isLoading) {
         slivers.add(
@@ -119,10 +120,7 @@ class _BattlePassRewardsScreenState
       if (overview.contracts.isFromCache) {
         slivers.add(
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: BpOfflineNotice(receivedAt: overview.contracts.receivedAt),
-            ),
+            child: BpOfflineNotice(receivedAt: overview.contracts.receivedAt),
           ),
         );
       }
@@ -139,25 +137,19 @@ class _BattlePassRewardsScreenState
         );
       } else {
         final isPremium = overview.isPremiumFor(pass.contract.uuid);
+        // Pinned frosted filter: "Tất cả · Đã mở khóa · Còn khóa".
+        header = SegmentedTabs<RewardsFilter>(
+          expand: true,
+          tabs: [
+            for (final f in RewardsFilter.values)
+              SegmentedTab(value: f, label: f.label),
+          ],
+          selected: _filter,
+          onChanged: _setFilter,
+        );
         slivers.addAll([
           SliverToBoxAdapter(
             child: _SummaryCard(pass: pass, isPremium: isPremium),
-          ),
-          // Pinned frosted filter: "Tất cả · Đã mở khóa · Còn khóa".
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: GlassHeaderDelegate(
-              height: 60,
-              child: SegmentedTabs<RewardsFilter>(
-                expand: true,
-                tabs: [
-                  for (final f in RewardsFilter.values)
-                    SegmentedTab(value: f, label: f.label),
-                ],
-                selected: _filter,
-                onChanged: _setFilter,
-              ),
-            ),
           ),
           SliverToBoxAdapter(
             child: _RewardsBody(
@@ -187,22 +179,15 @@ class _BattlePassRewardsScreenState
         ),
       );
     }
-    slivers.add(const SliverToBoxAdapter(child: SizedBox(height: 32)));
+    slivers.add(const SliverToBoxAdapter(child: SizedBox(height: 16)));
 
-    final title = widget.contractId == null || pass == null
-        ? BattlePassStrings.rewardsTitle
-        : pass.contract.displayName;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
-      ),
-      body: AdaptiveRefresh(
-        onRefresh: () => refreshBattlePass(ref, puuid),
-        child: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: slivers,
-        ),
-      ),
+    return SubPageScaffold(
+      title: BattlePassStrings.rewardsTitle,
+      subtitle: pass?.contract.displayName,
+      onRefresh: () => refreshBattlePass(ref, puuid),
+      header: header,
+      headerHeight: 60,
+      slivers: slivers,
     );
   }
 
@@ -253,13 +238,15 @@ class _BattlePassRewardsScreenState
       }
       final ctx = _currentChapterKey.currentContext;
       if (scroll && ctx != null) {
+        // Leave room for the pinned app bar and filter strip.
+        final size = MediaQuery.sizeOf(ctx);
+        final chrome = MediaQuery.paddingOf(ctx).top + kToolbarHeight + 60 + 8;
         unawaited(
           Scrollable.ensureVisible(
             ctx,
             duration: const Duration(milliseconds: 350),
             curve: Curves.easeOutCubic,
-            // Leave room for the pinned filter bar.
-            alignment: 0.08,
+            alignment: (chrome / size.height).clamp(0.0, 0.5),
           ),
         );
       }
@@ -281,13 +268,7 @@ class _BattlePassRewardsScreenState
       );
       return;
     }
-    unawaited(
-      showModalBottomSheet<void>(
-        context: context,
-        showDragHandle: true,
-        builder: (_) => RewardPreviewSheet(reward: reward),
-      ),
-    );
+    unawaited(showRewardPreviewSheet(context, reward));
   }
 }
 
@@ -335,6 +316,7 @@ class _RewardsBody extends StatelessWidget {
           key: c.isCurrent ? currentChapterKey : null,
           chapter: c,
           level: pass.level,
+          nextLevel: pass.isComplete ? null : pass.level + 1,
           premium: premium,
           free: free,
           onTap: onTap,
@@ -360,6 +342,8 @@ class _RewardsBody extends StatelessWidget {
   }
 }
 
+/// Level, unlocked count and the whole-pass progress bar; the Premium badge
+/// on a gold-tinted card for owners.
 class _SummaryCard extends StatelessWidget {
   const _SummaryCard({required this.pass, required this.isPremium});
 
@@ -370,64 +354,69 @@ class _SummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
+    final colors = valColorsOf(context);
     final premium = isPremium;
+    final gold = colors.gold;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
       child: ValCard(
-        padding: EdgeInsets.zero,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Text(
-                      pass.contract.displayName,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  if (premium != null) ...[
-                    const SizedBox(width: 8),
-                    BpBadge(
-                      premium
-                          ? BattlePassStrings.premium
-                          : BattlePassStrings.free,
-                      color: premium ? valColorsOf(context).warning : muted,
-                      filled: premium,
-                      icon: premium ? Icons.workspace_premium : null,
-                    ),
-                  ],
+        padding: const EdgeInsets.all(16),
+        gradient: premium == true
+            ? LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  gold.withValues(alpha: 0.16),
+                  gold.withValues(alpha: 0),
                 ],
-              ),
-              const SizedBox(height: 6),
-              Text(
-                BattlePassStrings.levelSummary(
-                  formatNumber(pass.level),
-                  formatNumber(pass.levelCount),
-                  formatNumber(pass.unlockedLevels),
-                ),
-                style: theme.textTheme.bodyMedium?.copyWith(color: muted),
-              ),
-              const SizedBox(height: 8),
-              BpProgressBar(value: pass.totalFraction),
-              if (premium == false) ...[
-                const SizedBox(height: 10),
-                Text(
-                  BattlePassStrings.premiumHint,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: legibleAccent(context, valColorsOf(context).warning),
+              )
+            : null,
+        borderColor: premium == true ? gold.withValues(alpha: 0.4) : null,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Text(
+                    BattlePassStrings.levelSummary(
+                      formatNumber(pass.level),
+                      formatNumber(pass.levelCount),
+                      formatNumber(pass.unlockedLevels),
+                    ),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
+                if (premium != null) ...[
+                  const SizedBox(width: 8),
+                  BpBadge(
+                    premium
+                        ? BattlePassStrings.premium
+                        : BattlePassStrings.free,
+                    color: premium ? gold : muted,
+                    filled: premium,
+                    icon: premium ? Icons.workspace_premium : null,
+                  ),
+                ],
               ],
+            ),
+            const SizedBox(height: 10),
+            BpProgressBar(value: pass.totalFraction),
+            if (premium == false) ...[
+              const SizedBox(height: 12),
+              Text(
+                BattlePassStrings.premiumHint,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: legibleAccent(context, colors.warning),
+                  height: 1.4,
+                ),
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );
@@ -439,6 +428,7 @@ class _ChapterSection extends StatelessWidget {
     super.key,
     required this.chapter,
     required this.level,
+    required this.nextLevel,
     required this.premium,
     required this.free,
     required this.onTap,
@@ -446,6 +436,9 @@ class _ChapterSection extends StatelessWidget {
 
   final RewardChapter chapter;
   final int level;
+
+  /// The level whose reward comes next (marked "Tiếp theo").
+  final int? nextLevel;
   final List<ResolvedReward> premium;
   final List<ResolvedReward> free;
   final void Function(ResolvedReward reward) onTap;
@@ -454,11 +447,14 @@ class _ChapterSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
+    final colors = valColorsOf(context);
     final title = chapter.isEpilogue
         ? BattlePassStrings.epilogue
         : BattlePassStrings.chapter(chapter.number);
+    final reached = chapter.levelsReached(level);
+    final done = reached >= chapter.levelCount;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -469,7 +465,9 @@ class _ChapterSection extends StatelessWidget {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.titleMedium,
+                  style: ValText.sectionTitle.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
                 ),
               ),
               if (chapter.isCurrent) ...[
@@ -481,38 +479,45 @@ class _ChapterSection extends StatelessWidget {
               ],
               const Spacer(),
               Text(
-                BattlePassStrings.chapterProgress(
-                  chapter.levelsReached(level),
-                  chapter.levelCount,
+                BattlePassStrings.chapterProgress(reached, chapter.levelCount),
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: done ? legibleAccent(context, colors.win) : muted,
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
-                style: theme.textTheme.labelMedium?.copyWith(color: muted),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          _RewardGrid(rewards: premium, onTap: onTap),
+          const SizedBox(height: 8),
+          ValProgressBar(
+            value: chapter.levelCount == 0 ? 0 : reached / chapter.levelCount,
+            height: 3,
+            color: done ? colors.win : theme.colorScheme.primary,
+          ),
+          const SizedBox(height: 12),
+          _RewardGrid(rewards: premium, nextLevel: nextLevel, onTap: onTap),
           if (free.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Row(
               children: [
                 Icon(
                   Icons.card_giftcard,
                   size: 14,
-                  color: valColorsOf(context).win,
+                  color: legibleAccent(context, colors.win),
                 ),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     BattlePassStrings.freeTrack,
                     style: theme.textTheme.labelMedium?.copyWith(
-                      color: valColorsOf(context).win,
+                      color: legibleAccent(context, colors.win),
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 6),
-            _RewardGrid(rewards: free, onTap: onTap),
+            _RewardGrid(rewards: free, nextLevel: null, onTap: onTap),
           ],
         ],
       ),
@@ -522,9 +527,14 @@ class _ChapterSection extends StatelessWidget {
 
 /// Rows of equal-height tiles (3 columns on a 360 dp phone).
 class _RewardGrid extends StatelessWidget {
-  const _RewardGrid({required this.rewards, required this.onTap});
+  const _RewardGrid({
+    required this.rewards,
+    required this.nextLevel,
+    required this.onTap,
+  });
 
   final List<ResolvedReward> rewards;
+  final int? nextLevel;
   final void Function(ResolvedReward reward) onTap;
 
   static const _spacing = 8.0;
@@ -556,6 +566,9 @@ class _RewardGrid extends StatelessWidget {
                       child: j < slice.length
                           ? RewardTile(
                               reward: slice[j],
+                              isNext:
+                                  !slice[j].tier.isFree &&
+                                  slice[j].tier.level == nextLevel,
                               onTap: slice[j].tier.reward == null
                                   ? null
                                   : () => onTap(slice[j]),
@@ -582,7 +595,20 @@ class _RewardGrid extends StatelessWidget {
   }
 }
 
-/// Larger preview of a non-skin reward (card, spray, buddy, title…).
+/// Opens the preview of a non-skin reward (card, spray, buddy, title…) in
+/// the shared sheet chrome.
+Future<void> showRewardPreviewSheet(
+  BuildContext context,
+  ResolvedReward reward,
+) => showValSheet<void>(
+  context,
+  title: reward.name,
+  subtitle: reward.typeLabel,
+  builder: (context, _) => RewardPreviewSheet(reward: reward),
+);
+
+/// Body of the reward preview: art on a state-tinted glow, then level,
+/// track and state rows.
 class RewardPreviewSheet extends StatelessWidget {
   const RewardPreviewSheet({super.key, required this.reward});
 
@@ -591,44 +617,105 @@ class RewardPreviewSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = valColorsOf(context);
     final muted = theme.colorScheme.onSurfaceVariant;
     final tier = reward.tier;
-    final state = switch (tier.state) {
-      RewardState.unlocked => BattlePassStrings.rewardUnlocked,
-      RewardState.locked => BattlePassStrings.rewardLocked,
-      RewardState.needsPremium => BattlePassStrings.rewardNeedsPremium,
+    final (stateLabel, stateColor, stateIcon) = switch (tier.state) {
+      RewardState.unlocked => (
+        BattlePassStrings.rewardUnlocked,
+        colors.win,
+        Icons.check_circle,
+      ),
+      RewardState.locked => (
+        BattlePassStrings.rewardLocked,
+        muted,
+        Icons.lock_outline,
+      ),
+      RewardState.needsPremium => (
+        BattlePassStrings.rewardNeedsPremium,
+        colors.warning,
+        Icons.lock,
+      ),
     };
     final image = reward.image;
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (image != null) ...[
-              SizedBox(height: 180, child: NetImage(image)),
-              const SizedBox(height: 16),
-            ],
-            Text(
-              reward.name,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.titleLarge,
+    final isTitle = reward.type == ContractRewardType.title;
+    return ListView(
+      shrinkWrap: true,
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      children: [
+        DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(ValRadius.card),
+            gradient: RadialGradient(
+              radius: 0.9,
+              colors: [
+                stateColor.withValues(alpha: 0.28),
+                stateColor.withValues(alpha: 0.03),
+              ],
             ),
-            const SizedBox(height: 4),
-            Text(
-              [
-                reward.typeLabel,
-                BattlePassStrings.levelShort(tier.level),
-                if (tier.isFree) BattlePassStrings.free,
-                state,
-              ].join(BattlePassStrings.dot),
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(color: muted),
+            border: Border.all(color: stateColor.withValues(alpha: 0.35)),
+          ),
+          child: SizedBox(
+            height: 200,
+            child: Center(
+              child: image != null && !isTitle
+                  ? Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: NetImage(
+                        image,
+                        fit: BoxFit.contain,
+                        error: Icon(
+                          Icons.card_giftcard,
+                          color: muted,
+                          size: 48,
+                        ),
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        reward.name,
+                        textAlign: TextAlign.center,
+                        style: ValText.display(
+                          26,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        GroupedSection(
+          margin: EdgeInsets.zero,
+          children: [
+            GroupedRow(
+              icon: Icons.flag_outlined,
+              title: BattlePassStrings.rewardLevelLabel,
+              value: BattlePassStrings.levelShort(tier.level),
+            ),
+            GroupedRow(
+              icon: Icons.category_outlined,
+              title: BattlePassStrings.rewardTypeLabel,
+              value: reward.typeLabel,
+            ),
+            GroupedRow(
+              icon: tier.isFree
+                  ? Icons.card_giftcard
+                  : Icons.workspace_premium_outlined,
+              title: BattlePassStrings.rewardTrackLabel,
+              value: tier.isFree
+                  ? BattlePassStrings.free
+                  : BattlePassStrings.premium,
+            ),
+            GroupedRow(
+              leading: Icon(stateIcon, size: 22, color: stateColor),
+              title: BattlePassStrings.rewardStatusLabel,
+              value: stateLabel,
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 }

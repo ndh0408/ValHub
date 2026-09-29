@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/content/content_db.dart';
@@ -7,6 +10,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/util/format.dart';
+import '../../social/social_routes.dart';
 import '../data/live_game_models.dart';
 import '../live_game_strings.dart';
 import '../providers/live_game_providers.dart';
@@ -101,10 +105,43 @@ class LiveIdleView extends ConsumerWidget {
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 24),
+          // Real actions only: poll now, or jump to the party / queue
+          // screen when the player is in the menus.
+          if (state.phase == LivePhase.lobby || queueing)
+            FilledButton.icon(
+              onPressed: () => _openParty(context),
+              icon: const Icon(Icons.groups_2_outlined),
+              label: const Text(LiveGameStrings.openParty),
+            ),
+          if (state.phase == LivePhase.lobby || queueing)
+            const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () =>
+                unawaited(ref.read(liveGameProvider(puuid).notifier).refresh()),
+            icon: const Icon(Icons.refresh),
+            label: const Text(LiveGameStrings.refreshNow),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            LiveGameStrings.autoRefreshNote,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ],
       ),
     );
+  }
+
+  /// Closes the sheet, then opens "Tổ đội & hàng chờ" in the profile tab.
+  void _openParty(BuildContext context) {
+    final router = GoRouter.maybeOf(context);
+    unawaited(Navigator.of(context).maybePop());
+    router?.go(SocialRoutes.party);
   }
 }

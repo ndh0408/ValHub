@@ -1,6 +1,20 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../core/util/search_text.dart';
 import '../../../core/xmpp/friends.dart';
+
+/// Friends whose Riot ID (or roster note) contains every word of [query],
+/// ignoring case and Vietnamese diacritics: "duc", "ĐỨC" and "đức" all find
+/// "Đức#VN1"; "dem cu" finds "Cú Đêm". A blank query keeps everyone.
+FriendsView searchFriends(FriendsView view, String query) {
+  if (searchTokens(query).isEmpty) return view;
+  bool keep(Friend f) => matchesSearch(query, [f.name?.riotId, f.note]);
+  return FriendsView(
+    online: view.online.where(keep).toList(),
+    offline: view.offline.where(keep).toList(),
+    connection: view.connection,
+  );
+}
 
 /// Quick filter of the friends list (remembered per device, `UiMemory` key
 /// `social.friends.filter`).

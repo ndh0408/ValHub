@@ -1,18 +1,89 @@
-/// Vietnamese formatting helpers (VF §8.0 rules 6–7, SUMMARY §8.8 X9).
+/// Locale-aware formatting helpers (VF §8.0 rules 6–7, SUMMARY §8.8 X9).
 ///
 /// All functions are pure; pass `now` explicitly (from `clockProvider`) so they
-/// are testable.
+/// are testable. Numbers, dates and times take an optional `locale` (an
+/// `intl` locale id such as `vi`, `en_US`, `ja`); it defaults to the current
+/// UI locale ([currentIntlLocale]). Instants are always shown in the device
+/// time zone (`toLocal()`). Relative words ("hôm nay", "3 ngày trước") still
+/// come from the Vietnamese string tables until the i18n phase.
 library;
 
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
 import '../l10n/common_strings.dart';
 import '../l10n/content_strings.dart';
+import '../l10n/locale.dart';
 
-final NumberFormat _decimal = NumberFormat.decimalPattern('vi');
+final Map<String, NumberFormat> _decimals = {};
 
-/// `1162500` → `1.162.500`. Non-finite values format as `0`.
-String formatNumber(num value) => _decimal.format(value.isFinite ? value : 0);
+String _loc(String? locale) =>
+    Intl.canonicalizedLocale(locale ?? currentIntlLocale());
+
+bool _isVi(String locale) => locale == 'vi' || locale.startsWith('vi_');
+
+bool _dateSymbolsReady = false;
+
+/// `DateFormat` for a non-Vietnamese [locale] (date symbols are loaded on
+/// first use; the bundled `intl` data covers every VALORANT language).
+DateFormat _dateFormat(String locale, DateFormat Function(String l) build) {
+  if (!_dateSymbolsReady) {
+    _dateSymbolsReady = true;
+    // Synchronous for the bundled local data; the future is already done.
+    initializeDateFormatting().ignore();
+  }
+  try {
+    return build(locale);
+  } on Object {
+    return build('en_US');
+  }
+}
+
+/// `1162500` → `1.162.500` (vi), `1,162,500` (en). Non-finite values
+/// format as `0`.
+String formatNumber(num value, {String? locale}) {
+  final l = _loc(locale);
+  final f = _decimals.putIfAbsent(l, () {
+    try {
+      return NumberFormat.decimalPattern(l);
+    } on Object {
+      return NumberFormat.decimalPattern('en_US');
+    }
+  });
+  return f.format(value.isFinite ? value : 0);
+}
+
+/// [amount] of [currency] (ISO 4217) in the locale's currency format and
+/// with the currency's usual decimals: `268000, 'VND'` → `268.000 ₫` (vi),
+/// `16.1, 'USD'` → `$16.10` (en_US).
+String formatCurrency(num amount, String currency, {String? locale}) {
+  final l = _loc(locale);
+  NumberFormat f;
+  try {
+    f = NumberFormat.simpleCurrency(locale: l, name: currency);
+  } on Object {
+    f = NumberFormat.simpleCurrency(locale: 'en_US', name: currency);
+  }
+  return f.format(amount.isFinite ? amount : 0);
+}
+
+/// Decimal digits normally used for [currency] (VND 0, USD 2, JPY 0).
+int currencyDecimalDigits(String currency) {
+  try {
+    return NumberFormat.simpleCurrency(
+          locale: 'en_US',
+          name: currency,
+        ).decimalDigits ??
+        2;
+  } on Object {
+    return 2;
+  }
+}
+
+/// A price that is only an estimate: `≈ 268.000 ₫`.
+String formatEstimatedPrice(num amount, String currency, {String? locale}) =>
+    '${CommonStrings.estimatePrefix} '
+    '${formatCurrency(amount, currency, locale: locale)}';
 
 /// `2175` → `2.175 VP`.
 String formatVp(num amount) =>
@@ -43,10 +114,19 @@ String formatSigned(int value) {
 /// Integer percent discount badge: `32` → `-32%`.
 String formatDiscountPercent(num percent) => '-${percent.round()}%';
 
-/// Fraction → percent: `0.256` → `26%`.
-String formatPercent(num fraction, {int decimals = 0}) {
+/// Fraction → percent: `0.256` → `26%` (`25,6%` in vi / `25.6%` in en
+/// with one decimal).
+String formatPercent(num fraction, {int decimals = 0, String? locale}) {
   final value = fraction.isFinite ? fraction * 100 : 0;
-  return '${value.toStringAsFixed(decimals).replaceAll('.', ',')}%';
+  final text = value.toStringAsFixed(decimals);
+  final l = _loc(locale);
+  String separator;
+  try {
+    separator = NumberFormat.decimalPattern(l).symbols.DECIMAL_SEP;
+  } on Object {
+    separator = '.';
+  }
+  return '${text.replaceAll('.', separator)}%';
 }
 
 String _two(int n) => n.toString().padLeft(2, '0');
@@ -85,7 +165,7 @@ String formatDurationCoarse(Duration d) {
 
 /// Relative past time: `vừa xong`, `5 phút trước`, `18 giờ trước`, `hôm qua`,
 /// `3 ngày trước`, then `22/09/2026`. Future instants read as `vừa xong`.
-String formatRelative(DateTime then, DateTime now) {
+String formatRelative(DateTime then, DateTime now, {String? locale}) {
   final localThen = then.toLocal();
   final localNow = now.toLocal();
   final diff = localNow.difference(localThen);
@@ -95,57 +175,109 @@ String formatRelative(DateTime then, DateTime now) {
   final dayDiff = _dateOnly(localNow).difference(_dateOnly(localThen)).inDays;
   if (dayDiff <= 1) return CommonStrings.yesterday;
   if (dayDiff < 7) return CommonStrings.daysAgo(dayDiff);
-  return formatDate(localThen);
+  return formatDate(localThen, locale: locale);
 }
 
 DateTime _dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
 
-/// `22/09/2026` (local time).
-String formatDate(DateTime d) {
-  final l = d.toLocal();
-  return '${_two(l.day)}/${_two(l.month)}/${l.year}';
+/// `22/09/2026` (vi), `9/22/2026` (en_US) — device time zone.
+String formatDate(DateTime d, {String? locale}) {
+  final t = d.toLocal();
+  final l = _loc(locale);
+  if (_isVi(l)) return '${_two(t.day)}/${_two(t.month)}/${t.year}';
+  return _dateFormat(l, DateFormat.yMd).format(t);
 }
 
-/// `22/09` (local time).
-String formatDayMonth(DateTime d) {
-  final l = d.toLocal();
-  return '${_two(l.day)}/${_two(l.month)}';
+/// `22/09` (vi), `9/22` (en_US) — device time zone.
+String formatDayMonth(DateTime d, {String? locale}) {
+  final t = d.toLocal();
+  final l = _loc(locale);
+  if (_isVi(l)) return '${_two(t.day)}/${_two(t.month)}';
+  return _dateFormat(l, DateFormat.Md).format(t);
 }
 
-/// `14:05` (24-hour, local time).
-String formatTime(DateTime d) {
-  final l = d.toLocal();
-  return '${_two(l.hour)}:${_two(l.minute)}';
+/// `14:05` (vi, 24-hour), `2:05 PM` (en_US) — the locale's clock, device
+/// time zone.
+String formatTime(DateTime d, {String? locale}) {
+  final t = d.toLocal();
+  final l = _loc(locale);
+  if (_isVi(l)) return '${_two(t.hour)}:${_two(t.minute)}';
+  return _dateFormat(l, DateFormat.jm).format(t);
 }
 
-/// `22/09/2026 14:05` (local time).
-String formatDateTime(DateTime d) => '${formatDate(d)} ${formatTime(d)}';
+/// `22/09/2026 14:05` (device time zone, locale order).
+String formatDateTime(DateTime d, {String? locale}) =>
+    '${formatDate(d, locale: locale)} ${formatTime(d, locale: locale)}';
 
-/// `Thứ Hai` for the local weekday of [d].
-String formatWeekday(DateTime d) =>
-    CommonStrings.weekdays[d.toLocal().weekday - 1];
+/// `Thứ Hai` (vi), `Monday` (en) for the local weekday of [d].
+String formatWeekday(DateTime d, {String? locale}) {
+  final t = d.toLocal();
+  final l = _loc(locale);
+  if (_isVi(l)) return CommonStrings.weekdays[t.weekday - 1];
+  return _dateFormat(l, DateFormat.EEEE).format(t);
+}
 
-/// `Thứ Hai, 22/09` (local time).
-String formatWeekdayDate(DateTime d) =>
-    '${formatWeekday(d)}, ${formatDayMonth(d)}';
+/// `Thứ Hai, 22/09` (device time zone).
+String formatWeekdayDate(DateTime d, {String? locale}) =>
+    '${formatWeekday(d, locale: locale)}, '
+    '${formatDayMonth(d, locale: locale)}';
+
+/// [d] rounded to the nearest minute (half up). Countdowns count down to
+/// 06:59:41 when the store resets at 07:00:00 (the remaining seconds are
+/// received a moment late), so reset / expiry times are shown rounded.
+DateTime roundToMinute(DateTime d) {
+  final ms = (d.millisecondsSinceEpoch + 30000) ~/ 60000 * 60000;
+  return DateTime.fromMillisecondsSinceEpoch(ms, isUtc: d.isUtc);
+}
+
+/// Wall-clock moment of a reset or expiry in the device time zone, with the
+/// locale's clock: `07:00 hôm nay`, `07:00 ngày mai`, else
+/// `23:59 thứ Hai 06/10`.
+String formatWallTime(DateTime at, DateTime now, {String? locale}) {
+  final t = roundToMinute(at).toLocal();
+  final dayDiff = _dateOnly(t).difference(_dateOnly(now.toLocal())).inDays;
+  final String day;
+  if (dayDiff == 0) {
+    day = CommonStrings.todayLower;
+  } else if (dayDiff == 1) {
+    day = CommonStrings.tomorrow;
+  } else {
+    day =
+        '${formatWeekdayLower(t, locale: locale)} '
+        '${formatDayMonth(t, locale: locale)}';
+  }
+  return CommonStrings.wallTime(formatTime(t, locale: locale), day);
+}
+
+/// `thứ Hai`, `chủ Nhật` — the weekday written mid-sentence (the first
+/// letter lower-cased where the language capitalises weekdays).
+String formatWeekdayLower(DateTime d, {String? locale}) {
+  final w = formatWeekday(d, locale: locale);
+  if (w.isEmpty) return w;
+  final l = _loc(locale);
+  // German capitalises nouns, weekdays included.
+  if (l.startsWith('de')) return w;
+  return w[0].toLowerCase() + w.substring(1);
+}
 
 /// Day header for grouped lists: `Hôm nay`, `Hôm qua`, else
 /// `Thứ Hai, 22/09` (VF S42).
-String formatDayHeader(DateTime d, DateTime now) {
+String formatDayHeader(DateTime d, DateTime now, {String? locale}) {
   final dayDiff = _dateOnly(now.toLocal())
       .difference(_dateOnly(d.toLocal()))
       .inDays;
   if (dayDiff == 0) return CommonStrings.today;
   if (dayDiff == 1) return CommonStrings.yesterdayTitle;
-  return formatWeekdayDate(d);
+  return formatWeekdayDate(d, locale: locale);
 }
 
 /// `Cập nhật lúc 14:05` today, `Cập nhật lúc 14:05, 22/09` otherwise.
-String formatUpdatedAt(DateTime at, DateTime now) {
+String formatUpdatedAt(DateTime at, DateTime now, {String? locale}) {
   final sameDay = _dateOnly(at.toLocal()) == _dateOnly(now.toLocal());
   final time = sameDay
-      ? formatTime(at)
-      : '${formatTime(at)}, ${formatDayMonth(at)}';
+      ? formatTime(at, locale: locale)
+      : '${formatTime(at, locale: locale)}, '
+            '${formatDayMonth(at, locale: locale)}';
   return CommonStrings.updatedAt(time);
 }
 

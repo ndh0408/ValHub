@@ -4,6 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/config/remote_config.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/xmpp/xmpp.dart';
+import 'package:valvn/features/social/social_strings.dart';
 import 'package:valvn/features/social/ui/party_screen.dart';
 
 import '../social_test_env.dart';
@@ -38,7 +39,7 @@ void main() {
     when(() => env.api.partyPlayer(any()))
         .thenAnswer((_) async => throw const NotFoundException());
     await _pump(tester, env);
-    expect(find.text('Hãy mở Valorant trên máy tính/console'), findsOneWidget);
+    expect(find.text(SocialStrings.gameNotRunningTitle), findsOneWidget);
     expect(find.text('Thử lại'), findsOneWidget);
     await unmount(tester);
   });
@@ -70,16 +71,20 @@ void main() {
     expect(find.textContaining('Tôi'), findsWidgets);
     expect(find.textContaining('Đồng Đội Có Cái Tên'), findsOneWidget);
     expect(find.text('Trưởng nhóm'), findsOneWidget);
-    expect(find.text('(bạn)'), findsOneWidget);
+    expect(find.text(SocialStrings.you.toUpperCase()), findsOneWidget);
     expect(find.text('Cấp 45'), findsOneWidget);
-    expect(find.widgetWithText(ChoiceChip, 'Đấu thường'), findsOneWidget);
-    expect(find.widgetWithText(ChoiceChip, 'Siêu Tốc'), findsOneWidget);
+    // The queue is a row that opens the picker sheet.
+    expect(find.text(SocialStrings.queueLabel.toUpperCase()), findsOneWidget);
 
     await tester.tap(find.text('Bắt đầu tìm trận'));
     await settle(tester);
     verify(() => env.api.partyJoinMatchmaking(me, partyId)).called(1);
 
-    await tester.tap(find.widgetWithText(ChoiceChip, 'Đấu thường'));
+    await tester.tap(find.byTooltip(SocialStrings.changeQueue));
+    await settle(tester);
+    expect(find.text(SocialStrings.pickQueueTitle), findsOneWidget);
+    expect(find.text('Siêu Tốc'), findsOneWidget);
+    await tester.tap(find.text('Đấu thường'));
     await settle(tester);
     verify(() => env.api.partyChangeQueue(me, partyId, 'unrated')).called(1);
     expect(tester.takeException(), isNull);
@@ -123,10 +128,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(
-      find.text('Chỉ trưởng nhóm mới có thể bắt đầu tìm trận.'),
-      findsOneWidget,
-    );
+    expect(find.text(SocialStrings.onlyLeader), findsOneWidget);
     final start = tester.widget<ButtonStyleButton>(
       find.ancestor(
         of: find.text('Bắt đầu tìm trận'),

@@ -1,6 +1,11 @@
 /// Strings for account management (VF §6.1 S05, §8.12).
 abstract final class AccountStrings {
   static const switcherTitle = 'Tài khoản';
+
+  /// "Tài khoản (3/10)" (sheet title).
+  static String switcherTitleCount(int count, int max) =>
+      '$switcherTitle ($count/$max)';
+  static const switcherSubtitle = 'Chạm để chuyển tài khoản';
   static String addAccount(int count, int max) =>
       'Thêm tài khoản ($count/$max)';
   static String accountsHeader(int count, int max) => 'TÀI KHOẢN ($count/$max)';
@@ -46,6 +51,8 @@ abstract final class AccountStrings {
   // Quick fill on the Riot login page
   static const quickFill = 'Điền nhanh';
   static const quickFillTitle = 'Điền tài khoản đã lưu';
+  static const quickFillSubtitle =
+      'Chọn ghi chú đăng nhập để điền vào trang Riot';
   static const quickFillDone = 'Đã điền, hãy bấm Đăng nhập.';
   static const quickFillNotReady =
       'Chưa thấy ô đăng nhập. Đợi trang tải xong rồi thử lại.';
@@ -63,4 +70,21 @@ abstract final class AccountStrings {
   static const regionKr = 'Hàn Quốc';
   static const regionLatam = 'Mỹ Latinh';
   static const regionBr = 'Brazil';
+
+  /// Vietnamese name of a Riot region id (`ap` → "Châu Á - Thái Bình
+  /// Dương"); unknown ids are shown upper-cased.
+  static String regionName(String region) => switch (region.toLowerCase()) {
+    'ap' => regionAp,
+    'na' => regionNa,
+    'eu' => regionEu,
+    'kr' => regionKr,
+    'latam' => regionLatam,
+    'br' => regionBr,
+    _ => region.toUpperCase(),
+  };
+
+  // Switcher sheet (S05)
+  static String accountCount(int count, int max) => '$count/$max tài khoản';
+  static const manageHint =
+      'Xóa tài khoản hoặc sửa ghi chú đăng nhập trong Cài đặt.';
 }

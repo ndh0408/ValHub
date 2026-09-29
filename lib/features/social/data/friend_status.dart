@@ -27,6 +27,41 @@ class FriendStatus {
   String toString() => 'FriendStatus($text, $tone)';
 }
 
+/// Muted second line of a friend in VALORANT, with what the status line
+/// does not already say: the queue of their match, the party size outside
+/// the lobby, the leaderboard position ("Thi đấu xếp hạng · Tổ đội 3/5 ·
+/// Top 120"). `null` when there is nothing to add.
+String? friendDetail(Friend friend, {required ContentDb db}) {
+  final v = friend.valorant;
+  if (!friend.isOnline || v == null) return null;
+  final activity = friend.activity;
+  final parts = <String>[];
+  final queue = (v.queueId ?? '').trim();
+  if ((activity == FriendActivity.inMatch ||
+          activity == FriendActivity.agentSelect) &&
+      queue.isNotEmpty &&
+      !v.isCustomGame) {
+    final name = db.queueName(queue).trim();
+    if (name.isNotEmpty) parts.add(name);
+  }
+  final size = v.partySize;
+  if (activity != FriendActivity.inLobby && size != null && size > 1) {
+    parts.add(SocialStrings.partyOf(size, v.maxPartySize ?? 5));
+  }
+  final top = v.leaderboardPosition;
+  if (top != null && top > 0) {
+    parts.add(SocialStrings.leaderboardTop(formatNumber(top)));
+  }
+  return parts.isEmpty ? null : parts.join(' · ');
+}
+
+/// Competitive tier shown next to a friend in VALORANT (`null` when
+/// unranked or unknown).
+int? friendRankTier(Friend friend) {
+  final tier = friend.isOnline ? friend.valorant?.competitiveTier : null;
+  return tier != null && tier > 2 ? tier : null;
+}
+
 /// Vietnamese status line of a friend (SUMMARY §9.9, VF S60):
 /// "Đang đấu · Ascent · 8 – 4", "Đang chọn đặc vụ · Bind",
 /// "Đang tìm trận · Thi đấu xếp hạng", "Đang ở sảnh chờ", "Vắng mặt",

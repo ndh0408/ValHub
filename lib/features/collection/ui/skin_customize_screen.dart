@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
@@ -13,8 +14,8 @@ import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/content_tier_badge.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
-import '../../../core/ui/section_header.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../skin_detail/skin_video_view.dart';
 import '../collection_strings.dart';
@@ -22,10 +23,13 @@ import '../data/loadout_view.dart';
 import '../providers/collection_providers.dart';
 import 'buddy_picker_sheet.dart';
 import 'widgets/collection_widgets.dart';
+import 'widgets/gun_hero.dart';
 import 'widgets/loadout_actions.dart';
 
-/// S35 "Tùy chỉnh skin": preview / video, owned variants and levels (locked
-/// ones greyed), buddy slot and "Trang bị". Route
+/// S35 "Tùy chỉnh skin": the chosen variant / level render as the header
+/// art (flies in from the skin list; cross-fades on change) with "Xem
+/// video", owned variants and levels (locked ones greyed, each level's
+/// video playable), the buddy slot and a fixed "Trang bị" bar. Route
 /// `/collection/weapons/:weaponId/skin/:skinId`.
 class SkinCustomizeScreen extends ConsumerStatefulWidget {
   const SkinCustomizeScreen({
@@ -43,6 +47,73 @@ class SkinCustomizeScreen extends ConsumerStatefulWidget {
       _SkinCustomizeScreenState();
 }
 
+/// What the page shows for the current picks.
+class _Selection {
+  _Selection({
+    required this.skin,
+    required this.levelId,
+    required this.chromaId,
+    required this.level,
+    required this.chroma,
+    required this.wearing,
+    required this.isEquipped,
+  });
+
+  factory _Selection.of(
+    WeaponSkin skin,
+    ContentDb db, {
+    required GunLoadout? gun,
+    required OwnedItems? owned,
+    required String? pickedLevel,
+    required String? pickedChroma,
+  }) {
+    final wearing = gun?.skinId == skin.uuid;
+    final ownedLevels = owned?.ownedLevels(skin) ?? const <SkinLevel>[];
+    // What is equipped, else the best owned level + the base variant.
+    var levelId = pickedLevel;
+    if (levelId == null || !(owned?.isSkinLevelOwned(levelId) ?? false)) {
+      levelId = wearing && gun?.skinLevelId != null
+          ? gun!.skinLevelId
+          : (ownedLevels.lastOrNull ?? skin.levels.firstOrNull)?.uuid;
+    }
+    var chromaId = pickedChroma;
+    if (chromaId == null || !(owned?.isChromaOwned(chromaId) ?? false)) {
+      chromaId = wearing && gun?.chromaId != null
+          ? gun!.chromaId
+          : skin.chromas.firstOrNull?.uuid;
+    }
+    return _Selection(
+      skin: skin,
+      levelId: levelId,
+      chromaId: chromaId,
+      level: levelId == null ? null : db.skinLevel(levelId),
+      chroma: chromaId == null ? null : db.skinChroma(chromaId),
+      wearing: wearing,
+      isEquipped:
+          wearing && gun?.skinLevelId == levelId && gun?.chromaId == chromaId,
+    );
+  }
+
+  final WeaponSkin skin;
+  final String? levelId;
+  final String? chromaId;
+  final SkinLevel? level;
+  final SkinChroma? chroma;
+  final bool wearing;
+  final bool isEquipped;
+
+  String? get render =>
+      chroma?.fullRender ??
+      chroma?.displayIcon ??
+      level?.displayIcon ??
+      skin.render;
+
+  String? get video =>
+      (level != null && level!.index > 0 ? level!.streamedVideo : null) ??
+      chroma?.streamedVideo ??
+      ((chroma?.isBase ?? true) ? skin.previewVideo : null);
+}
+
 class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
   String? _levelUuid;
   String? _chromaUuid;
@@ -51,349 +122,271 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final skin = ref.watch(contentProvider).value?.skinByAnyUuid(widget.skinId);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          skin == null ? CollectionStrings.skinCustomizeTitle : skinLabel(skin),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
-      body: CollectionAccountGate(
-        builder: (context, account) => LoadoutDataBuilder(
-          puuid: account.puuid,
-          loading: const _CustomizeSkeleton(),
-          builder: (context, snapshot, owned, db) {
-            final s = db.skinByAnyUuid(widget.skinId);
-            if (s == null) {
-              return const EmptyView(
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
+    final skin = db.skinByAnyUuid(widget.skinId);
+    final title = skin == null
+        ? CollectionStrings.skinCustomizeTitle
+        : skinLabel(skin);
+    final account = ref.watch(activeAccountProvider);
+    if (account == null) return NoAccountPage(title: title);
+    final puuid = account.puuid;
+    if (skin == null) {
+      return SubPageScaffold(
+        title: title,
+        body: db.isEmpty
+            ? const _CustomizeSkeleton()
+            : const EmptyView(
                 message: CollectionStrings.skinNotFound,
                 icon: Icons.help_outline,
-              );
-            }
-            return _buildBody(context, account.puuid, snapshot, owned, db, s);
-          },
+              ),
+      );
+    }
+
+    final snapshot = ref.watch(loadoutProvider(puuid)).value;
+    final owned = ref.watch(ownedItemsProvider(puuid)).value;
+    final gun = snapshot?.loadout.gun(_weaponId);
+    final sel = _Selection.of(
+      skin,
+      db,
+      gun: gun,
+      owned: owned,
+      pickedLevel: _levelUuid,
+      pickedChroma: _chromaUuid,
+    );
+    final isOwned = owned?.isSkinOwned(skin.uuid) ?? false;
+    final pending = snapshot?.isPending ?? false;
+    final canEquip =
+        snapshot != null &&
+        isOwned &&
+        gun != null &&
+        sel.levelId != null &&
+        sel.chromaId != null &&
+        !sel.isEquipped &&
+        !pending;
+    final hasTier = !skin.isStandard && skin.contentTierUuid != null;
+    final weapon = db.weapon(skin.weaponUuid) ?? db.weapon(_weaponId);
+    final video = sel.video;
+    final facts = [
+      ?weapon?.displayName,
+      ?skinTierName(ref, hasTier ? skin.contentTierUuid : null),
+    ];
+
+    return SubPageScaffold(
+      title: title,
+      subtitle: facts.isEmpty ? null : facts.join(' · '),
+      hero: GunHero(
+        render: sel.render,
+        tint: hasTier
+            ? skinTierColor(ref, context, skin.contentTierUuid)
+            : null,
+        heroTag: CollectionHeroTags.skin(skin.uuid),
+        bottomStart: hasTier
+            ? ContentTierBadge(
+                contentTierUuid: skin.contentTierUuid,
+                showName: true,
+              )
+            : null,
+        bottomEnd: video == null
+            ? null
+            : FilledButton.tonalIcon(
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size(48, 40),
+                  shape: const StadiumBorder(),
+                ),
+                onPressed: () =>
+                    unawaited(openSkinVideo(context, videoUrl: video)),
+                icon: const Icon(Icons.play_arrow_rounded),
+                label: const Text(CollectionStrings.playVideo),
+              ),
+      ),
+      heroHeight: 250,
+      onRefresh: () => refreshCollection(ref, puuid),
+      bottomBar: FilledButton.icon(
+        style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
+        onPressed: canEquip
+            ? () async {
+                Haptics.light();
+                final ok = await applyLoadoutChange(
+                  context,
+                  ref,
+                  puuid: puuid,
+                  change: EquipSkin(
+                    weaponId: _weaponId,
+                    skinId: skin.uuid,
+                    skinLevelId: sel.levelId!,
+                    chromaId: sel.chromaId!,
+                  ),
+                  successMessage: CollectionStrings.equippedItem(
+                    skinLabel(skin),
+                  ),
+                );
+                if (ok) Haptics.medium();
+              }
+            : null,
+        icon: Icon(sel.isEquipped ? Icons.check : Icons.done_all),
+        label: Text(
+          pending
+              ? CollectionStrings.saving
+              : (sel.isEquipped
+                    ? CollectionStrings.equipped
+                    : CollectionStrings.equip),
         ),
+      ),
+      slivers: loadoutSlivers(
+        ref,
+        puuid: puuid,
+        loading: const _CustomizeSkeleton(),
+        data: (snapshot, owned, db) => [
+          if (snapshot.isFromCache)
+            const SliverToBoxAdapter(child: CachedLoadoutBanner()),
+          SliverToBoxAdapter(child: SavingBar(visible: snapshot.isPending)),
+          if (!isOwned)
+            const SliverToBoxAdapter(
+              child: CollectionNotice(
+                icon: Icons.lock_outline,
+                text: CollectionStrings.skinNotOwned,
+                margin: EdgeInsets.fromLTRB(16, 4, 16, 0),
+              ),
+            ),
+          ..._body(context, sel, owned, gun, snapshot.isPending),
+        ],
       ),
     );
   }
 
-  Widget _buildBody(
+  List<Widget> _body(
     BuildContext context,
-    String puuid,
-    LoadoutSnapshot snapshot,
+    _Selection sel,
     OwnedItems owned,
-    ContentDb db,
-    WeaponSkin skin,
+    GunLoadout? gun,
+    bool pending,
   ) {
     final theme = Theme.of(context);
-    final gun = snapshot.loadout.gun(_weaponId);
-    final isOwned = owned.isSkinOwned(skin.uuid);
+    final skin = sel.skin;
     final ownedLevels = owned.ownedLevels(skin);
-    final wearing = gun?.skinId == skin.uuid;
-
-    // Selection: what is equipped, else the best owned level + base chroma.
-    var levelId = _levelUuid;
-    if (levelId == null || !owned.isSkinLevelOwned(levelId)) {
-      levelId = wearing && gun?.skinLevelId != null
-          ? gun!.skinLevelId
-          : (ownedLevels.lastOrNull ?? skin.levels.firstOrNull)?.uuid;
-    }
-    var chromaId = _chromaUuid;
-    if (chromaId == null || !owned.isChromaOwned(chromaId)) {
-      chromaId = wearing && gun?.chromaId != null
-          ? gun!.chromaId
-          : skin.chromas.firstOrNull?.uuid;
-    }
-    final level = levelId == null ? null : db.skinLevel(levelId);
-    final chroma = chromaId == null ? null : db.skinChroma(chromaId);
-
-    final render =
-        chroma?.fullRender ??
-        chroma?.displayIcon ??
-        level?.displayIcon ??
-        skin.render;
-    final video =
-        (level != null && level.index > 0 ? level.streamedVideo : null) ??
-        chroma?.streamedVideo ??
-        ((chroma?.isBase ?? true) ? skin.previewVideo : null);
-    final isSelectionEquipped =
-        wearing && gun?.skinLevelId == levelId && gun?.chromaId == chromaId;
-    final canEquip =
-        isOwned &&
-        gun != null &&
-        levelId != null &&
-        chromaId != null &&
-        !isSelectionEquipped &&
-        !snapshot.isPending;
-    final tint = contentTierTint(
-      ref,
-      skin.contentTierUuid,
-      fallback: theme.colorScheme.surfaceContainerHigh,
-    );
+    final ownedChromas = owned.ownedChromas(skin);
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final buddy = equippedBuddy(gun, db);
     final isMelee = gun?.isMelee ?? _weaponId == SpecialIds.melee;
-
-    return Column(
-      children: [
-        SavingBar(visible: snapshot.isPending),
-        Expanded(
-          child: AdaptiveRefresh(
-            onRefresh: () => refreshCollection(ref, puuid),
-            child: ListView(
-              padding: const EdgeInsets.only(bottom: 16),
-              children: [
-                _Preview(
-                  render: render,
-                  video: video,
-                  tint: tint,
-                  tierUuid: skin.contentTierUuid,
+    final chroma = sel.chroma;
+    return [
+      if (skin.chromas.length > 1) ...[
+        SliverToBoxAdapter(
+          child: CollectionSectionTitle(
+            CollectionStrings.variants,
+            trailing: CollectionStrings.chromaCount(
+              ownedChromas.length,
+              skin.chromas.length,
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: SizedBox(
+            height: 72,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: skin.chromas.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 10),
+              itemBuilder: (context, i) {
+                final c = skin.chromas[i];
+                final unlocked = owned.isChromaOwned(c.uuid);
+                return _ChromaSwatch(
+                  image: c.swatch ?? c.displayIcon ?? c.fullRender,
+                  label: c.label.isEmpty ? skin.displayName : c.label,
+                  selected: c.uuid == sel.chromaId,
+                  locked: !unlocked,
+                  onTap: unlocked
+                      ? () {
+                          Haptics.selection();
+                          setState(() => _chromaUuid = c.uuid);
+                        }
+                      : null,
+                );
+              },
+            ),
+          ),
+        ),
+        if (chroma != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+              child: AnimatedSwitcher(
+                duration: ValMotion.fast,
+                child: Text(
+                  chroma.label.isEmpty ? skin.displayName : chroma.label,
+                  key: ValueKey(chroma.uuid),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
-                if (!isOwned)
-                  const _Notice(
-                    icon: Icons.lock_outline,
-                    text: CollectionStrings.skinNotOwned,
-                  ),
-                if (skin.chromas.length > 1) ...[
-                  const SectionHeader(CollectionStrings.variants),
-                  SizedBox(
-                    height: 68,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: skin.chromas.length,
-                      separatorBuilder: (_, _) => const SizedBox(width: 10),
-                      itemBuilder: (context, i) {
-                        final c = skin.chromas[i];
-                        final unlocked = owned.isChromaOwned(c.uuid);
-                        return _ChromaSwatch(
-                          image: c.swatch ?? c.displayIcon ?? c.fullRender,
-                          label: c.label.isEmpty ? skin.displayName : c.label,
-                          selected: c.uuid == chromaId,
-                          locked: !unlocked,
-                          onTap: unlocked
-                              ? () {
-                                  Haptics.selection();
-                                  setState(() => _chromaUuid = c.uuid);
-                                }
-                              : null,
-                        );
-                      },
-                    ),
-                  ),
-                  if (chroma != null)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                      child: Text(
-                        chroma.label.isEmpty ? skin.displayName : chroma.label,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                ],
-                if (skin.levels.length > 1) ...[
-                  SectionHeader(
-                    CollectionStrings.levels,
-                    trailing: Text(
-                      CollectionStrings.levelsUnlocked(
-                        ownedLevels.length,
-                        skin.levels.length,
-                      ),
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                  GroupedSection(
-                    children: [
-                      for (final l in skin.levels)
-                        _LevelTile(
-                          title: CollectionStrings.levelLabel(
-                            l.levelNumber,
-                            l.levelItemLabel,
-                          ),
-                          selected: l.uuid == levelId,
-                          locked: !owned.isSkinLevelOwned(l.uuid),
-                          onTap: () {
-                            Haptics.selection();
-                            setState(() => _levelUuid = l.uuid);
-                          },
-                        ),
-                    ],
-                  ),
-                ],
-                if (!isMelee && gun != null) ...[
-                  const SectionHeader(CollectionStrings.buddySlot),
-                  _BuddySlot(
-                    name: buddy?.displayName,
-                    image: buddy?.image,
-                    onTap: snapshot.isPending
-                        ? null
-                        : () => unawaited(
-                            showBuddyPickerSheet(context, weaponId: _weaponId),
-                          ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-        SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-            child: FilledButton.icon(
-              style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(48),
-              ),
-              onPressed: canEquip
-                  ? () async {
-                      Haptics.light();
-                      final ok = await applyLoadoutChange(
-                        context,
-                        ref,
-                        puuid: puuid,
-                        change: EquipSkin(
-                          weaponId: _weaponId,
-                          skinId: skin.uuid,
-                          skinLevelId: levelId!,
-                          chromaId: chromaId!,
-                        ),
-                        successMessage: CollectionStrings.equippedItem(
-                          skinLabel(skin),
-                        ),
-                      );
-                      if (ok) Haptics.medium();
-                    }
-                  : null,
-              icon: Icon(isSelectionEquipped ? Icons.check : Icons.done_all),
-              label: Text(
-                snapshot.isPending
-                    ? CollectionStrings.saving
-                    : (isSelectionEquipped
-                          ? CollectionStrings.equipped
-                          : CollectionStrings.equip),
               ),
             ),
           ),
-        ),
       ],
-    );
-  }
-}
-
-/// Hero render on a rarity glow; cross-fades when the variant / level
-/// changes. Rarity badge top-left, "Xem video" pill bottom-right.
-class _Preview extends StatelessWidget {
-  const _Preview({
-    required this.render,
-    required this.video,
-    required this.tint,
-    required this.tierUuid,
-  });
-
-  final String? render;
-  final String? video;
-  final Color tint;
-  final String? tierUuid;
-
-  @override
-  Widget build(BuildContext context) {
-    final v = video;
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final color = tint.withValues(alpha: 1);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      child: AspectRatio(
-        aspectRatio: 16 / 10,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(ValRadius.card),
-            color: Theme.of(context).colorScheme.surfaceContainer,
-            border: Border.all(
-              color: color.withValues(alpha: dark ? 0.35 : 0.45),
-            ),
-            gradient: RadialGradient(
-              radius: 0.9,
-              colors: [
-                color.withValues(alpha: dark ? 0.42 : 0.26),
-                color.withValues(alpha: 0.02),
-              ],
+      if (skin.levels.length > 1) ...[
+        SliverToBoxAdapter(
+          child: CollectionSectionTitle(
+            CollectionStrings.levels,
+            trailing: CollectionStrings.levelsUnlocked(
+              ownedLevels.length,
+              skin.levels.length,
             ),
           ),
-          child: Stack(
-            fit: StackFit.expand,
+        ),
+        SliverToBoxAdapter(
+          child: GroupedSection(
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 36, 20, 36),
-                child: AnimatedSwitcher(
-                  duration: ValMotion.medium,
-                  switchInCurve: ValMotion.curve,
-                  child: NetImage(
-                    render,
-                    key: ValueKey(render),
-                    fit: BoxFit.contain,
+              for (final l in skin.levels)
+                _LevelTile(
+                  title: CollectionStrings.levelLabel(
+                    l.levelNumber,
+                    l.levelItemLabel,
                   ),
-                ),
-              ),
-              if (tierUuid != null)
-                Positioned(
-                  left: 14,
-                  top: 12,
-                  child: ContentTierBadge(
-                    contentTierUuid: tierUuid,
-                    showName: true,
-                  ),
-                ),
-              if (v != null)
-                Positioned(
-                  right: 10,
-                  bottom: 10,
-                  child: FilledButton.tonalIcon(
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(48, 40),
-                      shape: const StadiumBorder(),
-                    ),
-                    onPressed: () =>
-                        unawaited(openSkinVideo(context, videoUrl: v)),
-                    icon: const Icon(Icons.play_arrow_rounded),
-                    label: const Text(CollectionStrings.playVideo),
-                  ),
+                  selected: l.uuid == sel.levelId,
+                  locked: !owned.isSkinLevelOwned(l.uuid),
+                  video: l.streamedVideo,
+                  onTap: () {
+                    Haptics.selection();
+                    setState(() => _levelUuid = l.uuid);
+                  },
                 ),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _Notice extends StatelessWidget {
-  const _Notice({required this.icon, required this.text});
-
-  final IconData icon;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final warning = valColorsOf(context).warning;
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: warning.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: warning),
-          const SizedBox(width: 8),
-          Expanded(child: Text(text)),
-        ],
-      ),
-    );
+      ],
+      if (gun != null) ...[
+        const SliverToBoxAdapter(
+          child: CollectionSectionTitle(CollectionStrings.buddySlot),
+        ),
+        SliverToBoxAdapter(
+          child: isMelee
+              ? const CollectionNotice(
+                  icon: Icons.info_outline,
+                  text: CollectionStrings.meleeNoBuddy,
+                  margin: EdgeInsets.symmetric(horizontal: 16),
+                )
+              : GroupedSection(
+                  children: [
+                    HubRow(
+                      icon: Icons.link,
+                      leading: _BuddyThumb(image: buddy?.image),
+                      title: buddy?.displayName ?? CollectionStrings.noBuddy,
+                      value: CollectionStrings.changeBuddy,
+                      onTap: pending
+                          ? null
+                          : () => unawaited(
+                              showBuddyPickerSheet(
+                                context,
+                                weaponId: _weaponId,
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
+        ),
+      ],
+    ];
   }
 }
 
@@ -429,14 +422,16 @@ class _ChromaSwatch extends StatelessWidget {
           child: AnimatedContainer(
             duration: ValMotion.fast,
             curve: ValMotion.curve,
-            width: 64,
+            width: 72,
             decoration: BoxDecoration(
               color: selected
                   ? scheme.primary.withValues(alpha: 0.12)
-                  : scheme.surfaceContainerHigh,
+                  : scheme.surfaceContainer,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: selected ? scheme.primary : scheme.outlineVariant,
+                color: selected
+                    ? scheme.primary
+                    : valColorsOf(context).hairline,
                 width: selected ? 2 : 1,
               ),
             ),
@@ -444,7 +439,7 @@ class _ChromaSwatch extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(10),
                   child: NetImage(
                     image,
                     fit: BoxFit.contain,
@@ -468,105 +463,123 @@ class _ChromaSwatch extends StatelessWidget {
   }
 }
 
+/// One upgrade level: radio / lock, "Cấp 2 · Hiệu ứng hình ảnh", and its
+/// video (playable even while locked, to preview an upgrade).
 class _LevelTile extends StatelessWidget {
   const _LevelTile({
     required this.title,
     required this.selected,
     required this.locked,
     required this.onTap,
+    this.video,
   });
 
   final String title;
   final bool selected;
   final bool locked;
   final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final icon = locked
-        ? Icons.lock
-        : (selected ? Icons.radio_button_checked : Icons.radio_button_off);
-    return ListTile(
-      enabled: !locked,
-      selected: selected,
-      selectedColor: scheme.onSurface,
-      selectedTileColor: scheme.primary.withValues(alpha: 0.08),
-      onTap: locked ? null : onTap,
-      leading: AnimatedSwitcher(
-        duration: ValMotion.fast,
-        transitionBuilder: (child, a) =>
-            ScaleTransition(scale: a, child: child),
-        child: Icon(
-          icon,
-          key: ValueKey(icon),
-          color: selected && !locked ? scheme.primary : scheme.onSurfaceVariant,
-        ),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-        ),
-      ),
-      subtitle: locked ? const Text(CollectionStrings.locked) : null,
-    );
-  }
-}
-
-class _BuddySlot extends StatelessWidget {
-  const _BuddySlot({required this.name, required this.image, this.onTap});
-
-  final String? name;
-  final String? image;
-  final VoidCallback? onTap;
+  final String? video;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    return ValCard(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(12),
-      onTap: onTap,
-      child: Row(
-        children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: scheme.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.all(6),
-            child: name == null
-                ? Icon(Icons.add, color: scheme.onSurfaceVariant)
-                : NetImage(image, fit: BoxFit.contain),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              name ?? CollectionStrings.noBuddy,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: name == null
-                  ? theme.textTheme.bodyMedium?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                    )
-                  : theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
+    final icon = locked
+        ? Icons.lock
+        : (selected ? Icons.radio_button_checked : Icons.radio_button_off);
+    final v = video;
+    return Semantics(
+      button: !locked,
+      selected: selected,
+      enabled: !locked,
+      child: Material(
+        color: selected && !locked
+            ? scheme.primary.withValues(alpha: 0.08)
+            : Colors.transparent,
+        child: InkWell(
+          onTap: locked ? null : onTap,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 56),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 6, 4, 6),
+              child: Row(
+                children: [
+                  AnimatedSwitcher(
+                    duration: ValMotion.fast,
+                    transitionBuilder: (child, a) =>
+                        ScaleTransition(scale: a, child: child),
+                    child: Icon(
+                      icon,
+                      key: ValueKey(icon),
+                      color: selected && !locked
+                          ? legibleAccent(context, scheme.primary, min: 3)
+                          : scheme.onSurfaceVariant,
                     ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          title,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            fontWeight: selected
+                                ? FontWeight.w700
+                                : FontWeight.w500,
+                            color: locked ? scheme.onSurfaceVariant : null,
+                          ),
+                        ),
+                        if (locked)
+                          Text(
+                            CollectionStrings.locked,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (v != null)
+                    IconButton(
+                      tooltip: CollectionStrings.playLevelVideo,
+                      icon: const Icon(Icons.play_circle_outline),
+                      color: scheme.onSurfaceVariant,
+                      onPressed: () =>
+                          unawaited(openSkinVideo(context, videoUrl: v)),
+                    )
+                  else
+                    const SizedBox(width: 12),
+                ],
+              ),
             ),
           ),
-          Text(
-            CollectionStrings.changeBuddy,
-            style: theme.textTheme.labelLarge?.copyWith(
-              color: legibleAccent(context, scheme.primary),
-            ),
-          ),
-          Icon(Icons.chevron_right, color: scheme.onSurfaceVariant),
-        ],
+        ),
       ),
+    );
+  }
+}
+
+class _BuddyThumb extends StatelessWidget {
+  const _BuddyThumb({required this.image});
+
+  final String? image;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(ValRadius.small),
+      ),
+      padding: const EdgeInsets.all(6),
+      child: image == null
+          ? Icon(Icons.add, color: scheme.onSurfaceVariant)
+          : NetImage(image, fit: BoxFit.contain),
     );
   }
 }
@@ -577,30 +590,29 @@ class _CustomizeSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const SkeletonShimmer(
     child: Padding(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AspectRatio(
-            aspectRatio: 16 / 10,
-            child: Skeleton(shimmer: false, radius: ValRadius.card),
-          ),
-          SizedBox(height: 20),
           Skeleton(width: 120, shimmer: false),
           SizedBox(height: 12),
           Row(
             children: [
-              Skeleton(width: 60, height: 60, radius: 14, shimmer: false),
+              Skeleton(width: 72, height: 72, radius: 14, shimmer: false),
               SizedBox(width: 10),
-              Skeleton(width: 60, height: 60, radius: 14, shimmer: false),
+              Skeleton(width: 72, height: 72, radius: 14, shimmer: false),
               SizedBox(width: 10),
-              Skeleton(width: 60, height: 60, radius: 14, shimmer: false),
+              Skeleton(width: 72, height: 72, radius: 14, shimmer: false),
             ],
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 24),
           Skeleton(width: 120, shimmer: false),
           SizedBox(height: 12),
-          Skeleton(height: 112, radius: ValRadius.card, shimmer: false),
+          Skeleton(height: 168, radius: ValRadius.card, shimmer: false),
+          SizedBox(height: 24),
+          Skeleton(width: 120, shimmer: false),
+          SizedBox(height: 12),
+          Skeleton(height: 64, radius: ValRadius.card, shimmer: false),
         ],
       ),
     ),

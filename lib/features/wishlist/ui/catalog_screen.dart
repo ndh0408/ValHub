@@ -7,11 +7,11 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/storage/ui_memory.dart';
-import '../../../core/ui/adaptive.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
+import '../../../core/ui/error_view.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/sub_page.dart';
 import '../../../core/util/format.dart';
 import '../data/skin_query.dart';
 import '../data/skin_query_memory.dart';
@@ -82,82 +82,99 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
   @override
   Widget build(BuildContext context) {
     final puuid = ref.watch(activeAccountProvider)?.puuid;
-    return Scaffold(
-      appBar: AppBar(title: const Text(WishlistStrings.catalogTitle)),
-      body: AsyncValueView<SkinCatalog>(
-        value: ref.watch(skinCatalogProvider),
-        onRetry: _retry,
-        loading: const _CatalogSkeleton(),
-        isEmpty: (c) => c.skins.isEmpty,
-        empty: const EmptyView(
-          title: WishlistStrings.catalogEmptyTitle,
-          message: WishlistStrings.catalogEmpty,
-          icon: Icons.style_outlined,
+    final value = ref.watch(skinCatalogProvider);
+    final catalog = value.value;
+    final List<Widget> slivers;
+    if (catalog != null && catalog.skins.isNotEmpty) {
+      slivers = _slivers(context, catalog, puuid);
+    } else if (catalog != null) {
+      slivers = const [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: EmptyView(
+            title: WishlistStrings.catalogEmptyTitle,
+            message: WishlistStrings.catalogEmpty,
+            icon: Icons.style_outlined,
+          ),
         ),
-        data: (catalog) => _body(context, catalog, puuid),
-      ),
+      ];
+    } else if (value.hasError && !value.isLoading) {
+      slivers = [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: ErrorView(error: value.error!, onRetry: _retry),
+        ),
+      ];
+    } else {
+      slivers = const [SliverToBoxAdapter(child: _CatalogSkeleton())];
+    }
+    return SubPageScaffold(
+      title: WishlistStrings.catalogTitle,
+      subtitle: WishlistStrings.catalogSubtitle,
+      onRefresh: () => _refresh(puuid),
+      header: SkinSearchField(query: _query, onChanged: _setQuery),
+      headerHeight: skinSearchHeaderHeight(context),
+      slivers: slivers,
     );
   }
 
-  Widget _body(BuildContext context, SkinCatalog catalog, String? puuid) {
+  List<Widget> _slivers(
+    BuildContext context,
+    SkinCatalog catalog,
+    String? puuid,
+  ) {
     final visible = _filtered(catalog);
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final tileExtent = 118 + 58 * math.max<double>(1, textScale);
-    return AdaptiveRefresh(
-      onRefresh: () => _refresh(puuid),
-      child: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(
-            child: SkinFilterBar(
-              query: _query,
-              onChanged: _setQuery,
-              tiers: catalog.tiers,
-              weapons: catalog.weapons,
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: _CountLine(
-              count: visible.length,
-              puuid: puuid,
-              filtering: _query.isFiltering,
-            ),
-          ),
-          if (visible.isEmpty)
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: EmptyView(
-                title: WishlistStrings.noMatchTitle,
-                message: WishlistStrings.noMatch,
-                icon: Icons.search_off,
-                action: TextButton(
-                  onPressed: () => _setQuery(_query.cleared()),
-                  child: const Text(WishlistStrings.clearFilters),
-                ),
-              ),
-            )
-          else
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
-              sliver: SliverGrid.builder(
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  mainAxisExtent: tileExtent,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                ),
-                itemCount: visible.length,
-                itemBuilder: (context, i) => CatalogSkinTile(
-                  key: ValueKey(visible[i].uuid),
-                  facts: visible[i],
-                  db: catalog.db,
-                  puuid: puuid,
-                ),
-              ),
-            ),
-        ],
+    return [
+      SliverToBoxAdapter(
+        child: SkinFilterChips(
+          query: _query,
+          onChanged: _setQuery,
+          tiers: catalog.tiers,
+          weapons: catalog.weapons,
+        ),
       ),
-    );
+      SliverToBoxAdapter(
+        child: _CountLine(
+          count: visible.length,
+          puuid: puuid,
+          filtering: _query.isFiltering,
+        ),
+      ),
+      if (visible.isEmpty)
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: EmptyView(
+            title: WishlistStrings.noMatchTitle,
+            message: WishlistStrings.noMatch,
+            icon: Icons.search_off,
+            action: TextButton(
+              onPressed: () => _setQuery(_query.cleared()),
+              child: const Text(WishlistStrings.clearFilters),
+            ),
+          ),
+        )
+      else
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+          sliver: SliverGrid.builder(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 200,
+              mainAxisExtent: tileExtent,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+            ),
+            itemCount: visible.length,
+            itemBuilder: (context, i) => CatalogSkinTile(
+              key: ValueKey(visible[i].uuid),
+              facts: visible[i],
+              db: catalog.db,
+              puuid: puuid,
+            ),
+          ),
+        ),
+    ];
   }
 }
 
@@ -231,16 +248,24 @@ class _CatalogSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      physics: const NeverScrollableScrollPhysics(),
-      children: const [
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-          child: Skeleton(height: 44, radius: 22),
+          padding: EdgeInsets.fromLTRB(16, 4, 16, 8),
+          child: Row(
+            children: [
+              Skeleton(width: 132, height: 36, radius: 18),
+              SizedBox(width: 8),
+              Skeleton(width: 110, height: 36, radius: 18),
+              SizedBox(width: 8),
+              Expanded(child: Skeleton(height: 36, radius: 18)),
+            ],
+          ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Skeleton(height: 36, radius: 18),
+          padding: EdgeInsets.fromLTRB(16, 4, 16, 0),
+          child: Skeleton(width: 96, height: 16, radius: 8),
         ),
         SkeletonGrid(itemCount: 6, childAspectRatio: 0.8),
       ],

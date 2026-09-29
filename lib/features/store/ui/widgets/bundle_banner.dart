@@ -5,18 +5,23 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/l10n/common_strings.dart';
+import '../../../../core/riot/riot_ids.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/countdown_ring.dart';
 import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/ui/net_image.dart';
+import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/util/format.dart';
 import '../../store_routes.dart';
 import '../../store_strings.dart';
 import 'store_ui_bits.dart';
 
-/// S13 bundle banner: art, name, price (with the bundle discount) and
-/// "Còn …" countdown. Tap → S14.
+/// Hero tag shared by the bundle banner art and the S14 hero.
+Object bundleArtHeroTag(String bundleId) => ('bundle-art', bundleId);
+
+/// S13 bundle banner: art, name, price (with the bundle discount, VND
+/// estimate) and "Còn …" countdown. Tap → S14 (the art flies into its hero).
 class BundleBanner extends ConsumerWidget {
   const BundleBanner({super.key, required this.bundle});
 
@@ -51,7 +56,10 @@ class BundleBanner extends ConsumerWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                NetImage(content?.cardImage, fit: BoxFit.cover),
+                Hero(
+                  tag: bundleArtHeroTag(bundle.id),
+                  child: NetImage(content?.cardImage, fit: BoxFit.cover),
+                ),
                 DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -118,6 +126,12 @@ class BundleBanner extends ConsumerWidget {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
+                          if (bundle.currencyId == CurrencyIds.vp)
+                            PriceEstimate(
+                              bundle.price,
+                              interactive: false,
+                              color: Colors.white70,
+                            ),
                           if (expiresAt != null)
                             Container(
                               padding: const EdgeInsets.symmetric(
