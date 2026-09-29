@@ -5,6 +5,7 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/auth/auth_providers.dart';
 import '../../../core/config/app_constants.dart';
 import '../../../core/config/remote_config.dart';
+import '../../../core/l10n/locale.dart';
 import '../../../core/logging/session_log.dart';
 import '../../../core/network/dio_factory.dart';
 import '../../../core/storage/secure_store.dart';
@@ -36,6 +37,15 @@ final communityHttpProvider = Provider<CommunityHttp>(
   ),
 );
 
+/// The app language as a community language code (`vi` today; follows the
+/// app locale once ValVN ships more languages).
+final communityAppLanguageProvider = Provider<String>(
+  (ref) => lfgLanguageForLocale(
+    appLocale.languageCode,
+    scriptOrCountry: appLocale.scriptCode ?? appLocale.countryCode,
+  ),
+);
+
 /// Community sessions of the signed-in accounts.
 final communityAuthProvider = Provider<CommunityAuth>(
   (ref) => CommunityAuth(
@@ -44,6 +54,7 @@ final communityAuthProvider = Provider<CommunityAuth>(
     sessions: ref.watch(sessionManagerProvider),
     account: (puuid) => ref.read(accountProvider(puuid.toLowerCase())),
     now: () => ref.read(clockProvider).now(),
+    language: () => ref.read(communityAppLanguageProvider),
   ),
 );
 

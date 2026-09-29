@@ -97,6 +97,7 @@ typedef TopSkinsQuery = ({
   String? weapon,
   TopPeriod period,
   TopSort sort,
+  ScopeFilter? scope,
 });
 
 /// The leaderboard for [TopSkinsFilter] (`GET /v1/skins/top`).
@@ -109,6 +110,7 @@ final topSkinsProvider = FutureProvider.autoDispose
             weapon: q.weapon,
             period: q.period,
             sort: q.sort,
+            scope: q.scope,
           ),
     );
 

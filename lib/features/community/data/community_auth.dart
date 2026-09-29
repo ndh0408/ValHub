@@ -24,6 +24,7 @@ class CommunityAuth {
     required this._sessions,
     required this._account,
     required this._now,
+    this._language,
   });
 
   final CommunityHttp _http;
@@ -31,6 +32,9 @@ class CommunityAuth {
   final SessionManager _sessions;
   final Account? Function(String puuid) _account;
   final DateTime Function() _now;
+
+  /// The app language sent with `/v1/auth/riot` (e.g. `vi`).
+  final String Function()? _language;
 
   final Map<String, CommunitySession> _memory = {};
   final Map<String, Future<CommunitySession>> _inFlight = {};
@@ -110,6 +114,7 @@ class CommunityAuth {
         'region': communityRegion(account?.region ?? riot.region),
         'cardId': ?account?.cardId,
         'rankTier': ?account?.rankTier,
+        'language': ?_language?.call(),
       },
     );
     Object? body;

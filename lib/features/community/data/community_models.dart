@@ -18,6 +18,21 @@ String communityRegion(String? region) {
   return kCommunityRegions.contains(r) ? r! : 'ap';
 }
 
+/// ISO 3166-1 alpha-2 country code (upper case) or `null`.
+String? countryCode(Object? value) {
+  final s = asNonEmptyString(value)?.toUpperCase();
+  return s != null && RegExp(r'^[A-Z]{2}$').hasMatch(s) ? s : null;
+}
+
+/// Flag emoji of an alpha-2 country code ("VN" → 🇻🇳), empty when unknown.
+String flagEmoji(String? alpha2) {
+  final c = countryCode(alpha2);
+  if (c == null) return '';
+  return String.fromCharCodes([
+    for (final unit in c.codeUnits) 0x1F1E6 + unit - 0x41,
+  ]);
+}
+
 /// Public author object (everywhere a user is shown).
 @immutable
 class CommunityAuthor {
@@ -28,6 +43,8 @@ class CommunityAuthor {
     this.cardId,
     this.rankTier,
     this.region,
+    this.country,
+    this.language,
   });
 
   /// Placeholder when a body has no author.
@@ -44,6 +61,8 @@ class CommunityAuthor {
       cardId: lowerUuid(m['cardId']),
       rankTier: asInt(m['rankTier']),
       region: asNonEmptyString(m['region'])?.toLowerCase(),
+      country: countryCode(m['country']),
+      language: lfgLanguageCode(m['language']),
     );
   }
 
@@ -53,6 +72,12 @@ class CommunityAuthor {
   final String? cardId;
   final int? rankTier;
   final String? region;
+
+  /// ISO alpha-2 country from the Riot account (not user-editable).
+  final String? country;
+
+  /// App language of the author.
+  final String? language;
 
   bool get isUnknown => id.isEmpty;
 
@@ -68,6 +93,8 @@ class CommunityAuthor {
     'cardId': cardId,
     'rankTier': rankTier,
     'region': region,
+    'country': country,
+    'language': language,
   };
 
   @override
@@ -78,14 +105,127 @@ class CommunityAuthor {
       other.tagLine == tagLine &&
       other.cardId == cardId &&
       other.rankTier == rankTier &&
-      other.region == region;
+      other.region == region &&
+      other.country == country &&
+      other.language == language;
 
   @override
-  int get hashCode =>
-      Object.hash(id, gameName, tagLine, cardId, rankTier, region);
+  int get hashCode => Object.hash(
+    id,
+    gameName,
+    tagLine,
+    cardId,
+    rankTier,
+    region,
+    country,
+    language,
+  );
 
   @override
   String toString() => 'CommunityAuthor($id)';
+}
+
+// ----------------------------------------------------------------- scopes
+
+/// Community scopes (v3): one country, one VALORANT shard, or everyone.
+enum CommunityScope {
+  country,
+  region,
+  global;
+
+  static CommunityScope? tryParse(String? value) => switch (value) {
+    'country' => country,
+    'region' => region,
+    'global' => global,
+    _ => null,
+  };
+}
+
+/// What a list shows: a scope plus its target. `country` / `region` `null`
+/// mean "the viewer's own" (resolved before querying).
+@immutable
+class ScopeFilter {
+  const ScopeFilter({
+    required this.scope,
+    this.country,
+    this.region,
+    this.languages = const {},
+  });
+
+  static const mineCountry = ScopeFilter(scope: CommunityScope.country);
+  static const mineRegion = ScopeFilter(scope: CommunityScope.region);
+  static const global = ScopeFilter(scope: CommunityScope.global);
+
+  final CommunityScope scope;
+  final String? country;
+  final String? region;
+
+  /// Language filter of the global scope (empty = all).
+  final Set<String> languages;
+
+  /// Query parameters (`scope`, `country`, `region`, `language`).
+  Map<String, Object?> get query => {
+    'scope': scope.name,
+    if (scope == CommunityScope.country) 'country': country,
+    if (scope == CommunityScope.region) 'region': region,
+    if (scope == CommunityScope.global && languages.isNotEmpty)
+      'language': ([...languages]..sort()).join(','),
+  };
+
+  ScopeFilter copyWith({
+    CommunityScope? scope,
+    String? Function()? country,
+    String? Function()? region,
+    Set<String>? languages,
+  }) => ScopeFilter(
+    scope: scope ?? this.scope,
+    country: country == null ? this.country : country(),
+    region: region == null ? this.region : region(),
+    languages: languages ?? this.languages,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      other is ScopeFilter &&
+      other.scope == scope &&
+      other.country == country &&
+      other.region == region &&
+      setEquals(other.languages, languages);
+
+  @override
+  int get hashCode =>
+      Object.hash(scope, country, region, Object.hashAllUnordered(languages));
+
+  @override
+  String toString() => 'ScopeFilter(${scope.name}, $country, $region)';
+}
+
+/// One active country community (`GET /v1/communities`).
+@immutable
+class CountryCommunity {
+  const CountryCommunity({
+    required this.country,
+    this.posts = 0,
+    this.authors = 0,
+    this.lfg = 0,
+  });
+
+  static CountryCommunity? fromJson(Object? json) {
+    final m = asMap(json);
+    final c = countryCode(m?['country']);
+    if (m == null || c == null) return null;
+    return CountryCommunity(
+      country: c,
+      posts: _count(m['posts']),
+      authors: _count(m['authors']),
+      lfg: _count(m['lfg']),
+    );
+  }
+
+  final String country;
+  final int posts;
+  final int authors;
+  final int lfg;
 }
 
 /// A cursor page (`{"items": [...], "nextCursor": "…" | null}`).
@@ -313,6 +453,9 @@ class CommunityPost {
     this.liked = false,
     this.comments = 0,
     this.createdAt,
+    this.country,
+    this.region,
+    this.language,
   });
 
   static CommunityPost? fromJson(Object? json) {
@@ -333,6 +476,9 @@ class CommunityPost {
       liked: asBool(m['liked']) ?? false,
       comments: _count(m['comments']),
       createdAt: asDateTime(m['createdAt']),
+      country: countryCode(m['country']),
+      region: asNonEmptyString(m['region'])?.toLowerCase(),
+      language: lfgLanguageCode(m['language']),
     );
   }
 
@@ -347,6 +493,11 @@ class CommunityPost {
   final int comments;
   final DateTime? createdAt;
 
+  /// Author country / shard when posted, and the language of [body].
+  final String? country;
+  final String? region;
+  final String? language;
+
   CommunityPost copyWith({int? likes, bool? liked, int? comments}) =>
       CommunityPost(
         id: id,
@@ -359,6 +510,9 @@ class CommunityPost {
         liked: liked ?? this.liked,
         comments: comments ?? this.comments,
         createdAt: createdAt,
+        country: country,
+        region: region,
+        language: language,
       );
 
   /// The like state after tapping the heart (optimistic).
@@ -385,6 +539,7 @@ class CommunityComment {
     required this.author,
     this.body = '',
     this.createdAt,
+    this.language,
   });
 
   static CommunityComment? fromJson(Object? json) {
@@ -397,6 +552,7 @@ class CommunityComment {
       author: CommunityAuthor.fromJson(m['author']) ?? CommunityAuthor.unknown,
       body: asString(m['body'])?.trim() ?? '',
       createdAt: asDateTime(m['createdAt']),
+      language: lfgLanguageCode(m['language']),
     );
   }
 
@@ -405,6 +561,9 @@ class CommunityComment {
   final CommunityAuthor author;
   final String body;
   final DateTime? createdAt;
+
+  /// Language of [body] (for on-device translation).
+  final String? language;
 }
 
 /// `{"likes", "liked"}` after a like / unlike.
@@ -827,6 +986,7 @@ class SkinReview {
     this.mine = false,
     this.createdAt,
     this.updatedAt,
+    this.language,
   });
 
   static SkinReview? fromJson(Object? json) {
@@ -845,6 +1005,7 @@ class SkinReview {
       mine: asBool(m['mine']) ?? false,
       createdAt: asDateTime(m['createdAt']),
       updatedAt: asDateTime(m['updatedAt']),
+      language: lfgLanguageCode(m['language']),
     );
   }
 
@@ -860,6 +1021,9 @@ class SkinReview {
   final bool mine;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+
+  /// Language of [body] (for on-device translation).
+  final String? language;
 
   bool get edited =>
       updatedAt != null &&
@@ -877,6 +1041,7 @@ class SkinReview {
     mine: mine,
     createdAt: createdAt,
     updatedAt: updatedAt,
+    language: language,
   );
 
   SkinReview toggledLike() => copyWith(

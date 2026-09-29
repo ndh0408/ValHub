@@ -44,13 +44,19 @@ class CommunityApi {
     String? cardId,
     int? rankTier,
     String? region,
+    String? language,
   }) async =>
       CommunityAuthor.fromJson(
         await _send(
           'PATCH',
           '/v1/me',
           puuid: puuid,
-          json: {'cardId': ?cardId, 'rankTier': ?rankTier, 'region': ?region},
+          json: {
+            'cardId': ?cardId,
+            'rankTier': ?rankTier,
+            'region': ?region,
+            'language': ?language,
+          },
         ),
       ) ??
       (throw const CommunityException(CommunityException.badResponse));
@@ -75,6 +81,7 @@ class CommunityApi {
       '/v1/lfg',
       puuid: puuid,
       query: {
+        'scope': CommunityScope.region.name,
         'region': region,
         'mode': mode,
         'rank': rank,
@@ -221,6 +228,7 @@ class CommunityApi {
     String? weapon,
     TopPeriod period = TopPeriod.all,
     TopSort sort = TopSort.votes,
+    ScopeFilter? scope,
     int limit = 50,
     bool signIn = true,
   }) async {
@@ -231,6 +239,7 @@ class CommunityApi {
       auth: _Auth.optional,
       signIn: signIn,
       query: {
+        ...?scope?.query,
         'weapon': weapon,
         'period': period.query,
         'sort': sort.query,
@@ -282,6 +291,7 @@ class CommunityApi {
   Future<SkinSummary> skinSummary(
     String skinUuid, {
     String? puuid,
+    ScopeFilter? scope,
     bool signIn = true,
   }) async => SkinSummary.fromJson(
     await _send(
@@ -290,6 +300,7 @@ class CommunityApi {
       puuid: puuid,
       auth: _Auth.optional,
       signIn: signIn,
+      query: scope?.query,
     ),
     skinUuid,
   );
@@ -299,6 +310,7 @@ class CommunityApi {
     String skinUuid, {
     String? puuid,
     ReviewSort sort = ReviewSort.newest,
+    ScopeFilter? scope,
     String? cursor,
     int limit = 20,
     bool signIn = true,
@@ -310,6 +322,7 @@ class CommunityApi {
       auth: _Auth.optional,
       signIn: signIn,
       query: {
+        ...?scope?.query,
         'sort': sort.query,
         'cursor': cursor,
         'limit': limit.clamp(1, 50),
@@ -325,6 +338,7 @@ class CommunityApi {
     required int rating,
     String? weaponUuid,
     String body = '',
+    String? language,
   }) async =>
       SkinReview.fromJson(
         await _send(
@@ -335,6 +349,7 @@ class CommunityApi {
             'weaponUuid': ?weaponUuid,
             'rating': rating.clamp(1, 5),
             if (body.trim().isNotEmpty) 'body': body.trim(),
+            if (body.trim().isNotEmpty) 'language': ?language,
           },
         ),
       ) ??
@@ -366,12 +381,37 @@ class CommunityApi {
   /// `DELETE /v1/reviews/{id}` (own review).
   Future<void> deleteReview(String puuid, String id) =>
       _send('DELETE', '/v1/reviews/${Uri.encodeComponent(id)}', puuid: puuid);
+  // ------------------------------------------------------------ scopes
+
+  /// `GET /v1/communities` (countries with activity this week, most
+  /// posts first; auth optional).
+  Future<List<CountryCommunity>> communities({
+    String? puuid,
+    bool signIn = false,
+  }) async {
+    final body = await _send(
+      'GET',
+      '/v1/communities',
+      puuid: puuid,
+      auth: _Auth.optional,
+      signIn: signIn,
+      query: {'period': 'week'},
+    );
+    final seen = <String>{};
+    return [
+      for (final e in asList(asMap(body)?['items'] ?? body))
+        if (CountryCommunity.fromJson(e) case final c? when seen.add(c.country))
+          c,
+    ];
+  }
+
   // ----------------------------------------------------------------- feed
 
   /// `GET /v1/posts` (newest first).
   Future<CommunityPage<CommunityPost>> posts(
     String puuid, {
     PostKind? kind,
+    ScopeFilter? scope,
     String? cursor,
     int limit = 20,
   }) async => CommunityPage.fromJson(
@@ -380,6 +420,7 @@ class CommunityApi {
       '/v1/posts',
       puuid: puuid,
       query: {
+        ...?scope?.query,
         'kind': kind?.name,
         'cursor': cursor,
         'limit': limit.clamp(1, 50),
@@ -406,6 +447,7 @@ class CommunityApi {
     String body = '',
     List<String> media = const [],
     PostPayload? payload,
+    String? language,
   }) async =>
       CommunityPost.fromJson(
         await _send(
@@ -415,6 +457,7 @@ class CommunityApi {
           json: {
             'kind': kind.name,
             'body': body.trim(),
+            'language': ?language,
             if (media.isNotEmpty) 'media': media.take(4).toList(),
             if (kind.hasOffers) 'payload': ?payload?.toJson(kind),
           },
@@ -465,14 +508,15 @@ class CommunityApi {
   Future<CommunityComment> addComment(
     String puuid,
     String postId,
-    String body,
-  ) async =>
+    String body, {
+    String? language,
+  }) async =>
       CommunityComment.fromJson(
         await _send(
           'POST',
           '/v1/posts/${Uri.encodeComponent(postId)}/comments',
           puuid: puuid,
-          json: {'body': body.trim()},
+          json: {'body': body.trim(), 'language': ?language},
         ),
       ) ??
       (throw const CommunityException(CommunityException.badResponse));

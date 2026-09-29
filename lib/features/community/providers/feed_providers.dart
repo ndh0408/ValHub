@@ -4,6 +4,7 @@ import '../../../core/accounts/account_providers.dart';
 import '../data/community_api.dart';
 import '../data/community_models.dart';
 import 'community_providers.dart';
+import 'scope_providers.dart';
 
 /// The feed of the signed-in account ([puuid] = whose session is used).
 final feedProvider = AsyncNotifierProvider.autoDispose
@@ -23,12 +24,18 @@ class FeedNotifier extends AsyncNotifier<PagedState<CommunityPost>>
   Future<PagedState<CommunityPost>> build() async {
     ref.watch(accountProvider(puuid).select((a) => a?.needsLogin));
     final api = ref.watch(communityApiProvider);
-    return PagedState.fromPage(await api.posts(puuid));
+    _scope = await ref.watch(
+      resolvedScopeProvider((puuid: puuid, section: ScopedSection.feed)).future,
+    );
+    return PagedState.fromPage(await api.posts(puuid, scope: _scope));
   }
+
+  /// The scope the current list was loaded with.
+  ScopeFilter? _scope;
 
   @override
   Future<CommunityPage<CommunityPost>> fetchPage(String? cursor) =>
-      _api.posts(puuid, cursor: cursor);
+      _api.posts(puuid, scope: _scope, cursor: cursor);
 
   @override
   String idOf(CommunityPost item) => item.id;
