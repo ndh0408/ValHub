@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../l10n/common_strings.dart';
+import '../theme/app_theme.dart';
 
 /// Platform-adaptive building blocks: iOS gets Cupertino dialogs and action
 /// sheets, Android keeps Material 3. Every helper reads the platform from
@@ -83,22 +84,57 @@ Future<bool> showConfirmDialog(
           ],
         );
       }
-      final scheme = Theme.of(dialogContext).colorScheme;
+      final theme = Theme.of(dialogContext);
+      final scheme = theme.colorScheme;
+      final tint = destructive ? scheme.error : scheme.primary;
+      final disc =
+          icon ??
+          (destructive
+              ? Icons.warning_amber_rounded
+              : Icons.help_outline_rounded);
       return AlertDialog(
-        icon: icon == null
-            ? null
-            : Icon(icon, color: destructive ? scheme.error : scheme.primary),
-        title: Text(title),
-        content: Text(message),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        icon: _IconDisc(
+          icon: disc,
+          color: tint,
+          size: 56,
+          iconSize: 28,
+          strong: true,
+        ),
+        iconPadding: const EdgeInsets.only(top: 24),
+        title: Text(title, textAlign: TextAlign.center),
+        titleTextStyle: theme.textTheme.titleLarge?.copyWith(
+          fontFamily: AppFonts.body,
+          fontWeight: FontWeight.w800,
+          color: scheme.onSurface,
+        ),
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: scheme.onSurfaceVariant,
+            height: 1.45,
+          ),
+        ),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+        actionsAlignment: MainAxisAlignment.end,
+        actionsOverflowAlignment: OverflowBarAlignment.end,
+        actionsOverflowButtonSpacing: 8,
         actions: [
-          TextButton(onPressed: () => close(false), child: Text(cancelLabel)),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: scheme.onSurfaceVariant,
+              minimumSize: const Size(64, 44),
+            ),
+            onPressed: () => close(false),
+            child: Text(cancelLabel),
+          ),
           FilledButton(
-            style: destructive
-                ? FilledButton.styleFrom(
-                    backgroundColor: scheme.error,
-                    foregroundColor: scheme.onError,
-                  )
-                : null,
+            style: FilledButton.styleFrom(
+              minimumSize: const Size(64, 44),
+              backgroundColor: destructive ? scheme.error : null,
+              foregroundColor: destructive ? scheme.onError : null,
+            ),
             onPressed: () => close(true),
             child: Text(confirmLabel),
           ),
@@ -162,47 +198,165 @@ Future<T?> showActionSheet<T>(
   return showModalBottomSheet<T>(
     context: context,
     useSafeArea: true,
+    isScrollControlled: true,
     builder: (sheetContext) {
       final theme = Theme.of(sheetContext);
-      final error = theme.colorScheme.error;
-      return SafeArea(
-        top: false,
+      final scheme = theme.colorScheme;
+      final hairline = valColorsOf(sheetContext).hairline;
+      final maxHeight = MediaQuery.sizeOf(sheetContext).height * 0.9;
+      return ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxHeight),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (title != null)
+            if (title != null || message != null)
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 4),
-                child: Text(title, style: theme.textTheme.titleMedium),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (title != null)
+                      Semantics(
+                        header: true,
+                        child: Text(
+                          title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: ValText.sectionTitle.copyWith(
+                            fontSize: 20,
+                            color: scheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    if (message != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          message,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            if (message != null)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-                child: Text(
-                  message,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Material(
+                  color: scheme.surfaceContainer,
+                  clipBehavior: Clip.antiAlias,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(ValRadius.card),
+                    side: theme.brightness == Brightness.light
+                        ? BorderSide(color: hairline)
+                        : BorderSide.none,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (var i = 0; i < actions.length; i++) ...[
+                        if (i > 0)
+                          Divider(height: 1, thickness: 1, color: hairline),
+                        _SheetActionRow<T>(
+                          action: actions[i],
+                          onTap: () =>
+                              Navigator.of(sheetContext).pop(actions[i].value),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ),
-            for (final a in actions)
-              ListTile(
-                minTileHeight: 52,
-                leading: a.icon == null
-                    ? null
-                    : Icon(a.icon, color: a.destructive ? error : null),
-                title: Text(
-                  a.label,
-                  style: a.destructive ? TextStyle(color: error) : null,
-                ),
-                onTap: () => Navigator.of(sheetContext).pop(a.value),
-              ),
-            const SizedBox(height: 8),
+            ),
           ],
         ),
       );
     },
+  );
+}
+
+/// One 52 dp row of the Material action sheet: tinted icon disc (when the
+/// action has an icon), label, red for destructive actions.
+class _SheetActionRow<T> extends StatelessWidget {
+  const _SheetActionRow({required this.action, required this.onTap});
+
+  final SheetAction<T> action;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final color = action.destructive ? scheme.error : scheme.onSurface;
+    final icon = action.icon;
+    return InkWell(
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 52),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              if (icon != null) ...[
+                _IconDisc(
+                  icon: icon,
+                  color: action.destructive ? scheme.error : scheme.primary,
+                ),
+                const SizedBox(width: 14),
+              ],
+              Expanded(
+                child: Text(
+                  action.label,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Icon in a disc tinted 12 % of [color] (14 % when [strong]).
+class _IconDisc extends StatelessWidget {
+  const _IconDisc({
+    required this.icon,
+    required this.color,
+    this.size = 36,
+    this.iconSize = 20,
+    this.strong = false,
+  });
+
+  final IconData icon;
+  final Color color;
+  final double size;
+  final double iconSize;
+  final bool strong;
+
+  @override
+  Widget build(BuildContext context) => ExcludeSemantics(
+    child: Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color.withValues(alpha: strong ? 0.14 : 0.12),
+      ),
+      alignment: Alignment.center,
+      child: Icon(
+        icon,
+        size: iconSize,
+        color: legibleAccent(context, color, min: 3),
+      ),
+    ),
   );
 }
 

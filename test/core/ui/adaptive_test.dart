@@ -119,6 +119,135 @@ void main() {
     expect(picked, 'b');
   });
 
+  group('Android polish', () {
+    testWidgets('confirm dialog: icon disc, muted message, red destructive', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _app(
+          const _ConfirmHost(destructive: true),
+          platform: TargetPlatform.android,
+        ),
+      );
+      await tester.tap(find.text('open -'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsOneWidget);
+      // Default disc icon of a destructive confirmation.
+      expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+      final confirm = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Rời trận'),
+      );
+      final scheme = Theme.of(tester.element(find.byType(AlertDialog)))
+          .colorScheme;
+      expect(confirm.style?.backgroundColor?.resolve(const {}), scheme.error);
+      // Cancel is a plain text button and dismisses with false.
+      await tester.tap(find.widgetWithText(TextButton, CommonStrings.cancel));
+      await tester.pumpAndSettle();
+      expect(find.text('open false'), findsOneWidget);
+    });
+
+    testWidgets('confirm dialog fits 360 dp at 200 % text', (tester) async {
+      tester.view.physicalSize = const Size(360, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pumpWidget(
+        _app(const _ConfirmHost(), platform: TargetPlatform.android),
+      );
+      await tester.tap(find.text('open -'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.byType(AlertDialog), findsOneWidget);
+    });
+
+    testWidgets('action sheet: title, 52 dp rows, red destructive, pick', (
+      tester,
+    ) async {
+      String? picked;
+      await tester.pumpWidget(
+        _app(
+          Builder(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () async {
+                  picked = await showActionSheet<String>(
+                    context,
+                    title: 'Bộ trang bị',
+                    message: 'Chọn một thao tác',
+                    actions: const [
+                      SheetAction(
+                        value: 'a',
+                        label: 'Đổi tên',
+                        icon: Icons.edit_outlined,
+                      ),
+                      SheetAction(
+                        value: 'b',
+                        label: 'Xóa',
+                        icon: Icons.delete_outline,
+                        destructive: true,
+                      ),
+                    ],
+                  );
+                },
+                child: const Text('go'),
+              ),
+            ),
+          ),
+          platform: TargetPlatform.android,
+        ),
+      );
+      await tester.tap(find.text('go'));
+      await tester.pumpAndSettle();
+      expect(find.text('Bộ trang bị'), findsOneWidget);
+      expect(find.text('Chọn một thao tác'), findsOneWidget);
+      expect(find.byType(CupertinoActionSheet), findsNothing);
+      expect(tester.getSize(find.text('Xóa')).height, greaterThan(0));
+      final row = find.ancestor(
+        of: find.text('Đổi tên'),
+        matching: find.byType(InkWell),
+      );
+      expect(tester.getSize(row.first).height, greaterThanOrEqualTo(52));
+      final deleteStyle = tester.widget<Text>(find.text('Xóa')).style;
+      final error = Theme.of(tester.element(find.text('Xóa')))
+          .colorScheme
+          .error;
+      expect(deleteStyle?.color, error);
+      await tester.tap(find.text('Xóa'));
+      await tester.pumpAndSettle();
+      expect(picked, 'b');
+    });
+
+    testWidgets('action sheet without a title still lists the actions', (
+      tester,
+    ) async {
+      String? picked = 'unset';
+      await tester.pumpWidget(
+        _app(
+          Builder(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () async {
+                  picked = await showActionSheet<String>(
+                    context,
+                    actions: const [SheetAction(value: 'a', label: 'Sao chép')],
+                  );
+                },
+                child: const Text('go'),
+              ),
+            ),
+          ),
+          platform: TargetPlatform.android,
+        ),
+      );
+      await tester.tap(find.text('go'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Sao chép'));
+      await tester.pumpAndSettle();
+      expect(picked, 'a');
+    });
+  });
+
   test('UiMemory round-trips enums and falls back on unknown values', () async {
     final prefs = await createTestPrefs({'ui.x.bad': 'nope'});
     final container = ProviderContainer(

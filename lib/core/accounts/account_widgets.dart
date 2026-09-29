@@ -14,6 +14,7 @@ import '../ui/adaptive.dart';
 import '../ui/error_view.dart';
 import '../ui/net_image.dart';
 import '../ui/rank_badge.dart';
+import '../ui/sub_page.dart';
 import '../ui/val_widgets.dart';
 import 'account.dart';
 import 'account_providers.dart';
@@ -141,8 +142,10 @@ Future<void> showAccountSwitcherSheet(BuildContext context) =>
           const AccountActivityPoller(child: AccountSwitcherSheet()),
     );
 
-/// Account list with the active marker, rank, "Cần đăng nhập lại" and
-/// "Thêm tài khoản (n/10)".
+/// Account list in the shared sheet chrome: "Tài khoản (n/10)" with a close
+/// button and the online count, one grouped card of rows (active account =
+/// 4 px red bar + check, "Đăng nhập lại" badge when the session died) ending
+/// with "Thêm tài khoản". Scrolls when there are many accounts.
 class AccountSwitcherSheet extends ConsumerWidget {
   const AccountSwitcherSheet({super.key});
 
@@ -150,110 +153,193 @@ class AccountSwitcherSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final accounts = ref.watch(accountsProvider);
     final active = ref.watch(activePuuidProvider);
-    final full = accounts.length >= AppConstants.maxAccounts;
+    final max = AppConstants.maxAccounts;
+    final full = accounts.length >= max;
     final online = ref.watch(onlineAccountCountProvider);
     final theme = Theme.of(context);
-    return SafeArea(
+    final hairline = valColorsOf(context).hairline;
+    final maxHeight = MediaQuery.sizeOf(context).height * 0.9;
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: maxHeight),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: Row(
-              children: [
-                Text(
-                  AccountStrings.switcherTitle,
-                  style: theme.textTheme.titleLarge,
-                ),
-                if (online > 0) ...[
-                  const SizedBox(width: 10),
-                  Flexible(
+          SheetHeader(
+            title: AccountStrings.switcherTitleCount(accounts.length, max),
+            subtitle: AccountStrings.switcherSubtitle,
+            actions: [
+              if (online > 0)
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8),
                     child: StatusPill(
                       label: AccountStrings.onlineCount(online),
                       color: valColorsOf(context).win,
                     ),
                   ),
-                ],
-              ],
-            ),
+                ),
+            ],
           ),
           Flexible(
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                for (final a in accounts)
-                  _ActiveHighlight(
-                    key: ValueKey(a.puuid),
-                    active: a.puuid == active,
-                    child: AccountTile(
-                      account: a,
-                      selected: a.puuid == active,
-                      onTap: () {
-                        final router = GoRouter.of(context);
-                        Navigator.of(context).pop();
-                        if (a.needsLogin) {
-                          unawaited(
-                            router.push(
-                              AuthRoutes.loginPath(reauthPuuid: a.puuid),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                16,
+                0,
+                16,
+                16 + MediaQuery.paddingOf(context).bottom,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Material(
+                    color: theme.colorScheme.surfaceContainer,
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(ValRadius.card),
+                      side: theme.brightness == Brightness.light
+                          ? BorderSide(color: hairline)
+                          : BorderSide.none,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        for (final a in accounts) ...[
+                          _ActiveHighlight(
+                            key: ValueKey(a.puuid),
+                            active: a.puuid == active,
+                            child: AccountTile(
+                              account: a,
+                              selected: a.puuid == active,
+                              onTap: () {
+                                final router = GoRouter.of(context);
+                                Navigator.of(context).pop();
+                                if (a.needsLogin) {
+                                  unawaited(
+                                    router.push(
+                                      AuthRoutes.loginPath(
+                                        reauthPuuid: a.puuid,
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  if (a.puuid != active) Haptics.selection();
+                                  ref
+                                      .read(activePuuidProvider.notifier)
+                                      .select(a.puuid);
+                                }
+                              },
                             ),
-                          );
-                        } else {
-                          if (a.puuid != active) Haptics.selection();
-                          ref
-                              .read(activePuuidProvider.notifier)
-                              .select(a.puuid);
-                        }
-                      },
+                          ),
+                          Divider(height: 1, thickness: 1, color: hairline),
+                        ],
+                        _AddAccountRow(
+                          count: accounts.length,
+                          max: max,
+                          full: full,
+                          onAdd: () {
+                            final router = GoRouter.of(context);
+                            Navigator.of(context).pop();
+                            unawaited(router.push(AuthRoutes.login));
+                          },
+                        ),
+                      ],
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
+                    child: Text(
+                      AccountStrings.manageHint,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// "+ Thêm tài khoản (n/10)": accent when there is room; at the limit it is
+/// dimmed, explains why and tapping it shows the same message.
+class _AddAccountRow extends StatelessWidget {
+  const _AddAccountRow({
+    required this.count,
+    required this.max,
+    required this.full,
+    required this.onAdd,
+  });
+
+  final int count;
+  final int max;
+  final bool full;
+  final VoidCallback onAdd;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    final color = full ? muted : theme.colorScheme.primary;
+    return Semantics(
+      button: true,
+      enabled: !full,
+      child: InkWell(
+        onTap: full
+            ? () => showAppSnackBar(context, AccountStrings.maxAccounts(max))
+            : onAdd,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 64),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: color.withValues(alpha: 0.12),
+                  ),
+                  child: Icon(
+                    Icons.person_add_alt_1_outlined,
+                    size: 22,
+                    color: legibleAccent(context, color, min: 3),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        AccountStrings.addAccount(count, max),
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: legibleAccent(context, color),
+                        ),
+                      ),
+                      if (full)
+                        Text(
+                          AccountStrings.maxAccounts(max),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: muted,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
-          const Divider(),
-          ListTile(
-            enabled: !full,
-            minTileHeight: 56,
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: (full ? theme.disabledColor : theme.colorScheme.primary)
-                    .withValues(alpha: 0.14),
-              ),
-              child: Icon(
-                Icons.person_add_alt_1_outlined,
-                size: 20,
-                color: full ? theme.disabledColor : theme.colorScheme.primary,
-              ),
-            ),
-            title: Text(
-              AccountStrings.addAccount(
-                accounts.length,
-                AppConstants.maxAccounts,
-              ),
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                color: full ? null : theme.colorScheme.primary,
-              ),
-            ),
-            subtitle: full
-                ? Text(AccountStrings.maxAccounts(AppConstants.maxAccounts))
-                : null,
-            onTap: full
-                ? () => showAppSnackBar(
-                    context,
-                    AccountStrings.maxAccounts(AppConstants.maxAccounts),
-                  )
-                : () {
-                    final router = GoRouter.of(context);
-                    Navigator.of(context).pop();
-                    unawaited(router.push(AuthRoutes.login));
-                  },
-          ),
-          const SizedBox(height: 8),
-        ],
+        ),
       ),
     );
   }
@@ -395,29 +481,39 @@ class AccountTile extends ConsumerWidget {
                 ),
               ],
             ),
+      // Bounded and shrinking: at large text sizes the badge scales down
+      // instead of overflowing the tile.
       trailing:
           trailing ??
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (selected)
-                Icon(
-                  Icons.check_circle,
-                  color: theme.colorScheme.primary,
-                  semanticLabel: AccountStrings.active,
-                ),
-              if (account.needsLogin) ...[
-                const SizedBox(width: 8),
-                Tooltip(
-                  message: CommonStrings.signInAgain,
-                  child: ValBadge(
-                    CommonStrings.signInAgain,
-                    color: valColorsOf(context).warning,
-                    soft: true,
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 132),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (selected)
+                  Icon(
+                    Icons.check_circle,
+                    color: theme.colorScheme.primary,
+                    semanticLabel: AccountStrings.active,
                   ),
-                ),
+                if (account.needsLogin) ...[
+                  if (selected) const SizedBox(width: 8),
+                  Flexible(
+                    child: Tooltip(
+                      message: CommonStrings.signInAgain,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: ValBadge(
+                          CommonStrings.signInAgain,
+                          color: valColorsOf(context).warning,
+                          soft: true,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
     );
   }

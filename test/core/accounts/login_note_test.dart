@@ -171,4 +171,53 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('sheet: "Xóa ghi chú" asks first, then clears the note', (
+    tester,
+  ) async {
+    secure.values[SecureKeys.loginNote(_puuid(1))] = const LoginNote(
+      username: 'mikono',
+      password: 'hunter2',
+    ).encode();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: overrides(),
+        child: MaterialApp(
+          theme: buildDarkTheme(),
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () => showLoginNoteSheet(context, _account(1)),
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    // The shared sheet chrome: title, the Riot ID and a close button.
+    expect(find.text(AccountStrings.loginNote), findsOneWidget);
+    expect(find.text('P1#VN'), findsOneWidget);
+    expect(find.byTooltip(CommonStrings.close), findsOneWidget);
+
+    await tester.tap(find.text(AccountStrings.deleteLoginNote));
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(find.text(AccountStrings.deleteLoginNoteConfirm), findsOneWidget);
+
+    // Cancelling keeps the note.
+    await tester.tap(find.text(CommonStrings.cancel));
+    await tester.pumpAndSettle();
+    expect(secure.values.containsKey(SecureKeys.loginNote(_puuid(1))), isTrue);
+
+    await tester.tap(find.text(AccountStrings.deleteLoginNote));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, CommonStrings.delete));
+    await tester.pumpAndSettle();
+    expect(find.text(AccountStrings.loginNoteDeleted), findsOneWidget);
+    expect(secure.values.containsKey(SecureKeys.loginNote(_puuid(1))), isFalse);
+    expect(tester.takeException(), isNull);
+  });
 }

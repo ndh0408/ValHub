@@ -1,6 +1,11 @@
 /// Strings for account management (VF §6.1 S05, §8.12).
 abstract final class AccountStrings {
   static const switcherTitle = 'Tài khoản';
+
+  /// "Tài khoản (3/10)" (sheet title).
+  static String switcherTitleCount(int count, int max) =>
+      '$switcherTitle ($count/$max)';
+  static const switcherSubtitle = 'Chạm để chuyển tài khoản';
   static String addAccount(int count, int max) =>
       'Thêm tài khoản ($count/$max)';
   static String accountsHeader(int count, int max) => 'TÀI KHOẢN ($count/$max)';
@@ -46,6 +51,8 @@ abstract final class AccountStrings {
   // Quick fill on the Riot login page
   static const quickFill = 'Điền nhanh';
   static const quickFillTitle = 'Điền tài khoản đã lưu';
+  static const quickFillSubtitle =
+      'Chọn ghi chú đăng nhập để điền vào trang Riot';
   static const quickFillDone = 'Đã điền, hãy bấm Đăng nhập.';
   static const quickFillNotReady =
       'Chưa thấy ô đăng nhập. Đợi trang tải xong rồi thử lại.';
