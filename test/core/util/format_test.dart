@@ -169,4 +169,28 @@ void main() {
       expect(restLines('one line'), isNull);
     });
   });
+
+  group('VND and wall time', () {
+    test('formatVnd', () {
+      expect(formatVnd(1290000), '1.290.000 ₫');
+      expect(formatEstimatedVnd(268000), '≈ 268.000 ₫');
+    });
+
+    test('formatWallTime uses today / tomorrow / weekday, 24 h', () {
+      final now = DateTime(2026, 9, 29, 18, 30); // Tuesday
+      expect(
+        formatWallTime(DateTime(2026, 9, 29, 23, 5), now),
+        '23:05 hôm nay',
+      );
+      expect(formatWallTime(DateTime(2026, 9, 30, 7), now), '07:00 ngày mai');
+      expect(
+        formatWallTime(DateTime(2026, 10, 5, 23, 59), now),
+        '23:59 thứ Hai 05/10',
+      );
+      expect(
+        formatWallTime(DateTime(2026, 10, 4, 7), now),
+        '07:00 chủ Nhật 04/10',
+      );
+    });
+  });
 }

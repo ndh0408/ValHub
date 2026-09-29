@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../domain/competitive/names.dart';
+import '../util/search_text.dart';
 import 'xmpp_models.dart';
 import 'xmpp_store.dart';
 
@@ -192,18 +193,5 @@ FriendsView buildFriendsView(
   );
 }
 
-const _viFrom =
-    'àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ';
-const _viTo =
-    'aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyd';
-
 /// Lowercase without Vietnamese diacritics ("Đức" → "duc") for search.
-String foldVietnamese(String input) {
-  final lower = input.toLowerCase();
-  final out = StringBuffer();
-  for (final ch in lower.split('')) {
-    final i = _viFrom.indexOf(ch);
-    out.write(i < 0 ? ch : _viTo[i]);
-  }
-  return out.toString();
-}
+String foldVietnamese(String input) => foldSearchText(input);

@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../storage/prefs.dart';
 import '../util/json.dart';
 import 'app_constants.dart';
+import 'vp_prices.dart';
 
 /// Remotely overridable knobs (SUMMARY §13 "Remote config"). The bundled
 /// default lives in `assets/config/remote_config.json`; an optional static
@@ -21,6 +22,7 @@ class RemoteConfig {
     this.apiUserAgent,
     this.clientVersionOverride,
     this.communityBaseUrl,
+    this.vpPrices,
   });
 
   static const defaults = RemoteConfig();
@@ -37,6 +39,7 @@ class RemoteConfig {
       apiUserAgent: asNonEmptyString(m['apiUserAgent']),
       clientVersionOverride: asNonEmptyString(m['clientVersionOverride']),
       communityBaseUrl: asNonEmptyString(m['communityBaseUrl']),
+      vpPrices: VpPriceTable.fromJson(m['vpPricesVnd']),
     );
   }
 
@@ -57,6 +60,10 @@ class RemoteConfig {
   /// Replaces `AppConstants.communityBaseUrl` (community server).
   final String? communityBaseUrl;
 
+  /// Official Vietnamese VP top-up packages (`vpPricesVnd`) used for the
+  /// "≈ … ₫" estimates; `null` hides them.
+  final VpPriceTable? vpPrices;
+
   bool flag(String name, {bool fallback = false}) => flags[name] ?? fallback;
 
   /// [other]'s non-null values win.
@@ -66,6 +73,7 @@ class RemoteConfig {
     apiUserAgent: other.apiUserAgent ?? apiUserAgent,
     clientVersionOverride: other.clientVersionOverride ?? clientVersionOverride,
     communityBaseUrl: other.communityBaseUrl ?? communityBaseUrl,
+    vpPrices: other.vpPrices ?? vpPrices,
   );
 
   JsonMap toJson() => {
@@ -74,6 +82,7 @@ class RemoteConfig {
     'apiUserAgent': apiUserAgent,
     'clientVersionOverride': clientVersionOverride,
     'communityBaseUrl': communityBaseUrl,
+    'vpPricesVnd': vpPrices?.toJson(),
   };
 }
 

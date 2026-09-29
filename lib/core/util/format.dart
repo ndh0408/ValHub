@@ -30,6 +30,14 @@ String formatRp(num amount) =>
 String formatEstimatedVp(num amount) =>
     '${CommonStrings.estimatePrefix} ${formatVp(amount)}';
 
+/// `1290000` → `1.290.000 ₫`.
+String formatVnd(num amount) =>
+    '${formatNumber(amount)} ${CommonStrings.vndSymbol}';
+
+/// `≈ 1.290.000 ₫` (VND estimate of a VP price).
+String formatEstimatedVnd(num amount) =>
+    '${CommonStrings.estimatePrefix} ${formatVnd(amount)}';
+
 /// `+24 RR`, `−17 RR` (U+2212 minus), `0 RR`.
 String formatSignedRr(int rr) => '${formatSigned(rr)} RR';
 
@@ -128,6 +136,29 @@ String formatWeekday(DateTime d) =>
 /// `Thứ Hai, 22/09` (local time).
 String formatWeekdayDate(DateTime d) =>
     '${formatWeekday(d)}, ${formatDayMonth(d)}';
+
+/// Local wall-clock moment for resets and expiries, 24 h, on the device
+/// time zone (UTC+7 for Vietnamese players):
+/// `07:00 hôm nay`, `07:00 ngày mai`, else `23:59 thứ Hai 06/10`.
+String formatWallTime(DateTime at, DateTime now) {
+  final l = at.toLocal();
+  final dayDiff = _dateOnly(l).difference(_dateOnly(now.toLocal())).inDays;
+  final String day;
+  if (dayDiff == 0) {
+    day = CommonStrings.todayLower;
+  } else if (dayDiff == 1) {
+    day = CommonStrings.tomorrow;
+  } else {
+    day = '${formatWeekdayLower(l)} ${formatDayMonth(l)}';
+  }
+  return CommonStrings.wallTime(formatTime(l), day);
+}
+
+/// `thứ Hai`, `chủ Nhật` — the weekday written mid-sentence.
+String formatWeekdayLower(DateTime d) {
+  final w = formatWeekday(d);
+  return w[0].toLowerCase() + w.substring(1);
+}
 
 /// Day header for grouped lists: `Hôm nay`, `Hôm qua`, else
 /// `Thứ Hai, 22/09` (VF S42).

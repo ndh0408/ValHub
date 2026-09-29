@@ -53,7 +53,6 @@ abstract final class CommonStrings {
   static const noData = 'Không có dữ liệu';
   static const emptyGeneric = 'Chưa có dữ liệu.';
   static const copied = 'Đã sao chép!';
-  static const featureInProgress = 'Tính năng đang được phát triển.';
   static const unknownItem = 'Vật phẩm không xác định';
   static const estimatePrefix = '≈';
   static const dash = '–';
@@ -105,6 +104,13 @@ abstract final class CommonStrings {
   static String minutes(int n) => '$n phút';
   static String seconds(int n) => '$n giây';
 
+  static const tomorrow = 'ngày mai';
+  static const todayLower = 'hôm nay';
+  static const daily = 'hằng ngày';
+
+  /// "07:00 hôm nay" / "07:00 ngày mai" / "23:59 thứ Hai 06/10".
+  static String wallTime(String time, String day) => '$time $day';
+
   /// Monday … Sunday, indexed by `DateTime.weekday - 1`.
   static const weekdays = <String>[
     'Thứ Hai',
@@ -115,6 +121,23 @@ abstract final class CommonStrings {
     'Thứ Bảy',
     'Chủ Nhật',
   ];
+
+  // VND estimate (ValVN extra for Vietnamese players)
+  static const vndSymbol = '₫';
+  static const vndEstimateTitle = 'Giá VND ước tính';
+  static const vndEstimateTooltip = 'Giá VND ước tính — chạm để xem nguồn';
+  static const vndEstimateBody =
+      'Số tiền "≈ … ₫" cạnh giá VP là ước tính, quy đổi theo gói nạp VP có '
+      'lợi nhất đang bán chính thức tại Việt Nam. Bạn trả bằng VP trong game, '
+      'không phải bằng VND; số tiền thật phụ thuộc gói nạp, kênh thanh toán '
+      'và khuyến mãi lúc bạn nạp.';
+  static String vndRate(String vp, String vnd) => 'Gói tốt nhất: $vp = $vnd';
+  static String vndSource(String name) => 'Nguồn: $name';
+  static String vndUpdated(String date) => 'Cập nhật bảng giá: $date';
+  static const vndPackagesTitle = 'Các gói nạp VP';
+  static const vndOpenSource = 'Mở trang nguồn';
+  static const vndHide = 'Ẩn giá VND';
+  static const vndHidden = 'Đã ẩn giá VND. Bật lại trong Cài đặt.';
 
   // Legal (VF §8.13)
   static const riotDisclaimer =

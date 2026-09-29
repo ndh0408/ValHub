@@ -11,5 +11,20 @@
   },
   "webViewUserAgent": null,
   "apiUserAgent": null,
-  "clientVersionOverride": null
+  "clientVersionOverride": null,
+  "vpPricesVnd": {
+    "sourceName": "Bảng giá nạp VP tại VNGGames Shop (Viettel Store tổng hợp, khớp VTC Pay)",
+    "sourceUrl": "https://viettelstore.vn/tin-tuc/cach-nap-valorant-vp-an-toan-nhanh-chong-va-bang-gia-moi-nhat-2026",
+    "updatedAt": "2026-08-07",
+    "packages": [
+      { "vp": 52, "vnd": 10000 },
+      { "vp": 110, "vnd": 20000 },
+      { "vp": 275, "vnd": 50000 },
+      { "vp": 610, "vnd": 100000 },
+      { "vp": 1220, "vnd": 200000 },
+      { "vp": 3040, "vnd": 500000 },
+      { "vp": 6550, "vnd": 1000000 },
+      { "vp": 13250, "vnd": 2000000 }
+    ]
+  }
 }

@@ -407,7 +407,7 @@ try { … } finally { await ctx.finish(); }
 |---|---|
 | `AsyncValueView<T>(value:, data:, onRetry:, isEmpty:, emptyMessage:, loading:, empty:, puuid:)` | loading skeleton / error ("Thử lại", "Đăng nhập lại" → `/login?reauth=`) / empty / data; keeps stale data visible with a compact error row |
 | `ErrorView(error:, onRetry:, puuid:, compact:)`, `describeError(e)`, `showAppSnackBar(context, msg)` | errors |
-| `EmptyView(message:, title:, icon:, action:, color:)`, `StateIcon`, `FeaturePlaceholder()` | empty states (icon in a tinted disc, bold title, muted copy, action) |
+| `EmptyView(message:, title:, icon:, action:, color:)`, `StateIcon` | empty states (icon in a tinted disc, bold title, muted copy, action) |
 | `Skeleton(width:, height:, radius:)`, `SkeletonShimmer`, `SkeletonList`, `SkeletonGrid` | loading |
 | `CountdownText(expiresAt:, builder: (t) => …, onExpired:, format:)` | live `11:54:37` / `2 ngày 15:09:24` |
 | `CurrencyAmount(currencyId:, amount:)`, `.vp(n)`, `.kc(n)`, `.rp(n)` (`estimate`, `strikethrough`, `showLabel`) | amount with valorant-api icon |
@@ -424,6 +424,9 @@ try { … } finally { await ctx.finish(); }
 | `SkinArtCard(imageUrl:, name:, tierColor:, footer:, topStart:, topEnd:, dimmed:, selected:)`, `TierTag(label:, color:)` | image-forward grid card with rarity glow and edge |
 | `ValCard`, `SectionLabel`, `GroupedSection`/`GroupedRow`, `IconTile`, `ValProgressBar` (animated), `DiamondPip`, `StatusPill`, `ValBadge`, `CurrencyPill` | Figma design-system pieces (`val_widgets.dart`) |
 | `MaintenanceBanner({region})` | X-1 notice (vi) |
+| `sub_page.dart`: `SubPageScaffold(title:, subtitle:, actions:, onRefresh:, hero:/heroImage:, heroHeight:, showLargeTitle:, header:, slivers:/body:, bottomBar:)`, `LargeTitle`, `HeroBackdrop(imageUrl:, child:, tint:)`, `SubPageBottomBar` | **every screen pushed from a tab**: large title that hands over to a small bar title on scroll, optional collapsing hero with a gradient scrim (no Opacity/blur over content), pinned glass header, pull-to-refresh |
+| `showValSheet(context, title:, subtitle:, actions:, builder: (ctx, controller) => …, scrollable:)`, `SheetHeader`, `SheetCloseButton` | **every modal sheet**: drag handle + bold title + round close button (ValBuddy "Game Details"); fits content or draggable with a controller |
+| `vnd_estimate.dart`: `VndEstimate(vp)`, `vndEstimateText(ref, vp)`, `vndPriceTableProvider`, `showVndInfoSheet` | "≈ 268.000 ₫" next to VP prices (best-value official VN package from remote config `vpPricesVnd`; hidden when the table is null or the user turns it off) |
 
 Theme: `ValColors` (red `#FF4655`, navy, teal …), `valColorsOf(context)` →
 `ValThemeColors(win, loss, draw, warning, muted, …)`, `AppFonts.body` (Be Vietnam Pro),
@@ -454,6 +457,11 @@ restored the next time the screen opens (deep links still win).
   `formatDayMonth`, `formatTime`, `formatDateTime`, `formatWeekday`, `formatWeekdayDate`
   (Thứ Hai, 22/09), `formatDayHeader` (Hôm nay / Hôm qua / …), `formatUpdatedAt`,
   `viTitleCase`, `cleanDisplayText`, `isRawLocKey`, `firstLine`, `restLines`.
+- `search_text.dart`: `foldSearchText` ("Thượng Giới" → "thuong gioi", đ → d, NFD marks),
+  `matchesSearch(query, candidates)`, `searchTokens`, `matchesTokens`, `compareNames`,
+  `SearchIndex<T>` — **every search box** goes through these (diacritic- and case-insensitive).
+- `format.dart` also: `formatVnd`/`formatEstimatedVnd` (`≈ 268.000 ₫`), `formatWallTime(at, now)`
+  (`07:00 ngày mai`, `23:59 thứ Hai 06/10`, device time zone, 24 h), `formatWeekdayLower`.
 - `clock.dart`: `Clock`, `FixedClock` (tests), `clockProvider`.
 - `countdown.dart`: `expiresAtFrom(seconds, receivedAt)`, `remainingUntil`, `Deadline`
   (`fromSeconds`, `remaining(now)`, `isExpired(now)`), `earliest(deadlines)`.
@@ -463,7 +471,10 @@ restored the next time the screen opens (deep links still win).
 - `AppConstants` (`maxAccounts = 10`, timeouts, URLs), `AuthConstants`,
   `RiotClientConstants` (client platform, UAs, fallback version, `maxPageSize = 20`).
 - `remoteConfigProvider` → `RemoteConfig { flags, webViewUserAgent, apiUserAgent,
-  clientVersionOverride }`, `flag(RemoteFlags.liveScore)`. Flags: `social_login_hint`,
+  clientVersionOverride, communityBaseUrl, vpPrices }`, `flag(RemoteFlags.liveScore)`.
+  `vpPrices` (`VpPriceTable`, JSON key `vpPricesVnd`: packages `{vp, vnd}`, `sourceName`,
+  `sourceUrl`, `updatedAt`) drives the VND estimates; `estimateVnd(vp)` uses the best-value
+  package, rounded to 1.000 ₫. Flags: `social_login_hint`,
   `reauth_post_first`, `use_offers_endpoint`, `nm_next_date_source`, `live_score`,
   `party_accept_invite`, `console_support`.
 - `clientVersionRepositoryProvider` → `current` (`riotClientVersion`, `riotClientBuild`,
