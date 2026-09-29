@@ -65,6 +65,7 @@ Future<void> _chip(WidgetTester tester, String label, String list) async {
   }
   await tester.tap(chip);
 }
+
 final _rows = {
   'items': [
     {
@@ -106,14 +107,10 @@ void main() {
     env.server.json('GET /v1/skins/top', {'items': <Object>[]});
     await _open(tester, env);
 
-    await tester.tap(
-      find.widgetWithText(FilterChip, CommunityStrings.sortRating),
-    );
+    await _chip(tester, CommunityStrings.sortRating, 'skins-sort');
     await settle(tester);
     expect(env.server.calls('GET /v1/skins/top').last.query['sort'], 'rating');
-    await tester.tap(
-      find.widgetWithText(FilterChip, CommunityStrings.sortReviews),
-    );
+    await _chip(tester, CommunityStrings.sortReviews, 'skins-sort');
     await settle(tester);
     expect(env.server.calls('GET /v1/skins/top').last.query['sort'], 'reviews');
     await tester.tap(find.text(CommunityStrings.periodWeek));

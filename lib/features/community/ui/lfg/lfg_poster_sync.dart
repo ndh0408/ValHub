@@ -10,6 +10,7 @@ import '../../../../core/util/clock.dart';
 import '../../../../core/util/json.dart';
 import '../../community_routes.dart';
 import '../../community_strings.dart';
+import '../../data/community_exception.dart';
 import '../../data/lfg_sync.dart';
 import '../../providers/community_providers.dart';
 import '../../providers/lfg_providers.dart';
@@ -37,6 +38,9 @@ class _LfgPosterSyncState extends ConsumerState<LfgPosterSync> {
   bool _busy = false;
   Set<String>? _known;
   String? _knownFor;
+
+  /// No PATCH before this instant (after a 429).
+  DateTime? _pausedUntil;
 
   String get _puuid => widget.account.puuid;
 
@@ -73,6 +77,8 @@ class _LfgPosterSyncState extends ConsumerState<LfgPosterSync> {
     final post = ref.read(myLfgProvider(puuid)).value;
     final now = ref.read(clockProvider).now();
     if (post == null || post.isExpired(now)) return;
+    final pause = _pausedUntil;
+    if (pause != null && now.isBefore(pause)) return;
     _busy = true;
     try {
       final party = await readLfgParty(ref.read(pvpApiProvider), puuid);
@@ -106,6 +112,15 @@ class _LfgPosterSyncState extends ConsumerState<LfgPosterSync> {
               status: decision.status ?? post.status,
             );
         if (mounted) notifier.set(updated, patchedAt: now);
+      }
+    } on CommunityException catch (e) {
+      if (!mounted) return;
+      if (e.code == CommunityException.notFound) {
+        // Expired on the server: the user has to post again.
+        ref.read(myLfgProvider(puuid).notifier).set(null);
+      } else if (e.code == CommunityException.rateLimited) {
+        // PATCH limit (120 / 10 min): wait as the server asks.
+        _pausedUntil = now.add(e.retryAfter ?? const Duration(minutes: 2));
       }
     } on Object {
       // Offline / game closed / server hiccup: try again next tick.

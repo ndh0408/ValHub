@@ -39,7 +39,9 @@ class CommunityException implements Exception {
   final int? status;
   final Duration? retryAfter;
 
-  /// The server's own (English) message: debug only, never shown.
+  /// The ValVN server's Vietnamese message. Shown for `invalid_input`
+  /// (content filter: "Nội dung chứa từ ngữ không phù hợp", account-selling /
+  /// phone-number ads, field validation); other codes use the app's copy.
   final String? serverMessage;
 
   bool get isAuthFailure => code == unauthorized || status == 401;
@@ -149,8 +151,8 @@ ErrorDescription describeCommunityError(Object error) {
       icon: Icons.search_off_outlined,
       canRetry: false,
     ),
-    CommunityException.invalidInput => const ErrorDescription(
-      message: CommunityStrings.errorInvalid,
+    CommunityException.invalidInput => ErrorDescription(
+      message: e.serverMessage ?? CommunityStrings.errorInvalid,
       icon: Icons.edit_note_outlined,
       canRetry: false,
     ),

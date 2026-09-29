@@ -244,12 +244,27 @@ class MyLfgNotifier extends AsyncNotifier<LfgPost?> {
     if (post == null) {
       throw const CommunityException(CommunityException.notFound);
     }
-    final updated = await ref
-        .read(communityApiProvider)
-        .updateLfg(puuid, post.id, status: post.status);
-    set(updated, patchedAt: now);
-    return updated;
+    try {
+      final updated = await ref
+          .read(communityApiProvider)
+          .updateLfg(puuid, post.id, status: post.status);
+      set(updated, patchedAt: now);
+      return updated;
+    } on CommunityException catch (e) {
+      // The server answers 404 once the post expired: it must be posted
+      // again, so drop it.
+      if (e.code == CommunityException.notFound) {
+        set(null);
+        throw const LfgPostExpired();
+      }
+      rethrow;
+    }
   }
+}
+
+/// The own LFG post expired on the server (PATCH → 404): post a new one.
+class LfgPostExpired implements Exception {
+  const LfgPostExpired();
 }
 
 /// The poster's live party, published by the poller for the pinned card.

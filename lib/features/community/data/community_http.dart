@@ -68,8 +68,9 @@ class CommunityHttp {
           headers: headers,
         ),
       );
-      final text = res.data ?? '';
-      if (text.trim().isEmpty) return null;
+      final text = (res.data ?? '').trim();
+      // Empty 204s and a JSON `null` (e.g. `GET /v1/lfg/mine` without a post).
+      if (text.isEmpty || text == 'null') return null;
       final decoded = tryDecodeJson(text);
       if (decoded == null) {
         throw CommunityException(

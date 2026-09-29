@@ -306,6 +306,8 @@ abstract final class CommunityStrings {
   static String joinsCount(String n) => '$n người đã vào';
   static const extend = 'Gia hạn';
   static const extended = 'Đã gia hạn tin thêm 30 phút.';
+  static const lfgExpiredRepost =
+      'Tin của bạn đã hết hạn. Hãy đăng tin mới để tìm đồng đội.';
   static const liveMembers = 'Thành viên';
   static String memberJoined(String name) => '$name đã vào tổ đội';
   static const memberJoinedBody = 'Tin tìm đồng đội của bạn vừa có người vào.';

@@ -309,4 +309,45 @@ void main() {
     expect(find.text(CommunityStrings.createLfgShort), findsOneWidget);
     await unmount(tester);
   });
+
+  testWidgets('extending an expired post (404) drops it and says so', (
+    tester,
+  ) async {
+    env.server
+      ..json('GET /v1/lfg', page([]))
+      ..json('GET /v1/lfg/mine', lfgJson('mine', author: authorJson(id: meId)))
+      ..json('PATCH /v1/lfg/mine', {
+        'error': {'code': 'not_found'},
+      }, status: 404);
+    await _open(tester, env);
+    expect(find.text(CommunityStrings.extend), findsOneWidget);
+
+    await tester.tap(find.text(CommunityStrings.extend));
+    await settle(tester);
+
+    expect(find.text(CommunityStrings.lfgExpiredRepost), findsOneWidget);
+    expect(find.text(CommunityStrings.extend), findsNothing);
+    await unmount(tester);
+  });
+
+  testWidgets('poster sync: a 404 PATCH (expired) removes the pinned post', (
+    tester,
+  ) async {
+    env.server
+      ..json('GET /v1/lfg', page([]))
+      ..json('GET /v1/lfg/mine', lfgJson('mine', author: authorJson(id: meId)))
+      ..json('PATCH /v1/lfg/mine', {
+        'error': {'code': 'not_found'},
+      }, status: 404);
+    _serveParty(env, [mePuuid]);
+    await _open(tester, env);
+    expect(find.text(CommunityStrings.extend), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 21));
+    await settle(tester);
+
+    expect(env.server.calls('PATCH /v1/lfg/mine'), hasLength(1));
+    expect(find.text(CommunityStrings.extend), findsNothing);
+    await unmount(tester);
+  });
 }

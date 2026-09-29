@@ -411,4 +411,31 @@ void main() {
     );
     expect(env.server.requests, isEmpty);
   });
+
+  test('moderation / validation: the server message is shown', () async {
+    env.server.json('POST /v1/posts', {
+      'error': {
+        'code': 'invalid_input',
+        'message': 'Nội dung chứa từ ngữ không phù hợp',
+      },
+    }, status: 400);
+    final e = await api
+        .createPost(mePuuid, kind: PostKind.text, body: 'x')
+        .then<Object?>((_) => null, onError: (Object e) => e);
+    expect(
+      describeCommunityError(e!).message,
+      'Nội dung chứa từ ngữ không phù hợp',
+    );
+    expect(
+      describeCommunityError(
+        const CommunityException(CommunityException.invalidInput),
+      ).message,
+      'Nội dung chưa hợp lệ. Kiểm tra lại rồi thử lại.',
+    );
+  });
+
+  test('a JSON null body (no own LFG post) is not an error', () async {
+    env.server.json('GET /v1/lfg/mine', 'null');
+    expect(await api.myLfg(mePuuid), isNull);
+  });
 }

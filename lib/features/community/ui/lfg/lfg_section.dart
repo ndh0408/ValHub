@@ -234,6 +234,8 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
           .read(myLfgProvider(widget.account.puuid).notifier)
           .extend(ref.read(clockProvider).now());
       if (mounted) _snack(CommunityStrings.extended);
+    } on LfgPostExpired {
+      if (mounted) _snack(CommunityStrings.lfgExpiredRepost);
     } on Object catch (e) {
       if (mounted) showCommunityError(context, e);
     }
