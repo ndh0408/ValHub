@@ -15,8 +15,10 @@ import '../../data/wishlist_view.dart';
 import '../../wishlist_strings.dart';
 import 'skin_bits.dart';
 
-/// One S3A row: render, name, edition + weapon, price, "Đã sở hữu", and a
-/// red "Đang có trong Chợ Đêm!" bar per place the skin is on sale.
+/// One S3A card (same family as the store cards): a tier-tinted card with
+/// the render centered on top, then tier icon + name + weapon (left) and
+/// the price (right), a "Đã sở hữu" badge, and a red "Đang có trong Chợ
+/// Đêm!" bar per place the skin is on sale today.
 class WishlistRow extends ConsumerWidget {
   const WishlistRow({
     super.key,
@@ -46,23 +48,56 @@ class WishlistRow extends ConsumerWidget {
     );
     return TierGradientCard(
       tint: tint,
-      borderColor: entry.isOnSale ? ValColors.red : null,
+      borderColor: entry.isOnSale ? theme.colorScheme.primary : null,
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+        padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            SizedBox(
+              height: 76,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 28,
+                        vertical: 4,
+                      ),
+                      child: facts == null
+                          ? Icon(Icons.help_outline, color: colors.muted)
+                          : NetImage(
+                              facts.skin.image,
+                              fit: BoxFit.contain,
+                              showSkeleton: false,
+                            ),
+                    ),
+                  ),
+                  if (owned)
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      child: SmallBadge(
+                        WishlistStrings.owned,
+                        color: colors.win,
+                        icon: Icons.check_circle,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                  width: 84,
-                  height: 48,
-                  child: facts == null
-                      ? Icon(Icons.help_outline, color: colors.muted)
-                      : NetImage(facts.skin.image, fit: BoxFit.contain),
-                ),
-                const SizedBox(width: 12),
+                if (facts?.skin.contentTierUuid != null) ...[
+                  ContentTierBadge(
+                    contentTierUuid: facts?.skin.contentTierUuid,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                ],
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,41 +110,21 @@ class WishlistRow extends ConsumerWidget {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          ContentTierBadge(
-                            contentTierUuid: facts?.skin.contentTierUuid,
-                            size: 14,
+                      if ((facts?.weapon?.displayName ?? '').isNotEmpty)
+                        Text(
+                          facts!.weapon!.displayName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
-                          if (facts?.skin.contentTierUuid != null)
-                            const SizedBox(width: 6),
-                          Flexible(
-                            child: Text(
-                              facts?.weapon?.displayName ?? '',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: colors.muted,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (owned) ...[
-                        const SizedBox(height: 6),
-                        SmallBadge(
-                          WishlistStrings.owned,
-                          color: colors.win,
-                          icon: Icons.check_circle,
                         ),
-                      ],
                     ],
                   ),
                 ),
                 const SizedBox(width: 8),
                 ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 104),
+                  constraints: const BoxConstraints(maxWidth: 110),
                   child: _PriceColumn(entry: entry),
                 ),
               ],
@@ -168,7 +183,10 @@ class _PriceColumn extends StatelessWidget {
           ],
           if (pct != null && pct > 0) ...[
             const SizedBox(height: 4),
-            SmallBadge(formatDiscountPercent(pct), color: ValColors.red),
+            SmallBadge(
+              formatDiscountPercent(pct),
+              color: theme.colorScheme.primary,
+            ),
           ],
         ],
       );
@@ -192,26 +210,23 @@ class _HitBar extends ConsumerWidget {
     final theme = Theme.of(context);
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final expiresAt = hit.expiresAt;
+    final accent = theme.colorScheme.primary;
     final text = EconomyStrings.availableNow(hit.placeLabel(db));
     return Semantics(
       button: true,
       label: '$text ${WishlistStrings.viewInStore}',
       excludeSemantics: true,
       child: Material(
-        color: ValColors.red.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(12),
+        color: accent.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(ValRadius.small),
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(ValRadius.small),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 8, 6, 8),
+            padding: const EdgeInsets.fromLTRB(10, 10, 6, 10),
             child: Row(
               children: [
-                const Icon(
-                  Icons.local_fire_department,
-                  size: 18,
-                  color: ValColors.red,
-                ),
+                Icon(Icons.local_fire_department, size: 18, color: accent),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -222,7 +237,7 @@ class _HitBar extends ConsumerWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.labelLarge?.copyWith(
-                          color: ValColors.red,
+                          color: legibleAccent(context, accent),
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -231,7 +246,8 @@ class _HitBar extends ConsumerWidget {
                           expiresAt: expiresAt,
                           builder: WishlistStrings.endsIn,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: valColorsOf(context).muted,
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontFeatures: const [FontFeature.tabularFigures()],
                           ),
                         ),
                     ],

@@ -36,6 +36,17 @@ abstract final class BattlePassStrings {
   static String unlockedCount(String unlocked, String total) =>
       '$unlocked/$total đã mở khóa';
 
+  // XP pace (ValVN extra)
+  /// "21.469 XP / ngày".
+  static String xpPerDay(String xp) => '$xp XP / ngày';
+  static const xpPerDayCaption = 'Cần mỗi ngày để kịp hoàn thành';
+
+  /// "Còn 15 ngày".
+  static String daysLeft(int days) => 'Còn $days ngày';
+
+  /// "Nhiệm vụ tuần còn +76.800 XP".
+  static String weeklyXpLeft(String xp) => 'Nhiệm vụ tuần còn +$xp XP';
+
   // Estimate (ValVN extra)
   /// "Còn cần 321.034 XP".
   static String xpToFinish(String xp) => 'Còn cần $xp XP';
@@ -135,6 +146,15 @@ abstract final class BattlePassStrings {
       'Bạn chưa mua Premium: chỉ nhận được phần thưởng Miễn phí. '
       'Mua Premium trong game để mở khóa các cấp đã đạt.';
   static const noRewards = 'Chưa có phần thưởng nào cho Battle Pass này.';
+  static const noRewardsTitle = 'Chưa có phần thưởng';
+
+  // Rewards filter (remembered)
+  static const filterAll = 'Tất cả';
+  static const filterUnlocked = 'Đã mở khóa';
+  static const filterLocked = 'Còn khóa';
+  static const noRewardsInFilter = 'Không có phần thưởng nào trong mục này.';
+  static const showAllRewards = 'Xem tất cả';
+  static const missionsProgressLabel = 'Tiến độ nhiệm vụ tuần';
   static const unknownReward = 'Phần thưởng';
 
   /// Separator between short facts ("Skin · Cấp 12 · Đã mở khóa").

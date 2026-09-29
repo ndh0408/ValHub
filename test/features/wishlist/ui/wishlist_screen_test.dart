@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/domain/economy/economy.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
@@ -34,10 +35,12 @@ Future<void> _pump(
   Future<ContentDb> Function()? loadContent,
   MissCounter? misses,
   String? initialSkin,
+  ThemeData? theme,
 }) async {
   usePhoneViewport(tester);
   await tester.pumpWidget(
     testApp(
+      theme: theme,
       overrides: wishlistOverrides(
         api: api ?? fixtureApi(),
         prefs: prefs,
@@ -129,19 +132,14 @@ void main() {
 
   testWidgets('edition filter and sort menu', (tester) async {
     await _pump(tester, prefs: await _prefs());
-    await tester.tap(
-      find.text(WishlistStrings.sortLabel(WishlistStrings.sortRarity)),
-    );
-    await settle(tester);
-    // The menu item's text is not itself hit-testable mid-animation.
-    await tester.tapAt(
-      tester.getCenter(find.text(WishlistStrings.sortName).last),
-    );
-    await settle(tester);
-    expect(
-      find.text(WishlistStrings.sortLabel(WishlistStrings.sortName)),
-      findsOneWidget,
-    );
+    // Sort button shows the current order; the options open in an
+    // adaptive action sheet.
+    await tester.tap(find.text(WishlistStrings.sortRarity));
+    await settle(tester, 30);
+    await tester.tap(find.text(WishlistStrings.sortName).last);
+    await settle(tester, 30);
+    expect(find.text(WishlistStrings.sortName), findsOneWidget);
+    expect(find.text(WishlistStrings.sortRarity), findsNothing);
 
     // Select edition ("Tuyển Chọn") → only Ghost Thinh Lặng.
     await tester.ensureVisible(find.text('Tuyển Chọn'));
@@ -281,6 +279,38 @@ void main() {
     await unmount(tester);
   });
 
+  testWidgets('light theme at 200 % text on 360 dp: no overflow', (
+    tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pump(tester, prefs: await _prefs(), theme: buildLightTheme());
+    expect(tester.takeException(), isNull);
+    await tester.scrollUntilVisible(
+      find.text('Ghost Thinh Lặng'),
+      200,
+      scrollable: _mainScrollable,
+    );
+    expect(tester.takeException(), isNull);
+    await unmount(tester);
+  });
+
+  testWidgets('edition filter and sort are remembered', (tester) async {
+    final prefs = await _prefs();
+    await _pump(tester, prefs: prefs);
+    await tester.ensureVisible(find.text('Tuyển Chọn'));
+    await settle(tester);
+    await tester.tap(find.text('Tuyển Chọn'));
+    await settle(tester);
+    expect(find.textContaining('Đang lọc: 1 skin'), findsOneWidget);
+    await unmount(tester);
+
+    await _pump(tester, prefs: prefs);
+    expect(find.textContaining('Đang lọc: 1 skin'), findsOneWidget);
+    expect(find.text('Vandal Reaver'), findsNothing);
+    await unmount(tester);
+  });
+
   group('with the router', () {
     Future<void> pumpRouter(
       WidgetTester tester,
@@ -308,9 +338,13 @@ void main() {
     testWidgets('availability bar opens the store place', (tester) async {
       await _prefs();
       await pumpRouter(tester, WishlistRoutes.wishlist, await _prefs());
-      await tester.tap(
-        find.text(EconomyStrings.availableNow(EconomyStrings.placeDaily)),
+      final bar = find.text(
+        EconomyStrings.availableNow(EconomyStrings.placeDaily),
       );
+      // Image-forward cards are taller: bring the bar on screen first.
+      await tester.ensureVisible(bar);
+      await settle(tester);
+      await tester.tap(bar);
       await settle(tester);
       expect(find.text('STORE /store?segment=daily'), findsOneWidget);
       await unmount(tester);

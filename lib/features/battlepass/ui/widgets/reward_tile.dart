@@ -70,11 +70,13 @@ class ResolvedReward {
   bool get isSkin => type == ContractRewardType.skinLevel && isKnown;
 }
 
-/// S21 tile: level, reward image, type, lock/✓ and the "Miễn phí" tag.
+/// S21 tile: level pill, reward art over a soft state-colored glow, type,
+/// name, lock/✓ and the "Miễn phí" tag. Locked art is faded at paint time
+/// (no `Opacity` layer).
 class RewardTile extends StatelessWidget {
   const RewardTile({super.key, required this.reward, this.onTap});
 
-  static const imageHeight = 84.0;
+  static const imageHeight = 88.0;
 
   final ResolvedReward reward;
   final VoidCallback? onTap;
@@ -83,10 +85,16 @@ class RewardTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final colors = valColorsOf(context);
     final tier = reward.tier;
     final state = tier.state;
     final unlocked = state == RewardState.unlocked;
     final muted = scheme.onSurfaceVariant;
+    final stateColor = switch (state) {
+      RewardState.unlocked => colors.win,
+      RewardState.locked => muted,
+      RewardState.needsPremium => colors.warning,
+    };
     final stateLabel = switch (state) {
       RewardState.unlocked => BattlePassStrings.rewardUnlocked,
       RewardState.locked => BattlePassStrings.rewardLocked,
@@ -102,15 +110,15 @@ class RewardTile extends StatelessWidget {
         stateLabel,
       ].join(BattlePassStrings.dot),
       excludeSemantics: true,
-      child: Card(
+      child: Material(
         clipBehavior: Clip.antiAlias,
-        color: unlocked ? scheme.surfaceContainerHigh : scheme.surfaceContainer,
+        color: scheme.surfaceContainer,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           side: BorderSide(
-            color: unlocked
-                ? valColorsOf(context).win.withValues(alpha: 0.45)
-                : scheme.outlineVariant,
+            color: state == RewardState.locked
+                ? colors.hairline
+                : stateColor.withValues(alpha: 0.5),
           ),
         ),
         child: InkWell(
@@ -123,21 +131,43 @@ class RewardTile extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Opacity(
-                      opacity: unlocked ? 1 : 0.55,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 22, 8, 8),
-                        child: _RewardArt(reward: reward),
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: RadialGradient(
+                          center: const Alignment(0, 0.2),
+                          radius: 0.8,
+                          colors: [
+                            stateColor.withValues(
+                              alpha: unlocked ? 0.22 : 0.08,
+                            ),
+                            stateColor.withValues(alpha: 0),
+                          ],
+                        ),
                       ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 26, 8, 8),
+                      child: _RewardArt(reward: reward, dimmed: !unlocked),
                     ),
                     Positioned(
                       left: 6,
                       top: 6,
-                      child: Text(
-                        BattlePassStrings.levelShort(tier.level),
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: scheme.onSurface,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colors.surface2,
+                          borderRadius: BorderRadius.circular(ValRadius.pill),
+                        ),
+                        child: Text(
+                          BattlePassStrings.levelShort(tier.level),
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: scheme.onSurface,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
                         ),
                       ),
                     ),
@@ -147,12 +177,12 @@ class RewardTile extends StatelessWidget {
                       child: _StateIcon(state: state),
                     ),
                     if (tier.isFree)
-                      const Positioned(
+                      Positioned(
                         left: 6,
                         bottom: 6,
                         child: BpBadge(
                           BattlePassStrings.free,
-                          color: ValColors.teal,
+                          color: colors.win,
                           filled: true,
                         ),
                       ),
@@ -160,15 +190,19 @@ class RewardTile extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
+                padding: const EdgeInsets.fromLTRB(8, 6, 8, 9),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      reward.typeLabel,
+                      reward.typeLabel.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelSmall?.copyWith(color: muted),
+                      style: ValText.label.copyWith(
+                        fontSize: 10,
+                        letterSpacing: 0.5,
+                        color: muted,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -192,9 +226,10 @@ class RewardTile extends StatelessWidget {
 }
 
 class _RewardArt extends StatelessWidget {
-  const _RewardArt({required this.reward});
+  const _RewardArt({required this.reward, this.dimmed = false});
 
   final ResolvedReward reward;
+  final bool dimmed;
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +241,7 @@ class _RewardArt extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest,
+            color: valColorsOf(context).surface2,
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
@@ -217,6 +252,7 @@ class _RewardArt extends StatelessWidget {
             style: theme.textTheme.labelSmall?.copyWith(
               fontWeight: FontWeight.w700,
               letterSpacing: 0.6,
+              color: dimmed ? muted : null,
             ),
           ),
         ),
@@ -235,6 +271,8 @@ class _RewardArt extends StatelessWidget {
     return NetImage(
       reward.image,
       fit: BoxFit.contain,
+      showSkeleton: false,
+      opacity: dimmed ? 0.5 : null,
       error: Icon(fallbackIcon, color: muted, size: 28),
     );
   }

@@ -6,6 +6,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/network/riot_exception.dart';
+import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/features/battlepass/battlepass_strings.dart';
 import 'package:valvn/features/battlepass/ui/battlepass_rewards_screen.dart';
 import 'package:valvn/features/battlepass/ui/widgets/daily_checkpoints.dart';
@@ -22,11 +23,13 @@ Future<void> _pump(
   Future<ContentDb> Function()? loadContent,
   bool noAccount = false,
   Size size = const Size(360, 740),
+  ThemeData? theme,
 }) async {
   usePhoneViewport(tester, size: size);
   final prefs = await createTestPrefs();
   await tester.pumpWidget(
     bpApp(
+      theme: theme,
       overrides: bpOverrides(
         api: api,
         prefs: prefs,
@@ -47,7 +50,8 @@ void main() {
     await _pump(tester, bpApi());
 
     expect(find.text('Battle Pass'), findsOneWidget);
-    expect(find.text('MÙA 2026 // PHẦN V'), findsOneWidget);
+    // Compact card: the pass name in bold, "Cấp 46 / 55" on the right.
+    expect(find.text('Mùa 2026 // Phần V'), findsOneWidget);
     expect(find.text('Cấp 46 / 55'), findsOneWidget);
     expect(find.text('7.966 / 35.750 XP'), findsOneWidget);
     expect(find.text('840.466 / 1.162.500 XP'), findsOneWidget);
@@ -57,6 +61,10 @@ void main() {
     expect(find.text('46/55 đã mở khóa'), findsOneWidget);
     expect(_rich('Còn cần 322.034 XP'), findsOneWidget);
     expect(_rich('≈ 81 trận Đấu thường'), findsOneWidget);
+    // XP pace: 322.034 XP over the 16 days (15.5 rounded up) left in the act.
+    expect(find.text('20.128 XP / ngày'), findsOneWidget);
+    expect(find.text('Còn 16 ngày'), findsOneWidget);
+    expect(find.textContaining('Nhiệm vụ tuần còn +'), findsOneWidget);
     // Active Champions event pass.
     expect(find.text('VÉ SỰ KIỆN'), findsOneWidget);
     expect(find.text('Champions 2026: Shanghai'), findsOneWidget);
@@ -195,6 +203,24 @@ void main() {
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await _pump(tester, bpApi(), size: const Size(320, 640));
     expect(find.text('Cấp 46 / 55'), findsOneWidget);
+    await unmount(tester);
+  });
+
+  testWidgets('light theme, 360 dp and 200 % text: no overflow', (
+    tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pump(tester, bpApi(), theme: buildLightTheme());
+    expect(tester.takeException(), isNull);
+    expect(find.text('Cấp 46 / 55'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.byType(WeeklyMissionTile).last,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await settle(tester);
+    expect(tester.takeException(), isNull);
     await unmount(tester);
   });
 

@@ -7,6 +7,7 @@ import '../../../../core/content/content_db.dart';
 import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/util/format.dart';
@@ -67,7 +68,9 @@ class CatalogSkinTile extends ConsumerWidget {
       label: WishlistStrings.tileSemantics(facts.name, priceText, inWishlist),
       child: TierGradientCard(
         tint: tint,
-        borderColor: inWishlist ? ValColors.red.withValues(alpha: 0.7) : null,
+        borderColor: inWishlist
+            ? theme.colorScheme.primary.withValues(alpha: 0.8)
+            : null,
         onTap: () => unawaited(
           showSkinDetailSheet(
             context,
@@ -92,18 +95,22 @@ class CatalogSkinTile extends ConsumerWidget {
                       message: WishlistStrings.owned,
                       child: Icon(
                         Icons.check_circle,
-                        size: 16,
+                        size: 18,
                         color: colors.win,
+                        semanticLabel: WishlistStrings.owned,
                       ),
                     ),
                   if (puuid != null)
                     _HeartButton(
                       active: inWishlist,
-                      onTap: () => unawaited(
-                        ref
-                            .read(wishlistProvider(puuid).notifier)
-                            .toggleSkin(facts.uuid, db),
-                      ),
+                      onTap: () {
+                        Haptics.light();
+                        unawaited(
+                          ref
+                              .read(wishlistProvider(puuid).notifier)
+                              .toggleSkin(facts.uuid, db),
+                        );
+                      },
                     )
                   else
                     const SizedBox(height: 40),
@@ -112,7 +119,11 @@ class CatalogSkinTile extends ConsumerWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(4, 0, 10, 6),
-                  child: NetImage(facts.skin.image, fit: BoxFit.contain),
+                  child: NetImage(
+                    facts.skin.image,
+                    fit: BoxFit.contain,
+                    showSkeleton: false,
+                  ),
                 ),
               ),
               Padding(
@@ -152,6 +163,7 @@ class _HeartButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = Theme.of(context).colorScheme.primary;
     return IconButton(
       onPressed: onTap,
       tooltip: active
@@ -160,11 +172,17 @@ class _HeartButton extends StatelessWidget {
       isSelected: active,
       visualDensity: VisualDensity.compact,
       padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-      icon: Icon(
-        active ? Icons.favorite : Icons.favorite_border,
-        size: 20,
-        color: active ? ValColors.red : Theme.of(context).colorScheme.onSurface,
+      constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+      icon: AnimatedSwitcher(
+        duration: ValMotion.fast,
+        transitionBuilder: (child, a) =>
+            ScaleTransition(scale: a, child: child),
+        child: Icon(
+          active ? Icons.favorite : Icons.favorite_border,
+          key: ValueKey(active),
+          size: 20,
+          color: active ? accent : Theme.of(context).colorScheme.onSurface,
+        ),
       ),
     );
   }

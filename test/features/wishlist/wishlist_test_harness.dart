@@ -170,12 +170,15 @@ List<Override> wishlistOverrides({
 ];
 
 /// App wrapper with the real dark theme and no provider retries.
-Widget testApp({required List<Override> overrides, required Widget home}) =>
-    ProviderScope(
-      overrides: overrides,
-      retry: (_, _) => null,
-      child: MaterialApp(theme: buildDarkTheme(), home: home),
-    );
+Widget testApp({
+  required List<Override> overrides,
+  required Widget home,
+  ThemeData? theme,
+}) => ProviderScope(
+  overrides: overrides,
+  retry: (_, _) => null,
+  child: MaterialApp(theme: theme ?? buildDarkTheme(), home: home),
+);
 
 /// Router app: `/collection` + the wishlist routes, and stub `/store`
 /// pages that print their location.

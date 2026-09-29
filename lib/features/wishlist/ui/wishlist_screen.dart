@@ -10,16 +10,20 @@ import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/l10n/common_strings.dart';
+import '../../../core/storage/ui_memory.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/currency_amount.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../../skin_detail/skin_detail_sheet.dart';
 import '../../store/store_routes.dart';
 import '../../store/ui/store_screen.dart' show StoreSegment;
 import '../data/skin_query.dart';
+import '../data/skin_query_memory.dart';
 import '../data/wishlist_view.dart';
 import '../providers/wishlist_providers.dart';
 import '../wishlist_routes.dart';
@@ -49,7 +53,13 @@ class WishlistScreen extends ConsumerStatefulWidget {
 }
 
 class _WishlistScreenState extends ConsumerState<WishlistScreen> {
-  SkinQuery _query = const SkinQuery();
+  late final _memory = SkinQueryMemory(
+    ref.read(uiMemoryProvider),
+    SkinQueryMemory.wishlist,
+  );
+
+  /// Sort + edition filter are remembered (no weapon filter here).
+  late SkinQuery _query = _memory.load(rememberWeapon: false);
   String? _openedSkin;
   bool _missReported = false;
 
@@ -143,6 +153,12 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
     ref.invalidate(skinCatalogProvider);
   }
 
+  void _setQuery(SkinQuery next) {
+    final previous = _query;
+    setState(() => _query = next);
+    _memory.save(next, previous: previous);
+  }
+
   void _openCatalog() => unawaited(context.push(WishlistRoutes.catalog));
 
   void _openSkin(WishlistEntry entry) => unawaited(
@@ -170,6 +186,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
   void _remove(String puuid, WishlistEntry entry, ContentDb db) {
     final notifier = ref.read(wishlistProvider(puuid).notifier);
     final name = entry.facts?.name ?? CommonStrings.unknownItem;
+    Haptics.light();
     unawaited(notifier.removeSkin(entry.key, db));
     ScaffoldMessenger.maybeOf(context)
       ?..hideCurrentSnackBar()
@@ -239,6 +256,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
         SliverFillRemaining(
           hasScrollBody: false,
           child: EmptyView(
+            title: WishlistStrings.emptyTitle,
             message: WishlistStrings.empty,
             icon: Icons.favorite_border,
             action: FilledButton.icon(
@@ -260,7 +278,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
         SliverToBoxAdapter(
           child: SkinFilterBar(
             query: _query,
-            onChanged: (q) => setState(() => _query = q),
+            onChanged: _setQuery,
             tiers: catalog.tiers,
           ),
         ),
@@ -280,10 +298,11 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
           SliverFillRemaining(
             hasScrollBody: false,
             child: EmptyView(
+              title: WishlistStrings.noMatchTitle,
               message: WishlistStrings.noMatch,
               icon: Icons.search_off,
               action: TextButton(
-                onPressed: () => setState(() => _query = _query.cleared()),
+                onPressed: () => _setQuery(_query.cleared()),
                 child: const Text(WishlistStrings.clearFilters),
               ),
             ),
@@ -311,7 +330,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
     }
 
     return Scaffold(
-      body: RefreshIndicator(
+      body: AdaptiveRefresh(
         onRefresh: () => _refresh(puuid),
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -381,7 +400,7 @@ class _DismissibleRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
           color: theme.colorScheme.error,
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(ValRadius.card),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -434,14 +453,9 @@ class _SummaryStrip extends StatelessWidget {
     final filteredText = filtered.isEstimate
         ? formatEstimatedVp(filtered.totalVp)
         : formatVp(filtered.totalVp);
-    return Container(
+    return ValCard(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(6),
-        border: Border(left: BorderSide(color: ValColors.red, width: 3)),
-      ),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -449,7 +463,7 @@ class _SummaryStrip extends StatelessWidget {
             WishlistStrings.totalValue,
             style: theme.textTheme.labelMedium?.copyWith(color: muted),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Row(
             children: [
               Expanded(
@@ -483,7 +497,7 @@ class _SummaryStrip extends StatelessWidget {
                 filteredText,
               ),
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.primary,
+                color: legibleAccent(context, theme.colorScheme.primary),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -509,21 +523,23 @@ class _OnSaleBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final accent = theme.colorScheme.primary;
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(ValRadius.card),
+        border: Border.all(color: accent.withValues(alpha: 0.45)),
         gradient: LinearGradient(
           colors: [
-            ValColors.red.withValues(alpha: 0.30),
-            ValColors.red.withValues(alpha: 0.08),
+            accent.withValues(alpha: 0.22),
+            accent.withValues(alpha: 0.05),
           ],
         ),
       ),
       child: Row(
         children: [
-          const Icon(Icons.local_fire_department, color: ValColors.red),
+          Icon(Icons.local_fire_department_outlined, color: accent),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -560,12 +576,14 @@ class _WishlistSkeleton extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Skeleton(height: 44, radius: 8, shimmer: false),
+            const Skeleton(height: 44, radius: 22, shimmer: false),
+            const SizedBox(height: 10),
+            const Skeleton(height: 36, width: 220, radius: 18, shimmer: false),
             const SizedBox(height: 12),
-            const Skeleton(height: 72, radius: 6, shimmer: false),
-            const SizedBox(height: 16),
-            for (var i = 0; i < 5; i++) ...const [
-              Skeleton(height: 76, radius: 6, shimmer: false),
+            const Skeleton(height: 76, radius: 16, shimmer: false),
+            const SizedBox(height: 12),
+            for (var i = 0; i < 4; i++) ...const [
+              Skeleton(height: 140, radius: 16, shimmer: false),
               SizedBox(height: 10),
             ],
           ],

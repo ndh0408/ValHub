@@ -75,6 +75,7 @@ class WeaponPickerList extends StatelessWidget {
           ),
         ),
         ListTile(
+          selected: selected == null,
           leading: const Icon(Icons.apps),
           title: const Text(WishlistStrings.allWeapons),
           trailing: check(selected == null),
@@ -84,6 +85,7 @@ class WeaponPickerList extends StatelessWidget {
           SectionHeader(c.label.isEmpty ? WishlistStrings.weapon : c.label),
           for (final w in byCategory[c]!)
             ListTile(
+              selected: selected == w.uuid,
               leading: SizedBox(
                 width: 64,
                 height: 28,

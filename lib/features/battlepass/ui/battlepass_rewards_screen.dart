@@ -12,7 +12,11 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
+import '../../../core/storage/ui_memory.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/net_image.dart';
+import '../../../core/ui/segmented_tabs.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../../skin_detail/skin_detail_sheet.dart';
 import '../battlepass_strings.dart';
@@ -21,6 +25,29 @@ import '../providers/battlepass_providers.dart';
 import 'widgets/bp_ui_bits.dart';
 import 'widgets/overview_bits.dart';
 import 'widgets/reward_tile.dart';
+
+/// Reward filter of S21, remembered across launches
+/// (`UiMemory` key `battlepass.rewardsFilter`).
+enum RewardsFilter {
+  all,
+  unlocked,
+  locked;
+
+  String get label => switch (this) {
+    all => BattlePassStrings.filterAll,
+    unlocked => BattlePassStrings.filterUnlocked,
+    locked => BattlePassStrings.filterLocked,
+  };
+
+  bool keeps(RewardTier tier) => switch (this) {
+    all => true,
+    unlocked => tier.isUnlocked,
+    locked => !tier.isUnlocked,
+  };
+}
+
+/// `UiMemory` key of the remembered [RewardsFilter].
+const kRewardsFilterMemoryKey = 'battlepass.rewardsFilter';
 
 /// S21 "Phần thưởng Battle Pass". Route `/battlepass/rewards`
 /// (`?contract=<uuid>` shows an event pass instead of the battle pass).
@@ -44,6 +71,18 @@ class _BattlePassRewardsScreenState
   final _currentChapterKey = GlobalKey();
   bool _scrolledToCurrent = false;
   bool _missReported = false;
+  late RewardsFilter _filter = ref
+      .read(uiMemoryProvider)
+      .readEnum(
+        kRewardsFilterMemoryKey,
+        RewardsFilter.values,
+        RewardsFilter.all,
+      );
+
+  void _setFilter(RewardsFilter next) {
+    setState(() => _filter = next);
+    ref.read(uiMemoryProvider).writeEnum(kRewardsFilterMemoryKey, next);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,23 +131,46 @@ class _BattlePassRewardsScreenState
           const SliverFillRemaining(
             hasScrollBody: false,
             child: EmptyView(
+              title: BattlePassStrings.noRewardsTitle,
               message: BattlePassStrings.noRewards,
               icon: Icons.card_giftcard,
             ),
           ),
         );
       } else {
-        slivers.add(
+        final isPremium = overview.isPremiumFor(pass.contract.uuid);
+        slivers.addAll([
+          SliverToBoxAdapter(
+            child: _SummaryCard(pass: pass, isPremium: isPremium),
+          ),
+          // Pinned frosted filter: "Tất cả · Đã mở khóa · Còn khóa".
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: GlassHeaderDelegate(
+              height: 60,
+              child: SegmentedTabs<RewardsFilter>(
+                expand: true,
+                tabs: [
+                  for (final f in RewardsFilter.values)
+                    SegmentedTab(value: f, label: f.label),
+                ],
+                selected: _filter,
+                onChanged: _setFilter,
+              ),
+            ),
+          ),
           SliverToBoxAdapter(
             child: _RewardsBody(
               pass: pass,
-              isPremium: overview.isPremiumFor(pass.contract.uuid),
+              isPremium: isPremium,
               db: db,
               currentChapterKey: _currentChapterKey,
               onTap: _openReward,
+              filter: _filter,
+              onShowAll: () => _setFilter(RewardsFilter.all),
             ),
           ),
-        );
+        ]);
         _afterData(pass, overview, db);
       }
     } else {
@@ -134,7 +196,7 @@ class _BattlePassRewardsScreenState
       appBar: AppBar(
         title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
       ),
-      body: RefreshIndicator(
+      body: AdaptiveRefresh(
         onRefresh: () => refreshBattlePass(ref, puuid),
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -196,6 +258,8 @@ class _BattlePassRewardsScreenState
             ctx,
             duration: const Duration(milliseconds: 350),
             curve: Curves.easeOutCubic,
+            // Leave room for the pinned filter bar.
+            alignment: 0.08,
           ),
         );
       }
@@ -227,8 +291,8 @@ class _BattlePassRewardsScreenState
   }
 }
 
-/// Summary card + every chapter (built eagerly so the current chapter can
-/// be scrolled into view; a pass has ≈ 70 rewards).
+/// Every chapter kept by [filter] (built eagerly so the current chapter
+/// can be scrolled into view; a pass has ≈ 70 rewards).
 class _RewardsBody extends StatelessWidget {
   const _RewardsBody({
     required this.pass,
@@ -236,6 +300,8 @@ class _RewardsBody extends StatelessWidget {
     required this.db,
     required this.currentChapterKey,
     required this.onTap,
+    required this.filter,
+    required this.onShowAll,
   });
 
   final PassProgress pass;
@@ -243,6 +309,8 @@ class _RewardsBody extends StatelessWidget {
   final ContentDb db;
   final GlobalKey currentChapterKey;
   final void Function(ResolvedReward reward) onTap;
+  final RewardsFilter filter;
+  final VoidCallback onShowAll;
 
   @override
   Widget build(BuildContext context) {
@@ -251,20 +319,43 @@ class _RewardsBody extends StatelessWidget {
       level: pass.level,
       isPremium: isPremium,
     );
+    final sections = <Widget>[];
+    for (final c in chapters) {
+      final premium = [
+        for (final t in c.premium)
+          if (filter.keeps(t)) ResolvedReward.resolve(t, db),
+      ];
+      final free = [
+        for (final t in c.free)
+          if (filter.keeps(t)) ResolvedReward.resolve(t, db),
+      ];
+      if (premium.isEmpty && free.isEmpty) continue;
+      sections.add(
+        _ChapterSection(
+          key: c.isCurrent ? currentChapterKey : null,
+          chapter: c,
+          level: pass.level,
+          premium: premium,
+          free: free,
+          onTap: onTap,
+        ),
+      );
+    }
+    // No AnimatedSwitcher: the current chapter carries a GlobalKey, which
+    // must not exist twice during a cross-fade.
+    if (sections.isEmpty) {
+      return EmptyView(
+        message: BattlePassStrings.noRewardsInFilter,
+        icon: Icons.filter_alt_off_outlined,
+        action: TextButton(
+          onPressed: onShowAll,
+          child: const Text(BattlePassStrings.showAllRewards),
+        ),
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _SummaryCard(pass: pass, isPremium: isPremium),
-        for (final c in chapters)
-          _ChapterSection(
-            key: c.isCurrent ? currentChapterKey : null,
-            chapter: c,
-            level: pass.level,
-            premium: [for (final t in c.premium) ResolvedReward.resolve(t, db)],
-            free: [for (final t in c.free) ResolvedReward.resolve(t, db)],
-            onTap: onTap,
-          ),
-      ],
+      children: sections,
     );
   }
 }
@@ -282,9 +373,10 @@ class _SummaryCard extends StatelessWidget {
     final premium = isPremium;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      child: Card(
+      child: ValCard(
+        padding: EdgeInsets.zero,
         child: Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -324,13 +416,13 @@ class _SummaryCard extends StatelessWidget {
                 style: theme.textTheme.bodyMedium?.copyWith(color: muted),
               ),
               const SizedBox(height: 8),
-              BpProgressBar(value: pass.totalFraction, height: 4),
+              BpProgressBar(value: pass.totalFraction),
               if (premium == false) ...[
                 const SizedBox(height: 10),
                 Text(
                   BattlePassStrings.premiumHint,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: valColorsOf(context).warning,
+                    color: legibleAccent(context, valColorsOf(context).warning),
                   ),
                 ),
               ],
@@ -382,9 +474,9 @@ class _ChapterSection extends StatelessWidget {
               ),
               if (chapter.isCurrent) ...[
                 const SizedBox(width: 8),
-                const BpBadge(
+                BpBadge(
                   BattlePassStrings.currentChapter,
-                  color: ValColors.red,
+                  color: theme.colorScheme.primary,
                 ),
               ],
               const Spacer(),

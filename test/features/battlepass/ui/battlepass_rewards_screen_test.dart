@@ -7,6 +7,7 @@ import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/l10n/content_strings.dart';
 import 'package:valvn/core/network/riot_exception.dart';
+import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/features/battlepass/battlepass_routes.dart';
 import 'package:valvn/features/battlepass/battlepass_strings.dart';
 import 'package:valvn/features/battlepass/ui/battlepass_rewards_screen.dart';
@@ -24,9 +25,10 @@ Future<void> _pump(
   String location = BattlePassRoutes.rewards,
   Future<ContentDb> Function()? loadContent,
   List<int>? misses,
+  Prefs? prefs,
 }) async {
   usePhoneViewport(tester);
-  final prefs = await createTestPrefs();
+  prefs ??= await createTestPrefs();
   await tester.pumpWidget(
     bpApp(
       initialLocation: location,
@@ -51,9 +53,20 @@ void main() {
     await _pump(tester, bpApi());
 
     expect(find.text(BattlePassStrings.rewardsTitle), findsOneWidget);
-    expect(find.text('Mùa 2026 // Phần V'), findsOneWidget);
-    expect(find.text('Cấp 46 / 55 · 46/55 đã mở khóa'), findsOneWidget);
-    expect(find.text(BattlePassStrings.premium), findsOneWidget);
+    // The summary card is its own sliver, scrolled away when the screen
+    // opens on the current chapter.
+    expect(
+      find.text('Mùa 2026 // Phần V', skipOffstage: false),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Cấp 46 / 55 · 46/55 đã mở khóa', skipOffstage: false),
+      findsOneWidget,
+    );
+    expect(
+      find.text(BattlePassStrings.premium, skipOffstage: false),
+      findsOneWidget,
+    );
     for (var n = 1; n <= 10; n++) {
       expect(find.text(BattlePassStrings.chapter(n)), findsOneWidget);
     }
@@ -66,7 +79,10 @@ void main() {
     expect(find.text(BattlePassStrings.levelShort(1)), findsOneWidget);
     expect(find.text(ContentStrings.currencyRpFull), findsWidgets);
     expect(find.text(ContentStrings.currencyKcFull), findsNWidgets(10));
-    expect(find.text(BattlePassStrings.premiumHint), findsNothing);
+    expect(
+      find.text(BattlePassStrings.premiumHint, skipOffstage: false),
+      findsNothing,
+    );
 
     // Opens on the current chapter (levels 46–50).
     final y = tester.getTopLeft(find.text(BattlePassStrings.chapter(10))).dy;
@@ -79,9 +95,41 @@ void main() {
     await unmount(tester);
   });
 
+  testWidgets('reward filter narrows the grid and is remembered', (
+    tester,
+  ) async {
+    final prefs = await createTestPrefs();
+    await _pump(tester, bpApi(), prefs: prefs);
+    expect(find.byType(RewardTile), findsNWidgets(75));
+
+    await tester.tap(find.text(BattlePassStrings.filterUnlocked));
+    await settle(tester);
+    await tester.pump(const Duration(milliseconds: 400));
+    final unlocked = find.byType(RewardTile).evaluate().length;
+    expect(unlocked, inExclusiveRange(0, 75));
+    for (final e in find.byType(RewardTile).evaluate()) {
+      expect((e.widget as RewardTile).reward.tier.isUnlocked, isTrue);
+    }
+    expect(prefs.getString('ui.$kRewardsFilterMemoryKey'), 'unlocked');
+
+    // Reopening the screen keeps the filter.
+    await unmount(tester);
+    await _pump(tester, bpApi(), prefs: prefs);
+    expect(find.byType(RewardTile).evaluate().length, unlocked);
+
+    await tester.tap(find.text(BattlePassStrings.filterAll));
+    await settle(tester);
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.byType(RewardTile), findsNWidgets(75));
+    await unmount(tester);
+  });
+
   testWidgets('free accounts see the Premium hint and locks', (tester) async {
     await _pump(tester, bpApi(premium: const []));
-    expect(find.text(BattlePassStrings.premiumHint), findsOneWidget);
+    expect(
+      find.text(BattlePassStrings.premiumHint, skipOffstage: false),
+      findsOneWidget,
+    );
     expect(find.byIcon(Icons.lock), findsWidgets);
     final l1 = tester.widget<RewardTile>(_tileWithName('Vandal Reaver'));
     expect(l1.reward.tier.state.name, 'needsPremium');

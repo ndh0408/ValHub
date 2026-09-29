@@ -124,11 +124,12 @@ List<Override> bpOverrides({
 Widget bpApp({
   required List<Override> overrides,
   String initialLocation = BattlePassRoutes.root,
+  ThemeData? theme,
 }) => ProviderScope(
   overrides: overrides,
   retry: (_, _) => null,
   child: MaterialApp.router(
-    theme: buildDarkTheme(),
+    theme: theme ?? buildDarkTheme(),
     routerConfig: GoRouter(
       initialLocation: initialLocation,
       routes: battlepassBranchRoutes,

@@ -2,12 +2,14 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/countdown_text.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../battlepass_strings.dart';
 import '../../data/battlepass_models.dart';
 import 'bp_ui_bits.dart';
 
-/// P3 "Nhiệm vụ hằng tuần" (S20) with the P5 completed state.
+/// P3 "Nhiệm vụ hằng tuần" (S20) with the P5 completed state: header with
+/// the refill countdown and "1/3 hoàn thành", then one card per mission.
 class WeeklyMissionsSection extends StatelessWidget {
   const WeeklyMissionsSection({
     super.key,
@@ -28,6 +30,7 @@ class WeeklyMissionsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final refill = weekly.refillAt;
+    final total = weekly.missions.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -37,7 +40,7 @@ class WeeklyMissionsSection extends StatelessWidget {
               ? null
               : BattlePassStrings.missionsCompleted(
                   weekly.completedCount,
-                  weekly.missions.length,
+                  total,
                 ),
           trailing: refill == null
               ? null
@@ -60,16 +63,13 @@ class WeeklyMissionsSection extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                 ],
-                Card(
-                  child: Column(
-                    children: [
-                      for (var i = 0; i < weekly.missions.length; i++) ...[
-                        if (i > 0) const Divider(indent: 52),
-                        WeeklyMissionTile(mission: weekly.missions[i]),
-                      ],
-                    ],
+                for (var i = 0; i < total; i++) ...[
+                  if (i > 0) const SizedBox(height: 8),
+                  ValCard(
+                    padding: EdgeInsets.zero,
+                    child: WeeklyMissionTile(mission: weekly.missions[i]),
                   ),
-                ),
+                ],
               ],
             ],
           ),
@@ -79,7 +79,9 @@ class WeeklyMissionsSection extends StatelessWidget {
   }
 }
 
-/// One weekly mission row: status circle, title, bar, "8 / 15", "+XP".
+/// One weekly mission (ValBuddy style): empty ring / green check, title
+/// (struck through when done), thin bar, "8 / 15" left and red "+XP"
+/// right. Completed rows are muted by color (no `Opacity` layer).
 class WeeklyMissionTile extends StatelessWidget {
   const WeeklyMissionTile({super.key, required this.mission});
 
@@ -90,89 +92,109 @@ class WeeklyMissionTile extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final done = mission.isComplete;
-    final win = valColorsOf(context).win;
+    final colors = valColorsOf(context);
+    final win = colors.win;
     final muted = scheme.onSurfaceVariant;
     final title = mission.title ?? BattlePassStrings.unknownMission;
     final small = theme.textTheme.bodySmall?.copyWith(
       color: muted,
       fontFeatures: const [FontFeature.tabularFigures()],
     );
-    return Opacity(
-      opacity: done ? 0.6 : 1,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 16, 12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 1),
-              child: Icon(
-                done ? Icons.check_circle : Icons.radio_button_unchecked,
-                size: 22,
-                color: done ? win : muted,
-                semanticLabel: done ? BattlePassStrings.missionDone : null,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      decoration: done ? TextDecoration.lineThrough : null,
-                      decorationColor: muted,
-                      color: done ? muted : null,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 12, 16, 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: done
+                ? Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: win,
+                    ),
+                    child: Icon(
+                      Icons.check,
+                      size: 15,
+                      color: readableOn(win),
+                      semanticLabel: BattlePassStrings.missionDone,
+                    ),
+                  )
+                : Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: muted, width: 1.6),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  BpProgressBar(
-                    value: mission.fraction,
-                    color: done ? muted : ValColors.red,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    decoration: done ? TextDecoration.lineThrough : null,
+                    decorationColor: muted,
+                    color: done ? muted : null,
                   ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          BattlePassStrings.missionProgress(
-                            formatNumber(mission.progress),
-                            formatNumber(mission.target),
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: small,
+                ),
+                const SizedBox(height: 8),
+                BpProgressBar(
+                  value: mission.fraction,
+                  color: done ? colors.muted : null,
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        BattlePassStrings.missionProgress(
+                          formatNumber(mission.progress),
+                          formatNumber(mission.target),
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: small,
                       ),
-                      if (mission.xpGrant > 0) ...[
-                        const SizedBox(width: 8),
-                        Text(
+                    ),
+                    if (mission.xpGrant > 0) ...[
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
                           BattlePassStrings.xpReward(
                             formatNumber(mission.xpGrant),
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: small?.copyWith(
-                            color: done ? muted : win,
+                            color: legibleAccent(context, scheme.primary),
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                      ],
+                      ),
                     ],
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
-/// P5: trophy card "Đã hoàn thành tất cả nhiệm vụ" + "Nhiệm vụ mới sau …".
+/// P5: trophy card "Đã hoàn thành tất cả nhiệm vụ" + "Nhiệm vụ mới sau …",
+/// on a warm gold gradient.
 class MissionsDoneCard extends StatelessWidget {
   const MissionsDoneCard({super.key, required this.title, this.refillAt});
 
@@ -182,18 +204,33 @@ class MissionsDoneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final gold = valColorsOf(context).warning;
+    final gold = valColorsOf(context).gold;
     final refill = refillAt;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: gold.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(ValRadius.card),
-        border: Border.all(color: gold.withValues(alpha: 0.4)),
+        border: Border.all(color: gold.withValues(alpha: 0.45)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            gold.withValues(alpha: 0.22),
+            theme.colorScheme.surfaceContainer,
+          ],
+        ),
       ),
       child: Row(
         children: [
-          Icon(Icons.emoji_events, color: gold, size: 32),
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: gold.withValues(alpha: 0.18),
+            ),
+            child: Icon(Icons.emoji_events, color: gold, size: 28),
+          ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
@@ -235,35 +272,32 @@ class _NoMissionsCard extends StatelessWidget {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
     final refill = refillAt;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Icon(Icons.assignment_outlined, color: muted),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    BattlePassStrings.noWeeklyMissions,
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  if (refill != null)
-                    CountdownText(
-                      expiresAt: refill,
-                      builder: BattlePassStrings.newMissionsIn,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: muted,
-                        fontFeatures: const [FontFeature.tabularFigures()],
-                      ),
+    return ValCard(
+      child: Row(
+        children: [
+          IconTile(icon: Icons.assignment_outlined, color: muted),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  BattlePassStrings.noWeeklyMissions,
+                  style: theme.textTheme.bodyMedium,
+                ),
+                if (refill != null)
+                  CountdownText(
+                    expiresAt: refill,
+                    builder: BattlePassStrings.newMissionsIn,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: muted,
+                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
-                ],
-              ),
+                  ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
