@@ -92,9 +92,13 @@ class SettingsAccountsSection extends ConsumerWidget {
               onNote: () => unawaited(showLoginNoteSheet(context, a)),
             ),
           ListTile(
-            leading: Icon(
-              Icons.add,
-              color: full ? scheme.onSurfaceVariant : scheme.primary,
+            minTileHeight: 56,
+            leading: SizedBox(
+              width: 44,
+              child: Icon(
+                Icons.add_circle_outline,
+                color: full ? scheme.onSurfaceVariant : scheme.primary,
+              ),
             ),
             title: Text(
               AccountStrings.addAccount(accounts.length, max),
@@ -145,6 +149,7 @@ class _AccountRow extends ConsumerWidget {
     final tile = AccountTile(
       account: account,
       onTap: onTap,
+      circleAvatar: false,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -182,11 +187,18 @@ class _AccountRow extends ConsumerWidget {
             visualDensity: VisualDensity.compact,
             onPressed: onNote,
           ),
+          // Red trash in a round red-tinted disc (48 dp target).
           IconButton(
-            icon: const Icon(Icons.delete_outline),
-            color: scheme.onSurfaceVariant,
+            icon: const Icon(Icons.delete_outline, size: 20),
+            color: scheme.error,
+            style: IconButton.styleFrom(
+              backgroundColor: scheme.error.withValues(alpha: 0.14),
+              side: BorderSide(color: scheme.error.withValues(alpha: 0.25)),
+              fixedSize: const Size.square(38),
+              minimumSize: const Size.square(38),
+              tapTargetSize: MaterialTapTargetSize.padded,
+            ),
             tooltip: AccountStrings.removeAccount,
-            visualDensity: VisualDensity.compact,
             onPressed: onRemove,
           ),
         ],

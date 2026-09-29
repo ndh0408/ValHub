@@ -20,6 +20,9 @@ import '../l10n/auth_strings.dart';
 import '../l10n/common_strings.dart';
 import '../logging/session_log.dart';
 import '../network/riot_exception.dart';
+import '../theme/app_theme.dart';
+import '../ui/adaptive.dart';
+import '../ui/empty_view.dart';
 import '../ui/error_view.dart';
 import 'auth_callback.dart';
 import 'cookie_jar.dart';
@@ -230,22 +233,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  Future<bool?> _confirmAddAsNew() => showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text(AuthStrings.differentAccountTitle),
-      content: const Text(AuthStrings.differentAccountBody),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: const Text(CommonStrings.cancel),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.of(context).pop(true),
-          child: const Text(AuthStrings.addAsNew),
-        ),
-      ],
-    ),
+  Future<bool?> _confirmAddAsNew() => showConfirmDialog(
+    context,
+    title: AuthStrings.differentAccountTitle,
+    message: AuthStrings.differentAccountBody,
+    confirmLabel: AuthStrings.addAsNew,
   );
 
   Future<NavigationActionPolicy> _shouldOverride(
@@ -364,7 +356,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         .flag(RemoteFlags.socialLoginHint, fallback: true);
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AuthStrings.loginTitle),
+        title: const _LoginTitle(),
         leading: IconButton(
           icon: const Icon(Icons.close),
           tooltip: CommonStrings.close,
@@ -373,8 +365,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
         bottom: _phase == _Phase.web && _progress < 1
             ? PreferredSize(
-                preferredSize: const Size.fromHeight(2),
-                child: LinearProgressIndicator(value: _progress, minHeight: 2),
+                preferredSize: const Size.fromHeight(3),
+                child: TweenAnimationBuilder<double>(
+                  tween: Tween(end: _progress),
+                  duration: ValMotion.medium,
+                  builder: (context, v, _) =>
+                      LinearProgressIndicator(value: v, minHeight: 3),
+                ),
               )
             : null,
       ),
@@ -463,10 +460,14 @@ class _Hint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Material(
-      color: theme.colorScheme.surfaceContainerHigh,
+    return Container(
+      margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(ValRadius.small),
+      ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+        padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -499,22 +500,77 @@ class _Hint extends StatelessWidget {
   }
 }
 
+/// "Đăng nhập Riot" with a lock and the official host underneath, so it
+/// is clear the page is Riot's own.
+class _LoginTitle extends StatelessWidget {
+  const _LoginTitle();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final win = valColorsOf(context).win;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text(
+          AuthStrings.loginTitle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.lock, size: 12, color: win),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                AuthStrings.officialHost,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
 class _CenteredStatus extends StatelessWidget {
   const _CenteredStatus({required this.message});
 
   final String message;
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const CircularProgressIndicator(),
-        const SizedBox(height: 16),
-        Text(message),
-      ],
-    ),
-  );
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox.square(
+              dimension: 36,
+              child: CircularProgressIndicator.adaptive(),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _FailedView extends StatelessWidget {
@@ -527,23 +583,40 @@ class _FailedView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.error_outline, size: 40, color: theme.colorScheme.error),
-            const SizedBox(height: 12),
-            Text(AuthStrings.loginFailed, style: theme.textTheme.titleMedium),
-            const SizedBox(height: 4),
-            Text(message, textAlign: TextAlign.center),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: () => unawaited(onRetry()),
-              icon: const Icon(Icons.refresh),
-              label: const Text(CommonStrings.retry),
-            ),
-          ],
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 360),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              StateIcon(
+                icon: Icons.error_outline,
+                color: theme.colorScheme.error,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AuthStrings.loginFailed,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleMedium,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 20),
+              FilledButton.icon(
+                onPressed: () => unawaited(onRetry()),
+                icon: const Icon(Icons.refresh),
+                label: const Text(CommonStrings.retry),
+              ),
+            ],
+          ),
         ),
       ),
     );

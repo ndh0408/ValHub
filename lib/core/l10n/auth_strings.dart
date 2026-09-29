@@ -30,4 +30,5 @@ abstract final class AuthStrings {
   static const accountAlreadyAdded = 'Tài khoản này đã được thêm';
   static const reloginDone = 'Đã đăng nhập lại';
   static const openedInBrowser = 'Đã mở liên kết trong trình duyệt.';
+  static const officialHost = 'Trang chính thức · auth.riotgames.com';
 }
