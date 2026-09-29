@@ -1,6 +1,26 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../core/accounts/account.dart';
+import '../../core/accounts/account_providers.dart';
+import '../../core/content/content_db.dart';
+import '../../core/content/content_repository.dart';
+import '../../core/domain/economy/economy.dart';
+import '../../core/l10n/common_strings.dart';
+import '../../core/l10n/content_strings.dart';
+import '../../core/theme/app_theme.dart';
+import '../../core/ui/content_tier_badge.dart';
+import '../../core/ui/currency_amount.dart';
 import '../../core/ui/empty_view.dart';
+import '../../core/ui/error_view.dart';
+import '../../core/ui/net_image.dart';
+import '../../core/ui/skeleton.dart';
+import '../store/ui/widgets/store_ui_bits.dart';
+import 'providers/skin_availability.dart';
+import 'skin_detail_strings.dart';
+import 'skin_video_view.dart';
 
 /// Context the sheet is opened from.
 enum SkinDetailMode {
@@ -17,7 +37,7 @@ enum SkinDetailMode {
 /// Opens S15 "Chi tiết skin" as a full-height modal sheet.
 ///
 /// [skinOrLevelUuid] may be a skin, level or chroma uuid (resolved with
-/// `ContentDb.skinByAnyUuid`).
+/// `ContentDb.skinByAnyUuid`); a chroma uuid preselects that variant.
 Future<void> showSkinDetailSheet(
   BuildContext context, {
   required String skinOrLevelUuid,
@@ -26,11 +46,28 @@ Future<void> showSkinDetailSheet(
   context: context,
   isScrollControlled: true,
   useSafeArea: true,
+  showDragHandle: true,
   builder: (_) => SkinDetailSheet(skinOrLevelUuid: skinOrLevelUuid, mode: mode),
 );
 
-/// S15 body (render / video, variants, upgrades, wishlist button).
-class SkinDetailSheet extends StatelessWidget {
+/// The media shown for [chroma] of [skin]: its full render, and the video
+/// of that variant (the base variant falls back to the skin's best level
+/// video, VF §6.2 S15).
+({String? render, String? video}) skinMedia(
+  WeaponSkin skin,
+  SkinChroma? chroma,
+) {
+  final render = chroma?.fullRender ?? chroma?.displayIcon ?? skin.render;
+  final video = chroma == null || chroma.isBase
+      ? (chroma?.streamedVideo ?? skin.previewVideo)
+      : chroma.streamedVideo;
+  return (render: render, video: video);
+}
+
+/// S15 body: render / video, tier + price (or reward source), variants,
+/// upgrade levels with videos, owned state, wishlist button and the
+/// optional "Có trong cửa hàng của: …" line.
+class SkinDetailSheet extends ConsumerStatefulWidget {
   const SkinDetailSheet({
     super.key,
     required this.skinOrLevelUuid,
@@ -41,7 +78,623 @@ class SkinDetailSheet extends StatelessWidget {
   final SkinDetailMode mode;
 
   @override
+  ConsumerState<SkinDetailSheet> createState() => _SkinDetailSheetState();
+}
+
+class _SkinDetailSheetState extends ConsumerState<SkinDetailSheet> {
+  /// Selected chroma uuid; `null` = the one [widget.skinOrLevelUuid] names,
+  /// else the base variant.
+  String? _chromaUuid;
+  bool _missReported = false;
+
+  SkinChroma? _selectedChroma(WeaponSkin skin) {
+    final wanted = (_chromaUuid ?? widget.skinOrLevelUuid).toLowerCase();
+    for (final c in skin.chromas) {
+      if (c.uuid == wanted) return c;
+    }
+    return skin.chromas.firstOrNull;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const SizedBox(height: 480, child: FeaturePlaceholder());
+    final contentAsync = ref.watch(contentProvider);
+    final db = contentAsync.value;
+    final skin = db?.skinByAnyUuid(widget.skinOrLevelUuid);
+
+    final Widget body;
+    if (db == null || db.isEmpty) {
+      body = contentAsync.hasError && !contentAsync.isLoading
+          ? ErrorView(
+              error: contentAsync.error!,
+              onRetry: () => ref.invalidate(contentProvider),
+            )
+          : const _LoadingBody();
+    } else if (skin == null) {
+      _reportMiss();
+      body = const EmptyView(
+        message: SkinDetailStrings.notFound,
+        icon: Icons.search_off,
+      );
+    } else {
+      body = _SkinBody(
+        skin: skin,
+        mode: widget.mode,
+        chroma: _selectedChroma(skin),
+        onChromaSelected: (c) => setState(() => _chromaUuid = c.uuid),
+      );
+    }
+
+    return FractionallySizedBox(
+      heightFactor: 0.9,
+      alignment: Alignment.topCenter,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _SheetHeader(title: skin?.displayName ?? SkinDetailStrings.title),
+          Expanded(child: body),
+        ],
+      ),
+    );
+  }
+
+  /// A skin uuid missing from the content (new patch): ask for a
+  /// rate-limited content refresh.
+  void _reportMiss() {
+    if (_missReported) return;
+    _missReported = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(ref.read(contentMissReporterProvider).report());
+    });
+  }
+}
+
+class _SheetHeader extends StatelessWidget {
+  const _SheetHeader({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 4, 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.close),
+            tooltip: CommonStrings.close,
+            onPressed: () => Navigator.of(context).maybePop(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LoadingBody extends StatelessWidget {
+  const _LoadingBody();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SkeletonShimmer(
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Skeleton(height: null, shimmer: false),
+            ),
+            SizedBox(height: 16),
+            Skeleton(width: 200, height: 20, shimmer: false),
+            SizedBox(height: 20),
+            Skeleton(width: 120, height: 16, shimmer: false),
+            SizedBox(height: 12),
+            Skeleton(height: 48, shimmer: false),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SkinBody extends ConsumerWidget {
+  const _SkinBody({
+    required this.skin,
+    required this.mode,
+    required this.chroma,
+    required this.onChromaSelected,
+  });
+
+  final WeaponSkin skin;
+  final SkinDetailMode mode;
+  final SkinChroma? chroma;
+  final ValueChanged<SkinChroma> onChromaSelected;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    final puuid = ref.watch(activeAccountProvider)?.puuid;
+    final media = skinMedia(skin, chroma);
+    final quote = ref.watch(priceServiceProvider).priceForSkin(skin.uuid);
+    final reward = ref.watch(rewardSourceIndexProvider).forSkin(skin);
+    final owned = puuid == null
+        ? null
+        : ref.watch(ownedItemsProvider(puuid)).value;
+    final isOwned = owned?.isSkinOwned(skin.uuid) ?? false;
+    // Locks only make sense for a skin the account owns.
+    final ownedForLocks = isOwned && skin.isCollectible ? owned : null;
+    final inWishlist =
+        puuid != null &&
+        wishlistContains(ref.watch(wishlistProvider(puuid)), skin.uuid, db);
+    final showWishlist =
+        puuid != null &&
+        skin.isCollectible &&
+        !(mode == SkinDetailMode.owned && isOwned);
+    final List<Account> elsewhere =
+        mode == SkinDetailMode.store || puuid == null
+        ? const []
+        : ref.watch(skinAvailableElsewhereProvider(skin.uuid)).value ??
+              const [];
+    final tint = contentTierTint(
+      ref,
+      skin.contentTierUuid,
+      fallback: valColorsOf(context).muted,
+    );
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      children: [
+        _Media(render: media.render, video: media.video, tint: tint),
+        const SizedBox(height: 14),
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 12,
+          runSpacing: 6,
+          children: [
+            TierLabel(
+              contentTierUuid: skin.contentTierUuid,
+              fullName: true,
+              iconSize: 20,
+              style: theme.textTheme.titleSmall,
+            ),
+            _PriceLabel(quote: quote),
+          ],
+        ),
+        if (reward != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            SkinDetailStrings.rewardDetail(
+              reward.contractName,
+              reward.level == null ? null : ContentStrings.level(reward.level!),
+            ),
+            style: theme.textTheme.bodySmall?.copyWith(color: muted),
+          ),
+        ] else if (quote.isEstimate) ...[
+          const SizedBox(height: 4),
+          Text(
+            quote.source.label,
+            style: theme.textTheme.bodySmall?.copyWith(color: muted),
+          ),
+        ],
+        if (isOwned) ...[
+          const SizedBox(height: 10),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: OwnedBadge(label: SkinDetailStrings.owned),
+          ),
+        ],
+        if (elsewhere.isNotEmpty) ...[
+          const SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.storefront_outlined, size: 16, color: muted),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  SkinDetailStrings.availableInStoreOf(
+                    elsewhere.map((a) => a.riotId).join(', '),
+                  ),
+                  style: theme.textTheme.bodySmall?.copyWith(color: muted),
+                ),
+              ),
+            ],
+          ),
+        ],
+        if (skin.chromas.length > 1) ...[
+          const SizedBox(height: 20),
+          _SectionTitle(
+            SkinDetailStrings.variants,
+            trailing: chroma == null || chroma!.isBase ? null : chroma!.label,
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              for (final c in skin.chromas)
+                _ChromaSwatch(
+                  chroma: c,
+                  selected: c.uuid == chroma?.uuid,
+                  locked:
+                      ownedForLocks != null &&
+                      !ownedForLocks.isChromaOwned(c.uuid),
+                  onTap: () => onChromaSelected(c),
+                ),
+            ],
+          ),
+        ],
+        if (skin.levels.length > 1) ...[
+          const SizedBox(height: 20),
+          const _SectionTitle(SkinDetailStrings.upgrades),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final l in skin.levels)
+                _LevelChip(
+                  level: l,
+                  locked:
+                      ownedForLocks != null &&
+                      !ownedForLocks.isSkinLevelOwned(l.uuid),
+                ),
+            ],
+          ),
+        ],
+        if (puuid != null && showWishlist) ...[
+          const SizedBox(height: 24),
+          _WishlistButton(
+            active: inWishlist,
+            onPressed: () => unawaited(
+              ref
+                  .read(wishlistProvider(puuid).notifier)
+                  .toggleSkin(skin.uuid, db),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _Media extends StatelessWidget {
+  const _Media({required this.render, required this.video, required this.tint});
+
+  final String? render;
+  final String? video;
+  final Color tint;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final v = video;
+    return Semantics(
+      button: v != null,
+      label: v == null ? null : SkinDetailStrings.playVideo,
+      child: Material(
+        color: scheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(4),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: v == null
+              ? null
+              : () => unawaited(openSkinVideo(context, videoUrl: v)),
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                radius: 1.1,
+                colors: [
+                  tint.withValues(alpha: 0.45),
+                  tint.withValues(alpha: 0.05),
+                ],
+              ),
+            ),
+            child: AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: NetImage(
+                      render,
+                      key: ValueKey(render),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  if (v != null)
+                    Positioned(
+                      right: 10,
+                      bottom: 10,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.play_arrow,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                SkinDetailStrings.playVideo,
+                                style: Theme.of(context).textTheme.labelMedium
+                                    ?.copyWith(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Price or reward-source label (VF §6.2 S15, C9).
+class _PriceLabel extends StatelessWidget {
+  const _PriceLabel({required this.quote});
+
+  final PriceQuote quote;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final style = theme.textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.w700,
+    );
+    final caption = quote.caption;
+    if (caption != null) {
+      return Text(
+        caption,
+        style: style?.copyWith(color: valColorsOf(context).warning),
+      );
+    }
+    final vp = quote.vp;
+    if (vp == null) return Text(CommonStrings.dash, style: style);
+    return CurrencyAmount.vp(
+      vp,
+      iconSize: 18,
+      estimate: quote.isEstimate,
+      style: style,
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.title, {this.trailing});
+
+  final String title;
+  final String? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(title, style: theme.textTheme.titleSmall),
+        if (trailing != null) ...[
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              trailing!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.end,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _ChromaSwatch extends StatelessWidget {
+  const _ChromaSwatch({
+    required this.chroma,
+    required this.selected,
+    required this.locked,
+    required this.onTap,
+  });
+
+  final SkinChroma chroma;
+  final bool selected;
+  final bool locked;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: locked
+          ? '${chroma.label}, ${SkinDetailStrings.locked}'
+          : chroma.label,
+      excludeSemantics: true,
+      child: Tooltip(
+        message: chroma.label,
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onTap,
+          child: Container(
+            width: 48,
+            height: 48,
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: selected ? scheme.primary : scheme.outline,
+                width: selected ? 2 : 1,
+              ),
+            ),
+            child: ClipOval(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ColoredBox(
+                    color: scheme.surfaceContainerHigh,
+                    child: NetImage(
+                      chroma.swatch ?? chroma.displayIcon,
+                      fit: BoxFit.cover,
+                      showSkeleton: false,
+                    ),
+                  ),
+                  if (locked)
+                    ColoredBox(
+                      color: Colors.black.withValues(alpha: 0.55),
+                      child: const Icon(
+                        Icons.lock,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LevelChip extends StatelessWidget {
+  const _LevelChip({required this.level, required this.locked});
+
+  final SkinLevel level;
+  final bool locked;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final video = level.streamedVideo;
+    final muted = theme.colorScheme.onSurfaceVariant;
+    final levelText = ContentStrings.level(level.levelNumber);
+    return Semantics(
+      button: video != null,
+      label: [
+        SkinDetailStrings.levelCaption(levelText, level.levelItemLabel),
+        if (locked) SkinDetailStrings.locked,
+        if (video != null) SkinDetailStrings.playVideo,
+      ].join(', '),
+      excludeSemantics: true,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 100, maxWidth: 156),
+        child: Material(
+          color: theme.colorScheme.surfaceContainerHigh,
+          borderRadius: BorderRadius.circular(4),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: video == null
+                ? null
+                : () => unawaited(openSkinVideo(context, videoUrl: video)),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        levelText,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: locked ? muted : null,
+                        ),
+                      ),
+                      if (video != null) ...[
+                        const SizedBox(width: 6),
+                        const Icon(
+                          Icons.play_circle_fill,
+                          size: 16,
+                          color: ValColors.red,
+                        ),
+                      ],
+                      if (locked) ...[
+                        const SizedBox(width: 6),
+                        Icon(Icons.lock, size: 14, color: muted),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    level.levelItemLabel,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.labelSmall?.copyWith(color: muted),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _WishlistButton extends StatelessWidget {
+  const _WishlistButton({required this.active, required this.onPressed});
+
+  final bool active;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final icon = Icon(
+      active ? Icons.favorite : Icons.favorite_border,
+      color: active ? ValColors.red : null,
+    );
+    final label = Text(
+      active ? SkinDetailStrings.inWishlist : SkinDetailStrings.addToWishlist,
+    );
+    return Semantics(
+      toggled: active,
+      hint: active ? SkinDetailStrings.removeFromWishlist : null,
+      child: SizedBox(
+        height: 48,
+        child: active
+            ? OutlinedButton.icon(
+                onPressed: onPressed,
+                icon: icon,
+                label: label,
+              )
+            : FilledButton.icon(onPressed: onPressed, icon: icon, label: label),
+      ),
+    );
   }
 }

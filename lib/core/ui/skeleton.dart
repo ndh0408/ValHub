@@ -103,6 +103,7 @@ class SkeletonList extends StatelessWidget {
       child: ListView.separated(
         padding: padding,
         physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
         itemCount: itemCount,
         separatorBuilder: (_, _) => SizedBox(height: spacing),
         itemBuilder: (_, _) => Skeleton(height: itemHeight, shimmer: false),
