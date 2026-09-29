@@ -2,7 +2,11 @@ import 'package:material_ui/material_ui.dart';
 
 import '../theme/app_theme.dart';
 
-/// Animated shimmer applied to its skeleton descendants.
+/// Drives the shimmer of every [Skeleton] below it (one animation for the
+/// whole group, so the boxes sweep in sync). Only the [Skeleton] boxes are
+/// painted with the moving highlight: cards, backgrounds and other widgets
+/// inside keep their own colors (a `ShaderMask` over the subtree would flatten
+/// them to the skeleton gray).
 class SkeletonShimmer extends StatefulWidget {
   const SkeletonShimmer({super.key, required this.child});
 
@@ -26,30 +30,15 @@ class _SkeletonShimmerState extends State<SkeletonShimmer>
   }
 
   @override
-  Widget build(BuildContext context) {
-    final colors = valColorsOf(context);
-    return AnimatedBuilder(
-      animation: _controller,
-      child: widget.child,
-      builder: (context, child) {
-        final t = _controller.value;
-        return ShaderMask(
-          blendMode: BlendMode.srcATop,
-          shaderCallback: (bounds) => LinearGradient(
-            begin: Alignment(-1 - 2 + 4 * t, 0),
-            end: Alignment(1 - 2 + 4 * t, 0),
-            colors: [
-              colors.skeletonBase,
-              colors.skeletonHighlight,
-              colors.skeletonBase,
-            ],
-            stops: const [0.25, 0.5, 0.75],
-          ).createShader(bounds),
-          child: child,
-        );
-      },
-    );
-  }
+  Widget build(BuildContext context) =>
+      _ShimmerScope(controller: _controller, child: widget.child);
+}
+
+class _ShimmerScope extends InheritedNotifier<AnimationController> {
+  const _ShimmerScope({
+    required AnimationController controller,
+    required super.child,
+  }) : super(notifier: controller);
 }
 
 /// A placeholder box. Wrap groups in [SkeletonShimmer] (single boxes shimmer
@@ -70,15 +59,57 @@ class Skeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final box = Container(
+    final box = _SkeletonBox(width: width, height: height, radius: radius);
+    // Not inside a group: a single box shimmers on its own (or stays still).
+    final grouped =
+        context.getInheritedWidgetOfExactType<_ShimmerScope>() != null;
+    return shimmer && !grouped ? SkeletonShimmer(child: box) : box;
+  }
+}
+
+/// The painted box: a moving highlight when a [SkeletonShimmer] is above,
+/// else the plain skeleton color.
+class _SkeletonBox extends StatelessWidget {
+  const _SkeletonBox({this.width, this.height, required this.radius});
+
+  final double? width;
+  final double? height;
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = valColorsOf(context);
+    final controller = context
+        .dependOnInheritedWidgetOfExactType<_ShimmerScope>()
+        ?.notifier;
+    if (controller == null) {
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: colors.skeletonBase,
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      );
+    }
+    final t = controller.value;
+    return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: valColorsOf(context).skeletonBase,
         borderRadius: BorderRadius.circular(radius),
+        gradient: LinearGradient(
+          begin: Alignment(-1 - 2 + 4 * t, 0),
+          end: Alignment(1 - 2 + 4 * t, 0),
+          colors: [
+            colors.skeletonBase,
+            colors.skeletonHighlight,
+            colors.skeletonBase,
+          ],
+          stops: const [0.25, 0.5, 0.75],
+        ),
       ),
     );
-    return shimmer ? SkeletonShimmer(child: box) : box;
   }
 }
 

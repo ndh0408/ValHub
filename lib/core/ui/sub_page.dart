@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:material_ui/material_ui.dart';
 
 import '../l10n/common_strings.dart';
@@ -126,6 +127,9 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
         builder: (context, collapsed, _) => SliverAppBar(
           pinned: true,
           stretch: true,
+          // Light status-bar icons while the (dark-scrimmed) hero is under
+          // them; the theme's default once the bar has collapsed.
+          systemOverlayStyle: collapsed ? null : SystemUiOverlayStyle.light,
           expandedHeight: widget.heroHeight,
           leading: _BarButton.back(onImage: !collapsed),
           automaticallyImplyLeading: false,

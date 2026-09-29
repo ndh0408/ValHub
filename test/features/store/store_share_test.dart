@@ -148,11 +148,11 @@ void main() {
     tester,
   ) async {
     Uint8List? png;
-    String? fileName;
+    String? sharedName;
     final overrides = await _overrides(
       sharer: (bytes, {required fileName, subject, origin}) async {
         png = bytes;
-        fileName = fileName;
+        sharedName = fileName;
       },
     );
     tester.view.physicalSize = const Size(360, 1400);
@@ -192,5 +192,9 @@ void main() {
     await tester.pump();
     expect(png, isNotNull, reason: 'the native share sheet was called');
     expect(png!.sublist(0, 4), [0x89, 0x50, 0x4E, 0x47]);
+    expect(
+      sharedName,
+      matches(RegExp(r'^valvn-cua-hang-\d{4}-\d{2}-\d{2}\.png$')),
+    );
   });
 }
