@@ -88,42 +88,52 @@ class AccountChip extends ConsumerWidget {
     if (account == null) return const SizedBox.shrink();
     final theme = Theme.of(context);
     final name = account.gameName.isEmpty ? account.riotId : account.gameName;
+    // The pill is 38 dp tall; the tap target (and its semantics node) is
+    // 48 dp: a 5 dp band above and below belongs to the button.
     return Semantics(
       button: true,
       label: AccountStrings.switcherTitle,
       child: Material(
-        color: theme.colorScheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(22),
-        clipBehavior: Clip.antiAlias,
+        type: MaterialType.transparency,
         child: InkWell(
           onTap: () => unawaited(showAccountSwitcherSheet(context)),
+          customBorder: const StadiumBorder(),
           child: Padding(
-            padding: EdgeInsets.fromLTRB(4, 4, showName ? 12 : 4, 4),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Badge(
-                  isLabelVisible: account.needsLogin,
-                  smallSize: 8,
-                  child: AccountAvatar(
-                    account: account,
-                    size: 30,
-                    circle: true,
-                  ),
-                ),
-                if (showName) ...[
-                  const SizedBox(width: 8),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 120),
-                    child: Text(
-                      name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelLarge,
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: Ink(
+              decoration: ShapeDecoration(
+                color: theme.colorScheme.surfaceContainerHigh,
+                shape: const StadiumBorder(),
+              ),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(4, 4, showName ? 12 : 4, 4),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Badge(
+                      isLabelVisible: account.needsLogin,
+                      smallSize: 8,
+                      child: AccountAvatar(
+                        account: account,
+                        size: 30,
+                        circle: true,
+                      ),
                     ),
-                  ),
-                ],
-              ],
+                    if (showName) ...[
+                      const SizedBox(width: 8),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 120),
+                        child: Text(
+                          name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelLarge,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
             ),
           ),
         ),

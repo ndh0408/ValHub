@@ -57,7 +57,7 @@ class LiveHomeCard extends ConsumerWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          LiveRefreshRing(puuid: puuid, size: 36),
+          LiveRefreshRing(puuid: puuid, size: 48),
           Icon(Icons.chevron_right, color: theme.colorScheme.onSurfaceVariant),
         ],
       ),

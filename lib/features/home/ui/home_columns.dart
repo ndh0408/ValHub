@@ -128,6 +128,8 @@ class HomeColumns extends StatelessWidget {
       FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: child);
 
   Widget _slot(BuildContext context, int i) => Semantics(
+    // A node per card, so the sort key orders the cards themselves.
+    container: true,
     sortKey: OrdinalSortKey(i.toDouble()),
     child: FocusTraversalOrder(
       order: NumericFocusOrder(i.toDouble()),
