@@ -14,7 +14,6 @@ import 'package:valvn/features/home/ui/cards/store_home_card.dart';
 import 'package:valvn/features/home/ui/home_card_frame.dart';
 import 'package:valvn/features/skin_detail/skin_detail_sheet.dart';
 
-import '../../../core/domain/economy/economy_fixtures.dart';
 import '../home_test_env.dart';
 
 Widget _card() => const StoreHomeCard(puuid: Fx.puuid);

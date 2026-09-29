@@ -14,7 +14,6 @@ import 'package:valvn/features/home/providers/home_refresh.dart';
 import 'package:valvn/features/home/ui/cards/other_accounts_home_card.dart';
 import 'package:valvn/features/home/ui/home_card_frame.dart';
 
-import '../../../core/domain/economy/economy_fixtures.dart';
 import '../home_test_env.dart';
 
 Widget _card() => const OtherAccountsHomeCard();

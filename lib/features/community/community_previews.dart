@@ -42,20 +42,27 @@ final matchingLfgPreviewProvider = FutureProvider.autoDispose
       }
       final account = ref.watch(accountProvider(puuid));
       if (account == null) return const [];
+      final api = ref.watch(communityApiProvider);
+      // A preview on another screen (Trang chủ) never signs in: only a
+      // session the Cộng đồng tab already created is used, otherwise the
+      // Riot token would be sent to the community server behind the user's
+      // back.
+      final session = await api.auth.cachedSession(puuid);
+      if (session == null) return const [];
       final rank = lfgViewerRank(account);
-      final page = await ref
-          .watch(communityApiProvider)
-          .lfg(
-            puuid,
-            region: communityRegion(account.region),
-            rank: rank,
-            limit: 6,
-          );
+      final page = await api.lfg(
+        puuid,
+        region: communityRegion(account.region),
+        rank: rank,
+        limit: 6,
+      );
       final now = ref.read(clockProvider).now();
       return [
         for (final p in page.items)
           if (p.status == LfgStatus.open &&
               !p.isExpired(now) &&
+              p.hasValidCode &&
+              p.author.id != session.user.id &&
               p.acceptsRank(rank))
             p,
       ].take(2).toList();

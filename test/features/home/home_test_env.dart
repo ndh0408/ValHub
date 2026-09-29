@@ -46,7 +46,8 @@ export 'home_test_data.dart';
 export 'home_test_pump.dart';
 export '../battlepass/bp_fixtures.dart'
     show Bp, activeMission, bpContent, contractsJson, dailyTicketJson;
-export '../../core/domain/economy/economy_fixtures.dart' show Fx;
+export '../../core/domain/economy/economy_fixtures.dart'
+    show Fx, economyContent, economyFixture, economyFixtureText;
 
 class HomeMockApi extends Mock implements PvpApi {}
 
