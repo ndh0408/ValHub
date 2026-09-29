@@ -403,6 +403,8 @@ Future<GoRouter> pumpCommunityRouter(
   required List<RouteBase> routes,
   required String initialLocation,
   Size size = const Size(360, 1600),
+  double textScale = 1,
+  ThemeData? theme,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -413,7 +415,15 @@ Future<GoRouter> pumpCommunityRouter(
     ProviderScope(
       overrides: env.overrides,
       retry: (_, _) => null,
-      child: MaterialApp.router(theme: buildDarkTheme(), routerConfig: router),
+      child: MaterialApp.router(
+        theme: theme ?? buildDarkTheme(),
+        routerConfig: router,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(textScale)),
+          child: child!,
+        ),
+      ),
     ),
   );
   return router;

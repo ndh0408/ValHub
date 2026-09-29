@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/network/riot_exception.dart';
+import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/features/community/community_routes.dart';
 import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/ui/lfg/lfg_section.dart';
@@ -350,4 +351,42 @@ void main() {
     expect(find.text(CommunityStrings.extend), findsNothing);
     await unmount(tester);
   });
+
+  for (final light in [false, true]) {
+    testWidgets('no overflow at 360 dp × 2.0 (${light ? 'light' : 'dark'})', (
+      tester,
+    ) async {
+      env.server
+        ..json(
+          'GET /v1/lfg',
+          page([
+            {
+              ...lfgJson('l1', note: 'Cần 1 Controller, có mic, vui vẻ'),
+              'rankMin': 12,
+              'rankMax': 21,
+              'roles': ['controller', 'initiator', 'flex'],
+              'mic': true,
+              'partySize': 3,
+            },
+          ]),
+        )
+        ..json('GET /v1/lfg/mine', {
+          ...lfgJson('mine', author: authorJson(id: meId)),
+          'joins': 12,
+        });
+      await pumpCommunityRouter(
+        tester,
+        env,
+        routes: [...communityBranchRoutes, ...communityTopLevelRoutes],
+        initialLocation: '/community?section=lfg',
+        size: const Size(360, 3600),
+        textScale: 2,
+        theme: light ? buildLightTheme() : buildDarkTheme(),
+      );
+      await settle(tester);
+      expect(tester.takeException(), isNull);
+      expect(find.text('Cần 1 Controller, có mic, vui vẻ'), findsOneWidget);
+      await unmount(tester);
+    });
+  }
 }

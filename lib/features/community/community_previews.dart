@@ -17,6 +17,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/theme/tier_colors.dart';
 import '../../core/ui/net_image.dart';
 import '../../core/ui/val_widgets.dart';
+import '../../core/util/clock.dart';
 import '../../core/util/format.dart';
 import 'community_routes.dart';
 import 'community_strings.dart';
@@ -43,7 +44,7 @@ final matchingLfgPreviewProvider = FutureProvider.autoDispose
             rank: rank,
             limit: 6,
           );
-      final now = DateTime.now();
+      final now = ref.read(clockProvider).now();
       return [
         for (final p in page.items)
           if (p.status == LfgStatus.open &&

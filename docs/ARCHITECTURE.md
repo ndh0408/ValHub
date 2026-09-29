@@ -43,7 +43,7 @@ lib/
 └─ features/
    ├─ store/          (+ skin_detail/)   TAB 1 Cửa hàng
    ├─ battlepass/                        TAB 2 Battle Pass
-   ├─ community/                         TAB 3 Cộng đồng (feed, LFG, skin votes; docs/community-api.md)
+   ├─ community/                         TAB 3 Cộng đồng (feed, LFG, skin votes + reviews; docs/community-api.md)
    ├─ collection/                        TAB 3 Bộ sưu tập
    ├─ wishlist/                          Wishlist + catalog + background check
    ├─ profile/                           TAB 4 Hồ sơ, match detail, player profile
@@ -130,7 +130,7 @@ Routes are composed in `lib/app/router.dart`; features only edit their own
 |---|---|---|
 | top level | `settings_routes.dart` (`settingsTopLevelRoutes`) | `/welcome` → `WelcomeScreen` |
 | top level | core (`AuthRoutes`) | `/login`, `/login?reauth=<puuid>` → `LoginScreen` |
-| top level | `community_routes.dart` (`communityTopLevelRoutes`) | `/compose` → `ComposeScreen` (`extra`: `ComposeDraft`), `/post/:id` → `PostDetailScreen` (`extra`: `CommunityPost`) |
+| top level | `community_routes.dart` (`communityTopLevelRoutes`) | `/compose` → `ComposeScreen` (`extra`: `ComposeDraft`), `/post/:id` → `PostDetailScreen` (`extra`: `CommunityPost`), `/community/skin/:uuid` → `SkinReviewScreen` (`CommunityRoutes.skin(uuid)`, `openSkinReview(context, uuid)` from anywhere) |
 | top level | `profile_routes.dart` (`profileTopLevelRoutes`) | `/player/:puuid[?hidden=1]` → `PlayerProfileScreen`, `/match/:id[?player=<puuid>]` → `MatchDetailScreen` (full screen, e.g. from the live-game sheet) |
 | tab 0 | `store_routes.dart` (`storeBranchRoutes`) | `/store[?segment=daily\|nightmarket\|accessories\|bundles]`, `/store/bundle/:id` |
 | tab 1 | `battlepass_routes.dart` (`battlepassBranchRoutes`) | `/battlepass`, `/battlepass/rewards` |
@@ -157,6 +157,10 @@ context.go(StoreRoutes.root);                 // switch tab
 
 Redirect (`appRedirect`, unit-tested): no accounts → everything except `/welcome` and
 `/login` goes to `/welcome`; with accounts `/welcome` and `/` go to `/store`.
+
+Community previews for other screens (`lib/features/community/community_previews.dart`):
+`matchingLfgPreviewProvider(puuid)` → 2 open LFG posts that fit the account's rank + `LfgPreviewCard`;
+`trendingSkinsProvider(TopPeriod.week)` → top skins (read-only) + `TrendingSkinsCard`.
 
 Sheets (not routes): `showSkinDetailSheet(context, skinOrLevelUuid: id, mode:
 SkinDetailMode.store|owned|catalog)`, `openSkinVideo(context, videoUrl:)` (S16), `showLiveGameSheet(context)`,

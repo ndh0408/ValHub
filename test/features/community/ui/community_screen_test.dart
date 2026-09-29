@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart' show Size;
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/network/riot_exception.dart';
+import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/features/community/community_routes.dart';
 import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/ui/community_screen.dart';
@@ -223,4 +225,52 @@ void main() {
     expect(signedOut.server.requests, isEmpty);
     await unmount(tester);
   });
+
+  for (final light in [false, true]) {
+    testWidgets(
+      'feed: no overflow at 360 dp × 2.0 (${light ? 'light' : 'dark'})',
+      (tester) async {
+        env.server.json(
+          'GET /v1/posts',
+          page([
+            postJson(
+              'p1',
+              body: 'Shop hôm nay quá đẹp!',
+              kind: 'nightmarket',
+              payload: {
+                'date': '2026-09-28',
+                'offers': [
+                  {
+                    'skinUuid': reaverSkin,
+                    'baseCost': 1775,
+                    'discountCost': 1100,
+                    'discountPercent': 38,
+                  },
+                  {
+                    'skinUuid': knifeSkin,
+                    'baseCost': 4350,
+                    'discountCost': 2900,
+                  },
+                ],
+              },
+            ),
+            postJson('p2', likes: 1234, comments: 56),
+          ]),
+        );
+        await pumpCommunityRouter(
+          tester,
+          env,
+          routes: [...communityBranchRoutes, ...communityTopLevelRoutes],
+          initialLocation: CommunityRoutes.root,
+          size: const Size(360, 3200),
+          textScale: 2,
+          theme: light ? buildLightTheme() : buildDarkTheme(),
+        );
+        await settle(tester);
+        expect(tester.takeException(), isNull);
+        expect(find.text('Shop hôm nay quá đẹp!'), findsOneWidget);
+        await unmount(tester);
+      },
+    );
+  }
 }
