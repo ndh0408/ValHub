@@ -4,7 +4,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:valvn/app/router.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/features/settings/ui/welcome_screen.dart';
-import 'package:valvn/features/store/ui/store_screen.dart';
+import 'package:valvn/core/l10n/common_strings.dart';
+import 'package:valvn/features/home/ui/home_screen.dart';
 
 import '../helpers/test_prefs.dart';
 
@@ -22,10 +23,14 @@ void main() {
       expect(r(false, '/login?reauth=x'), isNull);
     });
 
-    test('signed in: /welcome and / go to /store, everything else stays', () {
-      expect(r(true, '/welcome'), '/store');
-      expect(r(true, '/'), '/store');
+    test('signed in: /welcome and / go to /home, everything else stays', () {
+      expect(r(true, '/welcome'), '/home');
+      expect(r(true, '/'), '/home');
+      expect(r(true, '/home'), isNull);
+      expect(r(true, '/home?focus=battlepass'), isNull);
       expect(r(true, '/store'), isNull);
+      expect(r(true, '/battlepass'), isNull);
+      expect(r(true, '/settings/about/terms'), isNull);
       expect(r(true, '/collection/weapons/w/skin/s'), isNull);
       expect(r(true, '/login?reauth=x'), isNull);
       expect(r(true, '/player/abc'), isNull);
@@ -51,8 +56,9 @@ void main() {
 
     hasAccounts.value = true;
     await tester.pumpAndSettle();
-    expect(find.byType(StoreScreen), findsOneWidget);
-    expect(find.text('Cửa hàng'), findsWidgets);
+    // The landing page is Trang chủ (no account is loaded here).
+    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.text(CommonStrings.tabHome), findsWidgets);
 
     router.go('/collection/weapons/w1/skin/s1');
     await tester.pumpAndSettle();

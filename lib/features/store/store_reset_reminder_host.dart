@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../core/accounts/account.dart';
 import '../../core/accounts/account_providers.dart';
 import '../../core/domain/economy/economy.dart';
 import '../../core/notifications/notification_service.dart';
@@ -39,13 +40,12 @@ class _StoreResetReminderHostState
   /// fetch, so rebuilds do not reschedule).
   final Map<String, Storefront> _scheduled = {};
 
-  void _onStorefront(String puuid, Storefront? store) {
+  void _onStorefront(Account account, Storefront? store) {
+    final puuid = account.puuid;
     if (store == null || identical(_scheduled[puuid], store)) return;
     _scheduled[puuid] = store;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final account = ref.read(accountProvider(puuid));
-      if (account == null || account.needsLogin) return;
       unawaited(
         scheduleStoreResetReminder(
           ref.read(notificationServiceProvider),
@@ -67,25 +67,25 @@ class _StoreResetReminderHostState
       return widget.child;
     }
     final active = ref.watch(
-      activeAccountProvider.select(
-        (a) => a == null || a.needsLogin ? null : a.puuid,
-      ),
+      activeAccountProvider.select((a) => a == null || a.needsLogin ? null : a),
     );
     if (active != null) {
-      _onStorefront(active, ref.watch(storefrontProvider(active)).value);
+      _onStorefront(active, ref.watch(storefrontProvider(active.puuid)).value);
     }
     // Everyone else: their saved copy, no network.
     final others = ref.watch(
       accountsProvider.select(
         (list) => [
           for (final a in list)
-            if (!a.needsLogin && a.puuid != active) a.puuid,
-        ].join(','),
+            if (!a.needsLogin && a.puuid != active?.puuid) a,
+        ],
       ),
     );
-    for (final puuid in others.split(',')) {
-      if (puuid.isEmpty) continue;
-      _onStorefront(puuid, ref.watch(savedStorefrontProvider(puuid)).value);
+    for (final account in others) {
+      _onStorefront(
+        account,
+        ref.watch(savedStorefrontProvider(account.puuid)).value,
+      );
     }
     return widget.child;
   }

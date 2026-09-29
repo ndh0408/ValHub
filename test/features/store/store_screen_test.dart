@@ -443,57 +443,26 @@ void main() {
     await unmount(tester);
   });
 
-  group('store-reset reminder', () {
-    testWidgets('scheduled at the reset time when the setting is on', (
+  testWidgets('the screen itself does not schedule the reset reminder', (
+    tester,
+  ) async {
+    // Scheduling moved to the always-mounted StoreResetReminderHost (see
+    // store_reset_reminder_host_test.dart), so it works without this tab.
+    final prefs = await createTestPrefs();
+    await prefs.setJson(
+      PrefKeys.appSettings,
+      const AppSettings(storeResetNotifications: true).toJson(),
+    );
+    final notifications = RecordingNotificationService();
+    await _pumpStore(
       tester,
-    ) async {
-      final prefs = await createTestPrefs();
-      await prefs.setJson(
-        PrefKeys.appSettings,
-        const AppSettings(storeResetNotifications: true).toJson(),
-      );
-      final notifications = RecordingNotificationService();
-      await _pumpStore(
-        tester,
-        api: fixtureApi(),
-        prefs: prefs,
-        notifications: notifications,
-      );
+      api: fixtureApi(),
+      prefs: prefs,
+      notifications: notifications,
+    );
 
-      expect(notifications.calls, hasLength(1));
-      final call = notifications.calls.single;
-      expect(call.id, NotificationIds.storeReset(Fx.puuid));
-      expect(call.at, t0.add(const Duration(seconds: 17401, minutes: 1)));
-      expect(call.title, StoreStrings.resetNotificationTitle);
-      expect(
-        call.body,
-        StoreStrings.resetNotificationBody(4, testAccount.riotId),
-      );
-      expect(call.channel, NotificationChannel.storeReset);
-      expect(call.payload, '${StoreRoutes.root}?account=${Fx.puuid}');
-      expect(call.accountPuuid, Fx.puuid);
-
-      // Rebuilds with the same storefront do not reschedule.
-      await tester.tap(find.text(StoreStrings.segmentBundles));
-      await settle(tester);
-      expect(notifications.calls, hasLength(1));
-
-      await unmount(tester);
-    });
-
-    testWidgets('not scheduled when the setting is off', (tester) async {
-      final prefs = await createTestPrefs();
-      final notifications = RecordingNotificationService();
-      await _pumpStore(
-        tester,
-        api: fixtureApi(),
-        prefs: prefs,
-        notifications: notifications,
-      );
-
-      expect(notifications.calls, isEmpty);
-      await unmount(tester);
-    });
+    expect(notifications.calls, isEmpty);
+    await unmount(tester);
   });
 
   testWidgets('no overflow on a 320 dp phone with 130 % text', (tester) async {
