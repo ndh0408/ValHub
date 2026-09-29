@@ -12,99 +12,96 @@ import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/async_value_view.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/skeleton.dart';
+import '../../../../core/ui/sub_page.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../collection_strings.dart';
 import 'loadout_actions.dart';
 
 /// Picker for `Identity.PreferredLevelBorderID`: "Tự động theo cấp" or a
-/// border unlocked at the account's level (P-9).
+/// border unlocked at the account's level (P-9), in the shared sheet chrome.
 Future<void> showLevelBorderSheet(
   BuildContext context, {
   required Account account,
-}) => showModalBottomSheet<void>(
-  context: context,
-  isScrollControlled: true,
-  useSafeArea: true,
-  builder: (_) => LevelBorderSheet(account: account),
+}) => showValSheet<void>(
+  context,
+  title: CollectionStrings.levelBorderTitle,
+  subtitle: account.level == null
+      ? null
+      : CollectionStrings.levelBorderSubtitle(account.level!),
+  scrollable: true,
+  initialSize: 0.7,
+  minSize: 0.45,
+  builder: (context, controller) =>
+      LevelBorderSheet(account: account, controller: controller),
 );
 
+/// Body of [showLevelBorderSheet]: the automatic option, then every border
+/// unlocked at the account's level (newest first), the current one ticked.
 class LevelBorderSheet extends ConsumerWidget {
-  const LevelBorderSheet({super.key, required this.account});
+  const LevelBorderSheet({super.key, required this.account, this.controller});
 
   final Account account;
+
+  /// Scroll controller of the draggable sheet.
+  final ScrollController? controller;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final puuid = account.puuid;
-    final theme = Theme.of(context);
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final snapshot = ref.watch(loadoutProvider(puuid)).value;
     final current = snapshot?.loadout.identity;
-    return DraggableScrollableSheet(
-      expand: false,
-      initialChildSize: 0.7,
-      maxChildSize: 0.95,
-      builder: (context, controller) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: Text(
-              CollectionStrings.levelBorderTitle,
-              style: theme.textTheme.titleLarge,
-            ),
-          ),
-          Expanded(
-            child: AsyncValueView(
-              value: ref.watch(accountXpProvider(puuid)),
-              puuid: puuid,
-              onRetry: () => ref.invalidate(accountXpProvider(puuid)),
-              loading: const SkeletonList(itemHeight: 56),
-              data: (xp) {
-                final level = xp.level > 0 ? xp.level : (account.level ?? 0);
-                final borders = [
-                  for (final b in db.levelBorders)
-                    if (b.startingLevel <= level) b,
-                ]..sort((a, b) => b.startingLevel.compareTo(a.startingLevel));
-                Future<void> pick(String? id) async {
-                  final navigator = Navigator.of(context);
-                  final ok = await applyLoadoutChange(
-                    context,
-                    ref,
-                    puuid: puuid,
-                    change: SetLevelBorder(id),
-                  );
-                  if (ok && navigator.mounted) navigator.pop();
-                }
+    return AsyncValueView(
+      value: ref.watch(accountXpProvider(puuid)),
+      puuid: puuid,
+      onRetry: () => ref.invalidate(accountXpProvider(puuid)),
+      loading: const SkeletonList(itemCount: 5, itemHeight: 60, spacing: 8),
+      data: (xp) {
+        final level = xp.level > 0 ? xp.level : (account.level ?? 0);
+        final borders = [
+          for (final b in db.levelBorders)
+            if (b.startingLevel <= level) b,
+        ]..sort((a, b) => b.startingLevel.compareTo(a.startingLevel));
+        Future<void> pick(String? id) async {
+          final navigator = Navigator.of(context);
+          final ok = await applyLoadoutChange(
+            context,
+            ref,
+            puuid: puuid,
+            change: SetLevelBorder(id),
+          );
+          if (ok && navigator.mounted) navigator.pop();
+        }
 
-                return ListView(
-                  controller: controller,
-                  children: [
-                    _BorderTile(
-                      border: db.levelBorderFor(level),
-                      title: CollectionStrings.levelBorderAuto,
-                      selected: current?.isAutoLevelBorder ?? false,
-                      onTap: () => unawaited(pick(null)),
+        return ListView(
+          controller: controller,
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
+          children: [
+            GroupedSection(
+              children: [
+                _BorderTile(
+                  border: db.levelBorderFor(level),
+                  title: CollectionStrings.levelBorderAuto,
+                  selected: current?.isAutoLevelBorder ?? false,
+                  onTap: () => unawaited(pick(null)),
+                ),
+                for (final b in borders)
+                  _BorderTile(
+                    border: b,
+                    title: b.displayName,
+                    subtitle: CollectionStrings.levelBorderFrom(
+                      b.startingLevel,
                     ),
-                    for (final b in borders)
-                      _BorderTile(
-                        border: b,
-                        title: b.displayName,
-                        subtitle: CollectionStrings.levelBorderFrom(
-                          b.startingLevel,
-                        ),
-                        selected:
-                            !(current?.isAutoLevelBorder ?? true) &&
-                            current?.preferredLevelBorderId == b.uuid,
-                        onTap: () => unawaited(pick(b.uuid)),
-                      ),
-                    const SizedBox(height: 16),
-                  ],
-                );
-              },
+                    selected:
+                        !(current?.isAutoLevelBorder ?? true) &&
+                        current?.preferredLevelBorderId == b.uuid,
+                    onTap: () => unawaited(pick(b.uuid)),
+                  ),
+              ],
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 }

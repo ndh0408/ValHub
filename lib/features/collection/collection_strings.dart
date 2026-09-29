@@ -158,8 +158,10 @@ abstract final class CollectionStrings {
   static const applyPresetBody =
       'Skin, phụ kiện súng, tổ hợp cảm xúc, thẻ và danh hiệu đang dùng sẽ được '
       'thay bằng bộ này.';
+  static const presetsEmptyTitle = 'Chưa có bộ trang bị';
   static const presetsEmpty =
-      'Chưa có bộ trang bị nào.\nLưu trang bị hiện tại để đổi nhanh sau này.';
+      'Lưu trang bị đang dùng để đổi nhanh giữa các bộ skin, thẻ và tổ hợp '
+      'cảm xúc sau này.';
   static const presetsFull =
       'Đã đạt tối đa 50 bộ trang bị. Hãy xóa bớt để lưu thêm.';
   static const presetsNote =
@@ -167,6 +169,10 @@ abstract final class CollectionStrings {
 
   // --------------------------------------------------- level border
   static const levelBorderTitle = 'Chọn khung cấp';
+
+  /// "Tài khoản cấp 474" under the sheet title.
+  static String levelBorderSubtitle(int level) => 'Tài khoản cấp $level';
+  static const levelBorderEmpty = 'Chưa có khung cấp nào cho cấp của bạn.';
   static String levelBorderFrom(int level) => 'Từ cấp $level';
 
   // ------------------------------------------------------- S39 browse
