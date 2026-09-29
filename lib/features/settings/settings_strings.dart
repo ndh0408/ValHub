@@ -77,8 +77,7 @@ abstract final class SettingsStrings {
   /// [time] = local time of the daily reset (00:00 UTC), e.g. `07:00`.
   static String notifStoreResetSubtitle(String time) => '$time hằng ngày';
   static const notifWishlist = 'Kiểm tra wishlist trong nền';
-  static const notifWishlistSubtitle =
-      'Báo khi skin trong wishlist xuất hiện, cho tất cả tài khoản';
+  static const notifWishlistSubtitle = 'Báo khi skin trong wishlist xuất hiện';
   static const notifNightMarket = 'Khi Chợ Đêm mở';
   static const notifNightMarketSubtitle = 'Nhắc bạn lật thẻ ưu đãi Chợ Đêm';
   static const notifPermissionMissing = 'Ứng dụng chưa có quyền gửi thông báo.';

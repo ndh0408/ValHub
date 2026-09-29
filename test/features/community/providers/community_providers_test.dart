@@ -171,6 +171,7 @@ void main() {
       await notifier.add('  Mới  ');
       expect(env.server.calls('POST /v1/posts/p1/comments').single.json, {
         'body': 'Mới',
+        'language': 'vi',
       });
       await notifier.delete('c1');
 
@@ -236,7 +237,15 @@ void main() {
             ? const FakeResponse(502, '<html>bad gateway</html>')
             : FakeResponse(200, page([lfgJson('l1')])),
       );
-      const q = (puuid: mePuuid, region: 'ap', mode: 'unrated');
+      const LfgQuery q = (
+        puuid: mePuuid,
+        region: 'ap',
+        mode: 'unrated',
+        rank: null,
+        role: null,
+        mic: null,
+        language: null,
+      );
       final sub = container.listen(lfgProvider(q), (_, _) {});
       addTearDown(sub.close);
       await container.read(lfgProvider(q).future);

@@ -6,6 +6,7 @@ import '../../../../core/util/format.dart';
 import '../../community_strings.dart';
 import '../../data/community_models.dart';
 import '../widgets/community_widgets.dart';
+import '../widgets/translatable_text.dart';
 import 'media_grid.dart';
 import 'offers_grid.dart';
 import 'report_sheet.dart';
@@ -78,8 +79,9 @@ class PostCard extends StatelessWidget {
           if (post.body.isNotEmpty)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-              child: Text(
+              child: TranslatableText(
                 post.body,
+                language: post.language ?? post.author.language,
                 maxLines: expanded ? null : 6,
                 overflow: expanded ? null : TextOverflow.ellipsis,
                 style: theme.textTheme.bodyLarge?.copyWith(

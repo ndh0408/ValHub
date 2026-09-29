@@ -95,6 +95,9 @@ describe('posts', () => {
       liked: false,
       comments: 0,
       createdAt: new Date(e.clock.t).toISOString(),
+      country: null,
+      region: 'ap',
+      language: null,
     });
 
     const store = await e.req('POST', '/v1/posts', { token, body: { kind: 'store', payload: storePayload } });
@@ -203,7 +206,7 @@ describe('posts', () => {
     const stores = await e.req('GET', '/v1/posts?kind=store', { token });
     expect(stores.json.items.map((p: any) => p.id)).toEqual([ids[3], ids[1]]);
     expectError(await e.req('GET', '/v1/posts?kind=bad', { token }), 400, 'invalid_input');
-    expectError(await e.req('GET', '/v1/posts'), 401, 'unauthorized');
+    expect((await e.req('GET', '/v1/posts')).status).toBe(200);
   });
 
   it('likes and unlikes idempotently', async () => {

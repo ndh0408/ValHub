@@ -1,19 +1,25 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../core/content/content_db.dart';
+import '../../../../core/content/content_repository.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/countdown_text.dart';
-import '../../../../core/ui/rank_badge.dart';
+import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 import '../../community_strings.dart';
 import '../../data/community_models.dart';
+import '../../data/lfg_sync.dart';
 import '../feed/report_sheet.dart';
 import '../widgets/community_widgets.dart';
+import '../widgets/translatable_text.dart';
+import 'lfg_bits.dart';
 
-/// One "Tìm đồng đội" post: author + rank, time left, mode, open slots,
-/// note, and a big "Vào tổ đội" button (or "Gỡ tin" on the user's own).
+/// One "Tìm đồng đội" post: author, time left, mode, rank range, roles,
+/// mic / language, party size dots, picked agents, note and "Vào tổ đội"
+/// (or, on the user's own post, live members + "Gia hạn" / "Gỡ tin").
 class LfgCard extends ConsumerWidget {
   const LfgCard({
     super.key,
@@ -22,8 +28,11 @@ class LfgCard extends ConsumerWidget {
     required this.onJoin,
     required this.onRemove,
     required this.onReport,
+    this.onExtend,
     this.joining = false,
     this.onExpired,
+    this.outOfRange = false,
+    this.live,
   });
 
   final LfgPost post;
@@ -31,22 +40,32 @@ class LfgCard extends ConsumerWidget {
   final VoidCallback onJoin;
   final VoidCallback onRemove;
   final VoidCallback onReport;
+  final VoidCallback? onExtend;
   final bool joining;
   final VoidCallback? onExpired;
+
+  /// Dimmed with "Ngoài khoảng rank" (the viewer's rank is outside).
+  final bool outOfRange;
+
+  /// Live party of the poster (own post only).
+  final LfgPartySnapshot? live;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colors = valColorsOf(context);
     final muted = theme.colorScheme.onSurfaceVariant;
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final now = ref.watch(clockProvider).now();
     final expiresAt = post.expiresAt;
     final expired = post.isExpired(now);
     final soon =
         expiresAt != null &&
         expiresAt.difference(now) < const Duration(minutes: 5);
-    final tier = post.rankTier ?? post.author.rankTier;
-    return ValCard(
+    final partySize = live?.size ?? post.currentPartySize;
+    final langTag = CommunityStrings.languageTag(post.language);
+
+    final card = ValCard(
       padding: const EdgeInsets.fromLTRB(16, 14, 8, 16),
       borderColor: isMine ? ValColors.red.withValues(alpha: 0.55) : null,
       gradient: isMine
@@ -66,7 +85,10 @@ class LfgCard extends ConsumerWidget {
             author: post.author,
             isMe: isMine,
             avatarSize: 44,
-            subtitle: CommunityStrings.regionLabel(post.region),
+            subtitle: CommunityStrings.dotJoin([
+              CommunityStrings.regionLabel(post.region),
+              CommunityStrings.languageLabel(post.language),
+            ]),
             trailing: isMine
                 ? const SizedBox(width: 8)
                 : ContentMenuButton(
@@ -74,7 +96,7 @@ class LfgCard extends ConsumerWidget {
                     onSelected: (_) => onReport(),
                   ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: Wrap(
@@ -82,7 +104,7 @@ class LfgCard extends ConsumerWidget {
               runSpacing: 8,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                if (expiresAt != null)
+                if (expiresAt != null && post.status == LfgStatus.open)
                   _TimeLeftPill(
                     expiresAt: expiresAt,
                     color: expired
@@ -90,29 +112,82 @@ class LfgCard extends ConsumerWidget {
                         : (soon ? colors.warning : colors.win),
                     onExpired: onExpired,
                   ),
+                if (isMine || post.status != LfgStatus.open)
+                  LfgStatusChip(status: post.status),
                 ValBadge(
                   CommunityStrings.modeLabel(post.mode),
                   color: ValColors.red,
                   soft: true,
                 ),
-                ValBadge(
-                  CommunityStrings.slotsWanted(post.slots),
-                  color: colors.win,
-                  soft: true,
-                ),
-                if (tier != null && tier > 2)
-                  RankBadge(
-                    tier: tier,
-                    size: 22,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                RankRangeBadge(min: post.rankMin, max: post.rankMax),
+                if (post.mic == true)
+                  Tooltip(
+                    message: CommunityStrings.mic,
+                    child: Icon(Icons.mic_rounded, size: 18, color: muted),
+                  ),
+                if (langTag.isNotEmpty)
+                  Tooltip(
+                    message: CommunityStrings.languageLabel(post.language),
+                    child: ValBadge(langTag, color: colors.draw, soft: true),
+                  ),
+                if (outOfRange)
+                  ValBadge(
+                    CommunityStrings.outOfRange,
+                    color: colors.warning,
+                    soft: true,
                   ),
               ],
             ),
           ),
           const SizedBox(height: 12),
-          _SlotDots(wanted: post.slots),
+          Wrap(
+            spacing: 10,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              PartyDots(size: partySize),
+              Text(
+                CommunityStrings.slotsWanted(post.slots),
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: legibleAccent(context, colors.win),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          if (isMine && (live?.members.isNotEmpty ?? false)) ...[
+            const SizedBox(height: 10),
+            _LiveMembers(live: live!, db: db),
+          ],
+          if (post.roles.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [for (final r in post.roles) RoleTag(role: r)],
+            ),
+          ],
+          if (post.agents.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                for (final a in post.agents)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: Tooltip(
+                      message: db.agent(a)?.displayName ?? '',
+                      child: NetImage(
+                        db.agent(a)?.displayIcon,
+                        width: 28,
+                        height: 28,
+                        borderRadius: BorderRadius.circular(8),
+                        showSkeleton: false,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
           if (post.note.isNotEmpty) ...[
             const SizedBox(height: 12),
             Padding(
@@ -126,8 +201,9 @@ class LfgCard extends ConsumerWidget {
                     left: BorderSide(color: ValColors.red, width: 3),
                   ),
                 ),
-                child: Text(
+                child: TranslatableText(
                   post.note,
+                  language: post.language,
                   style: theme.textTheme.bodyMedium?.copyWith(height: 1.35),
                 ),
               ),
@@ -136,23 +212,18 @@ class LfgCard extends ConsumerWidget {
           const SizedBox(height: 14),
           Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: SizedBox(
-              height: 50,
-              child: isMine
-                  ? OutlinedButton.icon(
-                      onPressed: onRemove,
-                      icon: const Icon(Icons.delete_outline_rounded),
-                      label: const Text(CommunityStrings.removeLfg),
-                    )
-                  : FilledButton.icon(
+            child: isMine
+                ? _MineActions(
+                    post: post,
+                    onExtend: onExtend,
+                    onRemove: onRemove,
+                  )
+                : SizedBox(
+                    height: 50,
+                    child: FilledButton.icon(
                       onPressed: expired || joining || !post.hasValidCode
                           ? null
                           : onJoin,
-                      style: FilledButton.styleFrom(
-                        textStyle: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
                       icon: joining
                           ? const SizedBox(
                               width: 18,
@@ -169,20 +240,134 @@ class LfgCard extends ConsumerWidget {
                             : CommunityStrings.joinParty,
                       ),
                     ),
+                  ),
+          ),
+        ],
+      ),
+    );
+    if (!outOfRange) return card;
+    // Dim with a translucent veil painted on top (no Opacity layer).
+    return Stack(
+      children: [
+        card,
+        Positioned.fill(
+          child: IgnorePointer(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor.withValues(alpha: 0.45),
+                borderRadius: BorderRadius.circular(ValRadius.card),
+              ),
             ),
           ),
-          if (isMine) ...[
-            const SizedBox(height: 8),
-            Text(
-              CommunityStrings.partyCodeValue(post.partyCode),
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: muted,
-                letterSpacing: 0.6,
+        ),
+      ],
+    );
+  }
+}
+
+class _MineActions extends StatelessWidget {
+  const _MineActions({
+    required this.post,
+    required this.onExtend,
+    required this.onRemove,
+  });
+
+  final LfgPost post;
+  final VoidCallback? onExtend;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: SizedBox(
+                height: 48,
+                child: OutlinedButton.icon(
+                  onPressed: onExtend,
+                  icon: const Icon(Icons.update_rounded),
+                  label: const Text(CommunityStrings.extend),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: SizedBox(
+                height: 48,
+                child: OutlinedButton.icon(
+                  onPressed: onRemove,
+                  icon: const Icon(Icons.delete_outline_rounded),
+                  label: const Text(CommunityStrings.removeLfg),
+                ),
               ),
             ),
           ],
-        ],
-      ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          CommunityStrings.dotJoin([
+            CommunityStrings.partyCodeValue(post.partyCode),
+            CommunityStrings.joinsCount(formatNumber(post.joins)),
+          ]),
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: muted,
+            letterSpacing: 0.4,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Avatars (player cards) of the poster's live party.
+class _LiveMembers extends StatelessWidget {
+  const _LiveMembers({required this.live, required this.db});
+
+  final LfgPartySnapshot live;
+  final ContentDb db;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Text(
+          CommunityStrings.liveMembers.toUpperCase(),
+          style: ValText.label.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(width: 10),
+        for (final m in live.members.take(5))
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: CircleAvatar(
+              radius: 14,
+              backgroundColor: theme.colorScheme.surfaceContainerHigh,
+              child: ClipOval(
+                child: NetImage(
+                  m.playerCardId == null
+                      ? null
+                      : db.card(m.playerCardId!)?.smallArt,
+                  width: 28,
+                  height: 28,
+                  fit: BoxFit.cover,
+                  showSkeleton: false,
+                  error: Icon(
+                    Icons.person_rounded,
+                    size: 16,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -200,6 +385,7 @@ class _TimeLeftPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fg = legibleAccent(context, color);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
@@ -209,7 +395,7 @@ class _TimeLeftPill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.timer_outlined, size: 14, color: color),
+          Icon(Icons.timer_outlined, size: 14, color: fg),
           const SizedBox(width: 4),
           CountdownText(
             expiresAt: expiresAt,
@@ -217,65 +403,13 @@ class _TimeLeftPill extends StatelessWidget {
             builder: CommunityStrings.expiresIn,
             onExpired: onExpired,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: color,
+              color: fg,
               fontWeight: FontWeight.w700,
               fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
         ],
       ),
-    );
-  }
-}
-
-/// Five party slots: filled for current members, red outlined for the
-/// players wanted.
-class _SlotDots extends StatelessWidget {
-  const _SlotDots({required this.wanted});
-
-  final int wanted;
-
-  @override
-  Widget build(BuildContext context) {
-    final track = valColorsOf(context).track;
-    final have = (5 - wanted).clamp(1, 4);
-    return Row(
-      children: [
-        for (var i = 0; i < 5; i++)
-          Padding(
-            padding: const EdgeInsets.only(right: 6),
-            child: i < have
-                ? Container(
-                    width: 26,
-                    height: 26,
-                    decoration: BoxDecoration(
-                      color: track,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.person_rounded,
-                      size: 16,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  )
-                : Container(
-                    width: 26,
-                    height: 26,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: ValColors.red.withValues(alpha: 0.8),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.add_rounded,
-                      size: 16,
-                      color: ValColors.red,
-                    ),
-                  ),
-          ),
-      ],
     );
   }
 }

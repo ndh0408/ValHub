@@ -179,6 +179,25 @@ void main() {
     expect(e.contentLoads, 0);
   });
 
+  test('checks only accounts with wishlist alerts enabled', () async {
+    final e = await env(
+      enabled: false,
+      accounts: const [account1, account2],
+      wishlists: const {
+        puuid1: {Fx.aresSentinels},
+        puuid2: {Fx.aresSentinels},
+      },
+    );
+    await e.prefs.setJson(
+      PrefKeys.appSettings,
+      const AppSettings(wishlistNotificationsByAccount: {puuid2: true})
+          .toJson(),
+    );
+    final report = await WishlistChecker(e).run();
+    expect(report.checked, 1);
+    expect(e.storefrontCalls, [puuid2]);
+  });
+
   test('notifies each hit with its account and deep link', () async {
     final e = await env();
     final report = await WishlistChecker(e).run();

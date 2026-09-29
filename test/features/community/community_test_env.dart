@@ -14,6 +14,8 @@ import 'package:valvn/core/auth/riot_session.dart';
 import 'package:valvn/core/auth/session_manager.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/content/content_repository.dart';
+import 'package:valvn/core/l10n/locale.dart';
+import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/core/riot/pvp_api.dart';
 import 'package:valvn/core/riot/riot_hosts.dart';
 import 'package:valvn/core/storage/json_file_cache.dart';
@@ -22,7 +24,12 @@ import 'package:valvn/core/storage/secure_store.dart';
 import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/core/util/clock.dart';
 import 'package:valvn/features/community/data/community_http.dart';
+import 'package:valvn/features/community/data/community_models.dart'
+    show kLfgLanguages;
+import 'package:valvn/features/community/data/community_translator.dart';
 import 'package:valvn/features/community/data/image_source.dart';
+import 'package:valvn/features/community/providers/consent_providers.dart';
+import 'package:valvn/features/community/providers/translation_providers.dart';
 import 'package:valvn/features/community/providers/community_providers.dart';
 
 import '../../helpers/fixtures.dart';
@@ -77,6 +84,8 @@ Map<String, Object?> authorJson({
   String tag = 'VN2',
   int? rank = 12,
   String? card,
+  String? country,
+  String? language,
 }) => {
   'id': id,
   'gameName': name,
@@ -84,12 +93,23 @@ Map<String, Object?> authorJson({
   'cardId': card,
   'rankTier': rank,
   'region': 'ap',
+  'country': country,
+  'language': language,
 };
 
-Map<String, Object?> sessionJson({String token = 'community-1'}) => {
+Map<String, Object?> sessionJson({
+  String token = 'community-1',
+  String? country,
+}) => {
   'token': token,
   'expiresAt': now.add(const Duration(days: 30)).toIso8601String(),
-  'user': authorJson(id: meId, name: 'Tôi Là Ai', tag: 'VN1', rank: 18),
+  'user': authorJson(
+    id: meId,
+    name: 'Tôi Là Ai',
+    tag: 'VN1',
+    rank: 18,
+    country: country,
+  ),
 };
 
 Map<String, Object?> postJson(
@@ -287,6 +307,48 @@ class FakeImagePicker implements CommunityImagePicker {
 Uint8List jpegBytes([int size = 64]) =>
     Uint8List.fromList([0xFF, 0xD8, 0xFF, 0xE0, ...List.filled(size, 1)]);
 
+/// In-memory [CommunityTranslator]: records downloads / translations, no
+/// plugin, no network.
+class FakeCommunityTranslator implements CommunityTranslator {
+  FakeCommunityTranslator({
+    this.supported = true,
+    Set<String>? downloaded,
+    this.failTranslate = false,
+  }) : downloaded = downloaded ?? {'vi', 'en'};
+
+  bool supported;
+  bool failTranslate;
+  final Set<String> downloaded;
+  final List<String> downloads = [];
+  final List<(String, String, String)> translations = [];
+
+  @override
+  bool get isSupported => supported;
+
+  @override
+  bool supportsLanguage(String code) => kLfgLanguages.contains(code);
+
+  @override
+  Future<bool> isDownloaded(String code) async => downloaded.contains(code);
+
+  @override
+  Future<void> download(String code) async {
+    downloads.add(code);
+    downloaded.add(code);
+  }
+
+  @override
+  Future<String> translate(
+    String text, {
+    required String from,
+    required String to,
+  }) async {
+    translations.add((text, from, to));
+    if (failTranslate) throw StateError('translate failed');
+    return '[$from>$to] $text';
+  }
+}
+
 /// In-memory [JsonFileCache].
 class MemoryJsonFileCache extends JsonFileCache {
   MemoryJsonFileCache() : super(() => throw UnimplementedError());
@@ -308,6 +370,27 @@ class MemoryJsonFileCache extends JsonFileCache {
       entries.removeWhere((k, _) => k.startsWith(prefix));
 }
 
+/// Records `showNow` calls (no plugin).
+class RecordingNotifications extends NotificationService {
+  RecordingNotifications(Prefs prefs) : super(prefs: prefs);
+
+  final shown = <({String title, String body, String? payload})>[];
+
+  @override
+  Future<void> showNow({
+    required int id,
+    required String title,
+    required String body,
+    required NotificationChannel channel,
+    String? payload,
+    String? accountPuuid,
+    String? tag,
+  }) async => shown.add((title: title, body: body, payload: payload));
+
+  @override
+  Future<void> cancelForAccount(String puuid) async {}
+}
+
 // --------------------------------------------------------------------- env
 
 /// Overrides for the community feature: signed-in account, fake community
@@ -315,14 +398,23 @@ class MemoryJsonFileCache extends JsonFileCache {
 class CommunityTestEnv {
   CommunityTestEnv._(this.prefs);
 
-  static Future<CommunityTestEnv> create({Account? account = meAccount}) async {
+  /// [consent]: the account already agreed to share its Riot ID with the
+  /// community server (the one-time sheet is skipped).
+  static Future<CommunityTestEnv> create({
+    Account? account = meAccount,
+    bool consent = true,
+  }) async {
     final prefs = await createTestPrefs();
     if (account != null) {
+      if (consent) {
+        await prefs.setString(communityConsentKey(account.puuid), 'granted');
+      }
       await prefs.setJson(PrefKeys.accounts, [account.toJson()]);
       await prefs.setString(PrefKeys.activePuuid, account.puuid);
     }
     final env = CommunityTestEnv._(prefs);
     when(() => env.sessions.events).thenAnswer((_) => const Stream.empty());
+    when(() => env.sessions.forget(any())).thenAnswer((_) async {});
     when(() => env.sessions.session(any()))
         .thenAnswer((_) async => riotSession());
     env.server.json('POST /v1/auth/riot', sessionJson());
@@ -336,6 +428,8 @@ class CommunityTestEnv {
   final server = FakeCommunityServer();
   final picker = FakeImagePicker();
   final clock = FixedClock(now);
+  late final notifications = RecordingNotifications(prefs);
+  final translator = FakeCommunityTranslator();
 
   List<Override> get overrides => [
     prefsProvider.overrideWithValue(prefs),
@@ -350,6 +444,8 @@ class CommunityTestEnv {
       CommunityHttp(dio: server.dio, baseUrl: baseUrl),
     ),
     communityImagePickerProvider.overrideWithValue(picker),
+    notificationServiceProvider.overrideWithValue(notifications),
+    communityTranslatorProvider.overrideWithValue(translator),
   ];
 
   ProviderContainer container() =>
@@ -370,7 +466,13 @@ Future<void> pumpCommunity(
     ProviderScope(
       overrides: env.overrides,
       retry: (_, _) => null,
-      child: MaterialApp(theme: buildDarkTheme(), home: child),
+      child: MaterialApp(
+        theme: buildDarkTheme(),
+        locale: appLocale,
+        supportedLocales: const [appLocale],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        home: child,
+      ),
     ),
   );
 }
@@ -382,6 +484,8 @@ Future<GoRouter> pumpCommunityRouter(
   required List<RouteBase> routes,
   required String initialLocation,
   Size size = const Size(360, 1600),
+  double textScale = 1,
+  ThemeData? theme,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -392,7 +496,18 @@ Future<GoRouter> pumpCommunityRouter(
     ProviderScope(
       overrides: env.overrides,
       retry: (_, _) => null,
-      child: MaterialApp.router(theme: buildDarkTheme(), routerConfig: router),
+      child: MaterialApp.router(
+        theme: theme ?? buildDarkTheme(),
+        locale: appLocale,
+        supportedLocales: const [appLocale],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        routerConfig: router,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(textScale)),
+          child: child!,
+        ),
+      ),
     ),
   );
   return router;

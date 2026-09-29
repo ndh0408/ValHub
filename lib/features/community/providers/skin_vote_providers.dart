@@ -1,63 +1,122 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/storage/ui_memory.dart';
 import '../data/community_models.dart';
 import 'community_providers.dart';
 
 /// Leaderboard filters.
 @immutable
 class TopSkinsFilter {
-  const TopSkinsFilter({this.weapon, this.period = TopPeriod.all});
+  const TopSkinsFilter({
+    this.weapon,
+    this.period = TopPeriod.all,
+    this.sort = TopSort.votes,
+  });
 
   /// Weapon uuid, `null` = every weapon.
   final String? weapon;
   final TopPeriod period;
+  final TopSort sort;
 
-  TopSkinsFilter copyWith({String? Function()? weapon, TopPeriod? period}) =>
-      TopSkinsFilter(
-        weapon: weapon == null ? this.weapon : weapon(),
-        period: period ?? this.period,
-      );
+  TopSkinsFilter copyWith({
+    String? Function()? weapon,
+    TopPeriod? period,
+    TopSort? sort,
+  }) => TopSkinsFilter(
+    weapon: weapon == null ? this.weapon : weapon(),
+    period: period ?? this.period,
+    sort: sort ?? this.sort,
+  );
 
   @override
   bool operator ==(Object other) =>
       other is TopSkinsFilter &&
       other.weapon == weapon &&
-      other.period == period;
+      other.period == period &&
+      other.sort == sort;
 
   @override
-  int get hashCode => Object.hash(weapon, period);
+  int get hashCode => Object.hash(weapon, period, sort);
 }
 
+/// `UiMemory` keys of the leaderboard filters.
+abstract final class TopSkinsMemoryKeys {
+  static const weapon = 'community.skins.weapon';
+  static const period = 'community.skins.period';
+  static const sort = 'community.skins.sort';
+}
+
+/// The leaderboard filters, remembered across launches (`UiMemory`).
 final topSkinsFilterProvider =
     NotifierProvider<TopSkinsFilterNotifier, TopSkinsFilter>(
       TopSkinsFilterNotifier.new,
     );
 
 class TopSkinsFilterNotifier extends Notifier<TopSkinsFilter> {
+  UiMemory get _memory => ref.read(uiMemoryProvider);
+
   @override
-  TopSkinsFilter build() => const TopSkinsFilter();
+  TopSkinsFilter build() {
+    final memory = ref.watch(uiMemoryProvider);
+    final weapon = memory.read(TopSkinsMemoryKeys.weapon);
+    return TopSkinsFilter(
+      weapon: weapon == null || weapon.isEmpty ? null : weapon,
+      period: memory.readEnum(
+        TopSkinsMemoryKeys.period,
+        TopPeriod.values,
+        TopPeriod.all,
+      ),
+      sort: memory.readEnum(
+        TopSkinsMemoryKeys.sort,
+        TopSort.values,
+        TopSort.votes,
+      ),
+    );
+  }
 
-  void setWeapon(String? weapon) =>
-      state = state.copyWith(weapon: () => weapon);
+  void setWeapon(String? weapon) {
+    state = state.copyWith(weapon: () => weapon);
+    _memory.write(TopSkinsMemoryKeys.weapon, weapon);
+  }
 
-  void setPeriod(TopPeriod period) => state = state.copyWith(period: period);
+  void setPeriod(TopPeriod period) {
+    state = state.copyWith(period: period);
+    _memory.writeEnum(TopSkinsMemoryKeys.period, period);
+  }
+
+  void setSort(TopSort sort) {
+    state = state.copyWith(sort: sort);
+    _memory.writeEnum(TopSkinsMemoryKeys.sort, sort);
+  }
 }
 
 /// Key of [topSkinsProvider] (`puuid` = whose votes are marked).
-typedef TopSkinsQuery = ({String puuid, String? weapon, TopPeriod period});
+typedef TopSkinsQuery = ({
+  String puuid,
+  String? weapon,
+  TopPeriod period,
+  TopSort sort,
+  ScopeFilter? scope,
+});
 
-/// The most-loved skins (`GET /v1/skins/top`).
+/// The leaderboard for [TopSkinsFilter] (`GET /v1/skins/top`).
 final topSkinsProvider = FutureProvider.autoDispose
     .family<List<TopSkin>, TopSkinsQuery>(
       (ref, q) => ref
           .watch(communityApiProvider)
-          .topSkins(puuid: q.puuid, weapon: q.weapon, period: q.period),
+          .topSkins(
+            puuid: q.puuid,
+            weapon: q.weapon,
+            period: q.period,
+            sort: q.sort,
+            scope: q.scope,
+          ),
     );
 
 /// Vote states changed on this device (optimistic, then the server's
-/// answer), per account. They win over fetched values so the leaderboard
-/// and the skin sheet agree.
+/// answer), per account. They win over fetched values so the leaderboard,
+/// the review page and the skin sheet agree.
 final skinVoteOverridesProvider =
     NotifierProvider.family<SkinVoteOverrides, Map<String, SkinVote>, String>(
       SkinVoteOverrides.new,
@@ -98,18 +157,18 @@ class SkinVoteOverrides extends Notifier<Map<String, SkinVote>> {
 /// Key of [skinVoteProvider].
 typedef SkinVoteKey = ({String? puuid, String skinUuid});
 
-/// Vote count of one skin for the skin sheet. Read-only: uses a cached
+/// Votes + rating of one skin for the skin sheet. Read-only: uses a cached
 /// community session when there is one (never signs in), and any failure
-/// yields `null` so the sheet simply hides the count.
+/// yields `null` so the sheet simply hides the row.
 final skinVoteProvider = FutureProvider.autoDispose
-    .family<SkinVote?, SkinVoteKey>((ref, key) async {
+    .family<SkinStats?, SkinVoteKey>((ref, key) async {
       if (!ref.watch(communityEnabledProvider)) return null;
       final id = key.skinUuid.toLowerCase();
       try {
-        final votes = await ref.watch(communityApiProvider).skinVotes([
+        final stats = await ref.watch(communityApiProvider).skinVotes([
           id,
         ], puuid: key.puuid);
-        return votes[id] ?? SkinVote(skinUuid: id);
+        return stats[id] ?? SkinStats(vote: SkinVote(skinUuid: id));
       } on Object {
         return null;
       }

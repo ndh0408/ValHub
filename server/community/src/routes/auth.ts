@@ -1,7 +1,9 @@
 import type { Hono } from 'hono';
 import { authorFromUser, iso, type Ctx } from '../context.js';
 import { hashUserId, SESSION_TTL_SECONDS, signSession } from '../crypto.js';
-import { ApiError } from '../errors.js';
+import { ApiError, invalid } from '../errors.js';
+import { normalizeAlpha2 } from '../geo/countries.js';
+import { parseLanguage } from '../geo/languages.js';
 import type { RiotIdentity } from '../riot.js';
 import {
   parseOptional,
@@ -22,6 +24,9 @@ export function registerAuth(app: Hono, x: Ctx): void {
     const region = parseRegion(body.region);
     const cardId = parseOptional(body, 'cardId', (v) => parseUuid(v, 'cardId'));
     const rankTier = parseOptional(body, 'rankTier', parseRankTier);
+    // App language (v3). Absent (clients before v3) → keep the stored value; null is not allowed.
+    const language = parseOptional(body, 'language', (v) => parseLanguage(v, 'language'));
+    if (language === null) throw invalid('language không được để trống.');
 
     let identity: RiotIdentity;
     try {
@@ -39,6 +44,9 @@ export function registerAuth(app: Hono, x: Ctx): void {
         gameName: identity.gameName,
         tagLine: identity.tagLine,
         region,
+        // Country comes only from Riot and is refreshed on every auth (never client-supplied).
+        country: normalizeAlpha2(identity.country),
+        language,
         cardId,
         rankTier,
       },
@@ -62,12 +70,16 @@ export function registerAuth(app: Hono, x: Ctx): void {
   app.patch('/v1/me', async (c) => {
     const user = x.user(c, true);
     const body = await x.readJson(c);
+    // `country` is never taken from the client (it comes from Riot at sign-in): silently ignored, like
+    // every other unknown field, so a client that sends its whole profile back keeps working.
     const cardId = parseOptional(body, 'cardId', (v) => parseUuid(v, 'cardId'));
     const rankTier = parseOptional(body, 'rankTier', parseRankTier);
     const regionRaw = parseOptional(body, 'region', parseRegion);
     if (regionRaw === null) throw new ApiError('invalid_input', 'region không được để trống.');
     const region: Region | undefined = regionRaw;
-    const updated = x.repo.updateUser(user.id, { cardId, rankTier, region }, x.now());
+    const languageRaw = parseOptional(body, 'language', (v) => parseLanguage(v, 'language'));
+    if (languageRaw === null) throw invalid('language không được để trống.');
+    const updated = x.repo.updateUser(user.id, { cardId, rankTier, region, language: languageRaw }, x.now());
     if (!updated) throw new ApiError('unauthorized', 'Tài khoản không tồn tại.');
     return x.json(c, authorFromUser(updated));
   });

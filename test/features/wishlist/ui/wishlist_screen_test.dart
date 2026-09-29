@@ -244,10 +244,10 @@ void main() {
     await _pump(tester, prefs: prefs);
     await tester.tap(find.byType(Switch));
     await settle(tester);
-    expect(readAppSettings(prefs).wishlistNotifications, isTrue);
+    expect(readAppSettings(prefs).wishlistNotificationsFor(Fx.puuid), isTrue);
     await tester.tap(find.byType(Switch));
     await settle(tester);
-    expect(readAppSettings(prefs).wishlistNotifications, isFalse);
+    expect(readAppSettings(prefs).wishlistNotificationsFor(Fx.puuid), isFalse);
     await unmount(tester);
   });
 
@@ -264,7 +264,7 @@ void main() {
     await tester.tap(find.text('Bật thông báo').last);
     await settle(tester);
     expect(notifications.permissionRequests, 1);
-    expect(readAppSettings(prefs).wishlistNotifications, isFalse);
+    expect(readAppSettings(prefs).wishlistNotificationsFor(Fx.puuid), isFalse);
     expect(find.text(WishlistStrings.notifPermissionMissing), findsOneWidget);
     await unmount(tester);
   });

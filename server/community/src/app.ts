@@ -3,9 +3,11 @@ import { bodyLimit } from 'hono/body-limit';
 import { Ctx, type AppDeps } from './context.js';
 import { ApiError, errorBody, invalid } from './errors.js';
 import { registerAuth } from './routes/auth.js';
+import { registerCommunities } from './routes/communities.js';
 import { registerLfg } from './routes/lfg.js';
 import { registerMedia } from './routes/media.js';
 import { registerPosts } from './routes/posts.js';
+import { registerReviews } from './routes/reviews.js';
 import { registerSkins } from './routes/skins.js';
 
 export type { AppDeps } from './context.js';
@@ -47,6 +49,8 @@ export function createApp(deps: AppDeps): Hono {
   registerAuth(app, x);
   registerLfg(app, x);
   registerSkins(app, x);
+  registerReviews(app, x);
+  registerCommunities(app, x);
   registerPosts(app, x);
   registerMedia(app, x);
 

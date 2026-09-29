@@ -83,7 +83,8 @@ extension NotificationToggleX on NotificationToggle {
 
 /// Whether any notification preference is switched on.
 bool anyNotificationEnabled(AppSettings s) =>
-    NotificationToggle.values.any((t) => t.valueIn(s));
+    NotificationToggle.values.any((t) => t.valueIn(s)) ||
+    s.wishlistNotificationsByAccount.values.any((enabled) => enabled);
 
 /// Settings actions that touch more than one core service.
 final settingsControllerProvider = Provider<SettingsController>(
@@ -94,6 +95,21 @@ class SettingsController {
   SettingsController(this._ref);
 
   final Ref _ref;
+
+  /// Sets the wishlist alert only for [puuid].
+  Future<void> setWishlistNotification(String puuid, bool on) async {
+    final id = puuid.toLowerCase();
+    await _ref
+        .read(appSettingsProvider.notifier)
+        .update(
+          (s) => s.copyWith(
+            wishlistNotificationsByAccount: {
+              ...s.wishlistNotificationsByAccount,
+              id: on,
+            },
+          ),
+        );
+  }
 
   /// Persists a notification switch. Turning one off also cancels the
   /// reminders already scheduled for it on every account, so a disabled

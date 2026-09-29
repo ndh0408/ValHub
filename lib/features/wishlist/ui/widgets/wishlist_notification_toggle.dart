@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/notifications/notification_service.dart';
 import '../../../../core/settings/app_settings.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../settings/ui/notification_priming_sheet.dart';
+import '../../../settings/providers/settings_providers.dart';
 import '../../wishlist_strings.dart';
 
 /// "Thông báo wishlist" switch (S3A shortcut to the settings switch
@@ -26,9 +28,11 @@ class _WishlistNotificationToggleState
   bool _busy = false;
 
   Future<void> _set(bool on) async {
-    final settings = ref.read(appSettingsProvider.notifier);
+    final account = ref.read(activeAccountProvider);
+    if (account == null) return;
+    final settings = ref.read(settingsControllerProvider);
     if (!on) {
-      await settings.update((s) => s.copyWith(wishlistNotifications: false));
+      await settings.setWishlistNotification(account.puuid, false);
       return;
     }
     setState(() => _busy = true);
@@ -36,7 +40,7 @@ class _WishlistNotificationToggleState
       final granted = await showNotificationPrimingSheet(context);
       if (!mounted) return;
       if (granted) {
-        await settings.update((s) => s.copyWith(wishlistNotifications: true));
+        await settings.setWishlistNotification(account.puuid, true);
       } else {
         final messenger = ScaffoldMessenger.maybeOf(context);
         final service = ref.read(notificationServiceProvider);
@@ -58,8 +62,11 @@ class _WishlistNotificationToggleState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final account = ref.watch(activeAccountProvider);
     final on = ref.watch(
-      appSettingsProvider.select((s) => s.wishlistNotifications),
+      appSettingsProvider.select(
+        (s) => account != null && s.wishlistNotificationsFor(account.puuid),
+      ),
     );
     return ValCard(
       margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
@@ -77,7 +84,11 @@ class _WishlistNotificationToggleState
           color: theme.colorScheme.primary,
         ),
         title: const Text(WishlistStrings.notifToggle),
-        subtitle: const Text(WishlistStrings.notifToggleSubtitle),
+        subtitle: Text(
+          account == null
+              ? WishlistStrings.notifToggleSubtitle
+              : 'Thông báo cho ${account.riotId}',
+        ),
       ),
     );
   }

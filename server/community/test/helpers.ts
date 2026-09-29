@@ -4,6 +4,7 @@ import path from 'node:path';
 import { expect } from 'vitest';
 import { createApp } from '../src/app.js';
 import { openDatabase, type Db } from '../src/db/database.js';
+import { countryFromAlpha3 } from '../src/geo/countries.js';
 import { SqliteRepo } from '../src/db/sqlite-repo.js';
 import { DiskMediaStore } from '../src/media.js';
 import type { RiotUserinfoFn } from '../src/riot.js';
@@ -44,6 +45,8 @@ export function setup() {
   const clock = { t: Date.UTC(2026, 8, 1, 12, 0, 0) };
   const riotTokens: string[] = [];
   const errors: string[] = [];
+  /** Riot `country` (alpha-3, as returned by /userinfo) per test user name; unset → Riot sends none. */
+  const riotCountries: Record<string, string | undefined> = {};
 
   /** Tokens: good-<name> → accepted (puuid derived from name), down → network error, else rejected. */
   const riot: RiotUserinfoFn = async (token) => {
@@ -51,7 +54,13 @@ export function setup() {
     if (token === 'down') throw new TypeError('fetch failed');
     if (token.startsWith('good-')) {
       const name = token.slice(5);
-      return { ok: true, puuid: `puuid-${name}`, gameName: `Player ${name}`, tagLine: 'VN1' };
+      return {
+        ok: true,
+        puuid: `puuid-${name}`,
+        gameName: `Player ${name}`,
+        tagLine: 'VN1',
+        country: countryFromAlpha3(riotCountries[name]),
+      };
     }
     return { ok: false };
   };
@@ -95,7 +104,7 @@ export function setup() {
     fs.rmSync(mediaDir, { recursive: true, force: true });
   }
 
-  return { app, db, repo, media, mediaDir, clock, riotTokens, errors, req, login, close };
+  return { app, db, repo, media, mediaDir, clock, riotTokens, riotCountries, errors, req, login, close };
 }
 
 export type Env = ReturnType<typeof setup>;

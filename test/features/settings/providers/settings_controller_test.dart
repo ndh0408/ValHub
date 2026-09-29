@@ -46,6 +46,29 @@ void main() {
   });
 
   group('SettingsController.setNotification', () {
+    test('wishlist choice is independent for each account', () async {
+      final controller = container.read(settingsControllerProvider);
+      await controller.setWishlistNotification(testPuuid(1), true);
+      expect(
+        readAppSettings(prefs).wishlistNotificationsFor(testPuuid(1)),
+        isTrue,
+      );
+      expect(
+        readAppSettings(prefs).wishlistNotificationsFor(testPuuid(2)),
+        isFalse,
+      );
+      await controller.setWishlistNotification(testPuuid(2), true);
+      await controller.setWishlistNotification(testPuuid(1), false);
+      expect(
+        readAppSettings(prefs).wishlistNotificationsFor(testPuuid(1)),
+        isFalse,
+      );
+      expect(
+        readAppSettings(prefs).wishlistNotificationsFor(testPuuid(2)),
+        isTrue,
+      );
+    });
+
     test('turning on persists without cancelling anything', () async {
       await container
           .read(settingsControllerProvider)

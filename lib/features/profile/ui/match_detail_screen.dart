@@ -14,7 +14,6 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/net_image.dart';
-import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
@@ -47,8 +46,6 @@ class MatchDetailScreen extends ConsumerStatefulWidget {
   ConsumerState<MatchDetailScreen> createState() => _MatchDetailScreenState();
 }
 
-enum _Tab { scoreboard, rounds }
-
 /// Hero height (below the status bar) for the current text scale, so the
 /// map name, meta line and score never collide with the back button.
 double _heroHeight(BuildContext context) {
@@ -57,13 +54,19 @@ double _heroHeight(BuildContext context) {
 }
 
 class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
-  _Tab _tab = _Tab.scoreboard;
+  bool _roundsExpanded = false;
 
   String get _id => widget.matchId.trim().toLowerCase();
 
   Future<void> _refresh() => ref
       .refresh(matchDetailsProvider(_id).future)
       .then<void>((_) {}, onError: (Object _) {});
+
+  @override
+  void didUpdateWidget(covariant MatchDetailScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.matchId != widget.matchId) _roundsExpanded = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +114,7 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
     final me = d.player(perspective);
     final inMatch = me != null && !me.isObserver;
     final hasRounds = d.modeKind.isRoundBased && d.playedRounds.isNotEmpty;
-    final tab = hasRounds ? _tab : _Tab.scoreboard;
+    final ranked = baseQueueId(d.info.queueId) == kCompetitiveQueue;
     // Incognito players seen during the live match stay anonymous here and
     // on their profile (SUMMARY U16).
     final hidden = ref
@@ -142,45 +145,53 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
               hidden: hidden.contains(me.subject),
             ),
           ),
-        if (hasRounds)
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: GlassHeaderDelegate(
-              height: 60,
-              child: SegmentedTabs<_Tab>(
-                expand: true,
-                tabs: const [
-                  SegmentedTab(
-                    value: _Tab.scoreboard,
-                    label: ProfileStrings.scoreboard,
-                    icon: Icons.leaderboard_outlined,
-                  ),
-                  SegmentedTab(
-                    value: _Tab.rounds,
-                    label: ProfileStrings.roundTimeline,
-                    icon: Icons.timeline_rounded,
-                  ),
-                ],
-                selected: tab,
-                onChanged: (t) => setState(() => _tab = t),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+            child: Text(
+              ranked
+                  ? ProfileStrings.rankedScoreboard
+                  : ProfileStrings.scoreboard,
+              style: ValText.sectionTitle.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-          )
-        else
-          const SliverToBoxAdapter(child: SizedBox(height: 4)),
-        if (tab == _Tab.scoreboard)
-          ScoreboardSliver(
-            details: d,
-            perspective: perspective,
-            onOpenPlayer: openPlayer,
-            hidden: hidden,
-          )
-        else
+          ),
+        ),
+        ScoreboardSliver(
+          details: d,
+          perspective: perspective,
+          onOpenPlayer: openPlayer,
+          hidden: hidden,
+        ),
+        // The scoreboard stays on screen; the round list opens under it.
+        if (hasRounds)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+              child: GroupedSection(
+                children: [
+                  GroupedRow(
+                    icon: Icons.timeline_rounded,
+                    title: ProfileStrings.roundTimeline,
+                    trailing: Icon(
+                      _roundsExpanded ? Icons.expand_less : Icons.expand_more,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    onTap: () =>
+                        setState(() => _roundsExpanded = !_roundsExpanded),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        if (hasRounds && _roundsExpanded)
           RoundTimelineSliver(
             details: d,
             perspective: perspective,
             hidden: hidden,
           ),
+        const SliverToBoxAdapter(child: SizedBox(height: 8)),
       ],
     );
   }

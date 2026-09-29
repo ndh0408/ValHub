@@ -148,19 +148,21 @@ class WishlistChecker {
     try {
       await _guard(env.reload);
       final settings = readAppSettings(env.prefs);
-      final wishlistOn = settings.wishlistNotifications;
+      final accounts = env.accounts();
       final nightMarketOn = settings.nightMarketNotifications;
-      if (!wishlistOn && !nightMarketOn) {
+      if (!nightMarketOn &&
+          !accounts.any((a) => settings.wishlistNotificationsFor(a.puuid))) {
         report.disabled = true;
         return report;
       }
       bool wantsWishlist(Account a) =>
-          wishlistOn && env.wishlist(a.puuid).isNotEmpty;
+          settings.wishlistNotificationsFor(a.puuid) &&
+          env.wishlist(a.puuid).isNotEmpty;
 
       final started = env.now();
       final state = WishlistCheckState(env.prefs);
       final due = [
-        for (final a in env.accounts())
+        for (final a in accounts)
           if (!a.needsLogin &&
               !state.checkedToday(a.puuid, started) &&
               (nightMarketOn || wantsWishlist(a)))

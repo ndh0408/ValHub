@@ -53,11 +53,45 @@ void main() {
       );
     });
 
-    test('odd bodies still mean the game is running', () {
-      expect(AccountActivity.fromSession({}), AccountActivity.online);
-      expect(AccountActivity.fromSession('<html>'), AccountActivity.online);
+    test('malformed and incomplete sessions do not claim online', () {
+      expect(AccountActivity.fromSession({}), AccountActivity.unknown);
+      expect(AccountActivity.fromSession('<html>'), AccountActivity.unknown);
       expect(
         AccountActivity.fromSession({'loopState': 42}),
+        AccountActivity.unknown,
+      );
+    });
+
+    test('expired or disconnected sessions are offline', () {
+      final now = DateTime.utc(2026, 9, 29, 12);
+      expect(
+        AccountActivity.fromSession({
+          'loopState': 'MENUS',
+          'expiredTime': now
+              .subtract(const Duration(seconds: 1))
+              .toIso8601String(),
+        }, now: now),
+        AccountActivity.offline,
+      );
+      expect(
+        AccountActivity.fromSession({
+          'loopState': 'MENUS',
+          'cxnState': 'DISCONNECTED',
+        }, now: now),
+        AccountActivity.offline,
+      );
+      expect(
+        AccountActivity.fromSession({
+          'loopState': 'MENUS',
+          'shouldForceInvalidate': true,
+        }, now: now),
+        AccountActivity.offline,
+      );
+      expect(
+        AccountActivity.fromSession({
+          'loopState': 'MENUS',
+          'expiredTime': now.add(const Duration(minutes: 1)).toIso8601String(),
+        }, now: now),
         AccountActivity.online,
       );
     });

@@ -70,9 +70,9 @@ describe('LFG', () => {
     const comp = await e.req('GET', '/v1/lfg?region=ap&mode=competitive', { token: t });
     expect(comp.json.items.map((i: any) => i.author.gameName)).toEqual(['Player d', 'Player a']);
 
-    const p1 = await e.req('GET', '/v1/lfg?limit=2', { token: t });
+    const p1 = await e.req('GET', '/v1/lfg?scope=global&limit=2', { token: t });
     expect(p1.json.items.map((i: any) => i.author.gameName)).toEqual(['Player d', 'Player c']);
-    const p2 = await e.req('GET', `/v1/lfg?limit=2&cursor=${p1.json.nextCursor}`, { token: t });
+    const p2 = await e.req('GET', `/v1/lfg?scope=global&limit=2&cursor=${p1.json.nextCursor}`, { token: t });
     expect(p2.json.items.map((i: any) => i.author.gameName)).toEqual(['Player b', 'Player a']);
     expect(p2.json.nextCursor).toBeNull();
   });

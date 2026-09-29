@@ -32,6 +32,7 @@ class AppSettings {
     this.showLiveScore = true,
     this.storeResetNotifications = false,
     this.wishlistNotifications = false,
+    this.wishlistNotificationsByAccount = const {},
     this.nightMarketNotifications = false,
     this.showPriceEstimate = true,
   });
@@ -54,6 +55,13 @@ class AppSettings {
           asBool(m['storeResetNotifications']) ?? d.storeResetNotifications,
       wishlistNotifications:
           asBool(m['wishlistNotifications']) ?? d.wishlistNotifications,
+      wishlistNotificationsByAccount: {
+        for (final entry
+            in (asMap(m['wishlistNotificationsByAccount']) ??
+                    const <String, dynamic>{})
+                .entries)
+          if (entry.value is bool) entry.key.toLowerCase(): entry.value as bool,
+      },
       nightMarketNotifications:
           asBool(m['nightMarketNotifications']) ?? d.nightMarketNotifications,
       showPriceEstimate: asBool(m['showPriceEstimate']) ?? d.showPriceEstimate,
@@ -79,6 +87,14 @@ class AppSettings {
   /// "Kiểm tra wishlist trong nền" (W2/W4).
   final bool wishlistNotifications;
 
+  /// Per-account choice. Missing entries use the old shared setting so
+  /// existing users keep their notification choice after upgrading.
+  final Map<String, bool> wishlistNotificationsByAccount;
+
+  bool wishlistNotificationsFor(String puuid) =>
+      wishlistNotificationsByAccount[puuid.toLowerCase()] ??
+      wishlistNotifications;
+
   /// "Khi Chợ Đêm mở" (ValVN extra).
   final bool nightMarketNotifications;
 
@@ -94,6 +110,7 @@ class AppSettings {
     'showLiveScore': showLiveScore,
     'storeResetNotifications': storeResetNotifications,
     'wishlistNotifications': wishlistNotifications,
+    'wishlistNotificationsByAccount': wishlistNotificationsByAccount,
     'nightMarketNotifications': nightMarketNotifications,
     'showPriceEstimate': showPriceEstimate,
   };
@@ -106,6 +123,7 @@ class AppSettings {
     bool? showLiveScore,
     bool? storeResetNotifications,
     bool? wishlistNotifications,
+    Map<String, bool>? wishlistNotificationsByAccount,
     bool? nightMarketNotifications,
     bool? showPriceEstimate,
   }) => AppSettings(
@@ -117,6 +135,8 @@ class AppSettings {
     storeResetNotifications:
         storeResetNotifications ?? this.storeResetNotifications,
     wishlistNotifications: wishlistNotifications ?? this.wishlistNotifications,
+    wishlistNotificationsByAccount:
+        wishlistNotificationsByAccount ?? this.wishlistNotificationsByAccount,
     nightMarketNotifications:
         nightMarketNotifications ?? this.nightMarketNotifications,
     showPriceEstimate: showPriceEstimate ?? this.showPriceEstimate,
@@ -124,10 +144,38 @@ class AppSettings {
 
   @override
   bool operator ==(Object other) =>
-      other is AppSettings && mapEquals(other.toJson(), toJson());
+      other is AppSettings &&
+      other.themeMode == themeMode &&
+      other.itemLanguage == itemLanguage &&
+      other.autoOpenLiveGame == autoOpenLiveGame &&
+      other.showPeakRankInGame == showPeakRankInGame &&
+      other.showLiveScore == showLiveScore &&
+      other.storeResetNotifications == storeResetNotifications &&
+      other.wishlistNotifications == wishlistNotifications &&
+      mapEquals(
+        other.wishlistNotificationsByAccount,
+        wishlistNotificationsByAccount,
+      ) &&
+      other.nightMarketNotifications == nightMarketNotifications &&
+      other.showPriceEstimate == showPriceEstimate;
 
   @override
-  int get hashCode => Object.hashAll(toJson().values);
+  int get hashCode => Object.hash(
+    themeMode,
+    itemLanguage,
+    autoOpenLiveGame,
+    showPeakRankInGame,
+    showLiveScore,
+    storeResetNotifications,
+    wishlistNotifications,
+    Object.hashAllUnordered(
+      wishlistNotificationsByAccount.entries.map(
+        (e) => Object.hash(e.key, e.value),
+      ),
+    ),
+    nightMarketNotifications,
+    showPriceEstimate,
+  );
 }
 
 /// Loads [AppSettings] from prefs (also usable from background isolates).

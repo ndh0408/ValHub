@@ -305,7 +305,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(env.notifications.permissionRequests, 1);
-      expect(container.read(appSettingsProvider).wishlistNotifications, isTrue);
+      expect(
+        container
+            .read(appSettingsProvider)
+            .wishlistNotificationsFor(testAccount(1).puuid),
+        isTrue,
+      );
       expect(find.text(SettingsStrings.notifPermissionMissing), findsNothing);
     });
 

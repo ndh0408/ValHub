@@ -181,10 +181,66 @@ from averages.
 - Rate limits: posts 10 / hour, comments 30 / 10 min, media 20 / hour, reports 20 /
   hour per user; votes 120 / hour.
 
+## Community scopes v3 — country / region / global (additive)
+
+ValVN is global (18 VALORANT languages, every country). Community content lives in
+three nested scopes; the viewer chooses which one to browse.
+
+| Scope | Meaning | Default for |
+|---|---|---|
+| `country` | Authors from one country (ISO 3166-1 alpha-2). Default = the viewer's own country. | Feed, skin leaderboard |
+| `region` | Authors on one VALORANT shard (`ap, kr, eu, na, latam, br`). Default = viewer's shard — the people you can actually party with. | LFG |
+| `global` | Everyone; filter by `language` (comma list). | — |
+
+Identity additions:
+
+- `country`: taken from Riot `/userinfo` (`country`, ISO 3166-1 **alpha-3** lowercase
+  such as `vnm`) during `POST /v1/auth/riot`, mapped to alpha-2 upper case (`VN`) by the
+  server (full ISO table in code; unknown → `null`). Not user-editable (prevents faking
+  a country); refreshed on every auth.
+- `language`: the app language (one of `ar, de, en, es, fr, id, it, ja, ko, pl, pt, ru,
+  th, tr, vi, zh-CN, zh-TW`), sent in `POST /v1/auth/riot` body `language` and
+  updatable via `PATCH /v1/me {"language"}`.
+- `Author` gains `"country"` (alpha-2 or null) and `"language"`.
+
+Content additions (all stored at creation time, from the author):
+
+- `Post`, `Comment`, `Review`, `LfgPost` gain `"country"`, `"region"` and `"language"`.
+  `POST /v1/posts`, comments, reviews and LFG accept an optional `language` (the
+  language the text is written in; default = author language) so the reader's app can
+  offer on-device translation.
+- LFG `language` accepts the 17 codes above plus `any` (replaces `vi|en|any`).
+
+Query additions:
+
+| Endpoint | New query params | Default |
+|---|---|---|
+| `GET /v1/posts` | `scope=country\|region\|global`, `country=XX`, `region=ap…`, `language=vi,en` | `scope=country` with the viewer's country (falls back to `region` when the viewer has no country, `global` when unauthenticated) |
+| `GET /v1/lfg` | `scope`, `country`, `language` (region already exists) | `scope=region` with the viewer's region |
+| `GET /v1/skins/top`, `GET /v1/skins/votes`, `GET /v1/skins/{uuid}/summary` | `scope`, `country`, `region` | `scope=global` |
+| `GET /v1/skins/{uuid}/reviews` | `scope`, `country`, `region`, `language` | `scope=global` |
+| `GET /v1/communities` (new) | `period=week` | Countries with activity: `{"items": [{"country", "posts", "authors", "lfg"}]}` sorted by posts desc (last 7 days) |
+
+- Votes and reviews record the voter's `country` / `region` at the time of the vote, so
+  per-country leaderboards count votes cast by people from that country.
+- Existing rows without country/region/language stay visible in `global` (and in
+  `region` when their region is known) and are backfilled when their author next
+  authenticates (users only; content keeps its creation-time values).
+
+Moderation v3: the content filter runs per language (`language` of the text, plus a
+cheap script/charset heuristic when absent). Word lists ship for vi and en and
+best-effort lists for the other 15 languages, all marked for native review; the
+filter must never reject text only because it is in an unsupported language.
+
 ## Client rules
 
 - Every account-changing Riot action (joining a party by code) stays user-initiated
   with a confirmation; the community server never touches Riot on the user's
   behalf beyond `/userinfo` during `/v1/auth/riot`.
+- The Riot access token is sent to `/v1/auth/riot` only after the user agreed, once per account
+  (consent sheet: what is sent, what others see, links to the privacy policy and community
+  guidelines; stored under `acct.<puuid>.community.consent`). Declining sends nothing.
+- Translation of posts / comments / reviews happens on the device (ML Kit); no text is sent
+  to any server.
 - The community session token is stored in secure storage under
   `acct.<puuid>.community` and wiped with the account.

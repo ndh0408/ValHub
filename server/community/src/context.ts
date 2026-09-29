@@ -30,6 +30,9 @@ export const LIMITS = {
   reports: { limit: 20, windowMs: 60 * 60_000 },
   votes: { limit: 120, windowMs: 60 * 60_000 },
   likes: { limit: 120, windowMs: 60 * 60_000 },
+  reviews: { limit: 30, windowMs: 60 * 60_000 },
+  lfgPatch: { limit: 120, windowMs: 10 * 60_000 },
+  lfgJoin: { limit: 30, windowMs: 10 * 60_000 },
   authIp: { limit: 30, windowMs: 10 * 60_000 },
 } as const;
 export type LimitName = keyof typeof LIMITS;
@@ -137,6 +140,8 @@ export function author(r: AuthorCols) {
     cardId: r.a_card_id,
     rankTier: r.a_rank_tier,
     region: r.a_region,
+    country: r.a_country ?? null,
+    language: r.a_language ?? null,
   };
 }
 
@@ -148,5 +153,12 @@ export function authorFromUser(u: UserRow) {
     cardId: u.card_id,
     rankTier: u.rank_tier,
     region: u.region,
+    country: u.country ?? null,
+    language: u.language ?? null,
   };
+}
+
+/** Country / region / language of a content row (stored at creation time). */
+export function origin(r: { country: string | null; region: string | null; language: string | null }) {
+  return { country: r.country ?? null, region: r.region ?? null, language: r.language ?? null };
 }

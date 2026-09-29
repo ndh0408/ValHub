@@ -61,6 +61,7 @@ void main() {
 
     expect(env.server.calls('POST /v1/posts/p1/comments').single.json, {
       'body': 'Mới toanh',
+      'language': 'vi',
     });
     expect(find.text('Mới toanh'), findsOneWidget);
     expect(find.text('BÌNH LUẬN · 2'), findsOneWidget);

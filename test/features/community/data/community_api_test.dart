@@ -42,6 +42,7 @@ void main() {
         'region': 'ap',
         'cardId': cardId,
         'rankTier': 18,
+        'language': 'vi',
       });
       final gets = env.server.calls('GET /v1/posts');
       expect(
@@ -145,6 +146,7 @@ void main() {
       ),
     ).called(1);
     expect(env.server.calls('GET /v1/lfg').single.query, {
+      'scope': 'region',
       'region': 'ap',
       'limit': '20',
     });
@@ -273,7 +275,7 @@ void main() {
       reaverSkin.toUpperCase(),
     ], puuid: mePuuid);
 
-    expect(votes[reaverSkin]?.votes, 42);
+    expect(votes[reaverSkin]?.vote.votes, 42);
     final req = env.server.requests.single;
     expect(req.authorization, isNull);
     expect(req.query['ids'], reaverSkin);
@@ -312,6 +314,7 @@ void main() {
     expect(env.server.calls('GET /v1/skins/top').single.query, {
       'weapon': vandal,
       'period': 'week',
+      'sort': 'votes',
       'limit': '50',
     });
   });
@@ -409,5 +412,32 @@ void main() {
       ),
     );
     expect(env.server.requests, isEmpty);
+  });
+
+  test('moderation / validation: the server message is shown', () async {
+    env.server.json('POST /v1/posts', {
+      'error': {
+        'code': 'invalid_input',
+        'message': 'Nội dung chứa từ ngữ không phù hợp',
+      },
+    }, status: 400);
+    final e = await api
+        .createPost(mePuuid, kind: PostKind.text, body: 'x')
+        .then<Object?>((_) => null, onError: (Object e) => e);
+    expect(
+      describeCommunityError(e!).message,
+      'Nội dung chứa từ ngữ không phù hợp',
+    );
+    expect(
+      describeCommunityError(
+        const CommunityException(CommunityException.invalidInput),
+      ).message,
+      'Nội dung chưa hợp lệ. Kiểm tra lại rồi thử lại.',
+    );
+  });
+
+  test('a JSON null body (no own LFG post) is not an error', () async {
+    env.server.json('GET /v1/lfg/mine', 'null');
+    expect(await api.myLfg(mePuuid), isNull);
   });
 }

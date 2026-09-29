@@ -132,4 +132,68 @@ void main() {
     expect(find.text(CommunityStrings.shareStore), findsNothing);
     await unmount(tester);
   });
+
+  testWidgets('skin sheet: "★ 4,6 · 128 đánh giá" opens the review page', (
+    tester,
+  ) async {
+    env.server.json('GET /v1/skins/votes', {
+      'items': [
+        {
+          'skinUuid': reaverSkin,
+          'votes': 41,
+          'ratingAvg': 4.56,
+          'ratingCount': 128,
+        },
+      ],
+    });
+    String? opened;
+    await pumpCommunityRouter(
+      tester,
+      env,
+      initialLocation: '/',
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const Scaffold(
+            body: SkinVoteButton(skinUuid: reaverSkin, weaponUuid: vandal),
+          ),
+        ),
+        GoRoute(
+          path: '/community/skin/:uuid',
+          builder: (context, state) {
+            opened = state.pathParameters['uuid'];
+            return const Scaffold(body: Text('review page'));
+          },
+        ),
+      ],
+    );
+    await settle(tester);
+
+    expect(
+      find.text(CommunityStrings.ratingSummary('4,6', '128')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('skin-rating-link')));
+    await settle(tester, frames: 30);
+    expect(opened, reaverSkin);
+    await unmount(tester);
+  });
+
+  testWidgets('skin sheet: no ratings yet invites the first review', (
+    tester,
+  ) async {
+    env.server.json('GET /v1/skins/votes', {
+      'items': [
+        {'skinUuid': reaverSkin, 'votes': 0},
+      ],
+    });
+    await pumpCommunity(
+      tester,
+      env,
+      const Scaffold(body: SkinVoteButton(skinUuid: reaverSkin)),
+    );
+    await settle(tester);
+    expect(find.text(CommunityStrings.writeFirstReview), findsOneWidget);
+    await unmount(tester);
+  });
 }

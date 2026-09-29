@@ -1,7 +1,9 @@
 # ValVN Community server
 
-Backend for the app's "Cộng đồng" tab: LFG (tìm đồng đội), skin votes, feed posts with
-images / likes / comments / reports. API contract: [`docs/community-api.md`](../../docs/community-api.md).
+Backend for the app's "Cộng đồng" tab: LFG (tìm đồng đội, v2 with rank range / roles / live party
+status / joins), skin votes, skin reviews (Daily Val-style stars + text), feed posts with images /
+likes / comments / reports, country / region / global community scopes (v3), and a multi-language content
+filter. API contract: [`docs/community-api.md`](../../docs/community-api.md).
 
 - Node 22 + TypeScript, [Hono](https://hono.dev) on `@hono/node-server`, listening on `PORT` (default 8080).
 - SQLite via `better-sqlite3` (WAL) at `$DATA_DIR/community.db`; migrations in `migrations/` are applied
@@ -16,10 +18,14 @@ src/
   main.ts            process entry: config, DB, HTTP server, housekeeping timer, graceful shutdown
   app.ts             createApp(deps) — Hono app, error handling, body limits
   context.ts         shared helpers: auth, rate limits, base URL, serializers
-  routes/            auth.ts, lfg.ts, skins.ts, posts.ts (posts, likes, comments, reports), media.ts
+  routes/            auth.ts, lfg.ts, skins.ts, reviews.ts, communities.ts, posts.ts (posts, likes, comments, reports), media.ts
+  geo/               countries.ts (ISO 3166-1 alpha-3 -> alpha-2, 249 entries), languages.ts (the 17 app languages),
+                     scope.ts (country / region / global resolution + SQL condition)
+  moderation/        filter.ts (normalise, match, mask/reject, links, phones, which lists apply), wordlists.ts (registry),
+                     vi-wordlist.ts + en-wordlist.ts (reviewed), lists/<lang>.ts (14 best-effort lists, NEEDS NATIVE REVIEW)
   db/                database.ts (open + migrate), repo.ts (Repo interface), sqlite-repo.ts
   config.ts crypto.ts cursor.ts errors.ts media.ts riot.ts validate.ts
-migrations/0001_init.sql
+migrations/          0001_init.sql ... 0004_scopes.sql — additive; never edit an applied migration
 test/                vitest (in-memory SQLite + temp media dir, stubbed Riot /userinfo, fake clock)
 ```
 
@@ -160,3 +166,133 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
 14. **Housekeeping:** every 10 minutes the server deletes rate-limit windows older than 1 day and LFG
     posts that expired more than 1 day ago.
 15. String length limits count Unicode code points (so Vietnamese diacritics count as one character).
+16. **Migrations** are strictly additive: `0002_reviews.sql` (skin_reviews, review_likes) and
+    `0003_lfg_v2.sql` (`ALTER TABLE lfg_posts ADD COLUMN …` + lfg_joins). `reports.target_type` never had
+    a CHECK constraint, so accepting `review` needed no schema change.
+
+### Skin reviews
+
+17. Editing a review (PUT again) keeps its `id`, `createdAt`, likes and hidden flag (editing cannot
+    un-hide a reported review); only `rating`, `body` and `updatedAt` change.
+    `DELETE /v1/skins/{skin}/review` is idempotent (204 even without a review).
+18. `sort=new` orders by `createdAt` (edits do not bump a review). `sort=top` = like count desc, then
+    newest; its cursor also carries the like count, and a cursor from one sort order is rejected (400)
+    by the other. Likes can change between pages, so a review may rarely repeat/skip across pages.
+19. `myReview` in the summary is returned to its author even when hidden by reports (so they can see
+    or delete it). Hidden reviews are excluded from lists, averages, counts and the distribution, and
+    liking them returns 404. Liking or unliking your own review → 403.
+20. `period=week` counts votes cast and reviews created **or edited** (`updatedAt`) in the last 7 days;
+    `ratingAvg` / `ratingCount` / `reviewCount` in `/v1/skins/top` follow the same period.
+21. `sort=rating`: `m` is the mean of all visible ratings in the period across **all** weapons (the
+    `weapon` filter only restricts which skins are ranked); ties → more ratings, then skin uuid.
+    `sort=reviews`: skins with at least one visible rating, ordered by `reviewCount` (non-empty body),
+    then `ratingCount`. `sort=votes` lists skins that have votes, as before.
+22. A skin's `weaponUuid` is pinned by its first vote **or** review; the summary returns
+    `weaponUuid: null` for a skin nobody has voted on or reviewed.
+
+### LFG v2
+
+23. Rank range: `0` (or absent) on either side means "no bound" on that side, so `rankMin ≤ rankMax`
+    is only enforced when both are non-zero. `rank=<tier>` keeps posts whose bounds contain the tier.
+24. `role=<role>` keeps posts that need that role **or list no roles** (open to anyone).
+    `language=vi|en` keeps posts in that language or `any`; `language=any` disables the filter.
+    `status` accepts `open` (default), `full`, `in_game`.
+25. PATCH on an expired post → 404 (a heartbeat cannot revive it; the client posts a new one).
+    `partySize` / `slots` / `status` cannot be `null`; `note: null` clears the note.
+    `partySize + slots` is not constrained (a full party keeps its last `slots`).
+26. `POST /v1/lfg/{id}/join` works for any status, but not for expired/hidden posts (404) or the owner
+    (403). Joins are dropped when the owner replaces the post. Rows created before v2 report
+    `partySize = 5 - slots` and `updatedAt = createdAt`.
+27. Extra rate limits: PATCH 120 / 10 min (a 20 s heartbeat fits easily), join 30 / 10 min.
+    Reviews 30 / hour (create + edit); review likes share the 120 / hour likes limit with post likes.
+
+### Content filter (`src/moderation/`)
+
+28. Applied to post bodies, comments, review bodies and LFG notes (create and PATCH), after length
+    validation. Profanity is masked with `***`. Hate, sexual harassment and "kill yourself"-style
+    harassment → 400 `Nội dung chứa từ ngữ không phù hợp`. Account selling / boosting ads and phone
+    numbers → 400 with a separate message. Report `reason` and Riot names are not filtered.
+29. Matching is per whole word or phrase. Words listed **without** accents match any accenting
+    (`dm` ↔ `đm`); words listed **with** accents only match that form, which keeps `đĩ`≠`đi`,
+    `lồn`≠`lon`, `cặc`≠`các`, `buồi`≠`buổi`, `đéo`≠`đeo`. As a consequence, unaccented spellings of those
+    ambiguous words are only caught inside listed phrases (`dit me`, `du ma`, …). Elongations match only
+    when the word really has repeated letters (`đmmmm`, `fuuuck`). Words that are also common innocent
+    words were left out on purpose (`éo` / éo le, `hiếp` / ức hiếp, `xoạc` / xoạc chân, `ba que` / bà quê,
+    `cl` / Champions League, `óc chó` / walnut). `bắc kỳ` is rejected even though it is also a
+    historical place name.
+30. Links: `http://`, scheme-less `www.` and URL-shortener links (list in `vi-wordlist.ts`) are removed;
+    other `https://` links are kept verbatim and excluded from word matching. Bare domains without
+    `www.` (e.g. `example.com`) are left alone unless they are known shorteners. If stripping leaves a
+    post or comment empty, it is rejected as empty.
+
+### Community scopes v3
+
+31. **Migration `0004_scopes.sql` is additive** (`ALTER TABLE … ADD COLUMN`, `UPDATE` backfill, new
+    indexes) and safe on the live database. Old clients keep working: every new request field is optional,
+    every new response field is additive (`country`, `language`, `appliedScope`, …), and explicit old
+    parameters (`GET /v1/lfg?region=ap`) behave as before.
+32. **Country** comes only from Riot `/userinfo` (`country`, alpha-3, any case) and is stored as ISO alpha-2
+    (`vnm` → `VN`; table in `src/geo/countries.ts`, all 249 assigned codes). Missing / unknown → `null`.
+    It is overwritten on every `POST /v1/auth/riot` (so it also becomes `null` if Riot stops sending one).
+    A `country` sent by the client (auth body or `PATCH /v1/me`) is ignored, like any unknown field.
+33. **Language.** `language` (auth body, `PATCH /v1/me`, per-item `language`) accepts the 17 codes in any case
+    and also `_` or a region suffix: `pt-BR` → `pt`, `es-MX` → `es`, `zh_CN` / `zh-Hans` / `zh-SG` → `zh-CN`,
+    `zh-HK` / `zh-Hant` → `zh-TW`; bare `zh` is rejected (script unknown). `null` is rejected. When auth omits
+    `language` the stored value is kept (`null` for a user who never sent one).
+34. **Content values are frozen at creation.** Posts, comments and reviews store the author's `country`,
+    `region` and `language` when created (a per-item `language` overrides the author's); LFG posts store the
+    author's `country` (region / party language come from the request). Moving country / shard or changing the
+    app language later does not touch old content. Editing a review keeps its country / region; its `language`
+    changes only when the edit sends one.
+35. **Votes and ratings count by the voter's country / region at the time of the vote / review** (`skin_votes`
+    and `skin_reviews` carry them). Re-sending a vote is idempotent, so it keeps the original values.
+    A user without a country still counts in `region` and `global` scope, never in a country's.
+36. **Scope resolution** (`src/geo/scope.ts`): an explicit `scope` wins; without it a `country` param implies
+    `country` scope, a `region` param implies `region`, otherwise the endpoint default applies. Feed default =
+    `country`, LFG default = `region`, skins (top / votes / summary / reviews) default = `global`. Where the spec
+    scope table lists the skin leaderboard under "country" but the endpoint table says `scope=global`, the
+    endpoint table (`global`) is implemented; clients pass `scope=country` explicitly. A `country` scope with no
+    country (param or viewer) falls back to `region` (param or the viewer's shard), then to `global`; the applied
+    result is returned as `appliedScope: {scope, country, region}` on feed / LFG / reviews lists, skins top /
+    votes and summary. Params that do not belong to the resolved scope are ignored. `country` must be a real
+    ISO alpha-2 code.
+37. `GET /v1/posts` (and `/v1/posts/{id}` and its comments) is readable **without a session** (scope `global`,
+    `liked: false`); an invalid token is still 401. LFG lists still require a session. Public reads are not
+    rate-limited by the app (Cloudflare fronts the tunnel).
+38. **`language` filters** (comma lists of the 17 codes) on the feed and reviews match the item's stored text
+    language exactly, so rows with no language (created before v3, or by clients that never sent one) are
+    excluded **only when the filter is used**. LFG's `language` matches the party language or `any`;
+    `language=any` (or a list containing `any`) disables the filter.
+39. **LFG party language** now accepts the 17 codes plus `any` (old `vi | en | any` still fine). When omitted it
+    defaults to the author's language, and to `vi` when the author never sent one (what clients before v3 got).
+40. **Replaced LFG posts are kept (expired), not deleted**, so `/v1/communities` can count a week of LFG
+    activity; their joins are deleted and they are purged 8 days after expiry. `GET /v1/lfg/mine`, lists and
+    `join` only see unexpired posts, as before. `DELETE /v1/lfg/{id}` on such an expired own post now answers
+    204 instead of 404.
+41. **`GET /v1/communities`** (public): `period=week` (default, last 7 days) or `all`. `posts` = visible posts,
+    `lfg` = LFG posts (including replaced ones), `authors` = distinct users among those, all grouped by the
+    author's country at creation time; content without a country is not listed. Sorted by posts, then lfg,
+    authors, country code. Comments and hidden content are not counted.
+42. **Backfill** (in the migration): `region` of old posts / comments / reviews / votes is copied from their
+    author's shard (`lfg_posts` already had its own), so they stay visible in `region` and `global` scope.
+    `country` / `language` stay `NULL` on old rows (hence invisible in a country scope); users get theirs at
+    their next `POST /v1/auth/riot`.
+
+### Content filter v3 (per language)
+
+43. `moderate(text, {language, country})` applies: English always; the list of the text's language (the item's
+    `language`, else the author's; `zh-CN` / `zh-TW` share `zh`); lists implied by the script / charset
+    (Hangul → ko, kana → ja, Han → zh, Thai → th, Arabic script → ar, Cyrillic → ru, Vietnamese letters → vi,
+    ß → de, ñ ¿ ¡ → es, ą ę ł → pl, ğ ı ş → tr); and for Latin-only text the Vietnamese list when the language
+    is unknown / `vi` / `en` (unaccented teencode — the original behaviour) plus the local-language list implied
+    by the author's country (VN → vi, MX → es, BR → pt, DE → de, TR → tr, ID → id, …). Text in a language
+    without a list (Hindi, Greek, Hebrew, Swahili, …) only gets English matching and is **never** rejected for
+    that.
+44. **vi and en are reviewed; the other 14 lists (ar de es fr id it ja ko pl pt ru th tr zh) are best-effort and
+    marked NEEDS NATIVE REVIEW** (`reviewed: false`, a banner in each `src/moderation/lists/<lang>.ts`, and
+    `LISTS_NEEDING_NATIVE_REVIEW`; a test checks the banners). Expect false negatives; ordinary words that are
+    also insults were left out on purpose and are listed at the top of each file. Entry syntax (see
+    `types.ts`): `word`, `two words`, `stem*` (prefix, inflected languages), `*part*` (substring, for Chinese /
+    Japanese / Thai), plus per-list `exceptions` (e.g. Korean `병신년`, Thai `เหี้ยม`, Japanese `おかまいなく`).
+45. Phone numbers: Vietnamese numbers as before, plus international numbers written with a leading `+` and a
+    country code (8–15 digits, separators allowed). Local formats of other countries are not detected.

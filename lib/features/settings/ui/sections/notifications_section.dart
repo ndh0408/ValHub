@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/notifications/notification_service.dart';
 import '../../../../core/settings/app_settings.dart';
@@ -64,11 +65,28 @@ class _SettingsNotificationsSectionState
     if (mounted) ref.invalidate(notificationsAllowedProvider);
   }
 
+  Future<void> _toggleWishlist(String puuid, bool on) async {
+    final controller = ref.read(settingsControllerProvider);
+    if (!on) {
+      await controller.setWishlistNotification(puuid, false);
+      return;
+    }
+    final result = await runNotificationPriming(context);
+    if (result == NotificationPrimingResult.dismissed) return;
+    await controller.setWishlistNotification(puuid, true);
+    if (mounted) ref.invalidate(notificationsAllowedProvider);
+  }
+
   @override
   Widget build(BuildContext context) {
     final settings = ref.watch(appSettingsProvider);
+    final accounts = ref.watch(accountsProvider);
     final allowed = ref.watch(notificationsAllowedProvider).value;
-    final showWarning = allowed == false && anyNotificationEnabled(settings);
+    final showWarning =
+        allowed == false &&
+        (settings.storeResetNotifications ||
+            settings.nightMarketNotifications ||
+            accounts.any((a) => settings.wishlistNotificationsFor(a.puuid)));
     return SettingsGroup(
       title: SettingsStrings.notificationsHeader,
       children: [
@@ -83,12 +101,6 @@ class _SettingsNotificationsSectionState
             ),
           ),
           (
-            NotificationToggle.wishlist,
-            Icons.favorite_border,
-            SettingsStrings.notifWishlist,
-            SettingsStrings.notifWishlistSubtitle,
-          ),
-          (
             NotificationToggle.nightMarket,
             Icons.nightlight_outlined,
             SettingsStrings.notifNightMarket,
@@ -101,6 +113,15 @@ class _SettingsNotificationsSectionState
             subtitle: subtitle,
             value: toggle.valueIn(settings),
             onChanged: (v) => unawaited(_toggle(toggle, v)),
+          ),
+        for (final account in accounts)
+          SettingsSwitchTile(
+            icon: Icons.favorite_border,
+            title: SettingsStrings.notifWishlist,
+            subtitle:
+                '${account.riotId} · ${SettingsStrings.notifWishlistSubtitle}',
+            value: settings.wishlistNotificationsFor(account.puuid),
+            onChanged: (v) => unawaited(_toggleWishlist(account.puuid, v)),
           ),
       ],
     );

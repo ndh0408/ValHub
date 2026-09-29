@@ -1,6 +1,15 @@
+import { countryFromAlpha3 } from './geo/countries.js';
+
 /** Result of verifying a Riot access token against /userinfo. */
 export type RiotIdentity =
-  | { ok: true; puuid: string; gameName: string; tagLine: string }
+  | {
+      ok: true;
+      puuid: string;
+      gameName: string;
+      tagLine: string;
+      /** ISO 3166-1 alpha-2 (upper case) mapped from Riot's alpha-3 `country`; null when missing/unknown. */
+      country?: string | null;
+    }
   | { ok: false };
 
 /** Injectable so tests can stub Riot. Throws only on network failure. */
@@ -24,7 +33,7 @@ export function parseUserinfo(text: string): RiotIdentity {
     typeof b.acct === 'object' && b.acct !== null ? (b.acct as Record<string, unknown>) : {};
   const gameName = typeof acct.game_name === 'string' ? acct.game_name.slice(0, 32) : '';
   const tagLine = typeof acct.tag_line === 'string' ? acct.tag_line.slice(0, 16) : '';
-  return { ok: true, puuid: sub, gameName, tagLine };
+  return { ok: true, puuid: sub, gameName, tagLine, country: countryFromAlpha3(b.country) };
 }
 
 /** Real implementation. The token is only placed in the Authorization header; never logged. */

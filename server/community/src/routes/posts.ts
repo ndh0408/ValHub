@@ -1,9 +1,12 @@
 import type { Context, Hono } from 'hono';
-import { author, iso, type Ctx } from '../context.js';
+import { author, iso, origin, type Ctx } from '../context.js';
 import { decodeCursor, page } from '../cursor.js';
 import type { AuthorCols, CommentRow, PostView } from '../db/repo.js';
 import { forbidden, invalid, notFound } from '../errors.js';
+import { contentLanguage, parseLanguageList } from '../geo/languages.js';
+import { appliedScope, resolveScope } from '../geo/scope.js';
 import { MEDIA_KEY_RE } from '../media.js';
+import { cleanUserText } from '../moderation/filter.js';
 import {
   isObject,
   isUuid,
@@ -76,6 +79,7 @@ export function registerPosts(app: Hono, x: Ctx): void {
       liked: p.liked === 1,
       comments: p.comments,
       createdAt: iso(p.created_at),
+      ...origin(p),
     };
   };
 
@@ -85,6 +89,7 @@ export function registerPosts(app: Hono, x: Ctx): void {
     author: author(r),
     body: r.body,
     createdAt: iso(r.created_at),
+    ...origin(r),
   });
 
   /** Visible (not hidden) post or 404. */
@@ -97,27 +102,35 @@ export function registerPosts(app: Hono, x: Ctx): void {
 
   // ---- posts -----------------------------------------------------------------
 
+  // v3: the feed is readable without a session (global scope); a session enables `liked`
+  // and the country/region defaults.
   app.get('/v1/posts', (c) => {
-    const user = x.user(c, true);
+    const user = x.user(c, false);
     const q = c.req.query();
     const kind = q.kind ? parseEnum(q.kind, POST_KINDS, 'kind') : undefined;
+    const geo = resolveScope(q, user, 'country');
+    const languages = parseLanguageList(q.language);
     const cursor = decodeCursor(q.cursor);
     const limit = parseLimit(q.limit, 20, 50);
-    const rows = x.repo.listPosts({ kind, cursor, limit, viewerId: user.id });
+    const rows = x.repo.listPosts({ kind, cursor, limit, viewerId: user?.id ?? '', geo, languages });
     const base = x.baseUrl(c);
-    return x.json(c, page(rows, limit, (p) => serializePost(p, base)));
+    return x.json(c, { ...page(rows, limit, (p) => serializePost(p, base)), appliedScope: appliedScope(geo) });
   });
 
   app.get('/v1/posts/:id', (c) => {
-    const user = x.user(c, true);
-    return x.json(c, serializePost(visiblePost(c.req.param('id'), user.id), x.baseUrl(c)));
+    const viewerId = x.user(c, false)?.id ?? '';
+    return x.json(c, serializePost(visiblePost(c.req.param('id'), viewerId), x.baseUrl(c)));
   });
 
   app.post('/v1/posts', async (c) => {
     const user = x.user(c, true);
     const body = await x.readJson(c);
     const kind = parseEnum(body.kind, POST_KINDS, 'kind');
-    const text = body.body === undefined || body.body === null ? '' : parseString(body.body, 'body', { max: 1000 });
+    const language = contentLanguage(body, user.language);
+    const text =
+      body.body === undefined || body.body === null
+        ? ''
+        : cleanUserText(parseString(body.body, 'body', { max: 1000 }), language, user.country);
 
     let media: string[] = [];
     if (body.media !== undefined && body.media !== null) {
@@ -156,6 +169,9 @@ export function registerPosts(app: Hono, x: Ctx): void {
       payload: payload === null ? null : JSON.stringify(payload),
       hidden: 0,
       created_at: x.now(),
+      country: user.country,
+      region: user.region,
+      language,
     });
     return x.json(c, serializePost(x.repo.getPost(id, user.id)!, x.baseUrl(c)));
   });
@@ -185,8 +201,8 @@ export function registerPosts(app: Hono, x: Ctx): void {
   // ---- comments ------------------------------------------------------------------
 
   app.get('/v1/posts/:id/comments', (c) => {
-    const user = x.user(c, true);
-    const p = visiblePost(c.req.param('id'), user.id);
+    const viewerId = x.user(c, false)?.id ?? '';
+    const p = visiblePost(c.req.param('id'), viewerId);
     const q = c.req.query();
     const cursor = decodeCursor(q.cursor);
     const limit = parseLimit(q.limit, 20, 50);
@@ -197,10 +213,22 @@ export function registerPosts(app: Hono, x: Ctx): void {
     const user = x.user(c, true);
     const p = visiblePost(c.req.param('id'), user.id);
     const body = await x.readJson(c);
-    const text = parseString(body.body, 'body', { min: 1, max: 500 });
+    const language = contentLanguage(body, user.language);
+    const text = cleanUserText(parseString(body.body, 'body', { min: 1, max: 500 }), language, user.country);
+    if (text === '') throw invalid('body không được để trống.');
     x.rateLimit('comments', user.id);
     const id = crypto.randomUUID();
-    x.repo.insertComment({ id, post_id: p.id, user_id: user.id, body: text, hidden: 0, created_at: x.now() });
+    x.repo.insertComment({
+      id,
+      post_id: p.id,
+      user_id: user.id,
+      body: text,
+      hidden: 0,
+      created_at: x.now(),
+      country: user.country,
+      region: user.region,
+      language,
+    });
     return x.json(c, serializeComment(x.repo.getComment(id)!));
   });
 

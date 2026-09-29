@@ -95,25 +95,35 @@ class OffersGrid extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(2, 0, 2, 10),
-            child: Row(
+            // Wraps the total under the title when the text is large.
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 4,
               children: [
-                Icon(
-                  nightMarket
-                      ? Icons.nightlight_round
-                      : Icons.storefront_rounded,
-                  size: 16,
-                  color: accent,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      nightMarket
+                          ? Icons.nightlight_round
+                          : Icons.storefront_rounded,
+                      size: 16,
+                      color: accent,
                     ),
-                  ),
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 if (payload.total > 0)
                   Text(
