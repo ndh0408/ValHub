@@ -33,7 +33,7 @@ class AppSettings {
     this.storeResetNotifications = false,
     this.wishlistNotifications = false,
     this.nightMarketNotifications = false,
-    this.showVndEstimate = true,
+    this.showPriceEstimate = true,
   });
 
   factory AppSettings.fromJson(Object? json) {
@@ -56,7 +56,7 @@ class AppSettings {
           asBool(m['wishlistNotifications']) ?? d.wishlistNotifications,
       nightMarketNotifications:
           asBool(m['nightMarketNotifications']) ?? d.nightMarketNotifications,
-      showVndEstimate: asBool(m['showVndEstimate']) ?? d.showVndEstimate,
+      showPriceEstimate: asBool(m['showPriceEstimate']) ?? d.showPriceEstimate,
     );
   }
 
@@ -82,8 +82,9 @@ class AppSettings {
   /// "Khi Chợ Đêm mở" (ValVN extra).
   final bool nightMarketNotifications;
 
-  /// "Hiện giá VND ước tính" next to VP prices (ValVN extra, VN players).
-  final bool showVndEstimate;
+  /// "Hiện giá quy đổi ước tính": the local-currency estimate next to VP
+  /// prices (ValVN extra).
+  final bool showPriceEstimate;
 
   JsonMap toJson() => {
     'themeMode': themeMode.name,
@@ -94,7 +95,7 @@ class AppSettings {
     'storeResetNotifications': storeResetNotifications,
     'wishlistNotifications': wishlistNotifications,
     'nightMarketNotifications': nightMarketNotifications,
-    'showVndEstimate': showVndEstimate,
+    'showPriceEstimate': showPriceEstimate,
   };
 
   AppSettings copyWith({
@@ -106,7 +107,7 @@ class AppSettings {
     bool? storeResetNotifications,
     bool? wishlistNotifications,
     bool? nightMarketNotifications,
-    bool? showVndEstimate,
+    bool? showPriceEstimate,
   }) => AppSettings(
     themeMode: themeMode ?? this.themeMode,
     itemLanguage: itemLanguage ?? this.itemLanguage,
@@ -118,7 +119,7 @@ class AppSettings {
     wishlistNotifications: wishlistNotifications ?? this.wishlistNotifications,
     nightMarketNotifications:
         nightMarketNotifications ?? this.nightMarketNotifications,
-    showVndEstimate: showVndEstimate ?? this.showVndEstimate,
+    showPriceEstimate: showPriceEstimate ?? this.showPriceEstimate,
   );
 
   @override

@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/domain/loadout/loadout.dart';
 import '../../../core/l10n/common_strings.dart';
@@ -14,6 +15,7 @@ import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../collection_strings.dart';
 import '../data/collection_items.dart';
@@ -51,62 +53,62 @@ class ExpressionsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(title: const Text(CollectionStrings.expressionsTitle)),
-      body: CollectionAccountGate(
-        builder: (context, account) => LoadoutDataBuilder(
-          puuid: account.puuid,
-          loading: const _WheelSkeleton(),
-          builder: (context, snapshot, owned, db) {
-            final loadout = snapshot.loadout;
-            void open(int slot) => unawaited(
-              showExpressionPicker(context, puuid: account.puuid, slot: slot),
-            );
-            return AdaptiveRefresh(
-              onRefresh: () => refreshCollection(ref, account.puuid),
-              child: ListView(
-                padding: const EdgeInsets.only(bottom: 24),
+    final account = ref.watch(activeAccountProvider);
+    if (account == null) {
+      return const NoAccountPage(title: CollectionStrings.expressionsTitle);
+    }
+    final puuid = account.puuid;
+    return SubPageScaffold(
+      title: CollectionStrings.expressionsTitle,
+      subtitle: CollectionStrings.expressionsHint,
+      onRefresh: () => refreshCollection(ref, puuid),
+      slivers: loadoutSlivers(
+        ref,
+        puuid: puuid,
+        loading: const _WheelSkeleton(),
+        data: (snapshot, owned, db) {
+          final loadout = snapshot.loadout;
+          void open(int slot) => unawaited(
+            showExpressionPicker(context, puuid: puuid, slot: slot),
+          );
+          return [
+            SliverToBoxAdapter(child: SavingBar(visible: snapshot.isPending)),
+            if (snapshot.isFromCache)
+              const SliverToBoxAdapter(child: CachedLoadoutBanner()),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: LayoutBuilder(
+                  builder: (context, c) => Center(
+                    child: _Wheel(
+                      size: math.min(c.maxWidth - 32, 320),
+                      slots: [
+                        for (var i = 0; i < kExpressionSlots; i++)
+                          _slotView(loadout.expression(i), db),
+                      ],
+                      onTap: snapshot.isPending ? null : open,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SliverToBoxAdapter(
+              child: SectionLabel(CollectionStrings.expressionsSlots),
+            ),
+            SliverToBoxAdapter(
+              child: GroupedSection(
                 children: [
-                  SavingBar(visible: snapshot.isPending),
-                  if (snapshot.isFromCache) const CachedLoadoutBanner(),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-                    child: Text(
-                      CollectionStrings.expressionsHint,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                  for (var i = 0; i < kExpressionSlots; i++)
+                    _SlotRow(
+                      slot: i,
+                      view: _slotView(loadout.expression(i), db),
+                      onTap: snapshot.isPending ? null : () => open(i),
                     ),
-                  ),
-                  LayoutBuilder(
-                    builder: (context, c) => Center(
-                      child: _Wheel(
-                        size: math.min(c.maxWidth - 32, 320),
-                        slots: [
-                          for (var i = 0; i < kExpressionSlots; i++)
-                            _slotView(loadout.expression(i), db),
-                        ],
-                        onTap: snapshot.isPending ? null : open,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  GroupedSection(
-                    children: [
-                      for (var i = 0; i < kExpressionSlots; i++)
-                        _SlotRow(
-                          slot: i,
-                          view: _slotView(loadout.expression(i), db),
-                          onTap: snapshot.isPending ? null : () => open(i),
-                        ),
-                    ],
-                  ),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+          ];
+        },
       ),
     );
   }
@@ -271,16 +273,21 @@ class _WheelSkeleton extends StatelessWidget {
 
 enum _PickerTab { sprays, flex }
 
-/// Picker of one wheel slot (tabs "Hình phun sơn | Flex", search).
+/// Picker of one wheel slot (tabs "Hình phun sơn | Flex", search) in the
+/// shared sheet chrome.
 Future<void> showExpressionPicker(
   BuildContext context, {
   required String puuid,
   required int slot,
-}) => showModalBottomSheet<void>(
-  context: context,
-  isScrollControlled: true,
-  useSafeArea: true,
-  builder: (_) => ExpressionPickerSheet(puuid: puuid, slot: slot),
+}) => showValSheet<void>(
+  context,
+  title: CollectionStrings.slotTitle(slot),
+  subtitle: CollectionStrings.expressionsTitle,
+  scrollable: true,
+  initialSize: 0.85,
+  minSize: 0.5,
+  builder: (context, controller) =>
+      ExpressionPickerSheet(puuid: puuid, slot: slot, controller: controller),
 );
 
 class ExpressionPickerSheet extends ConsumerStatefulWidget {
@@ -288,10 +295,14 @@ class ExpressionPickerSheet extends ConsumerStatefulWidget {
     super.key,
     required this.puuid,
     required this.slot,
+    this.controller,
   });
 
   final String puuid;
   final int slot;
+
+  /// Scroll controller of the draggable sheet.
+  final ScrollController? controller;
 
   @override
   ConsumerState<ExpressionPickerSheet> createState() =>
@@ -299,134 +310,143 @@ class ExpressionPickerSheet extends ConsumerStatefulWidget {
 }
 
 class _ExpressionPickerSheetState extends ConsumerState<ExpressionPickerSheet> {
+  static const _artHeight = 72.0;
   _PickerTab? _tab;
   String _search = '';
 
+  Future<void> _pick(String id, String name, bool flex) async {
+    final navigator = Navigator.of(context);
+    final ok = await applyLoadoutChange(
+      context,
+      ref,
+      puuid: widget.puuid,
+      change: flex
+          ? SetExpression.flex(widget.slot, id)
+          : SetExpression.spray(widget.slot, id),
+      successMessage: CollectionStrings.equippedItem(name),
+    );
+    if (ok) Haptics.medium();
+    if (ok && navigator.mounted) navigator.pop();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return DraggableScrollableSheet(
-      expand: false,
-      initialChildSize: 0.85,
-      minChildSize: 0.4,
-      maxChildSize: 0.95,
-      builder: (context, scroll) => LoadoutDataBuilder(
-        puuid: widget.puuid,
-        loading: const CollectionGridSkeleton(),
-        builder: (context, snapshot, owned, db) {
-          final current = snapshot.loadout.expression(widget.slot);
-          final tab =
-              _tab ??
-              (current?.isFlex ?? false ? _PickerTab.flex : _PickerTab.sprays);
-          final items = <({String id, String? image, String name, bool flex})>[
-            if (tab == _PickerTab.sprays) ...[
-              if (matchesSearch(_search, [CollectionStrings.emptySlot]))
-                (
-                  id: SpecialIds.nullSpray,
-                  image: null,
-                  name: CollectionStrings.emptySlot,
-                  flex: false,
-                ),
-              for (final s in ownedSprays(owned, db))
-                if (matchesSearch(_search, [s.displayName]))
-                  (
-                    id: s.uuid,
-                    image: s.image,
-                    name: s.displayName,
-                    flex: false,
-                  ),
-            ] else
-              for (final f in ownedFlex(owned, db))
-                if (matchesSearch(_search, [f.displayName]))
-                  (
-                    id: f.uuid,
-                    image: f.displayIcon,
-                    name: f.displayName,
-                    flex: true,
-                  ),
-          ];
-          bool isCurrent(String id, bool flex) =>
-              current != null &&
-              current.assetId == id &&
-              current.isFlex == flex;
-
-          Future<void> pick(String id, String name, bool flex) async {
-            final navigator = Navigator.of(context);
-            final ok = await applyLoadoutChange(
-              context,
+    final snapshot = ref.watch(loadoutProvider(widget.puuid)).value;
+    final current = snapshot?.loadout.expression(widget.slot);
+    final tab =
+        _tab ??
+        (current?.isFlex ?? false ? _PickerTab.flex : _PickerTab.sprays);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: SegmentedTabs<_PickerTab>(
+            expand: true,
+            tabs: const [
+              SegmentedTab(
+                value: _PickerTab.sprays,
+                label: CollectionStrings.tabSprays,
+              ),
+              SegmentedTab(
+                value: _PickerTab.flex,
+                label: CollectionStrings.tabFlex,
+              ),
+            ],
+            selected: tab,
+            onChanged: (t) => setState(() => _tab = t),
+          ),
+        ),
+        CollectionSearchField(
+          key: ValueKey(tab),
+          hint: tab == _PickerTab.sprays
+              ? CollectionStrings.searchSprays
+              : CollectionStrings.searchFlex,
+          initialValue: _search,
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          onChanged: (v) => setState(() => _search = v),
+        ),
+        Expanded(
+          child: CustomScrollView(
+            controller: widget.controller,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            slivers: loadoutSlivers(
               ref,
               puuid: widget.puuid,
-              change: flex
-                  ? SetExpression.flex(widget.slot, id)
-                  : SetExpression.spray(widget.slot, id),
-              successMessage: CollectionStrings.equippedItem(name),
-            );
-            if (ok) Haptics.medium();
-            if (ok && navigator.mounted) navigator.pop();
-          }
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  CollectionStrings.slotTitle(widget.slot),
-                  style: theme.textTheme.titleLarge,
-                ),
+              loading: SkeletonTileGrid(
+                maxExtent: 120,
+                tileHeight: tileExtent(context, image: _artHeight),
               ),
-              SegmentedTabs<_PickerTab>(
-                expand: true,
-                tabs: const [
-                  SegmentedTab(
-                    value: _PickerTab.sprays,
-                    label: CollectionStrings.tabSprays,
-                  ),
-                  SegmentedTab(
-                    value: _PickerTab.flex,
-                    label: CollectionStrings.tabFlex,
-                  ),
-                ],
-                selected: tab,
-                onChanged: (t) => setState(() => _tab = t),
-              ),
-              CollectionSearchField(
-                key: ValueKey(tab),
-                hint: tab == _PickerTab.sprays
-                    ? CollectionStrings.searchSprays
-                    : CollectionStrings.searchFlex,
-                initialValue: _search,
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                onChanged: (v) => setState(() => _search = v),
-              ),
-              SavingBar(visible: snapshot.isPending),
-              Expanded(
-                child: items.isEmpty
-                    ? ListView(
-                        controller: scroll,
-                        children: [
-                          EmptyView(
-                            icon: _search.trim().isNotEmpty
-                                ? Icons.search_off
-                                : Icons.format_paint_outlined,
-                            message: _search.trim().isNotEmpty
-                                ? CollectionStrings.noResults
-                                : (tab == _PickerTab.flex
-                                      ? CollectionStrings.noFlex
-                                      : CollectionStrings.noSprays),
+              data: (snapshot, owned, db) {
+                final current = snapshot.loadout.expression(widget.slot);
+                final items =
+                    <({String id, String? image, String name, bool flex})>[
+                      if (tab == _PickerTab.sprays) ...[
+                        if (matchesSearch(_search, [
+                          CollectionStrings.emptySlot,
+                        ]))
+                          (
+                            id: SpecialIds.nullSpray,
+                            image: null,
+                            name: CollectionStrings.emptySlot,
+                            flex: false,
                           ),
-                        ],
-                      )
-                    : GridView.builder(
-                        controller: scroll,
-                        keyboardDismissBehavior:
-                            ScrollViewKeyboardDismissBehavior.onDrag,
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                        for (final s in ownedSprays(owned, db))
+                          if (matchesSearch(_search, [s.displayName]))
+                            (
+                              id: s.uuid,
+                              image: s.image,
+                              name: s.displayName,
+                              flex: false,
+                            ),
+                      ] else
+                        for (final f in ownedFlex(owned, db))
+                          if (matchesSearch(_search, [f.displayName]))
+                            (
+                              id: f.uuid,
+                              image: f.displayIcon,
+                              name: f.displayName,
+                              flex: true,
+                            ),
+                    ];
+                bool isCurrent(String id, bool flex) =>
+                    current != null &&
+                    current.assetId == id &&
+                    current.isFlex == flex;
+                final searching = _search.trim().isNotEmpty;
+                return [
+                  SliverToBoxAdapter(
+                    child: SavingBar(visible: snapshot.isPending),
+                  ),
+                  if (items.isEmpty)
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: EmptyView(
+                        icon: searching
+                            ? Icons.search_off
+                            : Icons.format_paint_outlined,
+                        title: searching
+                            ? CollectionStrings.noResultsTitle
+                            : null,
+                        message: searching
+                            ? CollectionStrings.noResults
+                            : (tab == _PickerTab.flex
+                                  ? CollectionStrings.noFlex
+                                  : CollectionStrings.noSprays),
+                      ),
+                    )
+                  else
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                      sliver: SliverGrid.builder(
                         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                           maxCrossAxisExtent: 120,
                           mainAxisSpacing: 10,
                           crossAxisSpacing: 10,
-                          mainAxisExtent: tileExtent(context, image: 72),
+                          mainAxisExtent: tileExtent(
+                            context,
+                            image: _artHeight,
+                          ),
                         ),
                         itemCount: items.length,
                         itemBuilder: (context, i) {
@@ -441,16 +461,18 @@ class _ExpressionPickerSheetState extends ConsumerState<ExpressionPickerSheet> {
                             onTap: selected || snapshot.isPending
                                 ? null
                                 : () => unawaited(
-                                    pick(item.id, item.name, item.flex),
+                                    _pick(item.id, item.name, item.flex),
                                   ),
                           );
                         },
                       ),
-              ),
-            ],
-          );
-        },
-      ),
+                    ),
+                ];
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

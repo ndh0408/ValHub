@@ -20,7 +20,7 @@ import '../../core/ui/net_image.dart';
 import '../../core/ui/skeleton.dart';
 import '../../core/ui/sub_page.dart';
 import '../../core/ui/val_widgets.dart';
-import '../../core/ui/vnd_estimate.dart';
+import '../../core/ui/price_estimate.dart';
 import '../community/ui/skins/skin_vote_button.dart';
 import '../store/ui/widgets/store_ui_bits.dart';
 import 'providers/skin_availability.dart';
@@ -537,7 +537,7 @@ class _PriceLabel extends StatelessWidget {
           estimate: quote.isEstimate,
           style: style,
         ),
-        VndEstimate(vp),
+        PriceEstimate(vp),
       ],
     );
   }

@@ -59,12 +59,17 @@ abstract final class SettingsStrings {
   static const platformHint =
       'Người chơi console chọn đúng nền tảng để xem lịch sử đấu chính xác.';
   static String platformAppliesTo(String account) => 'Áp dụng cho $account';
-  static const optionShowVnd = 'Hiện giá VND ước tính';
-  static const optionShowVndSubtitle =
-      'Cạnh giá VP, quy đổi theo gói nạp VP có lợi nhất tại Việt Nam';
-  static const optionShowVndUnavailable =
-      'Chưa có bảng giá nạp VP đã xác minh, nên chưa thể ước tính.';
-  static const optionShowVndInfo = 'Cách tính giá VND';
+  static const optionShowPrice = 'Hiện giá quy đổi ước tính';
+  static String optionShowPriceSubtitle(String vp, String price) =>
+      'Cạnh giá VP, ví dụ $vp $price';
+  static const optionShowPriceUnavailable =
+      'Chưa có bảng giá đã xác minh cho khu vực của bạn — hãy nhập giá gói '
+      'VP của bạn.';
+  static const optionShowPriceInfo = 'Cách tính giá quy đổi';
+  static const optionOwnPrice = 'Giá gói VP của bạn';
+  static const optionOwnPriceEmpty =
+      'Chưa nhập — dùng bảng giá của khu vực nếu có';
+  static String optionOwnPriceValue(String vp, String price) => '$vp = $price';
 
   // THÔNG BÁO
   static const notifStoreReset = 'Khi cửa hàng làm mới';

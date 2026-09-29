@@ -47,6 +47,16 @@ abstract final class CollectionStrings {
   // --------------------------------------------------- S31 / S32 pickers
   static const playerCardTitle = 'Đổi thẻ người chơi';
   static const playerTitleTitle = 'Đổi danh hiệu';
+  static const playerCardSubtitle =
+      'Hiện ở sảnh chờ, bảng điểm và khi bạn hạ gục đối thủ.';
+  static const playerTitleSubtitle =
+      'Hiện dưới tên của bạn ở sảnh chờ và trong trận.';
+  static String equippedCardLabel(String name) => 'Thẻ đang dùng: $name';
+  static const unknownCard = 'Thẻ không xác định';
+  static String cardsCount(String n) => '$n thẻ đã sở hữu';
+  static String titlesCount(String n) => '$n danh hiệu đã sở hữu';
+  static const lobbyBanner = 'Ảnh ở sảnh chờ';
+  static const preview = 'Xem trước';
   static const searchCards = 'Tìm thẻ người chơi…';
   static const searchTitles = 'Tìm danh hiệu…';
   static const noTitle = ContentStrings.noTitle;
@@ -60,6 +70,12 @@ abstract final class CollectionStrings {
   // ------------------------------------------------ S33 / S34 weapons
   static const weaponLoadoutTitle = 'Trang bị vũ khí';
   static const weaponSkinsTitle = 'Chọn skin';
+  static String weaponLoadoutSubtitle(int custom, int total) =>
+      '$custom/$total vũ khí đang dùng skin';
+  static const searchWeapons = 'Tìm vũ khí, skin hoặc phụ kiện…';
+  static String equippedLine(String skin) => 'Đang dùng: $skin';
+  static String ownedForWeapon(int n) =>
+      n == 0 ? 'Chưa có skin nào' : '$n skin đã sở hữu';
   static const defaultSkin = ContentStrings.defaultSkin;
   static const searchSkins = 'Tìm skin…';
   static const sortLabel = 'Sắp xếp';
@@ -84,6 +100,7 @@ abstract final class CollectionStrings {
   static const changeBuddy = 'Đổi';
   static const locked = 'Chưa mở khóa';
   static const playVideo = 'Xem video';
+  static const playLevelVideo = 'Xem video cấp này';
   static const skinNotOwned = 'Bạn chưa sở hữu skin này.';
   static const skinNotFound = 'Không tìm thấy skin này.';
   static const meleeNoBuddy = 'Vũ khí cận chiến không gắn được phụ kiện.';
@@ -112,6 +129,7 @@ abstract final class CollectionStrings {
   static String slotName(int slot) =>
       slot >= 0 && slot < slotNames.length ? slotNames[slot] : '${slot + 1}';
   static String slotTitle(int slot) => 'Ô ${slotName(slot).toLowerCase()}';
+  static const expressionsSlots = 'Các ô trên vòng';
   static const tabSprays = 'Hình phun sơn';
   static const tabFlex = 'Flex';
   static const searchSprays = 'Tìm hình phun sơn…';

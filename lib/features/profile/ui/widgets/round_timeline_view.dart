@@ -613,7 +613,10 @@ class _KillRow extends StatelessWidget {
                 height: 18,
                 child: how == null
                     ? Center(child: howIcon)
-                    : Tooltip(message: how, child: Center(child: howIcon)),
+                    : Tooltip(
+                        message: how,
+                        child: Center(child: howIcon),
+                      ),
               ),
             ),
             side(victimAgent, victimName, sideColor(victim)),

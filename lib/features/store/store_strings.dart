@@ -1,4 +1,4 @@
-/// Vietnamese strings of the store feature (VF §6.2 S10–S14, §6.9, §8.2).
+/// Strings of the store feature (VF §6.2 S10–S14, §6.9, §8.2).
 abstract final class StoreStrings {
   static const title = 'Cửa hàng';
   static const segmentDaily = 'Hằng ngày';
@@ -81,11 +81,11 @@ abstract final class StoreStrings {
   static const shareDailyTitle = 'Chia sẻ cửa hàng hôm nay';
   static const shareNightMarketTitle = 'Chia sẻ Chợ Đêm';
   static const shareSubtitle =
-      'Tạo ảnh để đăng lên Zalo, Messenger, Facebook hay Discord.';
+      'Tạo ảnh đẹp để khoe với bạn bè qua bất kỳ ứng dụng nào.';
   static const shareShowRiotId = 'Hiện Riot ID trên ảnh';
   static const shareShowRiotIdHint = 'Tắt sẵn để giữ riêng tư cho bạn.';
-  static const shareShowVnd = 'Hiện giá VND ước tính';
-  static const shareShowVndHint = 'Quy đổi theo gói nạp VP có lợi nhất.';
+  static const shareShowPrice = 'Hiện giá quy đổi ước tính';
+  static const shareShowPriceHint = 'Quy đổi theo gói VP có lợi nhất.';
   static const sharePreparing = 'Đang tải ảnh skin…';
   static const shareButton = 'Chia sẻ';
   static const shareFailed = 'Không tạo được ảnh. Vui lòng thử lại.';
@@ -94,8 +94,8 @@ abstract final class StoreStrings {
   static const shareCardBrand = 'ValVN';
   static const shareCardMark = 'V';
   static const shareCardWatermark = 'VALVN';
-  static const shareCardTagline = 'Trợ thủ VALORANT tiếng Việt';
-  static const shareCardVndNote = 'Giá VND là ước tính theo gói nạp VP.';
+  static const shareCardTagline = 'Trợ thủ VALORANT của bạn';
+  static const shareCardPriceNote = 'Giá quy đổi chỉ là ước tính theo gói VP.';
 
   /// "Tổng 6.500 VP".
   static String shareCardTotal(String vp) => 'Tổng $vp';

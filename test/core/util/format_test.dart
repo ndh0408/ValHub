@@ -170,10 +170,30 @@ void main() {
     });
   });
 
-  group('VND and wall time', () {
-    test('formatVnd', () {
-      expect(formatVnd(1290000), '1.290.000 ₫');
-      expect(formatEstimatedVnd(268000), '≈ 268.000 ₫');
+  group('currencies, locales and wall time', () {
+    test('formatCurrency follows the currency and the locale', () {
+      expect(formatCurrency(1290000, 'VND', locale: 'vi'), '1.290.000\u00A0₫');
+      expect(formatCurrency(16.1, 'USD', locale: 'en_US'), r'$16.10');
+      expect(
+        formatEstimatedPrice(268000, 'VND', locale: 'vi'),
+        '≈ 268.000\u00A0₫',
+      );
+      expect(currencyDecimalDigits('VND'), 0);
+      expect(currencyDecimalDigits('USD'), 2);
+      expect(currencyDecimalDigits('JPY'), 0);
+    });
+
+    test('numbers, dates and times take a locale', () {
+      final d = DateTime(2026, 9, 22, 14, 5);
+      expect(formatNumber(1162500, locale: 'en_US'), '1,162,500');
+      expect(formatDate(d, locale: 'en_US'), '9/22/2026');
+      expect(formatTime(d, locale: 'en_US'), '2:05\u202FPM');
+      expect(formatWeekday(d, locale: 'en_US'), 'Tuesday');
+      expect(formatWeekday(d, locale: 'ja'), '火曜日');
+      expect(formatPercent(0.256, decimals: 1, locale: 'en_US'), '25.6%');
+      // The default is the current UI locale (Vietnamese today).
+      expect(formatDate(d), '22/09/2026');
+      expect(formatTime(d), '14:05');
     });
 
     test('formatWallTime uses today / tomorrow / weekday, 24 h', () {

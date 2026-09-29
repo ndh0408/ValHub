@@ -18,7 +18,7 @@ import '../../../core/ui/net_image.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/skin_art_card.dart';
 import '../../../core/ui/sub_page.dart';
-import '../../../core/ui/vnd_estimate.dart';
+import '../../../core/ui/price_estimate.dart';
 import '../collection_routes.dart';
 import '../collection_strings.dart';
 import '../data/collection_search.dart';
@@ -408,7 +408,11 @@ class _PriceLine extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        VndEstimate(vp, interactive: false, style: theme.textTheme.labelSmall),
+        PriceEstimate(
+          vp,
+          interactive: false,
+          style: theme.textTheme.labelSmall,
+        ),
       ],
     );
   }

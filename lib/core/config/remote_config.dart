@@ -22,7 +22,7 @@ class RemoteConfig {
     this.apiUserAgent,
     this.clientVersionOverride,
     this.communityBaseUrl,
-    this.vpPrices,
+    this.vpPrices = const VpPriceCatalog(),
   });
 
   static const defaults = RemoteConfig();
@@ -39,7 +39,7 @@ class RemoteConfig {
       apiUserAgent: asNonEmptyString(m['apiUserAgent']),
       clientVersionOverride: asNonEmptyString(m['clientVersionOverride']),
       communityBaseUrl: asNonEmptyString(m['communityBaseUrl']),
-      vpPrices: VpPriceTable.fromJson(m['vpPricesVnd']),
+      vpPrices: VpPriceCatalog.fromJson(m['vpPrices']),
     );
   }
 
@@ -60,9 +60,10 @@ class RemoteConfig {
   /// Replaces `AppConstants.communityBaseUrl` (community server).
   final String? communityBaseUrl;
 
-  /// Official Vietnamese VP top-up packages (`vpPricesVnd`) used for the
-  /// "≈ … ₫" estimates; `null` hides them.
-  final VpPriceTable? vpPrices;
+  /// Verified VP pack prices per country (`vpPrices`: ISO 3166-1 alpha-2 →
+  /// `{currency, packs: [{vp, price}], source, updated}`) for the local
+  /// price estimates; a country without a verified table shows none.
+  final VpPriceCatalog vpPrices;
 
   bool flag(String name, {bool fallback = false}) => flags[name] ?? fallback;
 
@@ -73,7 +74,7 @@ class RemoteConfig {
     apiUserAgent: other.apiUserAgent ?? apiUserAgent,
     clientVersionOverride: other.clientVersionOverride ?? clientVersionOverride,
     communityBaseUrl: other.communityBaseUrl ?? communityBaseUrl,
-    vpPrices: other.vpPrices ?? vpPrices,
+    vpPrices: vpPrices.merge(other.vpPrices),
   );
 
   JsonMap toJson() => {
@@ -82,7 +83,7 @@ class RemoteConfig {
     'apiUserAgent': apiUserAgent,
     'clientVersionOverride': clientVersionOverride,
     'communityBaseUrl': communityBaseUrl,
-    'vpPricesVnd': vpPrices?.toJson(),
+    'vpPrices': vpPrices.toJson(),
   };
 }
 

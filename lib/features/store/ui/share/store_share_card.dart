@@ -1,6 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
-import '../../../../core/config/vp_prices.dart';
+import '../../../../core/config/local_price.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/val_widgets.dart';
@@ -20,7 +20,7 @@ class StoreShareCard extends StatelessWidget {
     super.key,
     required this.data,
     this.riotId,
-    this.vnd,
+    this.price,
     this.imageFor,
   });
 
@@ -32,8 +32,8 @@ class StoreShareCard extends StatelessWidget {
   /// Riot ID line ("Tên#TAG"); hidden when `null`.
   final String? riotId;
 
-  /// VND estimates next to the VP prices; hidden when `null`.
-  final VpPriceTable? vnd;
+  /// Local-currency estimates next to the VP prices; hidden when `null`.
+  final LocalPrice? price;
 
   /// Image provider per render URL (precached by the sheet).
   final ShareImageProviderFactory? imageFor;
@@ -56,7 +56,7 @@ class StoreShareCard extends StatelessWidget {
   }
 
   Widget _body() {
-    final vnd = this.vnd;
+    final price = this.price;
     return DecoratedBox(
       decoration: const BoxDecoration(
         color: _Ink.background,
@@ -91,18 +91,26 @@ class StoreShareCard extends StatelessWidget {
                 _Header(data: data, riotId: riotId),
                 const SizedBox(height: 14),
                 if (data.isNightMarket)
-                  _NightMarketGrid(items: data.items, vnd: vnd, imageFor: imageFor)
+                  _NightMarketGrid(
+                    items: data.items,
+                    price: price,
+                    imageFor: imageFor,
+                  )
                 else
                   for (var i = 0; i < data.items.length; i++) ...[
                     if (i > 0) const SizedBox(height: 8),
-                    _DailyRow(item: data.items[i], vnd: vnd, imageFor: imageFor),
+                    _DailyRow(
+                      item: data.items[i],
+                      price: price,
+                      imageFor: imageFor,
+                    ),
                   ],
                 const SizedBox(height: 12),
-                _Totals(data: data, vnd: vnd),
+                _Totals(data: data, price: price),
                 const SizedBox(height: 12),
                 const Divider(height: 1, thickness: 1, color: _Ink.hairline),
                 const SizedBox(height: 10),
-                _Footer(showVndNote: vnd != null),
+                _Footer(showPriceNote: price != null),
               ],
             ),
           ),
@@ -288,10 +296,8 @@ Widget _render(ShareImageProviderFactory? imageFor, String? url) {
   );
 }
 
-String? _vndText(VpPriceTable? vnd, int? vp) {
-  final v = vp == null ? null : vnd?.estimateVnd(vp);
-  return v == null ? null : formatEstimatedVnd(v);
-}
+String? _priceText(LocalPrice? price, int? vp) =>
+    vp == null ? null : price?.format(vp);
 
 const _priceStyle = TextStyle(
   fontFamily: AppFonts.body,
@@ -301,7 +307,7 @@ const _priceStyle = TextStyle(
   color: _Ink.text,
 );
 
-const _vndStyle = TextStyle(
+const _estimateStyle = TextStyle(
   fontFamily: AppFonts.body,
   fontSize: 12,
   fontWeight: FontWeight.w500,
@@ -316,17 +322,17 @@ String _vp(int? amount) =>
 class _DailyRow extends StatelessWidget {
   const _DailyRow({
     required this.item,
-    required this.vnd,
+    required this.price,
     required this.imageFor,
   });
 
   final ShareOfferItem item;
-  final VpPriceTable? vnd;
+  final LocalPrice? price;
   final ShareImageProviderFactory? imageFor;
 
   @override
   Widget build(BuildContext context) {
-    final vndText = _vndText(vnd, item.price);
+    final priceText = _priceText(price, item.price);
     return Container(
       height: 96,
       decoration: _tile(item.tierColor),
@@ -364,8 +370,8 @@ class _DailyRow extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(_vp(item.price), maxLines: 1, style: _priceStyle),
-                if (vndText != null)
-                  Text(vndText, maxLines: 1, style: _vndStyle),
+                if (priceText != null)
+                  Text(priceText, maxLines: 1, style: _estimateStyle),
               ],
             ),
           ),
@@ -380,12 +386,12 @@ class _DailyRow extends StatelessWidget {
 class _NightMarketGrid extends StatelessWidget {
   const _NightMarketGrid({
     required this.items,
-    required this.vnd,
+    required this.price,
     required this.imageFor,
   });
 
   final List<ShareOfferItem> items;
-  final VpPriceTable? vnd;
+  final LocalPrice? price;
   final ShareImageProviderFactory? imageFor;
 
   @override
@@ -396,13 +402,19 @@ class _NightMarketGrid extends StatelessWidget {
       rows.add(
         Row(
           children: [
-            Expanded(child: _NightMarketTile(item: items[i], vnd: vnd, imageFor: imageFor)),
+            Expanded(
+              child: _NightMarketTile(
+                item: items[i],
+                price: price,
+                imageFor: imageFor,
+              ),
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: i + 1 < items.length
                   ? _NightMarketTile(
                       item: items[i + 1],
-                      vnd: vnd,
+                      price: price,
                       imageFor: imageFor,
                     )
                   : const SizedBox.shrink(),
@@ -418,17 +430,17 @@ class _NightMarketGrid extends StatelessWidget {
 class _NightMarketTile extends StatelessWidget {
   const _NightMarketTile({
     required this.item,
-    required this.vnd,
+    required this.price,
     required this.imageFor,
   });
 
   final ShareOfferItem item;
-  final VpPriceTable? vnd;
+  final LocalPrice? price;
   final ShareImageProviderFactory? imageFor;
 
   @override
   Widget build(BuildContext context) {
-    final vndText = _vndText(vnd, item.price);
+    final priceText = _priceText(price, item.price);
     final base = item.basePrice;
     return Container(
       height: 200,
@@ -498,7 +510,7 @@ class _NightMarketTile extends StatelessWidget {
                 Text(
                   formatNumber(base),
                   maxLines: 1,
-                  style: _vndStyle.copyWith(
+                  style: _estimateStyle.copyWith(
                     decoration: TextDecoration.lineThrough,
                     decorationColor: _Ink.muted,
                   ),
@@ -506,12 +518,12 @@ class _NightMarketTile extends StatelessWidget {
               ],
             ],
           ),
-          if (vndText != null)
+          if (priceText != null)
             Text(
-              vndText,
+              priceText,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: _vndStyle.copyWith(fontSize: 11),
+              style: _estimateStyle.copyWith(fontSize: 11),
             ),
         ],
       ),
@@ -520,17 +532,17 @@ class _NightMarketTile extends StatelessWidget {
 }
 
 class _Totals extends StatelessWidget {
-  const _Totals({required this.data, required this.vnd});
+  const _Totals({required this.data, required this.price});
 
   final StoreShareData data;
-  final VpPriceTable? vnd;
+  final LocalPrice? price;
 
   @override
   Widget build(BuildContext context) {
     final nm = data.isNightMarket;
     final amount = nm ? data.savingsVp : data.totalVp;
     if (amount <= 0) return const SizedBox.shrink();
-    final vndText = _vndText(vnd, amount);
+    final priceText = _priceText(price, amount);
     final label = nm
         ? StoreStrings.shareCardSaved(formatVp(amount))
         : StoreStrings.shareCardTotal(formatVp(amount));
@@ -553,9 +565,13 @@ class _Totals extends StatelessWidget {
             ),
           ),
         ),
-        if (vndText != null) ...[
+        if (priceText != null) ...[
           const SizedBox(width: 8),
-          Text(vndText, maxLines: 1, style: _vndStyle.copyWith(fontSize: 13)),
+          Text(
+            priceText,
+            maxLines: 1,
+            style: _estimateStyle.copyWith(fontSize: 13),
+          ),
         ],
       ],
     );
@@ -563,9 +579,9 @@ class _Totals extends StatelessWidget {
 }
 
 class _Footer extends StatelessWidget {
-  const _Footer({required this.showVndNote});
+  const _Footer({required this.showPriceNote});
 
-  final bool showVndNote;
+  final bool showPriceNote;
 
   @override
   Widget build(BuildContext context) {
@@ -594,9 +610,9 @@ class _Footer extends StatelessWidget {
             ),
           ],
         ),
-        if (showVndNote) ...[
+        if (showPriceNote) ...[
           const SizedBox(height: 4),
-          const Text(StoreStrings.shareCardVndNote, style: small),
+          const Text(StoreStrings.shareCardPriceNote, style: small),
         ],
       ],
     );

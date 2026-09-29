@@ -6,19 +6,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account_providers.dart';
+import '../../../../core/config/local_price.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/error_view.dart';
 import '../../../../core/ui/sub_page.dart';
 import '../../../../core/ui/val_widgets.dart';
-import '../../../../core/ui/vnd_estimate.dart';
 import '../../providers/store_share.dart';
 import '../../store_strings.dart';
 import 'store_share_card.dart';
 
 /// "Chia sẻ ảnh": preview of the branded picture with the "Hiện Riot ID"
-/// (off by default) and "Hiện giá VND" switches, then the OS share sheet
-/// with the PNG (Zalo, Messenger, Facebook, Discord…).
+/// (off by default) and "Hiện giá quy đổi" switches, then the platform's
+/// native share sheet with the PNG.
 Future<void> showStoreShareSheet(
   BuildContext context, {
   required StoreShareData data,
@@ -56,7 +56,7 @@ class _StoreShareSheetBodyState extends ConsumerState<StoreShareSheetBody> {
   final _boundary = GlobalKey();
   final _shareButton = GlobalKey();
   bool _showRiotId = false;
-  bool _showVnd = true;
+  bool _showPrice = true;
   bool _ready = false;
   bool _busy = false;
 
@@ -99,8 +99,7 @@ class _StoreShareSheetBodyState extends ConsumerState<StoreShareSheetBody> {
       if (bytes == null) throw StateError('no png');
       final stamp = _stamp(widget.data.createdAt);
       final nm = widget.data.isNightMarket;
-      final box =
-          _shareButton.currentContext?.findRenderObject() as RenderBox?;
+      final box = _shareButton.currentContext?.findRenderObject() as RenderBox?;
       final origin = box == null || !box.hasSize
           ? null
           : box.localToGlobal(Offset.zero) & box.size;
@@ -132,7 +131,7 @@ class _StoreShareSheetBodyState extends ConsumerState<StoreShareSheetBody> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final riotId = ref.watch(activeAccountProvider.select((a) => a?.riotId));
-    final table = ref.watch(vndPriceTableProvider);
+    final price = ref.watch(localPriceProvider);
     final factory = ref.watch(shareImageProviderFactoryProvider);
     final busy = _busy || !_ready;
     final switches = [
@@ -144,13 +143,13 @@ class _StoreShareSheetBodyState extends ConsumerState<StoreShareSheetBody> {
           value: _showRiotId,
           onChanged: (v) => setState(() => _showRiotId = v),
         ),
-      if (table != null)
+      if (price != null)
         _SwitchRow(
-          title: StoreStrings.shareShowVnd,
-          subtitle: StoreStrings.shareShowVndHint,
+          title: StoreStrings.shareShowPrice,
+          subtitle: StoreStrings.shareShowPriceHint,
           icon: Icons.payments_outlined,
-          value: _showVnd,
-          onChanged: (v) => setState(() => _showVnd = v),
+          value: _showPrice,
+          onChanged: (v) => setState(() => _showPrice = v),
         ),
     ];
     return ListView(
@@ -168,7 +167,7 @@ class _StoreShareSheetBodyState extends ConsumerState<StoreShareSheetBody> {
                 child: StoreShareCard(
                   data: widget.data,
                   riotId: _showRiotId ? riotId : null,
-                  vnd: _showVnd ? table : null,
+                  price: _showPrice ? price : null,
                   imageFor: factory,
                 ),
               ),
@@ -193,9 +192,7 @@ class _StoreShareSheetBodyState extends ConsumerState<StoreShareSheetBody> {
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   )
-                : Icon(
-                    isCupertino(context) ? Icons.ios_share : Icons.share,
-                  ),
+                : Icon(isCupertino(context) ? Icons.ios_share : Icons.share),
             label: Text(
               _ready ? StoreStrings.shareButton : StoreStrings.sharePreparing,
               maxLines: 1,
@@ -230,10 +227,7 @@ class _SwitchRow extends StatelessWidget {
       Haptics.selection();
       onChanged(v);
     },
-    secondary: Icon(
-      icon,
-      color: legibleAccent(context, ValColors.red, min: 3),
-    ),
+    secondary: Icon(icon, color: legibleAccent(context, ValColors.red, min: 3)),
     title: Text(title),
     subtitle: Text(subtitle),
   );

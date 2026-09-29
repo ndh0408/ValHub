@@ -21,6 +21,9 @@ abstract final class PrefKeys {
   static const clientVersion = 'app.clientVersion';
   static const remoteConfig = 'app.remoteConfig';
   static const appSettings = 'settings.app';
+
+  /// The user's own VP pack price (`VpPriceOverride`).
+  static const vpPriceOverride = 'settings.vpPrice';
   static const notificationPrimingShown = 'app.notificationPrimingShown';
 
   /// Per-account key wiped on sign-out.

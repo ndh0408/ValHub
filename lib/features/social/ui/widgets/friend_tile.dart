@@ -48,8 +48,10 @@ Object friendAvatarHeroTag(String puuid) => 'friend-avatar-$puuid';
 
 /// [avatar] flying between the friends list and the chat header: the
 /// [FittedBox] scales it to the in-flight size (46 → 38 dp).
-Widget friendAvatarHero(Object tag, Widget avatar) =>
-    Hero(tag: tag, child: FittedBox(child: avatar));
+Widget friendAvatarHero(Object tag, Widget avatar) => Hero(
+  tag: tag,
+  child: FittedBox(child: avatar),
+);
 
 /// One row of the friends list (S60): card avatar with a presence dot,
 /// Riot ID, colored status line, a muted detail line (queue, party,

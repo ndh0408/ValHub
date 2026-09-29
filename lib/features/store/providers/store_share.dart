@@ -151,27 +151,25 @@ final shareImageProviderFactoryProvider = Provider<ShareImageProviderFactory>(
       ),
 );
 
-/// Sends a PNG to the OS share sheet (Zalo, Messenger, Facebook, Discord…).
+/// Sends a PNG to the platform's native share sheet.
 /// [origin] anchors the iPad popover.
-typedef StoreImageSharer =
-    Future<void> Function(
-      Uint8List png, {
-      required String fileName,
-      String? subject,
-      Rect? origin,
-    });
+typedef StoreImageSharer = Future<void> Function(
+  Uint8List png, {
+  required String fileName,
+  String? subject,
+  Rect? origin,
+});
 
 final storeImageSharerProvider = Provider<StoreImageSharer>(
-  (ref) =>
-      (png, {required fileName, subject, origin}) async {
-        await SharePlus.instance.share(
-          ShareParams(
-            files: [XFile.fromData(png, mimeType: 'image/png')],
-            fileNameOverrides: [fileName],
-            subject: subject,
-            title: subject,
-            sharePositionOrigin: origin,
-          ),
-        );
-      },
+  (ref) => (png, {required fileName, subject, origin}) async {
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [XFile.fromData(png, mimeType: 'image/png')],
+        fileNameOverrides: [fileName],
+        subject: subject,
+        title: subject,
+        sharePositionOrigin: origin,
+      ),
+    );
+  },
 );

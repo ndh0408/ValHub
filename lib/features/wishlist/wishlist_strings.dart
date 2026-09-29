@@ -5,6 +5,7 @@ abstract final class WishlistStrings {
   static const title = 'Wishlist';
   static const subtitle = 'Skin bạn đang săn';
   static const catalogTitle = 'Tất cả skin';
+  static const catalogSubtitle = 'Chạm ♡ để thêm skin vào wishlist';
 
   /// "Wishlist của Tên#TAG" (VF §8.5 wishlistOfAccount).
   static String ofAccount(String riotId) => 'Wishlist của $riotId';

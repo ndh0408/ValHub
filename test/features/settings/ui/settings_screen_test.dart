@@ -422,12 +422,14 @@ void main() {
       await _drainSnackBars(tester);
     });
 
-    testWidgets('privacy policy and terms open the legal document screen', (
+    testWidgets('privacy policy and terms open from the About hub', (
       tester,
     ) async {
       await pumpSettings(tester, accounts: [testAccount(1)]);
 
-      await tester.tap(find.text(SettingsStrings.privacyPolicy));
+      await tester.tap(find.text(SettingsStrings.aboutTitle));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(LegalDocuments.privacy.title));
       await tester.pumpAndSettle();
       expect(
         tester
@@ -438,7 +440,7 @@ void main() {
 
       await tester.pageBack();
       await tester.pumpAndSettle();
-      await tester.tap(find.text(SettingsStrings.terms));
+      await tester.tap(find.text(LegalDocuments.terms.title));
       await tester.pumpAndSettle();
       expect(
         tester

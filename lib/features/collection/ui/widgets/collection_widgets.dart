@@ -136,7 +136,11 @@ List<Widget> loadoutSlivers(
     return [
       SliverFillRemaining(
         hasScrollBody: false,
-        child: ErrorView(error: owned.error!, puuid: puuid, onRetry: retryOwned),
+        child: ErrorView(
+          error: owned.error!,
+          puuid: puuid,
+          onRetry: retryOwned,
+        ),
       ),
     ];
   }
@@ -221,10 +225,8 @@ class _CollectionSearchFieldState extends State<CollectionSearchField> {
 }
 
 /// Font size [size] after the user's text scaling (clamped to 200 %).
-double _scaled(BuildContext context, double size) => math.min(
-  MediaQuery.textScalerOf(context).scale(size),
-  size * 2,
-);
+double _scaled(BuildContext context, double size) =>
+    math.min(MediaQuery.textScalerOf(context).scale(size), size * 2);
 
 /// Height of a pinned [SearchStrip] (search field, plus the filter row when
 /// [filters]) at the current text size, so it never clips up to 200 %.
@@ -524,10 +526,8 @@ class EquippedBadge extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-              ),
+              style: Theme.of(context).textTheme.labelSmall
+                  ?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
             ),
           ),
         ],

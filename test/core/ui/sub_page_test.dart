@@ -1,13 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:valvn/core/config/local_price.dart';
 import 'package:valvn/core/config/remote_config.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/settings/app_settings.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/theme/app_theme.dart';
+import 'package:valvn/core/ui/price_estimate.dart';
 import 'package:valvn/core/ui/sub_page.dart';
-import 'package:valvn/core/ui/vnd_estimate.dart';
 
 import '../../helpers/test_prefs.dart';
 
@@ -18,13 +19,16 @@ Widget _app(Widget home) => MaterialApp(
 );
 
 final _config = RemoteConfig.fromJson({
-  'vpPricesVnd': {
-    'sourceName': 'Nguồn thử',
-    'updatedAt': '2026-08-07',
-    'packages': [
-      {'vp': 13250, 'vnd': 2000000},
-      {'vp': 610, 'vnd': 100000},
-    ],
+  'vpPrices': {
+    'VN': {
+      'currency': 'VND',
+      'source': 'https://nguon.example/gia',
+      'updated': '2026-08-07',
+      'packs': [
+        {'vp': 13250, 'price': 2000000},
+        {'vp': 610, 'price': 100000},
+      ],
+    },
   },
 });
 
@@ -107,22 +111,24 @@ void main() {
     expect(find.text('Nội dung sheet'), findsNothing);
   });
 
-  group('VndEstimate', () {
+  group('PriceEstimate', () {
     Future<ProviderContainer> pump(
       WidgetTester tester, {
       RemoteConfig? config,
+      String country = 'VN',
     }) async {
       final prefs = await createTestPrefs();
       final container = ProviderContainer.test(
         overrides: [
           prefsProvider.overrideWithValue(prefs),
           remoteConfigProvider.overrideWithValue(config ?? _config),
+          deviceCountryProvider.overrideWithValue(country),
         ],
       );
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: _app(const Scaffold(body: Center(child: VndEstimate(1775)))),
+          child: _app(const Scaffold(body: Center(child: PriceEstimate(1775)))),
         ),
       );
       return container;
@@ -132,11 +138,18 @@ void main() {
       tester,
     ) async {
       await pump(tester);
-      expect(find.text('≈ 268.000 ₫'), findsOneWidget);
-      await tester.tap(find.text('≈ 268.000 ₫'));
+      expect(find.text('≈ 268.000\u00A0₫'), findsOneWidget);
+      await tester.tap(find.text('≈ 268.000\u00A0₫'));
       await tester.pumpAndSettle();
-      expect(find.text(CommonStrings.vndEstimateTitle), findsOneWidget);
-      expect(find.text(CommonStrings.vndSource('Nguồn thử')), findsOneWidget);
+      expect(find.text(CommonStrings.priceEstimateTitle), findsOneWidget);
+      expect(
+        find.text(CommonStrings.priceSource('nguon.example')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(CommonStrings.priceSourceOfficial('VN')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('hidden without a verified table', (tester) async {
@@ -144,11 +157,51 @@ void main() {
       expect(find.textContaining('₫'), findsNothing);
     });
 
+    testWidgets('hidden for a country without verified prices', (tester) async {
+      await pump(tester, country: 'FR');
+      expect(find.textContaining('≈'), findsNothing);
+    });
+
+    testWidgets('the user can enter their own pack price', (tester) async {
+      final container = await pump(tester, country: 'FR');
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: _app(
+            Builder(
+              builder: (context) => Scaffold(
+                body: Column(
+                  children: [
+                    const PriceEstimate(1775),
+                    TextButton(
+                      onPressed: () => showVpPriceOverrideSheet(context),
+                      child: const Text('mở'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('mở'));
+      await tester.pumpAndSettle();
+      final fields = find.byType(TextField);
+      await tester.enterText(fields.at(0), 'eur');
+      await tester.enterText(fields.at(1), '1000');
+      await tester.enterText(fields.at(2), '9,99');
+      await tester.pump();
+      await tester.tap(find.text(CommonStrings.priceOverrideSave));
+      await tester.pumpAndSettle();
+      expect(container.read(localPriceProvider)!.currency, 'EUR');
+      expect(find.textContaining('≈'), findsOneWidget);
+    });
+
     testWidgets('hidden when the user turns it off', (tester) async {
       final container = await pump(tester);
       await container
           .read(appSettingsProvider.notifier)
-          .update((s) => s.copyWith(showVndEstimate: false));
+          .update((s) => s.copyWith(showPriceEstimate: false));
       await tester.pump();
       expect(find.textContaining('₫'), findsNothing);
     });

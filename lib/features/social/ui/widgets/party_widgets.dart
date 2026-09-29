@@ -249,10 +249,8 @@ class _QueuePickerBody extends ConsumerWidget {
               Builder(
                 builder: (context) {
                   final current = c.queueId == party.queueId;
-                  final max = kQueuePartyLimits[c.queueId.replaceFirst(
-                    'console_',
-                    '',
-                  )];
+                  final max =
+                      kQueuePartyLimits[c.queueId.replaceFirst('console_', '')];
                   final String? subtitle = !c.eligible
                       ? SocialStrings.sentence(queueBlockReason(c, party))
                       : max != null

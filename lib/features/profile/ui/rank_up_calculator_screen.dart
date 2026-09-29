@@ -139,11 +139,7 @@ class _RankUpCalculatorScreenState
               onSelected: (t) => setState(() => _target = t),
             ),
             const SizedBox(height: 16),
-            _Results(
-              puuid: puuid,
-              target: target,
-              current: current,
-            ),
+            _Results(puuid: puuid, target: target, current: current),
           ],
         ),
       ),
@@ -209,10 +205,7 @@ class _CurrentRankCard extends StatelessWidget {
       gradient: LinearGradient(
         begin: Alignment.centerLeft,
         end: Alignment.centerRight,
-        colors: [
-          color.withValues(alpha: 0.16),
-          color.withValues(alpha: 0),
-        ],
+        colors: [color.withValues(alpha: 0.16), color.withValues(alpha: 0)],
       ),
       child: Row(
         children: [

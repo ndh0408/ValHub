@@ -176,7 +176,9 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
       subtitle: facts.isEmpty ? null : facts.join(' · '),
       hero: GunHero(
         render: sel.render,
-        tint: hasTier ? skinTierColor(ref, context, skin.contentTierUuid) : null,
+        tint: hasTier
+            ? skinTierColor(ref, context, skin.contentTierUuid)
+            : null,
         heroTag: CollectionHeroTags.skin(skin.uuid),
         bottomStart: hasTier
             ? ContentTierBadge(

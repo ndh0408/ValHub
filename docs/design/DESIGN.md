@@ -69,8 +69,10 @@ File Figma: https://www.figma.com/design/AwxGtJGhawAIv4xqapRc1f
   phải (kiểu "Game Details" của ValBuddy); vừa nội dung (≤ 90%) hoặc kéo được với danh sách dài.
 - **Hộp thoại xác nhận**: `showConfirmDialog` (Cupertino trên iOS, Material 3 trên Android), hành động
   có hình phạt màu đỏ và luôn cần xác nhận.
-- **Giá VND ước tính**: chữ nhỏ muted "≈ 268.000 ₫" cạnh giá VP (quy đổi theo gói nạp lợi nhất ở
-  Việt Nam, nguồn + ngày trong sheet giải thích; tắt được trong Cài đặt).
-- **Giờ địa phương**: cạnh mọi đếm ngược có giờ thật theo múi giờ máy, 24 giờ, thứ tiếng Việt
+- **Giá quy đổi ước tính**: chữ nhỏ muted "≈ 268.000 ₫" / "≈ $16.10" cạnh giá VP, theo tiền tệ
+  của người dùng (giá gói VP họ tự nhập, hoặc bảng giá đã xác minh của khu vực máy); chạm để xem
+  cách tính, nguồn + ngày; tắt được trong Cài đặt; không có dữ liệu thì ẩn.
+- **Giờ địa phương**: cạnh mọi đếm ngược có giờ thật theo múi giờ và định dạng giờ của máy
   ("Làm mới lúc 07:00 ngày mai", "Kết thúc 23:59 thứ Hai 06/10").
-- **Tìm kiếm**: không phân biệt dấu/hoa thường ("thuong gioi" tìm ra "Thượng Giới").
+- **Tìm kiếm**: không phân biệt dấu/hoa thường/độ rộng ký tự ở mọi ngôn ngữ ("thuong gioi" tìm ra
+  "Thượng Giới", "strasse" ra "Straße").

@@ -2,36 +2,75 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/util/search_text.dart';
 
 void main() {
-  group('foldSearchText', () {
-    test('strips every Vietnamese mark and đ', () {
-      expect(foldSearchText('Thượng Giới'), 'thuong gioi');
-      expect(foldSearchText('ĐỘC QUYỀN'), 'doc quyen');
-      expect(foldSearchText('Đức'), 'duc');
+  group('foldForSearch', () {
+    test('Vietnamese: every tone / vowel mark and đ', () {
+      expect(foldForSearch('Thượng Giới'), 'thuong gioi');
+      expect(foldForSearch('ĐỘC QUYỀN'), 'doc quyen');
+      expect(foldForSearch('Đức'), 'duc');
       expect(
-        foldSearchText('àáạảãâầấậẩẫăằắặẳẵ èéẹẻẽêềếệểễ ìíịỉĩ'),
+        foldForSearch('àáạảãâầấậẩẫăằắặẳẵ èéẹẻẽêềếệểễ ìíịỉĩ'),
         'aaaaaaaaaaaaaaaaa eeeeeeeeeee iiiii',
       );
       expect(
-        foldSearchText('òóọỏõôồốộổỗơờớợởỡ ùúụủũưừứựửữ ỳýỵỷỹ'),
+        foldForSearch('òóọỏõôồốộổỗơờớợởỡ ùúụủũưừứựửữ ỳýỵỷỹ'),
         'ooooooooooooooooo uuuuuuuuuuu yyyyy',
       );
-      expect(foldSearchText('ÀÁẠẢÃ ƯỪỨỰỬỮ ỲÝỴỶỸ Đ'), 'aaaaa uuuuuu yyyyy d');
+      expect(foldForSearch('ÀÁẠẢÃ ƯỪỨỰỬỮ ỲÝỴỶỸ Đ'), 'aaaaa uuuuuu yyyyy d');
     });
 
-    test('handles combining (NFD) marks', () {
-      // "Vô" typed as V + o + U+0302.
-      expect(foldSearchText('Vô Cực'), 'vo cuc');
+    test('Western European letters', () {
+      expect(foldForSearch('Café Crème'), 'cafe creme');
+      expect(foldForSearch('Straße'), 'strasse');
+      expect(foldForSearch('STRAẞE'), 'strasse');
+      expect(foldForSearch('Ærø Œuvre'), 'aero oeuvre');
+      expect(foldForSearch('Señor Pokémon Über'), 'senor pokemon uber');
+      expect(foldForSearch('Ação Coração'), 'acao coracao');
+      expect(foldForSearch('Perché Città'), 'perche citta');
+    });
+
+    test('Polish and Turkish', () {
+      expect(foldForSearch('Łódź Źdźbło'), 'lodz zdzblo');
+      expect(foldForSearch('Şehir Ğ ıİ'), 'sehir g ii');
+      expect(foldForSearch('İSTANBUL'), 'istanbul');
+      expect(foldForSearch('DİYARBAKIR'), 'diyarbakir');
+    });
+
+    test('Greek and Cyrillic', () {
+      expect(foldForSearch('Άλφα ΈΝΑ'), 'αλφα ενα');
+      expect(foldForSearch('λόγος'), 'λογοσ');
+      expect(foldForSearch('Ёлка Йод'), 'елка иод');
+      expect(foldForSearch('Москва'), 'москва');
+    });
+
+    test('Arabic: harakat, tatweel and hamza forms', () {
+      expect(foldForSearch('مَرْحَبًا'), 'مرحبا');
+      expect(foldForSearch('عـــربي'), 'عربي');
+      expect(foldForSearch('أحمد إبراهيم آمن'), 'احمد ابراهيم امن');
+    });
+
+    test('full-width ASCII and ideographic space', () {
+      expect(foldForSearch('ＲＥＡＶＥＲ　ｖａｎｄａｌ'), 'reaver vandal');
+      expect(foldForSearch('１２３'), '123');
+    });
+
+    test('CJK, kana and Hangul are kept as is', () {
+      expect(foldForSearch('ガイコツ ぎんが'), 'ガイコツ ぎんが');
+      expect(foldForSearch('프라임 뱅가드'), '프라임 뱅가드');
+      expect(foldForSearch('幻象 冠军'), '幻象 冠军');
+      expect(foldForSearch('นักรบ'), 'นักรบ');
+    });
+
+    test('handles combining (NFD) input', () {
+      // "Vô Cực" typed as base letters + combining marks.
+      expect(foldForSearch('Vô Cực'), 'vo cuc');
+      expect(foldForSearch('Café'), 'cafe');
     });
 
     test('collapses whitespace and trims', () {
-      expect(foldSearchText('  Vandal \t  Reaver\n'), 'vandal reaver');
-      expect(foldSearchText('a b'), 'a b');
-      expect(foldSearchText(''), '');
-      expect(foldSearchText('   '), '');
-    });
-
-    test('folds common Latin accents', () {
-      expect(foldSearchText('Pokémon Señor'), 'pokemon senor');
+      expect(foldForSearch('  Vandal \t  Reaver\n'), 'vandal reaver');
+      expect(foldForSearch('a b'), 'a b');
+      expect(foldForSearch(''), '');
+      expect(foldForSearch('   '), '');
     });
   });
 
@@ -43,6 +82,8 @@ void main() {
       expect(matchesSearch('thượng giới', [name]), isTrue);
       expect(matchesSearch('THUONG GIOI', [name]), isTrue);
       expect(matchesSearch('THƯỢNG GIỚI', [name]), isTrue);
+      expect(matchesSearch('strasse', ['Die Straße']), isTrue);
+      expect(matchesSearch('sehir', ['Şehir Efsanesi']), isTrue);
     });
 
     test('every word must match, in any order and across candidates', () {
@@ -65,7 +106,7 @@ void main() {
   });
 
   test('searchTokens / matchesTokens', () {
-    final key = foldSearchText('Bulldog Vô Cực');
+    final key = foldForSearch('Bulldog Vô Cực');
     expect(searchTokens('  VÔ   cuc '), ['vo', 'cuc']);
     expect(matchesTokens(key, searchTokens('vô cực')), isTrue);
     expect(matchesTokens(key, searchTokens('vo phantom')), isFalse);

@@ -9,7 +9,7 @@ import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/empty_view.dart';
-import '../../../../core/ui/vnd_estimate.dart';
+import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 import '../../../community/ui/share_to_community_button.dart';
@@ -141,7 +141,7 @@ class NightMarketSection extends ConsumerWidget {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      VndEstimate(nm.totalSavings),
+                      PriceEstimate(nm.totalSavings),
                     ],
                   ),
                 ),

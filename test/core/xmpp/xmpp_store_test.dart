@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/domain/competitive/names.dart';
+import 'package:valvn/core/util/search_text.dart';
 import 'package:valvn/core/xmpp/xmpp.dart';
 
 import 'fake_xmpp_server.dart';
@@ -263,8 +264,8 @@ void main() {
       store.dispose();
     });
 
-    test('foldVietnamese strips diacritics', () {
-      expect(foldVietnamese('ĐỨC Ánh Hường'), 'duc anh huong');
+    test('friend search folds diacritics', () {
+      expect(foldForSearch('ĐỨC Ánh Hường'), 'duc anh huong');
     });
   });
 }

@@ -10,7 +10,7 @@ import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/currency_amount.dart';
-import '../../../../core/ui/vnd_estimate.dart';
+import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
 import '../../store_strings.dart';
@@ -148,7 +148,7 @@ class DailyOfferCard extends ConsumerWidget {
                         // The fixed 2.8:1 card has no room for a second
                         // line at very large text sizes.
                         if (price != null && roomyText)
-                          VndEstimate(
+                          PriceEstimate(
                             price,
                             interactive: false,
                             style: theme.textTheme.labelSmall,

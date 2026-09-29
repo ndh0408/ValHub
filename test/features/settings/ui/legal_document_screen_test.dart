@@ -36,9 +36,9 @@ void main() {
     const doc = LegalDocuments.terms;
     await pumpDoc(tester, doc);
 
-    expect(find.text(LegalStrings.kicker), findsOneWidget);
-    // Title (header) + hidden app bar title.
-    expect(find.text(doc.title), findsNWidgets(2));
+    // Large title (the bar title only appears once scrolled).
+    expect(find.text(doc.title), findsOneWidget);
+    expect(find.text(doc.summary), findsOneWidget);
     expect(find.text(LegalStrings.version(doc.version)), findsOneWidget);
     expect(
       find.text(LegalStrings.effectiveFrom(doc.effectiveDate)),
@@ -78,7 +78,7 @@ void main() {
     // The "back to top" button appears once scrolled and returns to the top.
     await tester.tap(find.byTooltip(LegalStrings.backToTop));
     await tester.pumpAndSettle();
-    expect(tester.getTopLeft(find.text(LegalStrings.kicker)).dy, lessThan(200));
+    expect(tester.getTopLeft(find.text(doc.title).first).dy, lessThan(200));
   });
 
   for (final doc in LegalDocuments.all) {
@@ -89,7 +89,7 @@ void main() {
       expect(tester.takeException(), isNull);
       await tester.pumpAndSettle();
       await tester.fling(
-        find.byType(SingleChildScrollView),
+        find.byType(CustomScrollView),
         const Offset(0, -20000),
         4000,
       );

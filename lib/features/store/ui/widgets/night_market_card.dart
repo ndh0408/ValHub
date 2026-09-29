@@ -10,7 +10,7 @@ import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/currency_amount.dart';
-import '../../../../core/ui/vnd_estimate.dart';
+import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
 import '../../store_strings.dart';
@@ -159,7 +159,7 @@ class NightMarketCard extends ConsumerWidget {
               ],
             ),
             if (discounted != null)
-              VndEstimate(
+              PriceEstimate(
                 discounted,
                 interactive: false,
                 style: theme.textTheme.labelSmall,

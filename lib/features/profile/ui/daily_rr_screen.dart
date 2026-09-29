@@ -26,8 +26,8 @@ import 'widgets/rr_trend_chart.dart';
 /// S42 "RR theo ngày". Route `/profile/daily-rr`.
 ///
 /// A 7-day summary (net RR, record, RR trend), then one card per local day
-/// (newest first; days cut at the device's midnight, UTC+7 for Vietnamese
-/// players) that expands to its ranked matches.
+/// (newest first; days cut at midnight in the device's time zone) that
+/// expands to its ranked matches.
 class DailyRrScreen extends ConsumerWidget {
   const DailyRrScreen({super.key});
 
@@ -118,11 +118,7 @@ class DailyRrScreen extends ConsumerWidget {
           child: _WeekCard(days: list, trend: trend, now: now),
         ),
       )
-      ..add(
-        const SliverToBoxAdapter(
-          child: SizedBox(height: 4),
-        ),
-      )
+      ..add(const SliverToBoxAdapter(child: SizedBox(height: 4)))
       ..add(
         SliverList.builder(
           itemCount: list.length,

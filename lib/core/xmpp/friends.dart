@@ -87,12 +87,12 @@ class Friend {
 
   /// Case-insensitive, diacritic-insensitive Riot ID match.
   bool matches(String query) {
-    final q = foldVietnamese(query.trim());
+    final q = foldForSearch(query.trim());
     if (q.isEmpty) return true;
     final riotId = name?.riotId;
     if (riotId == null) return false;
-    return foldVietnamese(riotId).contains(q) ||
-        (note != null && foldVietnamese(note!).contains(q));
+    return foldForSearch(riotId).contains(q) ||
+        (note != null && foldForSearch(note!).contains(q));
   }
 
   @override
@@ -192,6 +192,3 @@ FriendsView buildFriendsView(
     connection: s.connection,
   );
 }
-
-/// Lowercase without Vietnamese diacritics ("Đức" → "duc") for search.
-String foldVietnamese(String input) => foldSearchText(input);

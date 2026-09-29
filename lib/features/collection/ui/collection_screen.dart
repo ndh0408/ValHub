@@ -19,7 +19,7 @@ import '../../../core/ui/net_image.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../../../core/ui/val_widgets.dart';
-import '../../../core/ui/vnd_estimate.dart';
+import '../../../core/ui/price_estimate.dart';
 import '../../../core/util/format.dart';
 import '../../wishlist/wishlist_routes.dart';
 import '../collection_routes.dart';
@@ -173,48 +173,48 @@ class _CardBanner extends StatelessWidget {
       child: Hero(
         tag: heroTag,
         child: Material(
-        color: scheme.surfaceContainerHigh,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(ValRadius.card),
-          side: BorderSide(color: scheme.primary.withValues(alpha: 0.45)),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              NetImage(
-                art,
-                fit: BoxFit.cover,
-                error: Icon(
-                  Icons.badge_outlined,
-                  size: 36,
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-              Positioned(
-                right: 10,
-                top: 10,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.45),
-                    shape: BoxShape.circle,
+          color: scheme.surfaceContainerHigh,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(ValRadius.card),
+            side: BorderSide(color: scheme.primary.withValues(alpha: 0.45)),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                NetImage(
+                  art,
+                  fit: BoxFit.cover,
+                  error: Icon(
+                    Icons.badge_outlined,
+                    size: 36,
+                    color: scheme.onSurfaceVariant,
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(6),
-                    child: Icon(
-                      Icons.edit_outlined,
-                      size: 16,
-                      color: Colors.white,
+                ),
+                Positioned(
+                  right: 10,
+                  top: 10,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.45),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(6),
+                      child: Icon(
+                        Icons.edit_outlined,
+                        size: 16,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }
@@ -490,7 +490,7 @@ class _ValueCard extends ConsumerWidget {
             alignment: Alignment.centerLeft,
             child: Text(amount, style: ValText.display(34, color: gold)),
           ),
-          VndEstimate(
+          PriceEstimate(
             value.totalVp,
             style: theme.textTheme.bodyMedium,
             color: theme.colorScheme.onSurface,

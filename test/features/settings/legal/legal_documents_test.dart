@@ -96,7 +96,8 @@ void main() {
         expect(
           legalDocumentToMarkdown(doc),
           isNot(contains('Giấy phép phần mềm')),
-          reason: '${doc.id} must not point to a document the app no longer '
+          reason:
+              '${doc.id} must not point to a document the app no longer '
               'shows',
         );
       }

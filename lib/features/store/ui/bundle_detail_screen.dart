@@ -17,7 +17,7 @@ import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
-import '../../../core/ui/vnd_estimate.dart';
+import '../../../core/ui/price_estimate.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
 import '../../skin_detail/skin_detail_sheet.dart';
@@ -346,7 +346,7 @@ class _PriceSummary extends StatelessWidget {
                 ),
               ),
             ),
-            if (vnd && isVp && amount > 0) VndEstimate(amount),
+            if (vnd && isVp && amount > 0) PriceEstimate(amount),
           ],
         ),
       );
@@ -508,7 +508,7 @@ class _BundleItemTile extends ConsumerWidget {
               ],
             ),
             if (showVnd)
-              VndEstimate(
+              PriceEstimate(
                 item.discountedPrice,
                 interactive: false,
                 style: theme.textTheme.labelSmall,

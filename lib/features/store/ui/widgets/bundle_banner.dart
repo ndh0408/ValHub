@@ -11,7 +11,7 @@ import '../../../../core/ui/countdown_ring.dart';
 import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/ui/net_image.dart';
-import '../../../../core/ui/vnd_estimate.dart';
+import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/util/format.dart';
 import '../../store_routes.dart';
 import '../../store_strings.dart';
@@ -127,7 +127,7 @@ class BundleBanner extends ConsumerWidget {
                             ),
                           ),
                           if (bundle.currencyId == CurrencyIds.vp)
-                            VndEstimate(
+                            PriceEstimate(
                               bundle.price,
                               interactive: false,
                               color: Colors.white70,

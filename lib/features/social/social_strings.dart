@@ -95,8 +95,7 @@ abstract final class SocialStrings {
   static const failedBadge = 'Chưa gửi được';
 
   // --------------------------------------------------------------- party
-  static const gameNotRunningTitle =
-      'Mở VALORANT trên máy tính hoặc console';
+  static const gameNotRunningTitle = 'Mở VALORANT trên máy tính hoặc console';
   static const gameNotRunningBody =
       'Tổ đội & hàng chờ chỉ hoạt động khi VALORANT đang chạy trên máy tính '
       'hoặc console của bạn. Mở game rồi kéo xuống để làm mới.';
@@ -219,10 +218,9 @@ abstract final class SocialStrings {
   static String actionFailed(String message) => 'Không thể thực hiện. $message';
 
   /// Platform labels of party members (shown for console players only).
-  static String? consolePlatform(String? type) =>
-      switch (type?.toLowerCase()) {
-        'playstation' || 'ps5' || 'ps4' || 'ps' => 'PlayStation',
-        'xbox' || 'xbone' || 'xsx' => 'Xbox',
-        _ => null,
-      };
+  static String? consolePlatform(String? type) => switch (type?.toLowerCase()) {
+    'playstation' || 'ps5' || 'ps4' || 'ps' => 'PlayStation',
+    'xbox' || 'xbone' || 'xsx' => 'Xbox',
+    _ => null,
+  };
 }

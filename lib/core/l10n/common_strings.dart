@@ -122,22 +122,51 @@ abstract final class CommonStrings {
     'Chủ Nhật',
   ];
 
-  // VND estimate (ValVN extra for Vietnamese players)
-  static const vndSymbol = '₫';
-  static const vndEstimateTitle = 'Giá VND ước tính';
-  static const vndEstimateTooltip = 'Giá VND ước tính — chạm để xem nguồn';
-  static const vndEstimateBody =
-      'Số tiền "≈ … ₫" cạnh giá VP là ước tính, quy đổi theo gói nạp VP có '
-      'lợi nhất đang bán chính thức tại Việt Nam. Bạn trả bằng VP trong game, '
-      'không phải bằng VND; số tiền thật phụ thuộc gói nạp, kênh thanh toán '
-      'và khuyến mãi lúc bạn nạp.';
-  static String vndRate(String vp, String vnd) => 'Gói tốt nhất: $vp = $vnd';
-  static String vndSource(String name) => 'Nguồn: $name';
-  static String vndUpdated(String date) => 'Cập nhật bảng giá: $date';
-  static const vndPackagesTitle = 'Các gói nạp VP';
-  static const vndOpenSource = 'Mở trang nguồn';
-  static const vndHide = 'Ẩn giá VND';
-  static const vndHidden = 'Đã ẩn giá VND. Bật lại trong Cài đặt.';
+  // Local price estimate next to VP prices (ValVN extra)
+  static const priceEstimateTitle = 'Giá quy đổi ước tính';
+  static const priceEstimateTooltip = 'Giá ước tính — chạm để xem cách tính';
+  static const priceEstimateBody =
+      'Số tiền “≈ …” cạnh giá VP là ước tính, quy đổi theo gói VP có lợi '
+      'nhất. Bạn trả bằng VP trong game; số tiền thật tùy gói nạp, kênh '
+      'thanh toán, thuế và khuyến mãi lúc bạn mua.';
+  static String priceBestPack(String vp, String price) =>
+      'Gói có lợi nhất: $vp = $price';
+
+  /// "Bảng giá chính thức ở khu vực VN" (ISO country code).
+  static String priceSourceOfficial(String country) =>
+      'Theo bảng giá gói VP ở khu vực $country';
+  static const priceSourceUser = 'Theo giá gói VP do bạn nhập';
+  static String priceSource(String url) => 'Nguồn: $url';
+  static String priceUpdated(String date) => 'Cập nhật bảng giá: $date';
+  static const pricePacksTitle = 'Các gói VP';
+  static const priceOpenSource = 'Mở trang nguồn';
+  static const priceEnterOwn = 'Nhập giá gói VP của bạn';
+  static const priceEditOwn = 'Sửa giá bạn đã nhập';
+  static const priceHide = 'Ẩn giá quy đổi';
+  static const priceHidden = 'Đã ẩn giá quy đổi. Bật lại trong Cài đặt.';
+  static const priceUnavailable =
+      'Chưa có bảng giá đã xác minh cho khu vực của bạn. Nhập giá của một gói '
+      'VP bạn từng mua để xem giá quy đổi ước tính.';
+
+  // "Giá gói VP của bạn" editor
+  static const priceOverrideTitle = 'Giá gói VP của bạn';
+  static const priceOverrideBody =
+      'Nhập số tiền bạn thực trả cho một gói VP (xem trong cửa hàng của game '
+      'hoặc hóa đơn). ValVN dùng giá này để ước tính giá quy đổi cho mọi món '
+      'đồ; giá chỉ lưu trên thiết bị này.';
+  static const priceOverrideCurrency = 'Mã tiền tệ';
+  static const priceOverrideCurrencyHint = 'Ví dụ: VND, USD, EUR, JPY';
+  static const priceOverrideVp = 'Số VP của gói';
+  static const priceOverridePrice = 'Giá gói';
+  static const priceOverrideSave = 'Lưu giá';
+  static const priceOverrideRemove = 'Xóa giá đã nhập';
+  static const priceOverrideInvalidCurrency =
+      'Nhập mã tiền tệ gồm 3 chữ cái (ISO 4217).';
+  static const priceOverrideInvalidNumber = 'Nhập một số lớn hơn 0.';
+  static const priceOverrideSaved = 'Đã lưu giá gói VP của bạn.';
+  static const priceOverrideRemoved = 'Đã xóa giá bạn nhập.';
+  static String priceOverrideExample(String vp, String price) =>
+      'Ví dụ ước tính: $vp ≈ $price';
 
   // Legal (VF §8.13)
   static const riotDisclaimer =

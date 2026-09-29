@@ -114,7 +114,8 @@ class SkinFilterChips extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 4),
       child: FilterChipBar(
         onClear: filtersOn
-            ? () => onChanged(query.copyWith(tiers: const {}, clearWeapon: true))
+            ? () =>
+                  onChanged(query.copyWith(tiers: const {}, clearWeapon: true))
             : null,
         children: [
           SortButton<SkinSort>(

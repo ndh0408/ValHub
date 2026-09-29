@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
+import '../../../core/content/content_repository.dart';
 import '../../../core/domain/loadout/loadout.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';

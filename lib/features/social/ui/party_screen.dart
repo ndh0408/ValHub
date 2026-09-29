@@ -593,10 +593,8 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
     }
     unawaited(
       _run('invite-${f.puuid}', () async {
-        await _notifier(me).invite(
-          gameName: name.gameName,
-          tagLine: name.tagLine,
-        );
+        await _notifier(me)
+            .invite(gameName: name.gameName, tagLine: name.tagLine);
         if (mounted) setState(() => _invited.add('${p.id}/${f.puuid}'));
       }, success: SocialStrings.inviteSent(name.riotId)),
     );
@@ -612,10 +610,8 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
     if (name == null || !mounted) return;
     await _run(
       'invite-id',
-      () => _notifier(me).invite(
-        gameName: name.gameName,
-        tagLine: name.tagLine,
-      ),
+      () =>
+          _notifier(me).invite(gameName: name.gameName, tagLine: name.tagLine),
       success: SocialStrings.inviteSent(name.riotId),
     );
   }

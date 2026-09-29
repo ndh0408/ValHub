@@ -178,9 +178,9 @@ class _NotificationPrimingSheetState
             style: TextButton.styleFrom(minimumSize: const Size(0, 48)),
             onPressed: _requesting
                 ? null
-                : () => Navigator.of(
-                    context,
-                  ).pop(NotificationPrimingResult.dismissed),
+                : () =>
+                      Navigator.of(context)
+                          .pop(NotificationPrimingResult.dismissed),
             child: const Text(SettingsStrings.primingLater),
           ),
         ],

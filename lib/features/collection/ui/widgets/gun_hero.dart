@@ -59,8 +59,14 @@ class GunHero extends StatelessWidget {
               end: Alignment.bottomCenter,
               stops: const [0, 0.55, 1],
               colors: [
-                Color.alphaBlend(color.withValues(alpha: dark ? 0.42 : 0.3), bg),
-                Color.alphaBlend(color.withValues(alpha: dark ? 0.16 : 0.12), bg),
+                Color.alphaBlend(
+                  color.withValues(alpha: dark ? 0.42 : 0.3),
+                  bg,
+                ),
+                Color.alphaBlend(
+                  color.withValues(alpha: dark ? 0.16 : 0.12),
+                  bg,
+                ),
                 bg,
               ],
             ),
@@ -78,10 +84,7 @@ class GunHero extends StatelessWidget {
             ),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(32, top + 4, 32, 30),
-          child: art,
-        ),
+        Padding(padding: EdgeInsets.fromLTRB(32, top + 4, 32, 30), child: art),
         if (bottomStart != null)
           Positioned(left: 16, bottom: 10, child: bottomStart!),
         if (bottomEnd != null)

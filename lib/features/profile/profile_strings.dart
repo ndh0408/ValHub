@@ -269,11 +269,11 @@ abstract final class ProfileStrings {
   /// "7 ngày qua".
   static String lastDays(int n) => '$n ngày qua';
 
-  /// "Ngày tính theo giờ Việt Nam (UTC+7)".
+  /// "Ngày tính theo giờ trên máy (UTC+7)".
   static String dayBoundary(String zone) => 'Ngày tính theo $zone';
 
-  /// Device time zone: "giờ Việt Nam (UTC+7)" for UTC+7, else
-  /// "giờ địa phương (UTC+9)".
+  /// The device time zone: "giờ trên máy (UTC+9)", "giờ trên máy
+  /// (UTC−3:30)".
   static String timeZoneLabel(Duration offset) {
     final sign = offset.isNegative ? '−' : '+';
     final abs = offset.abs();
@@ -282,16 +282,22 @@ abstract final class ProfileStrings {
     final utc = m == 0
         ? 'UTC$sign$h'
         : 'UTC$sign$h:${m.toString().padLeft(2, '0')}';
-    return offset == const Duration(hours: 7)
-        ? 'giờ Việt Nam ($utc)'
-        : 'giờ địa phương ($utc)';
+    return 'giờ trên máy ($utc)';
   }
 
   /// "5 ngày có trận".
   static String daysPlayed(int n) => '$n ngày có trận';
 
   /// Short weekday of a day badge, indexed by `DateTime.weekday - 1`.
-  static const weekdayShort = <String>['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+  static const weekdayShort = <String>[
+    'T2',
+    'T3',
+    'T4',
+    'T5',
+    'T6',
+    'T7',
+    'CN',
+  ];
 
   // Rank-Up Calculator
   /// "Tiến độ tới Kim Cương 2".

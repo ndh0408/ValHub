@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../wishlist_strings.dart';
-import 'vi_search.dart';
+import '../../../core/util/search_text.dart';
 
 /// Sort orders (VF §8.6 "Độ hiếm / Tên / Vũ khí / Giá").
 enum SkinSort {

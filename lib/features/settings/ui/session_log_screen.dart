@@ -220,9 +220,7 @@ class _SessionLogScreenState extends ConsumerState<SessionLogScreen> {
                     SliverList.builder(
                       itemCount: rows.length,
                       itemBuilder: (context, i) => switch (rows[i]) {
-                        final DateTime d => _DayHeader(
-                          formatDayHeader(d, now),
-                        ),
+                        final DateTime d => _DayHeader(formatDayHeader(d, now)),
                         final SessionLogEntry e => _LogRow(
                           entry: e,
                           onTap: () => unawaited(_copy(e.toLine())),
@@ -346,7 +344,10 @@ class _DayHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SectionLabel(label, padding: const EdgeInsets.fromLTRB(20, 18, 20, 6));
+    return SectionLabel(
+      label,
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 6),
+    );
   }
 }
 

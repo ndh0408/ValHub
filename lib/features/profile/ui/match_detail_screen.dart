@@ -264,9 +264,7 @@ class _MatchHero extends ConsumerWidget {
             right: 0,
             bottom: 0,
             height: 3,
-            child: ColoredBox(
-              color: known ? resultColor : Colors.transparent,
-            ),
+            child: ColoredBox(color: known ? resultColor : Colors.transparent),
           ),
           Positioned(
             left: 16,
@@ -371,10 +369,8 @@ class _HeroChip extends StatelessWidget {
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: c ?? Colors.white,
-            fontWeight: FontWeight.w700,
-          ),
+          style: Theme.of(context).textTheme.labelMedium
+              ?.copyWith(color: c ?? Colors.white, fontWeight: FontWeight.w700),
         ),
       ),
     );
@@ -709,10 +705,7 @@ class _HitDistribution extends StatelessWidget {
         ProfileStrings.hitShare(p.label, formatPercent(p.n / total)),
     ];
     return Semantics(
-      label: ProfileStrings.joined([
-        ProfileStrings.hitDistribution,
-        ...legend,
-      ]),
+      label: ProfileStrings.joined([ProfileStrings.hitDistribution, ...legend]),
       excludeSemantics: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
