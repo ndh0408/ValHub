@@ -5,7 +5,9 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/accounts/account.dart';
 import '../../../core/accounts/account_providers.dart';
+import '../../../core/storage/ui_memory.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../community_strings.dart';
 import '../providers/community_providers.dart';
@@ -13,9 +15,13 @@ import '../providers/feed_providers.dart';
 import '../providers/lfg_providers.dart';
 import '../providers/skin_vote_providers.dart';
 import 'feed/feed_section.dart';
+import 'lfg/lfg_poster_sync.dart';
 import 'lfg/lfg_section.dart';
 import 'skins/top_skins_section.dart';
 import 'widgets/community_widgets.dart';
+
+/// `UiMemory` key of the last community section.
+const kSectionMemoryKey = 'community.section';
 
 /// Sections of the "Cộng đồng" tab.
 enum CommunitySection {
@@ -26,10 +32,14 @@ enum CommunitySection {
   /// `?section=` value.
   String get query => name;
 
-  static CommunitySection parse(String? value) => switch (value) {
+  static CommunitySection parse(String? value) => tryParse(value) ?? feed;
+
+  /// `null` when [value] names no section.
+  static CommunitySection? tryParse(String? value) => switch (value) {
+    'feed' => feed,
     'lfg' => lfg,
     'skins' => skins,
-    _ => feed,
+    _ => null,
   };
 
   String get label => switch (this) {
@@ -42,26 +52,31 @@ enum CommunitySection {
 /// TAB "Cộng đồng": glass segmented header (Bảng tin · Tìm đồng đội · Xếp
 /// hạng skin), pull-to-refresh and a floating action per section.
 class CommunityScreen extends ConsumerStatefulWidget {
-  const CommunityScreen({
-    super.key,
-    this.initialSection = CommunitySection.feed,
-  });
+  const CommunityScreen({super.key, this.initialSection});
 
-  final CommunitySection initialSection;
+  /// Section to show (deep link); `null` = the one used last time.
+  final CommunitySection? initialSection;
 
   @override
   ConsumerState<CommunityScreen> createState() => _CommunityScreenState();
 }
 
 class _CommunityScreenState extends ConsumerState<CommunityScreen> {
-  late CommunitySection _section = widget.initialSection;
+  late CommunitySection _section =
+      widget.initialSection ??
+      ref
+          .read(uiMemoryProvider)
+          .readEnum(
+            kSectionMemoryKey,
+            CommunitySection.values,
+            CommunitySection.feed,
+          );
 
   @override
   void didUpdateWidget(CommunityScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.initialSection != widget.initialSection) {
-      _section = widget.initialSection;
-    }
+    final next = widget.initialSection;
+    if (next != null && oldWidget.initialSection != next) _section = next;
   }
 
   @override
@@ -91,37 +106,44 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
         ),
       );
     }
-    return TabPageScaffold(
-      title: CommunityStrings.title,
-      showMaintenanceBanner: false,
-      header: GlassSegmentedControl<CommunitySection>(
-        segments: [
-          for (final s in CommunitySection.values)
-            GlassSegment(value: s, label: s.label),
+    return LfgPosterSync(
+      account: account,
+      child: TabPageScaffold(
+        title: CommunityStrings.title,
+        showMaintenanceBanner: false,
+        header: SegmentedTabs<CommunitySection>(
+          expand: true,
+          tabs: [
+            for (final s in CommunitySection.values)
+              SegmentedTab(value: s, label: s.label),
+          ],
+          selected: _section,
+          onChanged: (s) {
+            setState(() => _section = s);
+            ref.read(uiMemoryProvider).writeEnum(kSectionMemoryKey, s);
+          },
+        ),
+        onRefresh: () => _refresh(account),
+        floatingActionButton: _fab(account),
+        slivers: [
+          switch (_section) {
+            CommunitySection.feed => FeedSliver(
+              key: ValueKey('feed-${account.puuid}'),
+              puuid: account.puuid,
+            ),
+            CommunitySection.lfg => LfgSliver(
+              key: ValueKey('lfg-${account.puuid}'),
+              account: account,
+            ),
+            CommunitySection.skins => TopSkinsSliver(
+              key: ValueKey('skins-${account.puuid}'),
+              puuid: account.puuid,
+            ),
+          },
+          const SliverToBoxAdapter(child: _PrivacyNote()),
+          const SliverToBoxAdapter(child: SizedBox(height: 96)),
         ],
-        selected: _section,
-        onChanged: (s) => setState(() => _section = s),
       ),
-      onRefresh: () => _refresh(account),
-      floatingActionButton: _fab(account),
-      slivers: [
-        switch (_section) {
-          CommunitySection.feed => FeedSliver(
-            key: ValueKey('feed-${account.puuid}'),
-            puuid: account.puuid,
-          ),
-          CommunitySection.lfg => LfgSliver(
-            key: ValueKey('lfg-${account.puuid}'),
-            account: account,
-          ),
-          CommunitySection.skins => TopSkinsSliver(
-            key: ValueKey('skins-${account.puuid}'),
-            puuid: account.puuid,
-          ),
-        },
-        const SliverToBoxAdapter(child: _PrivacyNote()),
-        const SliverToBoxAdapter(child: SizedBox(height: 96)),
-      ],
     );
   }
 
@@ -167,7 +189,12 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
           await ref.read(lfgProvider(q).notifier).refresh();
         case CommunitySection.skins:
           final f = ref.read(topSkinsFilterProvider);
-          final q = (puuid: puuid, weapon: f.weapon, period: f.period);
+          final q = (
+            puuid: puuid,
+            weapon: f.weapon,
+            period: f.period,
+            sort: f.sort,
+          );
           ref.invalidate(topSkinsProvider(q));
           await ref.read(topSkinsProvider(q).future);
       }

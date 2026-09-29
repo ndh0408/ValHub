@@ -10,6 +10,7 @@ import '../../../../core/auth/auth_routes.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/ui/filter_bar.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/rank_badge.dart';
 import '../../../../core/ui/skeleton.dart';
@@ -204,41 +205,31 @@ class _GlassSegmentButton extends StatelessWidget {
 
 // ------------------------------------------------------------------- chips
 
-/// Filter / choice chip in the community style: pill, no checkmark, red
-/// tint and border when selected.
+/// Filter / choice chip of the community tab (the app's `ValFilterChip`).
 class CommunityChip extends StatelessWidget {
   const CommunityChip({
     super.key,
     required this.label,
     required this.selected,
     required this.onSelected,
+    this.icon,
+    this.dotColor,
   });
 
   final String label;
   final bool selected;
   final VoidCallback onSelected;
+  final IconData? icon;
+  final Color? dotColor;
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return ChoiceChip(
-      label: Text(label),
-      selected: selected,
-      showCheckmark: false,
-      onSelected: (_) => onSelected(),
-      shape: const StadiumBorder(),
-      selectedColor: ValColors.red.withValues(alpha: 0.18),
-      side: BorderSide(
-        color: selected
-            ? ValColors.red.withValues(alpha: 0.6)
-            : valColorsOf(context).hairline,
-      ),
-      labelStyle: theme.textTheme.labelLarge?.copyWith(
-        color: selected ? ValColors.red : theme.colorScheme.onSurface,
-        fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ValFilterChip(
+    label: label,
+    selected: selected,
+    icon: icon,
+    dotColor: dotColor,
+    onSelected: (_) => onSelected(),
+  );
 }
 // ------------------------------------------------------------------ author
 

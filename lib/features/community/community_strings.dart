@@ -22,6 +22,7 @@ abstract final class CommunityStrings {
   static const unknownPlayer = 'Người chơi';
   static const moreActions = 'Tùy chọn khác';
   static String tagSuffix(String tag) => '#$tag';
+  static String riotId(String name, String tag) => '$name#$tag';
   static String dotJoin(Iterable<String> parts) => parts.join(' · ');
   static String pageOf(String i, String n) => '$i/$n';
   static String charCount(String n, String max) => '$n/$max';
@@ -136,7 +137,7 @@ abstract final class CommunityStrings {
   static const lfgEmptyBody =
       'Tạo tin để người chơi khác vào tổ đội của bạn chỉ với một chạm.';
   static const createLfg = 'Tạo tin tìm đồng đội';
-  static const createLfgShort = 'Tìm đồng đội';
+  static const createLfgShort = 'Tạo tin';
   static const allModes = 'Tất cả';
   static const region = 'Khu vực';
   static String slotsWanted(int n) => 'Cần $n người';
@@ -226,4 +227,98 @@ abstract final class CommunityStrings {
   static const shareStore = 'Khoe lên Cộng đồng';
   static const shareStoreHint = 'Khoe cửa hàng hôm nay với mọi người';
   static const shareNightMarketHint = 'Khoe Chợ Đêm của bạn với mọi người';
+
+  // -------------------------------------------------------- skin reviews
+  static const periodAllTime = 'Từ trước tới giờ';
+  static const sortVotes = 'Yêu thích nhất';
+  static const sortRating = 'Đánh giá cao nhất';
+  static const sortReviews = 'Nhiều đánh giá nhất';
+  static const noRatings = 'Chưa có đánh giá';
+  static String ratingCount(String n) => '$n đánh giá';
+  static String ratingSummary(String avg, String n) => '$avg · $n đánh giá';
+  static String starsSemantics(String avg) => '$avg trên 5 sao';
+  static const writeFirstReview = 'Viết đánh giá đầu tiên';
+  static const reviewTitle = 'Đánh giá skin';
+  static const reviewsSection = 'Đánh giá';
+  static String reviewsHeader(String n) => 'Đánh giá · $n';
+  static const sortNewest = 'Mới nhất';
+  static const sortHelpful = 'Hữu ích nhất';
+  static const reviewsEmptyTitle = 'Chưa có đánh giá';
+  static const reviewsEmptyBody = 'Chưa có đánh giá — hãy là người đầu tiên!';
+  static const yourReview = 'Đánh giá của bạn';
+  static const tapToRate = 'Chạm vào sao để chấm điểm skin này';
+  static const editReview = 'Sửa';
+  static const deleteReview = 'Xóa đánh giá';
+  static const deleteReviewTitle = 'Xóa đánh giá của bạn?';
+  static const deleteReviewBody =
+      'Điểm và nhận xét của bạn cho skin này sẽ bị xóa.';
+  static const reviewDeleted = 'Đã xóa đánh giá.';
+  static const reviewSaved = 'Đã lưu đánh giá!';
+  static const reviewHint = 'Chia sẻ cảm nhận về skin này (không bắt buộc)';
+  static const saveReview = 'Lưu đánh giá';
+  static const pickRating = 'Hãy chọn số sao.';
+  static const helpful = 'Hữu ích';
+  static String helpfulCount(String n) => 'Hữu ích · $n';
+  static const edited = 'đã sửa';
+  static String starLabel(int n) => '$n sao';
+  static const ratingWords = ['Tệ', 'Chưa ổn', 'Ổn', 'Đẹp', 'Tuyệt phẩm'];
+  static const signInToReview = 'Thêm tài khoản Riot để đánh giá skin.';
+  static const playVideo = 'Xem video';
+  static const skinNotFound = 'Không tìm thấy skin này.';
+  static const openReviews = 'Xem đánh giá';
+
+  // -------------------------------------------------------------- LFG v2
+  static const anyRank = 'Mọi rank';
+  static const rankRange = 'Khoảng rank';
+  static const rankFrom = 'Từ';
+  static const rankTo = 'Đến';
+  static String rankBetween(String a, String b) => '$a – $b';
+  static const rankRangeInvalid = 'Rank thấp nhất phải nhỏ hơn rank cao nhất.';
+  static const roles = 'Vai trò cần';
+  static const roleFlex = 'Linh hoạt';
+  static const mic = 'Cần mic';
+  static const micOn = 'Có mic';
+  static const language = 'Ngôn ngữ';
+  static String languageLabel(String code) => switch (code) {
+    'vi' => 'Tiếng Việt',
+    'en' => 'English',
+    _ => 'Bất kỳ',
+  };
+  static String languageFlag(String code) => switch (code) {
+    'vi' => 'VN',
+    'en' => 'EN',
+    _ => '',
+  };
+  static const partySize = 'Tổ đội hiện có';
+  static String partySizeValue(int n) => '$n người';
+  static const partySizeFromGame = 'Lấy từ tổ đội trong game';
+  static String slotsTooMany(int max) =>
+      'Tổ đội có tối đa 5 người: chỉ còn $max chỗ.';
+  static const codeAuto =
+      'Để trống: ValVN tự tạo mã từ tổ đội trong game khi bạn đăng tin.';
+  static const codeAutoFailed =
+      'Không tạo được mã tổ đội. Hãy mở VALORANT hoặc nhập mã thủ công.';
+  static const matchMyRank = 'Phù hợp rank của bạn';
+  static const outOfRange = 'Ngoài khoảng rank';
+  static const statusOpen = 'Đang tìm';
+  static const statusFull = 'Đã đủ người';
+  static const statusInGame = 'Đang trong trận';
+  static String joinsCount(String n) => '$n người đã vào';
+  static const extend = 'Gia hạn';
+  static const extended = 'Đã gia hạn tin thêm 30 phút.';
+  static const liveMembers = 'Thành viên';
+  static String memberJoined(String name) => '$name đã vào tổ đội';
+  static const memberJoinedBody = 'Tin tìm đồng đội của bạn vừa có người vào.';
+  static const joinedHint = 'Đã vào tổ đội! Mở VALORANT để chơi cùng nhau.';
+  static const joinPartyFull = 'Tổ đội này đã đủ người.';
+  static const joinCodeExpired =
+      'Mã tổ đội đã hết hạn hoặc không còn hiệu lực.';
+  static const refreshList = 'Làm mới';
+  static const agentsPicked = 'Đặc vụ đã chọn';
+  static const filters = 'Bộ lọc';
+  static const anyRole = 'Mọi vai trò';
+
+  // ------------------------------------------------------------ previews
+  static const lfgPreviewTitle = 'Tìm đồng đội hợp rank';
+  static const trendingTitle = 'Skin hot trong tuần';
 }

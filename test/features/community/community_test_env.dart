@@ -14,6 +14,7 @@ import 'package:valvn/core/auth/riot_session.dart';
 import 'package:valvn/core/auth/session_manager.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/content/content_repository.dart';
+import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/core/riot/pvp_api.dart';
 import 'package:valvn/core/riot/riot_hosts.dart';
 import 'package:valvn/core/storage/json_file_cache.dart';
@@ -308,6 +309,24 @@ class MemoryJsonFileCache extends JsonFileCache {
       entries.removeWhere((k, _) => k.startsWith(prefix));
 }
 
+/// Records `showNow` calls (no plugin).
+class RecordingNotifications extends NotificationService {
+  RecordingNotifications(Prefs prefs) : super(prefs: prefs);
+
+  final shown = <({String title, String body, String? payload})>[];
+
+  @override
+  Future<void> showNow({
+    required int id,
+    required String title,
+    required String body,
+    required NotificationChannel channel,
+    String? payload,
+    String? accountPuuid,
+    String? tag,
+  }) async => shown.add((title: title, body: body, payload: payload));
+}
+
 // --------------------------------------------------------------------- env
 
 /// Overrides for the community feature: signed-in account, fake community
@@ -336,6 +355,7 @@ class CommunityTestEnv {
   final server = FakeCommunityServer();
   final picker = FakeImagePicker();
   final clock = FixedClock(now);
+  late final notifications = RecordingNotifications(prefs);
 
   List<Override> get overrides => [
     prefsProvider.overrideWithValue(prefs),
@@ -350,6 +370,7 @@ class CommunityTestEnv {
       CommunityHttp(dio: server.dio, baseUrl: baseUrl),
     ),
     communityImagePickerProvider.overrideWithValue(picker),
+    notificationServiceProvider.overrideWithValue(notifications),
   ];
 
   ProviderContainer container() =>

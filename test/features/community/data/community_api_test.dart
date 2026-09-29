@@ -273,7 +273,7 @@ void main() {
       reaverSkin.toUpperCase(),
     ], puuid: mePuuid);
 
-    expect(votes[reaverSkin]?.votes, 42);
+    expect(votes[reaverSkin]?.vote.votes, 42);
     final req = env.server.requests.single;
     expect(req.authorization, isNull);
     expect(req.query['ids'], reaverSkin);
@@ -312,6 +312,7 @@ void main() {
     expect(env.server.calls('GET /v1/skins/top').single.query, {
       'weapon': vandal,
       'period': 'week',
+      'sort': 'votes',
       'limit': '50',
     });
   });

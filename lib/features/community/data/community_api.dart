@@ -57,11 +57,16 @@ class CommunityApi {
 
   // ----------------------------------------------------------------- LFG
 
-  /// `GET /v1/lfg` (active posts, newest first).
+  /// `GET /v1/lfg` (open posts, newest first). [rank] keeps posts whose
+  /// range contains it (or that have none).
   Future<CommunityPage<LfgPost>> lfg(
     String puuid, {
     required String region,
     String? mode,
+    int? rank,
+    String? role,
+    bool? mic,
+    String? language,
     String? cursor,
     int limit = 20,
   }) async => CommunityPage.fromJson(
@@ -72,12 +77,20 @@ class CommunityApi {
       query: {
         'region': region,
         'mode': mode,
+        'rank': rank,
+        'role': role,
+        'mic': mic,
+        'language': language,
         'cursor': cursor,
         'limit': limit.clamp(1, 50),
       },
     ),
     LfgPost.fromJson,
   );
+
+  /// `GET /v1/lfg/mine` (the user's own post, whatever its status).
+  Future<LfgPost?> myLfg(String puuid) async =>
+      LfgPost.fromJson(await _send('GET', '/v1/lfg/mine', puuid: puuid));
 
   /// `POST /v1/lfg` (replaces the user's previous post).
   Future<LfgPost> createLfg(
@@ -88,6 +101,13 @@ class CommunityApi {
     required int slots,
     int? rankTier,
     String? note,
+    int? rankMin,
+    int? rankMax,
+    List<String> roles = const [],
+    bool? mic,
+    String? language,
+    int? partySize,
+    List<String> agents = const [],
   }) async =>
       LfgPost.fromJson(
         await _send(
@@ -101,10 +121,56 @@ class CommunityApi {
             'slots': slots.clamp(1, 4),
             'rankTier': ?rankTier,
             if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
+            'rankMin': ?rankMin,
+            'rankMax': ?rankMax,
+            if (roles.isNotEmpty) 'roles': roles.toSet().take(4).toList(),
+            'mic': ?mic,
+            'language': ?language,
+            'partySize': ?partySize,
+            if (agents.isNotEmpty) 'agents': agents.take(5).toList(),
           },
         ),
       ) ??
       (throw const CommunityException(CommunityException.badResponse));
+
+  /// `PATCH /v1/lfg/{id}` (own post; also the "still active" heartbeat).
+  Future<LfgPost> updateLfg(
+    String puuid,
+    String id, {
+    int? partySize,
+    int? slots,
+    String? note,
+    LfgStatus? status,
+  }) async =>
+      LfgPost.fromJson(
+        await _send(
+          'PATCH',
+          '/v1/lfg/${Uri.encodeComponent(id)}',
+          puuid: puuid,
+          json: {
+            'partySize': ?partySize,
+            'slots': ?slots,
+            'note': ?note,
+            'status': ?status?.query,
+          },
+        ),
+      ) ??
+      (throw const CommunityException(CommunityException.badResponse));
+
+  /// `POST /v1/lfg/{id}/join` after a successful Riot join. Returns the
+  /// join count.
+  Future<int> recordLfgJoin(String puuid, String id) async =>
+      asInt(
+        asMap(
+          await _send(
+            'POST',
+            '/v1/lfg/${Uri.encodeComponent(id)}/join',
+            puuid: puuid,
+            json: const <String, Object?>{},
+          ),
+        )?['joins'],
+      ) ??
+      0;
 
   /// `DELETE /v1/lfg/{id}` (own post).
   Future<void> deleteLfg(String puuid, String id) =>
@@ -154,6 +220,7 @@ class CommunityApi {
     String? puuid,
     String? weapon,
     TopPeriod period = TopPeriod.all,
+    TopSort sort = TopSort.votes,
     int limit = 50,
     bool signIn = true,
   }) async {
@@ -166,6 +233,7 @@ class CommunityApi {
       query: {
         'weapon': weapon,
         'period': period.query,
+        'sort': sort.query,
         'limit': limit.clamp(1, 100),
       },
     );
@@ -180,8 +248,9 @@ class CommunityApi {
     return out;
   }
 
-  /// `GET /v1/skins/votes?ids=…` (≤ 50 ids; auth optional).
-  Future<Map<String, SkinVote>> skinVotes(
+  /// `GET /v1/skins/votes?ids=…` (≤ 50 ids; auth optional): votes and
+  /// rating of each skin.
+  Future<Map<String, SkinStats>> skinVotes(
     Iterable<String> ids, {
     String? puuid,
     bool signIn = false,
@@ -196,13 +265,107 @@ class CommunityApi {
       signIn: signIn,
       query: {'ids': list.join(',')},
     );
-    final votes = [
+    final stats = [
       for (final e in asList(asMap(body)?['items'] ?? body))
-        ?SkinVote.fromJson(e),
+        ?SkinStats.fromJson(e),
     ];
-    return {for (final v in votes) v.skinUuid: v};
+    return {for (final s in stats) s.skinUuid: s};
   }
 
+  // --------------------------------------------------------- skin reviews
+
+  String _skinPath(String skinUuid, String rest) =>
+      '/v1/skins/${Uri.encodeComponent(skinUuid.toLowerCase())}/$rest';
+
+  /// `GET /v1/skins/{uuid}/summary` (auth optional; `myReview` / `voted`
+  /// need a session).
+  Future<SkinSummary> skinSummary(
+    String skinUuid, {
+    String? puuid,
+    bool signIn = true,
+  }) async => SkinSummary.fromJson(
+    await _send(
+      'GET',
+      _skinPath(skinUuid, 'summary'),
+      puuid: puuid,
+      auth: _Auth.optional,
+      signIn: signIn,
+    ),
+    skinUuid,
+  );
+
+  /// `GET /v1/skins/{uuid}/reviews` (auth optional).
+  Future<CommunityPage<SkinReview>> skinReviews(
+    String skinUuid, {
+    String? puuid,
+    ReviewSort sort = ReviewSort.newest,
+    String? cursor,
+    int limit = 20,
+    bool signIn = true,
+  }) async => CommunityPage.fromJson(
+    await _send(
+      'GET',
+      _skinPath(skinUuid, 'reviews'),
+      puuid: puuid,
+      auth: _Auth.optional,
+      signIn: signIn,
+      query: {
+        'sort': sort.query,
+        'cursor': cursor,
+        'limit': limit.clamp(1, 50),
+      },
+    ),
+    SkinReview.fromJson,
+  );
+
+  /// `PUT /v1/skins/{uuid}/review` (create or replace the own review).
+  Future<SkinReview> putReview(
+    String puuid,
+    String skinUuid, {
+    required int rating,
+    String? weaponUuid,
+    String body = '',
+  }) async =>
+      SkinReview.fromJson(
+        await _send(
+          'PUT',
+          _skinPath(skinUuid, 'review'),
+          puuid: puuid,
+          json: {
+            'weaponUuid': ?weaponUuid,
+            'rating': rating.clamp(1, 5),
+            if (body.trim().isNotEmpty) 'body': body.trim(),
+          },
+        ),
+      ) ??
+      (throw const CommunityException(CommunityException.badResponse));
+
+  /// `DELETE /v1/skins/{uuid}/review` (the own review of that skin).
+  Future<void> deleteMyReview(String puuid, String skinUuid) =>
+      _send('DELETE', _skinPath(skinUuid, 'review'), puuid: puuid);
+
+  /// `PUT` / `DELETE /v1/reviews/{id}/like` ("Hữu ích"; not own).
+  Future<LikeResult> setReviewLiked(
+    String puuid,
+    String id, {
+    required bool liked,
+  }) async {
+    final m = asMap(
+      await _send(
+        liked ? 'PUT' : 'DELETE',
+        '/v1/reviews/${Uri.encodeComponent(id)}/like',
+        puuid: puuid,
+      ),
+    );
+    return (
+      likes: (asNum(m?['likes'])?.round() ?? 0).clamp(0, 1 << 31),
+      liked: asBool(m?['liked']) ?? liked,
+    );
+  }
+
+  /// `DELETE /v1/reviews/{id}` (own review).
+  Future<void> deleteReview(String puuid, String id) =>
+      _send('DELETE', '/v1/reviews/${Uri.encodeComponent(id)}', puuid: puuid);
   // ----------------------------------------------------------------- feed
 
   /// `GET /v1/posts` (newest first).
@@ -377,7 +540,14 @@ class CommunityApi {
     }
     Future<String?> tokenFor() async {
       if (puuid == null) return null;
-      return _auth.token(puuid, signIn: auth == _Auth.required || signIn);
+      if (auth == _Auth.required) return _auth.token(puuid);
+      // Optional auth: a failed sign-in (e.g. Riot needs login) must not
+      // hide public data; read anonymously instead.
+      try {
+        return await _auth.token(puuid, signIn: signIn);
+      } on Object {
+        return null;
+      }
     }
 
     final token = await tokenFor();
@@ -409,7 +579,7 @@ class CommunityApi {
 }
 
 /// `targetType` of a report.
-enum ReportTarget { post, comment, lfg }
+enum ReportTarget { post, comment, lfg, review }
 
 /// MIME type from the file signature (JPEG, PNG, WebP), else `null`.
 String? imageMimeType(List<int> bytes) {

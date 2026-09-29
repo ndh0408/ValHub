@@ -43,117 +43,174 @@ class _HostState extends State<_Host> {
 }
 
 Future<void> _open(WidgetTester tester, CommunityTestEnv env) async {
-  await pumpCommunity(tester, env, const _Host(), size: const Size(360, 900));
+  await pumpCommunity(tester, env, const _Host(), size: const Size(360, 1000));
   await tester.tap(find.text('tạo'));
   await settle(tester);
 }
 
-Map<String, Object?> _party({String code = ''}) => {
+Future<void> _tap(WidgetTester tester, Finder f) async {
+  await tester.ensureVisible(f);
+  await tester.pump();
+  await tester.tap(f);
+  await tester.pump();
+}
+
+Map<String, Object?> _party({List<String>? members, String code = ''}) => {
   'ID': 'aaaaaaaa-0000-0000-0000-000000000001',
   'Members': [
-    {'Subject': mePuuid, 'IsOwner': true},
+    for (final m in members ?? [mePuuid])
+      {'Subject': m, 'IsOwner': m == mePuuid},
   ],
   'State': 'DEFAULT',
+  'Accessibility': 'CLOSED',
   'InviteCode': code,
 };
+
+void _serveParty(CommunityTestEnv env, {List<String>? members}) {
+  when(() => env.pvp.partyPlayer(any())).thenAnswer(
+    (_) async => {
+      'Subject': mePuuid,
+      'CurrentPartyID': 'aaaaaaaa-0000-0000-0000-000000000001',
+    },
+  );
+  when(() => env.pvp.party(any(), any()))
+      .thenAnswer((_) async => _party(members: members));
+  when(() => env.pvp.gameSession(any()))
+      .thenAnswer((_) async => {'loopState': 'MENUS'});
+  when(() => env.pvp.partyGenerateInviteCode(any(), any()))
+      .thenAnswer((_) async => _party(members: members, code: 'ZX9Y8W'));
+  when(
+    () => env.pvp.partySetAccessibility(any(), any(), open: any(named: 'open')),
+  ).thenAnswer((_) async => _party(members: members));
+}
 
 void main() {
   late CommunityTestEnv env;
   setUp(() async => env = await CommunityTestEnv.create());
 
-  test('party code validation', () {
+  test('typed party code validation', () {
     expect(validatePartyCode(''), CommunityStrings.codeRequired);
     expect(validatePartyCode('abc12'), CommunityStrings.codeInvalid);
-    expect(validatePartyCode('ab-123'), CommunityStrings.codeInvalid);
     expect(validatePartyCode('abc123'), isNull);
   });
 
-  testWidgets('invalid code blocks posting; valid code posts', (tester) async {
-    env.server.json('POST /v1/lfg', lfgJson('new', code: 'Q1W2E3'));
-    await _open(tester, env);
-    expect(find.text(CommunityStrings.createLfg), findsOneWidget);
-
-    await tester.ensureVisible(find.text(CommunityStrings.postLfg));
-    await tester.tap(find.text(CommunityStrings.postLfg));
-    await settle(tester);
-    expect(find.text(CommunityStrings.codeRequired), findsOneWidget);
-    expect(env.server.calls('POST /v1/lfg'), isEmpty);
-
-    await tester.enterText(find.byKey(const ValueKey('lfg-code')), 'q1w2');
-    await tester.ensureVisible(find.text(CommunityStrings.postLfg));
-    await tester.tap(find.text(CommunityStrings.postLfg));
-    await settle(tester);
-    expect(find.text(CommunityStrings.codeInvalid), findsOneWidget);
-
-    await tester.enterText(find.byKey(const ValueKey('lfg-code')), 'q1w2e3');
-    await tester.ensureVisible(find.widgetWithText(ChoiceChip, 'Đấu thường'));
-    await tester.tap(find.widgetWithText(ChoiceChip, 'Đấu thường'));
-    await tester.pump();
-    await tester.ensureVisible(find.byTooltip(CommunityStrings.increase));
-    await tester.tap(find.byTooltip(CommunityStrings.increase));
-    await tester.pump();
-    await tester.tap(find.byTooltip(CommunityStrings.increase));
-    await tester.enterText(
-      find.widgetWithText(TextField, CommunityStrings.noteHint),
-      'Vui vẻ thôi',
+  testWidgets('empty code: generated from the party on "Đăng tin"', (
+    tester,
+  ) async {
+    _serveParty(
+      env,
+      members: [mePuuid, 'bbbbbbbb-0000-0000-0000-00000000000b'],
     );
-    await tester.pump();
-    expect(find.text('Cần 3 người'), findsOneWidget);
-    await tester.ensureVisible(find.text(CommunityStrings.postLfg));
-    await tester.tap(find.text(CommunityStrings.postLfg));
+    env.server.json('POST /v1/lfg', lfgJson('new', code: 'ZX9Y8W'));
+    await _open(tester, env);
+
+    // Party size prefilled from the live party.
+    expect(find.text(CommunityStrings.partySizeValue(2)), findsOneWidget);
+    expect(find.text(CommunityStrings.partySizeFromGame), findsOneWidget);
+
+    await _tap(tester, find.text(CommunityStrings.postLfg));
     await settle(tester);
 
-    expect(env.server.calls('POST /v1/lfg').single.json, {
-      'region': 'ap',
-      'mode': 'unrated',
-      'partyCode': 'Q1W2E3',
-      'slots': 3,
-      'rankTier': 18,
-      'note': 'Vui vẻ thôi',
-    });
+    verify(() => env.pvp.partyGenerateInviteCode(mePuuid, any())).called(1);
+    verify(() => env.pvp.partySetAccessibility(mePuuid, any(), open: true))
+        .called(1);
+    final body = env.server.calls('POST /v1/lfg').single.json! as Map;
+    expect(body['partyCode'], 'ZX9Y8W');
+    expect(body['partySize'], 2);
+    expect(body['language'], 'vi');
     expect(find.text('created:new'), findsOneWidget);
     await unmount(tester);
   });
 
-  testWidgets('"Tạo mã tổ đội" generates a code from the current party', (
-    tester,
-  ) async {
-    when(() => env.pvp.partyPlayer(any())).thenAnswer(
-      (_) async => {
-        'Subject': mePuuid,
-        'CurrentPartyID': 'aaaaaaaa-0000-0000-0000-000000000001',
-      },
-    );
-    when(() => env.pvp.party(any(), any())).thenAnswer((_) async => _party());
-    when(() => env.pvp.gameSession(any()))
-        .thenAnswer((_) async => {'loopState': 'MENUS'});
-    when(() => env.pvp.partyGenerateInviteCode(any(), any()))
-        .thenAnswer((_) async => _party(code: 'ZX9Y8W'));
-    await _open(tester, env);
-
-    await tester.ensureVisible(find.text(CommunityStrings.generateCode));
-    await tester.tap(find.text(CommunityStrings.generateCode));
-    await settle(tester);
-
-    verify(() => env.pvp.partyGenerateInviteCode(mePuuid, any())).called(1);
-    expect(find.text('ZX9Y8W'), findsOneWidget);
-    expect(find.text(CommunityStrings.codeGenerated), findsOneWidget);
-    await unmount(tester);
-  });
-
-  testWidgets('no running game: explains and allows manual entry', (
+  testWidgets('no running game and no code: explains, nothing posted', (
     tester,
   ) async {
     when(() => env.pvp.partyPlayer(any()))
         .thenAnswer((_) async => throw const NotFoundException());
     await _open(tester, env);
 
-    await tester.ensureVisible(find.text(CommunityStrings.generateCode));
-    await tester.tap(find.text(CommunityStrings.generateCode));
+    await _tap(tester, find.text(CommunityStrings.postLfg));
     await settle(tester);
 
-    expect(find.text(CommunityStrings.noParty), findsOneWidget);
-    verifyNever(() => env.pvp.partyGenerateInviteCode(any(), any()));
+    expect(find.text(CommunityStrings.codeAutoFailed), findsOneWidget);
+    expect(env.server.calls('POST /v1/lfg'), isEmpty);
+    await unmount(tester);
+  });
+
+  testWidgets('all fields: rank range, roles, mic, language, slots, note', (
+    tester,
+  ) async {
+    when(() => env.pvp.partyPlayer(any()))
+        .thenAnswer((_) async => throw const NotFoundException());
+    env.server.json('POST /v1/lfg', lfgJson('new', code: 'Q1W2E3'));
+    await _open(tester, env);
+
+    await _tap(tester, find.widgetWithText(FilterChip, 'Đấu thường'));
+    // Suggested range around the poster's rank (18 → 15..21).
+    await _tap(tester, find.byKey(const ValueKey('rank-suggest')));
+    await _tap(tester, find.widgetWithText(FilterChip, 'Kiểm soát'));
+    await _tap(tester, find.widgetWithText(FilterChip, 'Đối đầu'));
+    await _tap(tester, find.text(CommunityStrings.mic));
+    await _tap(tester, find.text('English'));
+    final slotsPlus = find.descendant(
+      of: find.byKey(const ValueKey('slots')),
+      matching: find.byTooltip(CommunityStrings.increase),
+    );
+    await _tap(tester, slotsPlus);
+    await tester.enterText(find.byKey(const ValueKey('lfg-code')), 'q1w2e3');
+    await tester.enterText(
+      find.widgetWithText(TextField, CommunityStrings.noteHint),
+      'Vui vẻ thôi',
+    );
+    await _tap(tester, find.text(CommunityStrings.postLfg));
+    await settle(tester);
+
+    expect(env.server.calls('POST /v1/lfg').single.json, {
+      'region': 'ap',
+      'mode': 'unrated',
+      'partyCode': 'Q1W2E3',
+      'slots': 2,
+      'rankTier': 18,
+      'note': 'Vui vẻ thôi',
+      'rankMin': 15,
+      'rankMax': 21,
+      'roles': ['duelist', 'controller'],
+      'mic': true,
+      'language': 'en',
+      'partySize': 1,
+    });
+    await unmount(tester);
+  });
+
+  testWidgets('invalid typed code and too many players are blocked', (
+    tester,
+  ) async {
+    when(() => env.pvp.partyPlayer(any()))
+        .thenAnswer((_) async => throw const NotFoundException());
+    await _open(tester, env);
+
+    await tester.enterText(find.byKey(const ValueKey('lfg-code')), 'q1w2');
+    await _tap(tester, find.text(CommunityStrings.postLfg));
+    await settle(tester);
+    expect(find.text(CommunityStrings.codeInvalid), findsOneWidget);
+    expect(env.server.calls('POST /v1/lfg'), isEmpty);
+
+    // Party of 4 leaves room for 1 slot only: the stepper stops there.
+    final sizePlus = find.descendant(
+      of: find.byKey(const ValueKey('party-size')),
+      matching: find.byTooltip(CommunityStrings.increase),
+    );
+    for (var i = 0; i < 3; i++) {
+      await _tap(tester, sizePlus);
+    }
+    expect(find.text(CommunityStrings.partySizeValue(4)), findsOneWidget);
+    final slotsPlus = tester.widget<IconButton>(
+      find.descendant(
+        of: find.byKey(const ValueKey('slots')),
+        matching: find.widgetWithIcon(IconButton, Icons.add_rounded),
+      ),
+    );
+    expect(slotsPlus.onPressed, isNull);
     await unmount(tester);
   });
 }

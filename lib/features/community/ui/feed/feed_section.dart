@@ -60,11 +60,6 @@ class FeedSliver extends ConsumerWidget {
               icon: Icons.forum_outlined,
               title: CommunityStrings.feedEmptyTitle,
               message: CommunityStrings.feedEmptyBody,
-              action: FilledButton.icon(
-                onPressed: () => unawaited(openComposer(context)),
-                icon: const Icon(Icons.edit_rounded),
-                label: const Text(CommunityStrings.writePost),
-              ),
             ),
           ],
         ),

@@ -1,11 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/features/community/community_routes.dart';
 import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/ui/community_screen.dart';
-import 'package:valvn/features/community/ui/lfg/lfg_section.dart';
 import 'package:valvn/features/community/ui/post_detail_screen.dart';
 
 import '../community_test_env.dart';
@@ -98,7 +96,9 @@ void main() {
       env.server.json('GET /v1/posts', page([]));
       await _open(tester, env);
       expect(find.text(CommunityStrings.feedEmptyTitle), findsOneWidget);
-      expect(find.text(CommunityStrings.writePost), findsOneWidget);
+      expect(find.text(CommunityStrings.writePost), findsNothing);
+      // The FAB is the only call to action.
+      expect(find.text(CommunityStrings.newPost), findsOneWidget);
       await unmount(tester);
     });
 
@@ -193,170 +193,6 @@ void main() {
 
       expect(find.byType(PostDetailScreen), findsOneWidget);
       expect(find.text('Hay quá'), findsOneWidget);
-      await unmount(tester);
-    });
-  });
-
-  group('Tìm đồng đội', () {
-    testWidgets('cards, pinned own post, join with confirmation', (
-      tester,
-    ) async {
-      env.server.json(
-        'GET /v1/lfg',
-        page([
-          lfgJson(
-            'mine',
-            author: authorJson(id: meId),
-            code: 'MINE12',
-          ),
-          lfgJson('l1', note: 'Cần 1 Controller, có mic'),
-        ]),
-      );
-      when(() => env.pvp.partyJoinByCode(any(), any()))
-          .thenAnswer((_) async => {});
-      await _open(tester, env, location: '/community?section=lfg');
-
-      expect(find.text(CommunityStrings.removeLfg), findsOneWidget);
-      expect(find.text('Mã tổ đội: MINE12'), findsOneWidget);
-      expect(find.text('Cần 1 Controller, có mic'), findsOneWidget);
-      expect(find.text('Cần 2 người'), findsWidgets);
-      expect(find.text('Còn 24:00'), findsWidgets);
-      expect(find.text('Xếp hạng'), findsWidgets);
-
-      await tester.tap(find.text(CommunityStrings.joinParty));
-      await settle(tester);
-      expect(find.text(CommunityStrings.joinConfirmTitle), findsOneWidget);
-      verifyNever(() => env.pvp.partyJoinByCode(any(), any()));
-
-      await tester.tap(find.text(CommunityStrings.join));
-      await settle(tester);
-      verify(() => env.pvp.partyJoinByCode(mePuuid, 'ABC123')).called(1);
-      expect(find.text(CommunityStrings.joined), findsOneWidget);
-      await unmount(tester);
-    });
-
-    testWidgets('join errors are explained (game not running)', (tester) async {
-      env.server.json('GET /v1/lfg', page([lfgJson('l1')]));
-      when(() => env.pvp.partyJoinByCode(any(), any()))
-          .thenThrow(const NotFoundException(errorCode: 'RESOURCE_NOT_FOUND'));
-      await _open(tester, env, location: '/community?section=lfg');
-
-      await tester.tap(find.text(CommunityStrings.joinParty));
-      await settle(tester);
-      await tester.tap(find.text(CommunityStrings.join));
-      await settle(tester);
-      expect(find.text(CommunityStrings.joinGameNotRunning), findsOneWidget);
-      await unmount(tester);
-    });
-
-    testWidgets('filters: mode chip refetches, auto refresh every 20 s', (
-      tester,
-    ) async {
-      env.server.json('GET /v1/lfg', page([lfgJson('l1')]));
-      await _open(tester, env, location: '/community?section=lfg');
-      expect(env.server.calls('GET /v1/lfg'), hasLength(1));
-
-      final chip = find.widgetWithText(ChoiceChip, 'Đấu thường');
-      await tester.scrollUntilVisible(
-        chip,
-        120,
-        scrollable: find.descendant(
-          of: find.byKey(const ValueKey('lfg-filters')),
-          matching: find.byType(Scrollable),
-        ),
-      );
-      await tester.ensureVisible(chip);
-      await tester.pump();
-      await tester.tap(chip);
-      await settle(tester);
-      final calls = env.server.calls('GET /v1/lfg');
-      expect(calls.last.query['mode'], 'unrated');
-      final before = calls.length;
-
-      await tester.pump(const Duration(seconds: 21));
-      await settle(tester);
-      expect(env.server.calls('GET /v1/lfg').length, greaterThan(before));
-      await unmount(tester);
-    });
-
-    testWidgets('empty list invites to post', (tester) async {
-      env.server.json('GET /v1/lfg', page([]));
-      await _open(tester, env, location: '/community?section=lfg');
-      expect(find.text(CommunityStrings.lfgEmptyTitle), findsOneWidget);
-      await unmount(tester);
-    });
-
-    test('join error mapping', () {
-      expect(
-        joinErrorMessage(const NotFoundException(errorCode: 'PARTY_NOT_FOUND')),
-        CommunityStrings.joinInvalidCode,
-      );
-      expect(
-        joinErrorMessage(const RiotApiException(409)),
-        CommunityStrings.joinInvalidCode,
-      );
-      expect(
-        joinErrorMessage(const NotFoundException()),
-        CommunityStrings.joinGameNotRunning,
-      );
-    });
-  });
-
-  group('Xếp hạng skin', () {
-    testWidgets('leaderboard with an optimistic heart', (tester) async {
-      env.server
-        ..json('GET /v1/skins/top', {
-          'items': [
-            {
-              'rank': 1,
-              'skinUuid': reaverSkin,
-              'weaponUuid': vandal,
-              'votes': 12,
-            },
-            {'rank': 2, 'skinUuid': knifeSkin, 'votes': 4, 'voted': true},
-          ],
-        })
-        ..json('PUT /v1/skins/*/vote', {
-          'skinUuid': reaverSkin,
-          'votes': 30,
-          'voted': true,
-        });
-      await _open(tester, env, location: '/community?section=skins');
-
-      expect(find.text('Vandal Reaver'), findsOneWidget);
-      expect(find.text('Dao Đặc Nhiệm 809'), findsOneWidget);
-      expect(find.text('#1'), findsOneWidget);
-      expect(find.text('12'), findsOneWidget);
-
-      await tester.tap(find.bySemanticsLabel(CommunityStrings.vote).first);
-      await tester.pump();
-      expect(find.text('13'), findsWidgets);
-      await settle(tester);
-      expect(find.text('30'), findsOneWidget);
-      expect(env.server.calls('PUT /v1/skins/*/vote').single.json, {
-        'weaponUuid': vandal,
-      });
-      await unmount(tester);
-    });
-
-    testWidgets('period toggle and weapon chips refetch', (tester) async {
-      env.server.json('GET /v1/skins/top', {'items': <Object>[]});
-      await _open(tester, env, location: '/community?section=skins');
-      expect(find.text(CommunityStrings.skinsEmptyTitle), findsOneWidget);
-
-      await tester.tap(find.text(CommunityStrings.periodWeek));
-      await settle(tester);
-      expect(
-        env.server.calls('GET /v1/skins/top').last.query['period'],
-        'week',
-      );
-
-      await tester.tap(find.widgetWithText(ChoiceChip, 'Vandal'));
-      await settle(tester);
-      expect(
-        env.server.calls('GET /v1/skins/top').last.query['weapon'],
-        vandal,
-      );
       await unmount(tester);
     });
   });
