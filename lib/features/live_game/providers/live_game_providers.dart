@@ -283,12 +283,22 @@ class LiveGameController extends AsyncNotifier<LiveGameState> {
 
   /// Leaves the current match: dodge in agent select (G-6) or disassociate
   /// from a running match (G-11). **Penalty** — only call after the user
-  /// confirmed the warning dialog.
-  Future<void> quitMatch() async {
+  /// confirmed the warning dialog, passing the match ([matchId]) and phase
+  /// ([pregame]) that dialog warned about. If polling moved on meanwhile
+  /// (agent select ended, or another match started), nothing is sent and
+  /// [MatchChangedException] is thrown: the user never agreed to that
+  /// penalty.
+  Future<void> quitMatch({
+    required String matchId,
+    required bool pregame,
+  }) async {
     final api = _api;
     final match = _last?.match;
     if (api == null || match == null) {
       throw const NotFoundException(errorCode: 'no_match');
+    }
+    if (match.matchId != matchId || match.isPregame != pregame) {
+      throw const MatchChangedException();
     }
     if (match.isPregame) {
       await api.pregameQuit(puuid, match.matchId);
@@ -297,6 +307,15 @@ class LiveGameController extends AsyncNotifier<LiveGameState> {
     }
     if (ref.mounted) unawaited(refresh());
   }
+}
+
+/// The match (or its phase) changed between the quit warning and the
+/// user's confirmation; no request was sent.
+class MatchChangedException implements Exception {
+  const MatchChangedException();
+
+  @override
+  String toString() => 'MatchChangedException';
 }
 
 /// Key of per-match providers.

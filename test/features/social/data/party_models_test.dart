@@ -40,6 +40,20 @@ void main() {
     expect(p.isOpen, isFalse);
   });
 
+  test("Riot's dotted QueueEntryTime is parsed (queue timer)", () {
+    final p = Party.fromJson({
+      'ID': partyId,
+      'State': 'MATCHMAKING',
+      'QueueEntryTime': '2026.04.23-22.40.57',
+    })!;
+    expect(p.queueEntryTime, DateTime.utc(2026, 4, 23, 22, 40, 57));
+    expect(
+      Party.fromJson({'ID': partyId, 'QueueEntryTime': '0001.01.01-00.00.00'})!
+          .queueEntryTime,
+      isNull,
+    );
+  });
+
   test('garbage in, nulls out', () {
     expect(Party.fromJson(null), isNull);
     expect(Party.fromJson('<html>'), isNull);

@@ -231,15 +231,19 @@ class _QuitBarState extends ConsumerState<_QuitBar> {
   bool _busy = false;
 
   Future<void> _confirmAndQuit() async {
-    final confirmed = await showQuitMatchDialog(
-      context,
-      pregame: widget.match.isPregame,
-    );
+    // What the user is warned about (dodge vs. abandon) is what gets sent.
+    final matchId = widget.match.matchId;
+    final pregame = widget.match.isPregame;
+    final confirmed = await showQuitMatchDialog(context, pregame: pregame);
     if (!confirmed || !mounted) return;
     setState(() => _busy = true);
     try {
-      await ref.read(liveGameProvider(widget.puuid).notifier).quitMatch();
+      await ref
+          .read(liveGameProvider(widget.puuid).notifier)
+          .quitMatch(matchId: matchId, pregame: pregame);
       if (mounted) showAppSnackBar(context, LiveGameStrings.quitDone);
+    } on MatchChangedException {
+      if (mounted) showAppSnackBar(context, LiveGameStrings.quitMatchChanged);
     } on Object catch (e) {
       if (mounted) {
         showAppSnackBar(

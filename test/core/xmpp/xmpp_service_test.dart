@@ -105,6 +105,26 @@ void main() {
     expect(s.roster[friendA]!.lastOnline, DateTime.utc(2026, 9, 28, 12));
   });
 
+  test(
+    'background + foreground during a slow connect still connects',
+    () async {
+      final gate = Completer<void>();
+      creds.gate = gate;
+      service.start();
+      await _tick();
+      await service.stop(); // app backgrounded while credentials are loading
+      service.start(); // back in the foreground
+      await _tick();
+      gate.complete();
+      await service.waitUntilConnected();
+      await _tick();
+      expect(service.snapshot.connection.status, XmppStatus.connected);
+      expect(service.isConnected, isTrue);
+      // The stale attempt gave up before opening a socket.
+      expect(server.connects, 1);
+    },
+  );
+
   test('streams emit the current value first, then changes', () async {
     final states = <XmppStatus>[];
     final sub = service.connectionStates.listen((s) => states.add(s.status));

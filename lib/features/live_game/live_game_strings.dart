@@ -97,6 +97,8 @@ abstract final class LiveGameStrings {
       'muốn rời?';
   static const quitDone = 'Đã rời trận.';
   static const quitFailed = 'Không thể rời trận.';
+  static const quitMatchChanged =
+      'Trận đã chuyển giai đoạn trong lúc bạn xác nhận. Chưa rời trận, hãy thử lại.';
 
   // Ended (G11)
   static const finalScoreboard = 'Bảng điểm cuối trận';

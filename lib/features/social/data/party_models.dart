@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../core/util/json.dart';
 import '../../../core/xmpp/xmpp_models.dart' show LoopState;
-import '../../../core/xmpp/xmpp_parsers.dart' show parseRiotTimestamp;
+import '../../../core/xmpp/xmpp_parsers.dart' show parseQueueEntryTime;
 
 // Party service payloads (EP §15.4, SUMMARY §6.4 G-12…G-24). Every field is
 // optional; nothing here throws.
@@ -160,7 +160,7 @@ class Party {
       queueId: asString(asMap(m['MatchmakingData'])?['QueueID'])
           ?.trim()
           .toLowerCase(),
-      queueEntryTime: parseRiotTimestamp(m['QueueEntryTime']),
+      queueEntryTime: parseQueueEntryTime(m['QueueEntryTime']),
       eligibleQueues: eligibleRaw is List
           ? {for (final q in asStringList(eligibleRaw)) q.toLowerCase()}
           : null,

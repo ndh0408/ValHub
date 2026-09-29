@@ -199,7 +199,9 @@ void main() {
     await withContainer((c) async {
       c.listen(liveGameProvider(me), (_, _) {});
       await tester.pump();
-      await c.read(liveGameProvider(me).notifier).quitMatch();
+      await c
+          .read(liveGameProvider(me).notifier)
+          .quitMatch(matchId: pregameMatchId, pregame: true);
       verify(() => env.api.pregameQuit(me, pregameMatchId)).called(1);
       verifyNever(() => env.api.coreGameDisassociate(any(), any()));
 
@@ -210,8 +212,36 @@ void main() {
       await c.read(liveGameProvider(me).notifier).refresh();
       await tester.pump();
       expect(c.read(liveGameProvider(me)).value?.phase, LivePhase.ingame);
-      await c.read(liveGameProvider(me).notifier).quitMatch();
+      await c
+          .read(liveGameProvider(me).notifier)
+          .quitMatch(matchId: liveMatchId, pregame: false);
       verify(() => env.api.coreGameDisassociate(me, liveMatchId)).called(1);
+    });
+  });
+
+  testWidgets('quit confirmed for agent select never abandons the started '
+      'match', (tester) async {
+    env
+      ..loop = 'PREGAME'
+      ..pregame = pregameMatchJson();
+    await withContainer((c) async {
+      c.listen(liveGameProvider(me), (_, _) {});
+      await tester.pump();
+      // Agent select ends while the dodge warning is open.
+      env
+        ..loop = 'INGAME'
+        ..pregame = null
+        ..core = coreMatchJson();
+      await c.read(liveGameProvider(me).notifier).refresh();
+      await tester.pump();
+      await expectLater(
+        c
+            .read(liveGameProvider(me).notifier)
+            .quitMatch(matchId: pregameMatchId, pregame: true),
+        throwsA(isA<MatchChangedException>()),
+      );
+      verifyNever(() => env.api.coreGameDisassociate(any(), any()));
+      verifyNever(() => env.api.pregameQuit(any(), any()));
     });
   });
 

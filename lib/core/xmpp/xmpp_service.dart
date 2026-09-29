@@ -183,6 +183,10 @@ class XmppService {
   Future<void> stop() async {
     _wanted = false;
     _generation++;
+    // The running attempt is now stale (it exits on the generation check);
+    // forget it so a start() right after this one connects again instead
+    // of waiting on an attempt that will never connect.
+    _connecting = null;
     _retry?.cancel();
     _retry = null;
     _attempt = 0;

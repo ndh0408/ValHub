@@ -240,9 +240,13 @@ class FakeCredentials implements XmppCredentialSource {
   final List<String> invalidated = [];
   Object? error;
 
+  /// When set, every credentials call waits for it (slow re-auth).
+  Completer<void>? gate;
+
   @override
   Future<XmppCredentials> credentials(String puuid) async {
     calls++;
+    await gate?.future;
     final e = error;
     if (e != null) throw e;
     return XmppCredentials(
