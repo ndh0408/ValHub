@@ -56,3 +56,21 @@ File Figma: https://www.figma.com/design/AwxGtJGhawAIv4xqapRc1f
 - Cài đặt: nhãn nhóm viết HOA muted; nhóm nền s1 bo 16, hàng ngăn bằng viền 6% trắng; hàng tài khoản
   có dải đỏ 4px cho tài khoản đang dùng + ✓, huy hiệu vàng "Đăng nhập lại"; "+ Thêm tài khoản" chữ đỏ;
   công tắc bật màu đỏ, tắt #2E3F4E.
+
+## Trang con, sheet và hộp thoại (2026-09, `core/ui/sub_page.dart`)
+
+- **Trang con** (mọi màn đẩy từ một tab): `SubPageScaffold` — nút quay lại, tiêu đề lớn Be Vietnam Pro
+  ExtraBold 28 bên trái (một bậc nhỏ hơn tiêu đề tab), phụ đề muted; khi cuộn, tiêu đề lớn trôi đi và
+  tiêu đề nhỏ 17 hiện trên thanh. Nội dung có ảnh (map, bundle, thẻ người chơi) dùng hero tràn viền cao
+  ~220, thu gọn dưới thanh, lớp phủ gradient (đen 45% ở trên cho thanh trạng thái → trong suốt → màu nền
+  ở dưới); nút trên ảnh nằm trong vòng tròn đen 38%. Thanh lọc/tìm kiếm ghim dùng `GlassBar`.
+  Hành động chính cố định ở đáy: `SubPageBottomBar` (viền mảnh trên, chừa vùng an toàn).
+- **Sheet**: `showValSheet` — tay nắm, tiêu đề đậm 20 bên trái + phụ đề muted, nút đóng tròn nền s2 bên
+  phải (kiểu "Game Details" của ValBuddy); vừa nội dung (≤ 90%) hoặc kéo được với danh sách dài.
+- **Hộp thoại xác nhận**: `showConfirmDialog` (Cupertino trên iOS, Material 3 trên Android), hành động
+  có hình phạt màu đỏ và luôn cần xác nhận.
+- **Giá VND ước tính**: chữ nhỏ muted "≈ 268.000 ₫" cạnh giá VP (quy đổi theo gói nạp lợi nhất ở
+  Việt Nam, nguồn + ngày trong sheet giải thích; tắt được trong Cài đặt).
+- **Giờ địa phương**: cạnh mọi đếm ngược có giờ thật theo múi giờ máy, 24 giờ, thứ tiếng Việt
+  ("Làm mới lúc 07:00 ngày mai", "Kết thúc 23:59 thứ Hai 06/10").
+- **Tìm kiếm**: không phân biệt dấu/hoa thường ("thuong gioi" tìm ra "Thượng Giới").
