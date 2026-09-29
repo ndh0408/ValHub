@@ -406,6 +406,22 @@ class _Filters extends ConsumerWidget {
                 selected: filter.micOnly,
                 onSelected: () => n.setMicOnly(!filter.micOnly),
               ),
+              const SizedBox(width: 8),
+              menuChip<String>(
+                key: const ValueKey('lfg-language-filter'),
+                icon: Icons.translate_rounded,
+                label: CommunityStrings.languageLabel(
+                  filter.language ?? kLfgAnyLanguage,
+                ),
+                tooltip: CommunityStrings.language,
+                items: [
+                  (kLfgAnyLanguage, CommunityStrings.anyLanguage),
+                  for (final l in kLfgLanguages)
+                    (l, CommunityStrings.languageLabel(l)),
+                ],
+                onSelected: (l) =>
+                    n.setLanguage(l == kLfgAnyLanguage ? null : l),
+              ),
             ],
           ),
         ),

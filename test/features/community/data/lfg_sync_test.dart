@@ -56,14 +56,14 @@ void main() {
       expect(p.joins, 4);
     });
 
-    test('rank 0 means any; unknown language falls back to vi', () {
+    test('rank 0 means any; unknown language means any', () {
       final p = LfgPost.fromJson({
         ...lfgJson('y', slots: 2),
         'rankMin': 0,
-        'language': 'fr',
+        'language': 'xx',
       })!;
       expect(p.hasRankRange, isFalse);
-      expect(p.language, 'vi');
+      expect(p.language, kLfgAnyLanguage);
       expect(p.currentPartySize, 3);
       expect(p.status, LfgStatus.open);
     });
@@ -222,5 +222,17 @@ void main() {
       expect(suggestedRankRange(0), isNull);
       expect(suggestedRankRange(null), isNull);
     });
+  });
+
+  test('language codes: canonical, case-insensitive, locale defaults', () {
+    expect(lfgLanguageCode('ZH_tw'), 'zh-TW');
+    expect(lfgLanguageCode('JA'), 'ja');
+    expect(lfgLanguageCode('Any'), kLfgAnyLanguage);
+    expect(lfgLanguageCode('klingon'), isNull);
+    expect(lfgLanguageForLocale('vi'), 'vi');
+    expect(lfgLanguageForLocale('zh', scriptOrCountry: 'Hant'), 'zh-TW');
+    expect(lfgLanguageForLocale('zh'), 'zh-CN');
+    expect(lfgLanguageForLocale('nl'), kLfgAnyLanguage);
+    expect(kLfgLanguages, hasLength(17));
   });
 }

@@ -200,7 +200,7 @@ abstract final class CommunityStrings {
 
   /// Community regions (`region` of the API).
   static String regionLabel(String region) => switch (region) {
-    'ap' => 'Châu Á - TBD',
+    'ap' => 'Châu Á – Thái Bình Dương',
     'na' => 'Bắc Mỹ',
     'eu' => 'Châu Âu',
     'kr' => 'Hàn Quốc',
@@ -279,16 +279,36 @@ abstract final class CommunityStrings {
   static const mic = 'Cần mic';
   static const micOn = 'Có mic';
   static const language = 'Ngôn ngữ';
-  static String languageLabel(String code) => switch (code) {
-    'vi' => 'Tiếng Việt',
-    'en' => 'English',
-    _ => 'Bất kỳ',
+  static const anyLanguage = 'Mọi ngôn ngữ';
+
+  /// VALORANT languages by their native names (not translated).
+  static const languageNames = <String, String>{
+    'ar': 'العربية',
+    'de': 'Deutsch',
+    'en': 'English',
+    'es': 'Español',
+    'fr': 'Français',
+    'id': 'Bahasa Indonesia',
+    'it': 'Italiano',
+    'ja': '日本語',
+    'ko': '한국어',
+    'pl': 'Polski',
+    'pt': 'Português',
+    'ru': 'Русский',
+    'th': 'ไทย',
+    'tr': 'Türkçe',
+    'vi': 'Tiếng Việt',
+    'zh-CN': '简体中文',
+    'zh-TW': '繁體中文',
   };
-  static String languageFlag(String code) => switch (code) {
-    'vi' => 'VN',
-    'en' => 'EN',
-    _ => '',
-  };
+
+  /// Native name of an LFG language code; "Mọi ngôn ngữ" for `any`.
+  static String languageLabel(String code) =>
+      languageNames[code] ?? anyLanguage;
+
+  /// Short tag of a language on cards ("JA", "ZH-TW"); empty for `any`.
+  static String languageTag(String code) =>
+      languageNames.containsKey(code) ? code.toUpperCase() : '';
   static const partySize = 'Tổ đội hiện có';
   static String partySizeValue(int n) => '$n người';
   static const partySizeFromGame = 'Lấy từ tổ đội trong game';

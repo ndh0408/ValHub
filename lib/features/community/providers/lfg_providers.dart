@@ -25,6 +25,7 @@ abstract final class LfgMemoryKeys {
   static const role = 'community.lfg.role';
   static const mic = 'community.lfg.mic';
   static const matchRank = 'community.lfg.matchRank';
+  static const language = 'community.lfg.language';
 }
 
 /// Filters of the LFG list (`region == null` = the active account's).
@@ -36,6 +37,7 @@ class LfgFilter {
     this.role,
     this.micOnly = false,
     this.matchRank = true,
+    this.language,
   });
 
   final String? region;
@@ -48,18 +50,23 @@ class LfgFilter {
   /// "Phù hợp rank của bạn" (on by default).
   final bool matchRank;
 
+  /// Party language (`null` = any).
+  final String? language;
+
   LfgFilter copyWith({
     String? Function()? region,
     String? Function()? mode,
     String? Function()? role,
     bool? micOnly,
     bool? matchRank,
+    String? Function()? language,
   }) => LfgFilter(
     region: region == null ? this.region : region(),
     mode: mode == null ? this.mode : mode(),
     role: role == null ? this.role : role(),
     micOnly: micOnly ?? this.micOnly,
     matchRank: matchRank ?? this.matchRank,
+    language: language == null ? this.language : language(),
   );
 
   @override
@@ -69,10 +76,12 @@ class LfgFilter {
       other.mode == mode &&
       other.role == role &&
       other.micOnly == micOnly &&
-      other.matchRank == matchRank;
+      other.matchRank == matchRank &&
+      other.language == language;
 
   @override
-  int get hashCode => Object.hash(region, mode, role, micOnly, matchRank);
+  int get hashCode =>
+      Object.hash(region, mode, role, micOnly, matchRank, language);
 }
 
 /// The LFG filters, remembered across launches (`UiMemory`).
@@ -94,6 +103,10 @@ class LfgFilterNotifier extends Notifier<LfgFilter> {
       role: known(m.read(LfgMemoryKeys.role), kLfgRoles),
       micOnly: m.readBool(LfgMemoryKeys.mic),
       matchRank: m.readBool(LfgMemoryKeys.matchRank, fallback: true),
+      language: switch (lfgLanguageCode(m.read(LfgMemoryKeys.language))) {
+        kLfgAnyLanguage || null => null,
+        final code => code,
+      },
     );
   }
 
@@ -117,6 +130,11 @@ class LfgFilterNotifier extends Notifier<LfgFilter> {
     _memory.writeBool(LfgMemoryKeys.mic, value);
   }
 
+  void setLanguage(String? language) {
+    state = state.copyWith(language: () => language);
+    _memory.write(LfgMemoryKeys.language, language);
+  }
+
   void setMatchRank(bool value) {
     state = state.copyWith(matchRank: value);
     _memory.writeBool(LfgMemoryKeys.matchRank, value);
@@ -131,6 +149,7 @@ typedef LfgQuery = ({
   int? rank,
   String? role,
   bool? mic,
+  String? language,
 });
 
 /// The viewer's rank for LFG matching (`null` when unranked / unknown).
@@ -147,6 +166,7 @@ LfgQuery lfgQueryFor(Account account, LfgFilter filter) => (
   rank: filter.matchRank ? lfgViewerRank(account) : null,
   role: filter.role,
   mic: filter.micOnly ? true : null,
+  language: filter.language,
 );
 
 /// Open LFG posts for a query, newest first.
@@ -177,6 +197,7 @@ class LfgNotifier extends AsyncNotifier<PagedState<LfgPost>>
       rank: query.rank,
       role: query.role,
       mic: query.mic,
+      language: query.language,
       cursor: cursor,
     );
     // The server filters too; keep the list honest if it does not.
@@ -187,7 +208,10 @@ class LfgNotifier extends AsyncNotifier<PagedState<LfgPost>>
             (query.role == null ||
                 p.roles.isEmpty ||
                 p.roles.contains(query.role)) &&
-            (query.mic != true || p.mic == true))
+            (query.mic != true || p.mic == true) &&
+            (query.language == null ||
+                p.language == query.language ||
+                p.language == kLfgAnyLanguage))
           p,
     ], nextCursor: page.nextCursor);
   }

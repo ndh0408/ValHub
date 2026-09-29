@@ -84,7 +84,7 @@ void main() {
     expect(find.text('Kiểm soát'), findsOneWidget);
     expect(find.text(CommunityStrings.roleFlex), findsOneWidget);
     expect(find.byTooltip(CommunityStrings.mic), findsOneWidget);
-    expect(find.text('VN'), findsOneWidget);
+    expect(find.text('VI'), findsOneWidget);
     expect(
       find.bySemanticsLabel(CommunityStrings.partySizeValue(3)),
       findsOneWidget,

@@ -14,6 +14,7 @@ import 'package:valvn/core/auth/riot_session.dart';
 import 'package:valvn/core/auth/session_manager.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/content/content_repository.dart';
+import 'package:valvn/core/l10n/locale.dart';
 import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/core/riot/pvp_api.dart';
 import 'package:valvn/core/riot/riot_hosts.dart';
@@ -391,7 +392,13 @@ Future<void> pumpCommunity(
     ProviderScope(
       overrides: env.overrides,
       retry: (_, _) => null,
-      child: MaterialApp(theme: buildDarkTheme(), home: child),
+      child: MaterialApp(
+        theme: buildDarkTheme(),
+        locale: appLocale,
+        supportedLocales: const [appLocale],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        home: child,
+      ),
     ),
   );
 }
@@ -417,6 +424,9 @@ Future<GoRouter> pumpCommunityRouter(
       retry: (_, _) => null,
       child: MaterialApp.router(
         theme: theme ?? buildDarkTheme(),
+        locale: appLocale,
+        supportedLocales: const [appLocale],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
         routerConfig: router,
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context)

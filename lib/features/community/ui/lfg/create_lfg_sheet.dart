@@ -9,7 +9,6 @@ import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/rank_badge.dart';
-import '../../../../core/ui/segmented_tabs.dart';
 import '../../../../core/util/clock.dart';
 import '../../community_strings.dart';
 import '../../data/community_models.dart';
@@ -68,7 +67,11 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
   int? _rankMax;
   final Set<String> _roles = {};
   bool _mic = false;
-  String _language = 'vi';
+
+  /// Picked language; `null` = the app's current language.
+  String? _languageChoice;
+
+  String get _language => _languageChoice ?? communityAppLanguage(context);
   bool _sizeFromGame = false;
   final _note = TextEditingController();
   final _code = TextEditingController();
@@ -216,18 +219,19 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
               title: const Text(CommunityStrings.mic),
             ),
             _label(CommunityStrings.language),
-            SegmentedTabs<String>(
-              expand: true,
-              padding: EdgeInsets.zero,
-              tabs: [
-                for (final l in kLfgLanguages)
-                  SegmentedTab(
-                    value: l,
-                    label: CommunityStrings.languageLabel(l),
-                  ),
-              ],
-              selected: _language,
-              onChanged: (l) => setState(() => _language = l),
+            Material(
+              color: theme.colorScheme.surfaceContainer,
+              borderRadius: BorderRadius.circular(ValRadius.small),
+              child: ListTile(
+                key: const ValueKey('lfg-language'),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(ValRadius.small),
+                ),
+                leading: const Icon(Icons.translate_rounded),
+                title: Text(CommunityStrings.languageLabel(_language)),
+                trailing: const Icon(Icons.expand_more_rounded),
+                onTap: () => unawaited(_pickLanguage()),
+              ),
             ),
             const SizedBox(height: 20),
             _label(CommunityStrings.partySize),
@@ -342,6 +346,34 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
       ),
     ),
   );
+
+  Future<void> _pickLanguage() async {
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      useSafeArea: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.6,
+        builder: (context, controller) => ListView(
+          controller: controller,
+          children: [
+            for (final code in [kLfgAnyLanguage, ...kLfgLanguages])
+              ListTile(
+                key: ValueKey('lang-$code'),
+                title: Text(CommunityStrings.languageLabel(code)),
+                trailing: code == _language
+                    ? const Icon(Icons.check_rounded)
+                    : null,
+                onTap: () => Navigator.of(context).pop(code),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (picked != null && mounted) setState(() => _languageChoice = picked);
+  }
 
   Future<void> _pickRank(ContentDb db, {required bool min}) async {
     final tiers = <int>{

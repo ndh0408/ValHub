@@ -5,6 +5,7 @@ import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/l10n/content_strings.dart';
+import '../../../../core/l10n/locale.dart';
 import '../../../../core/riot/riot_ids.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/net_image.dart';
@@ -256,4 +257,13 @@ class LfgStatusChip extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The app's current language as a community language code (today `vi`).
+String communityAppLanguage(BuildContext context) {
+  final locale = Localizations.maybeLocaleOf(context) ?? appLocale;
+  return lfgLanguageForLocale(
+    locale.languageCode,
+    scriptOrCountry: locale.scriptCode ?? locale.countryCode,
+  );
 }

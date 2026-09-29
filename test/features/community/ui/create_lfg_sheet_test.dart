@@ -151,7 +151,10 @@ void main() {
     await _tap(tester, find.widgetWithText(FilterChip, 'Kiểm soát'));
     await _tap(tester, find.widgetWithText(FilterChip, 'Đối đầu'));
     await _tap(tester, find.text(CommunityStrings.mic));
-    await _tap(tester, find.text('English'));
+    await _tap(tester, find.byKey(const ValueKey('lfg-language')));
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('lang-ja')));
+    await settle(tester);
     final slotsPlus = find.descendant(
       of: find.byKey(const ValueKey('slots')),
       matching: find.byTooltip(CommunityStrings.increase),
@@ -176,7 +179,7 @@ void main() {
       'rankMax': 21,
       'roles': ['duelist', 'controller'],
       'mic': true,
-      'language': 'en',
+      'language': 'ja',
       'partySize': 1,
     });
     await unmount(tester);

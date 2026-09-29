@@ -62,7 +62,7 @@ class LfgCard extends ConsumerWidget {
         expiresAt != null &&
         expiresAt.difference(now) < const Duration(minutes: 5);
     final partySize = live?.size ?? post.currentPartySize;
-    final langTag = CommunityStrings.languageFlag(post.language);
+    final langTag = CommunityStrings.languageTag(post.language);
 
     final card = ValCard(
       padding: const EdgeInsets.fromLTRB(16, 14, 8, 16),
@@ -125,7 +125,10 @@ class LfgCard extends ConsumerWidget {
                     child: Icon(Icons.mic_rounded, size: 18, color: muted),
                   ),
                 if (langTag.isNotEmpty)
-                  ValBadge(langTag, color: colors.draw, soft: true),
+                  Tooltip(
+                    message: CommunityStrings.languageLabel(post.language),
+                    child: ValBadge(langTag, color: colors.draw, soft: true),
+                  ),
                 if (outOfRange)
                   ValBadge(
                     CommunityStrings.outOfRange,

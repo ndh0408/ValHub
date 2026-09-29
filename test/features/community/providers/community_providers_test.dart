@@ -243,6 +243,7 @@ void main() {
         rank: null,
         role: null,
         mic: null,
+        language: null,
       );
       final sub = container.listen(lfgProvider(q), (_, _) {});
       addTearDown(sub.close);

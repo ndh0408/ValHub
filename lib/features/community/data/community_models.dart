@@ -1,4 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
+
+import '../../../core/l10n/locale.dart';
 
 import '../../../core/util/json.dart';
 
@@ -427,8 +430,55 @@ final RegExp partyCodePattern = RegExp(r'^[A-Z0-9]{6}$');
 /// LFG roles (`roles`).
 const kLfgRoles = ['duelist', 'initiator', 'controller', 'sentinel', 'flex'];
 
-/// LFG languages (`language`).
-const kLfgLanguages = ['vi', 'en', 'any'];
+/// VALORANT client languages accepted by LFG (`language`); `any` = no
+/// preference.
+const kLfgLanguages = [
+  'ar',
+  'de',
+  'en',
+  'es',
+  'fr',
+  'id',
+  'it',
+  'ja',
+  'ko',
+  'pl',
+  'pt',
+  'ru',
+  'th',
+  'tr',
+  'vi',
+  'zh-CN',
+  'zh-TW',
+];
+
+/// "Any language".
+const kLfgAnyLanguage = 'any';
+
+/// Canonical LFG language code for [value] (case-insensitive, `_` or `-`),
+/// `any`, or `null` when unknown.
+String? lfgLanguageCode(Object? value) {
+  final s = asNonEmptyString(value)?.replaceAll('_', '-').toLowerCase();
+  if (s == null) return null;
+  if (s == kLfgAnyLanguage) return kLfgAnyLanguage;
+  for (final code in kLfgLanguages) {
+    if (code.toLowerCase() == s) return code;
+  }
+  return null;
+}
+
+/// The LFG language matching an app locale (`zh` → `zh-CN` / `zh-TW`),
+/// else `any`.
+String lfgLanguageForLocale(String languageCode, {String? scriptOrCountry}) {
+  final lang = languageCode.toLowerCase();
+  if (lang == 'zh') {
+    final region = scriptOrCountry?.toUpperCase();
+    return region == 'TW' || region == 'HK' || region == 'HANT'
+        ? 'zh-TW'
+        : 'zh-CN';
+  }
+  return lfgLanguageCode(lang) ?? kLfgAnyLanguage;
+}
 
 /// LFG post status (`status`).
 enum LfgStatus {
@@ -470,7 +520,7 @@ class LfgPost {
     this.rankMax,
     this.roles = const [],
     this.mic,
-    this.language = 'vi',
+    this.language = kLfgAnyLanguage,
     this.partySize,
     this.agents = const [],
     this.status = LfgStatus.open,
@@ -494,7 +544,6 @@ class LfgPost {
       (rankMin, rankMax) = (rankMax, rankMin);
     }
     final partySize = asInt(m['partySize']);
-    final language = asNonEmptyString(m['language'])?.toLowerCase();
     return LfgPost(
       id: id,
       author: CommunityAuthor.fromJson(m['author']) ?? CommunityAuthor.unknown,
@@ -513,7 +562,7 @@ class LfgPost {
           if (kLfgRoles.contains(r.toLowerCase())) r.toLowerCase(),
       }.toList(),
       mic: asBool(m['mic']),
-      language: kLfgLanguages.contains(language) ? language! : 'vi',
+      language: lfgLanguageCode(m['language']) ?? kLfgAnyLanguage,
       partySize: partySize?.clamp(1, 5),
       agents: [for (final a in asStringList(m['agents'])) ?lowerUuid(a)]
           .take(5)
@@ -683,9 +732,9 @@ class SkinRating {
   int get hashCode => Object.hash(average, count, reviewCount);
 }
 
-/// `4.56` → `4,6` (one decimal, Vietnamese comma).
+/// `4.56` → `4,6`: one decimal with the app locale's separator.
 String formatRating(double value) =>
-    value.toStringAsFixed(1).replaceAll('.', ',');
+    NumberFormat('0.0', appIntlLocale).format(value);
 
 /// Votes + rating of one skin (`/v1/skins/votes` items).
 @immutable
