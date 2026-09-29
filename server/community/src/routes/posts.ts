@@ -4,6 +4,7 @@ import { decodeCursor, page } from '../cursor.js';
 import type { AuthorCols, CommentRow, PostView } from '../db/repo.js';
 import { forbidden, invalid, notFound } from '../errors.js';
 import { MEDIA_KEY_RE } from '../media.js';
+import { cleanUserText } from '../moderation/filter.js';
 import {
   isObject,
   isUuid,
@@ -117,7 +118,8 @@ export function registerPosts(app: Hono, x: Ctx): void {
     const user = x.user(c, true);
     const body = await x.readJson(c);
     const kind = parseEnum(body.kind, POST_KINDS, 'kind');
-    const text = body.body === undefined || body.body === null ? '' : parseString(body.body, 'body', { max: 1000 });
+    const text =
+      body.body === undefined || body.body === null ? '' : cleanUserText(parseString(body.body, 'body', { max: 1000 }));
 
     let media: string[] = [];
     if (body.media !== undefined && body.media !== null) {
@@ -197,7 +199,8 @@ export function registerPosts(app: Hono, x: Ctx): void {
     const user = x.user(c, true);
     const p = visiblePost(c.req.param('id'), user.id);
     const body = await x.readJson(c);
-    const text = parseString(body.body, 'body', { min: 1, max: 500 });
+    const text = cleanUserText(parseString(body.body, 'body', { min: 1, max: 500 }));
+    if (text === '') throw invalid('body không được để trống.');
     x.rateLimit('comments', user.id);
     const id = crypto.randomUUID();
     x.repo.insertComment({ id, post_id: p.id, user_id: user.id, body: text, hidden: 0, created_at: x.now() });

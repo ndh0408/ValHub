@@ -38,9 +38,9 @@ describe('skin votes', () => {
     const all = await e.req('GET', '/v1/skins/top', { token: a.token });
     expect(all.status).toBe(200);
     expect(all.json.items).toEqual([
-      { rank: 1, skinUuid: SKIN_A, weaponUuid: WEAPON_1, votes: 3, voted: true },
-      { rank: 2, skinUuid: SKIN_B, weaponUuid: WEAPON_2, votes: 2, voted: true },
-      { rank: 3, skinUuid: SKIN_C, weaponUuid: WEAPON_1, votes: 1, voted: false },
+      { rank: 1, skinUuid: SKIN_A, weaponUuid: WEAPON_1, votes: 3, voted: true, ratingAvg: null, ratingCount: 0, reviewCount: 0 },
+      { rank: 2, skinUuid: SKIN_B, weaponUuid: WEAPON_2, votes: 2, voted: true, ratingAvg: null, ratingCount: 0, reviewCount: 0 },
+      { rank: 3, skinUuid: SKIN_C, weaponUuid: WEAPON_1, votes: 1, voted: false, ratingAvg: null, ratingCount: 0, reviewCount: 0 },
     ]);
 
     const week = await e.req('GET', '/v1/skins/top?period=week');
@@ -50,7 +50,7 @@ describe('skin votes', () => {
     ]);
 
     const w1 = await e.req('GET', `/v1/skins/top?weapon=${WEAPON_1}&limit=1`);
-    expect(w1.json.items).toEqual([{ rank: 1, skinUuid: SKIN_A, weaponUuid: WEAPON_1, votes: 3, voted: false }]);
+    expect(w1.json.items).toEqual([{ rank: 1, skinUuid: SKIN_A, weaponUuid: WEAPON_1, votes: 3, voted: false, ratingAvg: null, ratingCount: 0, reviewCount: 0 }]);
   });
 
   it('pins a skin to the weapon of its first vote', async () => {
@@ -73,12 +73,12 @@ describe('skin votes', () => {
       token: a.token,
     });
     expect(res.json.items).toEqual([
-      { skinUuid: SKIN_B, votes: 1, voted: false },
-      { skinUuid: SKIN_A, votes: 2, voted: true },
-      { skinUuid: SKIN_C, votes: 0, voted: false },
+      { skinUuid: SKIN_B, votes: 1, voted: false, ratingAvg: null, ratingCount: 0 },
+      { skinUuid: SKIN_A, votes: 2, voted: true, ratingAvg: null, ratingCount: 0 },
+      { skinUuid: SKIN_C, votes: 0, voted: false, ratingAvg: null, ratingCount: 0 },
     ]);
     const anon = await e.req('GET', `/v1/skins/votes?ids=${SKIN_A}`);
-    expect(anon.json.items).toEqual([{ skinUuid: SKIN_A, votes: 2, voted: false }]);
+    expect(anon.json.items).toEqual([{ skinUuid: SKIN_A, votes: 2, voted: false, ratingAvg: null, ratingCount: 0 }]);
   });
 
   it('validates input', async () => {

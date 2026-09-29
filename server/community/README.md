@@ -1,7 +1,8 @@
 # ValVN Community server
 
-Backend for the app's "Cộng đồng" tab: LFG (tìm đồng đội), skin votes, feed posts with
-images / likes / comments / reports. API contract: [`docs/community-api.md`](../../docs/community-api.md).
+Backend for the app's "Cộng đồng" tab: LFG (tìm đồng đội, v2 with rank range / roles / live party
+status / joins), skin votes, skin reviews (Daily Val-style stars + text), feed posts with images /
+likes / comments / reports, and a Vietnamese-aware content filter. API contract: [`docs/community-api.md`](../../docs/community-api.md).
 
 - Node 22 + TypeScript, [Hono](https://hono.dev) on `@hono/node-server`, listening on `PORT` (default 8080).
 - SQLite via `better-sqlite3` (WAL) at `$DATA_DIR/community.db`; migrations in `migrations/` are applied
@@ -16,10 +17,11 @@ src/
   main.ts            process entry: config, DB, HTTP server, housekeeping timer, graceful shutdown
   app.ts             createApp(deps) — Hono app, error handling, body limits
   context.ts         shared helpers: auth, rate limits, base URL, serializers
-  routes/            auth.ts, lfg.ts, skins.ts, posts.ts (posts, likes, comments, reports), media.ts
+  routes/            auth.ts, lfg.ts, skins.ts, reviews.ts, posts.ts (posts, likes, comments, reports), media.ts
+  moderation/        vi-wordlist.ts (curated word list + categories), filter.ts (normalise, match, mask/reject, links, phones)
   db/                database.ts (open + migrate), repo.ts (Repo interface), sqlite-repo.ts
   config.ts crypto.ts cursor.ts errors.ts media.ts riot.ts validate.ts
-migrations/0001_init.sql
+migrations/          0001_init.sql, 0002_reviews.sql, 0003_lfg_v2.sql — additive; never edit an applied migration
 test/                vitest (in-memory SQLite + temp media dir, stubbed Riot /userinfo, fake clock)
 ```
 
@@ -160,3 +162,61 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
 14. **Housekeeping:** every 10 minutes the server deletes rate-limit windows older than 1 day and LFG
     posts that expired more than 1 day ago.
 15. String length limits count Unicode code points (so Vietnamese diacritics count as one character).
+16. **Migrations** are strictly additive: `0002_reviews.sql` (skin_reviews, review_likes) and
+    `0003_lfg_v2.sql` (`ALTER TABLE lfg_posts ADD COLUMN …` + lfg_joins). `reports.target_type` never had
+    a CHECK constraint, so accepting `review` needed no schema change.
+
+### Skin reviews
+
+17. Editing a review (PUT again) keeps its `id`, `createdAt`, likes and hidden flag (editing cannot
+    un-hide a reported review); only `rating`, `body` and `updatedAt` change.
+    `DELETE /v1/skins/{skin}/review` is idempotent (204 even without a review).
+18. `sort=new` orders by `createdAt` (edits do not bump a review). `sort=top` = like count desc, then
+    newest; its cursor also carries the like count, and a cursor from one sort order is rejected (400)
+    by the other. Likes can change between pages, so a review may rarely repeat/skip across pages.
+19. `myReview` in the summary is returned to its author even when hidden by reports (so they can see
+    or delete it). Hidden reviews are excluded from lists, averages, counts and the distribution, and
+    liking them returns 404. Liking or unliking your own review → 403.
+20. `period=week` counts votes cast and reviews created **or edited** (`updatedAt`) in the last 7 days;
+    `ratingAvg` / `ratingCount` / `reviewCount` in `/v1/skins/top` follow the same period.
+21. `sort=rating`: `m` is the mean of all visible ratings in the period across **all** weapons (the
+    `weapon` filter only restricts which skins are ranked); ties → more ratings, then skin uuid.
+    `sort=reviews`: skins with at least one visible rating, ordered by `reviewCount` (non-empty body),
+    then `ratingCount`. `sort=votes` lists skins that have votes, as before.
+22. A skin's `weaponUuid` is pinned by its first vote **or** review; the summary returns
+    `weaponUuid: null` for a skin nobody has voted on or reviewed.
+
+### LFG v2
+
+23. Rank range: `0` (or absent) on either side means "no bound" on that side, so `rankMin ≤ rankMax`
+    is only enforced when both are non-zero. `rank=<tier>` keeps posts whose bounds contain the tier.
+24. `role=<role>` keeps posts that need that role **or list no roles** (open to anyone).
+    `language=vi|en` keeps posts in that language or `any`; `language=any` disables the filter.
+    `status` accepts `open` (default), `full`, `in_game`.
+25. PATCH on an expired post → 404 (a heartbeat cannot revive it; the client posts a new one).
+    `partySize` / `slots` / `status` cannot be `null`; `note: null` clears the note.
+    `partySize + slots` is not constrained (a full party keeps its last `slots`).
+26. `POST /v1/lfg/{id}/join` works for any status, but not for expired/hidden posts (404) or the owner
+    (403). Joins are dropped when the owner replaces the post. Rows created before v2 report
+    `partySize = 5 - slots` and `updatedAt = createdAt`.
+27. Extra rate limits: PATCH 120 / 10 min (a 20 s heartbeat fits easily), join 30 / 10 min.
+    Reviews 30 / hour (create + edit); review likes share the 120 / hour likes limit with post likes.
+
+### Content filter (`src/moderation/`)
+
+28. Applied to post bodies, comments, review bodies and LFG notes (create and PATCH), after length
+    validation. Profanity is masked with `***`. Hate, sexual harassment and "kill yourself"-style
+    harassment → 400 `Nội dung chứa từ ngữ không phù hợp`. Account selling / boosting ads and Vietnamese
+    phone numbers → 400 with a separate message. Report `reason` and Riot names are not filtered.
+29. Matching is per whole word or phrase. Words listed **without** accents match any accenting
+    (`dm` ↔ `đm`); words listed **with** accents only match that form, which keeps `đĩ`≠`đi`,
+    `lồn`≠`lon`, `cặc`≠`các`, `buồi`≠`buổi`, `đéo`≠`đeo`. As a consequence, unaccented spellings of those
+    ambiguous words are only caught inside listed phrases (`dit me`, `du ma`, …). Elongations match only
+    when the word really has repeated letters (`đmmmm`, `fuuuck`). Words that are also common innocent
+    words were left out on purpose (`éo` / éo le, `hiếp` / ức hiếp, `xoạc` / xoạc chân, `ba que` / bà quê,
+    `cl` / Champions League, `óc chó` / walnut). `bắc kỳ` is rejected even though it is also a
+    historical place name.
+30. Links: `http://`, scheme-less `www.` and URL-shortener links (list in `vi-wordlist.ts`) are removed;
+    other `https://` links are kept verbatim and excluded from word matching. Bare domains without
+    `www.` (e.g. `example.com`) are left alone unless they are known shorteners. If stripping leaves a
+    post or comment empty, it is rejected as empty.
