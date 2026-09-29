@@ -14,9 +14,11 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
   upload. Times are ISO-8601 UTC strings. UUIDs lowercase.
 - Errors: HTTP status + `{"error": {"code": "snake_case", "message": "…"}}`.
   Codes: `unauthorized` (401), `forbidden` (403), `not_found` (404),
-  `invalid_input` (400), `rate_limited` (429, `retryAfter` seconds in body and
-  `Retry-After` header), `riot_rejected` (401, Riot refused the token),
-  `server_error` (500).
+  `invalid_input` (400), `rate_limited` (429, `retryAfter` seconds in the error object
+  and `Retry-After` header), `riot_rejected` (401, Riot refused the token),
+  `riot_unavailable` (503, Riot could not answer; `retryAfter` / `Retry-After` when
+  known), `storage_full` (507, the server's image storage is full), `server_error` (500).
+  `message` is a Vietnamese, human-readable text; clients switch on `code`.
 - Pagination: `?cursor=<opaque>&limit=<1..50, default 20>` →
   `{"items": [...], "nextCursor": "…" | null}`.
 
@@ -36,8 +38,16 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
 
 ```json
 {"id": "9f2c…", "gameName": "KAYN", "tagLine": "04082", "cardId": "uuid|null",
- "rankTier": 17, "region": "ap"}
+ "rankTier": 17, "region": "ap", "country": "VN|null", "language": "vi|null"}
 ```
+
+  (`country` / `language` were added in "Community scopes v3" below; `null` for accounts
+  that never reported one.) Riot ID, region, country, rank and card are **public by
+  design**: every reader of a post / comment / review / LFG post sees them (the app asks
+  for consent before the first sign-in).
+- Reports are personal data: a report is deleted after 12 months, or as soon as the
+  content it is about is deleted; a deleted account's reports are anonymised (see
+  "Data rights").
 
 ## Endpoints
 
@@ -47,10 +57,68 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
 |---|---|---|---|
 | POST | `/v1/auth/riot` | `{"accessToken", "region", "cardId"?, "rankTier"?}` | `{"token", "expiresAt", "user": Author}` |
 | GET | `/v1/me` | — | `Author` |
-| PATCH | `/v1/me` | `{"cardId"?, "rankTier"?, "region"?}` | `Author` |
+| PATCH | `/v1/me` | `{"cardId"?, "rankTier"?, "region"?, "language"?}` | `Author` |
+| GET | `/v1/me/export` | — | JSON download of all the caller's data (see "Data rights") |
+| DELETE | `/v1/me` | — | `204` (hard delete of the account and its data) |
 
 `region` ∈ `ap, na, eu, kr, latam, br`. `rankTier` 0..27 (client-reported, shown
 as-is).
+
+`POST /v1/auth/riot` errors: `400 invalid_input` (bad body, before Riot is called),
+`401 riot_rejected` (Riot refused the token: the client should refresh its Riot session
+once and retry), `503 riot_unavailable` (Riot rate-limited us, is down, timed out or
+answered with an error page: **the token may be fine**, so the client keeps its Riot
+session and retries later, after `Retry-After` when present, 1–300 s), `429 rate_limited`
+(30 attempts / 10 min per client IP). No user is created or changed unless Riot verified
+the token.
+
+### Data rights (quyền về dữ liệu)
+
+Both endpoints need a session (`401` otherwise).
+
+**`GET /v1/me/export`** — rate limit 5 / hour per user (`429`). Returns `200` with
+`content-type: application/json; charset=utf-8`,
+`content-disposition: attachment; filename="valvn-community-export.json"` and
+`cache-control: no-store`. Body (arrays are empty when there is nothing; times ISO-8601;
+media as URLs; hidden content is included with `hidden: true`):
+
+```json
+{
+  "format": "valvn-community-export/1",
+  "exportedAt": "…",
+  "profile": {"id", "gameName", "tagLine", "cardId", "rankTier", "region", "country",
+              "language", "createdAt", "updatedAt"},
+  "posts":    [{"id", "kind", "body", "media": [{"key", "url"}], "payload", "hidden",
+                "country", "region", "language", "createdAt"}],
+  "comments": [{"id", "postId", "body", "hidden", "country", "region", "language", "createdAt"}],
+  "reviews":  [{"id", "skinUuid", "weaponUuid", "rating", "body", "hidden", "likes",
+                "country", "region", "language", "createdAt", "updatedAt"}],
+  "postLikes":   [{"postId", "createdAt"}],
+  "reviewLikes": [{"reviewId", "createdAt"}],
+  "skinVotes":   [{"skinUuid", "weaponUuid", "country", "region", "createdAt"}],
+  "lfgPosts": [{"id", "region", "country", "mode", "partyCode", "slots", "rankTier", "note",
+                "rankMin", "rankMax", "roles", "mic", "language", "partySize", "agents",
+                "status", "hidden", "createdAt", "expiresAt", "updatedAt"}],
+  "lfgJoins": [{"lfgId", "createdAt"}],
+  "reportsFiled": [{"targetType", "targetId", "reason", "createdAt"}],
+  "media": [{"key", "url", "contentType", "size", "status": "active|quarantined",
+             "attachedToPost": "uuid|null", "createdAt"}]
+}
+```
+
+It contains only the caller's own data: nothing about other people, and no PUUID or IP
+address (neither is ever stored).
+
+**`DELETE /v1/me`** — rate limit 3 / hour per user (`429`, checked before anything is
+erased). Hard-deletes, in one step: the caller's posts (with the comments and likes on
+them), comments, reviews (with their likes), post and review likes, skin votes, LFG posts
+and joins, uploaded images (files and rows, including quarantined copies) and the user
+row. Reports **about** their content are deleted; reports they **filed** are kept but
+anonymised (reporter becomes an opaque id, free text cleared) because they may have hidden
+content; the like counters of other people's reviews are corrected. Returns `204` with
+`cache-control: no-store`. The session token stops working immediately (`401`), also for a
+second `DELETE`. Signing in again with the same Riot account creates a new, empty account
+(same `id`). Server backups keep older copies for at most 14 days.
 
 ### LFG (tìm đồng đội)
 
@@ -162,13 +230,13 @@ from averages.
 | GET | `/v1/posts/{id}/comments` | `?cursor&limit` | page of `Comment` (oldest first) |
 | POST | `/v1/posts/{id}/comments` | `{"body"}` (≤ 500) | `Comment` |
 | DELETE | `/v1/comments/{id}` | own only | `204` |
-| POST | `/v1/reports` | `{"targetType": "post"\|"comment"\|"lfg", "targetId", "reason"}` | `204` |
+| POST | `/v1/reports` | `{"targetType": "post"\|"comment"\|"lfg"\|"review", "targetId", "reason"}` (`reason` 1–200 chars) | `204` |
 | POST | `/v1/media` | raw bytes, `content-type: image/jpeg\|image/png\|image/webp`, ≤ 2 MB | `{"key", "url"}` |
 | GET | `/v1/media/{key}` | — (public, cacheable 1 year) | image bytes |
 
 - `kind` ∈ `text, store, nightmarket`. `body` ≤ 1000 chars (may be empty when
   `media` or `payload` is present). `media` ≤ 4 keys previously uploaded by the
-  same user.
+  same user (see "Media rules" below).
 - `payload` for `store`: `{"date": "YYYY-MM-DD", "offers": [{"skinUuid", "cost"}]}`;
   for `nightmarket`: `{"date", "offers": [{"skinUuid", "baseCost", "discountCost",
   "discountPercent"}]}`. Max 6 offers. The app renders names / images from
@@ -176,10 +244,61 @@ from averages.
 - `Post`: `{"id", "author": Author, "kind", "body", "media": [{"key", "url"}],
   "payload", "likes", "liked", "comments", "createdAt"}`.
 - `Comment`: `{"id", "postId", "author": Author, "body", "createdAt"}`.
-- Moderation: 3 distinct reports hide a post / comment / LFG post. Users can only
-  delete their own content.
+- Moderation: 3 distinct **eligible** reports hide a post / comment / review / LFG post
+  (see "Report eligibility"). Users can only delete their own content.
 - Rate limits: posts 10 / hour, comments 30 / 10 min, media 20 / hour, reports 20 /
   hour per user; votes 120 / hour.
+- Real game content only: `skinUuid` and `weaponUuid` of votes and reviews, `skinUuid` of
+  shared store / Night Market offers and the `agents` of an LFG post are checked against
+  valorant-api.com (skin uuids include level and chroma uuids). An unknown id is
+  `400 invalid_input`. The check never blocks users when the catalog is not available
+  (it accepts every well-formed uuid until the server has loaded it).
+
+#### Report eligibility
+
+`POST /v1/reports` always answers `204` with an empty body — for a report that counts, one
+that does not, a duplicate and a report about your own content — so a reporter cannot tell
+whether their report counted, whether the content is now hidden, or who else reported
+(reports are never exposed, except a user's own filed reports in their data export). The
+target must exist (`404` otherwise). A report is stored, but **counts toward the 3 that
+hide content only if the reporter's account is at least 24 hours old and has done at least
+one thing on the service** (a post, comment, review, vote or like). Eligibility is
+re-evaluated whenever another report about the same target arrives. The author's own
+reports never count. Hidden content disappears from lists and answers `404` on direct
+reads (its author can still delete it); a hidden post's images are quarantined (below).
+
+#### Media rules
+
+- **Upload** (`POST /v1/media`, auth, 20 / hour): the `content-type` must be one of
+  `image/jpeg`, `image/png`, `image/webp` **and** match the file's magic bytes; ≤ 2 MB
+  (`400 invalid_input` otherwise). The server **strips all metadata** — EXIF (including GPS
+  location and camera data), XMP, IPTC, comments, embedded thumbnails, PNG text / time
+  chunks, WebP EXIF / XMP — and anything appended after the image data. Only the EXIF
+  *orientation* survives, so photos are not shown sideways. The stored file is therefore
+  not byte-identical to the upload, and `key` / `url` refer to the sanitised file. A file
+  that is not a structurally valid image, or is larger than 50 megapixels or 16,384 px on a
+  side, is `400 invalid_input`.
+- **Storage limits:** each user may store 50 MB of images (counted on the sanitised
+  size; deleting posts frees it): beyond that `400 invalid_input` with the message
+  `Bạn đã dùng hết dung lượng ảnh (50 MB). Hãy xóa bớt bài viết có ảnh rồi thử lại.`
+  If the server's total image storage is full: `507 storage_full` (`Kho ảnh của máy chủ
+  đã đầy, vui lòng thử lại sau.`); retry later.
+- **Attaching:** `media` keys of `POST /v1/posts` must belong to the caller (`403`
+  otherwise), exist and be usable (`400 invalid_input` for an unknown or quarantined key)
+  and not be used by another post (`400`): one file, one post. A file that is never
+  attached to a post is **deleted 24 hours after upload** (upload again if a post
+  failed later than that).
+- **Serving** (`GET /v1/media/{key}`, public, no session): only files that exist **and have
+  an active record** are served; deleted files, files of deleted accounts and quarantined
+  files answer `404 not_found`. Responses carry `Cache-Control: public, max-age=31536000,
+  immutable`, an `ETag` (`If-None-Match` → `304`), `Content-Disposition: inline`,
+  `X-Content-Type-Options: nosniff`, `Content-Security-Policy: default-src 'none'; img-src
+  'self' data:; sandbox`, `Referrer-Policy: no-referrer` and `Cross-Origin-Resource-Policy:
+  cross-origin`.
+- **Lifecycle:** deleting a post deletes its images; deleting an account deletes all its
+  images; when a post is hidden by reports its images are moved to a private quarantine
+  (404 on `/v1/media`) and permanently deleted after 30 days, unless a moderator restores
+  them.
 
 ## Community scopes v3 — country / region / global (additive)
 
@@ -221,6 +340,21 @@ Query additions:
 | `GET /v1/skins/{uuid}/reviews` | `scope`, `country`, `region`, `language` | `scope=global` |
 | `GET /v1/communities` (new) | `period=week` | Countries with activity: `{"items": [{"country", "posts", "authors", "lfg"}]}` sorted by posts desc (last 7 days) |
 
+- **Scope resolution.** An explicit `scope` wins; without it, a `country` param implies
+  `country` scope and a `region` param implies `region` scope, otherwise the endpoint
+  default above applies. `scope=country` without `country` uses the viewer's country;
+  when there is none it falls back to `region` (the `region` param, else the viewer's
+  shard), and to `global` when that is unknown too (e.g. no session). Params that do not
+  belong to the resolved scope are ignored. `country` must be a real ISO alpha-2 code and
+  `region` one of the six shards (`400 invalid_input` otherwise).
+- **`appliedScope`.** Every scoped response says which scope was actually applied after
+  those fallbacks: `"appliedScope": {"scope": "country|region|global", "country": "VN" | null,
+  "region": "ap" | null}` (`country` is set only for `country` scope, `region` only for
+  `region` scope). It is a top-level field next to `items` / `nextCursor` on the pages of
+  `GET /v1/posts`, `GET /v1/lfg` and `GET /v1/skins/{uuid}/reviews`, next to `items` on
+  `GET /v1/skins/top` and `GET /v1/skins/votes`, and next to the other fields of
+  `GET /v1/skins/{uuid}/summary`. `GET /v1/communities` has none. Clients use it to show
+  the scope the server chose (e.g. "Khu vực" when the viewer has no country).
 - Votes and reviews record the voter's `country` / `region` at the time of the vote, so
   per-country leaderboards count votes cast by people from that country.
 - Existing rows without country/region/language stay visible in `global` (and in
@@ -231,6 +365,41 @@ Moderation v3: the content filter runs per language (`language` of the text, plu
 cheap script/charset heuristic when absent). Word lists ship for vi and en and
 best-effort lists for the other 15 languages, all marked for native review; the
 filter must never reject text only because it is in an unsupported language.
+
+## Anonymous access, rate limits and caching
+
+**Public reads need no session** (no `Authorization` header): `GET /v1/posts`,
+`/v1/posts/{id}`, `/v1/posts/{id}/comments`, `/v1/skins/top`, `/v1/skins/votes`,
+`/v1/skins/{uuid}/summary`, `/v1/skins/{uuid}/reviews`, `/v1/communities` and
+`/v1/media/{key}`. Without a session the default scope is `global` (an explicit `scope` /
+`country` / `region` still works), `liked` / `voted` are `false` and `myReview` is `null`. Everything else — including `GET /v1/lfg` and every write — needs a
+session. A token that is *present but invalid or expired* is `401` even on a public read, so
+the client can refresh it.
+
+**Limits for requests without a session** (per client IP, hashed with a server secret and
+kept in memory only; never stored or logged):
+
+| Requests | Limit |
+|---|---|
+| public reads other than image files | 120 / minute |
+| image files (`/v1/media/…`) | 1500 / minute |
+
+Over the limit: `429 rate_limited` with `retryAfter` (seconds until the minute ends) in the
+error object and `Retry-After`. Signed-in requests are limited per user only (the per-user
+limits listed with each feature; `GET /v1/me/export` 5 / hour, `DELETE /v1/me` 3 / hour),
+never per IP. `POST /v1/auth/riot` is limited to 30 attempts / 10 min per client IP.
+
+**Cache:** anonymous `GET /v1/skins/top`, `/v1/skins/votes`, `/v1/skins/{uuid}/summary`,
+`/v1/skins/{uuid}/reviews` and `/v1/communities` are answered from a shared in-memory cache
+for **45 seconds** (per path and query string; parameter order does not matter; errors are
+never cached), so an anonymous viewer can see data up to 45 s old, and a cache hit does not
+count against the limit above. The response header `x-cache: hit|miss` tells which. Requests
+with a session are never cached and always see live data. The feed, single posts, comments
+and image files are not cached by the server (images are immutable and cacheable by clients
+and CDNs).
+
+`GET /v1/communities` also accepts `period=all` (all time) besides the default
+`period=week`.
 
 ## Client rules
 
