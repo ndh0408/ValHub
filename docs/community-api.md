@@ -80,6 +80,37 @@ as-is).
 One vote per user per skin (idempotent PUT). `period=week` counts votes cast in the
 last 7 days. `voted` is `false` when unauthenticated.
 
+### Skin reviews (đánh giá skin — như Daily Val)
+
+Each user has at most **one review per skin**: a 1–5 star rating plus optional text,
+editable any time (`updatedAt` changes). Reviews can be liked ("Hữu ích") and
+reported (`targetType: "review"`; 3 reports hide it). Hidden reviews are excluded
+from averages.
+
+| Method | Path | Body / query | Response |
+|---|---|---|---|
+| PUT | `/v1/skins/{skinUuid}/review` | `{"weaponUuid", "rating": 1..5, "body"?: ≤ 500 chars}` | `Review` (create or replace own) |
+| DELETE | `/v1/skins/{skinUuid}/review` | — | `204` |
+| GET | `/v1/skins/{skinUuid}/reviews` | `?sort=new\|top&cursor&limit` (auth optional) | page of `Review` (`top` = most liked, then newest) |
+| GET | `/v1/skins/{skinUuid}/summary` | auth optional | `SkinSummary` |
+| PUT / DELETE | `/v1/reviews/{id}/like` | — (not own review) | `{"likes", "liked"}` |
+| DELETE | `/v1/reviews/{id}` | own only | `204` |
+
+- `Review`: `{"id", "skinUuid", "author": Author, "rating", "body", "likes", "liked",
+  "createdAt", "updatedAt", "mine"}`.
+- `SkinSummary`: `{"skinUuid", "weaponUuid", "votes", "voted", "ratingAvg" (1 decimal,
+  null when no ratings), "ratingCount", "distribution": [n1, n2, n3, n4, n5],
+  "reviewCount" (reviews with non-empty body), "myReview": Review | null}`.
+- `GET /v1/skins/top` gains `sort=votes|rating|reviews` (default `votes`) and every
+  item gains `"ratingAvg", "ratingCount", "reviewCount"`. `period=all` (default) is
+  all-time; `period=week` counts only activity (votes / ratings) of the last 7 days.
+  `sort=rating` ranks by a Bayesian average `(C·m + Σratings) / (C + n)` with
+  `m` = global mean rating and `C` = 5, and only includes skins with ≥ 3 ratings.
+- `GET /v1/skins/votes?ids=` items gain `"ratingAvg", "ratingCount"` (for badges in
+  lists and the skin detail sheet).
+- Rate limits: reviews (create/update) 30 / hour, review likes share the likes
+  limit.
+
 ### Feed (bảng tin)
 
 | Method | Path | Body / query | Response |
