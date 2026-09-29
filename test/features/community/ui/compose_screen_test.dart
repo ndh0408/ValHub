@@ -4,6 +4,7 @@ import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/data/community_models.dart';
 import 'package:valvn/features/community/data/compose_draft.dart';
 import 'package:valvn/features/community/data/image_source.dart';
+import 'package:valvn/features/community/providers/consent_providers.dart';
 import 'package:valvn/features/community/ui/compose_screen.dart';
 
 import '../community_test_env.dart';
@@ -207,5 +208,92 @@ void main() {
     );
     expect(find.text('Thử đăng'), findsOneWidget);
     await unmount(tester);
+  });
+
+  group('new server errors', () {
+    Future<void> publishWithPhoto(WidgetTester tester) async {
+      env.picker.next = [PickedImage(bytes: jpegBytes(), name: 'a.jpg')];
+      await pumpCommunity(tester, env, const ComposeScreen());
+      await settle(tester);
+      await tester.enterText(find.byType(TextField), 'Có ảnh nè');
+      await tester.tap(find.text(CommunityStrings.addPhotos));
+      await settle(tester);
+      await tester.tap(find.text(CommunityStrings.publish));
+      await settle(tester, frames: 20);
+    }
+
+    testWidgets('storage_full (507): says photos cannot be added, keeps all', (
+      tester,
+    ) async {
+      env.server.json('POST /v1/media', {
+        'error': {'code': 'storage_full', 'message': 'disk full'},
+      }, status: 507);
+      await publishWithPhoto(tester);
+
+      expect(find.text(CommunityStrings.errorStorageFull), findsOneWidget);
+      // Nothing was posted; the text and the photo are still there to retry
+      // (or to post without the photo).
+      expect(env.server.calls('POST /v1/posts'), isEmpty);
+      expect(find.text('Có ảnh nè'), findsOneWidget);
+      expect(find.text(CommunityStrings.photoCount(1, 4)), findsOneWidget);
+      await unmount(tester);
+    });
+
+    testWidgets('the per-user quota message of the server is shown as-is', (
+      tester,
+    ) async {
+      const quota =
+          'Bạn đã dùng hết 50 MB dung lượng ảnh. Hãy xóa bớt bài có ảnh.';
+      env.server.json('POST /v1/media', {
+        'error': {'code': 'invalid_input', 'message': quota},
+      }, status: 400);
+      await publishWithPhoto(tester);
+
+      expect(find.text(quota), findsOneWidget);
+      expect(find.text('Có ảnh nè'), findsOneWidget);
+      await unmount(tester);
+    });
+
+    testWidgets(
+      'riot_unavailable while signing in: retry later, the post is kept',
+      (tester) async {
+        env.server.on(
+          'POST /v1/auth/riot',
+          (_) => const FakeResponse(
+            503,
+            {
+              'error': {'code': 'riot_unavailable', 'retryAfter': 45},
+            },
+            {
+              'retry-after': ['45'],
+            },
+          ),
+        );
+        await pumpCommunity(tester, env, const ComposeScreen());
+        await settle(tester);
+        await tester.enterText(find.byType(TextField), 'Thử đăng');
+        await tester.pump();
+        await tester.tap(find.text(CommunityStrings.publish));
+        await settle(tester, frames: 20);
+
+        expect(
+          find.text(CommunityStrings.errorRiotUnavailableIn('45 giây')),
+          findsOneWidget,
+        );
+        expect(find.text('Thử đăng'), findsOneWidget);
+        // Not a refusal: no second attempt, the consent stays, and once
+        // Riot is back the same button works.
+        expect(env.server.calls('POST /v1/auth/riot'), hasLength(1));
+        expect(env.server.calls('POST /v1/posts'), isEmpty);
+        expect(env.prefs.getString(communityConsentKey(mePuuid)), 'granted');
+        env.server
+          ..json('POST /v1/auth/riot', sessionJson())
+          ..json('POST /v1/posts', postJson('new', body: 'Thử đăng'));
+        await tester.tap(find.text(CommunityStrings.publish));
+        await settle(tester, frames: 30);
+        expect(env.server.calls('POST /v1/posts'), hasLength(1));
+        await unmount(tester);
+      },
+    );
   });
 }

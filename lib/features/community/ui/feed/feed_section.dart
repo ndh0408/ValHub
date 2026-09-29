@@ -25,10 +25,25 @@ class FeedSliver extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // The scope the server applied to the list on screen (not to stale
+    // items of the scope just left).
+    final scope = ref
+        .watch(
+          resolvedScopeProvider((puuid: puuid, section: ScopedSection.feed)),
+        )
+        .value;
+    final loaded = ref.watch(feedProvider(puuid)).value;
+    final applied = loaded != null && scope != null && loaded.tag == scope
+        ? loaded.applied
+        : null;
     return SliverMainAxisGroup(
       slivers: [
         SliverToBoxAdapter(
-          child: ScopeBar(section: ScopedSection.feed, puuid: puuid),
+          child: ScopeBar(
+            section: ScopedSection.feed,
+            puuid: puuid,
+            applied: applied,
+          ),
         ),
         _content(context, ref),
       ],

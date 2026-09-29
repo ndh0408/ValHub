@@ -101,14 +101,15 @@ typedef TopSkinsQuery = ({
   ScopeFilter? scope,
 });
 
-/// The leaderboard for [TopSkinsFilter] (`GET /v1/skins/top`).
+/// The leaderboard for [TopSkinsFilter] (`GET /v1/skins/top`) with the
+/// scope the server applied.
 final topSkinsProvider = FutureProvider.autoDispose
-    .family<List<TopSkin>, TopSkinsQuery>((ref, q) {
-      // Joining changes oted (and the token sent): reload.
+    .family<TopSkinsResult, TopSkinsQuery>((ref, q) {
+      // Joining changes what is marked as voted (and the token sent): reload.
       ref.watch(communityConsentProvider(q.puuid));
       return ref
           .watch(communityApiProvider)
-          .topSkins(
+          .topSkinsResult(
             puuid: q.puuid,
             weapon: q.weapon,
             period: q.period,

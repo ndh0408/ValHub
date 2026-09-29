@@ -56,7 +56,9 @@ class TopSkinsSliver extends ConsumerWidget {
         .value;
     final overrides = ref.watch(skinVoteOverridesProvider(puuid));
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
-    final header = _Filters(filter: filter, db: db, puuid: puuid);
+    Widget headerFor([AppliedScope? applied]) =>
+        _Filters(filter: filter, db: db, puuid: puuid, applied: applied);
+    var header = headerFor();
     if (scope == null) {
       return SliverToBoxAdapter(
         child: Column(
@@ -101,7 +103,10 @@ class TopSkinsSliver extends ConsumerWidget {
         ),
       );
     }
-    final rows = async.requireValue;
+    final result = async.requireValue;
+    final rows = result.rows;
+    // Highlight the scope the server really applied.
+    header = headerFor(result.applied);
     if (rows.isEmpty) {
       return SliverToBoxAdapter(
         child: Column(
@@ -152,11 +157,17 @@ class TopSkinsSliver extends ConsumerWidget {
 }
 
 class _Filters extends ConsumerWidget {
-  const _Filters({required this.filter, required this.db, required this.puuid});
+  const _Filters({
+    required this.filter,
+    required this.db,
+    required this.puuid,
+    this.applied,
+  });
 
   final TopSkinsFilter filter;
   final ContentDb db;
   final String puuid;
+  final AppliedScope? applied;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -167,6 +178,7 @@ class _Filters extends ConsumerWidget {
         ScopeBar(
           section: ScopedSection.skins,
           puuid: puuid,
+          applied: applied,
           globalLabel: CommunityStrings.scopeWorldwide,
         ),
         SegmentedTabs<TopPeriod>(

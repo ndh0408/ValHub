@@ -44,6 +44,9 @@ class CommunityAuth {
   final Map<String, CommunitySession> _memory = {};
   final Map<String, Future<CommunitySession>> _inFlight = {};
 
+  /// Bumped by [forget], so a sign-in started before it drops its result.
+  final Map<String, int> _forgotten = {};
+
   /// Whether [puuid] agreed to join (send the Riot token once). Without it
   /// the client only reads public data, anonymously.
   bool hasConsent(String puuid) => _hasConsent(puuid);
@@ -117,10 +120,28 @@ class CommunityAuth {
     }
   }
 
+  /// Drops every trace of [puuid]'s community session on this device
+  /// (memory and secure storage). Used after the user deleted their
+  /// community data or withdrew their consent; nothing is sent to the
+  /// server. A sign-in that is running finishes without keeping its result.
+  Future<void> forget(String puuid) async {
+    final id = puuid.toLowerCase();
+    _forgotten[id] = (_forgotten[id] ?? 0) + 1;
+    _memory.remove(id);
+    unawaited(_inFlight.remove(id));
+    try {
+      await _store.delete(SecureKeys.community(id));
+    } on Object {
+      // Best effort: a stale token is useless without consent (and dead on
+      // the server after a deletion).
+    }
+  }
+
   Future<CommunitySession> _signIn(String puuid) async {
     if (!_hasConsent(puuid)) {
       throw const CommunityException(CommunityException.consentRequired);
     }
+    final epoch = _forgotten[puuid] ?? 0;
     final account = _account(puuid);
     var riot = await _sessions.session(puuid);
     Future<Object?> post(String accessToken) => _http.send(
@@ -149,6 +170,10 @@ class CommunityAuth {
     final session = CommunitySession.fromJson(body);
     if (session == null) {
       throw const CommunityException(CommunityException.badResponse);
+    }
+    // The user withdrew consent or deleted their data meanwhile: keep nothing.
+    if ((_forgotten[puuid] ?? 0) != epoch || !_hasConsent(puuid)) {
+      throw const CommunityException(CommunityException.consentRequired);
     }
     _memory[puuid] = session;
     try {
