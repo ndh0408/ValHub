@@ -7,13 +7,24 @@ import 'ui/wishlist_screen.dart';
 abstract final class WishlistRoutes {
   static const wishlist = '/collection/wishlist';
   static const catalog = '/collection/catalog';
+
+  /// Query parameter that opens a skin's detail sheet on the wishlist
+  /// (wishlist notification deep link, W5).
+  static const skinParam = 'skin';
+
+  /// `/collection/wishlist?skin=<uuid>`: the wishlist with that skin's
+  /// detail sheet open.
+  static String skin(String skinUuid) =>
+      Uri(path: wishlist, queryParameters: {skinParam: skinUuid}).toString();
 }
 
 /// Relative sub-routes nested by the app router under `/collection`.
 List<RouteBase> get wishlistRoutes => [
   GoRoute(
     path: 'wishlist',
-    builder: (context, state) => const WishlistScreen(),
+    builder: (context, state) => WishlistScreen(
+      initialSkinUuid: state.uri.queryParameters[WishlistRoutes.skinParam],
+    ),
   ),
   GoRoute(path: 'catalog', builder: (context, state) => const CatalogScreen()),
 ];
