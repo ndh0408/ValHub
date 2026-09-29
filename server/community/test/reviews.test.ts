@@ -36,6 +36,9 @@ describe('PUT /v1/skins/{skin}/review', () => {
       createdAt: new Date(e.clock.t).toISOString(),
       updatedAt: new Date(e.clock.t).toISOString(),
       mine: true,
+      country: null,
+      region: 'ap',
+      language: null,
     });
     const noBody = await review(token, SKIN_B, 5);
     expect(noBody.json.body).toBe('');
@@ -109,6 +112,7 @@ describe('summary', () => {
       distribution: [0, 0, 0, 2, 1],
       reviewCount: 2,
       myReview: null,
+      appliedScope: { scope: 'global', country: null, region: null },
     });
 
     const mine = await e.req('GET', `/v1/skins/${SKIN_A}/summary`, { token: a!.token });
@@ -126,6 +130,7 @@ describe('summary', () => {
       distribution: [0, 0, 0, 0, 0],
       reviewCount: 0,
       myReview: null,
+      appliedScope: { scope: 'global', country: null, region: null },
     });
     expectError(await e.req('GET', '/v1/skins/nope/summary'), 400, 'invalid_input');
   });

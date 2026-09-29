@@ -29,6 +29,8 @@ describe('POST /v1/auth/riot', () => {
       cardId: CARD,
       rankTier: 17,
       region: 'ap',
+      country: null,
+      language: null,
     });
     expect(res.json.expiresAt).toBe(new Date(e.clock.t + 30 * 86400_000).toISOString());
     expect(res.json.token.split('.')).toHaveLength(3);
@@ -160,12 +162,14 @@ describe('parseUserinfo', () => {
       puuid: 'abc-1',
       gameName: '',
       tagLine: '',
+      country: null,
     });
     expect(parseUserinfo('{"sub":"abc","acct":{"game_name":"KAYN","tag_line":"04082"}}')).toEqual({
       ok: true,
       puuid: 'abc',
       gameName: 'KAYN',
       tagLine: '04082',
+      country: null,
     });
   });
 });

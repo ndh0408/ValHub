@@ -84,7 +84,8 @@ describe('POST /v1/lfg v2 fields', () => {
       { roles: ['healer'] },
       { mic: 'true' },
       { mic: 1 },
-      { language: 'fr' },
+      { language: 'xx' },
+      { language: 'vi-VN-x' },
       { partySize: 0 },
       { partySize: 6 },
       { agents: [AGENT_1, AGENT_1] },
@@ -148,7 +149,7 @@ describe('GET /v1/lfg filters', () => {
 
   it('validates filters', async () => {
     const { token } = await e.login('viewer');
-    for (const qs of ['rank=28', 'rank=-1', 'rank=abc', 'role=healer', 'mic=yes', 'language=fr', 'status=closed']) {
+    for (const qs of ['rank=28', 'rank=-1', 'rank=abc', 'role=healer', 'mic=yes', 'language=xx', 'status=closed']) {
       expectError(await e.req('GET', `/v1/lfg?${qs}`, { token }), 400, 'invalid_input');
     }
   });
@@ -289,7 +290,7 @@ describe('migration from a v1 database', () => {
          VALUES ('00000000-0000-4000-8000-000000000001', '${'a'.repeat(32)}', 'ap', 'unrated', 'AAAAAA', 3, 1000, 9999999999999)`,
       ).run();
 
-      expect(migrate(db)).toEqual(['0002_reviews.sql', '0003_lfg_v2.sql']);
+      expect(migrate(db)).toEqual(['0002_reviews.sql', '0003_lfg_v2.sql', '0004_scopes.sql']);
       const repo = new SqliteRepo(db);
       const row = repo.getLfg('00000000-0000-4000-8000-000000000001')!;
       expect(row).toMatchObject({

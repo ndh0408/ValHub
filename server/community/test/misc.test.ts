@@ -173,13 +173,13 @@ describe('infrastructure', () => {
       expect(db.pragma('journal_mode', { simple: true })).toBe('wal');
       expect(migrate(db)).toEqual([]);
       const rows = db.prepare('SELECT name FROM schema_migrations').all();
-      expect(rows).toEqual([{ name: '0001_init.sql' }, { name: '0002_reviews.sql' }, { name: '0003_lfg_v2.sql' }]);
+      expect(rows).toEqual([{ name: '0001_init.sql' }, { name: '0002_reviews.sql' }, { name: '0003_lfg_v2.sql' }, { name: '0004_scopes.sql' }]);
       db.close();
       const again = openDatabase(file);
-      expect(again.prepare('SELECT COUNT(*) AS n FROM schema_migrations').get()).toEqual({ n: 3 });
+      expect(again.prepare('SELECT COUNT(*) AS n FROM schema_migrations').get()).toEqual({ n: 4 });
       again.close();
     } finally {
-      fs.rmSync(dir, { recursive: true, force: true });
+      fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 50 });
     }
   });
 
@@ -195,7 +195,7 @@ describe('infrastructure', () => {
   it('cleanup drops stale rate-limit windows and long-expired LFG posts', async () => {
     const { token } = await e.login('a');
     await e.req('POST', '/v1/lfg', { token, body: { region: 'ap', mode: 'custom', partyCode: 'AAAAAA', slots: 1 } });
-    e.repo.cleanup(e.clock.t + 2 * 86400_000);
+    e.repo.cleanup(e.clock.t + 10 * 86400_000);
     expect(e.db.prepare('SELECT COUNT(*) AS n FROM lfg_posts').get()).toEqual({ n: 0 });
     expect(e.db.prepare('SELECT COUNT(*) AS n FROM rate_limits').get()).toEqual({ n: 0 });
   });

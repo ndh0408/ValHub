@@ -3,10 +3,11 @@ import { author, iso, type Ctx } from '../context.js';
 import { decodeCursor, page } from '../cursor.js';
 import type { LfgPatch, LfgRow, LfgView } from '../db/repo.js';
 import { forbidden, invalid, notFound } from '../errors.js';
+import { parseLanguageList, parseLfgLanguage } from '../geo/languages.js';
+import { appliedScope, resolveScope } from '../geo/scope.js';
 import { cleanUserText } from '../moderation/filter.js';
 import {
   isUuid,
-  LFG_LANGUAGES,
   LFG_MODES,
   LFG_ROLES,
   LFG_STATUSES,
@@ -57,11 +58,14 @@ function serialize(r: LfgView) {
     status: r.status,
     joins: r.joins,
     updatedAt: iso(r.updated_at ?? r.created_at),
+    country: r.country ?? null,
   };
 }
 
-const parseNote = (body: Json) => {
-  const v = parseOptional(body, 'note', (x) => cleanUserText(parseString(x, 'note', { max: 140 })).trim());
+const parseNote = (body: Json, language: string | null, country: string | null) => {
+  const v = parseOptional(body, 'note', (x) =>
+    cleanUserText(parseString(x, 'note', { max: 140 }), language, country).trim(),
+  );
   return v === undefined ? undefined : v ? v : null;
 };
 
@@ -76,9 +80,9 @@ export function registerLfg(app: Hono, x: Ctx): void {
   };
 
   app.get('/v1/lfg', (c) => {
-    x.user(c, true);
+    const user = x.user(c, true);
     const q = c.req.query();
-    const region = q.region ? parseRegion(q.region) : undefined;
+    const geo = resolveScope(q, user, 'region');
     const mode = q.mode ? parseEnum(q.mode, LFG_MODES, 'mode') : undefined;
     let rank: number | undefined;
     if (q.rank !== undefined && q.rank !== '') {
@@ -91,13 +95,12 @@ export function registerLfg(app: Hono, x: Ctx): void {
       if (q.mic !== 'true' && q.mic !== 'false') throw invalid('mic phải là true hoặc false.');
       mic = q.mic === 'true';
     }
-    const languageQ = q.language ? parseEnum(q.language, LFG_LANGUAGES, 'language') : undefined;
-    const language = languageQ === 'any' ? undefined : languageQ;
+    const languages = parseLanguageList(q.language, true);
     const status = q.status ? parseEnum(q.status, LFG_STATUSES, 'status') : 'open';
     const cursor = decodeCursor(q.cursor);
     const limit = parseLimit(q.limit, 20, 50);
-    const rows = x.repo.listLfg({ region, mode, rank, role, mic, language, status, now: x.now(), cursor, limit });
-    return x.json(c, page(rows, limit, serialize));
+    const rows = x.repo.listLfg({ geo, mode, rank, role, mic, languages, status, now: x.now(), cursor, limit });
+    return x.json(c, { ...page(rows, limit, serialize), appliedScope: appliedScope(geo) });
   });
 
   app.get('/v1/lfg/mine', (c) => {
@@ -117,7 +120,6 @@ export function registerLfg(app: Hono, x: Ctx): void {
     const partyCode = body.partyCode;
     const slots = parseInt(body.slots, 1, 4, 'slots');
     const rankTier = parseOptional(body, 'rankTier', parseRankTier);
-    const note = parseNote(body) ?? null;
     // v2 fields
     const rankMin = parseOptional(body, 'rankMin', (v) => parseInt(v, 0, 27, 'rankMin')) ?? null;
     const rankMax = parseOptional(body, 'rankMax', (v) => parseInt(v, 0, 27, 'rankMax')) ?? null;
@@ -127,7 +129,10 @@ export function registerLfg(app: Hono, x: Ctx): void {
         parseUniqueArray(v, 'roles', 4, (r) => parseEnum(r, LFG_ROLES, 'roles')),
       ) ?? [];
     const mic = parseOptional(body, 'mic', (v) => parseBool(v, 'mic')) ?? false;
-    const language = parseOptional(body, 'language', (v) => parseEnum(v, LFG_LANGUAGES, 'language')) ?? 'vi';
+    // Party language: the 17 app languages or 'any'. Default = the author's language, 'vi' when unknown
+    // (what clients before v3 always got).
+    const language = parseOptional(body, 'language', (v) => parseLfgLanguage(v, 'language')) ?? user.language ?? 'vi';
+    const note = parseNote(body, language === 'any' ? user.language : language, user.country) ?? null;
     const partySize = parseOptional(body, 'partySize', (v) => parseInt(v, 1, 5, 'partySize')) ?? Math.max(1, 5 - slots);
     const agents =
       parseOptional(body, 'agents', (v) => parseUniqueArray(v, 'agents', 5, (a) => parseUuid(a, 'agents'))) ?? [];
@@ -156,6 +161,7 @@ export function registerLfg(app: Hono, x: Ctx): void {
       agents: JSON.stringify(agents),
       status: 'open',
       updated_at: now,
+      country: user.country,
     };
     x.repo.replaceLfg(row);
     return x.json(c, serialize(x.repo.getLfg(row.id)!));
@@ -172,7 +178,7 @@ export function registerLfg(app: Hono, x: Ctx): void {
     const slots = parseOptional(body, 'slots', (v) => parseInt(v, 1, 4, 'slots'));
     if (slots === null) throw invalid('slots không được để trống.');
     if (slots !== undefined) patch.slots = slots;
-    const note = parseNote(body);
+    const note = parseNote(body, post.language === 'any' ? user.language : post.language, user.country);
     if (note !== undefined) patch.note = note;
     const status = parseOptional(body, 'status', (v) => parseEnum(v, LFG_STATUSES, 'status'));
     if (status === null) throw invalid('status không được để trống.');

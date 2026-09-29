@@ -140,6 +140,8 @@ export function author(r: AuthorCols) {
     cardId: r.a_card_id,
     rankTier: r.a_rank_tier,
     region: r.a_region,
+    country: r.a_country ?? null,
+    language: r.a_language ?? null,
   };
 }
 
@@ -151,5 +153,12 @@ export function authorFromUser(u: UserRow) {
     cardId: u.card_id,
     rankTier: u.rank_tier,
     region: u.region,
+    country: u.country ?? null,
+    language: u.language ?? null,
   };
+}
+
+/** Country / region / language of a content row (stored at creation time). */
+export function origin(r: { country: string | null; region: string | null; language: string | null }) {
+  return { country: r.country ?? null, region: r.region ?? null, language: r.language ?? null };
 }

@@ -1,19 +1,22 @@
 import type { Cursor } from '../cursor.js';
+import { geoCondition, type GeoScope } from '../geo/scope.js';
 import type { ReportTarget } from '../validate.js';
 import type { Db } from './database.js';
 import type {
   AuthorCols,
   CommentRow,
+  CommunityActivity,
   LfgPatch,
   LfgQuery,
   LfgRow,
   LfgView,
   MediaRow,
-  RatingStats,
-  ReviewView,
+  Origin,
   PostRow,
   PostView,
+  RatingStats,
   Repo,
+  ReviewView,
   SkinCount,
   UserPatch,
   UserRow,
@@ -21,9 +24,11 @@ import type {
 } from './repo.js';
 
 const AUTHOR_SELECT = `u.id AS a_id, u.game_name AS a_game_name, u.tag_line AS a_tag_line,
-  u.card_id AS a_card_id, u.rank_tier AS a_rank_tier, u.region AS a_region`;
+  u.card_id AS a_card_id, u.rank_tier AS a_rank_tier, u.region AS a_region,
+  u.country AS a_country, u.language AS a_language`;
 
 const POST_SELECT = `SELECT p.id, p.user_id, p.kind, p.body, p.media, p.payload, p.hidden, p.created_at,
+  p.country, p.region, p.language,
   ${AUTHOR_SELECT},
   (SELECT COUNT(*) FROM post_likes l WHERE l.post_id = p.id) AS likes,
   (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id AND c.hidden = 0) AS comments,
@@ -38,10 +43,22 @@ const REVIEW_SELECT = `SELECT r.*, ${AUTHOR_SELECT},
   EXISTS (SELECT 1 FROM review_likes rl WHERE rl.review_id = r.id AND rl.user_id = @viewer) AS liked
   FROM skin_reviews r JOIN users u ON u.id = r.user_id`;
 
-const DAY_MS =24 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+/** Expired LFG posts are kept this long so /v1/communities can count a week of LFG activity. */
+const LFG_RETENTION_MS = 8 * DAY_MS;
 
-function placeholders(n: number): string {
-  return Array.from({ length: n }, () => '?').join(', ');
+/** Binds `values` as @<prefix>0, @<prefix>1, … and returns the placeholder list. */
+function inList(prefix: string, values: readonly string[], params: Record<string, unknown>): string {
+  return values
+    .map((v, i) => {
+      params[`${prefix}${i}`] = v;
+      return `@${prefix}${i}`;
+    })
+    .join(', ');
+}
+
+function and(where: string[]): string {
+  return where.filter(Boolean).join(' AND ');
 }
 
 export class SqliteRepo implements Repo {
@@ -57,15 +74,26 @@ export class SqliteRepo implements Repo {
     const existing = this.getUser(u.id);
     const cardId = u.cardId === undefined ? (existing?.card_id ?? null) : u.cardId;
     const rankTier = u.rankTier === undefined ? (existing?.rank_tier ?? null) : u.rankTier;
+    const language = u.language === undefined ? (existing?.language ?? null) : u.language;
     this.db
       .prepare(
-        `INSERT INTO users (id, game_name, tag_line, card_id, rank_tier, region, created_at, updated_at)
-         VALUES (@id, @gameName, @tagLine, @cardId, @rankTier, @region, @now, @now)
+        `INSERT INTO users (id, game_name, tag_line, card_id, rank_tier, region, country, language, created_at, updated_at)
+         VALUES (@id, @gameName, @tagLine, @cardId, @rankTier, @region, @country, @language, @now, @now)
          ON CONFLICT(id) DO UPDATE SET game_name = excluded.game_name, tag_line = excluded.tag_line,
            card_id = excluded.card_id, rank_tier = excluded.rank_tier, region = excluded.region,
-           updated_at = excluded.updated_at`,
+           country = excluded.country, language = excluded.language, updated_at = excluded.updated_at`,
       )
-      .run({ id: u.id, gameName: u.gameName, tagLine: u.tagLine, cardId, rankTier, region: u.region, now });
+      .run({
+        id: u.id,
+        gameName: u.gameName,
+        tagLine: u.tagLine,
+        cardId,
+        rankTier,
+        region: u.region,
+        country: u.country,
+        language,
+        now,
+      });
     return this.getUser(u.id)!;
   }
 
@@ -77,11 +105,12 @@ export class SqliteRepo implements Repo {
     const existing = this.getUser(id);
     if (!existing) return null;
     this.db
-      .prepare('UPDATE users SET card_id = ?, rank_tier = ?, region = ?, updated_at = ? WHERE id = ?')
+      .prepare('UPDATE users SET card_id = ?, rank_tier = ?, region = ?, language = ?, updated_at = ? WHERE id = ?')
       .run(
         patch.cardId === undefined ? existing.card_id : patch.cardId,
         patch.rankTier === undefined ? existing.rank_tier : patch.rankTier,
         patch.region ?? existing.region,
+        patch.language ?? existing.language,
         now,
         id,
       );
@@ -103,33 +132,40 @@ export class SqliteRepo implements Repo {
 
   cleanup(now: number): void {
     this.db.prepare('DELETE FROM rate_limits WHERE window_start < ?').run(now - DAY_MS);
-    this.db.prepare('DELETE FROM lfg_posts WHERE expires_at < ?').run(now - DAY_MS);
+    this.db.prepare('DELETE FROM lfg_posts WHERE expires_at < ?').run(now - LFG_RETENTION_MS);
   }
 
   // ---- LFG ---------------------------------------------------------------
 
   replaceLfg(post: LfgRow): void {
     this.db.transaction(() => {
-      this.db.prepare('DELETE FROM lfg_posts WHERE user_id = ?').run(post.user_id);
+      // One active post per user: earlier posts expire now (kept for the weekly activity count).
+      // A replacement starts a new join count even though old posts remain
+      // for activity statistics.
+      this.db
+        .prepare(
+          'DELETE FROM lfg_joins WHERE lfg_id IN (SELECT id FROM lfg_posts WHERE user_id = @userId AND expires_at > @now)',
+        )
+        .run({ userId: post.user_id, now: post.created_at });
+      this.db
+        .prepare('UPDATE lfg_posts SET expires_at = @now WHERE user_id = @userId AND expires_at > @now')
+        .run({ userId: post.user_id, now: post.created_at });
       this.db
         .prepare(
           `INSERT INTO lfg_posts (id, user_id, region, mode, party_code, slots, rank_tier, note, hidden,
-             created_at, expires_at, rank_min, rank_max, roles, mic, language, party_size, agents, status, updated_at)
+             created_at, expires_at, rank_min, rank_max, roles, mic, language, party_size, agents, status,
+             updated_at, country)
            VALUES (@id, @user_id, @region, @mode, @party_code, @slots, @rank_tier, @note, @hidden,
              @created_at, @expires_at, @rank_min, @rank_max, @roles, @mic, @language, @party_size, @agents,
-             @status, @updated_at)`,
+             @status, @updated_at, @country)`,
         )
         .run(post);
     })();
   }
 
   listLfg(q: LfgQuery): LfgView[] {
-    const where = ['l.hidden = 0', 'l.expires_at > @now', 'l.status = @status'];
     const params: Record<string, unknown> = { now: q.now, status: q.status, limit: q.limit + 1 };
-    if (q.region) {
-      where.push('l.region = @region');
-      params.region = q.region;
-    }
+    const where = ['l.hidden = 0', 'l.expires_at > @now', 'l.status = @status', geoCondition('l', q.geo, params)];
     if (q.mode) {
       where.push('l.mode = @mode');
       params.mode = q.mode;
@@ -151,9 +187,9 @@ export class SqliteRepo implements Repo {
       where.push('l.mic = @mic');
       params.mic = q.mic ? 1 : 0;
     }
-    if (q.language) {
-      where.push(`l.language IN (@language, 'any')`);
-      params.language = q.language;
+    if (q.languages && q.languages.length > 0 && !q.languages.includes('any')) {
+      // Parties open to any language always match.
+      where.push(`(l.language = 'any' OR l.language IN (${inList('lang', q.languages, params)}))`);
     }
     if (q.cursor) {
       where.push('(l.created_at < @cAt OR (l.created_at = @cAt AND l.id < @cId))');
@@ -161,7 +197,7 @@ export class SqliteRepo implements Repo {
       params.cId = q.cursor.id;
     }
     return this.db
-      .prepare(`${LFG_SELECT} WHERE ${where.join(' AND ')} ORDER BY l.created_at DESC, l.id DESC LIMIT @limit`)
+      .prepare(`${LFG_SELECT} WHERE ${and(where)} ORDER BY l.created_at DESC, l.id DESC LIMIT @limit`)
       .all(params) as LfgView[];
   }
 
@@ -215,20 +251,20 @@ export class SqliteRepo implements Repo {
 
   // ---- skin votes ----------------------------------------------------------
 
-  voteSkin(userId: string, skinUuid: string, weaponUuid: string, now: number): boolean {
-    // The weapon of a skin is pinned by its first vote so a wrong client value
-    // cannot split a skin's count across weapons.
+  voteSkin(userId: string, skinUuid: string, weaponUuid: string, now: number, origin: Origin): boolean {
+    // The weapon of a skin is pinned by its first vote/review so a wrong client value cannot
+    // split a skin's count across weapons. The voter's country/region are captured now.
     const res = this.db
       .prepare(
-        `INSERT INTO skin_votes (user_id, skin_uuid, weapon_uuid, created_at)
+        `INSERT INTO skin_votes (user_id, skin_uuid, weapon_uuid, created_at, country, region)
          VALUES (@userId, @skinUuid,
            COALESCE((SELECT weapon_uuid FROM skin_votes WHERE skin_uuid = @skinUuid LIMIT 1),
                     (SELECT weapon_uuid FROM skin_reviews WHERE skin_uuid = @skinUuid LIMIT 1),
                     @weaponUuid),
-           @now)
+           @now, @country, @region)
          ON CONFLICT(user_id, skin_uuid) DO NOTHING`,
       )
-      .run({ userId, skinUuid, weaponUuid, now });
+      .run({ userId, skinUuid, weaponUuid, now, country: origin.country, region: origin.region });
     return res.changes > 0;
   }
 
@@ -236,46 +272,48 @@ export class SqliteRepo implements Repo {
     this.db.prepare('DELETE FROM skin_votes WHERE user_id = ? AND skin_uuid = ?').run(userId, skinUuid);
   }
 
-  voteCounts(skinUuids: string[], since?: number): Map<string, number> {
+  voteCounts(skinUuids: string[], since?: number, geo?: GeoScope): Map<string, number> {
     const out = new Map<string, number>();
     if (skinUuids.length === 0) return out;
-    const sinceSql = since !== undefined ? 'AND created_at >= ?' : '';
+    const params: Record<string, unknown> = {};
+    const where = [`v.skin_uuid IN (${inList('s', skinUuids, params)})`, geoCondition('v', geo, params)];
+    if (since !== undefined) {
+      where.push('v.created_at >= @since');
+      params.since = since;
+    }
     const rows = this.db
-      .prepare(
-        `SELECT skin_uuid, COUNT(*) AS votes FROM skin_votes
-         WHERE skin_uuid IN (${placeholders(skinUuids.length)}) ${sinceSql} GROUP BY skin_uuid`,
-      )
-      .all(...skinUuids, ...(since !== undefined ? [since] : [])) as { skin_uuid: string; votes: number }[];
+      .prepare(`SELECT v.skin_uuid, COUNT(*) AS votes FROM skin_votes v WHERE ${and(where)} GROUP BY v.skin_uuid`)
+      .all(params) as { skin_uuid: string; votes: number }[];
     for (const r of rows) out.set(r.skin_uuid, r.votes);
     return out;
   }
 
   userVotes(userId: string, skinUuids: string[]): Set<string> {
     if (skinUuids.length === 0) return new Set();
+    const params: Record<string, unknown> = { userId };
     const rows = this.db
-      .prepare(
-        `SELECT skin_uuid FROM skin_votes WHERE user_id = ? AND skin_uuid IN (${placeholders(skinUuids.length)})`,
-      )
-      .all(userId, ...skinUuids) as { skin_uuid: string }[];
+      .prepare(`SELECT skin_uuid FROM skin_votes WHERE user_id = @userId AND skin_uuid IN (${inList('s', skinUuids, params)})`)
+      .all(params) as { skin_uuid: string }[];
     return new Set(rows.map((r) => r.skin_uuid));
   }
 
-  topSkins(q: { weaponUuid?: string; since?: number; limit: number }): SkinCount[] {
-    const where: string[] = [];
+  topSkins(q: { weaponUuid?: string; since?: number; limit: number; geo?: GeoScope }): SkinCount[] {
     const params: Record<string, unknown> = { limit: q.limit };
+    const where = [geoCondition('v', q.geo, params)];
     if (q.weaponUuid) {
-      where.push('weapon_uuid = @weapon');
+      where.push('v.weapon_uuid = @weapon');
       params.weapon = q.weaponUuid;
     }
     if (q.since !== undefined) {
-      where.push('created_at >= @since');
+      where.push('v.created_at >= @since');
       params.since = q.since;
     }
+    const cond = and(where);
     const rows = this.db
       .prepare(
-        `SELECT skin_uuid, MIN(weapon_uuid) AS weapon_uuid, COUNT(*) AS votes FROM skin_votes
-         ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
-         GROUP BY skin_uuid ORDER BY votes DESC, skin_uuid ASC LIMIT @limit`,
+        `SELECT v.skin_uuid, MIN(v.weapon_uuid) AS weapon_uuid, COUNT(*) AS votes FROM skin_votes v
+         ${cond ? `WHERE ${cond}` : ''}
+         GROUP BY v.skin_uuid ORDER BY votes DESC, v.skin_uuid ASC LIMIT @limit`,
       )
       .all(params) as { skin_uuid: string; weapon_uuid: string; votes: number }[];
     return rows.map((r) => ({ skinUuid: r.skin_uuid, weaponUuid: r.weapon_uuid, votes: r.votes }));
@@ -291,24 +329,35 @@ export class SqliteRepo implements Repo {
     return row.w;
   }
 
-  private reviewFilters(q: { weaponUuid?: string; since?: number }, params: Record<string, unknown>): string {
-    const where = ['hidden = 0'];
+  /** Visible reviews (alias r) of a period / scope / weapon. */
+  private reviewFilters(
+    q: { weaponUuid?: string; since?: number; geo?: GeoScope },
+    params: Record<string, unknown>,
+  ): string {
+    const where = ['r.hidden = 0', geoCondition('r', q.geo, params)];
     if (q.weaponUuid) {
-      where.push('weapon_uuid = @weapon');
+      where.push('r.weapon_uuid = @weapon');
       params.weapon = q.weaponUuid;
     }
     if (q.since !== undefined) {
-      where.push('updated_at >= @since');
+      where.push('r.updated_at >= @since');
       params.since = q.since;
     }
-    return where.join(' AND ');
+    return and(where);
   }
 
-  topRatedSkins(q: { weaponUuid?: string; since?: number; limit: number; c: number; minCount: number }) {
-    // m = global mean of all visible ratings in the period (not restricted by the weapon filter).
+  topRatedSkins(q: {
+    weaponUuid?: string;
+    since?: number;
+    limit: number;
+    c: number;
+    minCount: number;
+    geo?: GeoScope;
+  }) {
+    // m = mean of all visible ratings of the same period and scope (not restricted by weapon).
     const meanParams: Record<string, unknown> = {};
-    const meanWhere = this.reviewFilters({ since: q.since }, meanParams);
-    const { m } = this.db.prepare(`SELECT AVG(rating) AS m FROM skin_reviews WHERE ${meanWhere}`).get(meanParams) as {
+    const meanWhere = this.reviewFilters({ since: q.since, geo: q.geo }, meanParams);
+    const { m } = this.db.prepare(`SELECT AVG(r.rating) AS m FROM skin_reviews r WHERE ${meanWhere}`).get(meanParams) as {
       m: number | null;
     };
     if (m === null) return [];
@@ -316,23 +365,23 @@ export class SqliteRepo implements Repo {
     const where = this.reviewFilters(q, params);
     const rows = this.db
       .prepare(
-        `SELECT skin_uuid, MIN(weapon_uuid) AS weapon_uuid FROM skin_reviews WHERE ${where}
-         GROUP BY skin_uuid HAVING COUNT(*) >= @minCount
-         ORDER BY (@c * @m + SUM(rating)) * 1.0 / (@c + COUNT(*)) DESC, COUNT(*) DESC, skin_uuid ASC
+        `SELECT r.skin_uuid, MIN(r.weapon_uuid) AS weapon_uuid FROM skin_reviews r WHERE ${where}
+         GROUP BY r.skin_uuid HAVING COUNT(*) >= @minCount
+         ORDER BY (@c * @m + SUM(r.rating)) * 1.0 / (@c + COUNT(*)) DESC, COUNT(*) DESC, r.skin_uuid ASC
          LIMIT @limit`,
       )
       .all(params) as { skin_uuid: string; weapon_uuid: string }[];
     return rows.map((r) => ({ skinUuid: r.skin_uuid, weaponUuid: r.weapon_uuid }));
   }
 
-  topReviewedSkins(q: { weaponUuid?: string; since?: number; limit: number }) {
+  topReviewedSkins(q: { weaponUuid?: string; since?: number; limit: number; geo?: GeoScope }) {
     const params: Record<string, unknown> = { limit: q.limit };
     const where = this.reviewFilters(q, params);
     const rows = this.db
       .prepare(
-        `SELECT skin_uuid, MIN(weapon_uuid) AS weapon_uuid FROM skin_reviews WHERE ${where}
-         GROUP BY skin_uuid
-         ORDER BY SUM(CASE WHEN body <> '' THEN 1 ELSE 0 END) DESC, COUNT(*) DESC, skin_uuid ASC
+        `SELECT r.skin_uuid, MIN(r.weapon_uuid) AS weapon_uuid FROM skin_reviews r WHERE ${where}
+         GROUP BY r.skin_uuid
+         ORDER BY SUM(CASE WHEN r.body <> '' THEN 1 ELSE 0 END) DESC, COUNT(*) DESC, r.skin_uuid ASC
          LIMIT @limit`,
       )
       .all(params) as { skin_uuid: string; weapon_uuid: string }[];
@@ -341,25 +390,57 @@ export class SqliteRepo implements Repo {
 
   // ---- skin reviews ----------------------------------------------------------
 
-  upsertReview(r: { userId: string; skinUuid: string; weaponUuid: string; rating: number; body: string; now: number }) {
+  upsertReview(r: {
+    userId: string;
+    skinUuid: string;
+    weaponUuid: string;
+    rating: number;
+    body: string;
+    now: number;
+    origin: Origin;
+    language: string | null;
+    updateLanguage: boolean;
+  }) {
     return this.db.transaction(() => {
       const existing = this.db
         .prepare('SELECT id FROM skin_reviews WHERE user_id = ? AND skin_uuid = ?')
         .get(r.userId, r.skinUuid) as { id: string } | undefined;
       if (existing) {
-        // Editing keeps id, likes, created_at and the hidden flag (editing cannot un-hide).
+        // Editing keeps id, likes, created_at, the hidden flag (editing cannot un-hide) and the
+        // creation-time origin; the text language changes only when the client sends one.
         this.db
-          .prepare('UPDATE skin_reviews SET rating = ?, body = ?, updated_at = ? WHERE id = ?')
-          .run(r.rating, r.body, r.now, existing.id);
+          .prepare(
+            `UPDATE skin_reviews SET rating = @rating, body = @body, updated_at = @now
+             ${r.updateLanguage ? ', language = @language' : ''} WHERE id = @id`,
+          )
+          .run({
+            rating: r.rating,
+            body: r.body,
+            now: r.now,
+            id: existing.id,
+            ...(r.updateLanguage ? { language: r.language } : {}),
+          });
         return existing.id;
       }
       const id = crypto.randomUUID();
       this.db
         .prepare(
-          `INSERT INTO skin_reviews (id, user_id, skin_uuid, weapon_uuid, rating, body, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO skin_reviews (id, user_id, skin_uuid, weapon_uuid, rating, body, created_at, updated_at,
+             country, region, language)
+           VALUES (@id, @userId, @skinUuid, @weaponUuid, @rating, @body, @now, @now, @country, @region, @language)`,
         )
-        .run(id, r.userId, r.skinUuid, this.skinWeapon(r.skinUuid) ?? r.weaponUuid, r.rating, r.body, r.now, r.now);
+        .run({
+          id,
+          userId: r.userId,
+          skinUuid: r.skinUuid,
+          weaponUuid: this.skinWeapon(r.skinUuid) ?? r.weaponUuid,
+          rating: r.rating,
+          body: r.body,
+          now: r.now,
+          country: r.origin.country,
+          region: r.origin.region,
+          language: r.language,
+        });
       return id;
     })();
   }
@@ -385,9 +466,14 @@ export class SqliteRepo implements Repo {
     cursor?: Cursor;
     limit: number;
     viewerId: string;
+    geo?: GeoScope;
+    languages?: string[];
   }): ReviewView[] {
-    const where = ['r.skin_uuid = @skin', 'r.hidden = 0'];
     const params: Record<string, unknown> = { skin: q.skinUuid, viewer: q.viewerId, limit: q.limit + 1 };
+    const where = ['r.skin_uuid = @skin', 'r.hidden = 0', geoCondition('r', q.geo, params)];
+    if (q.languages && q.languages.length > 0) {
+      where.push(`r.language IN (${inList('lang', q.languages, params)})`);
+    }
     let order: string;
     if (q.sort === 'top') {
       order = 'r.like_count DESC, r.created_at DESC, r.id DESC';
@@ -407,7 +493,7 @@ export class SqliteRepo implements Repo {
       }
     }
     return this.db
-      .prepare(`${REVIEW_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${order} LIMIT @limit`)
+      .prepare(`${REVIEW_SELECT} WHERE ${and(where)} ORDER BY ${order} LIMIT @limit`)
       .all(params) as ReviewView[];
   }
 
@@ -443,31 +529,31 @@ export class SqliteRepo implements Repo {
     })();
   }
 
-  ratingStats(skinUuids: string[], since?: number): Map<string, RatingStats> {
+  ratingStats(skinUuids: string[], since?: number, geo?: GeoScope): Map<string, RatingStats> {
     const out = new Map<string, RatingStats>();
     if (skinUuids.length === 0) return out;
-    const sinceSql = since !== undefined ? 'AND updated_at >= ?' : '';
+    const params: Record<string, unknown> = {};
+    const where = [
+      this.reviewFilters({ since, geo }, params),
+      `r.skin_uuid IN (${inList('s', skinUuids, params)})`,
+    ];
     const rows = this.db
       .prepare(
-        `SELECT skin_uuid, COUNT(*) AS n, SUM(rating) AS s, SUM(CASE WHEN body <> '' THEN 1 ELSE 0 END) AS rc
-         FROM skin_reviews WHERE hidden = 0 AND skin_uuid IN (${placeholders(skinUuids.length)}) ${sinceSql}
-         GROUP BY skin_uuid`,
+        `SELECT r.skin_uuid, COUNT(*) AS n, SUM(r.rating) AS s, SUM(CASE WHEN r.body <> '' THEN 1 ELSE 0 END) AS rc
+         FROM skin_reviews r WHERE ${and(where)} GROUP BY r.skin_uuid`,
       )
-      .all(...skinUuids, ...(since !== undefined ? [since] : [])) as {
-      skin_uuid: string;
-      n: number;
-      s: number;
-      rc: number;
-    }[];
+      .all(params) as { skin_uuid: string; n: number; s: number; rc: number }[];
     for (const r of rows) out.set(r.skin_uuid, { count: r.n, sum: r.s, reviewCount: r.rc });
     return out;
   }
 
-  ratingDistribution(skinUuid: string): [number, number, number, number, number] {
+  ratingDistribution(skinUuid: string, geo?: GeoScope): [number, number, number, number, number] {
     const dist: [number, number, number, number, number] = [0, 0, 0, 0, 0];
+    const params: Record<string, unknown> = { skin: skinUuid };
+    const where = [this.reviewFilters({ geo }, params), 'r.skin_uuid = @skin'];
     const rows = this.db
-      .prepare('SELECT rating, COUNT(*) AS n FROM skin_reviews WHERE skin_uuid = ? AND hidden = 0 GROUP BY rating')
-      .all(skinUuid) as { rating: number; n: number }[];
+      .prepare(`SELECT r.rating, COUNT(*) AS n FROM skin_reviews r WHERE ${and(where)} GROUP BY r.rating`)
+      .all(params) as { rating: number; n: number }[];
     for (const r of rows) if (r.rating >= 1 && r.rating <= 5) dist[r.rating - 1] = r.n;
     return dist;
   }
@@ -477,8 +563,8 @@ export class SqliteRepo implements Repo {
   insertPost(p: PostRow): void {
     this.db
       .prepare(
-        `INSERT INTO posts (id, user_id, kind, body, media, payload, hidden, created_at)
-         VALUES (@id, @user_id, @kind, @body, @media, @payload, @hidden, @created_at)`,
+        `INSERT INTO posts (id, user_id, kind, body, media, payload, hidden, created_at, country, region, language)
+         VALUES (@id, @user_id, @kind, @body, @media, @payload, @hidden, @created_at, @country, @region, @language)`,
       )
       .run(p);
   }
@@ -491,12 +577,22 @@ export class SqliteRepo implements Repo {
     );
   }
 
-  listPosts(q: { kind?: string; cursor?: Cursor; limit: number; viewerId: string }): PostView[] {
-    const where = ['p.hidden = 0'];
+  listPosts(q: {
+    kind?: string;
+    cursor?: Cursor;
+    limit: number;
+    viewerId: string;
+    geo?: GeoScope;
+    languages?: string[];
+  }): PostView[] {
     const params: Record<string, unknown> = { viewer: q.viewerId, limit: q.limit + 1 };
+    const where = ['p.hidden = 0', geoCondition('p', q.geo, params)];
     if (q.kind) {
       where.push('p.kind = @kind');
       params.kind = q.kind;
+    }
+    if (q.languages && q.languages.length > 0) {
+      where.push(`p.language IN (${inList('lang', q.languages, params)})`);
     }
     if (q.cursor) {
       where.push('(p.created_at < @cAt OR (p.created_at = @cAt AND p.id < @cId))');
@@ -504,7 +600,7 @@ export class SqliteRepo implements Repo {
       params.cId = q.cursor.id;
     }
     return this.db
-      .prepare(`${POST_SELECT} WHERE ${where.join(' AND ')} ORDER BY p.created_at DESC, p.id DESC LIMIT @limit`)
+      .prepare(`${POST_SELECT} WHERE ${and(where)} ORDER BY p.created_at DESC, p.id DESC LIMIT @limit`)
       .all(params) as PostView[];
   }
 
@@ -536,8 +632,8 @@ export class SqliteRepo implements Repo {
   insertComment(c: CommentRow): void {
     this.db
       .prepare(
-        `INSERT INTO comments (id, post_id, user_id, body, hidden, created_at)
-         VALUES (@id, @post_id, @user_id, @body, @hidden, @created_at)`,
+        `INSERT INTO comments (id, post_id, user_id, body, hidden, created_at, country, region, language)
+         VALUES (@id, @post_id, @user_id, @body, @hidden, @created_at, @country, @region, @language)`,
       )
       .run(c);
   }
@@ -568,6 +664,29 @@ export class SqliteRepo implements Repo {
 
   deleteComment(id: string): void {
     this.db.prepare('DELETE FROM comments WHERE id = ?').run(id);
+  }
+
+  // ---- communities -----------------------------------------------------------
+
+  communities(since: number): CommunityActivity[] {
+    return this.db
+      .prepare(
+        `WITH
+           p AS (SELECT country, user_id FROM posts
+                 WHERE created_at >= @since AND hidden = 0 AND country IS NOT NULL),
+           l AS (SELECT country, user_id FROM lfg_posts
+                 WHERE created_at >= @since AND hidden = 0 AND country IS NOT NULL),
+           pc AS (SELECT country, COUNT(*) AS posts FROM p GROUP BY country),
+           lc AS (SELECT country, COUNT(*) AS lfg FROM l GROUP BY country),
+           ac AS (SELECT country, COUNT(DISTINCT user_id) AS authors
+                  FROM (SELECT country, user_id FROM p UNION ALL SELECT country, user_id FROM l)
+                  GROUP BY country)
+         SELECT ac.country AS country, COALESCE(pc.posts, 0) AS posts, ac.authors AS authors,
+                COALESCE(lc.lfg, 0) AS lfg
+         FROM ac LEFT JOIN pc ON pc.country = ac.country LEFT JOIN lc ON lc.country = ac.country
+         ORDER BY posts DESC, lfg DESC, authors DESC, country ASC`,
+      )
+      .all({ since }) as CommunityActivity[];
   }
 
   // ---- reports -------------------------------------------------------------
@@ -625,8 +744,7 @@ export class SqliteRepo implements Repo {
 
   getMediaMany(keys: string[]): MediaRow[] {
     if (keys.length === 0) return [];
-    return this.db
-      .prepare(`SELECT * FROM media WHERE key IN (${placeholders(keys.length)})`)
-      .all(...keys) as MediaRow[];
+    const params: Record<string, unknown> = {};
+    return this.db.prepare(`SELECT * FROM media WHERE key IN (${inList('k', keys, params)})`).all(params) as MediaRow[];
   }
 }

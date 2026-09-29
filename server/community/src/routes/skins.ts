@@ -2,6 +2,7 @@ import type { Hono } from 'hono';
 import type { Ctx } from '../context.js';
 import type { RatingStats } from '../db/repo.js';
 import { invalid } from '../errors.js';
+import { appliedScope, resolveScope } from '../geo/scope.js';
 import { parseEnum, parseLimit, parseUuid } from '../validate.js';
 
 export const WEEK_MS = 7 * 24 * 60 * 60_000;
@@ -29,7 +30,10 @@ export function registerSkins(app: Hono, x: Ctx): void {
     const body = await x.readJson(c);
     const weaponUuid = parseUuid(body.weaponUuid, 'weaponUuid');
     x.rateLimit('votes', user.id);
-    x.repo.voteSkin(user.id, skinUuid, weaponUuid, x.now());
+    x.repo.voteSkin(user.id, skinUuid, weaponUuid, x.now(), {
+      country: user.country,
+      region: user.region,
+    });
     return x.json(c, voteResponse(skinUuid, true));
   });
 
@@ -49,25 +53,28 @@ export function registerSkins(app: Hono, x: Ctx): void {
     const sort = q.sort ? parseEnum(q.sort, ['votes', 'rating', 'reviews'] as const, 'sort') : 'votes';
     const limit = parseLimit(q.limit, 20, 100);
     const since = period === 'week' ? x.now() - WEEK_MS : undefined;
+    // v3: votes / ratings are counted by the voter's / reviewer's country or region (default: everyone).
+    const geo = resolveScope(q, user, 'global');
 
     let rows: { skinUuid: string; weaponUuid: string }[];
     let votes: Map<string, number>;
     if (sort === 'votes') {
-      const top = x.repo.topSkins({ weaponUuid, since, limit });
+      const top = x.repo.topSkins({ weaponUuid, since, limit, geo });
       rows = top;
       votes = new Map(top.map((r) => [r.skinUuid, r.votes]));
     } else {
       rows =
         sort === 'rating'
-          ? x.repo.topRatedSkins({ weaponUuid, since, limit, c: BAYES_C, minCount: MIN_RATINGS_FOR_RANK })
-          : x.repo.topReviewedSkins({ weaponUuid, since, limit });
+          ? x.repo.topRatedSkins({ weaponUuid, since, limit, c: BAYES_C, minCount: MIN_RATINGS_FOR_RANK, geo })
+          : x.repo.topReviewedSkins({ weaponUuid, since, limit, geo });
       votes = x.repo.voteCounts(
         rows.map((r) => r.skinUuid),
         since,
+        geo,
       );
     }
     const ids = rows.map((r) => r.skinUuid);
-    const stats = x.repo.ratingStats(ids, since);
+    const stats = x.repo.ratingStats(ids, since, geo);
     const voted = user ? x.repo.userVotes(user.id, ids) : new Set<string>();
     return x.json(c, {
       items: rows.map((r, i) => {
@@ -83,6 +90,7 @@ export function registerSkins(app: Hono, x: Ctx): void {
           reviewCount: s?.reviewCount ?? 0,
         };
       }),
+      appliedScope: appliedScope(geo),
     });
   });
 
@@ -93,8 +101,9 @@ export function registerSkins(app: Hono, x: Ctx): void {
     if (parts.length === 0) throw invalid('ids không được để trống.');
     if (parts.length > MAX_IDS) throw invalid(`ids tối đa ${MAX_IDS} UUID.`);
     const ids = [...new Set(parts.map((p) => parseUuid(p, 'ids')))];
-    const counts = x.repo.voteCounts(ids);
-    const stats = x.repo.ratingStats(ids);
+    const geo = resolveScope(c.req.query(), user, 'global');
+    const counts = x.repo.voteCounts(ids, undefined, geo);
+    const stats = x.repo.ratingStats(ids, undefined, geo);
     const voted = user ? x.repo.userVotes(user.id, ids) : new Set<string>();
     return x.json(c, {
       items: ids.map((id) => ({
@@ -104,6 +113,7 @@ export function registerSkins(app: Hono, x: Ctx): void {
         ratingAvg: ratingAvg(stats.get(id)),
         ratingCount: stats.get(id)?.count ?? 0,
       })),
+      appliedScope: appliedScope(geo),
     });
   });
 }

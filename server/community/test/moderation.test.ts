@@ -10,7 +10,7 @@ import {
   stripLinks,
   tokenize,
 } from '../src/moderation/filter.js';
-import { WORDLIST } from '../src/moderation/vi-wordlist.js';
+import { WORDLISTS } from '../src/moderation/wordlists.js';
 import { expectError, setup, SKIN_A, WEAPON_1, type Env } from './helpers.js';
 
 const clean = (s: string) => moderate(s);
@@ -141,7 +141,7 @@ describe('no false positives', () => {
   });
 
   it('abbreviations never match inside longer words', () => {
-    expect(findMatches('admin cmd vlog cclub ccf dmz')).toEqual([]);
+    expect(findMatches('admin cmd vlog cclub ccf dmz', ['vi', 'en'])).toEqual([]);
   });
 });
 
@@ -167,7 +167,7 @@ describe('rejected categories', () => {
   });
 
   it('a harassment phrase wins over the profanity inside it', () => {
-    const m = findMatches('bú lồn');
+    const m = findMatches('bú lồn', ['vi', 'en']);
     expect(m).toHaveLength(1);
     expect(m[0]!.category).toBe('sexual');
   });
@@ -231,18 +231,22 @@ describe('links', () => {
 });
 
 describe('word list', () => {
-  it('has no duplicate or empty entries', () => {
-    const all = Object.values(WORDLIST).flat();
-    expect(all.every((w) => w.trim().length > 0)).toBe(true);
-    expect(new Set(all.map((w) => w.trim())).size).toBe(all.length);
+  it('has no duplicate or empty entries (per list)', () => {
+    for (const [key, list] of Object.entries(WORDLISTS)) {
+      const all = Object.values(list.words).flat();
+      expect(all.every((w) => w.trim().length > 0), key).toBe(true);
+      expect(new Set(all.map((w) => w.trim())).size, key).toBe(all.length);
+    }
   });
 
-  it('every entry matches itself', () => {
-    for (const [category, entries] of Object.entries(WORDLIST)) {
-      for (const entry of entries) {
-        const m = findMatches(entry);
-        expect(m.length, entry).toBe(1);
-        expect(m[0]!.category, entry).toBe(category);
+  it('every vi / en entry matches itself with its own category', () => {
+    for (const key of ['vi', 'en'] as const) {
+      for (const [category, entries] of Object.entries(WORDLISTS[key].words)) {
+        for (const entry of entries) {
+          const m = findMatches(entry, [key]);
+          expect(m.length, entry).toBe(1);
+          expect(m[0]!.category, entry).toBe(category);
+        }
       }
     }
   });
