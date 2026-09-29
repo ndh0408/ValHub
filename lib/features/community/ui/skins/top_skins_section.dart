@@ -14,7 +14,9 @@ import '../../../../core/util/format.dart';
 import '../../community_routes.dart';
 import '../../community_strings.dart';
 import '../../data/community_models.dart';
+import '../../providers/scope_providers.dart';
 import '../../providers/skin_vote_providers.dart';
+import '../scope/scope_bar.dart';
 import '../widgets/community_widgets.dart';
 import 'skin_vote_button.dart';
 import 'star_rating.dart';
@@ -47,17 +49,37 @@ class TopSkinsSliver extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filter = ref.watch(topSkinsFilterProvider);
+    final scope = ref
+        .watch(
+          resolvedScopeProvider((puuid: puuid, section: ScopedSection.skins)),
+        )
+        .value;
+    final overrides = ref.watch(skinVoteOverridesProvider(puuid));
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
+    final header = _Filters(filter: filter, db: db, puuid: puuid);
+    if (scope == null) {
+      return SliverToBoxAdapter(
+        child: Column(
+          children: [
+            header,
+            SkeletonColumn(
+              item: (_) => const TopSkinSkeleton(),
+              count: 5,
+              spacing: 10,
+            ),
+          ],
+        ),
+      );
+    }
     final query = (
       puuid: puuid,
       weapon: filter.weapon,
       period: filter.period,
       sort: filter.sort,
+      scope: scope,
     );
     final async = ref.watch(topSkinsProvider(query));
-    final overrides = ref.watch(skinVoteOverridesProvider(puuid));
-    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
 
-    final header = _Filters(filter: filter, db: db);
     if (!async.hasValue) {
       return SliverToBoxAdapter(
         child: Column(
@@ -130,10 +152,11 @@ class TopSkinsSliver extends ConsumerWidget {
 }
 
 class _Filters extends ConsumerWidget {
-  const _Filters({required this.filter, required this.db});
+  const _Filters({required this.filter, required this.db, required this.puuid});
 
   final TopSkinsFilter filter;
   final ContentDb db;
+  final String puuid;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -141,6 +164,11 @@ class _Filters extends ConsumerWidget {
     final weapons = leaderboardWeapons(db);
     return Column(
       children: [
+        ScopeBar(
+          section: ScopedSection.skins,
+          puuid: puuid,
+          globalLabel: CommunityStrings.scopeWorldwide,
+        ),
         SegmentedTabs<TopPeriod>(
           expand: true,
           tabs: const [

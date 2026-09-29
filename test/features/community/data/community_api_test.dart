@@ -42,6 +42,7 @@ void main() {
         'region': 'ap',
         'cardId': cardId,
         'rankTier': 18,
+        'language': 'vi',
       });
       final gets = env.server.calls('GET /v1/posts');
       expect(
@@ -145,6 +146,7 @@ void main() {
       ),
     ).called(1);
     expect(env.server.calls('GET /v1/lfg').single.query, {
+      'scope': 'region',
       'region': 'ap',
       'limit': '20',
     });

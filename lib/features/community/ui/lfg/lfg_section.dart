@@ -79,6 +79,7 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
     final header = _Filters(
       filter: filter,
       region: query.region,
+      myRegion: communityRegion(account.region),
       hasRank: viewerRank != null,
     );
 
@@ -316,11 +317,13 @@ class _Filters extends ConsumerWidget {
   const _Filters({
     required this.filter,
     required this.region,
+    required this.myRegion,
     required this.hasRank,
   });
 
   final LfgFilter filter;
   final String region;
+  final String myRegion;
   final bool hasRank;
 
   @override
@@ -445,6 +448,26 @@ class _Filters extends ConsumerWidget {
                   onSelected: () => n.setMode(m),
                 ),
               ],
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.info_outline_rounded, size: 14, color: muted),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  region == myRegion
+                      ? CommunityStrings.lfgSameShardNote
+                      : CommunityStrings.lfgOtherShardNote(
+                          CommunityStrings.regionLabel(region),
+                        ),
+                  style: theme.textTheme.bodySmall?.copyWith(color: muted),
+                ),
+              ),
             ],
           ),
         ),

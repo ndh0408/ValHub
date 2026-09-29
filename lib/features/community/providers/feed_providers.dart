@@ -27,7 +27,10 @@ class FeedNotifier extends AsyncNotifier<PagedState<CommunityPost>>
     _scope = await ref.watch(
       resolvedScopeProvider((puuid: puuid, section: ScopedSection.feed)).future,
     );
-    return PagedState.fromPage(await api.posts(puuid, scope: _scope));
+    return PagedState.fromPage(
+      await api.posts(puuid, scope: _scope),
+      tag: _scope,
+    );
   }
 
   /// The scope the current list was loaded with.

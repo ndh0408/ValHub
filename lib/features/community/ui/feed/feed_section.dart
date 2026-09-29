@@ -10,6 +10,8 @@ import '../../data/community_api.dart';
 import '../../data/community_models.dart';
 import '../../providers/community_providers.dart';
 import '../../providers/feed_providers.dart';
+import '../../providers/scope_providers.dart';
+import '../scope/scope_bar.dart';
 import '../widgets/community_widgets.dart';
 import 'post_card.dart';
 import 'report_sheet.dart';
@@ -22,11 +24,30 @@ class FeedSliver extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    return SliverMainAxisGroup(
+      slivers: [
+        SliverToBoxAdapter(
+          child: ScopeBar(section: ScopedSection.feed, puuid: puuid),
+        ),
+        _content(context, ref),
+      ],
+    );
+  }
+
+  Widget _content(BuildContext context, WidgetRef ref) {
     final provider = feedProvider(puuid);
     final async = ref.watch(provider);
     final meId = ref.watch(communityMeProvider(puuid)).value?.id;
+    final scope = ref
+        .watch(
+          resolvedScopeProvider((puuid: puuid, section: ScopedSection.feed)),
+        )
+        .value;
+    // Items of another scope (right after switching) are never shown.
+    final stale =
+        async.hasValue && scope != null && async.requireValue.tag != scope;
 
-    if (!async.hasValue) {
+    if (!async.hasValue || stale) {
       if (async.hasError && !async.isLoading) {
         return SliverToBoxAdapter(
           child: CommunityErrorState(
@@ -58,8 +79,8 @@ class FeedSliver extends ConsumerWidget {
               ),
             CommunityEmptyState(
               icon: Icons.forum_outlined,
-              title: CommunityStrings.feedEmptyTitle,
-              message: CommunityStrings.feedEmptyBody,
+              title: CommunityStrings.feedEmptyScopeTitle,
+              message: CommunityStrings.feedEmptyScopeBody,
             ),
           ],
         ),

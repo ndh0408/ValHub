@@ -25,6 +25,7 @@ import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/core/util/clock.dart';
 import 'package:valvn/features/community/data/community_http.dart';
 import 'package:valvn/features/community/data/image_source.dart';
+import 'package:valvn/features/community/providers/consent_providers.dart';
 import 'package:valvn/features/community/providers/community_providers.dart';
 
 import '../../helpers/fixtures.dart';
@@ -79,6 +80,8 @@ Map<String, Object?> authorJson({
   String tag = 'VN2',
   int? rank = 12,
   String? card,
+  String? country,
+  String? language,
 }) => {
   'id': id,
   'gameName': name,
@@ -86,12 +89,23 @@ Map<String, Object?> authorJson({
   'cardId': card,
   'rankTier': rank,
   'region': 'ap',
+  'country': country,
+  'language': language,
 };
 
-Map<String, Object?> sessionJson({String token = 'community-1'}) => {
+Map<String, Object?> sessionJson({
+  String token = 'community-1',
+  String? country,
+}) => {
   'token': token,
   'expiresAt': now.add(const Duration(days: 30)).toIso8601String(),
-  'user': authorJson(id: meId, name: 'Tôi Là Ai', tag: 'VN1', rank: 18),
+  'user': authorJson(
+    id: meId,
+    name: 'Tôi Là Ai',
+    tag: 'VN1',
+    rank: 18,
+    country: country,
+  ),
 };
 
 Map<String, Object?> postJson(
@@ -335,9 +349,17 @@ class RecordingNotifications extends NotificationService {
 class CommunityTestEnv {
   CommunityTestEnv._(this.prefs);
 
-  static Future<CommunityTestEnv> create({Account? account = meAccount}) async {
+  /// [consent]: the account already agreed to share its Riot ID with the
+  /// community server (the one-time sheet is skipped).
+  static Future<CommunityTestEnv> create({
+    Account? account = meAccount,
+    bool consent = true,
+  }) async {
     final prefs = await createTestPrefs();
     if (account != null) {
+      if (consent) {
+        await prefs.setString(communityConsentKey(account.puuid), 'granted');
+      }
       await prefs.setJson(PrefKeys.accounts, [account.toJson()]);
       await prefs.setString(PrefKeys.activePuuid, account.puuid);
     }

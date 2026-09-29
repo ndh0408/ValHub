@@ -27,6 +27,7 @@ import '../../providers/skin_review_providers.dart';
 import '../../providers/skin_vote_providers.dart';
 import '../feed/report_sheet.dart';
 import '../widgets/community_widgets.dart';
+import '../consent/consent_sheet.dart';
 import 'review_editor_sheet.dart';
 import 'skin_vote_button.dart';
 import 'star_rating.dart';
@@ -582,6 +583,12 @@ class _MyReviewCard extends ConsumerWidget {
   Future<void> _edit(BuildContext context, {int rating = 0}) async {
     final p = puuid;
     if (p == null) return;
+    final account = ProviderScope.containerOf(context).read(accountProvider(p));
+    if (account != null &&
+        !await ensureCommunityConsent(context, account, askAgain: true)) {
+      return;
+    }
+    if (!context.mounted) return;
     final mine = summary?.myReview;
     final saved = await showReviewEditor(
       context,

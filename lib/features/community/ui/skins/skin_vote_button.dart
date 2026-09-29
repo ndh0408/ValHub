@@ -11,6 +11,7 @@ import '../../community_strings.dart';
 import '../../data/community_models.dart';
 import '../../providers/community_providers.dart';
 import '../../providers/skin_vote_providers.dart';
+import '../consent/consent_sheet.dart';
 import '../widgets/community_widgets.dart';
 import 'star_rating.dart';
 
@@ -23,6 +24,13 @@ Future<void> toggleSkinVote(
   required SkinVote vote,
   String? weaponUuid,
 }) async {
+  // Voting needs a community session: ask (once) before any network call.
+  final account = ref.read(accountProvider(puuid));
+  if (account != null &&
+      !await ensureCommunityConsent(context, account, askAgain: true)) {
+    return;
+  }
+  if (!context.mounted) return;
   try {
     await ref
         .read(skinVoteOverridesProvider(puuid).notifier)

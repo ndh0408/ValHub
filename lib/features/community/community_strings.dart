@@ -343,4 +343,196 @@ abstract final class CommunityStrings {
   // ------------------------------------------------------------ previews
   static const lfgPreviewTitle = 'Tìm đồng đội hợp rank';
   static const trendingTitle = 'Skin hot trong tuần';
+
+  // --------------------------------------------------------- scopes (v3)
+  static const scopeCountry = 'Nước bạn';
+  static const scopeRegion = 'Khu vực';
+  static const scopeGlobal = 'Quốc tế';
+  static const scopeWorldwide = 'Toàn cầu';
+  static const countriesTitle = 'Cộng đồng các nước';
+  static const countriesSearchHint = 'Tìm quốc gia…';
+  static const countriesEmpty = 'Không tìm thấy quốc gia phù hợp.';
+  static const yourCountry = 'Nước của bạn';
+  static const backToMyCountry = 'Về nước bạn';
+  static String communityActivity(String posts, String authors) =>
+      '$posts bài · $authors người';
+  static String communityLfg(String n) => '$n tin tìm đồng đội';
+  static const languageFilter = 'Ngôn ngữ nội dung';
+  static const languageFilterHint =
+      'Chỉ hiện nội dung viết bằng các ngôn ngữ đã chọn. Bỏ trống để xem tất cả.';
+  static String languagesSelected(int n) => '$n ngôn ngữ';
+  static const clearFilter = 'Bỏ chọn';
+  static const apply = 'Áp dụng';
+  static const feedEmptyScopeTitle = 'Chưa có bài trong phạm vi này';
+  static const feedEmptyScopeBody =
+      'Hãy là người đầu tiên đăng bài, hoặc mở rộng sang khu vực / quốc tế để xem thêm.';
+  static const lfgSameShardNote = 'Chỉ người cùng máy chủ mới vào tổ đội được.';
+  static String lfgOtherShardNote(String region) =>
+      'Bạn đang xem máy chủ $region — chỉ người cùng máy chủ với tài khoản của bạn mới vào tổ đội được.';
+  static String countryName(String code) => countryNames[code] ?? code;
+
+  /// Country names (ISO 3166-1 alpha-2), Vietnamese for now; the i18n
+  /// phase localizes them.
+  static const countryNames = <String, String>{
+    'AE': 'Các Tiểu vương quốc Ả Rập Thống nhất',
+    'AL': 'Albania',
+    'AM': 'Armenia',
+    'AR': 'Argentina',
+    'AT': 'Áo',
+    'AU': 'Úc',
+    'AZ': 'Azerbaijan',
+    'BA': 'Bosnia và Herzegovina',
+    'BD': 'Bangladesh',
+    'BE': 'Bỉ',
+    'BG': 'Bulgaria',
+    'BH': 'Bahrain',
+    'BN': 'Brunei',
+    'BO': 'Bolivia',
+    'BR': 'Brazil',
+    'BY': 'Belarus',
+    'CA': 'Canada',
+    'CH': 'Thụy Sĩ',
+    'CL': 'Chile',
+    'CN': 'Trung Quốc',
+    'CO': 'Colombia',
+    'CR': 'Costa Rica',
+    'CU': 'Cuba',
+    'CY': 'Síp',
+    'CZ': 'Séc',
+    'DE': 'Đức',
+    'DK': 'Đan Mạch',
+    'DO': 'Cộng hòa Dominica',
+    'DZ': 'Algeria',
+    'EC': 'Ecuador',
+    'EE': 'Estonia',
+    'EG': 'Ai Cập',
+    'ES': 'Tây Ban Nha',
+    'ET': 'Ethiopia',
+    'FI': 'Phần Lan',
+    'FR': 'Pháp',
+    'GB': 'Vương quốc Anh',
+    'GE': 'Georgia',
+    'GH': 'Ghana',
+    'GR': 'Hy Lạp',
+    'GT': 'Guatemala',
+    'HK': 'Hồng Kông',
+    'HN': 'Honduras',
+    'HR': 'Croatia',
+    'HU': 'Hungary',
+    'ID': 'Indonesia',
+    'IE': 'Ireland',
+    'IL': 'Israel',
+    'IN': 'Ấn Độ',
+    'IQ': 'Iraq',
+    'IR': 'Iran',
+    'IS': 'Iceland',
+    'IT': 'Ý',
+    'JO': 'Jordan',
+    'JP': 'Nhật Bản',
+    'KE': 'Kenya',
+    'KH': 'Campuchia',
+    'KR': 'Hàn Quốc',
+    'KW': 'Kuwait',
+    'KZ': 'Kazakhstan',
+    'LA': 'Lào',
+    'LB': 'Liban',
+    'LK': 'Sri Lanka',
+    'LT': 'Litva',
+    'LU': 'Luxembourg',
+    'LV': 'Latvia',
+    'LY': 'Libya',
+    'MA': 'Maroc',
+    'MD': 'Moldova',
+    'ME': 'Montenegro',
+    'MK': 'Bắc Macedonia',
+    'MM': 'Myanmar',
+    'MN': 'Mông Cổ',
+    'MO': 'Ma Cao',
+    'MT': 'Malta',
+    'MX': 'Mexico',
+    'MY': 'Malaysia',
+    'NG': 'Nigeria',
+    'NI': 'Nicaragua',
+    'NL': 'Hà Lan',
+    'NO': 'Na Uy',
+    'NP': 'Nepal',
+    'NZ': 'New Zealand',
+    'OM': 'Oman',
+    'PA': 'Panama',
+    'PE': 'Peru',
+    'PH': 'Philippines',
+    'PK': 'Pakistan',
+    'PL': 'Ba Lan',
+    'PR': 'Puerto Rico',
+    'PT': 'Bồ Đào Nha',
+    'PY': 'Paraguay',
+    'QA': 'Qatar',
+    'RO': 'Romania',
+    'RS': 'Serbia',
+    'RU': 'Nga',
+    'SA': 'Ả Rập Xê Út',
+    'SE': 'Thụy Điển',
+    'SG': 'Singapore',
+    'SI': 'Slovenia',
+    'SK': 'Slovakia',
+    'SV': 'El Salvador',
+    'TH': 'Thái Lan',
+    'TL': 'Đông Timor',
+    'TN': 'Tunisia',
+    'TR': 'Thổ Nhĩ Kỳ',
+    'TW': 'Đài Loan',
+    'UA': 'Ukraine',
+    'US': 'Hoa Kỳ',
+    'UY': 'Uruguay',
+    'UZ': 'Uzbekistan',
+    'VE': 'Venezuela',
+    'VN': 'Việt Nam',
+    'ZA': 'Nam Phi',
+  };
+
+  // ---------------------------------------------------------- translation
+  static const translate = 'Dịch bằng Google';
+  static const translating = 'Đang dịch…';
+  static const downloadingModels = 'Đang tải gói dịch…';
+  static const showOriginal = 'Xem bản gốc';
+  static const showTranslation = 'Xem bản dịch';
+  static const translatedByGoogle = 'Dịch tự động bởi Google';
+  static const translateFailed = 'Không dịch được. Hãy thử lại.';
+  static const translateUnavailable = 'Thiết bị này chưa hỗ trợ dịch trên máy.';
+  static const translateDownloadTitle = 'Tải gói dịch trên máy?';
+  static String translateDownloadBody(String from, String to, String size) =>
+      'Để dịch từ $from sang $to, ValVN cần tải gói ngôn ngữ (khoảng $size). '
+      'Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và '
+      'không gửi tới máy chủ nào.';
+  static String modelSize(int mb) => '$mb MB';
+  static const download = 'Tải và dịch';
+  static const googleDisclaimerTitle = 'Bản dịch của Google';
+  static const googleDisclaimer =
+      'THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE '
+      'DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR '
+      'IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY '
+      'IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR '
+      'PURPOSE AND NONINFRINGEMENT.';
+
+  // -------------------------------------------------------------- consent
+  static const consentTitle = 'Tham gia Cộng đồng ValVN';
+  static String consentAccount(String riotId) => 'Tài khoản: $riotId';
+  static const consentVerify =
+      'Để xác minh Riot ID, ValVN gửi mã truy cập Riot của bạn một lần tới máy '
+      'chủ cộng đồng. Máy chủ dùng ngay rồi bỏ, không lưu.';
+  static const consentPublic =
+      'Người khác sẽ thấy Riot ID, thẻ người chơi, rank và quốc gia của bạn.';
+  static const consentLocal =
+      'Mật khẩu, cookie và PUUID của bạn không bao giờ rời khỏi máy.';
+  static const consentPrivacy = 'Chính sách quyền riêng tư';
+  static const consentGuidelines = 'Tiêu chuẩn cộng đồng';
+  static const consentAgree = 'Đồng ý và tiếp tục';
+  static const consentLater = 'Để sau';
+  static const consentGateTitle = 'Cộng đồng cần xác minh Riot ID';
+  static const consentGateBody =
+      'Bạn chưa đồng ý chia sẻ Riot ID với Cộng đồng ValVN nên chưa thể xem '
+      'hay đăng bài. Bạn có thể thay đổi quyết định bất cứ lúc nào.';
+  static const consentGateAction = 'Xem lại và tham gia';
+  static const errorConsent =
+      'Hãy đồng ý chia sẻ Riot ID với Cộng đồng để tiếp tục.';
 }

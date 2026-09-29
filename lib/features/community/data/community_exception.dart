@@ -31,6 +31,10 @@ class CommunityException implements Exception {
   static const cancelled = 'cancelled';
   static const badResponse = 'bad_response';
   static const disabled = 'disabled';
+
+  /// The user has not agreed to share their Riot ID with the community
+  /// server yet: no sign-in (and no Riot token upload) happens.
+  static const consentRequired = 'consent_required';
   static const imageTooLarge = 'image_too_large';
   static const imageType = 'image_type';
 
@@ -164,6 +168,11 @@ ErrorDescription describeCommunityError(Object error) {
     CommunityException.imageType => const ErrorDescription(
       message: CommunityStrings.errorImageType,
       icon: Icons.image_not_supported_outlined,
+      canRetry: false,
+    ),
+    CommunityException.consentRequired => const ErrorDescription(
+      message: CommunityStrings.errorConsent,
+      icon: Icons.verified_user_outlined,
       canRetry: false,
     ),
     CommunityException.disabled => const ErrorDescription(

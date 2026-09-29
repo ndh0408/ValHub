@@ -24,6 +24,7 @@ class CommunityAuth {
     required this._sessions,
     required this._account,
     required this._now,
+    required this._hasConsent,
     this._language,
   });
 
@@ -32,6 +33,10 @@ class CommunityAuth {
   final SessionManager _sessions;
   final Account? Function(String puuid) _account;
   final DateTime Function() _now;
+
+  /// Whether the user agreed to send their Riot access token to the
+  /// community server (once per account). Without it nothing is sent.
+  final bool Function(String puuid) _hasConsent;
 
   /// The app language sent with `/v1/auth/riot` (e.g. `vi`).
   final String Function()? _language;
@@ -104,6 +109,9 @@ class CommunityAuth {
   }
 
   Future<CommunitySession> _signIn(String puuid) async {
+    if (!_hasConsent(puuid)) {
+      throw const CommunityException(CommunityException.consentRequired);
+    }
     final account = _account(puuid);
     var riot = await _sessions.session(puuid);
     Future<Object?> post(String accessToken) => _http.send(

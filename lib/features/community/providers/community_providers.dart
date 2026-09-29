@@ -15,6 +15,7 @@ import '../data/community_auth.dart';
 import '../data/community_http.dart';
 import '../data/community_models.dart';
 import '../data/image_source.dart';
+import 'consent_providers.dart';
 
 /// Community server base URL: remote config `communityBaseUrl`, else
 /// [AppConstants.communityBaseUrl].
@@ -55,6 +56,9 @@ final communityAuthProvider = Provider<CommunityAuth>(
     account: (puuid) => ref.read(accountProvider(puuid.toLowerCase())),
     now: () => ref.read(clockProvider).now(),
     language: () => ref.read(communityAppLanguageProvider),
+    hasConsent: (puuid) =>
+        ref.read(communityConsentProvider(puuid.toLowerCase())) ==
+        CommunityConsent.granted,
   ),
 );
 
@@ -88,15 +92,20 @@ class PagedState<T> {
     this.nextCursor,
     this.loadingMore = false,
     this.loadMoreError,
+    this.tag,
   });
 
-  factory PagedState.fromPage(CommunityPage<T> page) =>
-      PagedState(items: page.items, nextCursor: page.nextCursor);
+  factory PagedState.fromPage(CommunityPage<T> page, {Object? tag}) =>
+      PagedState(items: page.items, nextCursor: page.nextCursor, tag: tag);
 
   final List<T> items;
   final String? nextCursor;
   final bool loadingMore;
   final Object? loadMoreError;
+
+  /// What the list was loaded for (e.g. the [ScopeFilter]), so a screen can
+  /// tell stale items of another scope from a plain refresh.
+  final Object? tag;
 
   bool get hasMore => nextCursor != null;
 
@@ -113,6 +122,7 @@ class PagedState<T> {
     nextCursor: nextCursor == null ? this.nextCursor : nextCursor(),
     loadingMore: loadingMore ?? this.loadingMore,
     loadMoreError: loadMoreError == null ? this.loadMoreError : loadMoreError(),
+    tag: tag,
   );
 
   /// Appends [page], skipping items already present (by [idOf]).
@@ -125,6 +135,7 @@ class PagedState<T> {
           if (ids.add(idOf(i))) i,
       ],
       nextCursor: page.nextCursor,
+      tag: tag,
     );
   }
 }

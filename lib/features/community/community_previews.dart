@@ -23,6 +23,7 @@ import 'community_routes.dart';
 import 'community_strings.dart';
 import 'data/community_models.dart';
 import 'providers/community_providers.dart';
+import 'providers/consent_providers.dart';
 import 'providers/lfg_providers.dart';
 import 'ui/community_screen.dart' show CommunitySection;
 import 'ui/lfg/lfg_bits.dart';
@@ -33,6 +34,12 @@ import 'ui/widgets/community_widgets.dart';
 final matchingLfgPreviewProvider = FutureProvider.autoDispose
     .family<List<LfgPost>, String>((ref, puuid) async {
       if (!ref.watch(communityEnabledProvider)) return const [];
+      // The LFG list needs a session: hidden (and no sign-in, no consent
+      // prompt) until the account agreed to join the community.
+      if (ref.watch(communityConsentProvider(puuid)) !=
+          CommunityConsent.granted) {
+        return const [];
+      }
       final account = ref.watch(accountProvider(puuid));
       if (account == null) return const [];
       final rank = lfgViewerRank(account);

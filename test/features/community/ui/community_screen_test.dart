@@ -97,7 +97,7 @@ void main() {
     testWidgets('empty feed invites the first post', (tester) async {
       env.server.json('GET /v1/posts', page([]));
       await _open(tester, env);
-      expect(find.text(CommunityStrings.feedEmptyTitle), findsOneWidget);
+      expect(find.text(CommunityStrings.feedEmptyScopeTitle), findsOneWidget);
       expect(find.text(CommunityStrings.writePost), findsNothing);
       // The FAB is the only call to action.
       expect(find.text(CommunityStrings.newPost), findsOneWidget);

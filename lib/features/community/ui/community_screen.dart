@@ -11,8 +11,11 @@ import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../community_strings.dart';
 import '../providers/community_providers.dart';
+import '../providers/consent_providers.dart';
+import 'consent/consent_sheet.dart';
 import '../providers/feed_providers.dart';
 import '../providers/lfg_providers.dart';
+import '../providers/scope_providers.dart';
 import '../providers/skin_vote_providers.dart';
 import 'feed/feed_section.dart';
 import 'lfg/lfg_poster_sync.dart';
@@ -106,6 +109,13 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
         ),
       );
     }
+    if (ref.watch(communityConsentProvider(account.puuid)) !=
+        CommunityConsent.granted) {
+      return _ConsentGate(
+        key: ValueKey('consent-${account.puuid}'),
+        account: account,
+      );
+    }
     return LfgPosterSync(
       account: account,
       child: TabPageScaffold(
@@ -189,11 +199,16 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
           await ref.read(lfgProvider(q).notifier).refresh();
         case CommunitySection.skins:
           final f = ref.read(topSkinsFilterProvider);
+          final scope = await ref.read(
+            resolvedScopeProvider((puuid: puuid, section: ScopedSection.skins))
+                .future,
+          );
           final q = (
             puuid: puuid,
             weapon: f.weapon,
             period: f.period,
             sort: f.sort,
+            scope: scope,
           );
           ref.invalidate(topSkinsProvider(q));
           await ref.read(topSkinsProvider(q).future);
@@ -226,6 +241,50 @@ class _PrivacyNote extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Shown until the account agreed to share its Riot ID (asked once, before
+/// any network call): the consent sheet opens by itself the first time; after
+/// "Để sau" the user can reopen it from here. Nothing is loaded meanwhile.
+class _ConsentGate extends StatefulWidget {
+  const _ConsentGate({super.key, required this.account});
+
+  final Account account;
+
+  @override
+  State<_ConsentGate> createState() => _ConsentGateState();
+}
+
+class _ConsentGateState extends State<_ConsentGate> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(ensureCommunityConsent(context, widget.account));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TabPageScaffold(
+      title: CommunityStrings.title,
+      showMaintenanceBanner: false,
+      body: Center(
+        child: CommunityEmptyState(
+          icon: Icons.verified_user_outlined,
+          title: CommunityStrings.consentGateTitle,
+          message: CommunityStrings.consentGateBody,
+          action: FilledButton(
+            key: const ValueKey('consent-gate-action'),
+            onPressed: () => unawaited(
+              ensureCommunityConsent(context, widget.account, askAgain: true),
+            ),
+            child: const Text(CommunityStrings.consentGateAction),
+          ),
+        ),
       ),
     );
   }

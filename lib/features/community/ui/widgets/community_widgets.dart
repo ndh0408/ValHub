@@ -19,6 +19,7 @@ import '../../../../core/util/format.dart';
 import '../../community_strings.dart';
 import '../../data/community_exception.dart';
 import '../../data/community_models.dart';
+import '../consent/consent_sheet.dart';
 
 // ---------------------------------------------------------------- segments
 
@@ -231,6 +232,50 @@ class CommunityChip extends StatelessWidget {
     onSelected: (_) => onSelected(),
   );
 }
+
+/// Pill that opens a popup menu ("Châu Á ▾"): [items] are (value, label).
+class CommunityMenuChip<T> extends StatelessWidget {
+  const CommunityMenuChip({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.tooltip,
+    required this.items,
+    required this.onSelected,
+  });
+
+  final IconData icon;
+  final String label;
+  final String tooltip;
+  final List<(T, String)> items;
+  final ValueChanged<T> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+    return PopupMenuButton<T>(
+      tooltip: tooltip,
+      onSelected: onSelected,
+      itemBuilder: (context) => [
+        for (final (v, l) in items) PopupMenuItem(value: v, child: Text(l)),
+      ],
+      child: Chip(
+        avatar: Icon(icon, size: 16),
+        shape: const StadiumBorder(),
+        label: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+            ),
+            const SizedBox(width: 2),
+            Icon(Icons.expand_more_rounded, size: 16, color: muted),
+          ],
+        ),
+      ),
+    );
+  }
+}
 // ------------------------------------------------------------------ author
 
 /// Round avatar of a community author: their player card art, or the red
@@ -377,6 +422,19 @@ class AuthorRow extends ConsumerWidget {
                       style: theme.textTheme.bodyLarge,
                     ),
                   ),
+                  if (author.country != null) ...[
+                    const SizedBox(width: 6),
+                    Tooltip(
+                      message: CommunityStrings.countryName(author.country!),
+                      child: Text(
+                        flagEmoji(author.country),
+                        style: const TextStyle(fontSize: 14),
+                        semanticsLabel: CommunityStrings.countryName(
+                          author.country!,
+                        ),
+                      ),
+                    ),
+                  ],
                   if (tier != null && tier > 2) ...[
                     const SizedBox(width: 6),
                     RankBadge(tier: tier, size: 18, showName: false),
@@ -802,6 +860,12 @@ class CommunityErrorState extends StatelessWidget {
 
 /// Snackbar with the Vietnamese message of [error].
 void showCommunityError(BuildContext context, Object error) {
+  if (error is CommunityException &&
+      error.code == CommunityException.consentRequired) {
+    // Not a failure: ask for the missing consent instead.
+    unawaited(promptConsentFromContext(context));
+    return;
+  }
   final messenger = ScaffoldMessenger.maybeOf(context);
   messenger
     ?..hideCurrentSnackBar()
