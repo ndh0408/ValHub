@@ -5,6 +5,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/notifications/notification_service.dart';
 import '../../../../core/settings/app_settings.dart';
+import '../../../../core/ui/adaptive.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../../settings/ui/notification_priming_sheet.dart';
 import '../../wishlist_strings.dart';
 
@@ -59,15 +61,20 @@ class _WishlistNotificationToggleState
     final on = ref.watch(
       appSettingsProvider.select((s) => s.wishlistNotifications),
     );
-    return Card(
+    return ValCard(
       margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-      clipBehavior: Clip.antiAlias,
-      child: SwitchListTile(
+      padding: EdgeInsets.zero,
+      child: SwitchListTile.adaptive(
         value: on,
-        onChanged: _busy ? null : (v) => unawaited(_set(v)),
+        onChanged: _busy
+            ? null
+            : (v) {
+                Haptics.selection();
+                unawaited(_set(v));
+              },
         secondary: Icon(
-          on ? Icons.notifications_active : Icons.notifications_none,
-          color: on ? theme.colorScheme.primary : null,
+          on ? Icons.notifications_active : Icons.notifications_none_outlined,
+          color: theme.colorScheme.primary,
         ),
         title: const Text(WishlistStrings.notifToggle),
         subtitle: const Text(WishlistStrings.notifToggleSubtitle),

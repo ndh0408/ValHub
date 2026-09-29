@@ -10,6 +10,7 @@ import '../content/content_repository.dart';
 import '../l10n/account_strings.dart';
 import '../l10n/common_strings.dart';
 import '../theme/app_theme.dart';
+import '../ui/adaptive.dart';
 import '../ui/error_view.dart';
 import '../ui/net_image.dart';
 import '../ui/rank_badge.dart';
@@ -59,7 +60,7 @@ class AccountAvatar extends ConsumerWidget {
       ),
     );
     return ClipRRect(
-      borderRadius: BorderRadius.circular(circle ? size / 2 : 6),
+      borderRadius: BorderRadius.circular(circle ? size / 2 : size * 0.22),
       child: art == null
           ? fallback
           : NetImage(
@@ -160,8 +161,6 @@ class AccountSwitcherSheet extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
               children: [
                 Text(
                   AccountStrings.switcherTitle,
@@ -170,13 +169,9 @@ class AccountSwitcherSheet extends ConsumerWidget {
                 if (online > 0) ...[
                   const SizedBox(width: 10),
                   Flexible(
-                    child: Text(
-                      AccountStrings.onlineCount(online),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: valColorsOf(context).win,
-                      ),
+                    child: StatusPill(
+                      label: AccountStrings.onlineCount(online),
+                      color: valColorsOf(context).win,
                     ),
                   ),
                 ],
@@ -188,22 +183,29 @@ class AccountSwitcherSheet extends ConsumerWidget {
               shrinkWrap: true,
               children: [
                 for (final a in accounts)
-                  AccountTile(
-                    account: a,
-                    selected: a.puuid == active,
-                    onTap: () {
-                      final router = GoRouter.of(context);
-                      Navigator.of(context).pop();
-                      if (a.needsLogin) {
-                        unawaited(
-                          router.push(
-                            AuthRoutes.loginPath(reauthPuuid: a.puuid),
-                          ),
-                        );
-                      } else {
-                        ref.read(activePuuidProvider.notifier).select(a.puuid);
-                      }
-                    },
+                  _ActiveHighlight(
+                    key: ValueKey(a.puuid),
+                    active: a.puuid == active,
+                    child: AccountTile(
+                      account: a,
+                      selected: a.puuid == active,
+                      onTap: () {
+                        final router = GoRouter.of(context);
+                        Navigator.of(context).pop();
+                        if (a.needsLogin) {
+                          unawaited(
+                            router.push(
+                              AuthRoutes.loginPath(reauthPuuid: a.puuid),
+                            ),
+                          );
+                        } else {
+                          if (a.puuid != active) Haptics.selection();
+                          ref
+                              .read(activePuuidProvider.notifier)
+                              .select(a.puuid);
+                        }
+                      },
+                    ),
                   ),
               ],
             ),
@@ -211,11 +213,29 @@ class AccountSwitcherSheet extends ConsumerWidget {
           const Divider(),
           ListTile(
             enabled: !full,
-            leading: const Icon(Icons.person_add_alt_1_outlined),
+            minTileHeight: 56,
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: (full ? theme.disabledColor : theme.colorScheme.primary)
+                    .withValues(alpha: 0.14),
+              ),
+              child: Icon(
+                Icons.person_add_alt_1_outlined,
+                size: 20,
+                color: full ? theme.disabledColor : theme.colorScheme.primary,
+              ),
+            ),
             title: Text(
               AccountStrings.addAccount(
                 accounts.length,
                 AppConstants.maxAccounts,
+              ),
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                color: full ? null : theme.colorScheme.primary,
               ),
             ),
             subtitle: full
@@ -239,6 +259,39 @@ class AccountSwitcherSheet extends ConsumerWidget {
   }
 }
 
+/// Active account marker in the switcher: 4 px accent strip and a faint
+/// accent wash behind the row.
+class _ActiveHighlight extends StatelessWidget {
+  const _ActiveHighlight({
+    super.key,
+    required this.active,
+    required this.child,
+  });
+
+  final bool active;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = Theme.of(context).colorScheme.primary;
+    // A Material (not a colored box) so the ListTile ink stays visible.
+    return Material(
+      color: active ? accent.withValues(alpha: 0.08) : Colors.transparent,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border(
+            left: BorderSide(
+              color: active ? accent : Colors.transparent,
+              width: 4,
+            ),
+          ),
+        ),
+        child: child,
+      ),
+    );
+  }
+}
+
 /// One account row (A4): avatar with a live status dot, Riot ID,
 /// "Đang đấu · AP · Cấp 222", current rank (icon + name), markers. Also usable in the settings
 /// account list.
@@ -250,11 +303,15 @@ class AccountTile extends ConsumerWidget {
     this.onTap,
     this.trailing,
     this.showActivity = true,
+    this.circleAvatar = true,
   });
 
   final Account account;
   final bool selected;
   final VoidCallback? onTap;
+
+  /// Round avatar (switcher) or the rounded-square player card (settings).
+  final bool circleAvatar;
 
   /// Replaces the default check mark (e.g. a delete button in settings).
   final Widget? trailing;
@@ -312,7 +369,7 @@ class AccountTile extends ConsumerWidget {
       isThreeLine: tier != null,
       leading: _StatusDot(
         activity: activity,
-        child: AccountAvatar(account: account, size: 40, circle: true),
+        child: AccountAvatar(account: account, size: 44, circle: circleAvatar),
       ),
       title: Text(
         account.riotId,
@@ -351,9 +408,13 @@ class AccountTile extends ConsumerWidget {
                 ),
               if (account.needsLogin) ...[
                 const SizedBox(width: 8),
-                const Tooltip(
+                Tooltip(
                   message: CommonStrings.signInAgain,
-                  child: Icon(Icons.login),
+                  child: ValBadge(
+                    CommonStrings.signInAgain,
+                    color: valColorsOf(context).warning,
+                    soft: true,
+                  ),
                 ),
               ],
             ],

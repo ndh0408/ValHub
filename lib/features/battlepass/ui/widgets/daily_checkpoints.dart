@@ -7,6 +7,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/async_value_view.dart';
 import '../../../../core/ui/error_view.dart';
 import '../../../../core/ui/skeleton.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
 import '../../battlepass_strings.dart';
 import '../../data/daily_ticket.dart';
@@ -49,7 +50,7 @@ class DailyCheckpointsSection extends ConsumerWidget {
             value: ticketAsync,
             puuid: puuid,
             onRetry: retry,
-            loading: const Skeleton(height: 132),
+            loading: const Skeleton(height: 150, radius: 16),
             data: (t) => t == null || t.isExpired(now)
                 ? DailyTicketNotReady(puuid: puuid, ticket: t)
                 : DailyCheckpointsCard(ticket: t),
@@ -73,7 +74,8 @@ class DailyCheckpointsCard extends StatelessWidget {
     final win = valColorsOf(context).win;
     final done = ticket.completedCount;
     final current = ticket.currentIndex;
-    return Card(
+    return ValCard(
+      padding: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 16, 12, 14),
         child: Column(
@@ -86,7 +88,7 @@ class DailyCheckpointsCard extends StatelessWidget {
                     Expanded(
                       child: BpProgressBar(
                         value: ticket.milestones[i - 1].isComplete ? 1 : 0,
-                        height: 2,
+                        height: 3,
                       ),
                     ),
                   CheckpointPip(
@@ -101,12 +103,15 @@ class DailyCheckpointsCard extends StatelessWidget {
             if (ticket.isAllComplete)
               Row(
                 children: [
-                  Icon(Icons.check_circle, size: 16, color: win),
-                  const SizedBox(width: 6),
+                  Icon(Icons.check_circle, size: 18, color: win),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       BattlePassStrings.dailyAllDone,
-                      style: theme.textTheme.bodyMedium?.copyWith(color: win),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: legibleAccent(context, win),
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ],
@@ -179,7 +184,8 @@ class CheckpointPip extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final complete = milestone.isComplete;
-    final outline = complete || isCurrent ? ValColors.red : scheme.outline;
+    final accent = scheme.primary;
+    final outline = complete || isCurrent ? accent : scheme.outline;
     return Semantics(
       label: BattlePassStrings.checkpointLabel(
         index,
@@ -201,13 +207,13 @@ class CheckpointPip extends StatelessWidget {
                   size: Size.square(size),
                   painter: _DiamondPainter(
                     fraction: milestone.fraction,
-                    fill: ValColors.red,
-                    track: scheme.surfaceContainerHighest,
+                    fill: accent,
+                    track: valColorsOf(context).track,
                     outline: outline,
                   ),
                 ),
                 if (complete)
-                  const Icon(Icons.check, size: 16, color: Colors.white),
+                  Icon(Icons.check, size: 16, color: scheme.onPrimary),
                 if (milestone.bonusApplied)
                   Positioned(
                     right: -6,
@@ -327,7 +333,8 @@ class _DailyTicketNotReadyState extends ConsumerState<DailyTicketNotReady> {
     final canRenew = ref
         .watch(dailyTicketRenewerProvider)
         .canRenew(widget.puuid, widget.ticket);
-    return Card(
+    return ValCard(
+      padding: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -336,9 +343,9 @@ class _DailyTicketNotReadyState extends ConsumerState<DailyTicketNotReady> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.event_repeat,
-                  color: theme.colorScheme.onSurfaceVariant,
+                IconTile(
+                  icon: Icons.event_repeat,
+                  color: valColorsOf(context).warning,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -362,7 +369,9 @@ class _DailyTicketNotReadyState extends ConsumerState<DailyTicketNotReady> {
                   icon: _busy
                       ? const SizedBox.square(
                           dimension: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                          child: CircularProgressIndicator.adaptive(
+                            strokeWidth: 2,
+                          ),
                         )
                       : const Icon(Icons.refresh, size: 18),
                   label: const Text(BattlePassStrings.renewButton),

@@ -202,8 +202,12 @@ void main() {
     await tester.tap(find.text('Tạo mã'));
     await settle(tester);
     verify(() => env.api.partyGenerateInviteCode(me, partyId)).called(1);
-    expect(find.text('Mã tổ đội: NEW123'), findsOneWidget);
+    expect(find.text('NEW123'), findsOneWidget);
+    expect(find.bySemanticsLabel('Mã tổ đội: NEW123'), findsOneWidget);
     expect(find.text('Sao chép'), findsOneWidget);
+    await tester.tap(find.text('Chia sẻ'));
+    await settle(tester);
+    expect(env.shared, ['Vào tổ đội VALORANT của mình bằng mã: NEW123']);
     await tester.tap(find.text('Tắt mã'));
     await settle(tester);
     verify(() => env.api.partyDisableInviteCode(me, partyId)).called(1);

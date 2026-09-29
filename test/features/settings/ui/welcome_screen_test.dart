@@ -56,6 +56,12 @@ void main() {
       find.textContaining(LegalStrings.consentPrefix, findRichText: true),
       findsOneWidget,
     );
+    final consent = find.textContaining(
+      LegalStrings.consentPrefix,
+      findRichText: true,
+    );
+    await tester.ensureVisible(consent);
+    await tester.pumpAndSettle();
     await tester.tapOnText(
       find.textRange.ofSubstring(LegalStrings.consentTerms),
     );
@@ -68,6 +74,8 @@ void main() {
     );
 
     await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(consent);
     await tester.pumpAndSettle();
     await tester.tapOnText(
       find.textRange.ofSubstring(LegalStrings.consentPrivacy),

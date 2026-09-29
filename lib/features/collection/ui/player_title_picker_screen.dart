@@ -6,8 +6,10 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/domain/loadout/loadout.dart';
 import '../../../core/riot/riot_ids.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../collection_strings.dart';
 import '../data/collection_items.dart';
 import '../data/collection_search.dart';
@@ -67,45 +69,72 @@ class _PlayerTitlePickerScreenState
 
                   Widget tile(String id, String label, {bool muted = false}) {
                     final selected = id == equipped;
+                    final scheme = Theme.of(context).colorScheme;
                     return ListTile(
+                      key: ValueKey(id),
                       selected: selected,
+                      selectedColor: scheme.onSurface,
+                      selectedTileColor: scheme.primary.withValues(alpha: 0.08),
                       enabled: !saving || selected,
+                      minTileHeight: 52,
+                      leading: HubIcon(muted ? Icons.block : Icons.text_fields),
                       title: Text(
                         label,
                         style: muted
                             ? TextStyle(
                                 fontStyle: FontStyle.italic,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
+                                color: scheme.onSurfaceVariant,
                               )
-                            : null,
+                            : TextStyle(
+                                fontWeight: selected
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                              ),
                       ),
-                      trailing: selected
-                          ? const Icon(Icons.check_circle, color: ValColors.red)
-                          : null,
-                      onTap: () => unawaited(pick(id, label)),
+                      trailing: AnimatedSwitcher(
+                        duration: ValMotion.fast,
+                        child: selected
+                            ? Icon(
+                                Icons.check_circle,
+                                key: const ValueKey('on'),
+                                color: scheme.primary,
+                              )
+                            : const SizedBox(key: ValueKey('off'), width: 24),
+                      ),
+                      onTap: () {
+                        if (id != equipped && !saving) Haptics.selection();
+                        unawaited(pick(id, label));
+                      },
                     );
                   }
 
-                  return RefreshIndicator(
+                  return AdaptiveRefresh(
                     onRefresh: () => refreshCollection(ref, account.puuid),
                     child: Column(
                       children: [
                         SavingBar(visible: saving),
                         Expanded(
                           child: ListView(
-                            padding: const EdgeInsets.only(bottom: 24),
+                            keyboardDismissBehavior:
+                                ScrollViewKeyboardDismissBehavior.onDrag,
+                            padding: const EdgeInsets.only(top: 4, bottom: 24),
                             children: [
-                              if (showNone)
-                                tile(
-                                  SpecialIds.noTitle,
-                                  CollectionStrings.noTitle,
-                                  muted: true,
+                              if (showNone || titles.isNotEmpty)
+                                GroupedSection(
+                                  children: [
+                                    if (showNone)
+                                      tile(
+                                        SpecialIds.noTitle,
+                                        CollectionStrings.noTitle,
+                                        muted: true,
+                                      ),
+                                    for (final t in titles)
+                                      tile(t.uuid, t.text),
+                                  ],
                                 ),
-                              for (final t in titles) tile(t.uuid, t.text),
                               if (!showNone && titles.isEmpty)
                                 const EmptyView(
+                                  title: CollectionStrings.noResultsTitle,
                                   message: CollectionStrings.noResults,
                                   icon: Icons.search_off,
                                 ),

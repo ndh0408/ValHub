@@ -8,13 +8,18 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive_strings.dart';
+import '../../../core/storage/ui_memory.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
-import '../../../core/ui/section_header.dart';
+import '../../../core/ui/filter_bar.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/xmpp/friends.dart';
 import '../../../core/xmpp/xmpp_providers.dart';
+import '../data/friend_sections.dart';
 import '../data/friend_status.dart';
 import '../social_routes.dart';
 import '../social_strings.dart';
@@ -23,8 +28,10 @@ import 'widgets/social_widgets.dart';
 
 /// S60 "Bạn bè & trò chuyện". Route `/profile/friends`.
 ///
-/// Riot friends (XMPP roster + presence) split into "Trực tuyến (n)" /
-/// "Ngoại tuyến (n)", searchable by Riot ID, with unread badges.
+/// Riot friends (XMPP roster + presence) in "Đang chơi (n)" /
+/// "Trực tuyến (n)" / "Ngoại tuyến (n)" cards, searchable by Riot ID
+/// (without diacritics), with a remembered quick filter (Tất cả / Trực
+/// tuyến / Chưa đọc) and unread badges.
 class FriendsScreen extends ConsumerStatefulWidget {
   const FriendsScreen({super.key});
 
@@ -33,8 +40,13 @@ class FriendsScreen extends ConsumerStatefulWidget {
 }
 
 class _FriendsScreenState extends ConsumerState<FriendsScreen> {
+  static const _filterKey = 'social.friends.filter';
+
   final _search = TextEditingController();
   String _query = '';
+  late FriendsFilter _filter = ref
+      .read(uiMemoryProvider)
+      .readEnum(_filterKey, FriendsFilter.values, FriendsFilter.all);
 
   @override
   void dispose() {
@@ -51,35 +63,51 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     if (service != null) unawaited(service.retryNow());
   }
 
+  void _setFilter(FriendsFilter f) {
+    setState(() => _filter = f);
+    ref.read(uiMemoryProvider).writeEnum(_filterKey, f);
+  }
+
   @override
   Widget build(BuildContext context) {
     final friends = ref.watch(friendsProvider);
     final puuid = ref.watch(activePuuidProvider);
+    final unread = friends.value?.totalUnread ?? 0;
     return Scaffold(
       appBar: AppBar(title: const Text(SocialStrings.friendsTitle)),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-            child: TextField(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+            child: GlassSearchField(
               controller: _search,
+              hintText: SocialStrings.searchHint,
               onChanged: (v) => setState(() => _query = v),
-              textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
-                hintText: SocialStrings.searchHint,
-                prefixIcon: const Icon(Icons.search),
-                isDense: true,
-                suffixIcon: _query.isEmpty
-                    ? null
-                    : IconButton(
-                        tooltip: SocialStrings.clearSearch,
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          _search.clear();
-                          setState(() => _query = '');
-                        },
-                      ),
-              ),
+            ),
+          ),
+          SizedBox(
+            height: 52,
+            child: FilterChipBar(
+              children: [
+                for (final f in FriendsFilter.values)
+                  ValFilterChip(
+                    label: switch (f) {
+                      FriendsFilter.all => SocialStrings.filterAll,
+                      FriendsFilter.online => SocialStrings.filterOnline,
+                      FriendsFilter.unread =>
+                        unread > 0
+                            ? '${SocialStrings.filterUnread} '
+                                  '(${SocialStrings.unreadBadge(unread)})'
+                            : SocialStrings.filterUnread,
+                    },
+                    // Compact: the three chips fit a 360 dp phone.
+                    dotColor: f == FriendsFilter.online
+                        ? valColorsOf(context).win
+                        : null,
+                    selected: _filter == f,
+                    onSelected: (_) => _setFilter(f),
+                  ),
+              ],
             ),
           ),
           if (friends.value case final view?)
@@ -91,21 +119,26 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
               onRetry: _retry,
               loading: const _FriendsSkeleton(),
               isEmpty: (v) => v.isEmpty,
-              empty: RefreshIndicator(
+              empty: AdaptiveRefresh(
                 onRefresh: _refresh,
                 child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   children: const [
                     EmptyView(
+                      title: SocialStrings.noFriendsTitle,
                       message: SocialStrings.noFriends,
                       icon: Icons.group_outlined,
                     ),
                   ],
                 ),
               ),
-              data: (view) => RefreshIndicator(
+              data: (view) => AdaptiveRefresh(
                 onRefresh: _refresh,
-                child: _FriendsList(view: view.filter(_query)),
+                child: _FriendsList(
+                  view: view.filter(_query),
+                  filter: _filter,
+                  searching: _query.trim().isNotEmpty,
+                ),
               ),
             ),
           ),
@@ -116,21 +149,32 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
 }
 
 class _FriendsList extends ConsumerWidget {
-  const _FriendsList({required this.view});
+  const _FriendsList({
+    required this.view,
+    required this.filter,
+    required this.searching,
+  });
 
   final FriendsView view;
+  final FriendsFilter filter;
+  final bool searching;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final now = ref.watch(clockProvider).now();
-    if (view.isEmpty) {
+    final sections = friendSections(view, filter: filter);
+    if (sections.isEmpty) {
       return ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        children: const [
+        children: [
           EmptyView(
-            message: SocialStrings.noSearchResults,
-            icon: Icons.search_off_outlined,
+            message: searching || view.isEmpty
+                ? SocialStrings.noSearchResults
+                : SocialStrings.noFilterResults,
+            icon: searching
+                ? Icons.search_off_outlined
+                : Icons.filter_alt_off_outlined,
           ),
         ],
       );
@@ -146,29 +190,26 @@ class _FriendsList extends ConsumerWidget {
 
     return CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       slivers: [
-        if (view.online.isNotEmpty) ...[
+        for (final section in sections) ...[
           SliverToBoxAdapter(
-            child: SectionHeader(
-              SocialStrings.onlineSection(view.online.length),
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-            ),
+            child: SectionLabel(switch (section.kind) {
+              FriendSectionKind.playing => SocialStrings.playingSection(
+                section.friends.length,
+              ),
+              FriendSectionKind.online => SocialStrings.onlineSection(
+                section.friends.length,
+              ),
+              FriendSectionKind.offline => SocialStrings.offlineSection(
+                section.friends.length,
+              ),
+            }, padding: const EdgeInsets.fromLTRB(20, 16, 20, 8)),
           ),
-          SliverList.builder(
-            itemCount: view.online.length,
-            itemBuilder: (_, i) => tile(view.online[i]),
-          ),
-        ],
-        if (view.offline.isNotEmpty) ...[
           SliverToBoxAdapter(
-            child: SectionHeader(
-              SocialStrings.offlineSection(view.offline.length),
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+            child: GroupedSection(
+              children: [for (final f in section.friends) tile(f)],
             ),
-          ),
-          SliverList.builder(
-            itemCount: view.offline.length,
-            itemBuilder: (_, i) => tile(view.offline[i]),
           ),
         ],
         const SliverToBoxAdapter(child: SizedBox(height: 24)),

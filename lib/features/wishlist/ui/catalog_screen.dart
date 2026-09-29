@@ -6,19 +6,23 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
+import '../../../core/storage/ui_memory.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/util/format.dart';
 import '../data/skin_query.dart';
+import '../data/skin_query_memory.dart';
 import '../providers/wishlist_providers.dart';
 import '../wishlist_strings.dart';
 import 'widgets/catalog_tile.dart';
 import 'widgets/skin_filter_bar.dart';
 
 /// S3B "Tất cả skin": every weapon skin of the current content
-/// (valorant-api, vi-VN) with search, weapon + edition filters, sort, and a
+/// (valorant-api, vi-VN) with search, weapon + edition filters, sort (the
+/// sort and filters are remembered across launches), and a
 /// heart on each tile to add it to the active account's wishlist. The grid
 /// is built lazily (only visible tiles, and their images, are created).
 /// Route `/collection/catalog`.
@@ -30,7 +34,17 @@ class CatalogScreen extends ConsumerStatefulWidget {
 }
 
 class _CatalogScreenState extends ConsumerState<CatalogScreen> {
-  SkinQuery _query = const SkinQuery();
+  late final _memory = SkinQueryMemory(
+    ref.read(uiMemoryProvider),
+    SkinQueryMemory.catalog,
+  );
+  late SkinQuery _query = _memory.load();
+
+  void _setQuery(SkinQuery next) {
+    final previous = _query;
+    setState(() => _query = next);
+    _memory.save(next, previous: previous);
+  }
 
   // Memo: filtering ~2 000 skins only when the query or catalog changes,
   // not on every heart tap.
@@ -76,6 +90,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
         loading: const _CatalogSkeleton(),
         isEmpty: (c) => c.skins.isEmpty,
         empty: const EmptyView(
+          title: WishlistStrings.catalogEmptyTitle,
           message: WishlistStrings.catalogEmpty,
           icon: Icons.style_outlined,
         ),
@@ -88,7 +103,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
     final visible = _filtered(catalog);
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final tileExtent = 118 + 58 * math.max<double>(1, textScale);
-    return RefreshIndicator(
+    return AdaptiveRefresh(
       onRefresh: () => _refresh(puuid),
       child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -96,7 +111,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
           SliverToBoxAdapter(
             child: SkinFilterBar(
               query: _query,
-              onChanged: (q) => setState(() => _query = q),
+              onChanged: _setQuery,
               tiers: catalog.tiers,
               weapons: catalog.weapons,
             ),
@@ -112,10 +127,11 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
             SliverFillRemaining(
               hasScrollBody: false,
               child: EmptyView(
+                title: WishlistStrings.noMatchTitle,
                 message: WishlistStrings.noMatch,
                 icon: Icons.search_off,
                 action: TextButton(
-                  onPressed: () => setState(() => _query = _query.cleared()),
+                  onPressed: () => _setQuery(_query.cleared()),
                   child: const Text(WishlistStrings.clearFilters),
                 ),
               ),
@@ -127,8 +143,8 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 200,
                   mainAxisExtent: tileExtent,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
                 ),
                 itemCount: visible.length,
                 itemBuilder: (context, i) => CatalogSkinTile(
@@ -174,7 +190,9 @@ class _CountLine extends ConsumerWidget {
             child: Text(
               WishlistStrings.catalogCount(formatNumber(count)),
               style: theme.textTheme.labelLarge?.copyWith(
-                color: filtering ? theme.colorScheme.primary : muted,
+                color: filtering
+                    ? legibleAccent(context, theme.colorScheme.primary)
+                    : muted,
               ),
             ),
           ),
@@ -183,7 +201,11 @@ class _CountLine extends ConsumerWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.favorite, size: 14, color: ValColors.red),
+                  Icon(
+                    Icons.favorite,
+                    size: 14,
+                    color: theme.colorScheme.primary,
+                  ),
                   const SizedBox(width: 4),
                   Flexible(
                     child: Text(
@@ -214,13 +236,13 @@ class _CatalogSkeleton extends StatelessWidget {
       children: const [
         Padding(
           padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-          child: Skeleton(height: 44, radius: 8),
+          child: Skeleton(height: 44, radius: 22),
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Skeleton(height: 32, radius: 8),
+          child: Skeleton(height: 36, radius: 18),
         ),
-        SkeletonGrid(itemCount: 6, childAspectRatio: 0.9),
+        SkeletonGrid(itemCount: 6, childAspectRatio: 0.8),
       ],
     );
   }

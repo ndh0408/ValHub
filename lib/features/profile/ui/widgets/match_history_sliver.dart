@@ -7,11 +7,16 @@ import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/competitive/competitive.dart';
 import '../../../../core/l10n/common_strings.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/empty_view.dart';
 import '../../../../core/ui/error_view.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/section_header.dart';
+import '../../../../core/ui/filter_bar.dart';
 import '../../../../core/ui/segmented_tabs.dart';
+import '../../../../core/ui/val_widgets.dart';
+import '../../../../core/util/clock.dart';
+import '../../../../core/util/format.dart';
 import '../../data/match_filter.dart';
 import '../../profile_strings.dart';
 import '../../providers/profile_providers.dart';
@@ -47,6 +52,7 @@ class MatchHistorySliver extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filter = ref.watch(matchFilterProvider(puuid));
+    final now = ref.watch(clockProvider).now();
     final query = (puuid: puuid, queue: filter.queue);
     final history = ref.watch(matchHistoryProvider(query));
     final value = history.value;
@@ -102,12 +108,21 @@ class MatchHistorySliver extends ConsumerWidget {
                 );
               }
               final entry = value.items[i];
-              return MatchCard(
+              final card = MatchCard(
                 key: ValueKey(entry.matchId),
                 entry: entry,
                 puuid: puuid,
                 filter: filter,
                 onTap: () => onOpenMatch(entry.matchId),
+              );
+              // Day headers ("Hôm nay", "Hôm qua", "Thứ Hai, 22/09") while
+              // every card is shown (a map filter hides some of them).
+              final day = _dayOf(entry.startTime);
+              final prev = i == 0 ? null : _dayOf(value.items[i - 1].startTime);
+              if (filter.hasMap || day == null || day == prev) return card;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [_DayHeader(formatDayHeader(day, now)), card],
               );
             },
           ),
@@ -135,11 +150,13 @@ class _Filters extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final notifier = ref.read(matchFilterProvider(puuid).notifier);
-    final mapName = filter.mapUrl == null
-        ? ProfileStrings.filterAll
-        : db.mapByUrl(filter.mapUrl)?.displayName ?? ProfileStrings.filterAll;
+    final map = filter.mapUrl == null ? null : db.mapByUrl(filter.mapUrl);
+    final mapName = map?.displayName ?? ProfileStrings.filterAll;
+    final accent = theme.colorScheme.primary;
+    final thumb = map?.listViewIcon;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -154,36 +171,82 @@ class _Filters extends ConsumerWidget {
           onChanged: notifier.setQueue,
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          child: ActionChip(
-            avatar: Icon(
-              Icons.map_outlined,
-              size: 18,
-              color: filter.hasMap
-                  ? Theme.of(context).colorScheme.primary
-                  : null,
-            ),
-            label: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Text(
-                    ProfileStrings.mapFilter(mapName),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+          padding: const EdgeInsets.only(bottom: 8),
+          child: FilterChipBar(
+            onClear: filter.hasMap ? () => notifier.setMap(null) : null,
+            children: [
+              ActionChip(
+                avatar: thumb == null
+                    ? Icon(
+                        Icons.map_outlined,
+                        size: 18,
+                        color: filter.hasMap ? accent : null,
+                      )
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: NetImage(
+                          thumb,
+                          width: 28,
+                          height: 18,
+                          fit: BoxFit.cover,
+                          showSkeleton: false,
+                        ),
+                      ),
+                shape: const StadiumBorder(),
+                visualDensity: VisualDensity.compact,
+                backgroundColor: filter.hasMap
+                    ? accent.withValues(alpha: 0.14)
+                    : theme.colorScheme.surfaceContainer,
+                side: BorderSide(
+                  color: filter.hasMap
+                      ? accent.withValues(alpha: 0.7)
+                      : valColorsOf(context).hairline,
                 ),
-                const Icon(Icons.arrow_drop_down, size: 18),
-              ],
-            ),
-            onPressed: () => unawaited(
-              _pickMap(context, db, filter.mapUrl, notifier.setMap),
-            ),
+                label: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        ProfileStrings.mapFilter(mapName),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const Icon(Icons.arrow_drop_down, size: 18),
+                  ],
+                ),
+                onPressed: () => unawaited(
+                  _pickMap(context, db, filter.mapUrl, notifier.setMap),
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
+}
+
+DateTime? _dayOf(DateTime? t) {
+  if (t == null) return null;
+  final l = t.toLocal();
+  return DateTime(l.year, l.month, l.day);
+}
+
+/// "HÔM NAY" day separator of the match list.
+class _DayHeader extends StatelessWidget {
+  const _DayHeader(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    header: true,
+    child: SectionLabel(
+      text,
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
+    ),
+  );
 }
 
 Future<void> _pickMap(
@@ -230,6 +293,7 @@ Future<void> _pickMap(
   if (picked != null) onPicked(picked.url);
 }
 
+/// Map banner row of the map picker: map art under a scrim, Anton name.
 class _MapTile extends StatelessWidget {
   const _MapTile({
     required this.label,
@@ -246,21 +310,82 @@ class _MapTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return ListTile(
-      selected: selected,
-      onTap: onTap,
-      title: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
-      trailing: selected ? Icon(Icons.check, color: scheme.primary) : null,
-      leading: image == null
-          ? const Icon(Icons.public)
-          : ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: SizedBox(
-                width: 72,
-                height: 28,
-                child: NetImage(image, fit: BoxFit.cover, showSkeleton: false),
+    final img = image;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Semantics(
+        button: true,
+        selected: selected,
+        child: Material(
+          color: scheme.surfaceContainer,
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(ValRadius.small),
+            side: selected
+                ? BorderSide(color: scheme.primary, width: 2)
+                : BorderSide.none,
+          ),
+          child: InkWell(
+            onTap: onTap,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 56),
+              child: Stack(
+                children: [
+                  if (img != null)
+                    Positioned.fill(
+                      child: NetImage(
+                        img,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.centerRight,
+                        showSkeleton: false,
+                        opacity: 0.85,
+                        error: const SizedBox.shrink(),
+                      ),
+                    ),
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            scheme.surfaceContainer,
+                            scheme.surfaceContainer.withValues(alpha: 0.85),
+                            scheme.surfaceContainer.withValues(alpha: 0.1),
+                          ],
+                          stops: const [0, 0.45, 1],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    child: Row(
+                      children: [
+                        if (img == null) ...[
+                          Icon(Icons.public, color: scheme.onSurfaceVariant),
+                          const SizedBox(width: 12),
+                        ],
+                        Expanded(
+                          child: Text(
+                            label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: ValText.display(20, color: scheme.onSurface),
+                          ),
+                        ),
+                        if (selected)
+                          Icon(Icons.check_circle, color: scheme.primary),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -361,7 +486,7 @@ class _FooterState extends State<_Footer> {
           child: SizedBox(
             width: 24,
             height: 24,
-            child: CircularProgressIndicator(strokeWidth: 2.5),
+            child: CircularProgressIndicator.adaptive(strokeWidth: 2.5),
           ),
         ),
       );

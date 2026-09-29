@@ -54,7 +54,8 @@ class SkinPriceText extends StatelessWidget {
   }
 }
 
-/// Card with a diagonal content-tier gradient (Valorant store look).
+/// ValBuddy-style card: a flat fill tinted by the content tier (rarity)
+/// color over the card surface, a soft glow toward the top, radius 16.
 class TierGradientCard extends StatelessWidget {
   const TierGradientCard({
     super.key,
@@ -63,42 +64,50 @@ class TierGradientCard extends StatelessWidget {
     this.onTap,
     this.onLongPress,
     this.borderColor,
-    this.radius = 6,
+    this.radius = ValRadius.card,
   });
 
-  /// Tier highlight color (usually with alpha 0x33).
+  /// Tier highlight color (any alpha; used opaque).
   final Color tint;
   final Widget child;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
-  /// Highlight border (e.g. "on sale now").
+  /// Highlight border (e.g. "on sale now", "in wishlist").
   final Color? borderColor;
   final double radius;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    final surface = theme.colorScheme.surfaceContainer;
+    final opaque = tint.withValues(alpha: 1);
+    final fill = Color.alphaBlend(
+      opaque.withValues(alpha: dark ? 0.16 : 0.10),
+      surface,
+    );
+    final border = borderColor;
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(radius),
-      side: BorderSide(
-        color: borderColor ?? theme.colorScheme.outlineVariant,
-        width: borderColor == null ? 1 : 1.6,
-      ),
+      side: border != null
+          ? BorderSide(color: border, width: 1.6)
+          : dark
+          ? BorderSide.none
+          : BorderSide(color: valColorsOf(context).hairline),
     );
-    final opaque = tint.withValues(alpha: 1);
     return Material(
-      color: theme.cardColor,
+      color: fill,
       shape: shape,
       clipBehavior: Clip.antiAlias,
       child: Ink(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+          gradient: RadialGradient(
+            center: const Alignment(0, -0.6),
+            radius: 1.1,
             colors: [
-              opaque.withValues(alpha: 0.26),
-              opaque.withValues(alpha: 0.04),
+              opaque.withValues(alpha: dark ? 0.16 : 0.10),
+              opaque.withValues(alpha: 0),
             ],
           ),
         ),
@@ -108,7 +117,7 @@ class TierGradientCard extends StatelessWidget {
   }
 }
 
-/// Small solid badge ("Đã sở hữu", "-22%").
+/// Small tinted badge ("Đã sở hữu", "-22%"), legible on both themes.
 class SmallBadge extends StatelessWidget {
   const SmallBadge(this.text, {super.key, required this.color, this.icon});
 
@@ -118,17 +127,18 @@ class SmallBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fg = legibleAccent(context, color, min: 3.5);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.18),
-        borderRadius: BorderRadius.circular(3),
+        borderRadius: BorderRadius.circular(ValRadius.pill),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 12, color: color),
+            Icon(icon, size: 12, color: fg),
             const SizedBox(width: 3),
           ],
           Flexible(
@@ -137,7 +147,7 @@ class SmallBadge extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelSmall
-                  ?.copyWith(color: color, fontWeight: FontWeight.w700),
+                  ?.copyWith(color: fg, fontWeight: FontWeight.w700),
             ),
           ),
         ],

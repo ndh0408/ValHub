@@ -9,11 +9,13 @@ import '../../../core/domain/economy/economy.dart';
 import '../../../core/domain/loadout/loadout.dart';
 import '../../../core/riot/riot_ids.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/content_tier_badge.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/section_header.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../skin_detail/skin_video_view.dart';
 import '../collection_strings.dart';
 import '../data/loadout_view.dart';
@@ -137,7 +139,7 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
       children: [
         SavingBar(visible: snapshot.isPending),
         Expanded(
-          child: RefreshIndicator(
+          child: AdaptiveRefresh(
             onRefresh: () => refreshCollection(ref, puuid),
             child: ListView(
               padding: const EdgeInsets.only(bottom: 16),
@@ -156,7 +158,7 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
                 if (skin.chromas.length > 1) ...[
                   const SectionHeader(CollectionStrings.variants),
                   SizedBox(
-                    height: 64,
+                    height: 68,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -171,7 +173,10 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
                           selected: c.uuid == chromaId,
                           locked: !unlocked,
                           onTap: unlocked
-                              ? () => setState(() => _chromaUuid = c.uuid)
+                              ? () {
+                                  Haptics.selection();
+                                  setState(() => _chromaUuid = c.uuid);
+                                }
                               : null,
                         );
                       },
@@ -189,17 +194,35 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
                     ),
                 ],
                 if (skin.levels.length > 1) ...[
-                  const SectionHeader(CollectionStrings.levels),
-                  for (final l in skin.levels)
-                    _LevelTile(
-                      title: CollectionStrings.levelLabel(
-                        l.levelNumber,
-                        l.levelItemLabel,
+                  SectionHeader(
+                    CollectionStrings.levels,
+                    trailing: Text(
+                      CollectionStrings.levelsUnlocked(
+                        ownedLevels.length,
+                        skin.levels.length,
                       ),
-                      selected: l.uuid == levelId,
-                      locked: !owned.isSkinLevelOwned(l.uuid),
-                      onTap: () => setState(() => _levelUuid = l.uuid),
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
+                  ),
+                  GroupedSection(
+                    children: [
+                      for (final l in skin.levels)
+                        _LevelTile(
+                          title: CollectionStrings.levelLabel(
+                            l.levelNumber,
+                            l.levelItemLabel,
+                          ),
+                          selected: l.uuid == levelId,
+                          locked: !owned.isSkinLevelOwned(l.uuid),
+                          onTap: () {
+                            Haptics.selection();
+                            setState(() => _levelUuid = l.uuid);
+                          },
+                        ),
+                    ],
+                  ),
                 ],
                 if (!isMelee && gun != null) ...[
                   const SectionHeader(CollectionStrings.buddySlot),
@@ -226,8 +249,9 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
                 minimumSize: const Size.fromHeight(48),
               ),
               onPressed: canEquip
-                  ? () => unawaited(
-                      applyLoadoutChange(
+                  ? () async {
+                      Haptics.light();
+                      final ok = await applyLoadoutChange(
                         context,
                         ref,
                         puuid: puuid,
@@ -240,8 +264,9 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
                         successMessage: CollectionStrings.equippedItem(
                           skinLabel(skin),
                         ),
-                      ),
-                    )
+                      );
+                      if (ok) Haptics.medium();
+                    }
                   : null,
               icon: Icon(isSelectionEquipped ? Icons.check : Icons.done_all),
               label: Text(
@@ -259,6 +284,8 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
   }
 }
 
+/// Hero render on a rarity glow; cross-fades when the variant / level
+/// changes. Rarity badge top-left, "Xem video" pill bottom-right.
 class _Preview extends StatelessWidget {
   const _Preview({
     required this.render,
@@ -275,46 +302,68 @@ class _Preview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final v = video;
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            radius: 1.1,
-            colors: [
-              tint.withValues(alpha: 0.45),
-              tint.withValues(alpha: 0.02),
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final color = tint.withValues(alpha: 1);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: AspectRatio(
+        aspectRatio: 16 / 10,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(ValRadius.card),
+            color: Theme.of(context).colorScheme.surfaceContainer,
+            border: Border.all(
+              color: color.withValues(alpha: dark ? 0.35 : 0.45),
+            ),
+            gradient: RadialGradient(
+              radius: 0.9,
+              colors: [
+                color.withValues(alpha: dark ? 0.42 : 0.26),
+                color.withValues(alpha: 0.02),
+              ],
+            ),
+          ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 36, 20, 36),
+                child: AnimatedSwitcher(
+                  duration: ValMotion.medium,
+                  switchInCurve: ValMotion.curve,
+                  child: NetImage(
+                    render,
+                    key: ValueKey(render),
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+              if (tierUuid != null)
+                Positioned(
+                  left: 14,
+                  top: 12,
+                  child: ContentTierBadge(
+                    contentTierUuid: tierUuid,
+                    showName: true,
+                  ),
+                ),
+              if (v != null)
+                Positioned(
+                  right: 10,
+                  bottom: 10,
+                  child: FilledButton.tonalIcon(
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(48, 40),
+                      shape: const StadiumBorder(),
+                    ),
+                    onPressed: () =>
+                        unawaited(openSkinVideo(context, videoUrl: v)),
+                    icon: const Icon(Icons.play_arrow_rounded),
+                    label: const Text(CollectionStrings.playVideo),
+                  ),
+                ),
             ],
           ),
-        ),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
-              child: NetImage(render, fit: BoxFit.contain),
-            ),
-            if (tierUuid != null)
-              Positioned(
-                left: 16,
-                top: 12,
-                child: ContentTierBadge(
-                  contentTierUuid: tierUuid,
-                  showName: true,
-                ),
-              ),
-            if (v != null)
-              Positioned(
-                right: 12,
-                bottom: 12,
-                child: FilledButton.tonalIcon(
-                  onPressed: () =>
-                      unawaited(openSkinVideo(context, videoUrl: v)),
-                  icon: const Icon(Icons.play_arrow),
-                  label: const Text(CollectionStrings.playVideo),
-                ),
-              ),
-          ],
         ),
       ),
     );
@@ -376,25 +425,30 @@ class _ChromaSwatch extends StatelessWidget {
         message: locked ? '$label · ${CollectionStrings.locked}' : label,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            width: 60,
+          borderRadius: BorderRadius.circular(14),
+          child: AnimatedContainer(
+            duration: ValMotion.fast,
+            curve: ValMotion.curve,
+            width: 64,
             decoration: BoxDecoration(
-              color: scheme.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(12),
+              color: selected
+                  ? scheme.primary.withValues(alpha: 0.12)
+                  : scheme.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: selected ? ValColors.red : scheme.outlineVariant,
+                color: selected ? scheme.primary : scheme.outlineVariant,
                 width: selected ? 2 : 1,
               ),
             ),
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Opacity(
-                  opacity: locked ? 0.3 : 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: NetImage(image, fit: BoxFit.contain),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: NetImage(
+                    image,
+                    fit: BoxFit.contain,
+                    opacity: locked ? 0.3 : null,
                   ),
                 ),
                 if (locked)
@@ -430,19 +484,31 @@ class _LevelTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final icon = locked
+        ? Icons.lock
+        : (selected ? Icons.radio_button_checked : Icons.radio_button_off);
     return ListTile(
       enabled: !locked,
       selected: selected,
+      selectedColor: scheme.onSurface,
+      selectedTileColor: scheme.primary.withValues(alpha: 0.08),
       onTap: locked ? null : onTap,
-      leading: Icon(
-        locked
-            ? Icons.lock
-            : (selected ? Icons.radio_button_checked : Icons.radio_button_off),
-        color: locked
-            ? scheme.onSurfaceVariant
-            : (selected ? ValColors.red : scheme.onSurfaceVariant),
+      leading: AnimatedSwitcher(
+        duration: ValMotion.fast,
+        transitionBuilder: (child, a) =>
+            ScaleTransition(scale: a, child: child),
+        child: Icon(
+          icon,
+          key: ValueKey(icon),
+          color: selected && !locked ? scheme.primary : scheme.onSurfaceVariant,
+        ),
       ),
-      title: Text(title),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+        ),
+      ),
       subtitle: locked ? const Text(CollectionStrings.locked) : null,
     );
   }
@@ -458,56 +524,48 @@ class _BuddySlot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Material(
-        color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(16),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.all(6),
-                  child: name == null
-                      ? Icon(
-                          Icons.add,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        )
-                      : NetImage(image, fit: BoxFit.contain),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    name ?? CollectionStrings.noBuddy,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: name == null
-                        ? theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          )
-                        : theme.textTheme.bodyLarge,
-                  ),
-                ),
-                Text(
-                  CollectionStrings.changeBuddy,
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: ValColors.red,
-                  ),
-                ),
-              ],
+    final scheme = theme.colorScheme;
+    return ValCard(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(12),
+      onTap: onTap,
+      child: Row(
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: scheme.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.all(6),
+            child: name == null
+                ? Icon(Icons.add, color: scheme.onSurfaceVariant)
+                : NetImage(image, fit: BoxFit.contain),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              name ?? CollectionStrings.noBuddy,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: name == null
+                  ? theme.textTheme.bodyMedium?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    )
+                  : theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
             ),
           ),
-        ),
+          Text(
+            CollectionStrings.changeBuddy,
+            style: theme.textTheme.labelLarge?.copyWith(
+              color: legibleAccent(context, scheme.primary),
+            ),
+          ),
+          Icon(Icons.chevron_right, color: scheme.onSurfaceVariant),
+        ],
       ),
     );
   }
@@ -524,19 +582,25 @@ class _CustomizeSkeleton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AspectRatio(
-            aspectRatio: 16 / 9,
-            child: Skeleton(shimmer: false, radius: 4),
+            aspectRatio: 16 / 10,
+            child: Skeleton(shimmer: false, radius: ValRadius.card),
           ),
           SizedBox(height: 20),
           Skeleton(width: 120, shimmer: false),
           SizedBox(height: 12),
-          Skeleton(height: 56, shimmer: false),
+          Row(
+            children: [
+              Skeleton(width: 60, height: 60, radius: 14, shimmer: false),
+              SizedBox(width: 10),
+              Skeleton(width: 60, height: 60, radius: 14, shimmer: false),
+              SizedBox(width: 10),
+              Skeleton(width: 60, height: 60, radius: 14, shimmer: false),
+            ],
+          ),
           SizedBox(height: 20),
           Skeleton(width: 120, shimmer: false),
           SizedBox(height: 12),
-          Skeleton(height: 48, shimmer: false),
-          SizedBox(height: 8),
-          Skeleton(height: 48, shimmer: false),
+          Skeleton(height: 112, radius: ValRadius.card, shimmer: false),
         ],
       ),
     ),

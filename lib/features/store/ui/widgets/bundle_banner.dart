@@ -6,6 +6,7 @@ import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/ui/countdown_ring.dart';
 import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/ui/net_image.dart';
@@ -41,7 +42,7 @@ class BundleBanner extends ConsumerWidget {
       ),
       child: Material(
         color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(ValRadius.card),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () => context.push(StoreRoutes.bundle(bundle.id)),
@@ -99,6 +100,16 @@ class BundleBanner extends ConsumerWidget {
                         runSpacing: 4,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
+                          if (bundle.savings > 0)
+                            CurrencyAmount(
+                              currencyId: bundle.currencyId,
+                              amount: bundle.itemsTotal,
+                              iconSize: 12,
+                              strikethrough: true,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: Colors.white70,
+                              ),
+                            ),
                           CurrencyAmount(
                             currencyId: bundle.currencyId,
                             amount: bundle.price,
@@ -108,28 +119,43 @@ class BundleBanner extends ConsumerWidget {
                             ),
                           ),
                           if (expiresAt != null)
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.schedule,
-                                  size: 14,
-                                  color: Colors.white70,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.45),
+                                borderRadius: BorderRadius.circular(
+                                  ValRadius.pill,
                                 ),
-                                const SizedBox(width: 4),
-                                Flexible(
-                                  child: CountdownText(
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  CountdownRing(
                                     expiresAt: expiresAt,
-                                    builder: StoreStrings.bundleEndsIn,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: Colors.white70,
-                                      fontFeatures: const [
-                                        FontFeature.tabularFigures(),
-                                      ],
+                                    period: const Duration(days: 14),
+                                    size: 13,
+                                    strokeWidth: 2,
+                                    color: onArt,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Flexible(
+                                    child: CountdownText(
+                                      expiresAt: expiresAt,
+                                      builder: StoreStrings.bundleEndsIn,
+                                      style: theme.textTheme.labelMedium
+                                          ?.copyWith(
+                                            color: Colors.white,
+                                            fontFeatures: const [
+                                              FontFeature.tabularFigures(),
+                                            ],
+                                          ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                         ],
                       ),

@@ -29,7 +29,9 @@ class RrTrendChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = valColorsOf(context);
-    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final dark = theme.brightness == Brightness.dark;
     final points = cumulativeRr(changes);
     final minY = points.reduce(math.min).toDouble();
     final maxY = points.reduce(math.max).toDouble();
@@ -55,7 +57,9 @@ class RrTrendChart extends StatelessWidget {
               horizontalLines: [
                 HorizontalLine(
                   y: 0,
-                  color: scheme.onSurfaceVariant.withValues(alpha: 0.35),
+                  color: scheme.onSurfaceVariant.withValues(
+                    alpha: dark ? 0.35 : 0.5,
+                  ),
                   strokeWidth: 1,
                   dashArray: const [4, 4],
                 ),
@@ -70,7 +74,7 @@ class RrTrendChart extends StatelessWidget {
                 isCurved: true,
                 preventCurveOverShooting: true,
                 color: line,
-                barWidth: 2.5,
+                barWidth: 3,
                 isStrokeCapRound: true,
                 dotData: FlDotData(
                   show: showDots,
@@ -81,19 +85,28 @@ class RrTrendChart extends StatelessWidget {
                         ? changes[i - 1]
                         : 0;
                     return FlDotCirclePainter(
-                      radius: 2.5,
+                      radius: 3,
+                      strokeColor: scheme.surfaceContainer,
                       color: change > 0
                           ? colors.win
                           : change < 0
                           ? colors.loss
                           : colors.draw,
-                      strokeWidth: 0,
+                      strokeWidth: 1.5,
                     );
                   },
                 ),
+                // Soft vertical fade under the line.
                 belowBarData: BarAreaData(
                   show: true,
-                  color: line.withValues(alpha: 0.12),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      line.withValues(alpha: dark ? 0.32 : 0.22),
+                      line.withValues(alpha: 0),
+                    ],
+                  ),
                 ),
               ),
             ],

@@ -10,7 +10,6 @@ import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/currency_amount.dart';
-import '../../../../core/ui/net_image.dart';
 import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
 import '../../store_strings.dart';
@@ -72,13 +71,28 @@ class NightMarketCard extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (offer.discountPercent > 0)
-                  StoreBadge(
-                    formatDiscountPercent(offer.discountPercent),
-                    color: ValColors.red,
+                Expanded(
+                  child: Wrap(
+                    spacing: 6,
+                    runSpacing: 4,
+                    children: [
+                      if (offer.discountPercent > 0)
+                        StoreBadge(
+                          formatDiscountPercent(offer.discountPercent),
+                          color: ValColors.red,
+                        ),
+                      if (!offer.isSeen)
+                        StoreBadge(
+                          StoreStrings.nightMarketUnrevealed,
+                          color: ValColors.amber,
+                          foreground: readableOn(ValColors.amber),
+                          icon: Icons.visibility_off_outlined,
+                        ),
+                    ],
                   ),
-                const Spacer(),
+                ),
                 WishlistHeartButton(
                   active: inWishlist,
                   size: 16,
@@ -92,8 +106,12 @@ class NightMarketCard extends ConsumerWidget {
             ),
             const SizedBox(height: 4),
             AspectRatio(
-              aspectRatio: 16 / 7,
-              child: NetImage(skin?.image, fit: BoxFit.contain),
+              aspectRatio: 16 / 8,
+              child: SkinGlowArt(
+                imageUrl: skin?.image,
+                tint: tint,
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+              ),
             ),
             const SizedBox(height: 8),
             ContentTierBadge(contentTierUuid: skin?.contentTierUuid, size: 14),
@@ -115,18 +133,24 @@ class NightMarketCard extends ConsumerWidget {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 if (base != null && base != discounted)
-                  CurrencyAmount.vp(
-                    base,
-                    iconSize: 12,
-                    strikethrough: true,
-                    style: theme.textTheme.bodySmall,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: CurrencyAmount.vp(
+                      base,
+                      iconSize: 12,
+                      strikethrough: true,
+                      style: theme.textTheme.bodySmall,
+                    ),
                   ),
                 if (discounted != null)
-                  CurrencyAmount.vp(
-                    discounted,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: valColorsOf(context).win,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: CurrencyAmount.vp(
+                      discounted,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: valColorsOf(context).win,
+                      ),
                     ),
                   )
                 else

@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../content/content_fallbacks.dart';
 import '../content/content_repository.dart';
+import '../theme/app_theme.dart';
 import '../theme/tier_colors.dart';
 import 'net_image.dart';
 
@@ -49,7 +50,7 @@ class ContentTierBadge extends ConsumerWidget {
         Text(
           fullName ? tier.displayName : tier.shortName,
           style: (style ?? Theme.of(context).textTheme.labelMedium)?.copyWith(
-            color: opaqueRgba(tier.highlightColor),
+            color: legibleAccent(context, opaqueRgba(tier.highlightColor)),
           ),
         ),
       ],

@@ -7,7 +7,9 @@ import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/riot/riot_ids.dart';
 import '../../../../core/ui/currency_amount.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/net_image.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../store_strings.dart';
 import 'store_ui_bits.dart';
 
@@ -38,16 +40,23 @@ class AccessoryRow extends ConsumerWidget {
     final kc = offer.kcCost;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         children: [
           Container(
-            width: 56,
-            height: 56,
-            padding: const EdgeInsets.all(4),
+            width: 60,
+            height: 60,
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(12),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  CurrencyColors.kc.withValues(alpha: 0.16),
+                  theme.colorScheme.surfaceContainerHigh,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(ValRadius.small),
             ),
             child: item?.image == null && typeId == ItemTypeIds.playerTitle
                 ? Icon(Icons.text_fields, color: muted)
@@ -93,10 +102,20 @@ class AccessoryRow extends ConsumerWidget {
               if (kc == null)
                 Text(CommonStrings.dash, style: theme.textTheme.titleSmall)
               else
-                CurrencyAmount.kc(
-                  kc,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: CurrencyColors.kc.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(ValRadius.pill),
+                  ),
+                  child: CurrencyAmount.kc(
+                    kc,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               if (owned) ...[const SizedBox(height: 6), const OwnedBadge()],

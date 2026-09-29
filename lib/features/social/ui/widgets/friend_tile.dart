@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/domain/competitive/names.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/xmpp/friends.dart';
 import '../../data/friend_status.dart';
 import 'social_widgets.dart';
@@ -60,22 +61,24 @@ class FriendTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = statusColor(context, status.tone);
+    final color = legibleAccent(
+      context,
+      statusColor(context, status.tone),
+      min: 3.5,
+    );
     return InkWell(
       onTap: onTap,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 68),
+        constraints: const BoxConstraints(minHeight: 64),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.fromLTRB(14, 10, 8, 10),
           child: Row(
             children: [
-              Opacity(
-                opacity: friend.isOnline ? 1 : 0.55,
-                child: FriendAvatar(
-                  playerCardId: friend.playerCardId,
-                  name: friend.name?.gameName,
-                  tone: friend.isOnline ? status.tone : null,
-                ),
+              FriendAvatar(
+                playerCardId: friend.playerCardId,
+                name: friend.name?.gameName,
+                tone: friend.isOnline ? status.tone : null,
+                dimmed: !friend.isOnline,
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -87,6 +90,7 @@ class FriendTile extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       status.text,
+                      key: ValueKey('status-${friend.puuid}'),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodySmall?.copyWith(

@@ -7,6 +7,7 @@ import '../../core/content/content_repository.dart';
 import '../../core/domain/loadout/loadout.dart';
 import '../../core/l10n/common_strings.dart';
 import '../../core/theme/tier_colors.dart';
+import '../../core/ui/adaptive.dart';
 import '../../core/ui/async_value_view.dart';
 import '../../core/ui/empty_view.dart';
 import '../../core/ui/net_image.dart';
@@ -83,7 +84,7 @@ class PlayerLoadoutSheet extends ConsumerWidget {
         onRetry: () => ref.invalidate(matchLoadoutsProvider(query)),
         loading: const SkeletonGrid(itemCount: 6),
         isEmpty: (l) => l.player(playerPuuid) == null,
-        empty: RefreshIndicator(
+        empty: AdaptiveRefresh(
           onRefresh: () => ref.refresh(matchLoadoutsProvider(query).future),
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -95,7 +96,7 @@ class PlayerLoadoutSheet extends ConsumerWidget {
             ],
           ),
         ),
-        data: (loadouts) => RefreshIndicator(
+        data: (loadouts) => AdaptiveRefresh(
           onRefresh: () => ref.refresh(matchLoadoutsProvider(query).future),
           child: PlayerLoadoutView(loadout: loadouts.player(playerPuuid)!),
         ),

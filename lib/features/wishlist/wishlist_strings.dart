@@ -11,6 +11,7 @@ abstract final class WishlistStrings {
 
   // --------------------------------------------------------- S3A wishlist
   static const addSkins = 'Thêm skin';
+  static const emptyTitle = 'Chưa có skin nào';
   static const empty = 'Wishlist trống. Nhấn ♡ ở bất kỳ skin nào để thêm.';
   static const browseCatalog = 'Xem tất cả skin';
   static const totalValue = 'Tổng giá trị wishlist';
@@ -60,10 +61,12 @@ abstract final class WishlistStrings {
   static const weapon = 'Vũ khí';
   static const allWeapons = 'Tất cả vũ khí';
   static const chooseWeapon = 'Chọn vũ khí';
+  static const noMatchTitle = 'Không tìm thấy skin';
   static const noMatch = 'Không có skin nào khớp bộ lọc.';
   static const clearFilters = 'Xóa bộ lọc';
 
   // ------------------------------------------------------------ S3B catalog
+  static const catalogEmptyTitle = 'Chưa có skin';
   static const catalogEmpty = 'Chưa có dữ liệu skin.';
   static String catalogCount(String count) => '$count skin';
   static String catalogInWishlist(String count) => '$count trong wishlist';

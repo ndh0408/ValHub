@@ -11,10 +11,12 @@ import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/xmpp/friends.dart';
 import '../../../core/xmpp/xmpp_providers.dart';
 import '../data/party_models.dart';
@@ -118,7 +120,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
             ),
         ],
       ),
-      body: RefreshIndicator(
+      body: AdaptiveRefresh(
         onRefresh: () => _notifier(puuid).refresh(),
         child: AsyncValueView<PartyView>(
           value: value,
@@ -252,10 +254,12 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
     final Widget primary;
     if (p.isMatchmaking) {
       primary = FilledButton.icon(
-        style: FilledButton.styleFrom(backgroundColor: ValColors.red),
         onPressed: _isBusy('mm')
             ? null
-            : () => _run('mm', () => _notifier(me).cancelMatchmaking()),
+            : () {
+                Haptics.medium();
+                unawaited(_run('mm', () => _notifier(me).cancelMatchmaking()));
+              },
         icon: const Icon(Icons.close),
         label: since == null
             ? const Text(SocialStrings.cancelQueueShort)
@@ -264,12 +268,15 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
     } else {
       primary = FilledButton.icon(
         onPressed: canStart && !_isBusy('mm')
-            ? () => _run('mm', () => _notifier(me).startMatchmaking())
+            ? () {
+                Haptics.medium();
+                unawaited(_run('mm', () => _notifier(me).startMatchmaking()));
+              }
             : null,
         icon: _isBusy('mm')
             ? const SizedBox.square(
                 dimension: 18,
-                child: CircularProgressIndicator(strokeWidth: 2),
+                child: CircularProgressIndicator.adaptive(strokeWidth: 2),
               )
             : const Icon(Icons.play_arrow_rounded),
         label: const Text(SocialStrings.startQueue),
@@ -287,19 +294,42 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.sports_esports, color: theme.colorScheme.primary),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      p.queueId == null
-                          ? SocialStrings.queueSection
-                          : db.queueName(p.queueId),
-                      style: theme.textTheme.titleMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                  Flexible(
+                    child: StatusPill(
+                      label: p.isMatchFound
+                          ? SocialStrings.matchFound
+                          : p.isMatchmaking
+                          ? SocialStrings.inQueue(null)
+                          : SocialStrings.idleQueue,
+                      color: p.isMatchFound
+                          ? colors.win
+                          : p.isMatchmaking
+                          ? colors.warning
+                          : theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    SocialStrings.readyCount(
+                      p.members.where((m) => m.isReady || m.isOwner).length,
+                      p.size,
+                    ),
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                p.queueId == null
+                    ? SocialStrings.queueSection
+                    : db.queueName(p.queueId),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               if (p.isMatchmaking && since != null) ...[
                 const SizedBox(height: 6),
@@ -333,7 +363,12 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
               OutlinedButton.icon(
                 onPressed: self == null || _isBusy('ready') || p.isMatchmaking
                     ? null
-                    : () => _run('ready', () => _notifier(me).setReady(!ready)),
+                    : () {
+                        Haptics.light();
+                        unawaited(
+                          _run('ready', () => _notifier(me).setReady(!ready)),
+                        );
+                      },
                 icon: Icon(ready ? Icons.remove_done : Icons.done_all),
                 label: Text(
                   ready ? SocialStrings.unready : SocialStrings.ready,
@@ -493,11 +528,25 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (code != null)
-              SelectableText(
-                SocialStrings.partyCodeValue(code),
-                style: theme.textTheme.titleMedium?.copyWith(
-                  letterSpacing: 1.2,
-                  fontWeight: FontWeight.w700,
+              Semantics(
+                label: SocialStrings.partyCodeValue(code),
+                excludeSemantics: true,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHigh,
+                    borderRadius: BorderRadius.circular(ValRadius.small),
+                  ),
+                  alignment: Alignment.center,
+                  child: SelectableText(
+                    code,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      letterSpacing: 4,
+                      fontWeight: FontWeight.w800,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
                 ),
               )
             else
@@ -511,12 +560,22 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                   FilledButton.tonalIcon(
                     onPressed: () async {
                       await Clipboard.setData(ClipboardData(text: code));
+                      Haptics.light();
                       if (mounted) {
                         showAppSnackBar(context, SocialStrings.codeCopied);
                       }
                     },
                     icon: const Icon(Icons.copy),
                     label: const Text(SocialStrings.copyCode),
+                  ),
+                  FilledButton.tonalIcon(
+                    onPressed: () => unawaited(
+                      ref.read(partyShareProvider)(
+                        SocialStrings.shareCodeText(code),
+                      ),
+                    ),
+                    icon: Icon(Icons.adaptive.share),
+                    label: const Text(SocialStrings.shareCode),
                   ),
                   if (isOwner)
                     OutlinedButton(
@@ -647,26 +706,35 @@ class _MoreMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final canLeave = party.size > 1;
     if (!canLeave && !isOwner) return const SizedBox.shrink();
-    return PopupMenuButton<String>(
+    return IconButton(
       tooltip: SocialStrings.moreActions,
-      onSelected: (v) {
+      icon: Icon(Icons.adaptive.more),
+      onPressed: () async {
+        final v = await showActionSheet<String>(
+          context,
+          actions: [
+            if (isOwner)
+              SheetAction(
+                value: 'open',
+                label: party.isOpen
+                    ? SocialStrings.closeParty
+                    : SocialStrings.openParty,
+                icon: party.isOpen
+                    ? Icons.lock_outline
+                    : Icons.lock_open_outlined,
+              ),
+            if (canLeave)
+              const SheetAction(
+                value: 'leave',
+                label: SocialStrings.leaveParty,
+                icon: Icons.logout,
+                destructive: true,
+              ),
+          ],
+        );
         if (v == 'leave') unawaited(onLeave());
         if (v == 'open') unawaited(onToggleOpen());
       },
-      itemBuilder: (context) => [
-        if (isOwner)
-          PopupMenuItem(
-            value: 'open',
-            child: Text(
-              party.isOpen ? SocialStrings.closeParty : SocialStrings.openParty,
-            ),
-          ),
-        if (canLeave)
-          const PopupMenuItem(
-            value: 'leave',
-            child: Text(SocialStrings.leaveParty),
-          ),
-      ],
     );
   }
 }
@@ -778,33 +846,15 @@ class _GameNotRunning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(32, 64, 32, 32),
+      padding: const EdgeInsets.only(top: 32),
       children: [
-        Icon(
-          Icons.desktop_windows_outlined,
-          size: 56,
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
-        const SizedBox(height: 16),
-        Text(
-          SocialStrings.gameNotRunningTitle,
-          textAlign: TextAlign.center,
-          style: theme.textTheme.titleMedium,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          SocialStrings.gameNotRunningBody,
-          textAlign: TextAlign.center,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: 20),
-        Center(
-          child: OutlinedButton.icon(
+        EmptyView(
+          icon: Icons.desktop_windows_outlined,
+          title: SocialStrings.gameNotRunningTitle,
+          message: SocialStrings.gameNotRunningBody,
+          action: OutlinedButton.icon(
             onPressed: () => unawaited(onRetry()),
             icon: const Icon(Icons.refresh),
             label: const Text(CommonStrings.retry),

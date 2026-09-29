@@ -3,9 +3,11 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/countdown_text.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 
-/// Design-system progress bar (Figma: 6 px, rounded, `#2E3F4E` track).
+/// Thin design-system progress bar (theme accent fill on the track color);
+/// the fill animates to new values.
 class BpProgressBar extends StatelessWidget {
   const BpProgressBar({
     super.key,
@@ -13,6 +15,7 @@ class BpProgressBar extends StatelessWidget {
     this.height = 6,
     this.color,
     this.background,
+    this.semanticsLabel,
   });
 
   /// Fill, 0–1 (clamped).
@@ -20,28 +23,16 @@ class BpProgressBar extends StatelessWidget {
   final double height;
   final Color? color;
   final Color? background;
+  final String? semanticsLabel;
 
   @override
-  Widget build(BuildContext context) {
-    final v = value.isFinite ? value.clamp(0.0, 1.0) : 0.0;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(height / 2),
-      child: SizedBox(
-        height: height,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            ColoredBox(color: background ?? valColorsOf(context).track),
-            FractionallySizedBox(
-              alignment: Alignment.centerLeft,
-              widthFactor: v,
-              child: ColoredBox(color: color ?? ValColors.red),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ValProgressBar(
+    value: value,
+    height: height,
+    color: color ?? Theme.of(context).colorScheme.primary,
+    trackColor: background,
+    semanticsLabel: semanticsLabel,
+  );
 }
 
 /// Small label badge ("Premium", "Miễn phí", "Hiện tại").
@@ -61,13 +52,15 @@ class BpBadge extends StatelessWidget {
   /// "PREMIUM" style (letter-spaced capitals).
   final bool uppercase;
 
-  /// Solid background with white text instead of a tinted one.
+  /// Solid background with readable text instead of a tinted one.
   final bool filled;
   final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
-    final fg = filled ? readableOn(color) : color;
+    final fg = filled
+        ? readableOn(color)
+        : legibleAccent(context, color, min: 3.5);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
@@ -146,7 +139,7 @@ class BpCountdownLine extends StatelessWidget {
   }
 }
 
-/// Compact countdown for section headers ("2 ngày 15:09:24").
+/// Compact countdown for section headers ("🕑 2 ngày 15:09:24").
 class BpHeaderCountdown extends StatelessWidget {
   const BpHeaderCountdown({
     super.key,
@@ -166,8 +159,8 @@ class BpHeaderCountdown extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.schedule, size: 14, color: muted),
-        const SizedBox(width: 4),
+        Icon(Icons.schedule, size: 15, color: muted),
+        const SizedBox(width: 5),
         Flexible(
           child: CountdownText(
             expiresAt: expiresAt,
@@ -209,7 +202,9 @@ class BpOfflineNotice extends StatelessWidget {
           Expanded(
             child: Text(
               CommonStrings.offlineCached(formatTime(receivedAt)),
-              style: theme.textTheme.bodySmall?.copyWith(color: warning),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: legibleAccent(context, warning),
+              ),
             ),
           ),
         ],
@@ -218,7 +213,9 @@ class BpOfflineNotice extends StatelessWidget {
   }
 }
 
-/// Section title row used on S20 ("Nhiệm vụ hằng tuần" + countdown).
+/// Section header used on S20: bold title on the left, the countdown (or
+/// any [trailing]) on the right, and a muted [subtitle] under the title.
+/// The trailing widget drops under the title when space runs out.
 class BpSectionTitle extends StatelessWidget {
   const BpSectionTitle({
     super.key,
@@ -238,29 +235,31 @@ class BpSectionTitle extends StatelessWidget {
     final end = trailing;
     final muted = theme.colorScheme.onSurfaceVariant;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 10),
+      padding: const EdgeInsets.fromLTRB(16, 22, 16, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(title, style: theme.textTheme.titleMedium),
-          // Subtitle left, countdown right, on their own line so the title
-          // never wraps on narrow phones.
-          if (sub != null || end != null)
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 12,
+            runSpacing: 4,
+            children: [
+              Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              ?end,
+            ],
+          ),
+          if (sub != null)
             Padding(
               padding: const EdgeInsets.only(top: 2),
-              child: Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 12,
-                runSpacing: 2,
-                children: [
-                  if (sub != null)
-                    Text(
-                      sub,
-                      style: theme.textTheme.bodySmall?.copyWith(color: muted),
-                    ),
-                  ?end,
-                ],
+              child: Text(
+                sub,
+                style: theme.textTheme.bodySmall?.copyWith(color: muted),
               ),
             ),
         ],

@@ -9,10 +9,12 @@ import '../../../core/domain/loadout/loadout.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/riot/riot_ids.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../collection_strings.dart';
 import '../data/collection_items.dart';
 import '../data/collection_search.dart';
@@ -60,7 +62,7 @@ class ExpressionsScreen extends ConsumerWidget {
             void open(int slot) => unawaited(
               showExpressionPicker(context, puuid: account.puuid, slot: slot),
             );
-            return RefreshIndicator(
+            return AdaptiveRefresh(
               onRefresh: () => refreshCollection(ref, account.puuid),
               child: ListView(
                 padding: const EdgeInsets.only(bottom: 24),
@@ -89,13 +91,17 @@ class ExpressionsScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  for (var i = 0; i < kExpressionSlots; i++)
-                    _SlotRow(
-                      slot: i,
-                      view: _slotView(loadout.expression(i), db),
-                      onTap: snapshot.isPending ? null : () => open(i),
-                    ),
+                  const SizedBox(height: 16),
+                  GroupedSection(
+                    children: [
+                      for (var i = 0; i < kExpressionSlots; i++)
+                        _SlotRow(
+                          slot: i,
+                          view: _slotView(loadout.expression(i), db),
+                          onTap: snapshot.isPending ? null : () => open(i),
+                        ),
+                    ],
+                  ),
                 ],
               ),
             );
@@ -116,6 +122,7 @@ class _Wheel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final accent = scheme.primary;
     final tile = size * 0.3;
     // Top, right, bottom, left (slot = index, U7).
     final offsets = [
@@ -135,11 +142,14 @@ class _Wheel extends StatelessWidget {
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: scheme.outlineVariant, width: 2),
+                  border: Border.all(
+                    color: accent.withValues(alpha: 0.35),
+                    width: 2,
+                  ),
                   gradient: RadialGradient(
                     colors: [
-                      ValColors.red.withValues(alpha: 0.12),
-                      Colors.transparent,
+                      accent.withValues(alpha: 0.16),
+                      accent.withValues(alpha: 0),
                     ],
                   ),
                 ),
@@ -166,8 +176,13 @@ class _Wheel extends StatelessWidget {
                 child: Material(
                   color: scheme.surfaceContainerHigh,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    side: BorderSide(color: scheme.outlineVariant),
+                    borderRadius: BorderRadius.circular(ValRadius.small),
+                    side: BorderSide(
+                      color: slots[i].isEmpty
+                          ? scheme.outlineVariant
+                          : accent.withValues(alpha: 0.6),
+                      width: slots[i].isEmpty ? 1 : 1.5,
+                    ),
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: InkWell(
@@ -202,18 +217,28 @@ class _SlotRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
     return ListTile(
       onTap: onTap,
+      minTileHeight: 60,
       leading: SizedBox(
         width: 40,
         height: 40,
         child: view.isEmpty
-            ? Icon(Icons.crop_square, color: theme.colorScheme.onSurfaceVariant)
+            ? Icon(Icons.add_box_outlined, color: muted)
             : NetImage(view.image, fit: BoxFit.contain),
       ),
-      title: Text(CollectionStrings.slotTitle(slot)),
-      subtitle: Text(view.name, maxLines: 2, overflow: TextOverflow.ellipsis),
-      trailing: const Icon(Icons.chevron_right),
+      title: Text(
+        CollectionStrings.slotTitle(slot),
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(
+        view.name,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(color: muted),
+      ),
+      trailing: Icon(Icons.chevron_right, color: muted, size: 20),
     );
   }
 }
@@ -336,6 +361,7 @@ class _ExpressionPickerSheetState extends ConsumerState<ExpressionPickerSheet> {
                   : SetExpression.spray(widget.slot, id),
               successMessage: CollectionStrings.equippedItem(name),
             );
+            if (ok) Haptics.medium();
             if (ok && navigator.mounted) navigator.pop();
           }
 
@@ -350,6 +376,7 @@ class _ExpressionPickerSheetState extends ConsumerState<ExpressionPickerSheet> {
                 ),
               ),
               SegmentedTabs<_PickerTab>(
+                expand: true,
                 tabs: const [
                   SegmentedTab(
                     value: _PickerTab.sprays,
@@ -379,6 +406,9 @@ class _ExpressionPickerSheetState extends ConsumerState<ExpressionPickerSheet> {
                         controller: scroll,
                         children: [
                           EmptyView(
+                            icon: _search.trim().isNotEmpty
+                                ? Icons.search_off
+                                : Icons.format_paint_outlined,
                             message: _search.trim().isNotEmpty
                                 ? CollectionStrings.noResults
                                 : (tab == _PickerTab.flex
@@ -389,6 +419,8 @@ class _ExpressionPickerSheetState extends ConsumerState<ExpressionPickerSheet> {
                       )
                     : GridView.builder(
                         controller: scroll,
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                           maxCrossAxisExtent: 120,
@@ -401,6 +433,7 @@ class _ExpressionPickerSheetState extends ConsumerState<ExpressionPickerSheet> {
                           final item = items[i];
                           final selected = isCurrent(item.id, item.flex);
                           return ArtTile(
+                            key: ValueKey(item.id),
                             image: item.image,
                             icon: Icons.block,
                             label: item.name,

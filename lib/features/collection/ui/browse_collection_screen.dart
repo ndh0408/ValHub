@@ -8,18 +8,23 @@ import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/l10n/content_strings.dart';
+import '../../../core/storage/ui_memory.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/async_value_view.dart';
-import '../../../core/ui/content_tier_badge.dart';
 import '../../../core/ui/currency_amount.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/skin_art_card.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../../skin_detail/skin_detail_sheet.dart';
 import '../collection_strings.dart';
 import '../data/buddy_options.dart';
 import '../data/collection_items.dart';
 import '../data/collection_search.dart';
+import '../data/query_memory.dart';
 import '../data/skin_query.dart';
 import '../providers/collection_providers.dart';
 import 'player_card_picker_screen.dart';
@@ -45,6 +50,10 @@ enum CollectionBrowseType {
 }
 
 /// S39 "Duyệt bộ sưu tập". Route `/collection/browse/:type`.
+///
+/// Skins: glass search, sort + rarity chips (remembered per screen), a
+/// value strip and an image-forward grid (rarity glow / edge, price or
+/// reward source). Other types: search + art grid (titles: a list).
 class BrowseCollectionScreen extends ConsumerStatefulWidget {
   const BrowseCollectionScreen({super.key, required this.type});
 
@@ -57,9 +66,25 @@ class BrowseCollectionScreen extends ConsumerStatefulWidget {
 
 class _BrowseCollectionScreenState
     extends ConsumerState<BrowseCollectionScreen> {
-  SkinQuery _query = const SkinQuery();
+  late SkinQuery _query = _type == CollectionBrowseType.skin
+      ? readSkinQuery(
+          ref.read(uiMemoryProvider),
+          CollectionMemoryKeys.browseSkins,
+        )
+      : const SkinQuery();
 
   CollectionBrowseType get _type => widget.type;
+
+  void _setQuery(SkinQuery q) {
+    setState(() => _query = q);
+    if (_type == CollectionBrowseType.skin) {
+      writeSkinQuery(
+        ref.read(uiMemoryProvider),
+        CollectionMemoryKeys.browseSkins,
+        q,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,19 +103,23 @@ class _BrowseCollectionScreenState
                     setState(() => _query = _query.copyWith(search: v)),
               ),
               if (_type == CollectionBrowseType.skin)
-                SkinFilterBar(
-                  query: _query,
-                  onChanged: (q) => setState(() => _query = q),
-                ),
+                SkinFilterBar(query: _query, onChanged: _setQuery),
               Expanded(
                 child: AsyncValueView(
                   value: ref.watch(ownedItemsProvider(puuid)),
                   puuid: puuid,
                   onRetry: () => ref.invalidate(entitlementsProvider(puuid)),
-                  loading: _type == CollectionBrowseType.title
-                      ? const SkeletonList(itemHeight: 48)
-                      : const CollectionGridSkeleton(),
-                  data: (owned) => RefreshIndicator(
+                  loading: switch (_type) {
+                    CollectionBrowseType.title => const SkeletonList(
+                      itemHeight: 56,
+                    ),
+                    CollectionBrowseType.skin => const CollectionGridSkeleton(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.95,
+                    ),
+                    _ => const CollectionGridSkeleton(),
+                  },
+                  data: (owned) => AdaptiveRefresh(
                     onRefresh: () => refreshCollection(ref, puuid),
                     child: _buildContent(
                       context,
@@ -126,12 +155,10 @@ class _BrowseCollectionScreenState
         return _scroll(
           summary: _itemsSummary(titles.length, all.length),
           empty: all.isEmpty,
-          sliver: SliverList.builder(
+          sliver: SliverList.separated(
             itemCount: titles.length,
-            itemBuilder: (context, i) => ListTile(
-              leading: const Icon(Icons.military_tech_outlined),
-              title: Text(titles[i].text),
-            ),
+            separatorBuilder: (_, _) => const SizedBox(height: 8),
+            itemBuilder: (context, i) => _TitleRow(text: titles[i].text),
           ),
           noMatches: titles.isEmpty,
         );
@@ -182,7 +209,7 @@ class _BrowseCollectionScreenState
               onTap: () => unawaited(
                 _showItemPreview(
                   context,
-                  image: sprays[i].animatedImage,
+                  image: sprays[i].animatedImage ?? sprays[i].image,
                   name: sprays[i].displayName,
                   type: ContentStrings.itemSpray,
                 ),
@@ -266,6 +293,7 @@ class _BrowseCollectionScreenState
     final amount = value.isEstimate
         ? formatEstimatedVp(value.totalVp)
         : formatVp(value.totalVp);
+    final imageFlex = skinCardImageFlex(context);
     return _scroll(
       summary: SummaryStrip(
         text: _query.isFiltering
@@ -278,13 +306,22 @@ class _BrowseCollectionScreenState
       ),
       empty: all.isEmpty,
       noMatches: skins.isEmpty,
-      sliver: _grid(
-        context,
-        maxExtent: 200,
-        image: 72,
-        footer: true,
-        count: skins.length,
-        builder: (context, i) => SkinGridTile(skin: skins[i], prices: prices),
+      sliver: SliverGrid(
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 220,
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
+          mainAxisExtent: skinCardExtent(context),
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, i) => SkinGridTile(
+            key: ValueKey(skins[i].uuid),
+            skin: skins[i],
+            prices: prices,
+            imageFlex: imageFlex,
+          ),
+          childCount: skins.length,
+        ),
       ),
     );
   }
@@ -304,17 +341,31 @@ class _BrowseCollectionScreenState
   }) {
     return CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       slivers: [
         SliverToBoxAdapter(child: summary),
         if (empty || noMatches)
           SliverFillRemaining(
             hasScrollBody: false,
-            child: EmptyView(
-              message: empty
-                  ? CollectionStrings.browseEmpty
-                  : CollectionStrings.noResults,
-              icon: empty ? Icons.inventory_2_outlined : Icons.search_off,
-            ),
+            child: empty
+                ? const EmptyView(
+                    title: CollectionStrings.browseEmptyTitle,
+                    message: CollectionStrings.browseEmpty,
+                    icon: Icons.inventory_2_outlined,
+                  )
+                : EmptyView(
+                    title: CollectionStrings.noResultsTitle,
+                    message: CollectionStrings.noResults,
+                    icon: Icons.search_off,
+                    action: _query.tiers.isEmpty
+                        ? null
+                        : OutlinedButton.icon(
+                            onPressed: () =>
+                                _setQuery(_query.copyWith(tiers: {})),
+                            icon: const Icon(Icons.filter_alt_off_outlined),
+                            label: const Text(CollectionStrings.clearTiers),
+                          ),
+                  ),
           )
         else
           SliverPadding(
@@ -343,57 +394,122 @@ class _BrowseCollectionScreenState
   );
 }
 
-/// Skin tile of S39: tier tint, image, name and price or reward source.
-class SkinGridTile extends ConsumerWidget {
-  const SkinGridTile({super.key, required this.skin, required this.prices});
+/// One owned title: a rounded row with a gold medal tile.
+class _TitleRow extends StatelessWidget {
+  const _TitleRow({required this.text});
 
-  final WeaponSkin skin;
-  final PriceService prices;
+  final String text;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final quote = prices.priceForSkin(skin.uuid);
-    final tint = contentTierTint(ref, skin.contentTierUuid);
-    final caption = quote.caption;
-    final Widget footer;
-    if (quote.vp case final vp?) {
-      footer = CurrencyAmount.vp(
-        vp,
-        estimate: quote.isEstimate,
-        iconSize: 12,
-        style: theme.textTheme.labelSmall,
-      );
-    } else {
-      footer = Text(
-        caption ?? CommonStrings.dash,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
-      );
-    }
-    return ArtTile(
-      image: skin.image,
-      label: skin.displayName,
-      tint: tint == Colors.transparent ? null : tint,
-      footer: footer,
-      semanticsLabel:
-          '${skin.displayName}, '
-          '${quote.vp == null ? (caption ?? CommonStrings.dash) : formatVp(quote.vp!)}',
-      onTap: () => unawaited(
-        showSkinDetailSheet(
-          context,
-          skinOrLevelUuid: skin.uuid,
-          mode: SkinDetailMode.owned,
-        ),
+  Widget build(BuildContext context) {
+    return ValCard(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Row(
+        children: [
+          IconTile(
+            icon: Icons.military_tech_outlined,
+            color: valColorsOf(context).gold,
+            size: 32,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-/// Large preview of a spray / Flex / buddy.
+/// Skin card of S39: large render on the rarity glow, rarity tag, name and
+/// the price at store prices, or the reward source ("Phần thưởng Battle
+/// Pass") for contract skins.
+class SkinGridTile extends ConsumerWidget {
+  const SkinGridTile({
+    super.key,
+    required this.skin,
+    required this.prices,
+    this.imageFlex = 5,
+  });
+
+  final WeaponSkin skin;
+  final PriceService prices;
+  final int imageFlex;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final quote = prices.priceForSkin(skin.uuid);
+    final color = skinTierColor(ref, context, skin.contentTierUuid);
+    final tierName = skinTierName(ref, skin.contentTierUuid);
+    final caption = quote.caption;
+    final Widget footer;
+    if (quote.vp case final vp?) {
+      footer = FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: AlignmentDirectional.centerStart,
+        child: CurrencyAmount.vp(
+          vp,
+          estimate: quote.isEstimate,
+          iconSize: 13,
+          style: theme.textTheme.labelMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      );
+    } else {
+      footer = Row(
+        children: [
+          Icon(
+            quote.isReward ? Icons.card_giftcard : Icons.remove_circle_outline,
+            size: 13,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Text(
+              caption ?? CommonStrings.dash,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    return SkinArtCard(
+      imageUrl: skin.image,
+      name: skin.displayName,
+      tierColor: color,
+      imageFlex: imageFlex,
+      topStart: tierName == null
+          ? null
+          : TierTag(label: tierName, color: color),
+      footer: footer,
+      semanticsLabel:
+          '${skin.displayName}, '
+          '${quote.vp == null ? (caption ?? CommonStrings.dash) : formatVp(quote.vp!)}',
+      onTap: () {
+        Haptics.selection();
+        unawaited(
+          showSkinDetailSheet(
+            context,
+            skinOrLevelUuid: skin.uuid,
+            mode: SkinDetailMode.owned,
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Large preview of a spray / Flex / buddy on a soft glow.
 Future<void> _showItemPreview(
   BuildContext context, {
   required String? image,
@@ -404,23 +520,42 @@ Future<void> _showItemPreview(
   useSafeArea: true,
   builder: (context) {
     final theme = Theme.of(context);
+    final accent = theme.colorScheme.primary;
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: 200, child: NetImage(image, fit: BoxFit.contain)),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  radius: 0.7,
+                  colors: [
+                    accent.withValues(alpha: 0.18),
+                    accent.withValues(alpha: 0),
+                  ],
+                ),
+              ),
+              child: SizedBox(
+                height: 220,
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: NetImage(image, fit: BoxFit.contain),
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
             Text(
               name,
               textAlign: TextAlign.center,
-              style: theme.textTheme.titleMedium,
+              style: theme.textTheme.titleLarge,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Text(
-              type,
-              style: theme.textTheme.bodySmall?.copyWith(
+              type.toUpperCase(),
+              style: ValText.label.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),

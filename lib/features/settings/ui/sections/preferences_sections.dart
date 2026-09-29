@@ -6,6 +6,8 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/accounts/account.dart';
 import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/settings/app_settings.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/ui/adaptive.dart';
 import '../../settings_strings.dart';
 import '../widgets/settings_widgets.dart';
 
@@ -105,19 +107,53 @@ class SettingsAppearanceSection extends ConsumerWidget {
   Future<void> _pickTheme(BuildContext context, WidgetRef ref) async {
     final current = ref.read(appSettingsProvider).themeMode;
     final settings = ref.read(appSettingsProvider.notifier);
-    final chosen = await showSettingsChoiceSheet<ThemeMode>(
-      context: context,
-      title: SettingsStrings.themePickerTitle,
-      selected: current,
-      options: [
-        for (final m in const [
-          ThemeMode.dark,
-          ThemeMode.light,
-          ThemeMode.system,
-        ])
-          (m, themeModeLabel(m)),
-      ],
-    );
+    const modes = [ThemeMode.dark, ThemeMode.light, ThemeMode.system];
+    final ThemeMode? chosen;
+    if (isCupertino(context)) {
+      chosen = await showSettingsChoiceSheet<ThemeMode>(
+        context: context,
+        title: SettingsStrings.themePickerTitle,
+        selected: current,
+        options: [for (final m in modes) (m, themeModeLabel(m))],
+      );
+    } else {
+      // Material: a live preview of each theme above the list.
+      chosen = await showModalBottomSheet<ThemeMode>(
+        context: context,
+        useSafeArea: true,
+        isScrollControlled: true,
+        builder: (sheetContext) {
+          void pick(ThemeMode m) => Navigator.of(sheetContext).pop(m);
+          return SettingsChoiceList<ThemeMode>(
+            title: SettingsStrings.themePickerTitle,
+            selected: current,
+            onPicked: pick,
+            header: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
+              child: Row(
+                children: [
+                  for (final m in modes) ...[
+                    if (m != modes.first) const SizedBox(width: 12),
+                    Expanded(
+                      child: ThemePreviewSwatch(
+                        mode: m,
+                        selected: m == current,
+                        onTap: () => pick(m),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            options: [
+              for (final m in modes)
+                (value: m, label: themeModeLabel(m), leading: null),
+            ],
+          );
+        },
+      );
+      if (chosen != null && chosen != current) Haptics.selection();
+    }
     if (chosen != null) await settings.setThemeMode(chosen);
   }
 
@@ -144,7 +180,11 @@ class SettingsAppearanceSection extends ConsumerWidget {
       title: SettingsStrings.appearanceHeader,
       children: [
         ListTile(
-          leading: const SettingsIcon(Icons.dark_mode_outlined),
+          leading: SettingsIcon(switch (theme) {
+            ThemeMode.light => Icons.light_mode_outlined,
+            ThemeMode.dark => Icons.dark_mode_outlined,
+            ThemeMode.system => Icons.brightness_auto_outlined,
+          }),
           title: const Text(SettingsStrings.themeLabel),
           trailing: SettingsValue(themeModeLabel(theme)),
           onTap: () => unawaited(_pickTheme(context, ref)),
@@ -158,4 +198,119 @@ class SettingsAppearanceSection extends ConsumerWidget {
       ],
     );
   }
+}
+
+/// Miniature of a theme (background, a card, a red pill) for the theme
+/// picker; "Theo hệ thống" shows dark and light split diagonally.
+class ThemePreviewSwatch extends StatelessWidget {
+  const ThemePreviewSwatch({
+    super.key,
+    required this.mode,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final ThemeMode mode;
+  final bool selected;
+  final VoidCallback onTap;
+
+  // The real theme palettes, so the previews follow any theme change.
+  static final _darkScheme = buildDarkTheme().colorScheme;
+  static final _lightScheme = buildLightTheme().colorScheme;
+
+  static Widget _mock({required bool dark}) {
+    final scheme = dark ? _darkScheme : _lightScheme;
+    final bg = scheme.surface;
+    final card = scheme.surfaceContainer;
+    final line = scheme.surfaceContainerHighest;
+    return ColoredBox(
+      color: bg,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 28,
+              height: 6,
+              decoration: BoxDecoration(
+                color: scheme.primary,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: card,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                padding: const EdgeInsets.all(6),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(height: 4, width: 30, color: line),
+                    const SizedBox(height: 4),
+                    Container(height: 4, width: 20, color: line),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final Widget art = switch (mode) {
+      ThemeMode.dark => _mock(dark: true),
+      ThemeMode.light => _mock(dark: false),
+      ThemeMode.system => Stack(
+        fit: StackFit.expand,
+        children: [
+          _mock(dark: false),
+          ClipPath(clipper: _DiagonalClipper(), child: _mock(dark: true)),
+        ],
+      ),
+    };
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: themeModeLabel(mode),
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: ValMotion.fast,
+          height: 84,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(ValRadius.small),
+            border: Border.all(
+              color: selected ? scheme.primary : scheme.outlineVariant,
+              width: selected ? 2 : 1,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(ValRadius.small - 2),
+            child: art,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DiagonalClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) => Path()
+    ..moveTo(0, 0)
+    ..lineTo(size.width, 0)
+    ..lineTo(0, size.height)
+    ..close();
+
+  @override
+  bool shouldReclip(_DiagonalClipper oldClipper) => false;
 }

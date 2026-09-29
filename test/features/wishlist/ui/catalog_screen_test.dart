@@ -5,6 +5,7 @@ import 'package:valvn/core/domain/economy/economy.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/storage/prefs.dart';
+import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/core/ui/skeleton.dart';
 import 'package:valvn/features/skin_detail/skin_detail_sheet.dart';
 import 'package:valvn/features/wishlist/ui/catalog_screen.dart';
@@ -20,10 +21,12 @@ Future<void> _pump(
   required Prefs prefs,
   Future<ContentDb> Function()? loadContent,
   bool signedIn = true,
+  ThemeData? theme,
 }) async {
   usePhoneViewport(tester);
   await tester.pumpWidget(
     testApp(
+      theme: theme,
       overrides: wishlistOverrides(
         api: fixtureApi(),
         prefs: prefs,
@@ -180,6 +183,70 @@ void main() {
     await tester.pump(const Duration(seconds: 6));
     await settle(tester);
     expect(find.text(WishlistStrings.catalogCount('12')), findsOneWidget);
+    await unmount(tester);
+  });
+
+  testWidgets('sort, weapon and edition filters are remembered', (
+    tester,
+  ) async {
+    final prefs = await createTestPrefs();
+    await _pump(tester, prefs: prefs);
+    // Sort by name.
+    await tester.tap(find.text(WishlistStrings.sortRarity));
+    await settle(tester, 30);
+    await tester.tap(find.text(WishlistStrings.sortName).last);
+    await settle(tester, 30);
+    // Weapon: Vandal.
+    await tester.tap(find.text(WishlistStrings.allWeapons));
+    await settle(tester);
+    await tester.tap(find.widgetWithText(ListTile, 'Vandal'));
+    await settle(tester);
+    expect(find.text(WishlistStrings.catalogCount('2')), findsOneWidget);
+    // Search text is not remembered.
+    await tester.enterText(find.byType(TextField), 'reaver');
+    await settle(tester);
+    await unmount(tester);
+
+    await _pump(tester, prefs: prefs);
+    expect(find.text(WishlistStrings.sortName), findsOneWidget);
+    expect(find.text('Vandal'), findsWidgets);
+    expect(find.text(WishlistStrings.catalogCount('2')), findsOneWidget);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller?.text,
+      isEmpty,
+    );
+
+    // "Bỏ lọc" clears the filters (and the remembered ones).
+    // At the end of the chip row: scroll it into view first.
+    await tester.ensureVisible(find.text(CommonStrings.clearFilters));
+    await settle(tester);
+    await tester.tap(find.text(CommonStrings.clearFilters));
+    await settle(tester);
+    expect(find.text(WishlistStrings.catalogCount('12')), findsOneWidget);
+    await unmount(tester);
+    await _pump(tester, prefs: prefs);
+    expect(find.text(WishlistStrings.catalogCount('12')), findsOneWidget);
+    expect(find.text(WishlistStrings.sortName), findsOneWidget);
+    await unmount(tester);
+  });
+
+  testWidgets('light theme at 200 % text on 360 dp: no overflow', (
+    tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pump(
+      tester,
+      prefs: await createTestPrefs(),
+      theme: buildLightTheme(),
+    );
+    expect(tester.takeException(), isNull);
+    await tester.scrollUntilVisible(
+      find.text('Ghost Thinh Lặng'),
+      300,
+      scrollable: _grid,
+    );
+    expect(tester.takeException(), isNull);
     await unmount(tester);
   });
 

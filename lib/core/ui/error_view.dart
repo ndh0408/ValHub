@@ -5,7 +5,9 @@ import '../auth/auth_routes.dart';
 import '../l10n/common_strings.dart';
 import '../network/error_classifier.dart';
 import '../network/riot_exception.dart';
+import '../theme/app_theme.dart';
 import '../util/format.dart';
+import 'empty_view.dart';
 
 /// User-facing description of an error.
 @immutable
@@ -112,38 +114,87 @@ class ErrorView extends StatelessWidget {
         : null;
 
     if (compact) {
-      return ListTile(
-        leading: Icon(d.icon, color: theme.colorScheme.error),
-        title: Text(d.title ?? d.message),
-        subtitle: d.title == null ? null : Text(d.message),
-        trailing: button,
+      final error = theme.colorScheme.error;
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(14, 10, 8, 10),
+          decoration: BoxDecoration(
+            color: error.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(ValRadius.small),
+            border: Border.all(color: error.withValues(alpha: 0.25)),
+          ),
+          child: Row(
+            children: [
+              Icon(d.icon, color: error, size: 22),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      d.title ?? d.message,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (d.title != null)
+                      Text(
+                        d.message,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              if (d.needsLogin)
+                TextButton(
+                  onPressed: () => context.push(
+                    AuthRoutes.loginPath(reauthPuuid: d.puuid ?? puuid),
+                  ),
+                  child: const Text(CommonStrings.signInAgain),
+                )
+              else if (onRetry != null && d.canRetry)
+                TextButton(
+                  onPressed: onRetry,
+                  child: const Text(CommonStrings.retry),
+                ),
+            ],
+          ),
+        ),
       );
     }
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(d.icon, size: 40, color: theme.colorScheme.error),
-            const SizedBox(height: 12),
-            if (d.title != null) ...[
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 360),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              StateIcon(icon: d.icon, color: theme.colorScheme.error),
+              const SizedBox(height: 16),
+              if (d.title != null) ...[
+                Text(
+                  d.title!,
+                  style: theme.textTheme.titleMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 6),
+              ],
               Text(
-                d.title!,
-                style: theme.textTheme.titleMedium,
+                d.message,
                 textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  height: 1.4,
+                ),
               ),
-              const SizedBox(height: 4),
+              if (button != null) ...[const SizedBox(height: 20), button],
             ],
-            Text(
-              d.message,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-            if (button != null) ...[const SizedBox(height: 16), button],
-          ],
+          ),
         ),
       ),
     );

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -8,6 +7,8 @@ import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
+import '../../../core/ui/countdown_ring.dart';
 import '../../../core/ui/countdown_text.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
@@ -18,6 +19,9 @@ import '../data/live_game_logic.dart';
 import '../data/live_game_models.dart';
 import '../live_game_strings.dart';
 import '../providers/live_game_providers.dart';
+
+/// Typical length of agent select (competitive: 85 s), for the timer ring.
+const kAgentSelectPeriod = Duration(seconds: 85);
 
 /// "Đặc vụ" tab of agent select (G4): 5-column agent grid; tap = hover
 /// (G-4), long press = lock (G-5). Every call is a user gesture.
@@ -39,6 +43,7 @@ class _AgentSelectViewState extends ConsumerState<AgentSelectView> {
 
   Future<void> _hover(Agent agent) async {
     if (_busy) return;
+    Haptics.selection();
     setState(() => _busy = true);
     try {
       await _controller.hoverAgent(agent.uuid);
@@ -54,7 +59,7 @@ class _AgentSelectViewState extends ConsumerState<AgentSelectView> {
   Future<void> _lock(Agent agent) async {
     if (_busy) return;
     setState(() => _busy = true);
-    unawaited(HapticFeedback.mediumImpact());
+    Haptics.medium();
     try {
       await _controller.lockAgent(agent.uuid);
       if (mounted) {
@@ -107,7 +112,8 @@ class _AgentSelectViewState extends ConsumerState<AgentSelectView> {
       );
     } else {
       grid = SliverPadding(
-        padding: const EdgeInsets.fromLTRB(12, 4, 12, 24),
+        // Room under the last row so it can scroll clear of a snackbar.
+        padding: const EdgeInsets.fromLTRB(12, 4, 12, 88),
         sliver: SliverLayoutBuilder(
           builder: (context, constraints) {
             const columns = 5;
@@ -149,7 +155,7 @@ class _AgentSelectViewState extends ConsumerState<AgentSelectView> {
       );
     }
 
-    return RefreshIndicator(
+    return AdaptiveRefresh(
       onRefresh: _controller.refresh,
       child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -213,6 +219,13 @@ class _AgentSelectInfo extends StatelessWidget {
               ),
               if (endsAt != null) ...[
                 const SizedBox(width: 8),
+                CountdownRing(
+                  expiresAt: endsAt,
+                  period: kAgentSelectPeriod,
+                  size: 18,
+                  color: colors.warning,
+                ),
+                const SizedBox(width: 6),
                 CountdownText(
                   expiresAt: endsAt,
                   format: (d) => formatMinutesSeconds(d, padMinutes: false),
@@ -328,7 +341,8 @@ class AgentTile extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: Container(
+                    child: AnimatedContainer(
+                      duration: ValMotion.fast,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: theme.colorScheme.surfaceContainerHighest,
@@ -336,16 +350,22 @@ class AgentTile extends StatelessWidget {
                           color: borderColor,
                           width: selected ? 2.5 : 1,
                         ),
+                        boxShadow: selected
+                            ? [
+                                BoxShadow(
+                                  color: borderColor.withValues(alpha: 0.45),
+                                  blurRadius: 10,
+                                ),
+                              ]
+                            : null,
                       ),
                       padding: const EdgeInsets.all(2),
                       child: ClipOval(
-                        child: Opacity(
-                          opacity: state.isDimmed ? 0.35 : 1,
-                          child: NetImage(
-                            agent.displayIcon,
-                            fit: BoxFit.cover,
-                            showSkeleton: false,
-                          ),
+                        child: NetImage(
+                          agent.displayIcon,
+                          fit: BoxFit.cover,
+                          showSkeleton: false,
+                          opacity: state.isDimmed ? 0.35 : null,
                         ),
                       ),
                     ),

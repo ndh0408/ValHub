@@ -105,6 +105,19 @@ abstract final class SettingsStrings {
   static String logFileHeader(String appName, String version) =>
       '$appName $version — Nhật ký phiên';
 
+  // Session log filter (remembered per device)
+  static const logFilterAll = 'Tất cả';
+  static const logFilterErrors = 'Lỗi';
+  static const logFilterHttp = 'HTTP';
+  static const logFilterAuth = 'Đăng nhập';
+  static const logFilterEmpty = 'Không có mục nào khớp bộ lọc này.';
+
+  // Welcome hero (S01)
+  static const welcomeKicker = 'TRỢ THỦ VALORANT TIẾNG VIỆT';
+  static const welcomeBulletStoreDetail = 'Xem giá, độ hiếm, đếm ngược làm mới';
+  static const welcomeBulletProfileDetail = 'RR từng trận, rank đối thủ';
+  static const welcomeBulletWishlistDetail = 'Báo ngay khi skin bạn săn lên kệ';
+
   // About screen (S72)
   static const aboutCreditsHeader = 'NGUỒN DỮ LIỆU';
   static const aboutCreditContent = 'valorant-api.com';

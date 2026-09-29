@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:valvn/core/ui/floating_nav_bar.dart';
 import 'package:valvn/app/app.dart';
 import 'package:valvn/app/router.dart';
 import 'package:valvn/core/accounts/account.dart';
@@ -86,7 +87,10 @@ Future<void> _settle(WidgetTester tester) async {
 
 Future<void> _tapTab(WidgetTester tester, String label) async {
   await tester.tap(
-    find.descendant(of: find.byType(NavigationBar), matching: find.text(label)),
+    find.descendant(
+      of: find.byType(FloatingNavBar),
+      matching: find.text(label),
+    ),
   );
   await _settle(tester);
 }
@@ -175,7 +179,7 @@ void main() {
     router.go('/collection/wishlist');
     await _settle(tester);
     expect(find.byType(WishlistScreen), findsOneWidget);
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.byType(FloatingNavBar), findsOneWidget);
 
     router.go('/profile/friends');
     await _settle(tester);

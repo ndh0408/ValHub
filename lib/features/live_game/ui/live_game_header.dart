@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/net_image.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/xmpp/xmpp.dart';
 import '../data/live_game_logic.dart';
@@ -12,10 +13,11 @@ import '../live_game_strings.dart';
 import '../providers/live_game_providers.dart';
 import 'live_widgets.dart';
 
-/// Header of the "Chi tiết trận" sheet (G3): title, refresh ring, close,
-/// then the map banner (splash, map, mode, status pill) and the live score.
-/// Screens shorter than this get the compact header (small phones, large
-/// text): one-line banner and an inline live score.
+/// Header of the "Chi tiết trận" sheet (G3, ValBuddy "Game Details"):
+/// bold title + round close button, a large rounded map splash, then map
+/// name / mode with the refresh ring and the status chip, and the live
+/// score. Screens shorter than this get the compact header (small phones,
+/// large text): a slimmer splash and an inline live score.
 const kCompactLiveHeaderHeight = 720.0;
 
 class LiveSheetHeader extends ConsumerWidget {
@@ -43,7 +45,7 @@ class LiveSheetHeader extends ConsumerWidget {
         Center(
           child: Container(
             margin: const EdgeInsets.only(top: 8),
-            width: 32,
+            width: 36,
             height: 4,
             decoration: BoxDecoration(
               color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
@@ -52,7 +54,7 @@ class LiveSheetHeader extends ConsumerWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
+          padding: const EdgeInsets.fromLTRB(20, 4, 8, 4),
           child: Row(
             children: [
               Expanded(
@@ -60,12 +62,19 @@ class LiveSheetHeader extends ConsumerWidget {
                   LiveGameStrings.sheetTitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.titleLarge,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
-              LiveRefreshRing(puuid: puuid),
-              IconButton(
+              // Outside a match there is no status row: keep the ring here.
+              if (status == null) LiveRefreshRing(puuid: puuid),
+              IconButton.filledTonal(
                 tooltip: LiveGameStrings.close,
+                style: IconButton.styleFrom(
+                  backgroundColor: theme.colorScheme.surfaceContainerHigh,
+                  foregroundColor: theme.colorScheme.onSurface,
+                ),
                 icon: const Icon(Icons.close),
                 onPressed: () => Navigator.of(context).maybePop(),
               ),
@@ -74,7 +83,7 @@ class LiveSheetHeader extends ConsumerWidget {
         ),
         if (status != null)
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
             child: LiveMapBanner(
               mapName: liveMapName(db, mapId),
               splash: db.mapByUrl(mapId)?.splash,
@@ -85,6 +94,7 @@ class LiveSheetHeader extends ConsumerWidget {
               ),
               status: status,
               compact: compact,
+              trailing: LiveRefreshRing(puuid: puuid, size: 36),
             ),
           ),
         if (match != null && !match.isPregame)
@@ -94,8 +104,8 @@ class LiveSheetHeader extends ConsumerWidget {
   }
 }
 
-/// Status pill, map name (Anton) and mode, centred on the sheet's teal
-/// hero (Figma). [splash] is kept for callers; the Figma layout has no art.
+/// Large rounded map splash, then the map name (bold) and mode (muted)
+/// with an optional [trailing] (refresh ring) and the status chip.
 class LiveMapBanner extends StatelessWidget {
   const LiveMapBanner({
     super.key,
@@ -104,6 +114,7 @@ class LiveMapBanner extends StatelessWidget {
     required this.mode,
     required this.status,
     this.compact = false,
+    this.trailing,
   });
 
   final String? mapName;
@@ -111,56 +122,71 @@ class LiveMapBanner extends StatelessWidget {
   final String mode;
   final LiveStatus status;
 
-  /// One row (map + mode | pill) for short screens.
+  /// Slimmer splash for short screens.
   final bool compact;
+
+  /// Shown before the status chip (the refresh ring).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final onSurface = theme.colorScheme.onSurface;
-    final name = Text(
-      (mapName ?? LiveGameStrings.sheetTitle).toUpperCase(),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      textAlign: compact ? TextAlign.start : TextAlign.center,
-      style: ValText.display(compact ? 26 : 40, color: onSurface),
-    );
-    final modeText = Text(
-      mode,
-      maxLines: compact ? 1 : 2,
-      overflow: TextOverflow.ellipsis,
-      textAlign: compact ? TextAlign.start : TextAlign.center,
-      style: (compact ? theme.textTheme.bodySmall : theme.textTheme.bodyMedium)
-          ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-    );
-    // Figma: no card, the map sits centred on the sheet's teal hero.
-    return compact
-        ? Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [name, modeText],
+    final art = splash;
+    final hasArt = art != null && art.isNotEmpty;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (hasArt) ...[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(ValRadius.card),
+            child: AspectRatio(
+              aspectRatio: compact ? 3.6 : 2.5,
+              child: ColoredBox(
+                color: theme.colorScheme.surfaceContainerHigh,
+                child: NetImage(
+                  art,
+                  fit: BoxFit.cover,
+                  error: const SizedBox.shrink(),
                 ),
               ),
-              const SizedBox(width: 8),
-              Flexible(child: LiveStatusPill(status)),
-            ],
-          )
-        : Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                LiveStatusPill(status),
-                const SizedBox(height: 10),
-                name,
-                const SizedBox(height: 4),
-                modeText,
-              ],
             ),
-          );
+          ),
+          const SizedBox(height: 10),
+        ],
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    mapName ?? LiveGameStrings.sheetTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  Text(
+                    mode,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (trailing != null) ...[const SizedBox(width: 4), trailing!],
+            const SizedBox(width: 4),
+            Flexible(child: LiveStatusPill(status)),
+          ],
+        ),
+      ],
+    );
   }
 }
 
@@ -180,8 +206,13 @@ class LiveScoreBanner extends ConsumerWidget {
     if (score == null) return const SizedBox.shrink();
     final theme = Theme.of(context);
     final colors = valColorsOf(context);
-    final style = ValText.display(compact ? 30 : 64)
-        .copyWith(height: 1.05, color: theme.colorScheme.onSurface);
+    final style = TextStyle(
+      fontSize: compact ? 28 : 52,
+      height: 1.05,
+      fontWeight: FontWeight.w800,
+      fontFeatures: const [FontFeature.tabularFigures()],
+      color: theme.colorScheme.onSurface,
+    );
     final label = Text(
       LiveGameStrings.liveScore.toUpperCase(),
       maxLines: 1,

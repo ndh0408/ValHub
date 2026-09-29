@@ -96,8 +96,13 @@ void main() {
     await pumpProfile(tester, env, screen, height: 2600);
     await settle(tester);
 
-    await tester.ensureVisible(find.text('Sinh Tử'));
-    await tester.tap(find.text('Sinh Tử'));
+    // The mode chip (match cards also show their mode).
+    final chip = find.descendant(
+      of: find.byType(SegmentedTabs<String?>),
+      matching: find.text('Sinh Tử'),
+    );
+    await tester.ensureVisible(chip);
+    await tester.tap(chip);
     await settle(tester);
 
     verify(
@@ -234,11 +239,17 @@ void main() {
     await pumpProfile(tester, env, screen, height: 900);
     await settle(tester);
 
-    await tester.drag(find.byType(Scrollable).first, const Offset(0, -300));
-    await settle(tester);
-    await tester.tap(
-      find.text(ProfileStrings.mapFilter(ProfileStrings.filterAll)),
+    // The profile header (card art, rank, form) is taller than one screen.
+    final mapChip = find.text(
+      ProfileStrings.mapFilter(ProfileStrings.filterAll),
     );
+    await tester.scrollUntilVisible(
+      mapChip,
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await settle(tester);
+    await tester.tap(mapChip);
     await settle(tester, frames: 12);
     expect(find.text(ProfileStrings.chooseMap), findsOneWidget);
     await tester.tap(find.text('District'));
@@ -246,7 +257,11 @@ void main() {
 
     // Every loaded match was on Ascent: nothing shown, no automatic paging.
     expect(find.text(ProfileStrings.mapFilter('District')), findsOneWidget);
-    await tester.drag(find.byType(Scrollable).first, const Offset(0, -300));
+    await tester.scrollUntilVisible(
+      find.text(ProfileStrings.noMatchesMap),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await settle(tester);
     expect(find.text(ProfileStrings.noMatchesMap), findsOneWidget);
     expect(find.text(ProfileStrings.kda(3, 1, 0)), findsNothing);
@@ -254,6 +269,11 @@ void main() {
     await settle(tester);
     expect(pages, before);
 
+    await tester.scrollUntilVisible(
+      find.text(CommonStrings.loadMore),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text(CommonStrings.loadMore));
     await settle(tester);
     expect(pages, before + 1);

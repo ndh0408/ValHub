@@ -7,6 +7,7 @@ import '../../../../core/domain/competitive/competitive.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/error_view.dart';
 import '../../../../core/ui/skeleton.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 
 /// Color of a match outcome (teal win, red loss, grey draw / unknown).
@@ -75,8 +76,29 @@ class SignedRrText extends StatelessWidget {
     style: (style ?? Theme.of(context).textTheme.labelLarge)?.copyWith(
       color: rrColor(context, rr),
       fontWeight: FontWeight.w700,
+      fontFeatures: const [FontFeature.tabularFigures()],
     ),
   );
+}
+
+/// "+24 RR" in a tinted pill (match cards, form card).
+class RrPill extends StatelessWidget {
+  const RrPill(this.rr, {super.key});
+
+  final int rr;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = rrColor(context, rr);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(ValRadius.pill),
+      ),
+      child: SignedRrText(rr, style: Theme.of(context).textTheme.labelSmall),
+    );
+  }
 }
 
 /// Label + value tile of a stats grid ("ACS" / "245").
@@ -186,8 +208,8 @@ class ProfileNavRow extends StatelessWidget {
         child: Row(
           children: [
             if (icon != null) ...[
-              Icon(icon, color: theme.colorScheme.primary),
-              const SizedBox(width: 16),
+              IconTile(icon: icon!, color: theme.colorScheme.primary),
+              const SizedBox(width: 14),
             ],
             Expanded(
               child: Column(
@@ -231,9 +253,40 @@ class MatchCardSkeleton extends StatelessWidget {
   const MatchCardSkeleton({super.key});
 
   @override
-  Widget build(BuildContext context) => const Padding(
-    padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
-    child: Skeleton(height: 72, radius: ValRadius.card),
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(ValRadius.card),
+      child: ColoredBox(
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        child: const SkeletonShimmer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Skeleton(height: 118, radius: 0, shimmer: false),
+              Padding(
+                padding: EdgeInsets.fromLTRB(14, 12, 14, 12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Skeleton(width: 150, height: 16, shimmer: false),
+                          SizedBox(height: 6),
+                          Skeleton(width: 120, height: 10, shimmer: false),
+                        ],
+                      ),
+                    ),
+                    Skeleton(width: 56, height: 10, shimmer: false),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
   );
 }
 

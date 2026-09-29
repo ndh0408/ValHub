@@ -5,9 +5,10 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../core/accounts/account_providers.dart';
 import '../../core/l10n/common_strings.dart';
-import '../../core/theme/app_theme.dart';
+import '../../core/ui/adaptive.dart';
 import '../../core/ui/empty_view.dart';
 import '../../core/ui/error_view.dart';
+import '../../core/ui/segmented_tabs.dart';
 import '../../core/ui/skeleton.dart';
 import 'data/live_game_logic.dart';
 import 'data/live_game_models.dart';
@@ -109,19 +110,9 @@ class LiveGameSheet extends ConsumerWidget {
           : content;
     }
 
-    final bg = Theme.of(context).scaffoldBackgroundColor;
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    return DecoratedBox(
-      // Figma: teal hero fading into the background.
-      decoration: BoxDecoration(
-        color: bg,
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color.lerp(bg, ValColors.liveTeal, dark ? 1 : 0.3)!, bg],
-          stops: const [0, 0.42],
-        ),
-      ),
+    return ColoredBox(
+      // ValBuddy: a plain sheet background under a large map splash.
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: SizedBox(
         height: height,
         child: ScaffoldMessenger(
@@ -157,42 +148,37 @@ class _PregameTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     final teams = splitTeams(match, puuid);
     final theme = Theme.of(context);
-    return DefaultTabController(
-      length: 2,
-      child: Column(
-        children: [
-          const TabBar(
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            tabs: [
-              Tab(text: LiveGameStrings.tabAgents),
-              Tab(text: LiveGameStrings.tabYourTeam),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
+    return LiveTabs(
+      labels: const [LiveGameStrings.tabAgents, LiveGameStrings.tabYourTeam],
+      children: [
+        AgentSelectView(puuid: puuid, match: match),
+        LiveRosterList(
+          puuid: puuid,
+          match: match,
+          players: teams.ally,
+          header: Padding(
+            padding: const EdgeInsets.fromLTRB(4, 4, 4, 10),
+            child: Row(
               children: [
-                AgentSelectView(puuid: puuid, match: match),
-                LiveRosterList(
-                  puuid: puuid,
-                  match: match,
-                  players: teams.ally,
-                  header: Padding(
-                    padding: const EdgeInsets.fromLTRB(4, 4, 4, 10),
-                    child: Text(
-                      LiveGameStrings.enemyHiddenInAgentSelect,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                Icon(
+                  Icons.visibility_off_outlined,
+                  size: 16,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    LiveGameStrings.enemyHiddenInAgentSelect,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -209,33 +195,12 @@ class _InGameTabs extends StatelessWidget {
     if (teams.isFreeForAll) {
       return LiveRosterList(puuid: puuid, match: match, players: teams.ally);
     }
-    return DefaultTabController(
-      length: 2,
-      child: Column(
-        children: [
-          const TabBar(
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            tabs: [
-              Tab(text: LiveGameStrings.tabYourTeam),
-              Tab(text: LiveGameStrings.tabEnemyTeam),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                LiveRosterList(puuid: puuid, match: match, players: teams.ally),
-                LiveRosterList(
-                  puuid: puuid,
-                  match: match,
-                  players: teams.enemy,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return LiveTabs(
+      labels: const [LiveGameStrings.tabYourTeam, LiveGameStrings.tabEnemyTeam],
+      children: [
+        LiveRosterList(puuid: puuid, match: match, players: teams.ally),
+        LiveRosterList(puuid: puuid, match: match, players: teams.enemy),
+      ],
     );
   }
 }
@@ -290,17 +255,16 @@ class _QuitBarState extends ConsumerState<_QuitBar> {
         child: OutlinedButton.icon(
           style: OutlinedButton.styleFrom(
             foregroundColor: error,
-            side: BorderSide(color: error),
+            backgroundColor: error.withValues(alpha: 0.10),
+            side: BorderSide(color: error.withValues(alpha: 0.8)),
             minimumSize: const Size.fromHeight(52),
+            shape: const StadiumBorder(),
           ),
           onPressed: _busy ? null : () => unawaited(_confirmAndQuit()),
           icon: _busy
-              ? SizedBox.square(
+              ? const SizedBox.square(
                   dimension: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: error,
-                  ),
+                  child: CircularProgressIndicator.adaptive(strokeWidth: 2),
                 )
               : const Icon(Icons.logout),
           label: const Text(LiveGameStrings.quitMatch),
@@ -311,39 +275,76 @@ class _QuitBarState extends ConsumerState<_QuitBar> {
 }
 
 /// "Rời trận đấu?" confirmation (G10). `true` only when the user tapped
-/// "Rời trận".
+/// "Rời trận". Cupertino alert on iOS, Material alert elsewhere.
 Future<bool> showQuitMatchDialog(
   BuildContext context, {
   required bool pregame,
-}) async {
-  final result = await showDialog<bool>(
-    context: context,
-    builder: (context) {
-      final error = Theme.of(context).colorScheme.error;
-      return AlertDialog(
-        icon: Icon(Icons.warning_amber_rounded, color: error),
-        title: const Text(LiveGameStrings.quitConfirmTitle),
-        content: Text(
-          pregame
-              ? LiveGameStrings.quitConfirmBodyPregame
-              : LiveGameStrings.quitConfirmBodyInGame,
+}) => showConfirmDialog(
+  context,
+  title: LiveGameStrings.quitConfirmTitle,
+  message: pregame
+      ? LiveGameStrings.quitConfirmBodyPregame
+      : LiveGameStrings.quitConfirmBodyInGame,
+  confirmLabel: LiveGameStrings.quitMatch,
+  destructive: true,
+  icon: Icons.warning_amber_rounded,
+);
+
+/// Glass segmented control ("Đội của bạn · Đội địch") over swipeable pages.
+class LiveTabs extends StatefulWidget {
+  const LiveTabs({super.key, required this.labels, required this.children})
+    : assert(labels.length == children.length);
+
+  final List<String> labels;
+  final List<Widget> children;
+
+  @override
+  State<LiveTabs> createState() => _LiveTabsState();
+}
+
+class _LiveTabsState extends State<LiveTabs>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabs = TabController(
+    length: widget.labels.length,
+    vsync: this,
+  )..addListener(_onChange);
+  int _index = 0;
+
+  void _onChange() {
+    if (_tabs.index != _index && mounted) {
+      setState(() => _index = _tabs.index);
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabs
+      ..removeListener(_onChange)
+      ..dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SegmentedTabs<int>(
+          expand: true,
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+          tabs: [
+            for (var i = 0; i < widget.labels.length; i++)
+              SegmentedTab(value: i, label: widget.labels[i]),
+          ],
+          selected: _index,
+          onChanged: (i) {
+            setState(() => _index = i);
+            _tabs.animateTo(i);
+          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text(CommonStrings.cancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text(LiveGameStrings.quitMatch),
-          ),
-        ],
-      );
-    },
-  );
-  return result ?? false;
+        Expanded(
+          child: TabBarView(controller: _tabs, children: widget.children),
+        ),
+      ],
+    );
+  }
 }

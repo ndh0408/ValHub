@@ -7,7 +7,9 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/logging/session_log.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/storage/ui_memory.dart';
 import '../../../core/ui/empty_view.dart';
+import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
 import '../providers/settings_providers.dart';
@@ -153,18 +155,79 @@ class SessionLogScreen extends ConsumerWidget {
 /// `monospace` resolves on Android; iOS needs a named face.
 const _monoFallback = ['Menlo', 'Courier', 'RobotoMono'];
 
-class _LogList extends ConsumerWidget {
+/// Session-log filter chips; the choice is remembered on the device
+/// (`UiMemory` key `settings.log.level`).
+enum SessionLogFilter {
+  all,
+  errors,
+  http,
+  auth;
+
+  static const memoryKey = 'settings.log.level';
+
+  String get label => switch (this) {
+    all => SettingsStrings.logFilterAll,
+    errors => SettingsStrings.logFilterErrors,
+    http => SettingsStrings.logFilterHttp,
+    auth => SettingsStrings.logFilterAuth,
+  };
+
+  bool matches(SessionLogEntry e) => switch (this) {
+    all => true,
+    errors => isErrorEntry(e),
+    http => e.event.startsWith('http'),
+    auth => _authPrefixes.any(e.event.startsWith),
+  };
+
+  static const _authPrefixes = ['reauth', 'login', 'auth', 'session'];
+
+  /// HTTP ≥ 400 or an event named like a failure.
+  static bool isErrorEntry(SessionLogEntry e) {
+    final status = e.status;
+    if (status != null && status >= 400) return true;
+    final name = e.event.toLowerCase();
+    return const [
+      'fail',
+      'error',
+      'needslogin',
+      'mismatch',
+      'denied',
+    ].any(name.contains);
+  }
+}
+
+class _LogList extends ConsumerStatefulWidget {
   const _LogList({required this.entries});
 
   final List<SessionLogEntry> entries;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_LogList> createState() => _LogListState();
+}
+
+class _LogListState extends ConsumerState<_LogList> {
+  late SessionLogFilter _filter = ref
+      .read(uiMemoryProvider)
+      .readEnum(
+        SessionLogFilter.memoryKey,
+        SessionLogFilter.values,
+        SessionLogFilter.all,
+      );
+
+  void _setFilter(SessionLogFilter f) {
+    setState(() => _filter = f);
+    ref.read(uiMemoryProvider).writeEnum(SessionLogFilter.memoryKey, f);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final now = ref.watch(clockProvider).now();
+    final entries = widget.entries;
     // Newest first, with a day header whenever the local day changes.
     final rows = <Object>[];
     DateTime? day;
     for (final e in entries.reversed) {
+      if (!_filter.matches(e)) continue;
       final local = e.time.toLocal();
       final d = DateTime(local.year, local.month, local.day);
       if (d != day) {
@@ -177,16 +240,34 @@ class _LogList extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _NoteBanner(count: entries.length),
+        SegmentedTabs<SessionLogFilter>(
+          tabs: [
+            for (final f in SessionLogFilter.values)
+              SegmentedTab(value: f, label: f.label),
+          ],
+          selected: _filter,
+          onChanged: _setFilter,
+        ),
         const Divider(height: 1),
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.only(bottom: 24),
-            itemCount: rows.length,
-            itemBuilder: (context, i) => switch (rows[i]) {
-              final DateTime d => _DayHeader(formatDayHeader(d, now)),
-              final SessionLogEntry e => _LogRow(entry: e),
-              _ => const SizedBox.shrink(),
-            },
+          child: AnimatedSwitcher(
+            duration: ValMotion.fast,
+            child: rows.isEmpty
+                ? const EmptyView(
+                    key: ValueKey('empty'),
+                    message: SettingsStrings.logFilterEmpty,
+                    icon: Icons.filter_alt_off_outlined,
+                  )
+                : ListView.builder(
+                    key: ValueKey(_filter),
+                    padding: const EdgeInsets.only(bottom: 24),
+                    itemCount: rows.length,
+                    itemBuilder: (context, i) => switch (rows[i]) {
+                      final DateTime d => _DayHeader(formatDayHeader(d, now)),
+                      final SessionLogEntry e => _LogRow(entry: e),
+                      _ => const SizedBox.shrink(),
+                    },
+                  ),
           ),
         ),
       ],
@@ -269,55 +350,89 @@ class _LogRow extends StatelessWidget {
     );
     final target = entry.target;
     final detail = entry.detail;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(_clock(entry.time), style: mono.copyWith(color: muted)),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  entry.event,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.labelLarge,
-                ),
-              ),
-              if (entry.ms != null) ...[
-                Text(
-                  '${formatNumber(entry.ms!)} ms',
-                  style: mono.copyWith(color: muted),
-                ),
-                const SizedBox(width: 8),
-              ],
-              if (entry.status != null) _StatusChip(entry.status!),
-            ],
-          ),
-          if (target != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Text(
-                target,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: mono,
+    final colors = valColorsOf(context);
+    final level = SessionLogFilter.isErrorEntry(entry)
+        ? colors.loss
+        : (entry.status != null && entry.status! < 300)
+        ? colors.win
+        : colors.track;
+    return Container(
+      margin: const EdgeInsets.fromLTRB(12, 3, 12, 3),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ColoredBox(color: level, child: const SizedBox(width: 3)),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                child: _body(theme, muted, mono, target, detail),
               ),
             ),
-          if (detail != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _body(
+    ThemeData theme,
+    Color muted,
+    TextStyle mono,
+    String? target,
+    String? detail,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(_clock(entry.time), style: mono.copyWith(color: muted)),
+            const SizedBox(width: 10),
+            Expanded(
               child: Text(
-                detail,
-                maxLines: 3,
+                entry.event,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelLarge,
+              ),
+            ),
+            if (entry.ms != null) ...[
+              Text(
+                '${formatNumber(entry.ms!)} ms',
                 style: mono.copyWith(color: muted),
               ),
+              const SizedBox(width: 8),
+            ],
+            if (entry.status != null) _StatusChip(entry.status!),
+          ],
+        ),
+        if (target != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(
+              target,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: mono,
             ),
-        ],
-      ),
+          ),
+        if (detail != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(
+              detail,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: mono.copyWith(color: muted),
+            ),
+          ),
+      ],
     );
   }
 }

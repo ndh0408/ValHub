@@ -4,6 +4,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../core/l10n/common_strings.dart';
+import '../../core/theme/app_theme.dart';
+import '../../core/ui/adaptive.dart';
 import 'skin_detail_strings.dart';
 
 /// Opens S16 (full-screen looping skin video with a mute toggle) above
@@ -111,6 +113,7 @@ class _SkinVideoViewState extends State<SkinVideoView> {
   }
 
   void _toggleMute() {
+    Haptics.selection();
     final next = !_muted;
     setState(() => _muted = next);
     final c = _controller;
@@ -120,6 +123,7 @@ class _SkinVideoViewState extends State<SkinVideoView> {
   void _togglePlay() {
     final c = _controller;
     if (c == null || !_ready) return;
+    Haptics.light();
     unawaited(c.value.isPlaying ? c.pause() : c.play());
   }
 
@@ -130,7 +134,9 @@ class _SkinVideoViewState extends State<SkinVideoView> {
     if (_error != null) {
       body = _VideoError(onRetry: () => unawaited(_start()));
     } else if (!_ready || c == null) {
-      body = const CircularProgressIndicator(color: Colors.white);
+      body = const CircularProgressIndicator.adaptive(
+        valueColor: AlwaysStoppedAnimation(Colors.white),
+      );
     } else {
       final ratio = c.value.aspectRatio;
       body = Semantics(
@@ -146,14 +152,51 @@ class _SkinVideoViewState extends State<SkinVideoView> {
                 children: [
                   AspectRatio(
                     aspectRatio: ratio.isFinite && ratio > 0 ? ratio : 16 / 9,
-                    child: VideoPlayer(c),
-                  ),
-                  if (!_playing)
-                    const Icon(
-                      Icons.play_circle_fill,
-                      size: 72,
-                      color: Colors.white70,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        VideoPlayer(c),
+                        // Thin scrubbable progress bar along the bottom edge.
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: VideoProgressIndicator(
+                            c,
+                            allowScrubbing: true,
+                            padding: const EdgeInsets.only(top: 12),
+                            colors: VideoProgressColors(
+                              playedColor: ValColors.red,
+                              bufferedColor: Colors.white.withValues(
+                                alpha: 0.35,
+                              ),
+                              backgroundColor: Colors.white.withValues(
+                                alpha: 0.15,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
+                  AnimatedSwitcher(
+                    duration: ValMotion.fast,
+                    transitionBuilder: (child, animation) => FadeTransition(
+                      opacity: animation,
+                      child: ScaleTransition(scale: animation, child: child),
+                    ),
+                    child: _playing
+                        ? const SizedBox.shrink()
+                        : DecoratedBox(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black.withValues(alpha: 0.45),
+                            ),
+                            child: const Icon(
+                              Icons.play_circle_fill,
+                              size: 72,
+                              color: Colors.white,
+                            ),
+                          ),
+                  ),
                 ],
               ),
             ),

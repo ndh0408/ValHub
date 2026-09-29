@@ -18,6 +18,13 @@ abstract final class StoreStrings {
   static String resetsIn(String t) => 'Làm mới sau $t';
   static const dailyTotalLabel = 'Tổng';
   static const dailyEmpty = 'Hôm nay cửa hàng không có skin nào.';
+  static const dailyEmptyTitle = 'Cửa hàng trống';
+
+  /// "Đã sở hữu 1/4" (daily summary chip).
+  static String ownedCount(int owned, int total) => 'Đã sở hữu $owned/$total';
+
+  /// "2 trong wishlist" (daily summary chip).
+  static String wishlistCount(int n) => '$n trong wishlist';
 
   // Night Market (S11).
   static String nightMarketEndsIn(String t) => 'Kết thúc sau $t';
@@ -26,6 +33,10 @@ abstract final class StoreStrings {
   static const nightMarketNote =
       'Ưu đãi Chợ Đêm là riêng cho tài khoản của bạn và không thể làm mới.';
   static const nightMarketEmpty = 'Hiện chưa có Chợ Đêm.';
+  static const nightMarketEmptyTitle = 'Chợ Đêm chưa mở';
+
+  /// Offer not yet flipped in game.
+  static const nightMarketUnrevealed = 'Chưa lật';
   static const priceOriginal = 'Giá gốc';
   static const priceDiscounted = 'Giá ưu đãi';
 
@@ -33,10 +44,17 @@ abstract final class StoreStrings {
   static String accessoryRefreshIn(String t) => 'Làm mới sau $t';
   static String accessoryFrom(String contract) => 'Từ: $contract';
   static const accessoryEmpty = 'Cửa hàng phụ kiện hiện không có gì.';
+  static const accessoryEmptyTitle = 'Chưa có phụ kiện';
 
   // Bundles (S13 / S14).
   static String bundleEndsIn(String t) => 'Còn $t';
   static const bundlesEmpty = 'Hiện không có bundle nào đang mở bán.';
+  static const bundlesEmptyTitle = 'Chưa có bundle';
+  static const bundleNotFoundTitle = 'Bundle đã hết hạn';
+
+  /// "Đã sở hữu 2/6 vật phẩm" (bundle detail).
+  static String bundleOwnedCount(int owned, int total) =>
+      'Đã sở hữu $owned/$total vật phẩm';
   static const bundlePriceLabel = 'Giá bundle';
   static const bundleBuySeparateLabel = 'Mua lẻ';
   static const bundleSavingsLabel = 'Tiết kiệm';

@@ -39,22 +39,21 @@ void main() {
     );
 
     expect(find.text('Bộ sưu tập'), findsOneWidget);
+    // Banner caption + "Đổi thẻ người chơi" row value.
+    expect(find.text('Thẻ Bộ Đôi Ngời Sáng'), findsNWidgets(2));
     expect(
-      find.text(CollectionStrings.equippedCard.toUpperCase()),
+      find.bySemanticsLabel(RegExp(CollectionStrings.equippedCard)),
       findsOneWidget,
     );
-    expect(find.text('Thẻ Bộ Đôi Ngời Sáng'), findsNWidgets(2));
-    expect(find.text('Tài Lộc'), findsNWidgets(2));
+    expect(find.text(CollectionStrings.playerTitleTitle), findsOneWidget);
+    expect(find.text('Tài Lộc'), findsOneWidget);
     expect(find.text(CollectionStrings.rowWeapons), findsOneWidget);
     expect(find.text(CollectionStrings.rowExpressions), findsOneWidget);
     expect(find.text(CollectionStrings.rowPresets), findsOneWidget);
     expect(find.text('Chưa có'), findsOneWidget);
 
     await scrollTo(tester, find.text(CollectionStrings.rowWishlist));
-    expect(
-      find.text(CollectionStrings.sectionBrowse.toUpperCase()),
-      findsOneWidget,
-    );
+    expect(find.text(CollectionStrings.sectionBrowse), findsOneWidget);
     expect(find.text('Phụ kiện súng'), findsOneWidget);
     expect(find.text('Trống'), findsOneWidget); // empty wishlist
 
@@ -131,10 +130,7 @@ void main() {
     riot.loadoutError = null;
     await tester.tap(find.text('Thử lại').first);
     await settle(tester);
-    expect(
-      find.text(CollectionStrings.equippedCard.toUpperCase()),
-      findsOneWidget,
-    );
+    expect(find.text('Thẻ Bộ Đôi Ngời Sáng'), findsWidgets);
     expect(tester.takeException(), isNull);
     await unmount(tester);
   });

@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../content/content_repository.dart';
 import '../l10n/content_strings.dart';
+import '../theme/app_theme.dart';
 import '../theme/tier_colors.dart';
 import 'net_image.dart';
 
@@ -49,7 +50,9 @@ class RankBadge extends ConsumerWidget {
     final text = Text(
       label,
       style: (style ?? Theme.of(context).textTheme.bodyMedium)?.copyWith(
-        color: t == null || t.isUnranked ? null : opaqueRgba(t.color),
+        color: t == null || t.isUnranked
+            ? null
+            : legibleAccent(context, opaqueRgba(t.color), min: 3.5),
       ),
     );
     return Flex(

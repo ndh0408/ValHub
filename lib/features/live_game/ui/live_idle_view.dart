@@ -4,6 +4,8 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
+import '../../../core/ui/empty_view.dart';
 import '../../../core/util/format.dart';
 import '../data/live_game_models.dart';
 import '../live_game_strings.dart';
@@ -37,26 +39,32 @@ class LiveIdleView extends ConsumerWidget {
       style: theme.textTheme.titleMedium,
     );
 
-    return RefreshIndicator(
+    final queueing = state.phase == LivePhase.queueing;
+    final tint = queueing ? colors.warning : theme.colorScheme.onSurfaceVariant;
+    return AdaptiveRefresh(
       onRefresh: () => ref.read(liveGameProvider(puuid).notifier).refresh(),
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
         children: [
           Center(
-            child: Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHigh,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 34,
-                color: state.phase == LivePhase.queueing
-                    ? colors.warning
-                    : theme.colorScheme.onSurfaceVariant,
+            child: SizedBox.square(
+              dimension: 88,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Searching: a spinning ring around the radar icon.
+                  if (queueing)
+                    SizedBox.square(
+                      dimension: 88,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: tint,
+                        backgroundColor: tint.withValues(alpha: 0.12),
+                      ),
+                    ),
+                  StateIcon(icon: icon, color: tint, size: 76),
+                ],
               ),
             ),
           ),

@@ -52,7 +52,9 @@ class RoundTimelineSliver extends StatelessWidget {
     }
     return SliverMainAxisGroup(
       slivers: [
-        SliverToBoxAdapter(child: _RoundStrip(rows: rows)),
+        SliverToBoxAdapter(
+          child: _RoundStrip(rows: rows, markHalves: showHalves),
+        ),
         SliverList.list(children: items),
       ],
     );
@@ -69,44 +71,64 @@ Color _roundColor(BuildContext context, bool? won) {
 }
 
 class _RoundStrip extends StatelessWidget {
-  const _RoundStrip({required this.rows});
+  const _RoundStrip({required this.rows, required this.markHalves});
 
   final List<RoundRow> rows;
 
+  /// Draw a side-switch marker between halves / overtime.
+  final bool markHalves;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-      child: Wrap(
-        spacing: 4,
-        runSpacing: 4,
-        children: [
-          for (final r in rows)
-            Tooltip(
-              message: ProfileStrings.joined([
-                ProfileStrings.round(r.number),
-                r.endType.label ?? CompetitiveStrings.noValue,
-              ]),
-              child: Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: _roundColor(context, r.won).withValues(alpha: 0.18),
-                  border: Border(
-                    bottom: BorderSide(
-                      color: _roundColor(context, r.won),
-                      width: 2,
-                    ),
-                  ),
-                ),
-                child: Icon(
-                  roundEndIcon(r.endType),
-                  size: 14,
-                  color: _roundColor(context, r.won),
-                ),
+    final theme = Theme.of(context);
+    final items = <Widget>[];
+    for (var i = 0; i < rows.length; i++) {
+      final r = rows[i];
+      if (markHalves && i > 0 && rows[i - 1].half != r.half) {
+        items.add(
+          Tooltip(
+            message: ProfileStrings.sideSwitch,
+            child: Container(
+              width: 3,
+              height: 28,
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onSurfaceVariant,
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
-        ],
+          ),
+        );
+      }
+      final color = _roundColor(context, r.won);
+      items.add(
+        Tooltip(
+          message: ProfileStrings.joined([
+            ProfileStrings.round(r.number),
+            if (r.won != null)
+              r.won! ? ProfileStrings.roundWon : ProfileStrings.roundLost,
+            r.endType.label ?? CompetitiveStrings.noValue,
+          ]),
+          child: Container(
+            width: 26,
+            height: 28,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(6),
+              border: Border(bottom: BorderSide(color: color, width: 2.5)),
+            ),
+            child: Icon(roundEndIcon(r.endType), size: 15, color: color),
+          ),
+        ),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Wrap(
+        spacing: 4,
+        runSpacing: 6,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: items,
       ),
     );
   }
@@ -120,17 +142,36 @@ class _HalfHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-      child: Text(
-        switch (half) {
-          MatchHalf.first => ProfileStrings.firstHalf,
-          MatchHalf.second => ProfileStrings.secondHalf,
-          MatchHalf.overtime => ProfileStrings.overtime,
-        },
-        style: theme.textTheme.labelMedium?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-          letterSpacing: 0.8,
+    final muted = theme.colorScheme.onSurfaceVariant;
+    return Semantics(
+      header: true,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
+        child: Row(
+          children: [
+            if (half != MatchHalf.first) ...[
+              Icon(Icons.swap_horiz_rounded, size: 16, color: muted),
+              const SizedBox(width: 6),
+            ],
+            Flexible(
+              child: Text(
+                switch (half) {
+                  MatchHalf.first => ProfileStrings.firstHalf,
+                  MatchHalf.second => ProfileStrings.secondHalf,
+                  MatchHalf.overtime => ProfileStrings.overtime,
+                },
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: muted,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Divider(height: 1, color: valColorsOf(context).hairline),
+            ),
+          ],
         ),
       ),
     );
@@ -162,7 +203,7 @@ class _RoundLine extends ConsumerWidget {
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: theme.colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(ValRadius.small),
         ),
         child: Stack(
           children: [
@@ -220,23 +261,25 @@ class _RoundLine extends ConsumerWidget {
                   ),
                   if (ceremony != null && ceremony.isNotEmpty) ...[
                     const SizedBox(width: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 1,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.secondary.withValues(
-                          alpha: 0.16,
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 1,
                         ),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        ceremony,
-                        maxLines: 1,
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.secondary,
-                          fontWeight: FontWeight.w700,
+                        decoration: BoxDecoration(
+                          color: valColorsOf(context).gold
+                              .withValues(alpha: 0.16),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          ceremony,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: valColorsOf(context).gold,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),
@@ -257,7 +300,8 @@ class _RoundLine extends ConsumerWidget {
         Text(
           ProfileStrings.score(row.myScore, row.otherScore),
           style: theme.textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
+            fontFeatures: const [FontFeature.tabularFigures()],
           ),
         ),
       ],

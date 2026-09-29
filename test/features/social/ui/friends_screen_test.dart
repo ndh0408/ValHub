@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/network/riot_exception.dart';
+import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/core/ui/skeleton.dart';
 import 'package:valvn/core/xmpp/xmpp.dart';
 import 'package:valvn/features/social/social_routes.dart';
@@ -80,13 +81,56 @@ void main() {
 
     expect(find.text('Bạn bè & trò chuyện'), findsOneWidget);
     expect(find.text('Tìm theo Riot ID…'), findsOneWidget);
-    expect(find.text('Trực tuyến (2)'), findsOneWidget);
-    expect(find.text('Ngoại tuyến (1)'), findsOneWidget);
+    // In a match → "Đang chơi"; in the lobby → "Trực tuyến".
+    expect(find.text('ĐANG CHƠI (1)'), findsOneWidget);
+    expect(find.text('TRỰC TUYẾN (1)'), findsOneWidget);
+    expect(find.text('NGOẠI TUYẾN (1)'), findsOneWidget);
     expect(find.text('Đang đấu · Ascent · 8 – 4'), findsOneWidget);
     expect(find.text('Đang ở sảnh chờ'), findsOneWidget);
     expect(find.text('Hoạt động 2 giờ trước'), findsOneWidget);
     expect(find.text('3'), findsOneWidget); // unread badge
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('quick filter is remembered; "Chưa đọc" shows unread only', (
+    tester,
+  ) async {
+    _seed(env);
+    await pumpSocial(tester, env, const FriendsScreen());
+    await settle(tester);
+    // Test glyphs are 1 em wide: the chip row scrolls.
+    await tester.ensureVisible(find.textContaining('Chưa đọc'));
+    await tester.tap(find.textContaining('Chưa đọc'));
+    await settle(tester);
+    expect(find.textContaining('Bee'), findsOneWidget);
+    expect(find.textContaining('Cú Đêm'), findsNothing);
+    expect(env.prefs.getString('ui.social.friends.filter'), 'unread');
+
+    // Reopening the screen keeps the filter.
+    await tester.pumpWidget(const SizedBox());
+    await pumpSocial(tester, env, const FriendsScreen());
+    await settle(tester);
+    expect(find.textContaining('Cú Đêm'), findsNothing);
+    await tester.ensureVisible(find.text('Tất cả'));
+    await tester.tap(find.text('Tất cả'));
+    await settle(tester);
+    expect(find.textContaining('Cú Đêm'), findsOneWidget);
+  });
+
+  testWidgets('fits 360 dp at 200 % text, dark and light', (tester) async {
+    _seed(env);
+    for (final theme in [buildDarkTheme(), buildLightTheme()]) {
+      await pumpSocial(
+        tester,
+        env,
+        const FriendsScreen(),
+        theme: theme,
+        textScale: 2,
+      );
+      await settle(tester);
+      expect(tester.takeException(), isNull);
+      expect(find.text('ĐANG CHƠI (1)'), findsOneWidget);
+    }
   });
 
   testWidgets('search filters by Riot ID without diacritics', (tester) async {
@@ -98,7 +142,7 @@ void main() {
     await settle(tester);
     expect(find.textContaining('Cú Đêm'), findsOneWidget);
     expect(find.textContaining('Bee'), findsNothing);
-    expect(find.text('Trực tuyến (2)'), findsNothing);
+    expect(find.text('TRỰC TUYẾN (1)'), findsNothing);
 
     await tester.enterText(find.byType(TextField), 'zzz');
     await settle(tester);
@@ -161,7 +205,7 @@ void main() {
       find.text('Mất kết nối trò chuyện. Đang kết nối lại…'),
       findsOneWidget,
     );
-    expect(find.text('Trực tuyến (2)'), findsOneWidget);
+    expect(find.text('ĐANG CHƠI (1)'), findsOneWidget);
   });
 
   testWidgets('tapping a friend opens the chat', (tester) async {

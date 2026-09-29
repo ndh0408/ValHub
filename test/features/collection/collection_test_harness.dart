@@ -116,6 +116,7 @@ List<Override> collectionOverrides({
 Widget collectionApp({
   required List<Override> overrides,
   required Widget home,
+  ThemeData? theme,
 }) {
   final router = GoRouter(
     initialLocation: '/test',
@@ -138,7 +139,10 @@ Widget collectionApp({
   return ProviderScope(
     overrides: overrides,
     retry: (_, _) => null,
-    child: MaterialApp.router(theme: buildDarkTheme(), routerConfig: router),
+    child: MaterialApp.router(
+      theme: theme ?? buildDarkTheme(),
+      routerConfig: router,
+    ),
   );
 }
 
@@ -166,12 +170,14 @@ Future<void> pumpCollection(
   required FakeRiot riot,
   required Prefs prefs,
   MemoryJsonCache? cache,
+  ThemeData? theme,
 }) async {
   usePhoneViewport(tester);
   await tester.pumpWidget(
     collectionApp(
       overrides: collectionOverrides(riot: riot, prefs: prefs, cache: cache),
       home: screen,
+      theme: theme,
     ),
   );
   await settle(tester);

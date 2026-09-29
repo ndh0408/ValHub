@@ -6,6 +6,7 @@ import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive.dart';
 import '../../../core/l10n/common_strings.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
@@ -13,6 +14,7 @@ import '../../../core/ui/error_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/section_header.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../profile_strings.dart';
 import 'widgets/rank_card.dart' show formatRr;
@@ -44,7 +46,7 @@ class _RankUpCalculatorScreenState
 
   Widget _body(String puuid) {
     final summary = ref.watch(rankSummaryProvider(puuid));
-    return RefreshIndicator(
+    return AdaptiveRefresh(
       onRefresh: () async {
         ref.invalidate(competitiveUpdatesProvider(puuid));
         await ref
@@ -135,7 +137,8 @@ class _CurrentRankTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
+    return ValCard(
+      padding: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
@@ -148,7 +151,7 @@ class _CurrentRankTile extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.titleMedium?.copyWith(
-                  color: rank.color,
+                  color: legibleAccent(context, rank.color, min: 3.5),
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -201,7 +204,10 @@ class _TargetPicker extends ConsumerWidget {
                       button: true,
                       label: rank.tierName,
                       child: InkWell(
-                        onTap: () => onSelected(t),
+                        onTap: () {
+                          if (t != selected) Haptics.selection();
+                          onSelected(t);
+                        },
                         borderRadius: BorderRadius.circular(12),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 150),
@@ -310,7 +316,8 @@ class _ResultCards extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Card(
+          ValCard(
+            padding: EdgeInsets.zero,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
@@ -322,7 +329,8 @@ class _ResultCards extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Card(
+          ValCard(
+            padding: EdgeInsets.zero,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -379,8 +387,8 @@ class _ResultCards extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Card(
-            clipBehavior: Clip.antiAlias,
+          ValCard(
+            padding: EdgeInsets.zero,
             child: Column(
               children: [
                 _TableRow(

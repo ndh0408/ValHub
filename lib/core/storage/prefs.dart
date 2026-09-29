@@ -31,6 +31,9 @@ abstract final class PrefKeys {
 
   /// Per-account key that survives sign-out (e.g. wishlist).
   static String accountKept(String puuid, String name) => 'keep.$puuid.$name';
+
+  /// Remembered UI choice (last segment / filter) — see `UiMemory`.
+  static String ui(String name) => 'ui.$name';
 }
 
 /// Thin synchronous-read wrapper around [SharedPreferencesWithCache].

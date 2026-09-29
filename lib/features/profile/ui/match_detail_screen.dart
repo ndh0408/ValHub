@@ -10,12 +10,14 @@ import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/network/riot_exception.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/skeleton.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../profile_routes.dart';
 import '../profile_strings.dart';
@@ -54,7 +56,7 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
 
     final Widget body;
     if (value != null) {
-      body = RefreshIndicator(
+      body = AdaptiveRefresh(
         onRefresh: () => ref
             .refresh(matchDetailsProvider(_id).future)
             .then<void>((_) {}, onError: (Object _) {}),
@@ -65,6 +67,7 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
       body = error is NotFoundException
           ? EmptyView(
               icon: Icons.hourglass_top_rounded,
+              color: valColorsOf(context).warning,
               message: CompetitiveStrings.matchPending,
               action: OutlinedButton.icon(
                 onPressed: () => ref.invalidate(matchDetailsProvider(_id)),
@@ -116,6 +119,8 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
         if (hasRounds)
           SliverToBoxAdapter(
             child: SegmentedTabs<_Tab>(
+              expand: true,
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               tabs: const [
                 SegmentedTab(
                   value: _Tab.scoreboard,
@@ -155,9 +160,15 @@ class _DetailSkeleton extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Skeleton(height: 160, shimmer: false),
+          Skeleton(height: 172, radius: ValRadius.card, shimmer: false),
+          SizedBox(height: 12),
+          Skeleton(width: 160, height: 28, shimmer: false),
+          SizedBox(height: 6),
+          Skeleton(width: 220, height: 12, shimmer: false),
           SizedBox(height: 16),
-          Skeleton(height: 120, shimmer: false),
+          Skeleton(height: 150, radius: ValRadius.card, shimmer: false),
+          SizedBox(height: 16),
+          Skeleton(height: 48, radius: ValRadius.pill, shimmer: false),
           SizedBox(height: 16),
           Skeleton(height: 44, shimmer: false),
           SizedBox(height: 8),
@@ -170,6 +181,8 @@ class _DetailSkeleton extends StatelessWidget {
   );
 }
 
+/// ValBuddy-style header: big rounded map splash (score overlaid), then
+/// the map name in Anton, mode · date · duration and the result tag.
 class _MatchHeader extends ConsumerWidget {
   const _MatchHeader({required this.details, required this.perspective});
 
@@ -192,87 +205,105 @@ class _MatchHeader extends ConsumerWidget {
       if (length != null)
         ProfileStrings.durationOf(formatDurationCoarse(length)),
     ]);
-    return SizedBox(
-      height: 176,
-      child: Stack(
-        fit: StackFit.expand,
+    final known = result.outcome != MatchOutcome.unknown;
+    final color = known ? outcomeColor(context, result.outcome) : null;
+    final fallback = ColoredBox(color: scheme.surfaceContainerHigh);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          NetImage(
-            map?.splash ?? map?.listViewIcon,
-            fit: BoxFit.cover,
-            showSkeleton: false,
-            error: ColoredBox(color: scheme.surfaceContainerLow),
-          ),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  scheme.surface.withValues(alpha: 0.2),
-                  scheme.surface.withValues(alpha: 0.9),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        (map?.displayName ?? CommonStrings.dash).toUpperCase(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.headlineMedium,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        meta,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurface.withValues(alpha: 0.8),
-                        ),
-                      ),
-                    ],
+          ClipRRect(
+            borderRadius: BorderRadius.circular(ValRadius.card),
+            child: SizedBox(
+              height: 172,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  NetImage(
+                    map?.splash ?? map?.listViewIcon,
+                    fit: BoxFit.cover,
+                    showSkeleton: false,
+                    error: fallback,
                   ),
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    if (result.hasScore)
-                      Text(
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.center,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(0x00000000), Color(0xB3000000)],
+                      ),
+                    ),
+                  ),
+                  if (result.hasScore)
+                    Positioned(
+                      right: 14,
+                      bottom: 8,
+                      child: Text(
                         ProfileStrings.score(
                           result.myScore!,
                           result.otherScore!,
                         ),
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          color: result.outcome == MatchOutcome.unknown
-                              ? null
-                              : outcomeColor(context, result.outcome),
+                        style: ValText.display(
+                          40,
+                          // The scrim is always dark: use the dark palette.
+                          color: switch (result.outcome) {
+                            MatchOutcome.win => ValThemeColors.dark.win,
+                            MatchOutcome.loss => ValThemeColors.dark.loss,
+                            _ => Colors.white,
+                          },
                         ),
                       ),
-                    if (result.placement case final p?)
-                      Text(
-                        ProfileStrings.placement(p),
-                        style: theme.textTheme.labelMedium,
+                    ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      (map?.displayName ?? CommonStrings.dash).toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: ValText.display(28, color: scheme.onSurface),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      meta,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
                       ),
-                    if (result.outcome != MatchOutcome.unknown) ...[
-                      const SizedBox(height: 4),
-                      OutcomeTag(result.outcome),
-                    ],
+                    ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (result.placement case final p?)
+                    Text(
+                      ProfileStrings.placement(p),
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  if (known) ...[
+                    const SizedBox(height: 4),
+                    OutcomeTag(result.outcome),
+                  ],
+                ],
+              ),
+            ],
           ),
         ],
       ),
@@ -316,24 +347,27 @@ class _PlayerSummary extends ConsumerWidget {
         v == null ? CompetitiveStrings.noValue : formatNumber(v.round());
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      child: Card(
+      child: ValCard(
+        padding: EdgeInsets.zero,
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      width: 44,
-                      height: 44,
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
                       color: theme.colorScheme.surfaceContainerHigh,
+                    ),
+                    child: ClipOval(
                       child: NetImage(
                         agent?.displayIconSmall ?? agent?.displayIcon,
-                        width: 44,
-                        height: 44,
+                        width: 48,
+                        height: 48,
                       ),
                     ),
                   ),

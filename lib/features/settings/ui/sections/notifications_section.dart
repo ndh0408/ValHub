@@ -115,8 +115,11 @@ class _PermissionWarning extends ConsumerWidget {
     final theme = Theme.of(context);
     final warning = valColorsOf(context).warning;
     return Container(
-      color: warning.withValues(alpha: 0.10),
-      padding: const EdgeInsets.fromLTRB(16, 12, 8, 8),
+      decoration: BoxDecoration(
+        color: warning.withValues(alpha: 0.10),
+        border: Border(left: BorderSide(color: warning, width: 4)),
+      ),
+      padding: const EdgeInsets.fromLTRB(12, 12, 8, 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -4,7 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/notifications/notification_service.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/empty_view.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../settings_strings.dart';
+import 'widgets/settings_widgets.dart';
 
 /// Outcome of the notification priming flow (S04).
 enum NotificationPrimingResult {
@@ -85,18 +89,9 @@ class _NotificationPrimingSheetState
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
-            child: Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: scheme.primary.withValues(alpha: 0.14),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.notifications_active_outlined,
-                size: 32,
-                color: scheme.primary,
-              ),
+            child: StateIcon(
+              icon: Icons.notifications_active_outlined,
+              color: scheme.primary,
             ),
           ),
           const SizedBox(height: 16),
@@ -114,39 +109,64 @@ class _NotificationPrimingSheetState
             ),
           ),
           const SizedBox(height: 16),
-          for (final (icon, text) in const [
-            (Icons.storefront_outlined, SettingsStrings.primingPointStore),
-            (Icons.favorite_border, SettingsStrings.primingPointWishlist),
-            (
-              Icons.nightlight_outlined,
-              SettingsStrings.primingPointNightMarket,
-            ),
-          ])
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Row(
-                children: [
-                  Icon(icon, size: 20, color: scheme.primary),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(text, style: theme.textTheme.bodyMedium),
+          ValCard(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            child: Column(
+              children: [
+                for (final (icon, color, text) in const [
+                  (
+                    Icons.storefront_outlined,
+                    ValColors.red,
+                    SettingsStrings.primingPointStore,
                   ),
-                ],
-              ),
+                  (
+                    Icons.favorite_border,
+                    TierColors.premium,
+                    SettingsStrings.primingPointWishlist,
+                  ),
+                  (
+                    Icons.nightlight_outlined,
+                    Color(0xFF9B7BFF),
+                    SettingsStrings.primingPointNightMarket,
+                  ),
+                ])
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Row(
+                      children: [
+                        SettingsIcon(icon, color: color),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            text,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
             ),
+          ),
           const SizedBox(height: 20),
           FilledButton(
-            style: FilledButton.styleFrom(minimumSize: const Size(0, 48)),
+            style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
             onPressed: _requesting ? null : () => unawaited(_enable()),
             child: _requesting
                 ? const SizedBox.square(
                     dimension: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
                   )
                 : const Text(SettingsStrings.primingEnable),
           ),
           const SizedBox(height: 4),
           TextButton(
+            style: TextButton.styleFrom(minimumSize: const Size(0, 48)),
             onPressed: _requesting
                 ? null
                 : () =>

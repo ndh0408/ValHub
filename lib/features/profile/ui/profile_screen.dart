@@ -10,6 +10,7 @@ import '../../../core/domain/competitive/competitive.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
 import '../../live_game/current_game_card.dart';
 import '../../social/social_routes.dart';
@@ -21,6 +22,7 @@ import 'widgets/identity_banner.dart';
 import 'widgets/match_history_sliver.dart';
 import 'widgets/profile_widgets.dart';
 import 'widgets/rank_card.dart';
+import 'widgets/recent_form_card.dart';
 
 /// TAB 4 "Hồ sơ" (S40). Route `/profile`. Hosts the live-game
 /// [CurrentGameCard] (owned by the live_game feature).
@@ -37,7 +39,10 @@ class ProfileScreen extends ConsumerWidget {
     if (account == null) {
       return const TabPageScaffold(
         title: ProfileStrings.title,
-        body: EmptyView(message: CommonStrings.errorNoAccount),
+        body: EmptyView(
+          icon: Icons.person_off_outlined,
+          message: CommonStrings.errorNoAccount,
+        ),
       );
     }
     final puuid = account.puuid;
@@ -56,12 +61,13 @@ class ProfileScreen extends ConsumerWidget {
                     unawaited(context.push(ProfileRoutes.rankUp)),
               ),
               const SizedBox(height: 12),
+              RecentFormCard(puuid: puuid),
               _DailyRrRow(puuid: puuid),
               const SizedBox(height: 12),
               currentGameCard ?? const CurrentGameCard(),
               const SizedBox(height: 12),
-              Card(
-                clipBehavior: Clip.antiAlias,
+              ValCard(
+                padding: EdgeInsets.zero,
                 child: Column(
                   children: [
                     ProfileNavRow(
@@ -69,7 +75,7 @@ class ProfileScreen extends ConsumerWidget {
                       title: ProfileStrings.partyRow,
                       onTap: () => unawaited(context.push(SocialRoutes.party)),
                     ),
-                    const Divider(indent: 56, height: 1),
+                    const Divider(indent: 66, height: 1),
                     ProfileNavRow(
                       icon: Icons.forum_outlined,
                       title: ProfileStrings.friendsRow,
@@ -115,9 +121,10 @@ class _DailyRrRow extends ConsumerWidget {
     final days = ref.watch(dailyRrProvider(puuid)).value;
     final now = ref.watch(clockProvider).now();
     final today = days == null ? null : dailyRrOn(days, now);
-    return Card(
-      clipBehavior: Clip.antiAlias,
+    return ValCard(
+      padding: EdgeInsets.zero,
       child: ProfileNavRow(
+        icon: Icons.calendar_month_rounded,
         title: ProfileStrings.dailyRrTitle,
         subtitle: days == null
             ? null
@@ -134,7 +141,7 @@ class _DailyRrRow extends ConsumerWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-        trailing: today == null ? null : SignedRrText(today.netRr),
+        trailing: today == null ? null : RrPill(today.netRr),
         onTap: () => unawaited(context.push(ProfileRoutes.dailyRr)),
       ),
     );

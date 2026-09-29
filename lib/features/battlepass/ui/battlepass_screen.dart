@@ -10,11 +10,13 @@ import '../../../core/l10n/common_strings.dart';
 import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
+import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
 import '../battlepass_routes.dart';
 import '../battlepass_strings.dart';
 import '../data/battlepass_models.dart';
+import '../data/xp_pace.dart';
 import '../providers/battlepass_providers.dart';
 import 'widgets/bp_ui_bits.dart';
 import 'widgets/daily_checkpoints.dart';
@@ -105,7 +107,8 @@ class BattlePassOverviewView extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
           child: bp == null
-              ? const Card(
+              ? const ValCard(
+                  padding: EdgeInsets.zero,
                   child: EmptyView(
                     message: BattlePassStrings.noBattlePass,
                     icon: Icons.military_tech_outlined,
@@ -127,7 +130,12 @@ class BattlePassOverviewView extends ConsumerWidget {
                     ),
                     if (!bp.isComplete && bp.xpRemaining > 0) ...[
                       const SizedBox(height: 10),
-                      XpEstimateCard(progress: bp, queueName: queueName),
+                      XpEstimateCard(
+                        progress: bp,
+                        queueName: queueName,
+                        pace: xpPaceOf(bp, overview.actEndsAt, now),
+                        weeklyXpLeft: overview.weekly.xpAvailable,
+                      ),
                     ],
                   ],
                 ),

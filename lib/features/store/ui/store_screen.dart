@@ -11,6 +11,8 @@ import '../../../core/domain/economy/economy.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/notifications/notification_service.dart';
 import '../../../core/settings/app_settings.dart';
+import '../../../core/storage/ui_memory.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/segmented_tabs.dart';
@@ -84,8 +86,29 @@ class StoreScreen extends ConsumerStatefulWidget {
   ConsumerState<StoreScreen> createState() => _StoreScreenState();
 }
 
+/// [UiMemory] key of the last segment the user picked.
+const storeSegmentMemoryKey = 'store.segment';
+
 class _StoreScreenState extends ConsumerState<StoreScreen> {
-  late StoreSegment _segment = widget.initialSegment;
+  /// A deep link (`?segment=…` or a notification tap) wins; a plain visit to
+  /// the tab reopens the segment the user last picked.
+  late StoreSegment _segment = _hasExplicitSegment(widget)
+      ? widget.initialSegment
+      : ref
+            .read(uiMemoryProvider)
+            .readEnum(
+              storeSegmentMemoryKey,
+              StoreSegment.values,
+              widget.initialSegment,
+            );
+
+  static bool _hasExplicitSegment(StoreScreen w) =>
+      w.linkNonce != null || w.initialSegment != StoreSegment.daily;
+
+  void _select(StoreSegment next) {
+    setState(() => _segment = next);
+    ref.read(uiMemoryProvider).writeEnum(storeSegmentMemoryKey, next);
+  }
 
   /// Last storefront a reset reminder was scheduled for (one per fetch).
   Storefront? _remindedFor;
@@ -171,11 +194,12 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
         SliverToBoxAdapter(child: WalletPill(puuid: puuid)),
         SliverPersistentHeader(
           pinned: true,
-          delegate: _SegmentsHeader(
-            StoreSegmentBar<StoreSegment>(
+          delegate: GlassHeaderDelegate(
+            height: 60,
+            child: StoreSegmentBar<StoreSegment>(
               tabs: tabs,
               selected: segment,
-              onChanged: (next) => setState(() => _segment = next),
+              onChanged: _select,
             ),
           ),
         ),
@@ -184,9 +208,15 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
             child: OfflineNotice(receivedAt: store.receivedAt),
           ),
         SliverToBoxAdapter(
-          child: KeyedSubtree(
-            key: ValueKey(segment),
-            child: _segmentBody(segment, puuid, storeAsync),
+          child: AnimatedSwitcher(
+            duration: ValMotion.medium,
+            // The old segment leaves at once; the new one fades in.
+            reverseDuration: Duration.zero,
+            switchInCurve: ValMotion.curve,
+            child: KeyedSubtree(
+              key: ValueKey(segment),
+              child: _segmentBody(segment, puuid, storeAsync),
+            ),
           ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 32)),
@@ -309,34 +339,4 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
       unawaited(ref.read(contentMissReporterProvider).report());
     }
   }
-}
-
-/// Pinned segmented control under the wallet pill.
-class _SegmentsHeader extends SliverPersistentHeaderDelegate {
-  _SegmentsHeader(this.child);
-
-  final Widget child;
-  static const _height = 52.0;
-
-  @override
-  double get minExtent => _height;
-
-  @override
-  double get maxExtent => _height;
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) => ColoredBox(
-    color: Theme.of(context).scaffoldBackgroundColor,
-    child: SizedBox(
-      height: _height,
-      child: Align(alignment: Alignment.centerLeft, child: child),
-    ),
-  );
-
-  @override
-  bool shouldRebuild(_SegmentsHeader oldDelegate) => oldDelegate.child != child;
 }
