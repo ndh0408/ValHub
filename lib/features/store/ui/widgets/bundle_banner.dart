@@ -41,7 +41,7 @@ class BundleBanner extends ConsumerWidget {
       ),
       child: Material(
         color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(16),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () => context.push(StoreRoutes.bundle(bundle.id)),

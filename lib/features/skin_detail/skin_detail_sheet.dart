@@ -386,7 +386,7 @@ class _Media extends StatelessWidget {
       label: v == null ? null : SkinDetailStrings.playVideo,
       child: Material(
         color: scheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(16),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: v == null
@@ -422,7 +422,7 @@ class _Media extends StatelessWidget {
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.6),
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: BorderRadius.circular(6),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
@@ -614,7 +614,7 @@ class _LevelChip extends StatelessWidget {
         constraints: const BoxConstraints(minWidth: 100, maxWidth: 156),
         child: Material(
           color: theme.colorScheme.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(12),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: video == null

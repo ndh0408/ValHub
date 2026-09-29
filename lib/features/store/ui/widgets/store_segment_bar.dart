@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/segmented_tabs.dart';
 
 /// Valorant-style segmented control whose segments share the width equally,
@@ -20,21 +21,28 @@ class StoreSegmentBar<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          for (var i = 0; i < tabs.length; i++) ...[
-            if (i > 0) const SizedBox(width: 6),
-            Expanded(
-              child: _Segment(
-                label: tabs[i].label,
-                selected: tabs[i].value == selected,
-                showDot: tabs[i].showDot,
-                onTap: () => onChanged(tabs[i].value),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(ValRadius.small),
+        ),
+        child: Row(
+          children: [
+            for (var i = 0; i < tabs.length; i++) ...[
+              if (i > 0) const SizedBox(width: 4),
+              Expanded(
+                child: _Segment(
+                  label: tabs[i].label,
+                  selected: tabs[i].value == selected,
+                  showDot: tabs[i].showDot,
+                  onTap: () => onChanged(tabs[i].value),
+                ),
               ),
-            ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
@@ -56,7 +64,7 @@ class _Segment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final fg = selected ? scheme.onPrimary : scheme.onSurface;
+    final fg = selected ? Colors.white : scheme.onSurface;
     return Semantics(
       container: true,
       selected: selected,
@@ -64,13 +72,13 @@ class _Segment extends StatelessWidget {
       label: label,
       excludeSemantics: true,
       child: Material(
-        color: selected ? scheme.primary : scheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(2),
+        color: selected ? ValColors.red : Colors.transparent,
+        borderRadius: BorderRadius.circular(9),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
           child: SizedBox(
-            height: 36,
+            height: 38,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Center(
@@ -91,7 +99,7 @@ class _Segment extends StatelessWidget {
                           width: 7,
                           height: 7,
                           decoration: BoxDecoration(
-                            color: selected ? scheme.onPrimary : scheme.primary,
+                            color: selected ? Colors.white : ValColors.red,
                             shape: BoxShape.circle,
                           ),
                         ),

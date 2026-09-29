@@ -92,7 +92,7 @@ void main() {
       expect(find.text('Player1#VN'), findsOneWidget);
       expect(find.text('Player2#VN'), findsOneWidget);
       // Exactly one active marker (the first account is active by default).
-      expect(find.byIcon(Icons.check_circle), findsOneWidget);
+      expect(find.byIcon(Icons.check), findsOneWidget);
       expect(find.text(SettingsStrings.version('1.2.3')), findsOneWidget);
       expect(find.text(SettingsStrings.buildNumber('42')), findsOneWidget);
       expect(find.text('5,0 MB'), findsOneWidget);

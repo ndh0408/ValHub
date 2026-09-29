@@ -9,7 +9,6 @@ import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/content_tier_badge.dart';
-import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
@@ -62,65 +61,54 @@ class DailyOfferCard extends ConsumerWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 10, 10, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: TierLabel(contentTierUuid: skin?.contentTierUuid),
-                  ),
-                ),
-                if (owned) ...[const OwnedBadge(), const SizedBox(width: 6)],
-                WishlistHeartButton(
-                  active: inWishlist,
-                  onTap: () => unawaited(
-                    ref
-                        .read(wishlistProvider(puuid).notifier)
-                        .toggleSkin(offer.skinLevelUuid, db),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 92,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
-                ),
-                child: NetImage(skin?.image, fit: BoxFit.contain),
-              ),
-            ),
-            const SizedBox(height: 6),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Text(
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TierLabel(contentTierUuid: skin?.contentTierUuid),
+                  const SizedBox(height: 6),
+                  Text(
                     name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  VpPrice(price),
+                  if (owned) ...[const SizedBox(height: 8), const OwnedBadge()],
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width < 360 ? 104 : 128,
+              height: 84,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: SkinRenderBox(
+                      child: NetImage(skin?.image, fit: BoxFit.contain),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                if (price == null)
-                  Text(CommonStrings.dash, style: theme.textTheme.titleMedium)
-                else
-                  CurrencyAmount.vp(
-                    price,
-                    iconSize: 18,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+                  Positioned(
+                    top: 2,
+                    right: 2,
+                    child: WishlistHeartButton(
+                      active: inWishlist,
+                      size: 14,
+                      onTap: () => unawaited(
+                        ref
+                            .read(wishlistProvider(puuid).notifier)
+                            .toggleSkin(offer.skinLevelUuid, db),
+                      ),
                     ),
                   ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

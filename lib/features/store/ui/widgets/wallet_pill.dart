@@ -6,6 +6,7 @@ import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/riot/riot_ids.dart';
 import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/ui/skeleton.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../store_strings.dart';
 
@@ -30,9 +31,9 @@ class WalletPill extends ConsumerWidget {
         excludeSemantics: true,
         child: _Pill(
           children: [
-            CurrencyAmount.vp(w.vp, style: _amountStyle(context)),
-            CurrencyAmount.kc(w.kc, style: _amountStyle(context)),
-            CurrencyAmount.rp(w.rp, style: _amountStyle(context)),
+            _Balance(currencyId: CurrencyIds.vp, amount: formatNumber(w.vp)),
+            _Balance(currencyId: CurrencyIds.kc, amount: formatNumber(w.kc)),
+            _Balance(currencyId: CurrencyIds.rp, amount: formatNumber(w.rp)),
           ],
         ),
       );
@@ -45,14 +46,14 @@ class WalletPill extends ConsumerWidget {
             CurrencyIds.kc,
             CurrencyIds.rp,
           ])
-            _DashAmount(currencyId: id),
+            _Balance(currencyId: id, amount: CommonStrings.dash),
         ],
       );
     } else {
-      content = const Skeleton(width: 220, height: 32, radius: 16);
+      content = const Skeleton(width: 260, height: 34, radius: 17);
     }
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: Align(
         alignment: Alignment.centerLeft,
         child: FittedBox(
@@ -63,25 +64,25 @@ class WalletPill extends ConsumerWidget {
       ),
     );
   }
-
-  static TextStyle? _amountStyle(BuildContext context) =>
-      Theme.of(context).textTheme.labelLarge
-          ?.copyWith(fontWeight: FontWeight.w700);
 }
 
-class _DashAmount extends ConsumerWidget {
-  const _DashAmount({required this.currencyId});
+/// One Figma wallet pill: colored dot, amount and currency code.
+class _Balance extends ConsumerWidget {
+  const _Balance({required this.currencyId, required this.amount});
 
   final String currencyId;
+  final String amount;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final label = currencyOf(ref, currencyId)?.label ?? '';
-    return Text(
-      '${CommonStrings.dash} $label',
-      style: Theme.of(context).textTheme.labelLarge,
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) => CurrencyPill(
+    dotColor: switch (currencyId) {
+      CurrencyIds.kc => CurrencyColors.kc,
+      CurrencyIds.rp => CurrencyColors.rp,
+      _ => CurrencyColors.vp,
+    },
+    amount: amount,
+    code: currencyOf(ref, currencyId)?.label ?? '',
+  );
 }
 
 class _Pill extends StatelessWidget {
@@ -90,29 +91,13 @@ class _Pill extends StatelessWidget {
   final List<Widget> children;
 
   @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Container(
-      height: 32,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: scheme.outlineVariant),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (var i = 0; i < children.length; i++) ...[
-            if (i > 0) ...[
-              const SizedBox(width: 10),
-              Container(width: 1, height: 14, color: scheme.outline),
-              const SizedBox(width: 10),
-            ],
-            children[i],
-          ],
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      for (var i = 0; i < children.length; i++) ...[
+        if (i > 0) const SizedBox(width: 8),
+        children[i],
+      ],
+    ],
+  );
 }

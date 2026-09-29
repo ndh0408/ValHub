@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/l10n/common_strings.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/section_header.dart';
 
 /// One settings section: an uppercase header ("TÙY CHỌN") above a rounded
@@ -21,10 +22,11 @@ class SettingsGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final hairline = valColorsOf(context).hairline;
     final rows = <Widget>[];
     for (var i = 0; i < children.length; i++) {
       if (i > 0) {
-        rows.add(Divider(height: 1, indent: 16, color: scheme.outlineVariant));
+        rows.add(Divider(height: 1, thickness: 1, color: hairline));
       }
       rows.add(children[i]);
     }
@@ -38,13 +40,12 @@ class SettingsGroup extends StatelessWidget {
             color: scheme.surfaceContainer,
             clipBehavior: Clip.antiAlias,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-              side: BorderSide(color: scheme.outlineVariant),
+              borderRadius: BorderRadius.circular(ValRadius.card),
             ),
             // Tighter than the default so long Vietnamese labels keep room
             // next to switches on 360dp phones.
             child: ListTileTheme.merge(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
               horizontalTitleGap: 12,
               minLeadingWidth: 32,
               child: Column(
@@ -80,8 +81,8 @@ class SettingsIcon extends StatelessWidget {
       height: 32,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: tint.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(6),
+        color: tint.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(9),
       ),
       child: Icon(icon, size: 18, color: tint),
     );
@@ -156,7 +157,11 @@ class SettingsSwitchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SwitchListTile(
     secondary: SettingsIcon(icon),
-    title: Text(title),
+    title: Text(
+      title,
+      style: Theme.of(context).textTheme.bodyLarge
+          ?.copyWith(fontWeight: FontWeight.w600),
+    ),
     subtitle: subtitle == null ? null : Text(subtitle!),
     value: value,
     onChanged: onChanged,
@@ -206,7 +211,7 @@ Future<T?> showSettingsChoiceSheet<T>({
               RadioListTile<T>(
                 value: value,
                 title: Text(label),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
               ),
           ],
         ),

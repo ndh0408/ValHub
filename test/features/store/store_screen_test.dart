@@ -99,7 +99,7 @@ void main() {
     final prefs = await createTestPrefs();
     await _pumpStore(tester, api: fixtureApi(), prefs: prefs);
 
-    expect(find.text(StoreStrings.title.toUpperCase()), findsOneWidget);
+    expect(find.text(StoreStrings.title), findsOneWidget);
     // Wallet pill (wallet.json: 1450 VP, 11200 KC, 60 RP).
     expect(find.text('1.450'), findsOneWidget);
     expect(find.text('11.200'), findsOneWidget);

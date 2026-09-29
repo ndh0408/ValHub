@@ -37,7 +37,7 @@ class AccessorySection extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainer,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
             children: [

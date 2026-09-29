@@ -47,7 +47,7 @@ class AccessoryRow extends ConsumerWidget {
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: theme.colorScheme.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: item?.image == null && typeId == ItemTypeIds.playerTitle
                 ? Icon(Icons.text_fields, color: muted)

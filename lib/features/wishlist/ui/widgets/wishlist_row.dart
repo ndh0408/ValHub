@@ -199,9 +199,9 @@ class _HitBar extends ConsumerWidget {
       excludeSemantics: true,
       child: Material(
         color: ValColors.red.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(12),
         child: InkWell(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(12),
           onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(10, 8, 6, 8),

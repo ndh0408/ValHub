@@ -11,7 +11,9 @@ import '../../../../core/auth/auth_routes.dart';
 import '../../../../core/config/app_constants.dart';
 import '../../../../core/l10n/account_strings.dart';
 import '../../../../core/l10n/common_strings.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/error_view.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../settings_strings.dart';
 import '../widgets/settings_widgets.dart';
 
@@ -81,8 +83,8 @@ class SettingsAccountsSection extends ConsumerWidget {
             onRemove: () => unawaited(_remove(context, ref, a)),
           ),
         ListTile(
-          leading: SettingsIcon(
-            Icons.person_add_alt_1_outlined,
+          leading: Icon(
+            Icons.add,
             color: full ? scheme.onSurfaceVariant : scheme.primary,
           ),
           title: Text(
@@ -131,16 +133,26 @@ class _AccountRow extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (account.needsLogin)
-            IconButton(
-              icon: Icon(Icons.login, color: scheme.error),
-              tooltip: CommonStrings.signInAgain,
-              onPressed: onReauth,
+            Tooltip(
+              message: CommonStrings.signInAgain,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(6),
+                onTap: onReauth,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: ValBadge(
+                    CommonStrings.signInAgain,
+                    color: valColorsOf(context).warning,
+                    soft: true,
+                  ),
+                ),
+              ),
             )
           else if (active)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Icon(
-                Icons.check_circle,
+                Icons.check,
                 color: scheme.primary,
                 semanticLabel: AccountStrings.active,
               ),
@@ -161,7 +173,7 @@ class _AccountRow extends StatelessWidget {
           border: Border(
             left: BorderSide(
               color: active ? scheme.primary : Colors.transparent,
-              width: 3,
+              width: 4,
             ),
           ),
         ),

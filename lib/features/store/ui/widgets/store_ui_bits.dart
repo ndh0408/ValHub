@@ -4,10 +4,12 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/content/content_fallbacks.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/l10n/common_strings.dart';
+import '../../../../core/riot/riot_ids.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tier_colors.dart';
-import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/countdown_text.dart';
+import '../../../../core/ui/currency_amount.dart';
+import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../store_strings.dart';
 
@@ -32,7 +34,7 @@ class StoreBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(2),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -143,8 +145,15 @@ class CountdownRow extends StatelessWidget {
       child: Row(
         children: [
           if (at != null) ...[
-            Icon(Icons.schedule, size: 16, color: muted),
-            const SizedBox(width: 6),
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: valColorsOf(context).win,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 8),
             Expanded(
               child: CountdownText(
                 expiresAt: at,
@@ -179,7 +188,7 @@ class OfflineNotice extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: warning.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(ValRadius.small),
       ),
       child: Row(
         children: [
@@ -243,9 +252,9 @@ class TwoColumnGrid extends StatelessWidget {
   }
 }
 
-/// Card surface tinted with a content-tier color (VF §6.2 S10): a vertical
-/// gradient from the tier color into the card color, with a thin tier
-/// accent on the left edge.
+/// Card surface tinted with a content-tier color (Figma skin card): a
+/// horizontal gradient from the tier color at 35% into the card color, a
+/// 35% tier border and 16 px corners.
 class TierCard extends StatelessWidget {
   const TierCard({
     super.key,
@@ -264,14 +273,17 @@ class TierCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final solid = tint.withValues(alpha: 1);
-    final radius = BorderRadius.circular(4);
+    final radius = BorderRadius.circular(ValRadius.card);
     return Semantics(
       container: true,
       button: onTap != null,
       label: semanticsLabel,
       child: Material(
         color: scheme.surfaceContainer,
-        borderRadius: radius,
+        shape: RoundedRectangleBorder(
+          borderRadius: radius,
+          side: BorderSide(color: solid.withValues(alpha: 0.35)),
+        ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
@@ -281,13 +293,10 @@ class TierCard extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  solid.withValues(alpha: 0.42),
-                  solid.withValues(alpha: 0.10),
+                  solid.withValues(alpha: 0.35),
                   scheme.surfaceContainer.withValues(alpha: 0),
                 ],
-                stops: const [0, 0.55, 1],
               ),
-              border: Border(left: BorderSide(color: solid, width: 3)),
             ),
             child: child,
           ),
@@ -297,8 +306,30 @@ class TierCard extends StatelessWidget {
   }
 }
 
+/// Rounded translucent box holding a skin render on the right of a
+/// [TierCard].
+class SkinRenderBox extends StatelessWidget {
+  const SkinRenderBox({super.key, required this.child, this.height = 76});
+
+  final Widget child;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(ValRadius.small),
+      ),
+      child: child,
+    );
+  }
+}
+
 /// Content-tier icon + name in the tier color ("Cao Cấp" /
-/// "Phiên Bản Cao Cấp"). Unlike [ContentTierBadge] with `showName`, the
+/// "Phiên Bản Cao Cấp"). Unlike `ContentTierBadge` with `showName`, the
 /// name wraps instead of overflowing on narrow screens.
 class TierLabel extends ConsumerWidget {
   const TierLabel({
@@ -322,22 +353,59 @@ class TierLabel extends ConsumerWidget {
         ref.watch(contentProvider).value?.contentTier(id) ??
         ContentFallbacks.contentTier(id);
     if (tier == null) return const SizedBox.shrink();
+    final color = opaqueRgba(tier.highlightColor);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        ContentTierBadge(contentTierUuid: id, size: iconSize),
+        DiamondPip(size: iconSize * 0.75, color: color),
         const SizedBox(width: 6),
         Flexible(
           child: Text(
-            fullName ? tier.displayName : tier.shortName,
+            fullName ? tier.displayName : tier.shortName.toUpperCase(),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: (style ?? Theme.of(context).textTheme.labelMedium)?.copyWith(
-              color: opaqueRgba(tier.highlightColor),
-            ),
+            style: (style ?? ValText.label).copyWith(color: color),
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Figma price line: red dot, amount, "VP" ("● 1.775 VP").
+class VpPrice extends ConsumerWidget {
+  const VpPrice(this.amount, {super.key, this.style});
+
+  final num? amount;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final base =
+        style ??
+        Theme.of(context).textTheme.bodyLarge
+            ?.copyWith(fontWeight: FontWeight.w600);
+    final a = amount;
+    final row = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: const BoxDecoration(
+            color: CurrencyColors.vp,
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 6),
+        Text(a == null ? CommonStrings.dash : formatNumber(a), style: base),
+        Text(' ${currencyOf(ref, CurrencyIds.vp)?.label ?? ''}', style: base),
+      ],
+    );
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: AlignmentDirectional.centerStart,
+      child: row,
     );
   }
 }

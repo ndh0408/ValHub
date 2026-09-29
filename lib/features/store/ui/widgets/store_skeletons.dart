@@ -25,7 +25,7 @@ class StoreSkeleton extends StatelessWidget {
               StoreSkeletonKind.daily => [
                 for (var i = 0; i < 4; i++) ...[
                   if (i > 0) const SizedBox(height: 12),
-                  const Skeleton(height: 176, shimmer: false),
+                  const Skeleton(height: 112, radius: 16, shimmer: false),
                 ],
               ],
               StoreSkeletonKind.nightMarket => [
@@ -33,9 +33,21 @@ class StoreSkeleton extends StatelessWidget {
                   if (r > 0) const SizedBox(height: 12),
                   const Row(
                     children: [
-                      Expanded(child: Skeleton(height: 210, shimmer: false)),
+                      Expanded(
+                        child: Skeleton(
+                          height: 210,
+                          radius: 16,
+                          shimmer: false,
+                        ),
+                      ),
                       SizedBox(width: 12),
-                      Expanded(child: Skeleton(height: 210, shimmer: false)),
+                      Expanded(
+                        child: Skeleton(
+                          height: 210,
+                          radius: 16,
+                          shimmer: false,
+                        ),
+                      ),
                     ],
                   ),
                 ],
