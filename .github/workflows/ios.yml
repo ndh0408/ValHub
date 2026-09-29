@@ -22,7 +22,9 @@ jobs:
     runs-on: macos-26            # arm64; macos-latest also points here
     timeout-minutes: 60
     env:
-      HAS_SIGNING: ${{ secrets.IOS_CERT_P12_BASE64 != '' && secrets.IOS_PROFILE_BASE64 != '' }}
+      # Signing needs all four secrets (see docs/BUILD.md §3); otherwise only
+      # the unsigned IPA is built.
+      HAS_SIGNING: ${{ secrets.IOS_CERT_P12_BASE64 != '' && secrets.IOS_PROFILE_BASE64 != '' && secrets.IOS_TEAM_ID != '' && secrets.IOS_CERT_PASSWORD != '' }}
     steps:
       - uses: actions/checkout@v7
 
@@ -54,6 +56,7 @@ jobs:
             --build-name=${{ steps.ver.outputs.name }} --build-number=${{ steps.ver.outputs.number }}
 
       - name: Package unsigned IPA
+        id: unsigned
         run: |
           set -euo pipefail
           mkdir -p dist build/ipa/Payload
@@ -61,9 +64,22 @@ jobs:
           (cd build/ipa && zip -qry "../../dist/ValVN-${{ steps.ver.outputs.name }}-unsigned.ipa" Payload)  # -y keeps framework symlinks
           ls -lh dist
 
+      # Uploaded before any signing step, so a signing failure never loses it.
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v7
+        with:
+          name: ValVN-ios-unsigned-${{ steps.ver.outputs.name }}+${{ steps.ver.outputs.number }}
+          path: dist/*-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 30
+
       # ---------- Optional signed IPA (only runs if secrets are set) ----------
+      # continue-on-error: an expired profile or a wrong certificate must not
+      # take the unsigned IPA and the GitHub Release down with it.
       - name: Install signing certificate and provisioning profile
+        id: install_signing
         if: env.HAS_SIGNING == 'true'
+        continue-on-error: true
         env:
           P12_BASE64: ${{ secrets.IOS_CERT_P12_BASE64 }}
           P12_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
@@ -91,7 +107,9 @@ jobs:
           echo "PROFILE_NAME=$NAME" >> "$GITHUB_ENV"
 
       - name: Build signed IPA
-        if: env.HAS_SIGNING == 'true'
+        id: signed
+        if: env.HAS_SIGNING == 'true' && steps.install_signing.outcome == 'success'
+        continue-on-error: true
         env:
           TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
           BUNDLE_ID: vn.valvn.app
@@ -109,25 +127,44 @@ jobs:
             <key>stripSwiftSymbols</key><true/>
           </dict></plist>
           EOF
-          # FLUTTER_XCODE_* env vars are forwarded to xcodebuild as build settings (flutter_tools xcodeproj.dart).
-          FLUTTER_XCODE_CODE_SIGN_STYLE=Manual \
-          FLUTTER_XCODE_DEVELOPMENT_TEAM="$TEAM_ID" \
-          FLUTTER_XCODE_PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
-          FLUTTER_XCODE_CODE_SIGN_IDENTITY="Apple Distribution" \
+          # Development profile + certificate for "debugging", distribution otherwise.
+          if [[ "$EXPORT_METHOD" == "debugging" || "$EXPORT_METHOD" == "development" ]]; then
+            IDENTITY="Apple Development"
+          else
+            IDENTITY="Apple Distribution"
+          fi
+          # Signing is scoped to the Runner target: ios/Flutter/Release.xcconfig
+          # is the base configuration of Runner's Release/Profile only. Global
+          # xcodebuild settings (FLUTTER_XCODE_*) would also hit the SwiftPM
+          # plugin resource-bundle targets, which reject a provisioning profile.
+          cat >> ios/Flutter/Release.xcconfig <<EOF
+          CODE_SIGN_STYLE = Manual
+          DEVELOPMENT_TEAM = ${TEAM_ID}
+          PROVISIONING_PROFILE_SPECIFIER = ${PROFILE_NAME}
+          CODE_SIGN_IDENTITY = ${IDENTITY}
+          CODE_SIGN_IDENTITY[sdk=iphoneos*] = ${IDENTITY}
+          EOF
           flutter build ipa --release \
             --export-options-plist="$RUNNER_TEMP/ExportOptions.plist" \
             --build-name=${{ steps.ver.outputs.name }} --build-number=${{ steps.ver.outputs.number }}
           cp build/ios/ipa/*.ipa "dist/ValVN-${{ steps.ver.outputs.name }}-signed.ipa"
 
-      - uses: actions/upload-artifact@v7
+      - name: Upload signed IPA
+        if: steps.signed.outcome == 'success'
+        uses: actions/upload-artifact@v7
         with:
-          name: ValVN-ios-${{ steps.ver.outputs.name }}+${{ steps.ver.outputs.number }}
-          path: dist/*.ipa
-          if-no-files-found: error
+          name: ValVN-ios-signed-${{ steps.ver.outputs.name }}+${{ steps.ver.outputs.number }}
+          path: dist/*-signed.ipa
+          if-no-files-found: warn
           retention-days: 30
 
+      - name: Signing failed warning
+        if: env.HAS_SIGNING == 'true' && steps.signed.outcome != 'success'
+        run: echo "::warning::Signed IPA failed (see the signing steps); only the unsigned IPA is published."
+
+      # Publishes whatever was built (unsigned always, signed when it worked).
       - name: GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: always() && startsWith(github.ref, 'refs/tags/v') && steps.unsigned.outcome == 'success'
         uses: softprops/action-gh-release@v3
         with:
           files: dist/*.ipa

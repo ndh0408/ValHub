@@ -99,8 +99,19 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+      # Every GitHub-hosted runner generates a NEW random debug keystore, so
+      # debug-signed APKs from two runs can never update each other (the tester
+      # would have to uninstall and lose every signed-in account). A tag
+      # release therefore requires the real keystore; the run's artifact above
+      # is still uploaded for testing.
+      - name: Refuse a debug-signed release
+        if: startsWith(github.ref, 'refs/tags/v') && env.HAS_KEYSTORE != 'true'
+        run: |
+          echo "::error::Không phát hành GitHub Release khi APK ký bằng debug key ngẫu nhiên của CI (bản sau không cập nhật đè được bản trước). Cấu hình secret ANDROID_KEYSTORE_BASE64 (docs/BUILD.md §4)."
+          exit 1
+
       - name: GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/v') && env.HAS_KEYSTORE == 'true'
         uses: softprops/action-gh-release@v3
         with:
           files: dist/*

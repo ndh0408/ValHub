@@ -47,7 +47,8 @@ cần runner macOS đắt hơn nhiều lần so với Linux:
 2. Chọn workflow **Android APK** hoặc **iOS IPA** → chọn lần chạy mới nhất (hoặc bấm
    **Run workflow** để chạy tay).
 3. Kéo xuống mục **Artifacts** ở cuối trang chạy → tải file zip
-   (`ValVN-android-<version>+<build>` hoặc `ValVN-ios-<version>+<build>`).
+   (`ValVN-android-<version>+<build>`, `ValVN-ios-unsigned-<version>+<build>`, và
+   `ValVN-ios-signed-<version>+<build>` khi có ký thật).
 4. Giải nén: bên Android sẽ có các file `.apk` + `SHA256SUMS.txt`; bên iOS có file
    `ValVN-<version>-unsigned.ipa` (và thêm `-signed.ipa` nếu repo đã cấu hình secret ký — xem mục 4).
 
@@ -102,6 +103,12 @@ cho AltStore/Sideloadly ở mục 3). Chỉ cần cấu hình khi muốn CI tự
 để đăng lên Google Play / App Store hoặc để APK có thể **cập nhật đè** lên bản cài trước đó (APK ký
 bằng key khác nhau thì Android coi là app khác, không cho cập nhật đè).
 
+> **Lưu ý APK ký debug key trên CI:** mỗi lần chạy, runner GitHub là một máy ảo mới và tự sinh
+> một debug keystore **ngẫu nhiên khác**. Vì vậy APK debug-signed của hai lần chạy CI khác nhau
+> **không bao giờ cập nhật đè lên nhau được** — người thử phải gỡ app (mất toàn bộ tài khoản đã
+> đăng nhập) rồi cài lại. Do đó khi push tag `v*` mà chưa có `ANDROID_KEYSTORE_BASE64`, job Android
+> **không tạo GitHub Release** (báo lỗi); APK vẫn có trong artifact của lần chạy để thử.
+
 Vào **Settings → Secrets and variables → Actions** của repo trên GitHub, thêm:
 
 ### Android (ký release thật) — workflow `android.yml`
@@ -129,8 +136,14 @@ xong — secret không lưu lại trong repo hay artifact.
 
 ### iOS (ký thật, tuỳ chọn) — workflow `ios.yml`
 
-Job build IPA chưa ký luôn chạy. Có thêm 2 secret dưới đây thì job **ký thật** mới chạy kèm (cần
-tài khoản Apple Developer Program trả phí, $99/năm):
+Job build IPA chưa ký luôn chạy, và IPA chưa ký được upload **trước** mọi bước ký. Khi có **đủ 4
+secret bắt buộc** `IOS_CERT_P12_BASE64`, `IOS_CERT_PASSWORD`, `IOS_PROFILE_BASE64`, `IOS_TEAM_ID`
+thì các bước **ký thật** mới chạy kèm (cần tài khoản Apple Developer Program trả phí, $99/năm).
+Bước ký lỗi (profile hết hạn, chứng chỉ không khớp…) chỉ tạo cảnh báo: IPA chưa ký vẫn được upload
+và vẫn vào GitHub Release. Việc ký chỉ áp dụng cho target Runner (ghi vào
+`ios/Flutter/Release.xcconfig` trên runner), không đụng các target resource bundle của plugin
+SwiftPM. `IOS_EXPORT_METHOD=debugging` dùng chứng chỉ **Apple Development** + development profile;
+các cách khác dùng **Apple Distribution**.
 
 | Secret / biến | Nội dung |
 |---|---|
