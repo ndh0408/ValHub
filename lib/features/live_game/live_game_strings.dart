@@ -1,8 +1,9 @@
-/// Vietnamese strings of the live-game feature (VF §6.6, §8.10).
+/// Strings of the live-game feature (VF §6.6, §8.10).
 abstract final class LiveGameStrings {
   // Sheet (S50)
   static const sheetTitle = 'Chi tiết trận';
   static const refresh = 'Làm mới';
+  static const refreshNow = 'Làm mới ngay';
   static const close = 'Đóng';
 
   /// Tooltip of the countdown ring: "Tự làm mới sau 4 giây".
@@ -41,6 +42,10 @@ abstract final class LiveGameStrings {
   static const queueHint =
       'Giữ ứng dụng mở — chi tiết trận sẽ hiện ngay khi tìm được trận.';
 
+  /// Opens the party & queue screen (from the idle states).
+  static const openParty = 'Mở tổ đội & hàng chờ';
+  static const autoRefreshNote = 'Tự động làm mới khi có trận.';
+
   // Tabs (VF §8.10)
   static const tabAgents = 'Đặc vụ';
   static const tabYourTeam = 'Đội của bạn';
@@ -48,7 +53,7 @@ abstract final class LiveGameStrings {
   static const tabAllPlayers = 'Người chơi';
 
   // Agent select (G4)
-  static const hoverLockHint = 'Chạm để chọn, giữ để khóa đặc vụ.';
+  static const hoverLockHint = 'Chạm để chọn thử, giữ để khóa đặc vụ.';
 
   /// "Còn 0:42".
   static String timeLeft(String t) => 'Còn $t';
@@ -83,6 +88,9 @@ abstract final class LiveGameStrings {
   static const rankUnavailable = 'Không rõ rank';
   static String openLoadoutOf(String name) => 'Xem trang bị của $name';
 
+  /// "Đội của bạn · 5".
+  static String teamHeader(String team, int count) => '$team · $count';
+
   // Live score (G7)
   static const liveScore = 'Tỉ số trực tiếp';
 
@@ -102,6 +110,10 @@ abstract final class LiveGameStrings {
 
   // Ended (G11)
   static const finalScoreboard = 'Bảng điểm cuối trận';
+
+  /// "Bạn: 12/8/3 · ACS 245".
+  static String yourStats(String kda, String? acs) =>
+      acs == null ? 'Bạn: $kda' : 'Bạn: $kda · ACS $acs';
   static const viewMatchDetails = 'Xem chi tiết trận';
   static const matchPendingHint =
       'ValVN sẽ tự thử lại. Bảng điểm thường có sau khoảng một phút.';
@@ -119,4 +131,9 @@ abstract final class LiveGameStrings {
   static const playerCard = 'Thẻ người chơi';
   static const noLoadout = 'Không có thông tin trang bị của người chơi này.';
   static const buddy = 'Phụ kiện súng';
+
+  /// "Vũ khí · 12".
+  static String weaponsCount(int n) => '$weapons · $n';
+  static const loadoutFromMatch = 'Trang bị trong trận này';
+  static const loadoutFromAgentSelect = 'Trang bị lúc chọn đặc vụ';
 }

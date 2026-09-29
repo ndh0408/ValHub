@@ -57,24 +57,37 @@ class LiveRosterList extends ConsumerWidget {
       onRefresh: refresh,
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(12, 4, 12, 24),
+        padding: EdgeInsets.fromLTRB(
+          12,
+          4,
+          12,
+          24 + MediaQuery.paddingOf(context).bottom,
+        ),
         children: [
           ?header,
           if (players.isEmpty)
             EmptyView(message: emptyMessage, icon: Icons.group_outlined)
           else
-            for (final p in players)
+            for (var i = 0; i < players.length; i++) ...[
+              if (i > 0)
+                Divider(
+                  height: 1,
+                  thickness: 1,
+                  indent: 66,
+                  color: valColorsOf(context).hairline,
+                ),
               LivePlayerRow(
-                key: ValueKey(p.subject),
-                player: p,
+                key: ValueKey(players[i].subject),
+                player: players[i],
                 match: match,
-                isSelf: p.subject == puuid,
+                isSelf: players[i].subject == puuid,
                 isPartyMember:
-                    ownParty != null && partyOf[p.subject] == ownParty,
-                partyGroup: groups[p.subject],
+                    ownParty != null && partyOf[players[i].subject] == ownParty,
+                partyGroup: groups[players[i].subject],
                 showPeak: showPeak,
                 viewerPuuid: puuid,
               ),
+            ],
         ],
       ),
     );

@@ -8,6 +8,7 @@ import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/core/xmpp/xmpp.dart';
 import 'package:valvn/features/live_game/live_game_sheet.dart';
+import 'package:valvn/features/live_game/live_game_strings.dart';
 import 'package:valvn/features/live_game/player_loadout_sheet.dart';
 
 import '../live_game_test_env.dart';
@@ -57,6 +58,34 @@ void main() {
       expect(find.text('Thi đấu xếp hạng'), findsOneWidget);
     });
 
+    testWidgets('idle: real actions only — poll now, no party shortcut', (
+      tester,
+    ) async {
+      await pumpSheet(tester);
+      expect(find.text(LiveGameStrings.refreshNow), findsOneWidget);
+      // Not in the menus: nothing to open in the party screen.
+      expect(find.text(LiveGameStrings.openParty), findsNothing);
+      await tester.tap(find.text(LiveGameStrings.refreshNow));
+      await settle(tester);
+      expect(find.text('Bạn không ở trong trận nào'), findsOneWidget);
+    });
+
+    testWidgets('lobby and queue offer the party & queue screen', (
+      tester,
+    ) async {
+      env
+        ..loop = 'MENUS'
+        ..party = partyJson();
+      await pumpSheet(tester);
+      expect(find.text(LiveGameStrings.openParty), findsOneWidget);
+      expect(find.text(LiveGameStrings.refreshNow), findsOneWidget);
+    });
+
+    testWidgets('idle fits 320 dp at 200 % text', (tester) async {
+      await pumpSheet(tester, width: 320, height: 640, textScale: 2);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('error without data → "Thử lại" polls again', (tester) async {
       env.sessionError = const TransientException(status: 503);
       await pumpSheet(tester);
@@ -79,9 +108,10 @@ void main() {
     testWidgets('header, hint, timer and grid', (tester) async {
       await pumpSheet(tester);
       expect(find.text('Đang chọn đặc vụ'), findsOneWidget);
-      expect(find.text('Ascent'), findsOneWidget);
+      // The hero carries the map name in capitals (with or without art).
+      expect(find.text('ASCENT'), findsOneWidget);
       expect(find.text('Thi đấu xếp hạng'), findsOneWidget);
-      expect(find.text('Chạm để chọn, giữ để khóa đặc vụ.'), findsOneWidget);
+      expect(find.text(LiveGameStrings.hoverLockHint), findsOneWidget);
       expect(find.text('Còn 0:42'), findsOneWidget);
       expect(find.text('Đội địch đã khóa 4/5'), findsOneWidget);
       for (final name in ['Jett', 'Omen', 'Raze', 'Reyna', 'Sage', 'Sova']) {
@@ -331,6 +361,24 @@ void main() {
       expect(find.text('K/D/A'), findsOneWidget);
       expect(find.text('Xem chi tiết trận'), findsOneWidget);
       expect(find.text('Rời trận'), findsNothing);
+    });
+
+    testWidgets('summary card: result and your K/D/A', (tester) async {
+      await pumpSheet(tester);
+      expect(find.textContaining('Bạn: '), findsOneWidget);
+      // The action is pinned under the list.
+      expect(find.widgetWithText(FilledButton, 'Xem chi tiết trận'), findsOne);
+    });
+
+    testWidgets('light theme fits 360 dp at 200 % text', (tester) async {
+      await pumpSheet(
+        tester,
+        width: 360,
+        height: 800,
+        textScale: 2,
+        theme: buildLightTheme(),
+      );
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('Riot still processing → message, then retries', (

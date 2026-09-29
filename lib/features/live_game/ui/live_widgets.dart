@@ -35,13 +35,58 @@ enum LiveStatus {
 }
 
 class LiveStatusPill extends StatelessWidget {
-  const LiveStatusPill(this.status, {super.key});
+  const LiveStatusPill(this.status, {super.key, this.onImage = false});
 
   final LiveStatus status;
 
+  /// Drawn over a photo (map splash): a dark capsule with white text keeps
+  /// it legible on any art, in both themes.
+  final bool onImage;
+
   @override
-  Widget build(BuildContext context) =>
-      StatusPill(label: status.label, color: status.color(context));
+  Widget build(BuildContext context) {
+    if (!onImage) {
+      return StatusPill(label: status.label, color: status.color(context));
+    }
+    // The dark theme's accent colors read well on the dark capsule.
+    final dot = switch (status) {
+      LiveStatus.agentSelect => ValThemeColors.dark.warning,
+      LiveStatus.inProgress => ValThemeColors.dark.win,
+      LiveStatus.ended => Colors.white70,
+    };
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(ValRadius.pill),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 7,
+              height: 7,
+              decoration: BoxDecoration(color: dot, shape: BoxShape.circle),
+            ),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                status.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 /// Small tag ("BẠN", "Tổ đội", "Đã khóa").
@@ -136,10 +181,18 @@ class _TickingBuilderState extends ConsumerState<TickingBuilder> {
 /// Refresh button with a countdown ring to the next automatic poll (G9).
 /// Tap = poll now.
 class LiveRefreshRing extends ConsumerStatefulWidget {
-  const LiveRefreshRing({super.key, required this.puuid, this.size = 40});
+  const LiveRefreshRing({
+    super.key,
+    required this.puuid,
+    this.size = 40,
+    this.onImage = false,
+  });
 
   final String puuid;
   final double size;
+
+  /// Over a photo: white ring on a dark disc.
+  final bool onImage;
 
   @override
   ConsumerState<LiveRefreshRing> createState() => _LiveRefreshRingState();
@@ -224,7 +277,12 @@ class _LiveRefreshRingState extends ConsumerState<LiveRefreshRing>
     final theme = Theme.of(context);
     final size = widget.size;
     final seconds = (_controller?.interval.inSeconds ?? 0);
-    return Tooltip(
+    final onImage = widget.onImage;
+    final ringColor = onImage ? Colors.white : theme.colorScheme.primary;
+    final trackColor = onImage
+        ? Colors.white.withValues(alpha: 0.25)
+        : theme.colorScheme.outlineVariant.withValues(alpha: 0.5);
+    final ring = Tooltip(
       message: _source?.value == null
           ? LiveGameStrings.refresh
           : LiveGameStrings.refreshIn(seconds),
@@ -241,7 +299,7 @@ class _LiveRefreshRingState extends ConsumerState<LiveRefreshRing>
                   dimension: size - 6,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: theme.colorScheme.primary,
+                    color: ringColor,
                   ),
                 )
               else
@@ -252,21 +310,30 @@ class _LiveRefreshRingState extends ConsumerState<LiveRefreshRing>
                     child: CircularProgressIndicator(
                       value: _ring.value,
                       strokeWidth: 2,
-                      color: theme.colorScheme.primary,
-                      backgroundColor: theme.colorScheme.outlineVariant
-                          .withValues(alpha: 0.5),
+                      color: ringColor,
+                      backgroundColor: trackColor,
                     ),
                   ),
                 ),
               Icon(
                 Icons.refresh,
                 size: size * 0.5,
+                color: onImage ? Colors.white : null,
                 semanticLabel: LiveGameStrings.refresh,
               ),
             ],
           ),
         ),
       ),
+    );
+    if (!onImage) return ring;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.55),
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
+      ),
+      child: ring,
     );
   }
 }

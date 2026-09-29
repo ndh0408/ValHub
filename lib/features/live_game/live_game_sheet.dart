@@ -10,6 +10,7 @@ import '../../core/ui/empty_view.dart';
 import '../../core/ui/error_view.dart';
 import '../../core/ui/segmented_tabs.dart';
 import '../../core/ui/skeleton.dart';
+import '../../core/ui/sub_page.dart';
 import 'data/live_game_logic.dart';
 import 'data/live_game_models.dart';
 import 'live_game_strings.dart';
@@ -30,8 +31,6 @@ Future<void> showLiveGameSheet(BuildContext context) async {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      // The header draws its own handle on the teal hero.
-      showDragHandle: false,
       clipBehavior: Clip.antiAlias,
       builder: (_) => const LiveGameSheet(),
     );
@@ -56,7 +55,20 @@ class LiveGameSheet extends ConsumerWidget {
     if (account == null) {
       return SizedBox(
         height: height,
-        child: const EmptyView(message: CommonStrings.errorNoAccount),
+        child: Column(
+          children: [
+            const SheetHeader(
+              title: LiveGameStrings.sheetTitle,
+              padding: EdgeInsets.fromLTRB(20, 0, 12, 10),
+            ),
+            const Expanded(
+              child: EmptyView(
+                message: CommonStrings.errorNoAccount,
+                icon: Icons.person_off_outlined,
+              ),
+            ),
+          ],
+        ),
       );
     }
     final puuid = account.puuid;
@@ -74,7 +86,7 @@ class LiveGameSheet extends ConsumerWidget {
                 ref.read(liveGameProvider(puuid).notifier).refresh(),
               ),
             )
-          : const SkeletonList(itemCount: 5, itemHeight: 76);
+          : const _LiveSkeleton();
     } else {
       final content = switch (match) {
         final LiveMatch m when m.isPregame => _PregameTabs(
@@ -248,27 +260,25 @@ class _QuitBarState extends ConsumerState<_QuitBar> {
   @override
   Widget build(BuildContext context) {
     final error = Theme.of(context).colorScheme.error;
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-        child: OutlinedButton.icon(
-          style: OutlinedButton.styleFrom(
-            foregroundColor: error,
-            backgroundColor: error.withValues(alpha: 0.10),
-            side: BorderSide(color: error.withValues(alpha: 0.8)),
-            minimumSize: const Size.fromHeight(52),
-            shape: const StadiumBorder(),
-          ),
-          onPressed: _busy ? null : () => unawaited(_confirmAndQuit()),
-          icon: _busy
-              ? const SizedBox.square(
-                  dimension: 18,
-                  child: CircularProgressIndicator.adaptive(strokeWidth: 2),
-                )
-              : const Icon(Icons.logout),
-          label: const Text(LiveGameStrings.quitMatch),
+    // ValBuddy: a red outlined "Quit Match" at the very bottom. It only
+    // ever asks; the penalty dialog decides.
+    return SubPageBottomBar(
+      child: OutlinedButton.icon(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: error,
+          backgroundColor: error.withValues(alpha: 0.10),
+          side: BorderSide(color: error.withValues(alpha: 0.8)),
+          minimumSize: const Size.fromHeight(52),
+          shape: const StadiumBorder(),
         ),
+        onPressed: _busy ? null : () => unawaited(_confirmAndQuit()),
+        icon: _busy
+            ? const SizedBox.square(
+                dimension: 18,
+                child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+              )
+            : const Icon(Icons.logout),
+        label: const Text(LiveGameStrings.quitMatch),
       ),
     );
   }
@@ -347,4 +357,57 @@ class _LiveTabsState extends State<LiveTabs>
       ],
     );
   }
+}
+
+/// Loading state that mirrors the final layout: team toggle, then rows.
+class _LiveSkeleton extends StatelessWidget {
+  const _LiveSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SkeletonShimmer(
+      child: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
+        child: Column(
+          children: [
+            Skeleton(height: 48, radius: 999, shimmer: false),
+            SizedBox(height: 14),
+            _SkeletonRow(),
+            _SkeletonRow(),
+            _SkeletonRow(),
+            _SkeletonRow(),
+            _SkeletonRow(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SkeletonRow extends StatelessWidget {
+  const _SkeletonRow();
+
+  @override
+  Widget build(BuildContext context) => const Padding(
+    padding: EdgeInsets.symmetric(vertical: 8),
+    child: Row(
+      children: [
+        Skeleton(width: 46, height: 46, radius: 999, shimmer: false),
+        SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Skeleton(width: 140, height: 14, shimmer: false),
+              SizedBox(height: 6),
+              Skeleton(width: 96, height: 11, shimmer: false),
+            ],
+          ),
+        ),
+        SizedBox(width: 12),
+        Skeleton(width: 56, height: 32, shimmer: false),
+      ],
+    ),
+  );
 }
