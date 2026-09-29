@@ -131,9 +131,17 @@ class CompetitiveUpdatesNotifier
   late String _queue;
   int _nextIndex = 0;
 
-  /// New match ids the first page added to the local history (used by
-  /// [rrHistorySyncProvider] to decide whether to backfill).
+  /// First-page rows that were not in the local history before this load
+  /// (used by [rrHistorySyncProvider] to decide whether to backfill). The
+  /// newest row always counts as new: [mmrProvider] may have stored it (its
+  /// `LatestCompetitiveUpdate`) moments before the first page arrived.
   int newInFirstPage = 0;
+
+  /// Match ids stored before the first page was loaded (minus the newest
+  /// row, see [newInFirstPage]). The backfill compares older pages with
+  /// this snapshot, so rows stored meanwhile (by [mmrProvider] or
+  /// [loadMore]) are not mistaken for an overlap.
+  Set<String> knownBeforeFirstPage = const {};
 
   @override
   Future<PagedState<CompetitiveUpdate>> build() async {
@@ -151,7 +159,14 @@ class CompetitiveUpdatesNotifier
     final page = CompetitiveUpdatesPage.fromJson(
       await api.competitiveUpdates(_viewer, subject: _subject, queue: _queue),
     );
-    newInFirstPage = await _store(store, page.matches);
+    final known = await _knownIds(store);
+    final newest = page.matches.firstOrNull?.matchId;
+    if (newest != null) known.remove(newest);
+    knownBeforeFirstPage = known;
+    newInFirstPage = page.matches
+        .where((u) => !known.contains(u.matchId))
+        .length;
+    await _store(store, page.matches);
     _nextIndex = page.matches.length;
     return PagedState(
       items: page.matches,
@@ -202,6 +217,14 @@ class CompetitiveUpdatesNotifier
     }
   }
 
+  Future<Set<String>> _knownIds(RrHistoryStore store) async {
+    try {
+      return {for (final r in (await store.read(_subject)).rows) r.matchId};
+    } on Object {
+      return <String>{};
+    }
+  }
+
   Future<int> _store(RrHistoryStore store, List<CompetitiveUpdate> rows) async {
     try {
       return await store.merge(_subject, rows);
@@ -239,6 +262,7 @@ final rrHistorySyncProvider = FutureProvider.autoDispose.family<int, String>((
     final queue =
         queueForPlatform(kCompetitiveQueue, console: console) ??
         kCompetitiveQueue;
+    final known = notifier.knownBeforeFirstPage;
     var added = 0;
     var start = first.items.length;
     for (var i = 0; i < kRrHistoryBackfillPages; i++) {
@@ -251,8 +275,10 @@ final rrHistorySyncProvider = FutureProvider.autoDispose.family<int, String>((
           queue: queue,
         ),
       );
-      final fresh = await store.merge(id, page.matches);
-      added += fresh;
+      final fresh = page.matches
+          .where((u) => !known.contains(u.matchId))
+          .length;
+      added += await store.merge(id, page.matches);
       start += page.matches.length;
       if (page.matches.length < kRiotPageSize || fresh < page.matches.length) {
         break;

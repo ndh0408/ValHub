@@ -282,6 +282,24 @@ void main() {
       sub.close();
     });
 
+    test(
+      'history sync still backfills when MMR stored the newest row first',
+      () async {
+        stubUpdates((start, _) => _updatesPage(start, 20));
+        // mmrProvider's LatestCompetitiveUpdate = row 0 of the first page.
+        await store.merge(me, [
+          CompetitiveUpdatesPage.fromJson(_updatesPage(0, 1)).matches.single,
+        ]);
+        final c = await container();
+        final sub = c.listen(rrHistorySyncProvider(me), (_, _) {});
+        final added = await c.read(rrHistorySyncProvider(me).future);
+        // Pages 2–5 (matches 21–100) are fetched.
+        expect(added, 80);
+        expect((await store.read(me)).rows, hasLength(100));
+        sub.close();
+      },
+    );
+
     test('daily RR and rank-up estimate from the stored rows', () async {
       stubMmr();
       stubUpdates((_, _) => competitiveFixtureMap('competitive_updates'));
