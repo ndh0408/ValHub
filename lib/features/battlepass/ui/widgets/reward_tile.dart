@@ -291,13 +291,32 @@ class _RewardArt extends StatelessWidget {
       ContractRewardType.currency => Icons.toll_outlined,
       _ => Icons.card_giftcard,
     };
-    return NetImage(
+    final art = NetImage(
       reward.image,
       fit: BoxFit.contain,
       showSkeleton: false,
       opacity: dimmed ? 0.5 : null,
       error: Icon(fallbackIcon, color: muted, size: 28),
     );
+    if (reward.type == ContractRewardType.currency) {
+      // Currency icons (Radianite, VP, KC) are white: on a dark disc they
+      // stay visible on the light theme too.
+      return Center(
+        child: FittedBox(
+          child: Container(
+            width: 60,
+            height: 60,
+            padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xFF2A2A31),
+            ),
+            child: art,
+          ),
+        ),
+      );
+    }
+    return art;
   }
 }
 
