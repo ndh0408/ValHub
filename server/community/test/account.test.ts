@@ -124,7 +124,8 @@ describe('DELETE /v1/me', () => {
     for (const [table, col] of [['posts', 'user_id'], ['comments', 'user_id'], ['skin_reviews', 'user_id'], ['post_likes', 'user_id'], ['review_likes', 'user_id'], ['skin_votes', 'user_id'], ['lfg_posts', 'user_id'], ['lfg_joins', 'user_id'], ['media', 'user_id']]) {
       expect(count(table!, `${col} = ?`, aliceId), table).toBe(0);
     }
-    expect(count('rate_limits', 'bucket LIKE ?', `%:${aliceId}`)).toBe(0);
+    // (Rate-limit counters are kept until they expire: deleting them would let delete + sign-in reset every limit.)
+    expect(count('rate_limits', 'bucket LIKE ?', `%:${aliceId}`)).toBeGreaterThan(0);
     // ... including every file, public, quarantined and orphaned.
     for (const k of [d.k1, d.k2, d.orphan]) {
       expect(fs.existsSync(publicFile(k)), k).toBe(false);
@@ -183,8 +184,15 @@ describe('DELETE /v1/me', () => {
     expect(e.repo.getUser(user.id)).not.toBeNull(); // nothing was erased
     e.clock.t += 3600_000;
     expect((await e.req('DELETE', '/v1/me', { token })).status).toBe(204);
-    // The counter rows of an erased account are erased with it.
-    expect(count('rate_limits', 'bucket LIKE ?', `%:${user.id}`)).toBe(0);
+    // The counters survive the erasure (they hold only an id and a count and expire by themselves): the erase limit
+    // cannot be reset by erasing, and neither can any other per-user limit (CS-37).
+    expect(count('rate_limits', 'bucket LIKE ?', `%:${user.id}`)).toBeGreaterThan(0);
+    for (let i = 0; i < 2; i++) {
+      const again = await e.login('flappy');
+      expect((await e.req('DELETE', '/v1/me', { token: again.token })).status).toBe(204);
+    }
+    const last = await e.login('flappy');
+    expectError(await e.req('DELETE', '/v1/me', { token: last.token }), 429, 'rate_limited');
   });
 
   it('erases a user with a lot of media without leaving files behind', async () => {

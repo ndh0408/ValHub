@@ -96,6 +96,8 @@ describe('posts', () => {
       comments: 0,
       createdAt: new Date(e.clock.t).toISOString(),
       country: null,
+      hidden: false,
+      hiddenReason: null,
       region: 'ap',
       language: null,
     });

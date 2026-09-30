@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { Ctx, type AppDeps } from './context.js';
-import { ApiError, errorBody, invalid } from './errors.js';
+import { ApiError, errorBody, reasonError } from './errors.js';
 import { registerAccount } from './routes/account.js';
 import { registerAuth } from './routes/auth.js';
 import { registerCommunities } from './routes/communities.js';
@@ -19,7 +19,7 @@ const MAX_JSON_BYTES = 64 * 1024;
 const jsonBodyLimit = bodyLimit({
   maxSize: MAX_JSON_BYTES,
   onError: () => {
-    throw invalid('Nội dung yêu cầu quá lớn.');
+    throw reasonError('invalid_input', 'body_too_large');
   },
 });
 
@@ -40,6 +40,17 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
   app.use('*', async (c, next) => {
     await next();
     if (!c.res.headers.has('cache-control')) c.res.headers.set('cache-control', 'no-store');
+  });
+
+  // Load shedding: while the event loop is lagging (sustained, see load.ts) answer 503 at once instead of
+  // queueing more work behind it. Only the health check is exempt.
+  app.use('*', async (c, next) => {
+    const limit = x.tuning.loadShedLagMs;
+    if (limit > 0 && c.req.path !== '/healthz' && x.loadLagMs() > limit) {
+      x.stats.inc('shed');
+      throw reasonError('server_busy', 'server_busy', {}, 2);
+    }
+    return next();
   });
 
   app.use('*', async (c, next) => {
@@ -86,7 +97,7 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
     } else {
       // Only the error name/message is logged — never headers, bodies or tokens.
       logError(`[${c.req.method} ${c.req.routePath}] ${e.name}: ${e.message}`);
-      err = new ApiError('server_error', 'Máy chủ gặp lỗi, vui lòng thử lại sau.');
+      err = reasonError('server_error', 'server_error');
     }
     const headers: Record<string, string> = {
       'content-type': 'application/json; charset=utf-8',

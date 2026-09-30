@@ -7,7 +7,7 @@ import { loadConfig } from '../src/config.js';
 import { migrate, openDatabase } from '../src/db/database.js';
 import { SqliteRepo } from '../src/db/sqlite-repo.js';
 import { DiskMediaStore } from '../src/media.js';
-import { expectError, PEPPER, PNG, SECRET, setup, type Env } from './helpers.js';
+import { expectError, migrationNames, PEPPER, PNG, SECRET, setup, type Env } from './helpers.js';
 
 let e: Env;
 beforeEach(() => {
@@ -173,10 +173,10 @@ describe('infrastructure', () => {
       expect(db.pragma('journal_mode', { simple: true })).toBe('wal');
       expect(migrate(db)).toEqual([]);
       const rows = db.prepare('SELECT name FROM schema_migrations').all();
-      expect(rows).toEqual([{ name: '0001_init.sql' }, { name: '0002_reviews.sql' }, { name: '0003_lfg_v2.sql' }, { name: '0004_scopes.sql' }, { name: '0005_hardening.sql' }]);
+      expect(rows).toEqual(migrationNames().map((name) => ({ name })));
       db.close();
       const again = openDatabase(file);
-      expect(again.prepare('SELECT COUNT(*) AS n FROM schema_migrations').get()).toEqual({ n: 5 });
+      expect(again.prepare('SELECT COUNT(*) AS n FROM schema_migrations').get()).toEqual({ n: migrationNames().length });
       again.close();
     } finally {
       fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 50 });

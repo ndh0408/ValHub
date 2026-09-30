@@ -54,3 +54,12 @@ android/key.properties
 
 # Agent worktrees
 .claude/worktrees/
+
+# i18n tooling (docs/design/I18N.md 5, tool/l10n_codemod)
+# `l10n scan` report: about 2 MB, regenerated at every wave start.
+/tool/l10n_codemod/reports/scan.json
+# Temporary files of the codemod's const restoration (R2b). Never commit them:
+# left behind, they would make `flutter analyze` report the const lints
+# everywhere.
+/lib/analysis_options.yaml
+/test/analysis_options.yaml

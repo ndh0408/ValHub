@@ -6,7 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app.dart';
 import 'core/background/background_tasks.dart';
 import 'core/config/remote_config.dart';
-import 'core/l10n/locale.dart';
+import 'core/l10n/intl_init.dart';
+import 'core/l10n/locale_boot.dart';
+import 'core/l10n/locale_controller.dart' show l10nBootProvider;
 import 'core/logging/session_log.dart';
 import 'core/network/retry_policy.dart';
 import 'core/notifications/notification_service.dart';
@@ -16,10 +18,20 @@ import 'core/storage/secure_store.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initAppLocale();
+  final prefs = await Prefs.create();
+
+  // Language first (docs/design/I18N.md 6.4): the preferences are read
+  // synchronously, so even the first frame is in the right language. It MUST
+  // run before _wipeSecretsAfterReinstall, which sets the install marker: the
+  // upgrade pin uses that marker to tell an existing install (keeps Vietnamese)
+  // from a fresh one.
+  final boot = L10nBootstrap.load(
+    prefs,
+    WidgetsBinding.instance.platformDispatcher.locales,
+  );
+  await initIntl(boot.formatTag);
   await initTimeZone();
 
-  final prefs = await Prefs.create();
   final secureStore = FlutterSecureStore();
   await _wipeSecretsAfterReinstall(prefs, secureStore);
   await migrateWishlistNotificationsPerAccount(prefs);
@@ -42,6 +54,7 @@ Future<void> main() async {
       retry: riotRetry,
       overrides: [
         prefsProvider.overrideWithValue(prefs),
+        l10nBootProvider.overrideWithValue(boot),
         secureStoreProvider.overrideWithValue(secureStore),
         remoteConfigProvider.overrideWithValue(remoteConfig),
         sessionLogProvider.overrideWithValue(sessionLog),

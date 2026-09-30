@@ -20,25 +20,39 @@ export interface SessionClaims {
   tag: string;
   iat: number;
   exp: number;
+  /** Session epoch of the account when the token was issued (absent on tokens from before revocation existed = 0). */
+  ep?: number;
 }
 
 export const SESSION_TTL_SECONDS = 30 * 24 * 60 * 60;
 
-const HEADER = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
+/**
+ * Key id of a signing secret (`kid` header): the first 8 hex characters of a one-way hash, so a token names the
+ * secret that signed it without revealing it. Lets two secrets be valid at once while one is being rotated out.
+ */
+export function sessionKid(secret: string): string {
+  return createHash('sha256').update(`kid:${secret}`).digest('hex').slice(0, 8);
+}
 
 function sign(secret: string, data: string): Buffer {
   return createHmac('sha256', secret).update(data).digest();
 }
 
 export function signSession(secret: string, claims: SessionClaims): string {
+  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT', kid: sessionKid(secret) })).toString('base64url');
   const payload = Buffer.from(JSON.stringify(claims)).toString('base64url');
-  const data = `${HEADER}.${payload}`;
+  const data = `${header}.${payload}`;
   return `${data}.${sign(secret, data).toString('base64url')}`;
 }
 
-/** Returns the claims if the token is a valid, unexpired HS256 session; otherwise null. */
-export function verifySession(secret: string, token: string, nowMs: number): SessionClaims | null {
+/**
+ * Returns the claims if the token is a valid, unexpired HS256 session signed by one of `secrets` (the current
+ * secret first, then the one being rotated out); otherwise null. A token with a `kid` is checked against the
+ * secret that key id names; a token without one (issued before rotation existed) against every secret.
+ */
+export function verifySession(secrets: string | readonly string[], token: string, nowMs: number): SessionClaims | null {
   if (token.length > 4096) return null;
+  const list = (typeof secrets === 'string' ? [secrets] : secrets).filter((s) => s !== '');
   const parts = token.split('.');
   if (parts.length !== 3) return null;
   const [h, p, s] = parts as [string, string, string];
@@ -51,9 +65,14 @@ export function verifySession(secret: string, token: string, nowMs: number): Ses
     ) {
       return null;
     }
-    const expected = sign(secret, `${h}.${p}`);
+    const kid = (header as Record<string, unknown>).kid;
+    const candidates = typeof kid === 'string' ? list.filter((secret) => sessionKid(secret) === kid) : list;
     const given = Buffer.from(s, 'base64url');
-    if (given.length !== expected.length || !timingSafeEqual(given, expected)) return null;
+    const valid = candidates.some((secret) => {
+      const expected = sign(secret, `${h}.${p}`);
+      return given.length === expected.length && timingSafeEqual(given, expected);
+    });
+    if (!valid) return null;
     const claims: unknown = JSON.parse(Buffer.from(p, 'base64url').toString('utf8'));
     if (typeof claims !== 'object' || claims === null) return null;
     const c = claims as Record<string, unknown>;
@@ -66,6 +85,7 @@ export function verifySession(secret: string, token: string, nowMs: number): Ses
       tag: typeof c.tag === 'string' ? c.tag : '',
       iat: c.iat,
       exp: c.exp,
+      ep: typeof c.ep === 'number' && Number.isInteger(c.ep) && c.ep >= 0 ? c.ep : 0,
     };
   } catch {
     return null;

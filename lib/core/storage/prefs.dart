@@ -22,6 +22,17 @@ abstract final class PrefKeys {
   static const remoteConfig = 'app.remoteConfig';
   static const appSettings = 'settings.app';
 
+  /// UI language choice: `"system"` (follow the device) or an
+  /// `AppLocale.tag`. Absent means undecided: `L10nBootstrap` decides once
+  /// and persists it (docs/design/I18N.md 6.2, 6.4).
+  static const appLocale = 'settings.appLocale';
+
+  /// JSON `{"v":1,"app":..,"format":..,"h24":..,"content":..}` written by the
+  /// UI isolate whenever the effective locale changes and read by background
+  /// isolates, which cannot rely on the headless engine's locale
+  /// (`EffectiveLocale`, docs/design/I18N.md 6.2, 10).
+  static const effectiveLocale = 'settings.effectiveLocale';
+
   /// Set once the single wishlist-alert switch was split per account.
   static const wishlistPerAccountMigrated = 'settings.wishlistPerAccountV1';
 
