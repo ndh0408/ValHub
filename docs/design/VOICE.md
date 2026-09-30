@@ -193,7 +193,7 @@ Mỗi chuỗi tiếng Việt sẽ thành một khóa ARB (`docs/design/I18N.md` 
 6. **Không thành ngữ, chơi chữ, viết tắt mơ hồ** khó dịch ("cày" → "cày rank" chỉ dùng khi là từ chuyên dụng), không chỉ hướng trái/phải (RTL).
 7. **Ký hiệu khóa** (VP, KC, RP, RR, K/D/A, ACS, HS%, ADR, MVP, Riot ID, ValVN, PC, PlayStation, Xbox) không đổi, không dịch.
 8. **Giới hạn độ dài**: nhãn tab/chip/nút ≤ 14 ký tự, huy hiệu ≤ 10, tiêu đề thông báo ≤ 40; đừng cắt nhãn bằng "…" trong chuỗi.
-9. **Chuỗi hiển thị nằm trong `*_strings.dart`**, không viết cứng trong widget; không có chuỗi mới trong `lib/**/ui` (còn một điểm sót: `wishlist_notification_toggle.dart` dòng 90).
+9. **Chuỗi hiển thị nằm trong `*_strings.dart` hoặc `lib/core/l10n/`**, không viết cứng trong widget. Điểm sót ở `wishlist_notification_toggle.dart` đã dùng helper chuỗi hiện có.
 10. Khi sửa lời một chuỗi đã có bản dịch, băm nguồn đổi và mọi ngôn ngữ thành "stale" tới khi dịch lại: chỉ sửa khi có lý do (sai nghĩa, thuật ngữ, lộ chi tiết kỹ thuật).
 
 ---
@@ -227,4 +227,24 @@ Ba việc này giữ lời hứa "không có gì trông như console" trong bả
 
 ---
 
-<!-- Phụ lục A–D được thêm ở cuối tài liệu sau khi viết lại chuỗi (Phase C). -->
+## Phụ lục A. Kiểm kê và kết quả WP-COPY
+
+- [Kiểm kê toàn bộ literal nguồn](../audit/COPY_INVENTORY.md): 20 file chuỗi ban đầu, lớp lời lỗi Cộng đồng mới, toàn bộ cây pháp lý, chuỗi ngoài file chuỗi, iOS và W0. Có dòng nguồn để bước ARB rà lại.
+- [Phát hiện và quyết định sửa](../audit/AUDIT_COPY.md): phân loại sáu nhóm, liên kết audit GL/PR/CS, phần xong và các điểm nối.
+- [Thông điệp máy chủ cần xử lý](../audit/COPY_SERVER_MESSAGES.md): chỉ liệt kê `server/**`, không sửa máy chủ trong WP-COPY. Client không còn hiển thị nguyên văn thông điệp đó.
+
+## Phụ lục B. Ngoại lệ placeholder và thành phần giữ nguyên
+
+Mọi member/chữ ký hiện có của 20 lớp chuỗi được giữ. Hai ngoại lệ cần thiết để không lộ kỹ thuật: `CommonStrings.errorApi(int status)` giữ tham số nhưng không in mã HTTP (đã làm ở WIP trước); `CommonStrings.priceSource(String url)` giữ tham số nhưng chỉ hiện “Xem nguồn bảng giá”. Nút mở trang nguồn vẫn mở liên kết thật. Chữ trong tệp báo lỗi có thể chứa tên yêu cầu/mã kết quả đã lọc; không được xuất hiện trong màn hình ứng dụng.
+
+Tên vật phẩm/bản đồ/đặc vụ lấy từ nội dung game; Riot ID và mã tổ đội là thông tin người chơi chủ động sử dụng, được giữ. Tên kênh và ID kênh thông báo không đổi. Tên tệp chia sẻ không chứa tài khoản: `valvn-store-<ngày>.png`, `valvn-night-market-<ngày>.png`, `valvn-bug-report-<ngày>.txt`.
+
+## Phụ lục C. Lỗi Cộng đồng
+
+`CommunityException` giữ `serverMessage` để tương thích nhưng UI không đọc nó. Các reason `content_inappropriate`, `content_scam`, `content_too_complex`, `account_banned`, `account_restricted` dùng lời của app trong `lib/core/l10n/community_error_strings.dart`. Reason mới/lạ, trường nhập sai, HTML và máy chủ cũ dùng mẫu dự phòng; không chèn tên trường/JSON/`params`. `server_busy` giữ thời gian chờ và nút thử lại. Namespace mới `communityError` đã đăng ký trong công cụ W0; các namespace cũ không đổi thứ tự.
+
+## Phụ lục D. Thuật ngữ và phạm vi kiểm chứng
+
+Thuật ngữ đã đối chiếu bảng §8 của `valbuddy-features.md`, không tự dịch lại tên chế độ/vật phẩm từ game. Các tên mới chưa xác minh nêu ở §3 giữ nguyên. WP-COPY không dùng thiết bị/emulator/adb; Claude kiểm tra trực quan chữ dài, bảng chia sẻ và bố cục trước phát hành. Bản W0 vẫn chỉ có tiếng Việt; hỗ trợ 18 ngôn ngữ là chương trình tiếp theo, không quảng cáo như đã dịch xong.
+
+Các cam kết pháp lý, số ngày lưu trữ, địa chỉ liên hệ, quyền, nghĩa vụ và tuyên bố miễn trừ được giữ khi viết lại. Phần bổ sung Google ML Kit thực hiện quyết định D1 trong `GLOBAL_AUDIT.md`: nói rõ tải gói từ Google sau khi đồng ý, dịch trên máy và không gửi bài viết đi dịch. Không khẳng định SDK không có lưu lượng kỹ thuật chưa kiểm chứng.

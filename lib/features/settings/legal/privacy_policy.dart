@@ -440,6 +440,18 @@ const privacyPolicy = LegalDocument(
         'thông báo trong Cài đặt của Ứng dụng hoặc của hệ điều hành.',
       ),
     ]),
+    LegalSection('Dịch nội dung trên thiết bị', [
+      LegalParagraph(
+        'Khi bạn chọn dịch nội dung Cộng đồng, ValVN dùng công cụ dịch ML Kit '
+        'của Google chạy trên thiết bị. Nếu chưa có gói ngôn ngữ cần thiết, '
+        'ValVN hỏi bạn trước khi tải gói từ Google (khoảng 30 MB mỗi gói). '
+        'Việc tải cần kết nối mạng và Google có thể nhận thông tin kỹ thuật '
+        'của kết nối, như địa chỉ IP, theo chính sách của Google. Nội dung '
+        'bài viết được dịch trên thiết bị, không gửi tới Google để dịch. '
+        'Bạn có thể không dùng tính năng này; ValVN không dùng chatbot hay '
+        'dịch vụ tạo nội dung bằng AI.',
+      ),
+    ]),
     LegalSection('Phân tích, quảng cáo và theo dõi', [
       LegalParagraph(
         'ValVN không tích hợp công cụ phân tích, công cụ tự động báo cáo sự '

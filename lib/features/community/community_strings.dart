@@ -570,13 +570,13 @@ abstract final class CommunityStrings {
   static const consentTitle = 'Tham gia Cộng đồng ValVN';
   static String consentAccount(String riotId) => 'Tài khoản: $riotId';
   static const consentVerify =
-      'ValVN gửi quyền truy cập Riot của bạn một lần cho Cộng đồng ValVN để '
-      'xác minh Riot ID. Cộng đồng dùng xong là bỏ ngay, không lưu.';
+      'Khi cần xác minh Riot ID, ValVN gửi quyền truy cập Riot của bạn cho '
+      'Cộng đồng ValVN. Cộng đồng dùng xong là bỏ ngay, không lưu.';
   static const consentPublic =
       'Người khác sẽ thấy Riot ID, thẻ người chơi, rank và quốc gia của bạn.';
   static const consentLocal =
       'Mật khẩu và dữ liệu đăng nhập khác của bạn luôn ở lại trên thiết bị '
-      'này.';
+      'này. Bạn có thể rút lại đồng ý trong Cài đặt.';
   static const consentPrivacy = 'Chính sách quyền riêng tư';
   static const consentGuidelines = 'Tiêu chuẩn cộng đồng';
   static const consentAgree = 'Đồng ý và tiếp tục';

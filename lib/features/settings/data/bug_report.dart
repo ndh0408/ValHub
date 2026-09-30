@@ -49,7 +49,7 @@ BugReportFile buildBugReport(
 // Scrub again at the sharing boundary, including older on-disk entries.
 // Unicode Riot tags are not covered by the legacy SessionLog scrubber.
 String _scrubReport(String text) {
-  final riotId = RegExp(r'[^\s#/]+#[\p{L}\p{N}]+', unicode: true);
+  final riotId = RegExp(r'[^\s#/]+#[\p{L}\p{N}\p{M}]+', unicode: true);
   final password = RegExp(
     r'(password|passwd|pwd)(\s*[=:]\s*)[^;&\s,]+',
     caseSensitive: false,

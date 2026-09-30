@@ -76,6 +76,8 @@ void main() {
       expect(privacy, contains('không lưu PUUID'));
       expect(privacy, contains('30 phút'));
       expect(privacy, contains('Cloudflare'));
+      expect(privacy, contains('gói từ Google'));
+      expect(privacy, contains('không gửi tới Google để dịch'));
 
       final terms = legalDocumentToMarkdown(LegalDocuments.terms);
       expect(

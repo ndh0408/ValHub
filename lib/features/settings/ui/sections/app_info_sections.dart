@@ -154,10 +154,17 @@ class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
     final origin = box is RenderBox && box.hasSize
         ? box.localToGlobal(Offset.zero) & box.size
         : null;
+    String? version;
+    try {
+      version = (await ref.read(packageInfoProvider.future)).version;
+    } on Object {
+      // A report can still be shared when app information is unavailable.
+    }
+    if (!mounted) return;
     final report = buildBugReport(
       log,
       now: ref.read(clockProvider).now(),
-      version: ref.read(packageInfoProvider).value?.version,
+      version: version,
     );
     try {
       await ref.read(bugReportSharerProvider)(report, origin: origin);

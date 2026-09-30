@@ -116,11 +116,15 @@ Máy chủ Cộng đồng do nhà phát hành tự vận hành. Kết nối tớ
 
 ValVN chỉ dùng thông báo cục bộ, tức là thông báo do chính thiết bị của bạn tạo ra. Chúng tôi không vận hành máy chủ gửi thông báo đẩy và không thu thập mã thiết bị. Ứng dụng đăng ký với hệ điều hành một tác vụ chạy nền định kỳ, chạy ngay trên thiết bị, để giữ đăng nhập Riot của bạn còn hiệu lực và, nếu bạn bật, đọc cửa hàng trực tiếp từ Riot để báo skin trong wishlist hoặc Chợ Đêm. Bạn có thể tắt thông báo trong Cài đặt của Ứng dụng hoặc của hệ điều hành.
 
-## 13. Phân tích, quảng cáo và theo dõi
+## 13. Dịch nội dung trên thiết bị
+
+Khi bạn chọn dịch nội dung Cộng đồng, ValVN dùng công cụ dịch ML Kit của Google chạy trên thiết bị. Nếu chưa có gói ngôn ngữ cần thiết, ValVN hỏi bạn trước khi tải gói từ Google (khoảng 30 MB mỗi gói). Việc tải cần kết nối mạng và Google có thể nhận thông tin kỹ thuật của kết nối, như địa chỉ IP, theo chính sách của Google. Nội dung bài viết được dịch trên thiết bị, không gửi tới Google để dịch. Bạn có thể không dùng tính năng này; ValVN không dùng chatbot hay dịch vụ tạo nội dung bằng AI.
+
+## 14. Phân tích, quảng cáo và theo dõi
 
 ValVN không tích hợp công cụ phân tích, công cụ tự động báo cáo sự cố, quảng cáo hay công cụ theo dõi của bên thứ ba. ValVN không dùng mã định danh quảng cáo và không theo dõi bạn giữa các ứng dụng hay trang web. Nếu điều này thay đổi trong tương lai, chúng tôi sẽ cập nhật Chính sách và xin sự đồng ý của bạn khi pháp luật yêu cầu.
 
-## 14. Bảo mật dữ liệu
+## 15. Bảo mật dữ liệu
 
 - Thông tin bí mật (dữ liệu đăng nhập Riot, thông tin đăng nhập đã lưu, mã đăng nhập Cộng đồng) chỉ được lưu trong vùng lưu trữ bảo mật của hệ điều hành (Keychain hoặc Keystore) và được xóa khi cài lại Ứng dụng.
 - Mọi kết nối mạng đều được mã hóa (HTTPS/TLS).
@@ -130,11 +134,11 @@ ValVN không tích hợp công cụ phân tích, công cụ tự động báo c�
 
 Không có biện pháp nào an toàn tuyệt đối. Nếu xảy ra sự cố vi phạm dữ liệu cá nhân, chúng tôi sẽ thông báo cho cơ quan có thẩm quyền và người dùng bị ảnh hưởng theo quy định của pháp luật.
 
-## 15. Trẻ em
+## 16. Trẻ em
 
 Ứng dụng không dành cho trẻ em dưới 13 tuổi. Ở những nơi pháp luật quy định độ tuổi tối thiểu để tự đồng ý xử lý dữ liệu cao hơn (ví dụ 16 tuổi ở một số nước thuộc Liên minh châu Âu), bạn chỉ được sử dụng Ứng dụng, đặc biệt là tính năng Cộng đồng, khi đã đủ tuổi đó hoặc khi có sự đồng ý và giám sát của cha, mẹ hoặc người giám hộ hợp pháp. Nếu bạn là phụ huynh và cho rằng con mình đã cung cấp dữ liệu cho Cộng đồng khi chưa có sự đồng ý, vui lòng liên hệ để chúng tôi xóa dữ liệu đó.
 
-## 16. Quyền của bạn
+## 17. Quyền của bạn
 
 Theo pháp luật Việt Nam về bảo vệ dữ liệu cá nhân (bao gồm Nghị định 13/2023/NĐ-CP), bạn có các quyền sau:
 
@@ -151,7 +155,7 @@ Theo pháp luật Việt Nam về bảo vệ dữ liệu cá nhân (bao gồm Ng
 
 Phần lớn dữ liệu nằm trên thiết bị và bạn có thể tự xem hoặc xóa ngay trong Ứng dụng. Với dữ liệu trên máy chủ Cộng đồng, hãy gửi yêu cầu tới ndh0408@gmail.com. Chúng tôi xử lý yêu cầu trong vòng 30 ngày và có thể cần xác minh danh tính của bạn trước khi xử lý. Bạn cũng có thể tự tải bản sao dữ liệu Cộng đồng của mình (tệp JSON) tại Cài đặt > "Dữ liệu Cộng đồng của bạn" > "Tải dữ liệu của tôi", và tự xóa dữ liệu đó ngay tại đây.
 
-## 17. Quyền của bạn theo luật nơi bạn sống
+## 18. Quyền của bạn theo luật nơi bạn sống
 
 Tùy nơi bạn sống, pháp luật địa phương có thể cho bạn thêm quyền. Dù bạn ở đâu, bạn đều có thể thực hiện các quyền thực tế dưới đây bằng cách gửi email tới ndh0408@gmail.com; chúng tôi xử lý yêu cầu trong vòng 30 ngày và không phân biệt đối xử với bạn vì đã thực hiện quyền của mình.
 
@@ -172,11 +176,11 @@ Một số ví dụ về luật có thể áp dụng cho bạn:
 
 Chúng tôi không thu thập nhiều dữ liệu hơn mức cần thiết và không thực hiện quyết định tự động có ảnh hưởng pháp lý tới bạn. Nếu bạn không hài lòng với phản hồi của chúng tôi, bạn có quyền khiếu nại tới cơ quan có thẩm quyền ở nơi bạn sống.
 
-## 18. Thay đổi Chính sách
+## 19. Thay đổi Chính sách
 
 Chúng tôi có thể cập nhật Chính sách này khi Ứng dụng hoặc quy định pháp luật thay đổi. Phiên bản và ngày hiệu lực luôn được ghi ở đầu văn bản. Với thay đổi quan trọng về cách xử lý dữ liệu, chúng tôi sẽ thông báo trong Ứng dụng và xin lại sự đồng ý của bạn khi cần.
 
-## 19. Liên hệ
+## 20. Liên hệ
 
 Mọi câu hỏi hoặc yêu cầu về quyền riêng tư và dữ liệu cá nhân, vui lòng liên hệ:
 

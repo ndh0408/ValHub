@@ -184,6 +184,25 @@ abstract final class SettingsStrings {
   static String logFileHeader(String appName, String version) =>
       '$appName $version — Báo lỗi';
 
+  // Keep the historical members for the later mechanical ARB extraction.
+  // They do not restore the retired log viewer or any route to it.
+  static const exportLogNote =
+      'Báo lỗi không chứa mật khẩu hay dữ liệu đăng nhập Riot của bạn.';
+  static const exportLogEmptyTitle = 'Chưa có gì để gửi';
+  static String logEntryCount(int count) => '$count mục';
+  static String logEntryShown(int shown, int total) => '$shown / $total mục';
+  static const logSearchHint = 'Tìm trong báo lỗi…';
+  static const logSearchEmpty = 'Không có mục phù hợp.';
+  static const logMore = 'Tùy chọn khác';
+  static const clearLog = 'Xóa báo lỗi đã ghi';
+  static const clearLogConfirm = 'Xóa báo lỗi đã ghi trên thiết bị này?';
+  static const logCleared = 'Đã xóa báo lỗi';
+  static const logFilterAll = 'Tất cả';
+  static const logFilterErrors = 'Sự cố';
+  static const logFilterHttp = 'Kết nối';
+  static const logFilterAuth = 'Đăng nhập';
+  static const logFilterEmpty = 'Không có mục phù hợp. Hãy bỏ lọc để xem thêm.';
+
   // Welcome hero (S01)
   static const welcomeKicker = 'TRỢ THỦ VALORANT';
   static const welcomeBulletStoreDetail = 'Xem giá, độ hiếm, đếm ngược làm mới';
