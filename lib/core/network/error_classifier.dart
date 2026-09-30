@@ -88,6 +88,17 @@ bool isAuthFailure(
       );
 }
 
+/// True when a `400` says the `X-Riot-ClientVersion` header is out of date
+/// (the exact Riot error is UNVERIFIED, SUMMARY §13: an `errorCode` naming the
+/// client version, or a message that does). A call refused like this is worth
+/// exactly one repeat, after `/v1/version` was re-read.
+bool isClientVersionRejection(int? status, Object? body) {
+  if (status != 400) return false;
+  final code = riotErrorCode(body)?.toUpperCase() ?? '';
+  if (code.contains('CLIENT_VERSION')) return true;
+  return (_riotMessage(body) ?? '').toLowerCase().contains('client version');
+}
+
 /// `403` + JSON body (not downtime) on a `/name-service/` path.
 bool isNameServiceAuthFailure(
   int? status,

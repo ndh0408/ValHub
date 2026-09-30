@@ -65,6 +65,7 @@ class BackgroundContext {
     final secure = FlutterSecureStore();
     final log = SessionLog.persistent();
     await log.load();
+    secure.onError = secureErrorToLog(log);
     final versions = ClientVersionRepository(
       prefs: prefs,
       remoteConfig: () => remote,

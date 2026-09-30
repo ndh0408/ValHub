@@ -28,6 +28,16 @@ abstract final class SecureKeys {
     loginNote(puuid),
     community(puuid),
   ];
+
+  /// The PUUID a key belongs to (`acct.<puuid>.…`), lower case, or `null`
+  /// for a key outside the schema.
+  static String? puuidOf(String key) {
+    if (!key.startsWith('acct.')) return null;
+    final rest = key.substring(5);
+    final dot = rest.indexOf('.');
+    final id = dot < 0 ? rest : rest.substring(0, dot);
+    return id.isEmpty ? null : id.toLowerCase();
+  }
 }
 
 /// Key/value store for secrets (cookies, tokens). Values are never logged.
@@ -36,21 +46,40 @@ abstract interface class SecureStore {
   Future<void> write(String key, String value);
   Future<void> delete(String key);
 
+  /// Every key currently stored (never the values), for the orphan sweeper
+  /// (`AccountRepository.sweepOrphans`). Empty when the store cannot be read.
+  Future<Set<String>> readAllKeys();
+
   /// Deletes every ValVN secret (first launch after a reinstall, sign-out all).
   Future<void> deleteAll();
 }
 
+/// Receives the operation (`read`, `write`, …) and the error of a failed
+/// keystore call, for the session log. Must never see keys or values.
+typedef SecureErrorSink = void Function(String operation, Object error);
+
 /// [SecureStore] backed by the Keychain / Android Keystore.
 ///
-/// - Android: `storageNamespace: valvn_secure` (flutter_secure_storage 11).
+/// - Android: `storageNamespace: valvn_secure` (flutter_secure_storage 11) and
+///   `resetOnError: false`: a Keystore hiccup (backup restore, OEM bug, lock
+///   screen change) no longer erases every account silently. Instead:
+///   - a failed **read** is reported to [onError] and reads as "no value", so
+///     the account simply needs a new login while the data is kept (the
+///     Keystore may recover);
+///   - a failed **write** is reported, retried once, and only when the store
+///     is really unusable it is reset (reported too) and written once more:
+///     the visible equivalent of the plugin's silent reset.
 /// - iOS: `first_unlock_this_device` so background tasks can read it while the
 ///   phone is locked; never synchronised to iCloud.
 class FlutterSecureStore implements SecureStore {
-  FlutterSecureStore([FlutterSecureStorage? storage])
+  FlutterSecureStore([FlutterSecureStorage? storage, this.onError])
     : _storage = storage ?? defaultStorage;
 
   static const defaultStorage = FlutterSecureStorage(
-    aOptions: AndroidOptions(storageNamespace: 'valvn_secure'),
+    aOptions: AndroidOptions(
+      storageNamespace: 'valvn_secure',
+      resetOnError: false,
+    ),
     iOptions: IOSOptions(
       accessibility: KeychainAccessibility.first_unlock_this_device,
     ),
@@ -58,15 +87,72 @@ class FlutterSecureStore implements SecureStore {
 
   final FlutterSecureStorage _storage;
 
-  @override
-  Future<String?> read(String key) => _storage.read(key: key);
+  /// Where failures are reported (the session log). Assigned by whoever owns
+  /// the log (`sessionManagerProvider`, `BackgroundContext`).
+  SecureErrorSink? onError;
+
+  void _report(String operation, Object error) {
+    try {
+      onError?.call(operation, error);
+    } on Object {
+      // Reporting must never break storage.
+    }
+  }
 
   @override
-  Future<void> write(String key, String value) =>
-      _storage.write(key: key, value: value);
+  Future<String?> read(String key) async {
+    try {
+      return await _storage.read(key: key);
+    } on Object catch (e) {
+      _report('read', e);
+      return null;
+    }
+  }
 
   @override
-  Future<void> delete(String key) => _storage.delete(key: key);
+  Future<void> write(String key, String value) async {
+    try {
+      await _storage.write(key: key, value: value);
+      return;
+    } on Object catch (e) {
+      _report('write', e);
+    }
+    try {
+      await _storage.write(key: key, value: value);
+      return;
+    } on Object catch (e) {
+      _report('write.retry', e);
+    }
+    // Unusable store: reset it visibly (what `resetOnError` did silently),
+    // then write once more.
+    try {
+      await _storage.deleteAll();
+      _report('reset', StateError('secure storage reset after write errors'));
+    } on Object catch (e) {
+      _report('reset.failed', e);
+    }
+    await _storage.write(key: key, value: value);
+  }
+
+  @override
+  Future<void> delete(String key) async {
+    try {
+      await _storage.delete(key: key);
+    } on Object catch (e) {
+      // Best effort: the orphan sweeper retries at the next start.
+      _report('delete', e);
+    }
+  }
+
+  @override
+  Future<Set<String>> readAllKeys() async {
+    try {
+      return (await _storage.readAll()).keys.toSet();
+    } on Object catch (e) {
+      _report('readAll', e);
+      return const <String>{};
+    }
+  }
 
   @override
   Future<void> deleteAll() => _storage.deleteAll();
@@ -86,6 +172,9 @@ class MemorySecureStore implements SecureStore {
 
   @override
   Future<void> delete(String key) async => values.remove(key);
+
+  @override
+  Future<Set<String>> readAllKeys() async => values.keys.toSet();
 
   @override
   Future<void> deleteAll() async => values.clear();

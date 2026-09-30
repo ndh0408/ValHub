@@ -180,4 +180,51 @@ void main() {
       ),
     );
   });
+
+  group('client version rejected (AR-011)', () {
+    const rejection = '{"httpStatus":400,"errorCode":"BAD_CLIENT_VERSION"}';
+
+    test('/v1/version is re-read and the call repeated once', () async {
+      when(() => sessions.noteVersionRejected()).thenAnswer((_) async => true);
+      setUpDio([_json(400, rejection), _json(200, '[]')]);
+      final res = await call('/store/v2/x');
+      expect(res.statusCode, 200);
+      expect(adapter.requests, hasLength(2));
+      verify(() => sessions.noteVersionRejected()).called(1);
+      verifyNever(
+        () => sessions.refreshAfterAuthFailure(
+          _puuid,
+          failedAccessToken: any(named: 'failedAccessToken'),
+        ),
+      );
+    });
+
+    test('an unchanged version leaves the error alone', () async {
+      when(() => sessions.noteVersionRejected()).thenAnswer((_) async => false);
+      setUpDio([_json(400, rejection)]);
+      await expectLater(call('/store/v2/x'), throwsA(isA<DioException>()));
+      expect(adapter.requests, hasLength(1));
+    });
+
+    test('the repeat is not repeated (no loop)', () async {
+      when(() => sessions.noteVersionRejected()).thenAnswer((_) async => true);
+      setUpDio([_json(400, rejection), _json(400, rejection)]);
+      await expectLater(call('/store/v2/x'), throwsA(isA<DioException>()));
+      expect(adapter.requests, hasLength(2));
+      verify(() => sessions.noteVersionRejected()).called(1);
+    });
+
+    test('a failing refresh leaves the original error', () async {
+      when(() => sessions.noteVersionRejected()).thenThrow(StateError('boom'));
+      setUpDio([_json(400, rejection)]);
+      await expectLater(call('/store/v2/x'), throwsA(isA<DioException>()));
+      expect(adapter.requests, hasLength(1));
+    });
+
+    test('other 400s do not touch the version', () async {
+      setUpDio([_json(400, '{"errorCode":"BAD_PARAMETER"}')]);
+      await expectLater(call('/store/v2/x'), throwsA(isA<DioException>()));
+      verifyNever(() => sessions.noteVersionRejected());
+    });
+  });
 }

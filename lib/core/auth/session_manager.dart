@@ -225,6 +225,16 @@ class SessionManager {
     return _obtain(id, failedAccessToken: failedAccessToken);
   }
 
+  /// A PD / GLZ call was refused because `X-Riot-ClientVersion` is out of
+  /// date: re-reads `/v1/version` (at most every 10 min). `true` when the
+  /// version changed, so repeating the call with fresh headers can succeed.
+  Future<bool> noteVersionRejected() async {
+    _log?.add('version.rejected');
+    final changed = await _versions.noteRejected();
+    if (changed) _log?.add('version.refreshed');
+    return changed;
+  }
+
   /// The cached session without any network call (may be expired or null).
   RiotSession? peek(String puuid) => _cache[puuid.toLowerCase()];
 

@@ -88,6 +88,21 @@ enum AccountActivity {
 /// How often a visible account list re-checks every account.
 const kAccountActivityRefresh = Duration(seconds: 45);
 
+/// Gap between two accounts' checks in one refresh round (account `i` starts
+/// `i × stagger` late, at most [kAccountActivityMaxStagger] in total), so ten
+/// accounts do not hit Riot in the same instant every 45 s.
+const kAccountActivityStagger = Duration(milliseconds: 300);
+
+/// Longest delay of the last account in a round.
+const kAccountActivityMaxStagger = Duration(seconds: 3);
+
+/// Delay of the check of the account at [index] in a refresh round.
+Duration accountActivityStaggerFor(int index) {
+  if (index <= 0) return Duration.zero;
+  final d = kAccountActivityStagger * index;
+  return d > kAccountActivityMaxStagger ? kAccountActivityMaxStagger : d;
+}
+
 /// Live activity of one account (G-1 with that account's own session).
 /// Auto-disposed; wrap the list in [AccountActivityPoller] to refresh it
 /// while visible. Never throws: failures read as [AccountActivity.unknown].
@@ -135,6 +150,9 @@ class AccountActivityPoller extends ConsumerStatefulWidget {
 class _AccountActivityPollerState extends ConsumerState<AccountActivityPoller> {
   Timer? _timer;
 
+  /// Pending staggered refreshes of accounts after the first one.
+  final List<Timer> _staggered = [];
+
   /// False while this tab is in the background.
   var _visible = true;
   var _initialized = false;
@@ -146,7 +164,7 @@ class _AccountActivityPollerState extends ConsumerState<AccountActivityPoller> {
     if (_initialized && visible && !_visible) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && _visible && ref.read(appForegroundProvider)) {
-          ref.invalidate(accountActivityProvider);
+          _refreshStaggered();
         }
       });
     }
@@ -159,14 +177,40 @@ class _AccountActivityPollerState extends ConsumerState<AccountActivityPoller> {
     super.initState();
     _timer = Timer.periodic(kAccountActivityRefresh, (_) {
       if (mounted && _visible && ref.read(appForegroundProvider)) {
-        ref.invalidate(accountActivityProvider);
+        _refreshStaggered();
       }
     });
+  }
+
+  /// Re-checks every listed account: the first now, the others one after the
+  /// other ([accountActivityStaggerFor]).
+  void _refreshStaggered() {
+    for (final t in _staggered) {
+      t.cancel();
+    }
+    _staggered.clear();
+    final accounts = ref.read(accountsProvider);
+    for (var i = 0; i < accounts.length; i++) {
+      final puuid = accounts[i].puuid;
+      final delay = accountActivityStaggerFor(i);
+      if (delay == Duration.zero) {
+        ref.invalidate(accountActivityProvider(puuid));
+      } else {
+        _staggered.add(
+          Timer(delay, () {
+            if (mounted) ref.invalidate(accountActivityProvider(puuid));
+          }),
+        );
+      }
+    }
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    for (final t in _staggered) {
+      t.cancel();
+    }
     super.dispose();
   }
 
@@ -174,7 +218,7 @@ class _AccountActivityPollerState extends ConsumerState<AccountActivityPoller> {
   Widget build(BuildContext context) {
     ref.listen<bool>(appForegroundProvider, (wasForeground, foreground) {
       if (foreground && wasForeground == false && _visible) {
-        ref.invalidate(accountActivityProvider);
+        _refreshStaggered();
       }
     });
     return widget.child;

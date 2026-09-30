@@ -135,6 +135,25 @@ class RiotAuthInterceptor extends Interceptor {
     final response = err.response;
     final status = response?.statusCode;
     final contentType = response?.headers.value(Headers.contentTypeHeader);
+    if (puuid is String &&
+        options.extra[RequestExtras.authRetried] != true &&
+        isClientVersionRejection(status, response?.data)) {
+      // The client version is out of date: re-read /v1/version and repeat the
+      // call once with the fresh header (no re-auth involved).
+      try {
+        if (await _sessions.noteVersionRejected()) {
+          final session = await _sessions.session(puuid);
+          options.extra[RequestExtras.authRetried] = true;
+          options.headers.addAll(session.gameHeaders);
+          return handler.resolve(await _dio.fetch<dynamic>(options));
+        }
+      } on DioException catch (e) {
+        return handler.next(e);
+      } on Object {
+        // Could not refresh: the original error stands.
+      }
+      return handler.next(err);
+    }
     final nameService = isNameServiceAuthFailure(
       status,
       response?.data,

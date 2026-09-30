@@ -273,6 +273,14 @@ class SessionLog extends ChangeNotifier {
   }
 }
 
+/// A [SecureErrorSink] that records keystore failures as `secure.error`
+/// lines (operation and exception type only: never keys or values).
+void Function(String operation, Object error) secureErrorToLog(
+  SessionLog log,
+) =>
+    (operation, error) =>
+        log.add('secure.error', detail: '$operation ${error.runtimeType}');
+
 /// App-wide session log. `main()` calls `load()` once at startup. Widgets
 /// listen with `ListenableBuilder(listenable: ref.watch(sessionLogProvider))`.
 final sessionLogProvider = Provider<SessionLog>((ref) {

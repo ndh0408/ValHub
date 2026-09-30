@@ -219,6 +219,63 @@ void main() {
     });
   });
 
+  test('the check of account i starts i × 300 ms late, at most 3 s', () {
+    expect(accountActivityStaggerFor(0), Duration.zero);
+    expect(accountActivityStaggerFor(-1), Duration.zero);
+    expect(accountActivityStaggerFor(1), const Duration(milliseconds: 300));
+    expect(accountActivityStaggerFor(4), const Duration(milliseconds: 1200));
+    expect(
+      accountActivityStaggerFor(9),
+      const Duration(seconds: 2, milliseconds: 700),
+    );
+    expect(accountActivityStaggerFor(10), kAccountActivityMaxStagger);
+    expect(accountActivityStaggerFor(99), kAccountActivityMaxStagger);
+  });
+
+  testWidgets('a refresh round checks the accounts one after the other', (
+    tester,
+  ) async {
+    await seed([_account(1), _account(2), _account(3)]);
+    for (var i = 1; i <= 3; i++) {
+      when(() => api.gameSession(_puuid(i)))
+          .thenAnswer((_) async => {'loopState': 'MENUS'});
+    }
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: overrides(),
+        child: MaterialApp(
+          theme: buildDarkTheme(),
+          home: const Scaffold(
+            body: AccountActivityPoller(child: AccountSwitcherSheet()),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+    clearInteractions(api);
+
+    await tester.pump(kAccountActivityRefresh);
+    await tester.pump();
+    verify(() => api.gameSession(_puuid(1))).called(1);
+    verifyNever(() => api.gameSession(_puuid(2)));
+    verifyNever(() => api.gameSession(_puuid(3)));
+
+    await tester.pump(kAccountActivityStagger);
+    await tester.pump();
+    verify(() => api.gameSession(_puuid(2))).called(1);
+    verifyNever(() => api.gameSession(_puuid(3)));
+
+    await tester.pump(kAccountActivityStagger);
+    await tester.pump();
+    verify(() => api.gameSession(_puuid(3))).called(1);
+
+    // Leaving the screen cancels the pending staggered checks.
+    await tester.pump(kAccountActivityRefresh);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(kAccountActivityRefresh);
+  });
+
   testWidgets('switcher shows every account status and the online count', (
     tester,
   ) async {

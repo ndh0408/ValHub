@@ -44,15 +44,19 @@ final accountLockProvider = Provider<AccountLock>((ref) => PrefsAccountLock());
 
 /// The one [SessionManager] of the UI isolate.
 final sessionManagerProvider = Provider<SessionManager>((ref) {
+  final secure = ref.watch(secureStoreProvider);
+  final log = ref.watch(sessionLogProvider);
+  // Keystore failures show up in "Nhật ký phiên" instead of vanishing.
+  if (secure is FlutterSecureStore) secure.onError = secureErrorToLog(log);
   final manager = SessionManager(
-    secureStore: ref.watch(secureStoreProvider),
+    secureStore: secure,
     accounts: ref.watch(accountRepositoryProvider),
     reauthClient: ref.watch(reauthClientProvider),
     bootstrapClient: ref.watch(bootstrapClientProvider),
     versions: ref.watch(clientVersionRepositoryProvider),
     remoteConfig: () => ref.read(remoteConfigProvider),
     lock: ref.watch(accountLockProvider),
-    log: ref.watch(sessionLogProvider),
+    log: log,
     clock: ref.watch(clockProvider),
   );
   ref.onDispose(manager.dispose);
