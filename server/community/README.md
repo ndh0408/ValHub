@@ -58,6 +58,7 @@ never touch the network or the real clock.
 | `ANON_READ_LIMIT_PER_MIN` | no (120) | Requests without a session per client IP per minute (feed, skins, communities). |
 | `ANON_MEDIA_LIMIT_PER_MIN` | no (1500) | Same, for image files (generous: many phones share one carrier-grade-NAT address). |
 | `PUBLIC_CACHE_TTL_SECONDS` | no (45) | Cache of anonymous aggregate responses; `0` = off. |
+| `MEDIA_EDGE_CACHE_SECONDS` | no (0) | How long Cloudflare's edge may keep an image (`Cloudflare-CDN-Cache-Control`). `0` = `no-store`: deleted / quarantined images stop being served at once. Devices always keep the 1-year `Cache-Control`. A value <= 60 trades a short deletion lag for fewer origin reads. |
 | `BACKUP_DIR`, `BACKUP_KEEP_DAYS`, `BACKUP_INTERVAL_SECONDS` | no | Backup service (compose): host directory (`./backups`), retention (14), period (86400). |
 
 The process exits immediately with a clear message if a secret is missing / too short or a number is out of range.
@@ -105,6 +106,28 @@ docker compose logs -f valvn-community
   of `docker-compose.yml` with `ops/backup-loop.sh`: delete the `valvn-backup` block from the host's override
   (keep only the `edge` network), set `BACKUP_DIR=/home/huy/backups/valvn-community` in `.env`, then
   `docker compose up -d` (the container is recreated; existing archives are kept and count toward retention).
+
+### Cloudflare and media caching (CS-01)
+
+Cloudflare's default cache level caches static file extensions (`.jpg`, `.png`, `.webp`) **whatever the origin says**,
+and it also caches error pages for them (a 404 for a media path was seen with `cf-cache-status: HIT`). The origin
+therefore sends, on every media `200` / `304`, `Cache-Control: public, max-age=31536000, immutable` (devices) **and**
+`Cloudflare-CDN-Cache-Control: no-store` (the edge; overrides `Cache-Control` for Cloudflare only), and
+`Cache-Control: no-store` on **every** other response (errors included, JSON included). This is what makes a
+deleted, quarantined or erased image disappear from the edge together with the database row.
+
+**Verify after every deploy** (twice; the second answer must not be a `HIT`):
+
+```bash
+curl -sI https://val.gianguyen.cloud/v1/media/u/<userId>/<key>.jpg | grep -i -E 'cf-cache-status|cache-control|age'
+curl -sI https://val.gianguyen.cloud/v1/media/u/00000000000000000000000000000000/00000000000000000000000000000000.jpg
+# expected: HTTP 404, cache-control: no-store, cf-cache-status: DYNAMIC (or BYPASS) - never HIT
+```
+
+**Fallback if the edge still answers `HIT`** (a Cache Rule or Page Rule with `Cache Everything` / `Ignore cache-control`
+on the zone overrides origin headers): Cloudflare dashboard -> Caching -> Cache Rules -> Create rule, expression
+`(starts_with(http.request.uri.path, "/v1/media/"))`, action **Bypass cache** (place it above other cache rules).
+To remove one image that is already cached: Caching -> Configuration -> Purge Cache -> Custom Purge -> URL.
 
 ### Restart policy and health
 
@@ -256,7 +279,8 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
     30 / 10 min per client IP (`CF-Connecting-IP`, stored only as a peppered hash). Rate limits use
     fixed windows stored in SQLite, so they survive restarts.
 13. **Media:** content-type must be `image/jpeg|png|webp` *and* match the magic bytes. `GET` sends
-    `Cache-Control: public, max-age=31536000, immutable`, an `ETag`, and honours `If-None-Match` (304).
+    `Cache-Control: public, max-age=31536000, immutable` (+ `Cloudflare-CDN-Cache-Control: no-store`), an `ETag`, and
+    honours `If-None-Match` (304).
     Files are sanitised on upload and served with hardened headers (see 47–49).
 14. **Housekeeping:** superseded by the sweeper (see 51).
 15. String length limits count Unicode code points (so Vietnamese diacritics count as one character).
@@ -419,7 +443,9 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
 49. **Serving media.** `GET /v1/media/{key}` needs an *active database row*: deleted, quarantined and stray files are
     404 even if bytes remain on disk. Responses carry `Content-Disposition: inline`, `X-Content-Type-Options: nosniff`,
     `Content-Security-Policy: default-src 'none'; img-src 'self' data:; sandbox`, `Referrer-Policy: no-referrer`,
-    `Cross-Origin-Resource-Policy: cross-origin` and the 1-year immutable cache header (304s too).
+    `Cross-Origin-Resource-Policy: cross-origin`, the 1-year immutable `Cache-Control` for devices and
+    `Cloudflare-CDN-Cache-Control: no-store` for the edge (304s too, see "Cloudflare and media caching"). Every error
+    response, and every response without its own `Cache-Control`, is `Cache-Control: no-store`.
 50. **Media lifecycle.** A file is attached to its post when the post is created (same transaction); it cannot be used by
     a second post (400) and quarantined files cannot be attached. **Post deleted by its author** → files and rows deleted
     (public and quarantined copies). **Post newly hidden by reports** → row `quarantined`, file moved to

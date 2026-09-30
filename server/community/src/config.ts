@@ -18,6 +18,12 @@ export interface Config {
   anonMediaLimitPerMin: number;
   /** How long anonymous aggregate responses (skin top / votes / summary / reviews, communities) are cached; 0 = off. */
   publicCacheTtlMs: number;
+  /**
+   * How long Cloudflare's edge may keep a media 200 (Cloudflare-CDN-Cache-Control). Devices always get the
+   * 1-year immutable Cache-Control. 0 (default) = no-store at the edge, so deleted / quarantined images stop
+   * being served at once; a small value (<= 60) trades a short deletion lag for fewer origin reads.
+   */
+  mediaEdgeCacheSeconds: number;
 }
 
 const MIN_SECRET_LENGTH = 32;
@@ -65,6 +71,7 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
   const anonReadLimitPerMin = num('ANON_READ_LIMIT_PER_MIN', 120, 1, 100_000);
   const anonMediaLimitPerMin = num('ANON_MEDIA_LIMIT_PER_MIN', 1500, 1, 1_000_000);
   const cacheSeconds = num('PUBLIC_CACHE_TTL_SECONDS', 45, 0, 3600);
+  const mediaEdgeCacheSeconds = num('MEDIA_EDGE_CACHE_SECONDS', 0, 0, 3600);
 
   if (problems.length > 0) throw new Error(`Invalid configuration:\n- ${problems.join('\n- ')}`);
 
@@ -80,5 +87,6 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
     anonReadLimitPerMin: Math.round(anonReadLimitPerMin),
     anonMediaLimitPerMin: Math.round(anonMediaLimitPerMin),
     publicCacheTtlMs: Math.round(cacheSeconds * 1000),
+    mediaEdgeCacheSeconds: Math.round(mediaEdgeCacheSeconds),
   };
 }

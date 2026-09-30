@@ -232,7 +232,7 @@ from averages.
 | DELETE | `/v1/comments/{id}` | own only | `204` |
 | POST | `/v1/reports` | `{"targetType": "post"\|"comment"\|"lfg"\|"review", "targetId", "reason"}` (`reason` 1–200 chars) | `204` |
 | POST | `/v1/media` | raw bytes, `content-type: image/jpeg\|image/png\|image/webp`, ≤ 2 MB | `{"key", "url"}` |
-| GET | `/v1/media/{key}` | — (public, cacheable 1 year) | image bytes |
+| GET | `/v1/media/{key}` | — (public; devices may cache 1 year, the CDN edge may not) | image bytes |
 
 - `kind` ∈ `text, store, nightmarket`. `body` ≤ 1000 chars (may be empty when
   `media` or `payload` is present). `media` ≤ 4 keys previously uploaded by the
@@ -291,7 +291,9 @@ reads (its author can still delete it); a hidden post's images are quarantined (
 - **Serving** (`GET /v1/media/{key}`, public, no session): only files that exist **and have
   an active record** are served; deleted files, files of deleted accounts and quarantined
   files answer `404 not_found`. Responses carry `Cache-Control: public, max-age=31536000,
-  immutable`, an `ETag` (`If-None-Match` → `304`), `Content-Disposition: inline`,
+  immutable` (for devices), `Cloudflare-CDN-Cache-Control: no-store` (the CDN edge must not keep
+  the file: a deleted or quarantined image must stop being served at once), an `ETag`
+  (`If-None-Match` → `304`), `Content-Disposition: inline`,
   `X-Content-Type-Options: nosniff`, `Content-Security-Policy: default-src 'none'; img-src
   'self' data:; sandbox`, `Referrer-Policy: no-referrer` and `Cross-Origin-Resource-Policy:
   cross-origin`.
@@ -395,8 +397,12 @@ for **45 seconds** (per path and query string; parameter order does not matter; 
 never cached), so an anonymous viewer can see data up to 45 s old, and a cache hit does not
 count against the limit above. The response header `x-cache: hit|miss` tells which. Requests
 with a session are never cached and always see live data. The feed, single posts, comments
-and image files are not cached by the server (images are immutable and cacheable by clients
-and CDNs).
+and image files are not cached by the server (images are immutable and cacheable by clients;
+the CDN edge is told not to store them, see "Media rules").
+
+**No shared caching.** Every response except a media `200` / `304` carries
+`Cache-Control: no-store` — errors (`404` included) and authenticated JSON alike — so no
+proxy or CDN may keep them.
 
 `GET /v1/communities` also accepts `period=all` (all time) besides the default
 `period=week`.

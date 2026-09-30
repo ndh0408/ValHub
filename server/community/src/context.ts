@@ -13,7 +13,12 @@ import { parseJsonObject, type Json } from './validate.js';
 /** Tunable limits. Anything left out gets the default below (tests run with the cache off). */
 export type Tuning = Pick<
   Config,
-  'mediaUserQuotaBytes' | 'mediaMaxTotalBytes' | 'anonReadLimitPerMin' | 'anonMediaLimitPerMin' | 'publicCacheTtlMs'
+  | 'mediaUserQuotaBytes'
+  | 'mediaMaxTotalBytes'
+  | 'anonReadLimitPerMin'
+  | 'anonMediaLimitPerMin'
+  | 'publicCacheTtlMs'
+  | 'mediaEdgeCacheSeconds'
 >;
 
 export const DEFAULT_TUNING: Tuning = {
@@ -22,6 +27,7 @@ export const DEFAULT_TUNING: Tuning = {
   anonReadLimitPerMin: 120,
   anonMediaLimitPerMin: 1500,
   publicCacheTtlMs: 0,
+  mediaEdgeCacheSeconds: 0,
 };
 
 /** A report only counts toward hiding when the reporter's account is at least this old (and active). */

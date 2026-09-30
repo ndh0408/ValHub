@@ -34,6 +34,14 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
   const logError = deps.logError ?? ((msg: string) => console.error(msg));
   const app = new Hono();
 
+  // Every response that does not set its own Cache-Control (JSON, errors, 204s, healthz) is no-store:
+  // authenticated JSON must never be shared by a cache, and Cloudflare caches by file extension, so an
+  // error for a media path (404!) would otherwise be cached at the edge and outlive a later upload.
+  app.use('*', async (c, next) => {
+    await next();
+    if (!c.res.headers.has('cache-control')) c.res.headers.set('cache-control', 'no-store');
+  });
+
   app.use('*', async (c, next) => {
     if (c.req.method === 'POST' && c.req.path === '/v1/media') return next();
     return jsonBodyLimit(c, next);
@@ -67,6 +75,7 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
     const err = new ApiError('not_found', 'Không tìm thấy đường dẫn.');
     return c.body(JSON.stringify(errorBody(err)), 404, {
       'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store',
     });
   });
 
@@ -79,7 +88,10 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
       logError(`[${c.req.method} ${c.req.routePath}] ${e.name}: ${e.message}`);
       err = new ApiError('server_error', 'Máy chủ gặp lỗi, vui lòng thử lại sau.');
     }
-    const headers: Record<string, string> = { 'content-type': 'application/json; charset=utf-8' };
+    const headers: Record<string, string> = {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store',
+    };
     if (err.retryAfter !== undefined) headers['retry-after'] = String(err.retryAfter);
     return c.body(JSON.stringify(errorBody(err)), err.status as 400, headers);
   });
