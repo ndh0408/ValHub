@@ -12,13 +12,21 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
   by remote config key `communityBaseUrl`).
 - JSON everywhere (`content-type: application/json; charset=utf-8`) except media
   upload. Times are ISO-8601 UTC strings. UUIDs lowercase.
-- Errors: HTTP status + `{"error": {"code": "snake_case", "message": "…"}}`.
+- Errors: HTTP status + `{"error": {"code": "snake_case", "message": "…", "messageEn"?, "reason"?, "params"?}}`.
   Codes: `unauthorized` (401), `forbidden` (403), `not_found` (404),
   `invalid_input` (400), `rate_limited` (429, `retryAfter` seconds in the error object
   and `Retry-After` header), `riot_rejected` (401, Riot refused the token),
   `riot_unavailable` (503, Riot could not answer; `retryAfter` / `Retry-After` when
-  known), `storage_full` (507, the server's image storage is full), `server_error` (500).
-  `message` is a Vietnamese, human-readable text; clients switch on `code`.
+  known), `storage_full` (507, the server's image storage is full), `suspended` (403, the
+  account is banned or restricted; see "Sanctions"), `server_busy` (503, the server is
+  shedding load: retry after `Retry-After` seconds), `server_error` (500).
+  `message` is a Vietnamese, human-readable text kept for old clients; clients switch on
+  `code`. Errors may also carry (all additive): `reason` — a stable snake_case code for the
+  exact case (`content_inappropriate`, `field_too_long`, `rate_limited`, …) — `params` —
+  the numbers / field names behind it (`{"field": "body", "max": 500}`,
+  `{"bucket": "posts", "limit": 10, "windowSeconds": 3600}`) — and `messageEn`, the English
+  text of `message`. New clients should localise from `reason` + `params` and fall back to
+  `message`.
 - Pagination: `?cursor=<opaque>&limit=<1..50, default 20>` →
   `{"items": [...], "nextCursor": "…" | null}`.
 
@@ -389,7 +397,11 @@ kept in memory only; never stored or logged):
 Over the limit: `429 rate_limited` with `retryAfter` (seconds until the minute ends) in the
 error object and `Retry-After`. Signed-in requests are limited per user only (the per-user
 limits listed with each feature; `GET /v1/me/export` 5 / hour, `DELETE /v1/me` 3 / hour),
-never per IP. `POST /v1/auth/riot` is limited to 30 attempts / 10 min per client IP.
+never per IP; on top of those, a signed-in user may make at most **240 requests per
+minute** in total (any method, any route: `429`, `reason: "rate_limited"`,
+`params: {"bucket": "requests", "limit": 240, "windowSeconds": 60}`). Per-action limits are
+counted **before** the text is checked, so a request that the content filter rejects still
+counts toward them. `POST /v1/auth/riot` is limited to 30 attempts / 10 min per client IP.
 
 **Cache:** anonymous `GET /v1/skins/top`, `/v1/skins/votes`, `/v1/skins/{uuid}/summary`,
 `/v1/skins/{uuid}/reviews` and `/v1/communities` are answered from a shared in-memory cache

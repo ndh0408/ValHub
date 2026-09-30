@@ -24,6 +24,10 @@ export interface Config {
    * being served at once; a small value (<= 60) trades a short deletion lag for fewer origin reads.
    */
   mediaEdgeCacheSeconds: number;
+  /** Requests per signed-in user per minute, any method and route (a coarse valve above the per-action limits). */
+  userRequestLimitPerMin: number;
+  /** Event-loop lag (ms) above which requests are answered 503 + Retry-After (load shedding); 0 = off. */
+  loadShedLagMs: number;
 }
 
 const MIN_SECRET_LENGTH = 32;
@@ -72,6 +76,8 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
   const anonMediaLimitPerMin = num('ANON_MEDIA_LIMIT_PER_MIN', 1500, 1, 1_000_000);
   const cacheSeconds = num('PUBLIC_CACHE_TTL_SECONDS', 45, 0, 3600);
   const mediaEdgeCacheSeconds = num('MEDIA_EDGE_CACHE_SECONDS', 0, 0, 3600);
+  const userRequestLimitPerMin = num('USER_REQUEST_LIMIT_PER_MIN', 240, 10, 1_000_000);
+  const loadShedLagMs = num('LOAD_SHED_LAG_MS', 250, 0, 60_000);
 
   if (problems.length > 0) throw new Error(`Invalid configuration:\n- ${problems.join('\n- ')}`);
 
@@ -88,5 +94,7 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
     anonMediaLimitPerMin: Math.round(anonMediaLimitPerMin),
     publicCacheTtlMs: Math.round(cacheSeconds * 1000),
     mediaEdgeCacheSeconds: Math.round(mediaEdgeCacheSeconds),
+    userRequestLimitPerMin: Math.round(userRequestLimitPerMin),
+    loadShedLagMs: Math.round(loadShedLagMs),
   };
 }

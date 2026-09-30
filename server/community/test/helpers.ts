@@ -31,6 +31,8 @@ export interface SetupOptions {
   tuning?: Partial<Tuning>;
   content?: ContentCatalog;
   riot?: RiotUserinfoFn;
+  /** Event-loop lag probe for load shedding (ms). */
+  loadProbe?: () => number;
 }
 
 export interface Res {
@@ -84,6 +86,7 @@ export function setup(opts: SetupOptions = {}) {
     content: opts.content,
     riotUserinfo: opts.riot ?? riot,
     now: () => clock.t,
+    loadProbe: opts.loadProbe,
     logError: (m) => errors.push(m),
   });
 

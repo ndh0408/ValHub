@@ -4,8 +4,9 @@ import type { Config } from './config.js';
 import type { ContentCatalog, ContentKind } from './content.js';
 import { hashIp, verifySession } from './crypto.js';
 import type { AuthorCols, Repo, UserRow } from './db/repo.js';
-import { ApiError, invalid, unauthorized } from './errors.js';
+import { invalid, reasonError, unauthorized } from './errors.js';
 import type { MediaStore } from './media.js';
+import { Counters } from './metrics.js';
 import { deleteMedia, quarantineMedia, type MediaDeps } from './media-service.js';
 import type { RiotUserinfoFn } from './riot.js';
 import { parseJsonObject, type Json } from './validate.js';
@@ -19,6 +20,8 @@ export type Tuning = Pick<
   | 'anonMediaLimitPerMin'
   | 'publicCacheTtlMs'
   | 'mediaEdgeCacheSeconds'
+  | 'userRequestLimitPerMin'
+  | 'loadShedLagMs'
 >;
 
 export const DEFAULT_TUNING: Tuning = {
@@ -28,6 +31,8 @@ export const DEFAULT_TUNING: Tuning = {
   anonMediaLimitPerMin: 1500,
   publicCacheTtlMs: 0,
   mediaEdgeCacheSeconds: 0,
+  userRequestLimitPerMin: 240,
+  loadShedLagMs: 250,
 };
 
 /** A report only counts toward hiding when the reporter's account is at least this old (and active). */
@@ -43,6 +48,8 @@ export interface AppDeps {
   riotUserinfo: RiotUserinfoFn;
   /** Injectable clock (ms since epoch). */
   now?: () => number;
+  /** Current event-loop lag in ms (see load.ts); omitted -> the server never sheds load (tests). */
+  loadProbe?: () => number;
   /** Error sink; receives only error names/messages, never request data. */
   logError?: (msg: string) => void;
 }
@@ -73,6 +80,10 @@ export class Ctx {
   readonly tuning: Tuning;
   /** Unauthenticated reads per client IP (in memory: no database write per request). */
   readonly anonLimiter = new FixedWindowLimiter();
+  /** Aggregate abuse / security counters (no user data), drained by the once-a-minute log line. */
+  readonly stats = new Counters();
+  /** Requests per signed-in user (coarse bucket for every route and method; in memory). */
+  readonly userLimiter = new FixedWindowLimiter();
   /** Anonymous aggregate responses (skin top / votes / summary / reviews, communities). */
   readonly publicCache = new TtlCache<{ body: string; type: string }>(500);
 
@@ -89,6 +100,7 @@ export class Ctx {
   pruneMemory(): void {
     const now = this.now();
     this.anonLimiter.prune(now);
+    this.userLimiter.prune(now);
     this.publicCache.prune(now);
   }
 
@@ -158,7 +170,23 @@ export class Ctx {
     if (!claims) throw unauthorized();
     const user = this.repo.getUser(claims.sub);
     if (!user) throw unauthorized();
+    // Coarse valve above the per-action limits: every request of a signed-in user, any route and method
+    // (reads, deletes and profile calls have no other limit). In memory: no database write per request.
+    const bucket = this.userLimiter.hit(user.id, this.tuning.userRequestLimitPerMin, 60_000, this.now());
+    if (!bucket.ok) {
+      throw reasonError(
+        'rate_limited',
+        'rate_limited',
+        { bucket: 'requests', limit: this.tuning.userRequestLimitPerMin, windowSeconds: 60 },
+        bucket.retryAfterSeconds,
+      );
+    }
     return user;
+  }
+
+  /** Event-loop lag in ms (0 without a probe). */
+  loadLagMs(): number {
+    return this.deps.loadProbe?.() ?? 0;
   }
 
   /** Fixed-window counter; throws 429 with retryAfter once the limit is exceeded. */
@@ -169,7 +197,12 @@ export class Ctx {
     const count = this.repo.hitRateLimit(`${name}:${subject}`, windowStart);
     if (count > limit) {
       const retryAfter = Math.max(1, Math.ceil((windowStart + windowMs - now) / 1000));
-      throw new ApiError('rate_limited', 'Bạn thao tác quá nhanh, vui lòng thử lại sau.', retryAfter);
+      throw reasonError(
+        'rate_limited',
+        'rate_limited',
+        { bucket: name, limit, windowSeconds: Math.round(windowMs / 1000) },
+        retryAfter,
+      );
     }
   }
 

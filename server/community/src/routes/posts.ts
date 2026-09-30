@@ -128,10 +128,8 @@ export function registerPosts(app: Hono, x: Ctx): void {
     const body = await x.readJson(c);
     const kind = parseEnum(body.kind, POST_KINDS, 'kind');
     const language = contentLanguage(body, user.language);
-    const text =
-      body.body === undefined || body.body === null
-        ? ''
-        : cleanUserText(parseString(body.body, 'body', { max: 1000 }), language, user.country);
+    const rawText =
+      body.body === undefined || body.body === null ? '' : parseString(body.body, 'body', { max: 1000 });
 
     let media: string[] = [];
     if (body.media !== undefined && body.media !== null) {
@@ -145,6 +143,15 @@ export function registerPosts(app: Hono, x: Ctx): void {
       if (new Set(media).size !== media.length) throw invalid('media có key trùng lặp.');
     }
     const payload = parsePayload(kind, body.payload);
+    if (rawText === '' && media.length === 0 && payload === null) {
+      throw invalid('Bài viết không được để trống.');
+    }
+
+    // Rate limit BEFORE the expensive work (text filter, database checks, catalog lookups): an over-limit request
+    // costs almost nothing, and an attempt the filter rejects still counts (CS-03).
+    x.rateLimit('posts', user.id);
+
+    const text = cleanUserText(rawText, language, user.country);
     if (text === '' && media.length === 0 && payload === null) {
       throw invalid('Bài viết không được để trống.');
     }
@@ -163,8 +170,6 @@ export function registerPosts(app: Hono, x: Ctx): void {
       const offers = (payload as { offers?: { skinUuid: string }[] }).offers ?? [];
       for (const [i, o] of offers.entries()) await x.assertContent('skin', o.skinUuid, `payload.offers[${i}].skinUuid`);
     }
-
-    x.rateLimit('posts', user.id);
 
     const id = crypto.randomUUID();
     x.repo.insertPost({
@@ -223,9 +228,10 @@ export function registerPosts(app: Hono, x: Ctx): void {
     const p = visiblePost(c.req.param('id'), user.id);
     const body = await x.readJson(c);
     const language = contentLanguage(body, user.language);
-    const text = cleanUserText(parseString(body.body, 'body', { min: 1, max: 500 }), language, user.country);
+    const rawText = parseString(body.body, 'body', { min: 1, max: 500 });
+    x.rateLimit('comments', user.id); // before the text filter (CS-03)
+    const text = cleanUserText(rawText, language, user.country);
     if (text === '') throw invalid('body không được để trống.');
-    x.rateLimit('comments', user.id);
     const id = crypto.randomUUID();
     x.repo.insertComment({
       id,

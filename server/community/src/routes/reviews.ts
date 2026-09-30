@@ -38,14 +38,14 @@ export function registerReviews(app: Hono, x: Ctx): void {
     const body = await x.readJson(c);
     const weaponUuid = parseUuid(body.weaponUuid, 'weaponUuid');
     const rating = parseInt(body.rating, 1, 5, 'rating');
+    const language = contentLanguage(body, user.language);
+    const rawText =
+      body.body === undefined || body.body === null ? '' : parseString(body.body, 'body', { max: 500 });
+    // Rate limit BEFORE the catalog lookups and the text filter (CS-03).
+    x.rateLimit('reviews', user.id);
     await x.assertContent('skin', skinUuid, 'skinUuid');
     await x.assertContent('weapon', weaponUuid, 'weaponUuid');
-    const language = contentLanguage(body, user.language);
-    const text =
-      body.body === undefined || body.body === null
-        ? ''
-        : cleanUserText(parseString(body.body, 'body', { max: 500 }), language, user.country);
-    x.rateLimit('reviews', user.id);
+    const text = cleanUserText(rawText, language, user.country);
     const id = x.repo.upsertReview({
       userId: user.id,
       skinUuid,

@@ -58,6 +58,8 @@ never touch the network or the real clock.
 | `ANON_READ_LIMIT_PER_MIN` | no (120) | Requests without a session per client IP per minute (feed, skins, communities). |
 | `ANON_MEDIA_LIMIT_PER_MIN` | no (1500) | Same, for image files (generous: many phones share one carrier-grade-NAT address). |
 | `PUBLIC_CACHE_TTL_SECONDS` | no (45) | Cache of anonymous aggregate responses; `0` = off. |
+| `USER_REQUEST_LIMIT_PER_MIN` | no (240) | Requests per signed-in user per minute, any method and route (`429 rate_limited`, `params.bucket = "requests"`); a coarse valve above the per-action limits (10 - 1,000,000). |
+| `LOAD_SHED_LAG_MS` | no (250) | Event-loop lag above which every request except `/healthz` is answered `503 server_busy` + `Retry-After: 2` (load shedding, see note 59); `0` = off. |
 | `MEDIA_EDGE_CACHE_SECONDS` | no (0) | How long Cloudflare's edge may keep an image (`Cloudflare-CDN-Cache-Control`). `0` = `no-store`: deleted / quarantined images stop being served at once. Devices always keep the 1-year `Cache-Control`. A value <= 60 trades a short deletion lag for fewer origin reads. |
 | `BACKUP_DIR`, `BACKUP_KEEP_DAYS`, `BACKUP_INTERVAL_SECONDS` | no | Backup service (compose): host directory (`./backups`), retention (14), period (86400). |
 
@@ -507,10 +509,29 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
     **Known gaps:** two-letter spaced words (`d m`, `시 발`, `傻 逼`) are not read as words (too many false
     positives); look-alikes beyond the built-in table; accents added on purpose to defeat accent-exact entries
     (`đĩ` with Zalgo marks); leetspeak with punctuation (`sh!t`); phonetic / transliterated spellings; text inside images.
-    The filter is a best-effort deterrent: reports and moderators remain the backstop. Worst case (1,000 adversarial
-    characters) costs ≈ 40 ms, typical text 1–3 ms; posts / comments are rate limited per user.
+    The filter is a best-effort deterrent: reports and moderators remain the backstop. Cost: typical 1,000-character
+    text ≈ 3 ms, worst case just under the caps (note 59) ≈ 20 ms; the rate limit runs before the filter.
 58. **Ops.** Container `mem_limit` (512 MB / backup 256 MB), `pids_limit`, `cap_drop: [ALL]`, read-only root, size-limited
     tmpfs; `valvn-backup` is part of `docker-compose.yml` (`ops/backup-loop.sh`: integrity-checked snapshots, atomic
     archives, retention only after a successful backup, no extra backup after a restart, `BACKUP_ONCE=1`);
     `scripts/restore.sh` verifies, saves an undo archive, restores, waits for health. The whole stack (build, start,
     backup, CLI erase, restore, health) was exercised end to end in Docker for this change.
+
+### Phase 1b hardening (WP-SRV, from the independent audit)
+
+59. **CS-03: availability.** (a) On every write route the per-action rate limit now runs **before** the text filter, the
+    catalog lookups and the database checks (only cheap shape validation comes first), so an over-limit request costs
+    almost nothing and an attempt the filter rejects still counts (posts 10 / h, comments 30 / 10 min, reviews 30 / h, LFG
+    6 / 10 min, PATCH 120 / 10 min). (b) A coarse bucket in `Ctx.user()`: `USER_REQUEST_LIMIT_PER_MIN` (240) requests per
+    user per minute for **every** method and route (in memory, no database write); reads, deletes and profile calls had
+    no limit before. (c) The filter refuses, instead of scanning, a text with more than 400 words, more than 300
+    isolated letters in spelled-out runs, or more than 4,000 UTF-16 units (`400 invalid_input`, reason
+    `content_too_complex`); a legitimate 1,000-character text has ~200 words. The matcher was also made ~6x faster
+    (first-word hash index instead of scanning every entry, per-letter forms computed once per run, an ASCII fast path in
+    `canon()`): worst case 114 ms -> ~20 ms per call. (d) Load shedding: `src/load.ts` measures the event-loop delay
+    (p95 of the last second, `perf_hooks.monitorEventLoopDelay`); above `LOAD_SHED_LAG_MS` (250) every request except
+    `/healthz` is answered `503 server_busy` with `Retry-After: 2` before any work is done. A `worker_threads` filter was
+    considered and not needed: with the rate limit first, one account can trigger at most ~250 filter runs an hour.
+60. **Error format (CS-33 / GL-15 / GL-28, additive).** Errors may carry `reason` (stable code, `src/reasons.ts`),
+    `params` (limits, field names) and `messageEn` next to the unchanged Vietnamese `message`. New codes: `suspended`
+    (403, note 62) and `server_busy` (503). Rate-limit errors return `params: {bucket, limit, windowSeconds}`.

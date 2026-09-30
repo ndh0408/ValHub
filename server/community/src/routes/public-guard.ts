@@ -1,6 +1,6 @@
 import type { Hono } from 'hono';
 import type { Ctx } from '../context.js';
-import { ApiError } from '../errors.js';
+import { reasonError } from '../errors.js';
 
 /** Public reads that work without a session. */
 const PUBLIC_READS = [/^\/v1\/posts(\/|$)/, /^\/v1\/skins\//, /^\/v1\/communities$/];
@@ -43,7 +43,12 @@ export function registerPublicGuard(app: Hono, x: Ctx): void {
       const limit = isMedia ? x.tuning.anonMediaLimitPerMin : x.tuning.anonReadLimitPerMin;
       const r = x.anonLimiter.hit(`${isMedia ? 'media' : 'read'}:${ip}`, limit, 60_000, x.now());
       if (!r.ok) {
-        throw new ApiError('rate_limited', 'Bạn thao tác quá nhanh, vui lòng thử lại sau.', r.retryAfterSeconds);
+        throw reasonError(
+          'rate_limited',
+          'rate_limited',
+          { bucket: isMedia ? 'anonMedia' : 'anonRead', limit, windowSeconds: 60 },
+          r.retryAfterSeconds,
+        );
       }
     }
 
