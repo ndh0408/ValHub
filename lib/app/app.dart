@@ -7,6 +7,7 @@ import '../core/accounts/account_providers.dart';
 import '../core/config/client_version.dart';
 import '../core/content/content_repository.dart';
 import '../core/l10n/common_strings.dart';
+import '../core/l10n/l10n.dart' show appLocalizationsDelegates;
 import '../core/l10n/locale.dart';
 import '../core/notifications/notification_service.dart';
 import '../core/storage/prefs.dart';
@@ -78,9 +79,13 @@ class _ValVnAppState extends ConsumerState<ValVnApp> {
       theme: buildLightTheme(),
       darkTheme: buildDarkTheme(),
       themeMode: ref.watch(themeModeProvider),
+      // Still Vietnamese-only: `kShippedLocales` is `{vi}` and the locale
+      // providers are not read here until wave W5 (docs/design/I18N.md).
       locale: appLocale,
       supportedLocales: const [appLocale],
-      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      // AppLocalizations + material_ui's delegates. Never the generated
+      // `AppLocalizations.localizationsDelegates` (legacy Material).
+      localizationsDelegates: appLocalizationsDelegates,
       // Legacy-Material packages (fl_chart, video_player, inappwebview) still
       // resolve flutter/material Theme/Localizations; bridge them (FS §2).
       // ignore: deprecated_member_use
