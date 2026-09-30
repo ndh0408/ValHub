@@ -2,7 +2,9 @@ import type { Context, Hono } from 'hono';
 import { FixedWindowLimiter, TtlCache } from './cache.js';
 import type { Config } from './config.js';
 import type { ContentCatalog, ContentKind } from './content.js';
+import { isIP } from 'node:net';
 import { hashIp, verifySession } from './crypto.js';
+import { ipKey, isPrivateAddress } from './ip.js';
 import type { AuthorCols, Repo, SanctionRow, UserRow } from './db/repo.js';
 import { invalid, reasonError, unauthorized } from './errors.js';
 import type { MediaStore } from './media.js';
@@ -19,6 +21,7 @@ export type Tuning = Pick<
   | 'anonReadLimitPerMin'
   | 'anonMediaLimitPerMin'
   | 'publicCacheTtlMs'
+  | 'publicFeedCacheTtlMs'
   | 'mediaEdgeCacheSeconds'
   | 'userRequestLimitPerMin'
   | 'loadShedLagMs'
@@ -27,9 +30,10 @@ export type Tuning = Pick<
 export const DEFAULT_TUNING: Tuning = {
   mediaUserQuotaBytes: 50 * 1024 * 1024,
   mediaMaxTotalBytes: 2048 * 1024 * 1024,
-  anonReadLimitPerMin: 120,
+  anonReadLimitPerMin: 600,
   anonMediaLimitPerMin: 1500,
   publicCacheTtlMs: 0,
+  publicFeedCacheTtlMs: 0,
   mediaEdgeCacheSeconds: 0,
   userRequestLimitPerMin: 240,
   loadShedLagMs: 250,
@@ -94,11 +98,18 @@ export const LIMITS = {
   reviews: { limit: 30, windowMs: 60 * 60_000 },
   lfgPatch: { limit: 120, windowMs: 10 * 60_000 },
   lfgJoin: { limit: 30, windowMs: 10 * 60_000 },
-  authIp: { limit: 30, windowMs: 10 * 60_000 },
   accountExport: { limit: 5, windowMs: 60 * 60_000 },
   accountDelete: { limit: 3, windowMs: 60 * 60_000 },
 } as const;
 export type LimitName = keyof typeof LIMITS;
+
+/**
+ * Sign-in limits per client address (in memory, hashed; many people share one carrier-grade-NAT address, so the
+ * total is generous). Only tokens Riot REJECTS count toward the small failure limit: each of those costs a Riot
+ * call and is how a token could be guessed; successful sign-ins are bounded by real Riot logins.
+ */
+export const AUTH_ATTEMPTS = { limit: 300, windowMs: 10 * 60_000 } as const;
+export const AUTH_FAILURES = { limit: 30, windowMs: 10 * 60_000 } as const;
 
 /** Shared helpers handed to every route module. */
 export class Ctx {
@@ -248,20 +259,22 @@ export class Ctx {
     }
   }
 
-  /** Client IP (CF-Connecting-IP behind the tunnel), hashed with the pepper; null if unknown. */
+  /**
+   * The rate-limit identity of the client, hashed with the pepper (null if unknown). Behind the Cloudflare Tunnel
+   * (`TRUST_PROXY=true`) it is `CF-Connecting-IP`, believed only when the TCP peer is a loopback / private address
+   * (the tunnel) and the header is a real IP address; X-Forwarded-For is never used (its leftmost value is client
+   * controlled). Otherwise it is the socket address. IPv6 addresses count as their /64 (see ip.ts).
+   */
   clientIpHash(c: Context): string | null {
+    const env = c.env as { incoming?: { socket?: { remoteAddress?: string } } } | undefined;
+    const peer = env?.incoming?.socket?.remoteAddress;
     let ip: string | undefined;
-    if (this.deps.config.trustProxy) {
-      ip =
-        c.req.header('cf-connecting-ip')?.trim() ||
-        c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ||
-        undefined;
+    if (this.deps.config.trustProxy && (peer === undefined || isPrivateAddress(peer))) {
+      const forwarded = c.req.header('cf-connecting-ip')?.trim();
+      if (forwarded && isIP(forwarded) !== 0) ip = forwarded;
     }
-    if (!ip) {
-      const env = c.env as { incoming?: { socket?: { remoteAddress?: string } } } | undefined;
-      ip = env?.incoming?.socket?.remoteAddress;
-    }
-    return ip ? hashIp(this.deps.config.pepper, ip) : null;
+    ip ??= peer;
+    return ip ? hashIp(this.deps.config.pepper, ipKey(ip)) : null;
   }
 
   /** Absolute base URL for links (PUBLIC_BASE_URL, else request origin via tunnel headers). */

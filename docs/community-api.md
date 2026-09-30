@@ -86,8 +86,8 @@ the same Riot account signs in again, and banning an account ends its sessions t
 once and retry), `503 riot_unavailable` (Riot rate-limited us, is down, timed out or
 answered with an error page: **the token may be fine**, so the client keeps its Riot
 session and retries later, after `Retry-After` when present, 1–300 s), `429 rate_limited`
-(30 attempts / 10 min per client IP). No user is created or changed unless Riot verified
-the token.
+(too many attempts or rejected tokens from one address, see "Anonymous access"). No user is
+created or changed unless Riot verified the token. `403 suspended` if the account is banned.
 
 ### Sanctions (hạn chế và khóa tài khoản)
 
@@ -430,29 +430,32 @@ filter must never reject text only because it is in an unsupported language.
 session. A token that is *present but invalid or expired* is `401` even on a public read, so
 the client can refresh it.
 
-**Limits for requests without a session** (per client IP, hashed with a server secret and
-kept in memory only; never stored or logged):
+**Limits for requests without a session** (per client address — an IPv6 address counts as its /64 —
+hashed with a server secret and kept in memory only; never stored or logged):
 
 | Requests | Limit |
 |---|---|
-| public reads other than image files | 120 / minute |
-| image files (`/v1/media/…`) | 1500 / minute |
+| public reads other than image files | 600 / minute |
+| image files (`/v1/media/…`) | 1500 / minute (an `Authorization` header does not exempt them) |
 
 Over the limit: `429 rate_limited` with `retryAfter` (seconds until the minute ends) in the
 error object and `Retry-After`. Signed-in requests are limited per user only (the per-user
 limits listed with each feature; `GET /v1/me/export` 5 / hour, `DELETE /v1/me` 3 / hour),
-never per IP; on top of those, a signed-in user may make at most **240 requests per
+never per IP (except sign-in below); on top of those, a signed-in user may make at most **240 requests per
 minute** in total (any method, any route: `429`, `reason: "rate_limited"`,
 `params: {"bucket": "requests", "limit": 240, "windowSeconds": 60}`). Per-action limits are
 counted **before** the text is checked, so a request that the content filter rejects still
-counts toward them. `POST /v1/auth/riot` is limited to 30 attempts / 10 min per client IP.
+counts toward them. `POST /v1/auth/riot` is limited per client address to 300 attempts / 10 min, and to 30
+**rejected** tokens / 10 min (`429`, `params.bucket` `authIp` or `authFailures`); successful
+sign-ins do not count as failures, so many users behind one carrier address can sign in.
 
 **Cache:** anonymous `GET /v1/skins/top`, `/v1/skins/votes`, `/v1/skins/{uuid}/summary`,
 `/v1/skins/{uuid}/reviews` and `/v1/communities` are answered from a shared in-memory cache
 for **45 seconds** (per path and query string; parameter order does not matter; errors are
 never cached), so an anonymous viewer can see data up to 45 s old, and a cache hit does not
-count against the limit above. The response header `x-cache: hit|miss` tells which. Requests
-with a session are never cached and always see live data. The feed, single posts, comments
+count against the limit above. An anonymous feed page (`GET /v1/posts`) is cached for **5
+seconds** the same way. The response header `x-cache: hit|miss` tells which. Requests
+with a session are never cached and always see live data. Single posts, comments
 and image files are not cached by the server (images are immutable and cacheable by clients;
 the CDN edge is told not to store them, see "Media rules").
 

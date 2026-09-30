@@ -1,7 +1,7 @@
 import type { Hono } from 'hono';
-import { authorFromUser, iso, suspendedError, type Ctx } from '../context.js';
+import { AUTH_ATTEMPTS, AUTH_FAILURES, authorFromUser, iso, suspendedError, type Ctx } from '../context.js';
 import { hashUserId, SESSION_TTL_SECONDS, signSession } from '../crypto.js';
-import { ApiError, invalid } from '../errors.js';
+import { ApiError, invalid, reasonError } from '../errors.js';
 import { normalizeAlpha2 } from '../geo/countries.js';
 import { parseLanguage } from '../geo/languages.js';
 import type { RiotIdentity } from '../riot.js';
@@ -24,8 +24,26 @@ function parseConsentVersion(v: unknown): string {
 
 export function registerAuth(app: Hono, x: Ctx): void {
   app.post('/v1/auth/riot', async (c) => {
+    // Per client address, in memory (never stored): every attempt counts toward a generous limit (shared carrier
+    // addresses), and tokens Riot rejects toward a small one (see AUTH_FAILURES).
     const ip = x.clientIpHash(c);
-    if (ip) x.rateLimit('authIp', ip);
+    if (ip) {
+      const at = x.now();
+      const all = x.anonLimiter.hit(`auth:${ip}`, AUTH_ATTEMPTS.limit, AUTH_ATTEMPTS.windowMs, at);
+      const bad = x.anonLimiter.peek(`authFail:${ip}`, AUTH_FAILURES.limit, AUTH_FAILURES.windowMs, at);
+      if (!all.ok || !bad.ok) {
+        x.stats.inc('auth429');
+        const [bucket, limit, retry] = !all.ok
+          ? ['authIp', AUTH_ATTEMPTS.limit, all.retryAfterSeconds]
+          : ['authFailures', AUTH_FAILURES.limit, bad.retryAfterSeconds];
+        throw reasonError(
+          'rate_limited',
+          'rate_limited',
+          { bucket: bucket as string, limit: limit as number, windowSeconds: AUTH_ATTEMPTS.windowMs / 1000 },
+          retry as number,
+        );
+      }
+    }
 
     const body = await x.readJson(c);
     const accessToken = parseString(body.accessToken, 'accessToken', { min: 1, max: 8192 });
@@ -55,6 +73,7 @@ export function registerAuth(app: Hono, x: Ctx): void {
           identity.retryAfter,
         );
       }
+      if (ip) x.anonLimiter.hit(`authFail:${ip}`, AUTH_FAILURES.limit, AUTH_FAILURES.windowMs, x.now());
       throw new ApiError('riot_rejected', 'Riot từ chối phiên đăng nhập. Hãy đăng nhập lại.');
     }
 

@@ -12,7 +12,12 @@ export interface Config {
   pepper: string;
   /** e.g. https://community.example.com — no trailing slash. Empty → derive from request. */
   publicBaseUrl: string;
-  /** Trust CF-Connecting-IP / X-Forwarded-* (true behind the Cloudflare Tunnel). */
+  /**
+   * Believe `CF-Connecting-IP` (the client address Cloudflare adds) and `X-Forwarded-Proto/Host`. Default false: a
+   * server reachable without Cloudflare would let clients choose their own rate-limit identity. docker-compose.yml
+   * sets it to true for the Cloudflare Tunnel deployment. Even then the header is only believed when the TCP peer is
+   * a loopback / private address (the tunnel), see ip.ts.
+   */
   trustProxy: boolean;
   /** Per-user image storage quota (bytes). */
   mediaUserQuotaBytes: number;
@@ -23,6 +28,8 @@ export interface Config {
   anonMediaLimitPerMin: number;
   /** How long anonymous aggregate responses (skin top / votes / summary / reviews, communities) are cached; 0 = off. */
   publicCacheTtlMs: number;
+  /** How long an anonymous feed page (GET /v1/posts) is cached, shared by every anonymous viewer; 0 = off. */
+  publicFeedCacheTtlMs: number;
   /**
    * How long Cloudflare's edge may keep a media 200 (Cloudflare-CDN-Cache-Control). Devices always get the
    * 1-year immutable Cache-Control. 0 (default) = no-store at the edge, so deleted / quarantined images stop
@@ -85,9 +92,10 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
   };
   const mediaUserQuotaMb = num('MEDIA_USER_QUOTA_MB', 50, 1, 10_000);
   const mediaMaxTotalMb = num('MEDIA_MAX_TOTAL_MB', 2048, 1, 10_000_000);
-  const anonReadLimitPerMin = num('ANON_READ_LIMIT_PER_MIN', 120, 1, 100_000);
+  const anonReadLimitPerMin = num('ANON_READ_LIMIT_PER_MIN', 600, 1, 100_000);
   const anonMediaLimitPerMin = num('ANON_MEDIA_LIMIT_PER_MIN', 1500, 1, 1_000_000);
   const cacheSeconds = num('PUBLIC_CACHE_TTL_SECONDS', 45, 0, 3600);
+  const feedCacheSeconds = num('PUBLIC_FEED_CACHE_SECONDS', 5, 0, 300);
   const mediaEdgeCacheSeconds = num('MEDIA_EDGE_CACHE_SECONDS', 0, 0, 3600);
   const userRequestLimitPerMin = num('USER_REQUEST_LIMIT_PER_MIN', 240, 10, 1_000_000);
   const loadShedLagMs = num('LOAD_SHED_LAG_MS', 250, 0, 60_000);
@@ -101,12 +109,13 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
     sessionSecretPrev,
     pepper,
     publicBaseUrl,
-    trustProxy: (env.TRUST_PROXY ?? 'true').toLowerCase() !== 'false',
+    trustProxy: (env.TRUST_PROXY ?? 'false').trim().toLowerCase() === 'true',
     mediaUserQuotaBytes: Math.round(mediaUserQuotaMb * 1024 * 1024),
     mediaMaxTotalBytes: Math.round(mediaMaxTotalMb * 1024 * 1024),
     anonReadLimitPerMin: Math.round(anonReadLimitPerMin),
     anonMediaLimitPerMin: Math.round(anonMediaLimitPerMin),
     publicCacheTtlMs: Math.round(cacheSeconds * 1000),
+    publicFeedCacheTtlMs: Math.round(feedCacheSeconds * 1000),
     mediaEdgeCacheSeconds: Math.round(mediaEdgeCacheSeconds),
     userRequestLimitPerMin: Math.round(userRequestLimitPerMin),
     loadShedLagMs: Math.round(loadShedLagMs),

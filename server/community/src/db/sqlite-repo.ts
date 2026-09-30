@@ -958,7 +958,8 @@ export class SqliteRepo implements Repo {
       this.db
         .prepare(`UPDATE reports SET reporter_id = 'anon-' || lower(hex(randomblob(8))), reason = '' WHERE reporter_id = ?`)
         .run(userId);
-      this.db.prepare(`DELETE FROM rate_limits WHERE bucket LIKE '%:' || ?`).run(userId);
+      // rate_limits rows are NOT deleted: they hold only the id and a count, expire on their own (swept after a
+      // day) and deleting them would let delete + sign-in reset every per-user limit (CS-37).
       // The denormalised like counters of other people's reviews must not keep counting this user's likes
       // (the like rows themselves cascade away with the user).
       this.db

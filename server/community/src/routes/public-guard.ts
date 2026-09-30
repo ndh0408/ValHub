@@ -21,13 +21,18 @@ const CACHEABLE = [
 export function registerPublicGuard(app: Hono, x: Ctx): void {
   app.use('/v1/*', async (c, next) => {
     if (c.req.method !== 'GET' && c.req.method !== 'HEAD') return next();
-    if (c.req.header('authorization')) return next();
     const path = c.req.path;
     const isMedia = path.startsWith('/v1/media/');
+    // Image files never look at the Authorization header, so it must not buy anyone out of the limit (any string
+    // in that header used to skip it). Other public reads with a header are limited per user by Ctx.user().
+    if (!isMedia && c.req.header('authorization')) return next();
     if (!isMedia && !PUBLIC_READS.some((re) => re.test(path))) return next();
 
-    const ttl = x.tuning.publicCacheTtlMs;
-    const cacheable = ttl > 0 && CACHEABLE.some((re) => re.test(path));
+    // Aggregates: 45 s by default. The anonymous feed page is the hot path of a public app: a few seconds of
+    // sharing removes most of its database work without making the feed feel stale.
+    const isFeed = path === '/v1/posts';
+    const ttl = isFeed ? x.tuning.publicFeedCacheTtlMs : x.tuning.publicCacheTtlMs;
+    const cacheable = ttl > 0 && (isFeed || CACHEABLE.some((re) => re.test(path)));
     let key = '';
     if (cacheable) {
       const params = [...new URL(c.req.url).searchParams.entries()].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));

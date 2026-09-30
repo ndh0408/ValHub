@@ -54,14 +54,15 @@ never touch the network or the real clock.
 | `SESSION_SECRET_PREV` | no, ≥ 32 chars | The previous secret during a rotation: tokens signed with it are still accepted (never used to sign). Remove it after 30 days. |
 | `PEPPER` | yes, ≥ 32 chars | user id = `hex(sha256(PEPPER + puuid))[0..32]`; also salts the hashed IPs. **Never change after launch.** |
 | `PUBLIC_BASE_URL` | no | Public origin used for media URLs, e.g. `https://val.gianguyen.cloud`. Empty → derived from the request (`X-Forwarded-Proto` / `X-Forwarded-Host`). |
-| `TRUST_PROXY` | no (default `true`) | Trust `CF-Connecting-IP` / `X-Forwarded-*`. |
+| `TRUST_PROXY` | no (default **`false`**) | Believe `CF-Connecting-IP` (client address) and `X-Forwarded-Proto/Host`. `docker-compose.yml` sets it to `true` (`${TRUST_PROXY:-true}`) because that stack is reached through the Cloudflare Tunnel only; a server reachable without Cloudflare must leave it `false`. Even when true, the header is only believed if the TCP peer is a loopback / private address (note 64). |
 | `PORT` | no (8080) | |
 | `DATA_DIR` | no (`/data`) | SQLite file + `media/` + `quarantine/`. |
 | `MEDIA_USER_QUOTA_MB` | no (50) | Per-user image storage. Over it: `400 invalid_input` with a readable message. |
 | `MEDIA_MAX_TOTAL_MB` | no (2048) | Total image storage. Over it: `507 storage_full`. |
-| `ANON_READ_LIMIT_PER_MIN` | no (120) | Requests without a session per client IP per minute (feed, skins, communities). |
+| `ANON_READ_LIMIT_PER_MIN` | no (600) | Requests without a session per client IP per minute (feed, skins, communities). Generous on purpose: many phones share one carrier-grade-NAT address. |
 | `ANON_MEDIA_LIMIT_PER_MIN` | no (1500) | Same, for image files (generous: many phones share one carrier-grade-NAT address). |
 | `PUBLIC_CACHE_TTL_SECONDS` | no (45) | Cache of anonymous aggregate responses; `0` = off. |
+| `PUBLIC_FEED_CACHE_SECONDS` | no (5) | Cache of an anonymous feed page (`GET /v1/posts`), shared by every anonymous viewer; `0` = off. |
 | `USER_REQUEST_LIMIT_PER_MIN` | no (240) | Requests per signed-in user per minute, any method and route (`429 rate_limited`, `params.bucket = "requests"`); a coarse valve above the per-action limits (10 - 1,000,000). |
 | `LOAD_SHED_LAG_MS` | no (250) | Event-loop lag above which every request except `/healthz` is answered `503 server_busy` + `Retry-After: 2` (load shedding, see note 59); `0` = off. |
 | `MEDIA_EDGE_CACHE_SECONDS` | no (0) | How long Cloudflare's edge may keep an image (`Cloudflare-CDN-Cache-Control`). `0` = `no-store`: deleted / quarantined images stop being served at once. Devices always keep the 1-year `Cache-Control`. A value <= 60 trades a short deletion lag for fewer origin reads. |
@@ -198,7 +199,7 @@ docker compose exec valvn-community node dist/cli.js delete --riot "Name#TAG" --
 ```
 
 Erasure removes: posts (with their comments and likes), comments, reviews (with likes), likes, votes, LFG posts and
-joins, uploaded images (public and quarantined files), rate-limit counters and the user row. **Reports the user
+joins, uploaded images (public and quarantined files) and the user row. **Reports the user
 filed** are kept but anonymised (`reporter_id` → `anon-…`, free text cleared) because they may have hidden
 content; reports **about** their content are deleted. Backups keep older copies for up to 14 days (see Backup).
 **Verify who is asking** before acting (reply to the email of the Riot account, or ask them to add a marker to
@@ -213,7 +214,7 @@ DELETE FROM reports WHERE target_type = 'comment' AND target_id IN (SELECT id FR
 DELETE FROM reports WHERE target_type = 'review'  AND target_id IN (SELECT id FROM skin_reviews WHERE user_id = :id);
 DELETE FROM reports WHERE target_type = 'lfg'     AND target_id IN (SELECT id FROM lfg_posts WHERE user_id = :id);
 UPDATE reports SET reporter_id = 'anon-' || lower(hex(randomblob(8))), reason = '' WHERE reporter_id = :id;
-DELETE FROM rate_limits WHERE bucket LIKE '%:' || :id;
+-- (rate_limits counters are kept on purpose: they hold only the id and a count and expire within a day)
 -- image files: SELECT key FROM media WHERE user_id = :id;  then delete /data/media/<key> and /data/quarantine/<key>
 DELETE FROM users WHERE id = :id;   -- cascades to posts, comments, reviews, likes, votes, LFG, media rows
 ```
@@ -254,7 +255,7 @@ DELETE FROM users WHERE id = :id;   -- cascades to posts, comments, reviews, lik
 | Promise | Implementation |
 |---|---|
 | Riot token never stored / logged | only in the `Authorization` header of the `/userinfo` call; access log has no query / headers |
-| PUUID never stored | `hex(sha256(PEPPER + puuid))[0..32]`; IPs only as peppered hashes in memory |
+| PUUID never stored | `hex(sha256(PEPPER + puuid))[0..32]`; IPs only as peppered hashes **in memory** (anonymous reads, sign-in attempts): nothing about an address is written to the database or to backups (CS-22) |
 | Photos carry no location / camera data | `imaging.ts` strips EXIF / GPS / XMP / IPTC / comments / thumbnails on upload (note 47) |
 | Deleted content is deleted | post delete removes its images; account delete removes everything (notes 50, 52); orphan uploads purged after 24 h |
 | Reports are kept 12 months at most | sweeper deletes reports older than 365 days and reports on deleted content |
@@ -301,9 +302,9 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
     1–200 chars. Re-reporting is idempotent; self-reports are accepted (204) but not counted; only reports
     from established accounts count toward hiding (see 53).
     Hidden content is excluded from lists and returns 404 on direct GET; the author can still delete it.
-12. **Extra rate limits** not in the spec: likes 120/hour per user, and `POST /v1/auth/riot`
-    30 / 10 min per client IP (`CF-Connecting-IP`, stored only as a peppered hash). Rate limits use
-    fixed windows stored in SQLite, so they survive restarts.
+12. **Extra rate limits** not in the spec: likes 120/hour per user, and `POST /v1/auth/riot` per client address (note 64:
+    300 attempts and 30 rejected tokens per 10 min, in memory as peppered hashes). Per-user limits use fixed windows
+    stored in SQLite, so they survive restarts.
 13. **Media:** content-type must be `image/jpeg|png|webp` *and* match the magic bytes. `GET` sends
     `Cache-Control: public, max-age=31536000, immutable` (+ `Cloudflare-CDN-Cache-Control: no-store`), an `ETag`, and
     honours `If-None-Match` (304).
@@ -402,7 +403,7 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
     ISO alpha-2 code.
 37. `GET /v1/posts` (and `/v1/posts/{id}` and its comments) is readable **without a session** (scope `global`,
     `liked: false`); an invalid token is still 401. LFG lists still require a session. Public reads are not
-    rate-limited by the app (Cloudflare fronts the tunnel).
+    rate-limited **per client address** since the hardening work (note 54).
 38. **`language` filters** (comma lists of the 17 codes) on the feed and reviews match the item's stored text
     language exactly, so rows with no language (created before v3, or by clients that never sent one) are
     excluded **only when the filter is used**. LFG's `language` matches the party language or `any`;
@@ -485,7 +486,9 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
     was hidden stays hidden), **reports about content that no longer exists**, rate-limit windows older than 1 day,
     LFG rows expired for more than 8 days, and the in-memory limiter / cache. Results are logged only when non-zero.
 52. **`DELETE /v1/me`** (auth, 3 / hour, `204`) hard-deletes the account: posts (with comments and likes), comments,
-    reviews (with likes), likes, votes, LFG posts and joins, media rows and files, rate-limit counters, the user row.
+    reviews (with likes), likes, votes, LFG posts and joins, media rows and files, the user row. **Rate-limit counters are
+    kept** until their window ends (they hold only the id and a count, nothing else; deleting them would let delete +
+    sign-in reset every per-user limit, CS-37).
     Reports it filed are anonymised (`reporter_id` = `anon-<random>`, `reason` cleared); reports about its content are
     deleted; the like counters of other people's reviews are decremented; the (empty) upload directory is removed.
     The session token stops working at once (401). Signing in again with the same Riot account creates an empty
@@ -502,13 +505,14 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
     exposed nowhere except in the reporter's own export (`reportsFiled`) and the operator CLI. Reviewers' and authors'
     Riot IDs are public by design (privacy policy).
 54. **Anonymous traffic.** Requests without an `Authorization` header to the public reads (`/v1/posts…`, `/v1/skins/…`,
-    `/v1/communities`) are limited per client IP (`CF-Connecting-IP` behind the tunnel, else `X-Forwarded-For`, hashed
-    with the pepper, **in memory only**): `ANON_READ_LIMIT_PER_MIN` (120); image files have their own
-    `ANON_MEDIA_LIMIT_PER_MIN` (1500). Responses served from the cache are not counted (they cost no database work). Over the limit: `429` with `Retry-After`. Signed-in requests are limited per
+    `/v1/communities`) are limited per client address (note 64, hashed with the pepper, **in memory only**):
+    `ANON_READ_LIMIT_PER_MIN` (600); image files have their own `ANON_MEDIA_LIMIT_PER_MIN` (1500) that an
+    `Authorization` header does **not** skip (image files never look at it). Responses served from the cache are not counted (they cost no database work). Over the limit: `429` with `Retry-After`. Signed-in requests are limited per
     user only. If no IP is known (in-process tests) the limit is skipped. **Cache:** anonymous `GET /v1/skins/top`,
     `/votes`, `/{uuid}/summary`, `/{uuid}/reviews` and `/v1/communities` are cached for `PUBLIC_CACHE_TTL_SECONDS` (45)
     per path + sorted query (max 500 entries, errors never cached): an anonymous viewer can see data up to 45 s old;
-    signed-in requests are never cached and see live data. Responses show `x-cache: hit|miss`.
+    signed-in requests are never cached and see live data. The anonymous feed page `GET /v1/posts` is cached for
+    `PUBLIC_FEED_CACHE_SECONDS` (5), per query. Responses show `x-cache: hit|miss`.
 55. **Riot errors** (replaces note 3): `POST /v1/auth/riot` maps Riot's answer to `401 riot_rejected` only for a real
     refusal of the token (400 / 401 / 403 with a non-HTML body). Everything else is `503 riot_unavailable` with
     `Retry-After` (Riot's, clamped to 1–300 s, when present): 429, 5xx, 408, redirects, timeouts and network errors,
@@ -586,3 +590,16 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
     the server stores the version and the time it first saw that version (`users.consent_version` / `consent_at`), keeps the
     time while the version is unchanged, and returns it in the export (`profile.consent`). Nothing is stored for clients that
     do not send it. It goes with the account on erasure.
+64. **CS-13 / CS-14 / CS-22 / CS-37: who is "a client".** The rate-limit identity is `CF-Connecting-IP` when `TRUST_PROXY=true`,
+    the header parses as an IP address **and** the TCP peer is a loopback / private / Tailscale address (the tunnel or a
+    reverse proxy on the same host or Docker network; a client reaching the server directly from a public address cannot
+    choose its identity); otherwise the socket address. `X-Forwarded-For` is never used. IPv6 addresses count as their **/64**
+    (`src/ip.ts`), so rotating addresses inside a subscriber's prefix does not multiply the limit. Limits: anonymous reads
+    600 / min, images 1500 / min (any `Authorization` header is ignored for images), `POST /v1/auth/riot` **300 attempts and
+    30 rejected tokens per 10 min** (successful sign-ins are not counted as failures, `riot_unavailable` is not the client's
+    fault), all in memory (LRU-capped at 100,000 keys), hashed with the pepper. Rate-limit counters of a user are **not**
+    deleted with the account (CS-37). **After deploying check that the header arrives:** two different phones must not share a
+    limit, e.g. `docker compose logs valvn-community | grep anon429` staying at zero under normal traffic; if every client
+    suddenly gets `429`, `CF-Connecting-IP` is missing (bucketed by the tunnel's address). **Cloudflare rate rules** worth adding
+    (Security -> WAF -> Rate limiting rules; they act before the origin): `/v1/auth/riot` 30 requests / 10 min per IP
+    (block 10 min), `/v1/media` 300 / min per IP, `/v1/posts` 120 / min per IP (managed challenge).

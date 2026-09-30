@@ -61,6 +61,16 @@ export class FixedWindowLimiter {
     return { ok: true, retryAfterSeconds: 0 };
   }
 
+  /** Like `hit` but does not count: has this key already exceeded `limit` in the current window? */
+  peek(key: string, limit: number, windowMs: number, now: number): { ok: boolean; retryAfterSeconds: number } {
+    const start = Math.floor(now / windowMs) * windowMs;
+    const w = this.windows.get(key);
+    if (w && w.start === start && w.count >= limit) {
+      return { ok: false, retryAfterSeconds: Math.max(1, Math.ceil((start + windowMs - now) / 1000)) };
+    }
+    return { ok: true, retryAfterSeconds: 0 };
+  }
+
   prune(now: number, maxAgeMs = 10 * 60_000): void {
     for (const [k, w] of this.windows) if (w.start + maxAgeMs < now) this.windows.delete(k);
   }
