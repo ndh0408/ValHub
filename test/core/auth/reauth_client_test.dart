@@ -5,6 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/auth/cookie_jar.dart';
 import 'package:valvn/core/auth/reauth_client.dart';
 import 'package:valvn/core/auth/session_manager.dart';
+import 'package:valvn/core/config/app_constants.dart';
+import 'package:valvn/core/network/auth_traffic.dart';
+import 'package:valvn/core/network/rate_limiter.dart';
 
 import '../../helpers/jwt.dart';
 
@@ -277,6 +280,138 @@ void main() {
       final out = await client(adapter).reauth(jar);
       expect(out, isA<ReauthTransient>());
       expect((out as ReauthTransient).reason, 'timeout');
+    });
+  });
+
+  group('auth host throttle (AR-001 / AR-005)', () {
+    const jar = RiotCookieJar({'ssid': 'old', 'tdid': 't'});
+    const host = AuthConstants.authHost;
+
+    late DateTime clock;
+    late HostRateLimiter limiter;
+
+    setUp(() {
+      clock = DateTime(2026, 9, 30, 12);
+      limiter = createAuthLimiter(now: () => clock, jitter: () => 0);
+    });
+
+    RiotReauthClient throttled(_FakeAdapter adapter) {
+      final dio = RiotReauthClient.createAuthDio()..httpClientAdapter = adapter;
+      return RiotReauthClient(
+        dio: dio,
+        userAgent: () => 'UA',
+        now: () => _now,
+        limiter: limiter,
+      );
+    }
+
+    ResponseBody html403() => _res(
+      403,
+      body: '<!DOCTYPE html><title>Just a moment...</title>',
+      headers: {
+        'content-type': ['text/html'],
+      },
+    );
+
+    test(
+      'Cloudflare penalises the host; the next call sends nothing',
+      () async {
+        final adapter = _FakeAdapter([(_) => html403()]);
+        final client = throttled(adapter);
+        final first = await client.reauth(jar) as ReauthTransient;
+        expect(first.reason, 'cloudflare');
+        expect(limiter.cooldownRemaining(host), const Duration(seconds: 30));
+
+        final second = await client.reauth(jar) as ReauthTransient;
+        expect(second.reason, 'cooldown');
+        expect(second.retryAfter, const Duration(seconds: 30));
+        expect(second.jar, jar, reason: 'the jar is returned untouched');
+        expect(adapter.requests, hasLength(1));
+
+        // Once the cooldown is over, requests flow again.
+        clock = clock.add(const Duration(seconds: 31));
+        adapter.responses.add(
+          (_) => _res(
+            303,
+            headers: {
+              'location': [_okLocation()],
+            },
+          ),
+        );
+        expect(await client.reauth(jar), isA<ReauthOk>());
+        expect(adapter.requests, hasLength(2));
+      },
+    );
+
+    test('429 honours Retry-After for the whole host', () async {
+      final adapter = _FakeAdapter([
+        (_) => _res(
+          429,
+          headers: {
+            'retry-after': ['120'],
+          },
+        ),
+      ]);
+      final out = await throttled(adapter).reauth(jar) as ReauthTransient;
+      expect(out.retryAfter, const Duration(seconds: 120));
+      expect(limiter.cooldownRemaining(host), const Duration(seconds: 120));
+    });
+
+    test(
+      'the second 5xx within two minutes penalises, the first does not',
+      () async {
+        final adapter = _FakeAdapter([(_) => _res(502), (_) => _res(502)]);
+        final client = throttled(adapter);
+        await client.reauth(jar);
+        expect(limiter.cooldownRemaining(host), isNull);
+        await client.reauth(jar);
+        expect(limiter.cooldownRemaining(host), const Duration(seconds: 30));
+      },
+    );
+
+    test('an answer of any kind resets the strikes', () async {
+      limiter.penalize(host); // strike 1, 30 s
+      clock = clock.add(const Duration(seconds: 31));
+      final adapter = _FakeAdapter([
+        (_) => _res(
+          303,
+          headers: {
+            'location': ['https://authenticate.riotgames.com/login'],
+          },
+        ),
+      ]);
+      expect(await throttled(adapter).reauth(jar), isA<ReauthNeedsLogin>());
+      // The strikes were forgotten: the next penalty is the 30 s base again.
+      expect(limiter.penalize(host), const Duration(seconds: 30));
+    });
+
+    test('timeouts and connection errors do not penalise the host', () async {
+      final adapter = _FakeAdapter([
+        (o) => throw DioException(
+          requestOptions: o,
+          type: DioExceptionType.connectionTimeout,
+        ),
+      ]);
+      final out = await throttled(adapter).reauth(jar) as ReauthTransient;
+      expect(out.reason, 'timeout');
+      expect(limiter.cooldownRemaining(host), isNull);
+    });
+
+    test('the GET and its POST fallback share the same throttle', () async {
+      final adapter = _FakeAdapter([
+        (_) => _res(
+          200,
+          body: '<html></html>',
+          headers: {
+            'content-type': ['text/html'],
+          },
+        ),
+        (_) => html403(),
+      ]);
+      final out = await throttled(adapter).reauth(jar) as ReauthTransient;
+      expect(out.reason, 'cloudflare');
+      expect(adapter.requests.map((r) => r.method), ['GET', 'POST']);
+      expect(limiter.cooldownRemaining(host), isNotNull);
     });
   });
 

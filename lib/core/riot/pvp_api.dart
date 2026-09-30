@@ -34,15 +34,27 @@ class PvpApi {
     Dio? publicDio,
     HostRateLimiter? limiter,
     Future<void> Function(Duration)? delay,
+    this.deadline = callDeadline,
   }) : _publicDio = publicDio ?? createBaseDio(),
        _limiter = limiter ?? HostRateLimiter(),
        _delay = delay ?? Future<void>.delayed;
+
+  /// One call (session, queueing, requests and inline retries together) ends
+  /// after this long with a `timeout` [TransientException] (AR-006).
+  static const callDeadline = Duration(seconds: 45);
+
+  /// A host cooldown longer than this is not waited for: the call fails at
+  /// once with `TransientException(reason: 'cooldown', retryAfter: …)`.
+  static const maxCooldownWait = Duration(seconds: 10);
 
   final SessionManager _sessions;
   final Dio _dio;
   final Dio _publicDio;
   final HostRateLimiter _limiter;
   final Future<void> Function(Duration) _delay;
+
+  /// See [callDeadline].
+  final Duration deadline;
 
   // ------------------------------------------------------------------ PD (§6.2)
 
@@ -112,7 +124,11 @@ class PvpApi {
 
   /// P-10 `PUT /name-service/v2/players` body `["puuid", …]` →
   /// `[{Subject, GameName, TagLine, DisplayName}]`. Batched by 50.
-  Future<List<JsonMap>> names(String puuid, Iterable<String> subjects) async {
+  Future<List<JsonMap>> names(
+    String puuid,
+    Iterable<String> subjects, {
+    CancelToken? cancelToken,
+  }) async {
     final unique = {for (final s in subjects) s.toLowerCase()}.toList();
     final out = <JsonMap>[];
     for (
@@ -130,6 +146,7 @@ class PvpApi {
         (h) => '${h.pd}/name-service/v2/players',
         data: unique.sublist(i, end),
         idempotent: true,
+        cancelToken: cancelToken,
       );
       out.addAll(asMapList(data));
     }
@@ -137,8 +154,16 @@ class PvpApi {
   }
 
   /// P-11 `GET /mmr/v1/players/{subject}` (any player; default: self).
-  Future<JsonMap> mmr(String puuid, {String? subject}) =>
-      _map(puuid, 'GET', (h) => '${h.pd}/mmr/v1/players/${subject ?? puuid}');
+  Future<JsonMap> mmr(
+    String puuid, {
+    String? subject,
+    CancelToken? cancelToken,
+  }) => _map(
+    puuid,
+    'GET',
+    (h) => '${h.pd}/mmr/v1/players/${subject ?? puuid}',
+    cancelToken: cancelToken,
+  );
 
   /// P-12 `GET /mmr/v1/players/{subject}/competitiveupdates` (page ≤ 20).
   Future<JsonMap> competitiveUpdates(
@@ -147,6 +172,7 @@ class PvpApi {
     int startIndex = 0,
     int endIndex = RiotClientConstants.maxPageSize,
     String queue = 'competitive',
+    CancelToken? cancelToken,
   }) {
     final (start, end) = _page(startIndex, endIndex);
     return _map(
@@ -154,6 +180,7 @@ class PvpApi {
       'GET',
       (h) => '${h.pd}/mmr/v1/players/${subject ?? puuid}/competitiveupdates',
       query: {'startIndex': start, 'endIndex': end, 'queue': queue},
+      cancelToken: cancelToken,
     );
   }
 
@@ -165,6 +192,7 @@ class PvpApi {
     int startIndex = 0,
     int endIndex = RiotClientConstants.maxPageSize,
     String? queue,
+    CancelToken? cancelToken,
   }) {
     final (start, end) = _page(startIndex, endIndex);
     return _map(
@@ -172,13 +200,22 @@ class PvpApi {
       'GET',
       (h) => '${h.pd}/match-history/v1/history/${subject ?? puuid}',
       query: {'startIndex': start, 'endIndex': end, 'queue': ?queue},
+      cancelToken: cancelToken,
     );
   }
 
   /// P-14 `GET /match-details/v1/matches/{matchId}` (immutable; cache
   /// forever; 404 right after a match = not processed yet).
-  Future<JsonMap> matchDetails(String puuid, String matchId) =>
-      _map(puuid, 'GET', (h) => '${h.pd}/match-details/v1/matches/$matchId');
+  Future<JsonMap> matchDetails(
+    String puuid,
+    String matchId, {
+    CancelToken? cancelToken,
+  }) => _map(
+    puuid,
+    'GET',
+    (h) => '${h.pd}/match-details/v1/matches/$matchId',
+    cancelToken: cancelToken,
+  );
 
   /// P-15 `GET /contracts/v1/contracts/{puuid}`.
   Future<JsonMap> contracts(String puuid) =>
@@ -470,6 +507,7 @@ class PvpApi {
     Object? data,
     Map<String, dynamic>? query,
     bool? idempotent,
+    CancelToken? cancelToken,
   }) async {
     final body = await _send(
       puuid,
@@ -478,6 +516,7 @@ class PvpApi {
       data: data,
       query: query,
       idempotent: idempotent,
+      cancelToken: cancelToken,
     );
     if (body == null) return <String, dynamic>{};
     if (body is String) {
@@ -489,6 +528,20 @@ class PvpApi {
     return asMap(body) ?? <String, dynamic>{'data': body};
   }
 
+  /// One Riot call: session, host throttle, request, classification and the
+  /// inline retry policy (AR-005 / AR-006):
+  ///
+  /// - the whole call ends after [deadline] (45 s) with a `timeout`;
+  /// - a host cooling down for more than [maxCooldownWait] fails at once;
+  /// - a `429` / Cloudflare page / repeated `5xx` penalises the host (every
+  ///   caller stops for 30 s doubling to 10 min, `Retry-After` wins) and the
+  ///   error carries that wait as `retryAfter`;
+  /// - only idempotent calls retry inline, and only after a timeout, a lone
+  ///   `5xx`, or a `429` whose wait is short. A connection error (offline),
+  ///   Cloudflare and mutations never retry inline;
+  /// - mutations use the limiter's priority lane;
+  /// - [cancelToken] (a provider that was disposed) stops the wait and the
+  ///   request.
   Future<Object?> _send(
     String puuid,
     String method,
@@ -497,72 +550,146 @@ class PvpApi {
     Map<String, dynamic>? query,
     bool? idempotent,
     ResponseType? responseType,
+    CancelToken? cancelToken,
   }) async {
     final id = puuid.toLowerCase();
-    final RiotHosts hosts;
-    try {
-      hosts = (await _sessions.session(id)).hosts;
-    } on Object catch (e) {
-      throw classifyError(e);
+    final token = CancelToken();
+    var deadlineHit = false;
+    final timer = Timer(deadline, () {
+      deadlineHit = true;
+      if (!token.isCancelled) token.cancel('deadline');
+    });
+    if (cancelToken != null) {
+      unawaited(
+        cancelToken.whenCancel.then<void>((_) {
+          if (!token.isCancelled) token.cancel('cancelled');
+        }),
+      );
     }
-    final uri = Uri.parse(url(hosts));
-    final canRetry = idempotent ?? method == 'GET';
-    for (var attempt = 0; ; attempt++) {
-      await _limiter.acquire(uri.host);
-      Duration wait;
+    TransientException cancelled() =>
+        TransientException(reason: deadlineHit ? 'timeout' : 'cancelled');
+    try {
+      final RiotHosts hosts;
       try {
-        final res = await _dio.requestUri<Object?>(
-          query == null || query.isEmpty
-              ? uri
-              : uri.replace(
-                  queryParameters: {
-                    ...uri.queryParameters,
-                    for (final e in query.entries) e.key: '${e.value}',
-                  },
-                ),
-          data: data,
-          options: Options(
-            method: method,
-            responseType: responseType,
-            contentType: data == null ? null : Headers.jsonContentType,
-            extra: {RequestExtras.puuid: id},
-          ),
-        );
-        return res.data;
+        hosts = (await _sessions.session(id).timeout(deadline)).hosts;
+      } on TimeoutException {
+        throw const TransientException(reason: 'timeout');
       } on Object catch (e) {
-        var error = classifyError(e);
-        if (error is NeedsLoginException && error.puuid == null) {
-          error = NeedsLoginException(puuid: id, reason: error.reason);
-        }
-        final rateLimited = error is TransientException && error.status == 429;
-        if (error is TransientException && error.status == 429) {
-          // Every caller of this host waits (honours Retry-After).
-          _limiter.cooldown(
-            uri.host,
-            error.retryAfter ?? const Duration(seconds: 10),
-          );
-        }
-        final retryDelay = _inlineRetryDelay(error, attempt);
-        if (!canRetry || retryDelay == null) throw error;
-        // After a 429 the limiter's cooldown already enforces the wait.
-        wait = rateLimited ? Duration.zero : retryDelay;
-      } finally {
-        _limiter.release(uri.host);
+        throw classifyError(e);
       }
-      // Sleep outside the limiter slot.
-      if (wait > Duration.zero) await _delay(wait);
+      final uri = Uri.parse(url(hosts));
+      final host = uri.host;
+      final canRetry = idempotent ?? method == 'GET';
+      for (var attempt = 0; ; attempt++) {
+        if (token.isCancelled) throw cancelled();
+        final cooling = _limiter.cooldownRemaining(host);
+        if (cooling != null && cooling > maxCooldownWait) {
+          throw TransientException(retryAfter: cooling, reason: 'cooldown');
+        }
+        try {
+          await _limiter.acquire(
+            host,
+            cancelled: token.whenCancel,
+            priority: !canRetry,
+          );
+        } on LimiterCancelled {
+          throw cancelled();
+        }
+        Duration wait;
+        try {
+          final res = await _dio.requestUri<Object?>(
+            query == null || query.isEmpty
+                ? uri
+                : uri.replace(
+                    queryParameters: {
+                      ...uri.queryParameters,
+                      for (final e in query.entries) e.key: '${e.value}',
+                    },
+                  ),
+            data: data,
+            cancelToken: token,
+            options: Options(
+              method: method,
+              responseType: responseType,
+              contentType: data == null ? null : Headers.jsonContentType,
+              extra: {RequestExtras.puuid: id},
+            ),
+          );
+          _limiter.recordSuccess(host);
+          return res.data;
+        } on Object catch (e) {
+          var error = classifyError(e);
+          if (error is NeedsLoginException && error.puuid == null) {
+            error = NeedsLoginException(puuid: id, reason: error.reason);
+          }
+          if (token.isCancelled) throw cancelled();
+          if (error is TransientException) {
+            error = _learn(host, error);
+          }
+          final retryDelay = canRetry
+              ? _inlineRetryDelay(error, attempt)
+              : null;
+          if (retryDelay == null) throw error;
+          wait = retryDelay;
+        } finally {
+          _limiter.release(host);
+        }
+        // Sleep outside the limiter slot (a 429 wait is also enforced by the
+        // host cooldown the next acquire honours).
+        if (wait > Duration.zero) {
+          await Future.any<Object?>([_delay(wait), token.whenCancel]);
+        }
+      }
+    } finally {
+      timer.cancel();
     }
   }
 
-  /// At most 2 quick retries for transient failures of idempotent calls;
-  /// longer waits are left to the caller (Riverpod `retry`).
+  /// Teaches the host limiter what [error] says about the host and returns
+  /// the error with `retryAfter` set to the cooldown that now applies.
+  TransientException _learn(String host, TransientException error) {
+    Duration? applied;
+    if (error.status == 429) {
+      applied = _limiter.penalize(
+        host,
+        retryAfter: error.retryAfter,
+        base: const Duration(seconds: 10),
+      );
+    } else if (error.reason == 'cloudflare') {
+      applied = _limiter.penalize(host, retryAfter: error.retryAfter);
+    } else if ((error.status ?? 0) >= 500) {
+      applied = _limiter.recordServerError(host, retryAfter: error.retryAfter);
+    }
+    if (applied == null) return error;
+    return TransientException(
+      retryAfter: applied,
+      status: error.status,
+      reason: error.reason,
+    );
+  }
+
+  /// Inline retries of idempotent calls, at most two:
+  /// - a timeout: once, after 1 s;
+  /// - a `5xx`: after 1 s then 3 s (none once the host is penalised);
+  /// - a `429`: only when the server's wait is at most 10 s;
+  /// - never after a connection error, Cloudflare, a cooldown, a
+  ///   cancellation or a certificate problem.
   static Duration? _inlineRetryDelay(RiotException error, int attempt) {
     if (error is! TransientException || attempt >= 2) return null;
-    if (error.reason == 'cancelled') return null;
-    final retryAfter = error.retryAfter;
-    if (retryAfter != null) {
-      return retryAfter <= const Duration(seconds: 10) ? retryAfter : null;
+    switch (error.reason) {
+      case 'cancelled' || 'network' || 'cloudflare' || 'cooldown' || 'tls':
+        return null;
+      case 'timeout':
+        return attempt == 0 ? const Duration(seconds: 1) : null;
     }
+    final retryAfter = error.retryAfter;
+    if (error.status == 429) {
+      return retryAfter != null && retryAfter <= maxCooldownWait
+          ? retryAfter
+          : null;
+    }
+    // A penalised host (repeated 5xx) tells the caller to wait, not to retry.
+    if (retryAfter != null) return null;
     return Duration(seconds: attempt == 0 ? 1 : 3);
   }
 }

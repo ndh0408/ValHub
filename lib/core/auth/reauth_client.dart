@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 
 import '../config/app_constants.dart';
+import '../network/auth_traffic.dart';
 import '../network/error_classifier.dart';
+import '../network/rate_limiter.dart';
 import '../util/json.dart';
 import 'auth_callback.dart';
 import 'cookie_jar.dart';
@@ -208,17 +210,25 @@ ReauthVerdict classifyAuthorizationResponse({
 ///
 /// Primary: `GET /authorize?…&prompt=none` (no redirects). Fallback:
 /// `POST /api/v1/authorization`. The username/password `PUT` is never used.
+///
+/// Every call goes through the shared auth [HostRateLimiter]
+/// (`createAuthLimiter`): while the host cools down after a block the call
+/// fails at once with a `cooldown` transient outcome instead of sending
+/// another request.
 class RiotReauthClient {
   RiotReauthClient({
     Dio? dio,
     required this._userAgent,
     DateTime Function()? now,
+    HostRateLimiter? limiter,
   }) : _dio = dio ?? createAuthDio(),
-       _now = now ?? DateTime.now;
+       _now = now ?? DateTime.now,
+       _limiter = limiter ?? createAuthLimiter();
 
   final Dio _dio;
   final String Function() _userAgent;
   final DateTime Function() _now;
+  final HostRateLimiter _limiter;
 
   /// A dio that returns every status (we classify it) and never follows
   /// redirects (we need the 303 `Location`).
@@ -268,7 +278,49 @@ class RiotReauthClient {
     return ReauthTransient(lastReason, current);
   }
 
-  Future<(ReauthVerdict, RiotCookieJar)> _get(RiotCookieJar jar) async {
+  /// Runs one auth-host call through the shared limiter: fails fast while the
+  /// host cools down, otherwise waits for a slot, sends, and teaches the
+  /// limiter what the answer meant.
+  Future<(ReauthVerdict, RiotCookieJar)> _throttled(
+    RiotCookieJar jar,
+    Future<(ReauthVerdict, RiotCookieJar)> Function() send,
+  ) async {
+    const host = AuthConstants.authHost;
+    final blocked = _limiter.cooldownRemaining(host);
+    if (blocked != null) {
+      return (VerdictTransient('cooldown', retryAfter: blocked), jar);
+    }
+    await _limiter.acquire(host);
+    try {
+      final result = await send();
+      switch (result.$1) {
+        case VerdictTransient(:final reason, :final retryAfter, :final status):
+          learnFromAuthAnswer(
+            _limiter,
+            host,
+            status: status,
+            reason: reason,
+            retryAfter: retryAfter,
+            transient: true,
+          );
+        case VerdictOk() || VerdictNeedsLogin():
+          learnFromAuthAnswer(_limiter, host);
+        case VerdictUnknown():
+          break;
+      }
+      return result;
+    } finally {
+      _limiter.release(host);
+    }
+  }
+
+  Future<(ReauthVerdict, RiotCookieJar)> _get(RiotCookieJar jar) =>
+      _throttled(jar, () => _sendGet(jar));
+
+  Future<(ReauthVerdict, RiotCookieJar)> _post(RiotCookieJar jar) =>
+      _throttled(jar, () => _sendPost(jar));
+
+  Future<(ReauthVerdict, RiotCookieJar)> _sendGet(RiotCookieJar jar) async {
     try {
       final res = await _dio.get<String>(
         reauthAuthorizeUrl,
@@ -293,7 +345,7 @@ class RiotReauthClient {
     }
   }
 
-  Future<(ReauthVerdict, RiotCookieJar)> _post(RiotCookieJar jar) async {
+  Future<(ReauthVerdict, RiotCookieJar)> _sendPost(RiotCookieJar jar) async {
     try {
       final res = await _dio.post<String>(
         AuthConstants.authorizationApiUrl,

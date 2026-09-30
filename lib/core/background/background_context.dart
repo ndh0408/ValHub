@@ -13,6 +13,7 @@ import '../config/remote_config.dart';
 import '../content/content_repository.dart';
 import '../l10n/locale.dart';
 import '../logging/session_log.dart';
+import '../network/auth_traffic.dart';
 import '../network/dio_factory.dart';
 import '../notifications/notification_service.dart';
 import '../riot/pvp_api.dart';
@@ -73,12 +74,18 @@ class BackgroundContext {
       secureStore: secure,
       fileCache: JsonFileCache.appSupport('cache'),
     );
+    // One throttle for every auth-host call of this isolate.
+    final authLimiter = createAuthLimiter();
     final sessions = SessionManager(
       secureStore: secure,
       accounts: accounts,
-      reauthClient: RiotReauthClient(userAgent: () => versions.apiUserAgent),
+      reauthClient: RiotReauthClient(
+        userAgent: () => versions.apiUserAgent,
+        limiter: authLimiter,
+      ),
       bootstrapClient: RiotBootstrapClient(
         userAgent: () => versions.apiUserAgent,
+        limiter: authLimiter,
       ),
       versions: versions,
       remoteConfig: () => remote,

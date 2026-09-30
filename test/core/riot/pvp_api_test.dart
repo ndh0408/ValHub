@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -192,13 +193,33 @@ void main() {
     expect(await api.coreGamePlayer(_puuid).orNullIfNotFound(), isNull);
   });
 
-  test('Cloudflare HTML 403 on GET is retried twice, then transient', () async {
-    for (var i = 0; i < 3; i++) {
+  test(
+    'Cloudflare HTML 403 is not retried inline: host cooldown instead',
+    () async {
       adapter.reply(403, '<!DOCTYPE html><title>Just a moment...</title>');
-    }
-    await expectLater(api.mmr(_puuid), throwsA(isA<TransientException>()));
-    expect(adapter.requests, hasLength(3));
-  });
+      await expectLater(
+        api.mmr(_puuid),
+        throwsA(
+          isA<TransientException>()
+              .having((e) => e.reason, 'reason', 'cloudflare')
+              .having((e) => e.retryAfter, 'retryAfter', isNotNull),
+        ),
+      );
+      expect(adapter.requests, hasLength(1));
+      // Everyone stops for the cooldown: the next call fails without a request.
+      await expectLater(
+        api.wallet(_puuid),
+        throwsA(
+          isA<TransientException>().having(
+            (e) => e.reason,
+            'reason',
+            'cooldown',
+          ),
+        ),
+      );
+      expect(adapter.requests, hasLength(1));
+    },
+  );
 
   test('mutations are never retried automatically', () async {
     adapter.reply(503, {'errorCode': 'x'});
@@ -244,4 +265,266 @@ void main() {
     adapter.queue.add((_) => ResponseBody.fromString('', 204));
     expect(await api.partyLeaveMatchmaking(_puuid, 'p'), isEmpty);
   });
+
+  group('traffic shaping (AR-005 / AR-006 / AR-017)', () {
+    ResponseBody Function(RequestOptions) failWith(DioExceptionType type) =>
+        (o) => throw DioException(requestOptions: o, type: type);
+
+    PvpApi build({
+      HostRateLimiter? limiter,
+      Duration deadline = PvpApi.callDeadline,
+      Future<void> Function(Duration)? delay,
+    }) => PvpApi(
+      sessions: sessions,
+      dio: createPvpDio(sessions: sessions)..httpClientAdapter = adapter,
+      limiter: limiter ?? HostRateLimiter(burst: 100, refillPerSecond: 100),
+      delay: delay ?? (_) async {},
+      deadline: deadline,
+    );
+
+    test(
+      'a lone 5xx is retried; the second one within two minutes stops it',
+      () async {
+        for (var i = 0; i < 3; i++) {
+          adapter.reply(503, {'errorCode': 'x'});
+        }
+        await expectLater(
+          api.mmr(_puuid),
+          throwsA(
+            isA<TransientException>()
+                .having((e) => e.status, 'status', 503)
+                .having(
+                  (e) => e.retryAfter,
+                  'retryAfter',
+                  greaterThanOrEqualTo(const Duration(seconds: 30)),
+                ),
+          ),
+        );
+        expect(adapter.requests, hasLength(2));
+        // The host is penalised now: the next call does not even try.
+        await expectLater(
+          api.wallet(_puuid),
+          throwsA(
+            isA<TransientException>().having(
+              (e) => e.reason,
+              'reason',
+              'cooldown',
+            ),
+          ),
+        );
+        expect(adapter.requests, hasLength(2));
+      },
+    );
+
+    test('a 5xx that recovers on the retry succeeds', () async {
+      adapter
+        ..reply(502, {'errorCode': 'x'})
+        ..reply(200, {'Balances': <String, dynamic>{}});
+      final wallet = await api.wallet(_puuid);
+      expect(wallet.containsKey('Balances'), isTrue);
+      expect(adapter.requests, hasLength(2));
+    });
+
+    test('a connection error (offline) is not retried inline', () async {
+      adapter.queue.add(failWith(DioExceptionType.connectionError));
+      await expectLater(
+        api.mmr(_puuid),
+        throwsA(
+          isA<TransientException>().having(
+            (e) => e.reason,
+            'reason',
+            'network',
+          ),
+        ),
+      );
+      expect(adapter.requests, hasLength(1));
+    });
+
+    test('a timeout is retried once', () async {
+      adapter
+        ..queue.add(failWith(DioExceptionType.receiveTimeout))
+        ..reply(200, {'ok': true});
+      expect(await api.mmr(_puuid), {'ok': true});
+      expect(adapter.requests, hasLength(2));
+
+      adapter
+        ..queue.add(failWith(DioExceptionType.receiveTimeout))
+        ..queue.add(failWith(DioExceptionType.receiveTimeout));
+      await expectLater(
+        api.mmr(_puuid),
+        throwsA(
+          isA<TransientException>().having((e) => e.isTimeout, 'timeout', true),
+        ),
+      );
+      expect(adapter.requests, hasLength(4));
+    });
+
+    test('a 429 with a short Retry-After waits for it and retries', () async {
+      var now = DateTime(2026, 9, 30, 12);
+      Future<void> tick(Duration d) async => now = now.add(d);
+      final waits = <Duration>[];
+      final limiter = HostRateLimiter(
+        burst: 100,
+        refillPerSecond: 100,
+        now: () => now,
+        delay: (d) async {
+          waits.add(d);
+          await tick(d);
+        },
+      );
+      final shaped = build(limiter: limiter, delay: tick);
+      adapter
+        ..reply(
+          429,
+          {'errorCode': 'x'},
+          headers: {
+            Headers.contentTypeHeader: [Headers.jsonContentType],
+            'retry-after': ['5'],
+          },
+        )
+        ..reply(200, {'Balances': <String, dynamic>{}});
+      final wallet = await shaped.wallet(_puuid);
+      expect(wallet.containsKey('Balances'), isTrue);
+      expect(adapter.requests, hasLength(2));
+      expect(now.difference(DateTime(2026, 9, 30, 12)).inSeconds, 5);
+    });
+
+    test('a 429 with a long Retry-After is surfaced, not waited for', () async {
+      adapter.reply(
+        429,
+        {'errorCode': 'x'},
+        headers: {
+          Headers.contentTypeHeader: [Headers.jsonContentType],
+          'retry-after': ['120'],
+        },
+      );
+      await expectLater(
+        api.mmr(_puuid),
+        throwsA(
+          isA<TransientException>()
+              .having((e) => e.status, 'status', 429)
+              .having(
+                (e) => e.retryAfter,
+                'retryAfter',
+                const Duration(seconds: 120),
+              ),
+        ),
+      );
+      expect(adapter.requests, hasLength(1));
+    });
+
+    test('a 429 without Retry-After starts at 10 s and doubles', () async {
+      adapter.reply(429, {'errorCode': 'x'});
+      final first = await api
+          .mmr(_puuid)
+          .then<Object?>((_) => null, onError: (Object e) => e);
+      expect(
+        (first! as TransientException).retryAfter,
+        greaterThanOrEqualTo(const Duration(seconds: 10)),
+      );
+      expect(
+        (first as TransientException).retryAfter,
+        lessThan(const Duration(seconds: 13)),
+      );
+    });
+
+    test('mutations skip the token queue (priority lane)', () async {
+      final limiter = HostRateLimiter(
+        burst: 1,
+        refillPerSecond: 0.001,
+        delay: (d) async => fail('a mutation must not wait for a token'),
+      );
+      final shaped = build(limiter: limiter);
+      adapter
+        ..reply(200, {'ok': true})
+        ..reply(200, {'ok': true});
+      await shaped.wallet(_puuid); // takes the only token
+      await shaped.renewDailyTicket(_puuid); // same host, a mutation
+      expect(adapter.requests, hasLength(2));
+    });
+
+    test('the deadline ends a hanging call with a timeout', () async {
+      final hanging = _HangingAdapter();
+      final shaped = PvpApi(
+        sessions: sessions,
+        dio: createPvpDio(sessions: sessions)..httpClientAdapter = hanging,
+        limiter: HostRateLimiter(burst: 100, refillPerSecond: 100),
+        delay: (_) async {},
+        deadline: const Duration(milliseconds: 150),
+      );
+      await expectLater(
+        shaped.mmr(_puuid),
+        throwsA(
+          isA<TransientException>().having((e) => e.isTimeout, 'timeout', true),
+        ),
+      );
+      expect(hanging.requests, 1, reason: 'no retry after the deadline');
+    });
+
+    test('a slow session also counts against the deadline', () async {
+      when(() => sessions.session(any()))
+          .thenAnswer((_) => Completer<RiotSession>().future);
+      final shaped = build(deadline: const Duration(milliseconds: 100));
+      await expectLater(
+        shaped.mmr(_puuid),
+        throwsA(
+          isA<TransientException>().having((e) => e.isTimeout, 'timeout', true),
+        ),
+      );
+      expect(adapter.requests, isEmpty);
+    });
+
+    test('a cancel token stops the request (disposed provider)', () async {
+      final hanging = _HangingAdapter();
+      final shaped = PvpApi(
+        sessions: sessions,
+        dio: createPvpDio(sessions: sessions)..httpClientAdapter = hanging,
+        limiter: HostRateLimiter(burst: 100, refillPerSecond: 100),
+        delay: (_) async {},
+      );
+      final token = CancelToken();
+      final call = shaped.matchDetails(_puuid, 'm1', cancelToken: token);
+      final outcome = expectLater(
+        call,
+        throwsA(
+          isA<TransientException>().having(
+            (e) => e.reason,
+            'reason',
+            'cancelled',
+          ),
+        ),
+      );
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+      token.cancel('screen closed');
+      await outcome;
+    });
+
+    test('an already cancelled token sends nothing', () async {
+      final token = CancelToken()..cancel('gone');
+      await expectLater(
+        api.matchDetails(_puuid, 'm1', cancelToken: token),
+        throwsA(isA<TransientException>()),
+      );
+      expect(adapter.requests, isEmpty);
+    });
+  });
+}
+
+/// Never answers; completes with a cancellation when dio asks it to stop.
+class _HangingAdapter implements HttpClientAdapter {
+  int requests = 0;
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions o,
+    Stream<List<int>>? s,
+    Future<void>? cancelFuture,
+  ) async {
+    requests++;
+    await cancelFuture;
+    throw DioException.requestCancelled(requestOptions: o, reason: 'cancel');
+  }
+
+  @override
+  void close({bool force = false}) {}
 }

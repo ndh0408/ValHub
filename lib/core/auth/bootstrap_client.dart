@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../config/app_constants.dart';
+import '../network/auth_traffic.dart';
 import '../network/error_classifier.dart';
+import '../network/rate_limiter.dart';
 import '../network/riot_exception.dart';
 import '../util/json.dart';
 
@@ -41,20 +43,29 @@ String? regionFromGeo(Object? json) =>
 
 /// Bootstrap calls after login and after every re-auth (SUMMARY §3.3 a–c).
 /// Throws [RiotException] subtypes only.
+///
+/// Calls go through the shared auth [HostRateLimiter] (`createAuthLimiter`),
+/// and fail at once with a `cooldown` [TransientException] while their host
+/// is cooling down after a block.
 class RiotBootstrapClient {
-  RiotBootstrapClient({Dio? dio, required this._userAgent})
-    : _dio =
-          dio ??
-          Dio(
-            BaseOptions(
-              connectTimeout: AppConstants.networkTimeout,
-              receiveTimeout: AppConstants.networkTimeout,
-              sendTimeout: AppConstants.networkTimeout,
-            ),
-          );
+  RiotBootstrapClient({
+    Dio? dio,
+    required this._userAgent,
+    HostRateLimiter? limiter,
+  }) : _dio =
+           dio ??
+           Dio(
+             BaseOptions(
+               connectTimeout: AppConstants.networkTimeout,
+               receiveTimeout: AppConstants.networkTimeout,
+               sendTimeout: AppConstants.networkTimeout,
+             ),
+           ),
+       _limiter = limiter ?? createAuthLimiter();
 
   final Dio _dio;
   final String Function() _userAgent;
+  final HostRateLimiter _limiter;
 
   Map<String, String> _bearer(String accessToken) => {
     'Authorization': 'Bearer $accessToken',
@@ -64,6 +75,7 @@ class RiotBootstrapClient {
   /// (a) `POST entitlements.auth.riotgames.com/api/token/v1` body `{}`.
   Future<String> fetchEntitlementsToken(String accessToken) async {
     final data = await _call(
+      AuthConstants.entitlementsUrl,
       () => _dio.post<Object?>(
         AuthConstants.entitlementsUrl,
         data: const <String, dynamic>{},
@@ -83,6 +95,7 @@ class RiotBootstrapClient {
   /// (b) `GET auth.riotgames.com/userinfo`.
   Future<RiotUserInfo> fetchUserInfo(String accessToken) async {
     final data = await _call(
+      AuthConstants.userInfoUrl,
       () => _dio.get<Object?>(
         AuthConstants.userInfoUrl,
         options: Options(headers: _bearer(accessToken)),
@@ -99,6 +112,7 @@ class RiotBootstrapClient {
   /// `affinities.live`.
   Future<String> fetchRegion(String accessToken, String idToken) async {
     final data = await _call(
+      AuthConstants.riotGeoUrl,
       () => _dio.put<Object?>(
         AuthConstants.riotGeoUrl,
         data: {'id_token': idToken},
@@ -114,9 +128,19 @@ class RiotBootstrapClient {
     return region;
   }
 
-  Future<Object?> _call(Future<Response<Object?>> Function() request) async {
+  Future<Object?> _call(
+    String url,
+    Future<Response<Object?>> Function() request,
+  ) async {
+    final host = Uri.parse(url).host;
+    final blocked = _limiter.cooldownRemaining(host);
+    if (blocked != null) {
+      throw TransientException(retryAfter: blocked, reason: 'cooldown');
+    }
+    await _limiter.acquire(host);
     try {
       final res = await request();
+      learnFromAuthAnswer(_limiter, host);
       return res.data;
     } on Object catch (e) {
       final error = classifyError(e);
@@ -125,7 +149,12 @@ class RiotBootstrapClient {
       if (error is NeedsLoginException) {
         throw const TransientException(status: 401, reason: 'bootstrap_401');
       }
+      if (error is TransientException) {
+        learnFromAuthFailure(_limiter, host, error);
+      }
       throw error;
+    } finally {
+      _limiter.release(host);
     }
   }
 }

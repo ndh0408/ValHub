@@ -146,6 +146,16 @@ void main() {
     expect(riotRetry(3, const TransientException()), isNull);
   });
 
+  test('an offline device (network) is retried once, then the error shows', () {
+    const offline = TransientException(reason: 'network');
+    expect(riotRetry(0, offline), const Duration(seconds: 2));
+    expect(riotRetry(1, offline), isNull);
+    // Timeouts and server errors keep the full policy.
+    const timeout = TransientException(reason: 'timeout');
+    expect(riotRetry(1, timeout), const Duration(seconds: 4));
+    expect(riotRetry(2, timeout), const Duration(seconds: 8));
+  });
+
   test('orNullIfNotFound', () async {
     expect(
       await Future<int>.error(const NotFoundException()).orNullIfNotFound(),

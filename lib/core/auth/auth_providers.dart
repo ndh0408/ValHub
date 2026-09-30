@@ -4,6 +4,8 @@ import '../accounts/account_providers.dart';
 import '../config/client_version.dart';
 import '../config/remote_config.dart';
 import '../logging/session_log.dart';
+import '../network/auth_traffic.dart';
+import '../network/rate_limiter.dart';
 import '../storage/secure_store.dart';
 import '../util/clock.dart';
 import 'account_lock.dart';
@@ -12,16 +14,29 @@ import 'reauth_client.dart';
 import 'riot_session.dart';
 import 'session_manager.dart';
 
+/// The one throttle of every call to Riot's auth hosts (re-auth, entitlements,
+/// userinfo, riot-geo): burst 2, ~1 request/s, ≤ 2 in flight, host cooldown
+/// after a block.
+final authLimiterProvider = Provider<HostRateLimiter>(
+  (ref) => createAuthLimiter(),
+);
+
 /// Silent re-auth client (auth hosts, redirects not followed).
 final reauthClientProvider = Provider<RiotReauthClient>((ref) {
   final versions = ref.watch(clientVersionRepositoryProvider);
-  return RiotReauthClient(userAgent: () => versions.apiUserAgent);
+  return RiotReauthClient(
+    userAgent: () => versions.apiUserAgent,
+    limiter: ref.watch(authLimiterProvider),
+  );
 });
 
 /// Entitlements / userinfo / riot-geo client.
 final bootstrapClientProvider = Provider<RiotBootstrapClient>((ref) {
   final versions = ref.watch(clientVersionRepositoryProvider);
-  return RiotBootstrapClient(userAgent: () => versions.apiUserAgent);
+  return RiotBootstrapClient(
+    userAgent: () => versions.apiUserAgent,
+    limiter: ref.watch(authLimiterProvider),
+  );
 });
 
 /// Cross-isolate re-auth lock.
