@@ -10,6 +10,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
+import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/net_image.dart';
@@ -316,7 +317,7 @@ class _InGameBody extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
-                    '–',
+                    CommonStrings.dash,
                     style: ValText.display(
                       26,
                       color: theme.colorScheme.onSurfaceVariant,

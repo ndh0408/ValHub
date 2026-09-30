@@ -400,4 +400,29 @@ void main() {
       }
     });
   });
+
+  group('dailyRrOn (shared with Home)', () {
+    final days = groupDailyRr([
+      CompetitiveUpdate(
+        matchId: 'a',
+        matchStartTime: DateTime(2026, 9, 28, 10),
+        rrEarned: 20,
+      ),
+      CompetitiveUpdate(
+        matchId: 'b',
+        matchStartTime: DateTime(2026, 9, 27, 21),
+        rrEarned: -10,
+      ),
+    ]);
+
+    test('finds the local day of "now"', () {
+      expect(dailyRrOn(days, DateTime(2026, 9, 28, 22))?.netRr, 20);
+      expect(dailyRrOn(days, DateTime(2026, 9, 27, 1))?.netRr, -10);
+    });
+
+    test('null on a day without ranked games, and for no days at all', () {
+      expect(dailyRrOn(days, DateTime(2026, 9, 29, 1)), isNull);
+      expect(dailyRrOn(const [], DateTime(2026, 9, 28)), isNull);
+    });
+  });
 }

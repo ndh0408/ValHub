@@ -50,7 +50,6 @@ abstract final class HomeStrings {
   static const cardServerStatusDesc = 'Chỉ hiện khi có bảo trì hoặc sự cố.';
 
   // Live card
-  static const liveOpen = 'Xem chi tiết trận';
   static String liveScoreSemantics(int ally, int enemy) =>
       'Đội bạn $ally, đội địch $enemy';
   static const liveAllyLabel = 'Đội bạn';
@@ -68,7 +67,6 @@ abstract final class HomeStrings {
   static String storeTotal(String vp) => 'Tổng $vp';
   static String storeWallet(String vp, int affordable) =>
       'Ví $vp · đủ mua $affordable skin';
-  static String storeWalletOnly(String vp) => 'Ví $vp';
   static const nightMarketTitle = 'Chợ Đêm';
   static String nightMarketWaiting(int n) => '$n ưu đãi đang chờ bạn lật';
   static String nightMarketBest(String pct, String name, String price) =>
@@ -98,7 +96,6 @@ abstract final class HomeStrings {
   static String matchesToRankUp(int n, String rank) => '≈ $n trận để lên $rank';
   static String previousAct(String rank) => 'Phần trước: $rank';
   static String leaderboard(String pos) => 'Hạng $pos bảng xếp hạng';
-  static const rankUnranked = 'Chưa xếp hạng';
 
   // Friends card
   static String friendsPlaying(int n) => '$n bạn đang chơi';
@@ -136,9 +133,7 @@ abstract final class HomeStrings {
   static String statusIncident(String region) => 'Sự cố máy chủ · $region';
   static String statusMore(int n) => '+$n thông báo';
   static const statusDetails = 'Chi tiết';
-  static const statusCachedNote = 'Dữ liệu có thể chưa mới do máy chủ bảo trì.';
 
   // Shared card bits
   static const dot = ' · ';
-  static const openCard = 'Mở';
 }

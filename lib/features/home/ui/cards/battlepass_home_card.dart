@@ -90,7 +90,9 @@ class _BpBody extends ConsumerWidget {
                 formatNumber(pass.level),
                 formatNumber(pass.levelCount),
               ),
-              style: ValText.display(22, color: theme.colorScheme.onSurface),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
             ),
             if (snap.daysLeft != null)
               StatusPill(

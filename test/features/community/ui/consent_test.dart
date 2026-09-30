@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -659,8 +661,14 @@ void main() {
       },
     );
 
-    testWidgets('with consent the LFG preview appears', (tester) async {
+    testWidgets('with consent and a session the LFG preview appears', (
+      tester,
+    ) async {
       final consented = await CommunityTestEnv.create();
+      // The Cộng đồng tab signed in earlier: the preview only reuses it.
+      consented.secure.values[SecureKeys.community(mePuuid)] = jsonEncode(
+        sessionJson(),
+      );
       consented.server.json('GET /v1/lfg', page([lfgJson('a')]));
       await pumpCommunity(
         tester,
@@ -669,6 +677,24 @@ void main() {
       );
       await settle(tester);
       expect(find.text(CommunityStrings.lfgPreviewTitle), findsOneWidget);
+      expect(consented.server.calls('POST /v1/auth/riot'), isEmpty);
+      await unmount(tester);
+    });
+
+    testWidgets('with consent but no session it stays hidden and silent', (
+      tester,
+    ) async {
+      final consented = await CommunityTestEnv.create();
+      consented.server.json('GET /v1/lfg', page([lfgJson('a')]));
+      await pumpCommunity(
+        tester,
+        consented,
+        const Scaffold(body: LfgPreviewCard(puuid: mePuuid)),
+      );
+      await settle(tester);
+      expect(find.text(CommunityStrings.lfgPreviewTitle), findsNothing);
+      // Never signs in: the Riot token stays on the device.
+      expect(consented.server.requests, isEmpty);
       await unmount(tester);
     });
   });
