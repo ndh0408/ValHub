@@ -84,7 +84,9 @@ final class AppFormats {
   final bool h24;
 
   /// The generated messages of [locale], for the methods that need words.
-  AppLocalizations get l10n => lookupAppLocalizations(locale.flutter);
+  /// Looked up on first use, so an [AppFormats] of a locale without generated
+  /// messages (until W1's scaffold) still formats numbers and dates.
+  late final AppLocalizations l10n = lookupAppLocalizations(locale.flutter);
 
   bool get _vi => locale == AppLocale.vi;
 
@@ -209,9 +211,9 @@ final class AppFormats {
         .split(RegExp(r'\s+'))
         .where((w) => w.isNotEmpty)
         .map((w) {
-          final rest = lower(w);
-          final first = String.fromCharCode(rest.runes.first);
-          return upper(first) + rest.substring(first.length);
+          final lowered = lower(w);
+          final first = String.fromCharCode(lowered.runes.first);
+          return upper(first) + lowered.substring(first.length);
         })
         .join(' ');
   }

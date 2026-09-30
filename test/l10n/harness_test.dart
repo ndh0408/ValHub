@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:valvn/core/l10n/l10n.dart';
 
 import '../helpers/l10n.dart';
 
@@ -64,7 +63,9 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           supportedLocales: supported,
-          localizationsDelegates: appLocalizationsDelegates,
+          // material_ui's only: AppLocalizations has just `vi` until W1, and
+          // this test is about the device locale, not about our messages.
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
           home: Builder(
             builder: (context) {
               resolved = Localizations.localeOf(context);
