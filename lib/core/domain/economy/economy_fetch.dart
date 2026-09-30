@@ -101,7 +101,7 @@ class FetchedJson {
 
   /// The transient failure that made us fall back to the cache; `null` for
   /// live data.
-  final TransientException? cachedAfter;
+  final RiotException? cachedAfter;
 
   bool get isFromCache => cachedAfter != null;
 }
@@ -128,7 +128,8 @@ Future<FetchedJson> fetchWithOfflineCache(
       // The offline copy is best effort.
     }
     return FetchedJson(data, receivedAt: receivedAt);
-  } on TransientException catch (error) {
+  } on RiotException catch (error) {
+    if (!canUseOfflineCopy(error)) rethrow;
     CachedJson? cached;
     try {
       cached = await cache.read(key);
@@ -146,8 +147,15 @@ Future<FetchedJson> fetchWithOfflineCache(
 
 /// Delay before retrying after serving an offline copy: the server's
 /// `Retry-After` when given, clamped to 30 s … 10 min.
-Duration offlineRetryDelay(TransientException error) {
-  final wanted = error.retryAfter ?? kOfflineRetryDelay;
+bool canUseOfflineCopy(RiotException error) =>
+    error is TransientException ||
+    error is NeedsLoginException ||
+    error is MaintenanceException;
+
+Duration offlineRetryDelay(RiotException error) {
+  final wanted = error is TransientException
+      ? error.retryAfter ?? kOfflineRetryDelay
+      : const Duration(minutes: 10);
   const min = Duration(seconds: 30);
   const max = Duration(minutes: 10);
   if (wanted < min) return min;

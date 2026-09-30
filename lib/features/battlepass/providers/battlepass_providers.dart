@@ -7,6 +7,7 @@ import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/viewer.dart' show cacheFor;
 import '../../../core/domain/economy/owned_items.dart';
+import '../../../core/domain/economy/economy_fetch.dart' show canUseOfflineCopy;
 import '../../../core/network/riot_exception.dart';
 import '../../../core/riot/pvp_api.dart';
 import '../../../core/riot/riot_ids.dart';
@@ -48,7 +49,8 @@ final playerContractsProvider = FutureProvider.autoDispose
               .catchError((Object _) {}),
         );
         return PlayerContracts.fromJson(json, receivedAt: receivedAt);
-      } on TransientException {
+      } on RiotException catch (error) {
+        if (!canUseOfflineCopy(error)) rethrow;
         CachedJson? cached;
         try {
           cached = await cache.read(contractsCacheKey(id));

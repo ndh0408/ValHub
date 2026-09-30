@@ -50,6 +50,7 @@ class RrHistoryStore {
   final int maxRows;
 
   final Map<String, RrHistory> _memory = {};
+  final Map<String, RrHistory> _visitors = {};
   final Map<String, Future<void>> _locks = {};
   final StreamController<String> _changes = StreamController.broadcast();
 
@@ -60,6 +61,34 @@ class RrHistoryStore {
 
   /// Emits the PUUID whose history changed.
   Stream<String> get changes => _changes.stream;
+
+  /// Other players never create files. LRU: 20 players, 200 rows each.
+  RrHistory readVisitor(String puuid) {
+    final id = puuid.trim().toLowerCase();
+    final history = _visitors.remove(id) ?? RrHistory(puuid: id);
+    _visitors[id] = history;
+    while (_visitors.length > 20) {
+      _visitors.remove(_visitors.keys.first);
+    }
+    return history;
+  }
+
+  int mergeVisitor(String puuid, Iterable<CompetitiveUpdate> incoming) {
+    final current = readVisitor(puuid);
+    final rows = {for (final r in current.rows) r.matchId: r};
+    var added = 0;
+    for (final r in incoming) {
+      if (!rows.containsKey(r.matchId)) added++;
+      rows[r.matchId] = r;
+    }
+    final sorted = rows.values.toList()..sort(compareUpdatesNewestFirst);
+    _visitors[current.puuid] = RrHistory(
+      puuid: current.puuid,
+      rows: sorted.take(200).toList(),
+    );
+    _emit(current.puuid);
+    return added;
+  }
 
   /// Stored history of [puuid] (empty when nothing was stored).
   Future<RrHistory> read(String puuid) {
@@ -138,6 +167,7 @@ class RrHistoryStore {
     final id = puuid.trim().toLowerCase();
     return _locked(id, () async {
       _memory.remove(id);
+      _visitors.remove(id);
       try {
         await _files.delete(key(id));
       } on Object {
@@ -151,6 +181,7 @@ class RrHistoryStore {
   Future<void> clear() async {
     final ids = _memory.keys.toList();
     _memory.clear();
+    _visitors.clear();
     try {
       await _files.deletePrefix('keep');
     } on Object {
@@ -186,11 +217,12 @@ class RrHistoryStore {
     } on Object {
       history = RrHistory(puuid: id);
     }
-    return _memory[id] = history;
+    _remember(history);
+    return history;
   }
 
   Future<void> _save(RrHistory history) async {
-    _memory[history.puuid] = history;
+    _remember(history);
     try {
       await _files.write(key(history.puuid), encode(history));
     } on Object {
@@ -201,6 +233,14 @@ class RrHistoryStore {
 
   void _emit(String id) {
     if (!_changes.isClosed) _changes.add(id);
+  }
+
+  void _remember(RrHistory history) {
+    _memory.remove(history.puuid);
+    _memory[history.puuid] = history;
+    while (_memory.length > 20) {
+      _memory.remove(_memory.keys.first);
+    }
   }
 
   /// Serialised form: `{"v":1,"rows":[<P-12 rows>],"outcomes":{id:"win"}}`.

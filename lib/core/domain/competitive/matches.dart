@@ -363,10 +363,26 @@ class MatchHistoryNotifier
 /// `CompetitiveStrings.matchPending`, retry later), other `RiotException`s.
 /// A failed load is never kept alive (AR-029): retrying fetches again.
 final matchDetailsProvider = FutureProvider.autoDispose
-    .family<MatchDetails, String>((ref, matchId) async {
-      final id = matchId.trim().toLowerCase();
+    .family<MatchDetails, String>((ref, matchId) {
       final viewer = ref.watch(activePuuidProvider);
       if (viewer == null) {
+        throw const NeedsLoginException(reason: 'no_account');
+      }
+      return ref.watch(
+        viewerMatchDetailsProvider((
+          viewer: viewer,
+          matchId: matchId.trim().toLowerCase(),
+        )).future,
+      );
+    });
+
+typedef ViewerMatchQuery = ({String viewer, String matchId});
+
+final viewerMatchDetailsProvider = FutureProvider.autoDispose
+    .family<MatchDetails, ViewerMatchQuery>((ref, query) async {
+      final id = query.matchId;
+      final viewer = query.viewer;
+      if (ref.watch(accountProvider(viewer)) == null) {
         throw const NeedsLoginException(reason: 'no_account');
       }
       final repo = ref.watch(matchRepositoryProvider);
@@ -381,6 +397,11 @@ final matchDetailsProvider = FutureProvider.autoDispose
       final ledger = ref.read(matchStatsStoreProvider);
 
       final details = await repo.details(viewer, id);
+      if (!ref.mounted) {
+        return details.withoutNames({
+          for (final p in details.players) p.subject,
+        });
+      }
       // Incognito players seen during the live match (U16): their Riot ID
       // is never looked up, and the UI shows them as anonymous.
       final hidden = privacyStore.read(viewer, id).hiddenIn(details, viewer);
@@ -407,6 +428,9 @@ final matchDetailsProvider = FutureProvider.autoDispose
       final competitive =
           baseQueueId(details.info.queueId) == kCompetitiveQueue;
       for (final a in accounts) {
+        if (!ref.mounted || ref.read(accountProvider(a.puuid)) == null) {
+          continue;
+        }
         if (details.player(a.puuid) == null) continue;
         if (competitive) {
           final outcome = details.resultFor(a.puuid).outcome;

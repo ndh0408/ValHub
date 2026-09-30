@@ -55,11 +55,12 @@ final rrHistoryProvider = FutureProvider.autoDispose.family<RrHistory, String>((
 ) {
   final id = puuid.trim().toLowerCase();
   final store = ref.watch(rrHistoryStoreProvider);
+  final own = ref.watch(accountProvider(id)) != null;
   final sub = store.changes
       .where((changed) => changed == id)
       .listen((_) => ref.invalidateSelf());
   ref.onDispose(sub.cancel);
-  return store.read(id);
+  return own ? store.read(id) : store.readVisitor(id);
 });
 
 /// Rank card of any player (R2, R3, R11, R13, G5, G6): current rank,
@@ -219,7 +220,11 @@ class CompetitiveUpdatesNotifier
 
   Future<Set<String>> _knownIds(RrHistoryStore store) async {
     try {
-      return {for (final r in (await store.read(_subject)).rows) r.matchId};
+      final own = ref.read(accountProvider(_subject)) != null;
+      final history = own
+          ? await store.read(_subject)
+          : store.readVisitor(_subject);
+      return {for (final r in history.rows) r.matchId};
     } on Object {
       return <String>{};
     }
@@ -227,7 +232,10 @@ class CompetitiveUpdatesNotifier
 
   Future<int> _store(RrHistoryStore store, List<CompetitiveUpdate> rows) async {
     try {
-      return await store.merge(_subject, rows);
+      if (!ref.mounted) return 0;
+      return ref.read(accountProvider(_subject)) != null
+          ? await store.merge(_subject, rows)
+          : store.mergeVisitor(_subject, rows);
     } on Object {
       return 0;
     }
@@ -247,6 +255,7 @@ final rrHistorySyncProvider = FutureProvider.autoDispose.family<int, String>((
   puuid,
 ) async {
   final id = puuid.trim().toLowerCase();
+  if (ref.watch(accountProvider(id)) == null) return 0;
   final viewer = watchViewer(ref, id);
   final console = watchIsConsole(ref, viewer);
   final api = ref.watch(pvpApiProvider);
@@ -289,6 +298,19 @@ final rrHistorySyncProvider = FutureProvider.autoDispose.family<int, String>((
     return 0;
   }
 });
+
+/// Settings integration: deletes only this own account's recorded RR.
+Future<void> deleteRrHistoryFor(Ref ref, String puuid) async {
+  final id = puuid.trim().toLowerCase();
+  if (ref.read(accountProvider(id)) == null) return;
+  await ref.read(rrHistoryStoreProvider).delete(id);
+}
+
+final deleteRrHistoryProvider =
+    Provider.family<Future<void> Function(), String>(
+      (ref, puuid) =>
+          () => deleteRrHistoryFor(ref, puuid),
+    );
 
 /// Daily RR (R5, S42) of a player from the local RR history, newest day
 /// first. Keeps the first page of competitive updates and the backfill

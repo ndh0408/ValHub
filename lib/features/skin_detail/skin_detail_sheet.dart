@@ -26,6 +26,7 @@ import '../store/ui/widgets/store_ui_bits.dart';
 import 'providers/skin_availability.dart';
 import 'skin_detail_strings.dart';
 import 'skin_video_view.dart';
+import 'store_history_line.dart';
 
 /// Context the sheet is opened from.
 enum SkinDetailMode {
@@ -314,6 +315,7 @@ class _SkinBody extends ConsumerWidget {
         ),
         const SizedBox(height: 8),
         SkinVoteButton(skinUuid: skin.uuid, weaponUuid: skin.weaponUuid),
+        if (puuid != null) StoreHistoryLine(puuid: puuid, skin: skin),
         if (elsewhere.isNotEmpty) ...[
           const SizedBox(height: 10),
           Row(

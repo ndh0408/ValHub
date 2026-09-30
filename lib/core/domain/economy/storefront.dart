@@ -15,6 +15,7 @@ import '../../util/countdown.dart';
 import '../../util/json.dart';
 import 'economy_fetch.dart';
 import 'prices.dart' show observedPricesProvider;
+import 'store_history.dart';
 
 /// `{currencyId: amount}` with lowercase currency ids.
 typedef CostMap = Map<String, int>;
@@ -782,6 +783,7 @@ final storefrontProvider = FutureProvider.autoDispose
         return storefront;
       }
       scheduleProviderRefresh(ref, storefront.nextRefreshAt(now), now: now);
+      await recordStoreHistoryFor(ref, puuid, storefront, fetched.receivedAt);
       await ref
           .read(observedPricesProvider.notifier)
           .record(storefront.observedSkinPrices());

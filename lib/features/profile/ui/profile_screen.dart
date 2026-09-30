@@ -68,6 +68,15 @@ class ProfileScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               RecentFormCard(puuid: puuid),
               _DailyRrRow(puuid: puuid),
+              ValCard(
+                padding: EdgeInsets.zero,
+                child: ProfileNavRow(
+                  icon: Icons.insights_outlined,
+                  title: ProfileStrings.performanceTitle,
+                  onTap: () =>
+                      unawaited(context.push(ProfileRoutes.performance)),
+                ),
+              ),
               const SizedBox(height: 12),
               currentGameCard ?? const CurrentGameCard(),
               const SizedBox(height: 12),

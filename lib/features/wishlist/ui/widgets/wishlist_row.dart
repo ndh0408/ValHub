@@ -13,6 +13,7 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/util/format.dart';
 import '../../data/wishlist_view.dart';
 import '../../wishlist_strings.dart';
+import '../../../skin_detail/community_skin_score.dart';
 import 'skin_bits.dart';
 
 /// One S3A card (same family as the store cards): a tier-tinted card with
@@ -133,6 +134,7 @@ class WishlistRow extends ConsumerWidget {
               const SizedBox(height: 10),
               _HitBar(hit: hit, onTap: () => onOpenHit(hit)),
             ],
+            if (facts != null) CommunitySkinScore(skinUuid: facts.skin.uuid),
           ],
         ),
       ),

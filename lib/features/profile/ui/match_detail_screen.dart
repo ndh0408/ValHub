@@ -665,6 +665,13 @@ class _PlayerSummary extends ConsumerWidget {
                       : formatPercent(s.headshotRate!),
                 ),
                 StatTile(label: ProfileStrings.adr, value: fmt(s.adr)),
+                StatTile(label: ProfileStrings.kd, value: fmt(s.kd)),
+                StatTile(
+                  label: ProfileStrings.firstDeaths,
+                  value: roundBased
+                      ? formatNumber(s.firstDeaths)
+                      : CompetitiveStrings.noValue,
+                ),
                 StatTile(
                   label: ProfileStrings.kast,
                   value: s.kast == null

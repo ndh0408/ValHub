@@ -12,6 +12,7 @@ import '../../storage/json_file_cache.dart';
 import '../../storage/prefs.dart';
 import '../../util/clock.dart';
 import '../economy/owned_items.dart';
+import '../economy/economy_fetch.dart' show canUseOfflineCopy;
 import 'loadout_changes.dart';
 import 'loadout_models.dart';
 import 'loadout_presets.dart';
@@ -74,7 +75,8 @@ class LoadoutController extends AsyncNotifier<LoadoutSnapshot> {
     final LoadoutSnapshot snapshot;
     try {
       snapshot = await repo.fetch(puuid);
-    } on TransientException {
+    } on RiotException catch (error) {
+      if (!canUseOfflineCopy(error)) rethrow;
       final cached = await _readOffline();
       if (cached == null) rethrow;
       return cached;

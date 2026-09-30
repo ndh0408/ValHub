@@ -9,6 +9,7 @@
 library;
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -137,20 +138,18 @@ class StoreHistoryDay {
 
   /// `a,b,c,d` of the sorted daily uuids; `utc:2026-09-28` without any.
   static String rotationKey(List<HistoryDailyOffer> daily, DateTime at) {
-    if (daily.isEmpty) {
-      final d = at.toUtc();
-      return 'utc:${d.year}-${d.month.toString().padLeft(2, '0')}-'
-          '${d.day.toString().padLeft(2, '0')}';
-    }
-    final ids = [for (final o in daily) o.skinLevelUuid]..sort();
-    return ids.join(',');
+    final d = at.toUtc();
+    return 'utc:${d.year}-${d.month.toString().padLeft(2, '0')}-'
+        '${d.day.toString().padLeft(2, '0')}';
   }
 
   /// This rotation seen again at [seenAt]: the newest contents win (a Night
   /// Market may have started or been revealed since).
   StoreHistoryDay seenAgain(StoreHistoryDay later) => StoreHistoryDay(
     key: key,
-    firstSeen: firstSeen.isBefore(later.firstSeen) ? firstSeen : later.firstSeen,
+    firstSeen: firstSeen.isBefore(later.firstSeen)
+        ? firstSeen
+        : later.firstSeen,
     lastSeen: lastSeen.isAfter(later.lastSeen) ? lastSeen : later.lastSeen,
     resetsAt: later.resetsAt ?? resetsAt,
     daily: later.daily.isEmpty ? daily : later.daily,
@@ -188,8 +187,8 @@ class StoreHistoryDay {
 @immutable
 class StoreHistory {
   StoreHistory({List<StoreHistoryDay> days = const []})
-    : days = List.unmodifiable(
-        [...days]..sort((a, b) => b.firstSeen.compareTo(a.firstSeen)),
+    : days = List<StoreHistoryDay>.unmodifiable(
+        <StoreHistoryDay>[...days]..sort((a, b) => b.firstSeen.compareTo(a.firstSeen)),
       );
 
   final List<StoreHistoryDay> days;
@@ -323,7 +322,7 @@ SkinStoreHistory summarizeSkin(StoreHistory history, Iterable<String> levels) {
 /// Every [record] reads the file again before writing, so the UI isolate and
 /// the background check (another isolate) do not overwrite each other's days.
 class StoreHistoryStore {
-  StoreHistoryStore(this._files, {this.maxDays = 366});
+  StoreHistoryStore(this._files, {this.maxDays = 365});
 
   /// The store on the app's history directory (usable from a background
   /// isolate, which has no Riverpod).
@@ -409,7 +408,27 @@ class StoreHistoryStore {
     _locks[id] = done.future;
     try {
       if (previous != null) await previous;
-      return await body();
+      final path = await _files.fileFor(key(id));
+      await path.parent.create(recursive: true);
+      final lock = await File('${path.path}.lock').open(mode: FileMode.append);
+      try {
+        for (var attempt = 0; ; attempt++) {
+          try {
+            await lock.lock(FileLock.exclusive);
+            break;
+          } on FileSystemException {
+            if (attempt >= 100) rethrow;
+            await Future<void>.delayed(const Duration(milliseconds: 20));
+          }
+        }
+        try {
+          return await body();
+        } finally {
+          await lock.unlock();
+        }
+      } finally {
+        await lock.close();
+      }
     } finally {
       done.complete();
       _locks.removeWhere((k, f) => k == id && identical(f, done.future));
@@ -492,7 +511,8 @@ class StoreHistoryStore {
           !seen.add(key)) {
         continue;
       }
-      DateTime at(int ms) => DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
+      DateTime at(int ms) =>
+          DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
       int? price(Object? v) {
         final n = asInt(v);
         return n == null || n < 0 ? null : n;

@@ -1,5 +1,37 @@
+import 'data/performance_view.dart';
+
 /// Vietnamese strings of the profile feature (VF §6.5, §8.8).
 abstract final class ProfileStrings {
+  static const performanceTitle = 'Hiệu suất';
+  static const performanceEmpty =
+      'Chưa có trận nào được ghi trên thiết bị này. Mở lịch sử trận để ghi lại những trận bạn đã chơi.';
+  static const performanceNoMatches =
+      'Không có trận trong khoảng thời gian đã chọn.';
+  static const performanceSample =
+      'Tỉ lệ chỉ hiện khi có ít nhất 3 trận. ACS, ADR, HS% và K/D chỉ tính các chế độ theo vòng.';
+  static const performanceGames = 'Số trận';
+  static const performanceAttack = 'Tấn công';
+  static const performanceDefense = 'Phòng thủ';
+  static const performanceTrendEmpty =
+      'Cần ít nhất hai giai đoạn có từ 3 trận để so sánh xu hướng.';
+  static const firstDeaths = 'Bị hạ đầu tiên';
+  static String performanceSince(String date) =>
+      'Lịch sử trên thiết bị, từ $date';
+  static String performanceSideCoverage(int known, int total) =>
+      'Xác định được bên tấn công hoặc phòng thủ ở $known/$total vòng.';
+  static String performanceRounds(int n) => '$n vòng đã ghi nhận';
+  static String performancePeriod(PerfPeriod p) => switch (p) {
+    PerfPeriod.all => 'Toàn bộ',
+    PerfPeriod.days30 => '30 ngày',
+    PerfPeriod.days7 => '7 ngày',
+  };
+  static String performanceSegment(PerfSegment s) => switch (s) {
+    PerfSegment.agents => 'Đặc vụ',
+    PerfSegment.maps => 'Bản đồ',
+    PerfSegment.queues => 'Chế độ',
+    PerfSegment.sides => 'Tấn công / Phòng thủ',
+    PerfSegment.trend => 'Xu hướng',
+  };
   static const title = 'Hồ sơ';
   static const rankUpTitle = 'Tính toán lên hạng';
   static const dailyRrTitle = 'RR theo ngày';

@@ -13,6 +13,7 @@ import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
+import '../../../skin_detail/community_skin_score.dart';
 import '../../store_strings.dart';
 import 'store_ui_bits.dart';
 
@@ -86,6 +87,9 @@ class DailyOfferCard extends ConsumerWidget {
                       start: 12,
                       child: OwnedBadge(),
                     ),
+                  if (skin != null)
+                    PositionedDirectional(start: 12, bottom: 2,
+                      child: CommunitySkinScore(skinUuid: skin.uuid)),
                   PositionedDirectional(
                     top: 2,
                     end: 2,
