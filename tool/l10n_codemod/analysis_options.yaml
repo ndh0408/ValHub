@@ -1,0 +1,17 @@
+# The codemod is its own package: the app's analysis_options.yaml excludes
+# tool/l10n_codemod/**, so this file is what `dart analyze` uses inside it.
+analyzer:
+  language:
+    strict-casts: true
+    strict-raw-types: true
+    strict-inference: true
+
+linter:
+  rules:
+    - always_declare_return_types
+    - avoid_dynamic_calls
+    - cancel_subscriptions
+    - curly_braces_in_flow_control_structures
+    - prefer_final_locals
+    - prefer_single_quotes
+    - unawaited_futures

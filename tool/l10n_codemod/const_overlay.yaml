@@ -1,0 +1,30 @@
+# Lint overlay for codemod step R2b, const restoration (docs/design/I18N.md
+# 5.3, verified in W0 as V3).
+#
+# `dart analyze --options <file>` does NOT exist in Dart 3.13.4, so the design's
+# `dart analyze --options tool/l10n_codemod/const_overlay.yaml` is not
+# available. What works, and what R2b does instead:
+#
+#  1. write a TEMPORARY nested `lib/analysis_options.yaml` (and
+#     `test/analysis_options.yaml`) that includes the app's file and enables
+#     the rules below: the analyzer applies the nearest options file to every
+#     file it analyzes;
+#         include: ../analysis_options.yaml
+#         linter:
+#           rules:
+#             - prefer_const_constructors
+#             - prefer_const_literals_to_create_immutables
+#  2. run `dart analyze --format=machine <touched files>`: `--format` is a
+#     hidden flag that still exists and prints one line per diagnostic,
+#         SEVERITY|TYPE|CODE|<path>|<line>|<column>|<length>|<message>
+#  3. insert `const` at each diagnostic that lies inside a region the tool
+#     itself de-const'ed (no repo-wide noise), loop until stable (max 5 rounds);
+#  4. delete the temporary files (also on failure; they are git-ignored so an
+#     interrupted run can never be committed).
+#
+# The app's own options (flutter_lints 6.0.0) do not enable these two rules, so
+# without the overlay `dart fix --apply` would restore nothing.
+linter:
+  rules:
+    - prefer_const_constructors
+    - prefer_const_literals_to_create_immutables

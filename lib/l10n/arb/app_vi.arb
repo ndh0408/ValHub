@@ -1,0 +1,30 @@
+{
+  "@@locale": "vi",
+  "smokePlain": "Kiểm tra sinh mã",
+  "@smokePlain": {
+    "description": "SMOKE/TEST ONLY (W0 foundation). Proves gen-l10n output and the delegate list. Never shown to users; W1 replaces this file with the real template.",
+    "x-context": "smoke/test"
+  },
+  "smokeGreeting": "Xin chào, {name}!",
+  "@smokeGreeting": {
+    "description": "SMOKE/TEST ONLY (W0 foundation). A message with a String placeholder. Never shown to users.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    },
+    "x-context": "smoke/test",
+    "x-example": "Xin chào, Nguyễn Văn A!"
+  },
+  "smokeCount": "{n, plural, other{{n} mục}}",
+  "@smokeCount": {
+    "description": "SMOKE/TEST ONLY (W0 foundation). A plural message with an int placeholder. Never shown to users.",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    },
+    "x-context": "smoke/test",
+    "x-example": "5 mục"
+  }
+}
