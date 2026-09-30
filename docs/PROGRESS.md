@@ -44,7 +44,19 @@ arm64-v8a 25,7 MB, armeabi-v7a 23,5 MB, x86_64 27,2 MB.
      iOS bằng `flutter_launcher_icons`. Icon thông báo trắng riêng `@drawable/ic_stat_valvn`.
      Màn khởi động Android/iOS nền tối (không còn chớp trắng).
    - Xóa `docs/wip/store-settings-wip.patch` (Cửa hàng và Cài đặt đã vào code).
-6. **CI**: `.github/workflows/android.yml` (APK) và `ios.yml` (IPA chưa ký), xem `docs/BUILD.md`.
+6. **Trang chủ và 5 tab** (`docs/design/HOME.md`, `lib/features/home/`): tab đầu tiên là bảng điều
+   khiển thông minh với tám thẻ đúng thứ tự IA (Trận hiện tại, Cửa hàng hôm nay, Rank & phong độ,
+   Battle Pass, Bạn bè đang chơi, Cộng đồng, Tài khoản khác, Trạng thái máy chủ). Thẻ nào không có dữ
+   liệu thì ẩn; trận đang diễn ra và bảo trì chặn nổi lên đầu; skeleton chỉ cho ba thẻ lõi. Người dùng ẩn
+   / sắp xếp thẻ trong "Tùy chỉnh Trang chủ" (lưu ở Prefs `f.home.layout`). Thanh tab còn 5 mục
+   (Cộng đồng ở giữa, nhấn mạnh); Battle Pass và Cài đặt không còn là tab: route giữ nguyên, nằm trong
+   nhánh Hồ sơ (hàng "Battle Pass" và nút ⚙ ở Trang chủ / Hồ sơ). `/` đổi thành `/home`, link thông báo
+   `/settings` và `/battlepass` mở kèm Hồ sơ phía dưới nên Back vẫn chạy. `StoreResetReminderHost` luôn
+   được dựng trong shell nên nhắc "Cửa hàng đã làm mới" không phụ thuộc việc tab Cửa hàng có được mở.
+   Trang chủ không có vòng poll Riot mới (dùng lại TTL / poller sẵn có), không tự kết nối chat (bạn bè
+   cần đồng ý một lần) và không tự đăng nhập cộng đồng. Test: hàm thuần, provider, từng thẻ, bố cục
+   360 dp / chữ 200% / tablet / gập / RTL, tiếp cận (chạm ≥ 48 dp, tương phản), chuyển động giảm.
+7. **CI**: `.github/workflows/android.yml` (APK) và `ios.yml` (IPA chưa ký), xem `docs/BUILD.md`.
 
 ## Đã review
 

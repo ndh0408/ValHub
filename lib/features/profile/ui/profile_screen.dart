@@ -12,9 +12,11 @@ import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
+import '../../battlepass/battlepass_routes.dart';
+import '../../battlepass/ui/battlepass_entry.dart';
 import '../../live_game/current_game_card.dart';
+import '../../settings/ui/settings_gear_button.dart';
 import '../../social/social_routes.dart';
-import '../data/rr_trend.dart';
 import '../profile_routes.dart';
 import '../profile_strings.dart';
 import '../providers/profile_providers.dart';
@@ -25,7 +27,9 @@ import 'widgets/rank_card.dart';
 import 'widgets/recent_form_card.dart';
 
 /// TAB 4 "Hồ sơ" (S40). Route `/profile`. Hosts the live-game
-/// [CurrentGameCard] (owned by the live_game feature).
+/// [CurrentGameCard] (owned by the live_game feature). Battle Pass and Cài
+/// đặt are not tabs: this screen has a "Battle Pass" row and a ⚙ button in
+/// the header that push their pages on top of it.
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key, this.currentGameCard});
 
@@ -48,6 +52,7 @@ class ProfileScreen extends ConsumerWidget {
     final puuid = account.puuid;
     return TabPageScaffold(
       title: ProfileStrings.title,
+      actions: const [SettingsGearButton()],
       onRefresh: () => _refresh(ref, account),
       slivers: [
         SliverToBoxAdapter(child: ProfileHeader(account: account)),
@@ -70,6 +75,14 @@ class ProfileScreen extends ConsumerWidget {
                 padding: EdgeInsets.zero,
                 child: Column(
                   children: [
+                    ProfileNavRow(
+                      icon: Icons.military_tech_outlined,
+                      title: CommonStrings.tabBattlePass,
+                      subtitle: BattlePassProgressSubtitle(puuid: puuid),
+                      onTap: () =>
+                          unawaited(context.push(BattlePassRoutes.root)),
+                    ),
+                    const Divider(indent: 66, height: 1),
                     ProfileNavRow(
                       icon: Icons.groups_outlined,
                       title: ProfileStrings.partyRow,

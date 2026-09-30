@@ -583,6 +583,17 @@ List<DailyRr> groupDailyRr(
   ];
 }
 
+/// The Daily RR entry of the local day of [now] (`null` without ranked
+/// matches today). [days] as returned by [groupDailyRr].
+DailyRr? dailyRrOn(List<DailyRr> days, DateTime now) {
+  final local = now.toLocal();
+  final today = DateTime(local.year, local.month, local.day);
+  for (final d in days) {
+    if (d.date == today) return d;
+  }
+  return null;
+}
+
 // ------------------------------------------------------------ Rank-Up (§9.7)
 
 /// Highest target of the calculator: Immortal 1 (Episode 5+ tier 24).

@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:valvn/core/storage/secure_store.dart';
 import 'package:valvn/features/community/community_previews.dart';
 import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/data/community_models.dart';
@@ -11,9 +15,15 @@ void main() {
   late CommunityTestEnv env;
   setUp(() async => env = await CommunityTestEnv.create());
 
+  /// The Cộng đồng tab created a session earlier (the previews never sign
+  /// in themselves).
+  void seedSession() => env.secure.values[SecureKeys.community(mePuuid)] =
+      jsonEncode(sessionJson());
+
   test(
     'matchingLfgPreviewProvider: 2 newest open posts fitting the rank',
     () async {
+      seedSession();
       env.server.json(
         'GET /v1/lfg',
         page([
@@ -21,6 +31,9 @@ void main() {
           {...lfgJson('low'), 'rankMin': 3, 'rankMax': 8},
           lfgJson('old', left: const Duration(minutes: -1)),
           {...lfgJson('full'), 'status': 'full'},
+          // The viewer's own post and one with a broken party code.
+          lfgJson('mine', author: authorJson(id: meId)),
+          lfgJson('bad', code: 'x'),
           lfgJson('b'),
           lfgJson('c'),
         ]),
@@ -41,6 +54,26 @@ void main() {
       expect((q['region'], q['rank']), ('ap', '18'));
     },
   );
+
+  test('matchingLfgPreviewProvider never signs in: no cached session, no '
+      'request', () async {
+    env.server.json('GET /v1/lfg', page([lfgJson('a')]));
+    final container = env.container();
+    final sub = container.listen(
+      matchingLfgPreviewProvider(mePuuid),
+      (_, _) {},
+    );
+    addTearDown(sub.close);
+
+    final posts = await container.read(
+      matchingLfgPreviewProvider(mePuuid).future,
+    );
+
+    expect(posts, isEmpty);
+    expect(env.server.requests, isEmpty);
+    expect(env.server.calls('POST /v1/auth/riot'), isEmpty);
+    verifyNever(() => env.sessions.session(any()));
+  });
 
   test('trendingSkinsProvider: this week, read-only (no sign-in)', () async {
     env.server.json('GET /v1/skins/top', {
@@ -73,6 +106,7 @@ void main() {
   });
 
   testWidgets('compact cards render and open their targets', (tester) async {
+    seedSession();
     env.server
       ..json(
         'GET /v1/lfg',

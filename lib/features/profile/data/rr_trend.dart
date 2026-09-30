@@ -1,5 +1,8 @@
 import '../../../core/domain/competitive/competitive.dart';
 
+// `dailyRrOn` moved to the shared competitive domain (Home uses it too).
+export '../../../core/domain/competitive/rank_calc.dart' show dailyRrOn;
+
 /// RR changes of the newest [limit] competitive updates, oldest first (for
 /// the trend chart). [updates] may be in any order; duplicates are dropped.
 List<int> recentRrChanges(
@@ -19,15 +22,4 @@ List<int> recentRrChanges(
 List<int> cumulativeRr(List<int> changes) {
   var total = 0;
   return [0, for (final c in changes) total += c];
-}
-
-/// The Daily RR entry of the local day of [now] (`null` without ranked
-/// matches today).
-DailyRr? dailyRrOn(List<DailyRr> days, DateTime now) {
-  final local = now.toLocal();
-  final today = DateTime(local.year, local.month, local.day);
-  for (final d in days) {
-    if (d.date == today) return d;
-  }
-  return null;
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/theme/app_theme.dart';
+import 'package:valvn/core/ui/skeleton.dart';
 import 'package:valvn/core/ui/val_widgets.dart';
 
 Widget _app(Widget child, {ThemeData? theme}) => MaterialApp(
@@ -84,5 +85,50 @@ void main() {
       expect(find.text('2.440'), findsOneWidget);
       expect(tester.takeException(), isNull);
     }
+  });
+
+  group('SkeletonShimmer', () {
+    Widget skeletons({bool reduceMotion = false}) => MaterialApp(
+      theme: buildDarkTheme(),
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(disableAnimations: reduceMotion),
+        child: child!,
+      ),
+      home: const Scaffold(
+        body: SkeletonShimmer(
+          child: Column(
+            children: [
+              Skeleton(width: 100, height: 16),
+              Skeleton(width: 60, height: 16),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    testWidgets('shimmers by default', (tester) async {
+      await tester.pumpWidget(skeletons());
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(tester.binding.transientCallbackCount, greaterThan(0));
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('is static when the system reduces motion', (tester) async {
+      await tester.pumpWidget(skeletons(reduceMotion: true));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.byType(Skeleton), findsNWidgets(2));
+      // No animation controller is running.
+      expect(tester.binding.transientCallbackCount, 0);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('follows the setting when it changes', (tester) async {
+      await tester.pumpWidget(skeletons(reduceMotion: true));
+      expect(tester.binding.transientCallbackCount, 0);
+      await tester.pumpWidget(skeletons());
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(tester.binding.transientCallbackCount, greaterThan(0));
+      await tester.pumpWidget(const SizedBox());
+    });
   });
 }

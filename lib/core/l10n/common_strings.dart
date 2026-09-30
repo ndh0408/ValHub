@@ -6,6 +6,7 @@ abstract final class CommonStrings {
   static const tagline = 'Trợ thủ Valorant của bạn';
 
   // Navigation (VF §8.1)
+  static const tabHome = 'Trang chủ';
   static const tabStore = 'Cửa hàng';
   static const tabBattlePass = 'Battle Pass';
   static const tabCommunity = 'Cộng đồng';

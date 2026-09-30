@@ -12,7 +12,8 @@ import 'sections/app_info_sections.dart';
 import 'sections/notifications_section.dart';
 import 'sections/preferences_sections.dart';
 
-/// TAB 5 "Cài đặt" (S70). Route `/settings`.
+/// "Cài đặt" (S70), hosted by the Hồ sơ tab and opened by the ⚙ button of
+/// the Trang chủ and Hồ sơ headers. Route `/settings`.
 ///
 /// Sections: TÀI KHOẢN (ending with "Đăng xuất tất cả tài khoản"), TÙY CHỌN,
 /// THÔNG BÁO, GIAO DIỆN, HỖ TRỢ (server status, session log, feedback),

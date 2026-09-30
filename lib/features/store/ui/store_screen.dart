@@ -9,17 +9,13 @@ import '../../../core/accounts/account_widgets.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/l10n/common_strings.dart';
-import '../../../core/notifications/notification_service.dart';
-import '../../../core/settings/app_settings.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
-import '../../../core/util/clock.dart';
 import '../providers/night_market_seen.dart';
-import '../providers/store_reset_reminder.dart';
 import '../store_strings.dart';
 import 'widgets/accessory_section.dart';
 import 'widgets/bundle_section.dart';
@@ -67,8 +63,8 @@ StoreSegment effectiveStoreSegment(StoreSegment wanted, Storefront? store) =>
 /// Header: title, account chip, wallet pill, segmented control
 /// "Hằng ngày · Chợ Đêm · Phụ kiện · Bundle" (Chợ Đêm only while active,
 /// with a red dot until opened). Pull-to-refresh reloads the storefront and
-/// the wallet. Every new storefront (re)schedules the "Cửa hàng đã làm mới"
-/// reminder when that setting is on (VF §6.9).
+/// the wallet. The "Cửa hàng đã làm mới" reminder (VF §6.9) is scheduled by
+/// the always-mounted `StoreResetReminderHost`, not by this screen.
 class StoreScreen extends ConsumerStatefulWidget {
   const StoreScreen({
     super.key,
@@ -110,9 +106,6 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
     ref.read(uiMemoryProvider).writeEnum(storeSegmentMemoryKey, next);
   }
 
-  /// Last storefront a reset reminder was scheduled for (one per fetch).
-  Storefront? _remindedFor;
-
   /// Last storefront checked for content misses.
   Storefront? _missCheckedFor;
 
@@ -148,14 +141,10 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
     final segment = effectiveStoreSegment(_segment, store);
     // Rebuild once the content arrives, to check the offers against it.
     ref.watch(contentProvider.select((c) => c.hasValue));
-    final remindersOn = ref.watch(
-      appSettingsProvider.select((s) => s.storeResetNotifications),
-    );
 
     _afterBuild(
       account: account,
       store: store,
-      remindersOn: remindersOn,
       markNightMarketSeen: segment == StoreSegment.nightMarket && hasUnseen
           ? nmIds.toList()
           : null,
@@ -282,25 +271,16 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
   }
 
   /// Side effects that must not run during build: marking the Night Market
-  /// seen, the reset reminder and content-miss reports.
+  /// seen and content-miss reports.
   void _afterBuild({
     required Account account,
     required Storefront? store,
-    required bool remindersOn,
     required List<String>? markNightMarketSeen,
   }) {
-    if (!remindersOn) _remindedFor = null;
-    final remindFor =
-        remindersOn && store != null && !identical(store, _remindedFor)
-        ? store
-        : null;
-    if (remindFor != null) _remindedFor = remindFor;
     final missesIn = store != null && !identical(store, _missCheckedFor)
         ? store
         : null;
-    if (remindFor == null && missesIn == null && markNightMarketSeen == null) {
-      return;
-    }
+    if (missesIn == null && markNightMarketSeen == null) return;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -309,16 +289,6 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
           ref
               .read(nightMarketSeenProvider(account.puuid).notifier)
               .markSeen(markNightMarketSeen),
-        );
-      }
-      if (remindFor != null) {
-        unawaited(
-          scheduleStoreResetReminder(
-            ref.read(notificationServiceProvider),
-            account: account,
-            store: remindFor,
-            now: ref.read(clockProvider).now(),
-          ),
         );
       }
       if (missesIn != null) _reportContentMisses(missesIn);

@@ -12,6 +12,8 @@ import 'adaptive.dart';
 /// Takes the same [NavigationDestination]s as a Material [NavigationBar]
 /// (icon / selectedIcon / label), so any number of tabs (5–6) works; items
 /// share the width equally. Labels shrink to fit instead of ellipsizing.
+/// One item can be [emphasizedIndex]ed (the middle "Cộng đồng" tab): its
+/// icon sits in a filled circle.
 class FloatingNavBar extends StatelessWidget {
   const FloatingNavBar({
     super.key,
@@ -19,6 +21,7 @@ class FloatingNavBar extends StatelessWidget {
     required this.selectedIndex,
     required this.onDestinationSelected,
     this.compact = false,
+    this.emphasizedIndex,
   });
 
   final List<NavigationDestination> destinations;
@@ -28,6 +31,10 @@ class FloatingNavBar extends StatelessWidget {
   /// Narrow screens with many tabs: unselected items show only their icon
   /// (label kept for semantics / tooltips), the selected one icon + label.
   final bool compact;
+
+  /// Destination whose icon is drawn in a 32 dp circle: tinted red with a
+  /// red icon when unselected, solid red with a white icon when selected.
+  final int? emphasizedIndex;
 
   static const _barHeight = 64.0;
 
@@ -80,6 +87,7 @@ class FloatingNavBar extends StatelessWidget {
                           child: _NavItem(
                             destination: destinations[i],
                             selected: i == selectedIndex,
+                            emphasized: i == emphasizedIndex,
                             showLabel: !compact || i == selectedIndex,
                             onTap: () {
                               if (i != selectedIndex) Haptics.selection();
@@ -105,12 +113,14 @@ class _NavItem extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.showLabel = true,
+    this.emphasized = false,
   });
 
   final NavigationDestination destination;
   final bool selected;
   final VoidCallback onTap;
   final bool showLabel;
+  final bool emphasized;
 
   @override
   Widget build(BuildContext context) {
@@ -142,10 +152,13 @@ class _NavItem extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconTheme.merge(
-                data: IconThemeData(color: fg, size: showLabel ? 22 : 24),
-                child: icon,
-              ),
+              if (emphasized)
+                _EmphasizedIcon(selected: selected, accent: accent, child: icon)
+              else
+                IconTheme.merge(
+                  data: IconThemeData(color: fg, size: showLabel ? 22 : 24),
+                  child: icon,
+                ),
               if (showLabel) ...[
                 const SizedBox(height: 2),
                 Padding(
@@ -169,6 +182,48 @@ class _NavItem extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// The icon of the emphasized destination inside a 32 dp circle. Unselected:
+/// primary at 16 % with a primary icon; selected: solid primary with an
+/// `onPrimary` icon (≥ 3:1, a graphic object).
+class _EmphasizedIcon extends StatelessWidget {
+  const _EmphasizedIcon({
+    required this.selected,
+    required this.accent,
+    required this.child,
+  });
+
+  final bool selected;
+  final Color accent;
+  final Widget child;
+
+  static const size = 32.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return AnimatedContainer(
+      duration: ValMotion.medium,
+      curve: ValMotion.curve,
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: selected
+            ? scheme.primary
+            : scheme.primary.withValues(alpha: 0.16),
+      ),
+      child: IconTheme.merge(
+        data: IconThemeData(
+          color: selected ? scheme.onPrimary : accent,
+          size: 20,
+        ),
+        child: child,
       ),
     );
   }

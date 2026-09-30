@@ -21,8 +21,8 @@ lib/
 │  ├─ app.dart               ValVnApp: MaterialApp.router (material_ui), themes, vi locale,
 │  │                         notification deep links, resume hooks
 │  ├─ router.dart            routerProvider, appRedirect(), buildAppRoutes(), createAppRouter()
-│  ├─ shell.dart             AppShell: 6-tab NavigationBar + LiveGameOverlayHost
-│  └─ deep_links.dart        parseDeepLink() for notification payloads
+│  ├─ shell.dart             AppTab (5 tabs), AppShell: FloatingNavBar + LiveGameOverlayHost + StoreResetReminderHost
+│  └─ deep_links.dart        parseDeepLink(), planLinkNavigation(), openAppLink() for notification payloads
 ├─ core/
 │  ├─ accounts/              Account model, AccountRepository, providers, AccountChip / switcher sheet
 │  ├─ auth/                  WebView login, callback validation, cookie jar, re-auth, SessionManager
@@ -41,15 +41,16 @@ lib/
 │  ├─ util/                  json.dart, format.dart, clock.dart, countdown.dart
 │  └─ wishlist/              per-account wishlist storage (shared contract)
 └─ features/
-   ├─ store/          (+ skin_detail/)   TAB 1 Cửa hàng
-   ├─ battlepass/                        TAB 2 Battle Pass
-   ├─ community/                         TAB 3 Cộng đồng (feed, LFG, skin votes + reviews; docs/community-api.md)
+   ├─ home/                              TAB 0 Trang chủ (bảng điều khiển thông minh, 8 thẻ; docs/design/HOME.md)
+   ├─ store/          (+ skin_detail/)   TAB 1 Cửa hàng (+ StoreResetReminderHost luôn được dựng trong shell)
+   ├─ community/                         TAB 2 Cộng đồng (feed, LFG, skin votes + reviews; docs/community-api.md)
    ├─ collection/                        TAB 3 Bộ sưu tập
    ├─ wishlist/                          Wishlist + catalog + background check
-   ├─ profile/                           TAB 4 Hồ sơ, match detail, player profile
+   ├─ profile/                           TAB 4 Hồ sơ, match detail, player profile; có hàng Battle Pass và nút ⚙
+   ├─ battlepass/                        không phải tab: route /battlepass* nằm trong nhánh Hồ sơ
    ├─ live_game/                         global "Chi tiết trận" sheet, overlay host, current-game card
    ├─ social/                            party & remote queue, friends, chat (XMPP)
-   └─ settings/                          TAB 5 Cài đặt, welcome, session log, about, notification priming
+   └─ settings/                          không phải tab: route /settings* nằm trong nhánh Hồ sơ (nút ⚙); welcome, session log, about, notification priming
 test/                         mirrors lib/ (test/core/…, test/app/…, test/features/<f>/…)
 test/fixtures/content/        trimmed real valorant-api vi-VN responses
 test/helpers/                 createTestPrefs(), fakeJwt(), loadContentFixtures()
@@ -71,8 +72,23 @@ Every feature folder follows `data/` (parsing, repositories), `providers/`, `ui/
 | Collection agent | `lib/features/collection/` | S30–S39 |
 | Profile agent | `lib/features/profile/` | S40–S44 |
 | Live-game agent | `lib/features/live_game/` | S50, S51, R7 card, overlay |
+| Home agent | `lib/features/home/` | Trang chủ (8 thẻ, tùy chỉnh) |
 | Social agent | `lib/features/social/` | S55, S60, S61 |
 | Settings agent | `lib/features/settings/` | S01, S04, S70–S72 |
+
+Home imports these symbols of other features **read-only** (their signatures are frozen): the
+providers and pure helpers listed in `docs/design/HOME.md` §3.6 (`liveGameProvider`,
+`storefrontProvider`, `walletProvider`, `wishlistHitsProvider`, `rankSummaryProvider`,
+`rrHistoryProvider`, `rankUpEstimateProvider`, `battlePassOverviewProvider`,
+`dailyTicketProvider`, `friendsProvider`, `platformStatusProvider`, `accountActivityProvider`,
+`savedStorefrontProvider`, `matchingLfgPreviewProvider`, `trendingSkinsProvider`, the `*Routes`
+helpers…). Small additions that Home introduced in other features:
+`SettingsGearButton` (`features/settings/ui/settings_gear_button.dart`),
+`BattlePassProgressSubtitle` (`features/battlepass/ui/battlepass_entry.dart`),
+`StoreResetReminderHost` (`features/store/store_reset_reminder_host.dart`),
+`savedStorefrontProvider` / `storefrontSellsSkin` (moved to `core/domain/economy/saved_storefront.dart`),
+`dailyRrOn` (moved to `core/domain/competitive/rank_calc.dart`), `TabPageScaffold(controller:)`,
+`FloatingNavBar(emphasizedIndex:)` and a static `SkeletonShimmer` under "reduce motion".
 
 Rules:
 
@@ -132,14 +148,15 @@ Routes are composed in `lib/app/router.dart`; features only edit their own
 | top level | core (`AuthRoutes`) | `/login`, `/login?reauth=<puuid>` → `LoginScreen` |
 | top level | `community_routes.dart` (`communityTopLevelRoutes`) | `/compose` → `ComposeScreen` (`extra`: `ComposeDraft`), `/post/:id` → `PostDetailScreen` (`extra`: `CommunityPost`), `/community/skin/:uuid` → `SkinReviewScreen` (`CommunityRoutes.skin(uuid)`, `openSkinReview(context, uuid)` from anywhere) |
 | top level | `profile_routes.dart` (`profileTopLevelRoutes`) | `/player/:puuid[?hidden=1]` → `PlayerProfileScreen`, `/match/:id[?player=<puuid>]` → `MatchDetailScreen` (full screen, e.g. from the live-game sheet) |
-| tab 0 | `store_routes.dart` (`storeBranchRoutes`) | `/store[?segment=daily\|nightmarket\|accessories\|bundles]`, `/store/bundle/:id` |
-| tab 1 | `battlepass_routes.dart` (`battlepassBranchRoutes`) | `/battlepass`, `/battlepass/rewards` |
+| tab 0 | `home_routes.dart` (`homeBranchRoutes`) | `/home[?focus=<card>]` (`HomeRoutes.focus(HomeCardId)`) |
+| tab 1 | `store_routes.dart` (`storeBranchRoutes`) | `/store[?segment=daily\|nightmarket\|accessories\|bundles]`, `/store/bundle/:id` |
 | tab 2 | `community_routes.dart` (`communityBranchRoutes`) | `/community[?section=feed\|lfg\|skins]` |
 | tab 3 | `collection_routes.dart` (`collectionBranchRoutes({nested})`) | `/collection`, `/card`, `/title`, `/weapons`, `/weapons/:weaponId`, `/weapons/:weaponId/skin/:skinId`, `/expressions`, `/presets`, `/browse/:type` |
 | tab 3 (nested) | `wishlist_routes.dart` (`wishlistRoutes`, relative) | `/collection/wishlist`, `/collection/catalog` |
 | tab 4 | `profile_routes.dart` (`profileBranchRoutes({nested})`) | `/profile`, `/profile/rankup`, `/profile/daily-rr`, `/profile/match/:id` |
 | tab 4 (nested) | `social_routes.dart` (`socialRoutes`, relative) | `/profile/party`, `/profile/friends`, `/profile/friends/:puuid/chat` |
-| tab 5 | `settings_routes.dart` (`settingsBranchRoutes`) | `/settings`, `/settings/log`, `/settings/about` |
+| tab 4 (hosted) | `battlepass_routes.dart` (`battlepassBranchRoutes`) | `/battlepass`, `/battlepass/rewards` (opened from Trang chủ / Hồ sơ, on top of the tab) |
+| tab 4 (hosted) | `settings_routes.dart` (`settingsBranchRoutes`) | `/settings`, `/settings/log`, `/settings/status`, `/settings/about[/<doc>]` (opened by the ⚙ button of Trang chủ / Hồ sơ) |
 
 Location helpers (use them instead of string literals):
 `StoreRoutes.bundle(id)`, `StoreRoutes.segment(StoreSegment.nightMarket)`,
@@ -155,12 +172,22 @@ context.push(ProfileRoutes.player(puuid));    // full screen, above the tab bar
 context.go(StoreRoutes.root);                 // switch tab
 ```
 
+The shell has **five branches** in `AppTab` order: Trang chủ · Cửa hàng · Cộng đồng · Bộ sưu tập ·
+Hồ sơ (never hard-code a branch index: use `AppTab.x.index`). Battle Pass and Cài đặt are not tabs:
+their routes keep their paths and are extra roots of the Hồ sơ branch, so a `push` from Trang chủ or
+Hồ sơ stays inside that tab and Back returns to it. Links to them from a notification use
+`openAppLink(router, link)` (`planLinkNavigation`): it `go`es to `/profile` and pushes the page, so
+Back works.
+
 Redirect (`appRedirect`, unit-tested): no accounts → everything except `/welcome` and
-`/login` goes to `/welcome`; with accounts `/welcome` and `/` go to `/store`.
+`/login` goes to `/welcome`; with accounts `/welcome` and `/` (the "default tab", which core code
+and the error page use without knowing feature paths) go to `/home`.
 
 Community previews for other screens (`lib/features/community/community_previews.dart`):
-`matchingLfgPreviewProvider(puuid)` → 2 open LFG posts that fit the account's rank + `LfgPreviewCard`;
-`trendingSkinsProvider(TopPeriod.week)` → top skins (read-only) + `TrendingSkinsCard`.
+`matchingLfgPreviewProvider(puuid)` → 2 open LFG posts that fit the account's rank (only when the account
+already agreed to join **and** the Cộng đồng tab already created a session: a preview never signs in) +
+`LfgPreviewCard`; `trendingSkinsProvider(TopPeriod.week)` → top skins (read-only, anonymous) +
+`TrendingSkinsCard`. Trang chủ reads the two providers directly.
 
 Sheets (not routes): `showSkinDetailSheet(context, skinOrLevelUuid: id, mode:
 SkinDetailMode.store|owned|catalog)`, `openSkinVideo(context, videoUrl:)` (S16), `showLiveGameSheet(context)`,

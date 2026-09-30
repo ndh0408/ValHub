@@ -60,7 +60,7 @@ class _ValVnAppState extends ConsumerState<ValVnApp> {
         ref.read(accountsProvider).any((a) => a.puuid == account)) {
       ref.read(activePuuidProvider.notifier).select(account);
     }
-    ref.read(routerProvider).go(link.location);
+    openAppLink(ref.read(routerProvider), link);
   }
 
   @override
