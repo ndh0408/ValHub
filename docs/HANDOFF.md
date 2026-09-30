@@ -1,0 +1,65 @@
+# ValVN — Bàn giao cho Codex (30/09/2026)
+
+Claude đã dừng vì hết hạn mức. Codex tiếp tục các gói việc bên dưới; Claude chỉ **review, gộp, sửa sai sót** sau đó.
+Đọc trước: `CLAUDE.md`, `docs/GLOBAL_AUDIT.md`, các báo cáo trong `docs/audit/` (mỗi phát hiện có ID + file:line + cách sửa), `docs/design/{IA,HOME,I18N,COUNTRIES,DEVICES,DESIGN}.md`, `docs/community-api.md`.
+
+## 1. Luật chung (bắt buộc)
+
+1. **Không AI** kiểu chatbot/LLM/API trả phí. Công cụ miễn phí chạy trên máy (ML Kit dịch) được giữ. Ưu tiên giải pháp miễn phí.
+2. **Dữ liệu thật**: không dữ liệu mẫu, không nút chết, không "sắp ra mắt"; số liệu không xác minh được thì ẩn, không bịa (đặc biệt số liệu Riot, giá, clutch).
+3. **Chữ hiển thị viết cho người chơi VALORANT** bằng ngôn ngữ của game (Đặc vụ, Tổ đội, Sảnh chờ, Xếp hạng, Chợ Đêm…), không dùng ngôn ngữ lập trình (token, cache, session, shard, PUUID, mã lỗi…), không lộ console/nhật ký. Thuật ngữ chính thức: `docs/research/valbuddy-features.md` §8; bộ quy tắc: `docs/design/VOICE.md` (khi có).
+4. **Toàn cầu**: không giả định người dùng ở Việt Nam (múi giờ, VND, `ap`, `vi`); tách quốc gia / khu vực / máy chủ / ngôn ngữ / múi giờ / tiền tệ.
+5. **Giữ kiến trúc hiện có** (SessionManager, PvpApi, Riverpod family theo PUUID, `lib/features/<f>/{data,providers,ui}`); không thêm phụ thuộc nếu không cần; không viết lại thứ đang chạy đúng.
+6. Không bao giờ log/gửi token, cookie, PUUID; thao tác đổi tài khoản Riot phải do người dùng bấm.
+7. Mọi thay đổi có test; **`flutter analyze` = 0 lỗi**, **`flutter test` = xanh toàn bộ**, `dart format lib test tool`. Không tắt lint/không bỏ qua test lỗi.
+8. Chuỗi hiển thị nằm trong `lib/features/<f>/<f>_strings.dart` hoặc `lib/core/l10n/`, không hard-code trong widget; không đặt chữ trong lớp domain/data (trả enum/id/số). Giữ nguyên TÊN member khi chỉ sửa nội dung (để bước tách ARB sau này cơ học).
+9. **Không** dùng emulator/adb/thiết bị thật (Claude kiểm tra trực quan). **Không** push origin, **không** gộp vào nhánh chính, **không** deploy máy chủ — Claude làm các bước đó sau review.
+
+## 2. Công cụ (Windows)
+
+- Flutter (PowerShell): `$env:Path="D:\Dev\Flutter\3.47.5\flutter\bin;$env:Path"`; JDK `D:\Dev\Java\jdk-17`; Android SDK `D:\Dev\Android\sdk`. Git Bash không chạy được flutter (PATH quá dài).
+- Kiểm tra: `flutter pub get; dart format lib test tool; flutter analyze; flutter test` (toàn bộ ~2000+ test; chạy riêng thư mục khi làm dở).
+- Máy chủ: `cd server/community; npm ci; npm test; npx tsc --noEmit`.
+- Commit: tiếng Việt, ngắn gọn, mỗi nhóm việc một commit, **commit WIP thường xuyên** (không để mất việc); danh tính: `git -c user.name="Codex" -c user.email="noreply@openai.com" commit -F <file>` (thông điệp nhiều dòng qua file).
+- Mỗi gói kết thúc bằng file `HANDOFF_REPORT.md` ở gốc worktree (đã commit): từng phát hiện → xong/một phần/bỏ qua + lý do, file chính đã sửa, chỗ rủi ro, kết quả `analyze`/`test`, danh sách commit.
+
+## 3. Gói việc đang mở (chạy song song, đường dẫn tách biệt)
+
+Mỗi gói bắt đầu từ nhánh ghi bên dưới (đã có commit dở dang; xem `git log` để biết đã làm gì), rồi **`git merge claude/jolly-hawking-23o2j8`** (đã có nền tảng i18n W0, Trang chủ, máy chủ v3…; giải quyết xung đột giữ cả hai phía).
+
+### WP-SRV — máy chủ `server/community/**` (+ `.github/workflows/server.yml`)
+Nhánh gốc: `claude/jolly-hawking-23o2j8` (đã có 4 commit WP-SRV: CS-01, CS-03, CS-02 và uuid skin chuẩn hóa dở). Tạo nhánh `codex/wp-srv`. Nguồn: `docs/audit/AUDIT_COMMUNITY.md` (CS-01…CS-41), `AUDIT_GLOBAL.md` GL-15/20/28/40.
+Làm hết mức Cao/Trung bình, Thấp tùy khả năng; migration chỉ thêm (0006+); khách cũ vẫn chạy được; cập nhật `README.md` của server và `docs/community-api.md` mỗi khi đổi hợp đồng:
+- Cao: CS-01 (`no-store` cho lỗi + `Cloudflare-CDN-Cache-Control` cho media — có thể đã xong, kiểm tra), CS-02 (bảng `sanctions`, CLI ban/unban/hide/delete-content/reports list/hidden list, kiểm tra trong `Ctx.user()`), CS-03 (rate limit TRƯỚC kiểm duyệt, bucket theo người dùng, đo trễ vòng lặp sự kiện → 503).
+- Trung bình: CS-04 (thu hồi phiên: `iat` ≥ ngày tạo user, `session_epoch`/`ep`, `POST /v1/auth/logout`, xoay 2 khóa `kid`), CS-05 (uuid skin chuẩn hóa + vũ khí do server suy ra, gộp phiếu trùng bằng migration), CS-06 (trọng số người báo cáo, giới hạn ẩn/ngày, cho tác giả thấy `hidden` + lý do trong danh sách của chính họ), CS-07 (chỉ tính người bình chọn "có uy tín", `MIN_RATINGS_FOR_RANK` ≥ 10, C ≈ 10–20 hoặc Wilson, bảng tuần theo thời điểm chấm đầu), CS-08 (bỏ WebP động, ≤16 MP; re-encode WASM nếu build ổn định), CS-11 (sổ ghi xóa `/data/erasures.jsonl` phát lại khi khởi động/khôi phục; xóa `pre-restore/` sau 14 ngày), CS-12 (healthcheck sao lưu, staging trên đĩa, diễn tập khôi phục hàng tuần, hook `BACKUP_OFFSITE_CMD` mã hóa `age`), CS-13 (IPv6 /64, bỏ X-Forwarded-For trái nhất, limiter media bất kể Authorization, LRU), CS-15 (trả `partyCode` từ `POST /v1/lfg/:id/join`; giữ trong danh sách sau cờ `LFG_CODE_IN_LIST`).
+- Thấp: CS-14, 16–23, 25–27, 29–34, 36–39; GL-15 (mã `error.reason` ổn định + `messageEn`), GL-28, GL-40; CS-40/41 ghi lại điểm nối (Repo async, RateLimitStore/CacheStore/RevocationStore).
+Kiểm tra: `npm test` + `npx tsc --noEmit` xanh. **Không deploy.**
+
+### WP-CORE — lõi ứng dụng (đăng nhập, mạng, tài khoản, nền, thông báo)
+Nhánh gốc: `worktree-agent-aa13bc24a6d96c816` (4 commit, gồm 1 WIP). Nhánh mới `codex/wp-core`. Nguồn: `docs/audit/AUDIT_ACCOUNTS.md` (AR-001…AR-034), `AUDIT_GLOBAL.md` GL-25/26/37/39, `AUDIT_PRODUCT.md` PR-05/06/29.
+Sở hữu: `lib/core/{auth,network,accounts,storage,config,background,notifications,xmpp,logging,riot}/**`, `lib/features/store/providers/store_reset_reminder*.dart`, `lib/features/store/store_reset_reminder_host.dart`, phần thông báo trong `lib/features/settings/{ui/sections/notifications_section.dart,providers/settings_providers.dart}`, `lib/core/util/format.dart` (chỉ toán ngày DST), test tương ứng. **Không sửa**: `lib/core/domain/**`, `lib/features/{profile,home,battlepass,skin_detail,community}/**`, `lib/app/**`, `lib/core/ui/**`, `pubspec.yaml` (trừ khi bắt buộc và tối thiểu), `server/**`, `docs/legal`.
+Nội dung: (1) chờ giãn cách khi đăng nhập lại thất bại (`_nextReauthAt` 30 s→10 phút, `Retry-After` thắng; không thử lại ngay sau 429/Cloudflare/5xx; limiter chung cho host đăng nhập; tối đa 2 lần đăng nhập lại song song; host cooldown có jitter; fail-fast khi mất mạng; hạn chót ≤45 s/lệnh) — AR-001/005/006/017; (2) đăng xuất xóa sạch & an toàn khi bị ngắt (`app.pendingWipe` + `sweepOrphans()` khi khởi động, `SecureStore.readAllKeys()`, xóa phiên cộng đồng trong bộ nhớ, hộp thoại chọn "Giữ dữ liệu cục bộ" + hành động "Xóa dữ liệu cục bộ") — AR-002/003/018; (3) bí mật & cấu hình: ghi chú đăng nhập khóa bằng `local_auth`, tự xóa clipboard sau 45 s, ghim host nhận token, kiểm tra schema remote-config, kiểm tra phiên bản client, `resetOnError:false`, allow-list host XMPP/WebView, thông báo không lộ Riot ID ở màn khóa — AR-004/009/010/011/021/022/023/024; (4) nền & thông báo: không bão retry, hủy tác vụ khi hết tài khoản, nhắc cửa hàng 7 lần reset tới, kênh mới `battlePass`/`rank`/`community`/`lfg` (+ công tắc; chỉ thông báo cục bộ), múi giờ dự phòng = UTC, bỏ chữ "giờ Việt Nam" — AR-007/008, PR-05/06/29, GL-26; (5) tài khoản & cache: khóa `acct.<puuid>.lock.reauth`, tuần tự hóa đọc-sửa-ghi `AccountRepository`, deep link tài khoản không tồn tại, đồng ý bạn bè theo từng tài khoản (chỉ cung cấp helper cho Home), nhật ký phiên ghi nối mỗi isolate, toán ngày DST — AR-019/020/025/026/029/030/034, GL-25/37/39; (6) bộ nhớ nội dung game: dùng cache ngay, tải nền, meta theo từng endpoint — AR-012.
+Không thuộc gói này: AR-013/014/015/016 (WP-DOMAIN).
+
+### WP-DOMAIN — dữ liệu & phân tích
+Nhánh gốc: `worktree-agent-a85ea61caa1a46869` (2 commit). Nhánh mới `codex/wp-domain`. Nguồn: `docs/audit/AUDIT_PRODUCT.md` (PR-01…PR-30 + bảng metric), `AUDIT_ACCOUNTS.md` AR-013/014/015/016, `AUDIT_GLOBAL.md` GL-10/24/38.
+Sở hữu: `lib/core/domain/**`, `lib/features/{profile,home,store,battlepass,skin_detail,wishlist}/**` **trừ** `store_reset_reminder*`, `store_reset_reminder_host.dart` và `wishlist/background/**` (WP-CORE). **Không sửa** `lib/core/{auth,network,accounts,storage,config,background,notifications,xmpp,logging,riot,ui,util}/**`, `lib/app/**`, `lib/features/{community,settings}/**`, `pubspec.yaml`, `server/**`.
+Nội dung: (1) sửa số sai: PR-02 (ACS/ADR/HS%/first blood chỉ tính chế độ theo vòng, trọng số Σscore/Σrounds, ẩn nếu không đủ), PR-04 (`maxAffordableTogether`), GL-10 (`storeWishlistIn` thành câu đầy đủ), GL-24 (`normalizeTier` theo id), PR-19; (2) PR-01: module thuần `lib/core/domain/competitive/performance.dart` (theo đặc vụ/bản đồ/hàng đợi/tấn-thủ/xu hướng, `now`/`toLocal` truyền vào, không chữ) + sổ trận của CHÍNH tài khoản `keep/<puuid>/match_stats` (≈150 B/trận, tối đa ≈5000, khử trùng, schema version) + mục "Hiệu suất" trong Hồ sơ (ẩn tỉ lệ dưới 3 trận, ghi "trên thiết bị, từ dd/MM"); **không hiển thị clutch**; đưa mọi phép tính trong widget ra hàm thuần có test (PR-15); PR-26, PR-17; (3) PR-03: `StoreHistoryStore` (mỗi ngày UTC một lần, ≈365 ngày, `acct/<puuid>/store_history`) cung cấp hàm ghi cho WP-CORE gọi, bộ tổng hợp thuần, dòng "Trong cửa hàng của bạn: N lần…" chỉ từ dữ liệu đã lưu, có nút xóa; (4) AR-013 (dùng bản đã lưu cả khi cần đăng nhập lại/bảo trì), AR-014/016 (lịch sử RR chỉ lưu tài khoản của mình; người khác LRU trong bộ nhớ; cache tên → `cache/names` ≤30 ngày), AR-015 (`matchDetailsProvider` khóa theo (viewer, matchId)), PR-08 (hàm + provider "Xóa lịch sử RR"; Claude nối vào Cài đặt); (5) PR-09 (điểm cộng đồng cho thẻ trong cửa hàng/wishlist qua `GET /v1/skins/votes?ids=` ẩn danh, cache 30 phút; chi phí Radianite chỉ nếu xác minh được dạng dữ liệu), PR-16 (ký hiệu thắng/thua ngoài màu), PR-23/24 (phần thuộc Home).
+
+### WP-COPY — nội dung cho người chơi
+Nhánh gốc: `worktree-agent-a44a4fefcd4a244d3` (2 commit, 1 WIP). Nhánh mới `codex/wp-copy`. Mục tiêu: mọi chữ hiển thị đọc như app game VALORANT viết cho người chơi.
+Việc: (A) kiểm kê mọi chuỗi hiển thị (`lib/**/*_strings.dart` ×20, `lib/core/l10n/**`, `lib/features/settings/legal/**`, thông báo, lỗi/trống/đang tải, chữ chia sẻ, `ios/Runner/Info.plist`, tooltip/semantics, thông điệp máy chủ hiển thị nguyên văn — chỉ LIỆT KÊ file:line để Claude xử lý, **không sửa `server/**`**), phân loại: thuật ngữ lập trình / văn dịch máy / không nhất quán / sai thuật ngữ VALORANT / màn hình chỉ dành cho lập trình viên / lỗi hiện chi tiết kỹ thuật; (B) viết `docs/design/VOICE.md`: giọng văn, thuật ngữ chính thức, **bảng thay thế** từ kỹ thuật → cách nói của người chơi, mẫu lỗi (chuyện gì xảy ra + nên làm gì + nút thử lại, không mã lỗi), mẫu trạng thái trống, đồng ý/quyền, thông báo, quy tắc giữ nguyên placeholder/số nhiều cho bước tách ARB; (C) viết lại GIÁ TRỊ chuỗi (giữ nguyên tên member, chữ ký hàm, placeholder; không thêm/xóa member); viết lại văn bản pháp lý cho dễ đọc **không đổi ý nghĩa pháp lý/dữ kiện**; gom màn hình dành cho lập trình viên vào nhóm "Nâng cao"; **bỏ hẳn màn hình nhật ký kiểu console** (route `/settings/log` → chuyển về Cài đặt; thay bằng hành động "Gửi báo lỗi cho ValVN" mở bảng chia sẻ, kèm 1 câu giải thích không có mật khẩu) và "Xóa dữ liệu tạm"; rà mọi chỗ lộ chi tiết kỹ thuật (mã trạng thái, id, JSON, URL, `e.toString()`), thay bằng mẫu thân thiện; ghi vào báo cáo yêu cầu "khung lỗi thân thiện khi chạy thật (`ErrorWidget.builder` + bộ bắt lỗi chung chỉ ghi nội bộ)" — **không sửa `lib/main.dart`/`lib/app/app.dart`**. Sửa test có chuỗi literal cũ.
+
+## 4. Hàng đợi (Claude giao sau khi các gói trên được gộp)
+
+1. **I18N W1** (tách chuỗi → ARB, parity) → W2 (lõi) → W3 (từng tính năng) → W4 (chuyển hẳn) → W5 (giao diện chọn ngôn ngữ, `contentLocale`, `ui_locales`, trạng thái máy chủ theo ngôn ngữ) → W6 (dịch 17 ngôn ngữ) → W7 (RTL/phông/bố cục) — `docs/design/I18N.md` §13.
+2. **COUNTRIES P0–P3** (mô hình Account: quốc gia/khu vực/máy chủ, bộ chọn quốc gia + ghi đè thủ công) — `docs/design/COUNTRIES.md`; GL-11/12/19/29.
+3. **DEVICES/A11y**: rail điều hướng, list-detail, RTL codemod, semantics tap action, tương phản chế độ tối (PR-10/11/12/13/20/21/27/28) — `docs/design/DEVICES.md`.
+4. **Deep link/chia sẻ** (`valvn://`, https), thông báo Battle Pass/Rank, khung lỗi thân thiện, phát hành (Android/iOS, ký, cửa hàng ứng dụng).
+5. Khách cộng đồng: chặn/tắt tiếng người dùng, ghi phiên bản đồng ý (CS-34), bỏ `partyCode` khỏi danh sách LFG khi khách mới phát hành.
+
+## 5. Những việc chỉ chủ dự án làm được
+Mở khóa thanh toán GitHub (Actions đang bị khóa); đăng nhập Apple ID trong Xcode trên Mac ảo + cắm/mở khóa iPhone; DNS/Cloudflare; quyết định bản quyền/nhà phát hành.
+
+## 6. Checklist Claude dùng khi review
+Chạy `analyze`+`test`; đọc diff theo phát hiện ID; kiểm tra: không lộ bí mật/log, cách ly theo PUUID, không vi phạm luật chung §1, không đổi hành vi ngoài phạm vi, test thực sự khẳng định hành vi (không chỉ "không lỗi"), migration chỉ thêm, chuỗi đúng giọng người chơi; sau đó gộp vào nhánh chính, triển khai máy chủ (sao lưu trước), build máy ảo và chụp màn hình.

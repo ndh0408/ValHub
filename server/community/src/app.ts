@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { Ctx, type AppDeps } from './context.js';
-import { ApiError, errorBody, invalid } from './errors.js';
+import { ApiError, errorBody, reasonError } from './errors.js';
 import { registerAccount } from './routes/account.js';
 import { registerAuth } from './routes/auth.js';
 import { registerCommunities } from './routes/communities.js';
@@ -19,7 +19,7 @@ const MAX_JSON_BYTES = 64 * 1024;
 const jsonBodyLimit = bodyLimit({
   maxSize: MAX_JSON_BYTES,
   onError: () => {
-    throw invalid('Nội dung yêu cầu quá lớn.');
+    throw reasonError('invalid_input', 'body_too_large');
   },
 });
 
@@ -33,6 +33,25 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
   const x = new Ctx(deps);
   const logError = deps.logError ?? ((msg: string) => console.error(msg));
   const app = new Hono();
+
+  // Every response that does not set its own Cache-Control (JSON, errors, 204s, healthz) is no-store:
+  // authenticated JSON must never be shared by a cache, and Cloudflare caches by file extension, so an
+  // error for a media path (404!) would otherwise be cached at the edge and outlive a later upload.
+  app.use('*', async (c, next) => {
+    await next();
+    if (!c.res.headers.has('cache-control')) c.res.headers.set('cache-control', 'no-store');
+  });
+
+  // Load shedding: while the event loop is lagging (sustained, see load.ts) answer 503 at once instead of
+  // queueing more work behind it. Only the health check is exempt.
+  app.use('*', async (c, next) => {
+    const limit = x.tuning.loadShedLagMs;
+    if (limit > 0 && c.req.path !== '/healthz' && x.loadLagMs() > limit) {
+      x.stats.inc('shed');
+      throw reasonError('server_busy', 'server_busy', {}, 2);
+    }
+    return next();
+  });
 
   app.use('*', async (c, next) => {
     if (c.req.method === 'POST' && c.req.path === '/v1/media') return next();
@@ -67,6 +86,7 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
     const err = new ApiError('not_found', 'Không tìm thấy đường dẫn.');
     return c.body(JSON.stringify(errorBody(err)), 404, {
       'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store',
     });
   });
 
@@ -77,9 +97,12 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
     } else {
       // Only the error name/message is logged — never headers, bodies or tokens.
       logError(`[${c.req.method} ${c.req.routePath}] ${e.name}: ${e.message}`);
-      err = new ApiError('server_error', 'Máy chủ gặp lỗi, vui lòng thử lại sau.');
+      err = reasonError('server_error', 'server_error');
     }
-    const headers: Record<string, string> = { 'content-type': 'application/json; charset=utf-8' };
+    const headers: Record<string, string> = {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store',
+    };
     if (err.retryAfter !== undefined) headers['retry-after'] = String(err.retryAfter);
     return c.body(JSON.stringify(errorBody(err)), err.status as 400, headers);
   });

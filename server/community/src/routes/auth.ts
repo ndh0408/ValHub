@@ -1,7 +1,7 @@
 import type { Hono } from 'hono';
-import { authorFromUser, iso, type Ctx } from '../context.js';
+import { AUTH_ATTEMPTS, AUTH_FAILURES, authorFromUser, iso, suspendedError, type Ctx } from '../context.js';
 import { hashUserId, SESSION_TTL_SECONDS, signSession } from '../crypto.js';
-import { ApiError, invalid } from '../errors.js';
+import { ApiError, invalid, reasonError } from '../errors.js';
 import { normalizeAlpha2 } from '../geo/countries.js';
 import { parseLanguage } from '../geo/languages.js';
 import type { RiotIdentity } from '../riot.js';
@@ -14,10 +14,36 @@ import {
   type Region,
 } from '../validate.js';
 
+/** Policy / consent version label such as "2026-09" or "1.2": short, printable, no spaces. */
+function parseConsentVersion(v: unknown): string {
+  if (typeof v !== 'string' || !/^[A-Za-z0-9._-]{1,32}$/.test(v)) {
+    throw invalid('consentVersion phải gồm 1-32 ký tự chữ, số, . _ -');
+  }
+  return v;
+}
+
 export function registerAuth(app: Hono, x: Ctx): void {
   app.post('/v1/auth/riot', async (c) => {
+    // Per client address, in memory (never stored): every attempt counts toward a generous limit (shared carrier
+    // addresses), and tokens Riot rejects toward a small one (see AUTH_FAILURES).
     const ip = x.clientIpHash(c);
-    if (ip) x.rateLimit('authIp', ip);
+    if (ip) {
+      const at = x.now();
+      const all = x.anonLimiter.hit(`auth:${ip}`, AUTH_ATTEMPTS.limit, AUTH_ATTEMPTS.windowMs, at);
+      const bad = x.anonLimiter.peek(`authFail:${ip}`, AUTH_FAILURES.limit, AUTH_FAILURES.windowMs, at);
+      if (!all.ok || !bad.ok) {
+        x.stats.inc('auth429');
+        const [bucket, limit, retry] = !all.ok
+          ? ['authIp', AUTH_ATTEMPTS.limit, all.retryAfterSeconds]
+          : ['authFailures', AUTH_FAILURES.limit, bad.retryAfterSeconds];
+        throw reasonError(
+          'rate_limited',
+          'rate_limited',
+          { bucket: bucket as string, limit: limit as number, windowSeconds: AUTH_ATTEMPTS.windowMs / 1000 },
+          retry as number,
+        );
+      }
+    }
 
     const body = await x.readJson(c);
     const accessToken = parseString(body.accessToken, 'accessToken', { min: 1, max: 8192 });
@@ -27,6 +53,9 @@ export function registerAuth(app: Hono, x: Ctx): void {
     // App language (v3). Absent (clients before v3) → keep the stored value; null is not allowed.
     const language = parseOptional(body, 'language', (v) => parseLanguage(v, 'language'));
     if (language === null) throw invalid('language không được để trống.');
+    // Policy version the user accepted (optional; only version and time are stored, see CS-34).
+    const consentVersion = parseOptional(body, 'consentVersion', parseConsentVersion);
+    if (consentVersion === null) throw invalid('consentVersion không được để trống.');
 
     let identity: RiotIdentity;
     try {
@@ -44,13 +73,22 @@ export function registerAuth(app: Hono, x: Ctx): void {
           identity.retryAfter,
         );
       }
+      if (ip) x.anonLimiter.hit(`authFail:${ip}`, AUTH_FAILURES.limit, AUTH_FAILURES.windowMs, x.now());
       throw new ApiError('riot_rejected', 'Riot từ chối phiên đăng nhập. Hãy đăng nhập lại.');
     }
 
     const now = x.now();
+    const userId = hashUserId(x.deps.config.pepper, identity.puuid);
+    // A banned account gets no session (erasing the account and signing in again yields the same id, so the
+    // ban outlives the account row). A restricted account may sign in: it can still read.
+    const sanction = x.repo.activeSanction(userId, now);
+    if (sanction?.kind === 'ban') {
+      x.stats.inc('suspended:ban:signin');
+      throw suspendedError(sanction);
+    }
     const user = x.repo.upsertUser(
       {
-        id: hashUserId(x.deps.config.pepper, identity.puuid),
+        id: userId,
         gameName: identity.gameName,
         tagLine: identity.tagLine,
         region,
@@ -59,6 +97,7 @@ export function registerAuth(app: Hono, x: Ctx): void {
         language,
         cardId,
         rankTier,
+        consentVersion,
       },
       now,
     );
@@ -71,8 +110,17 @@ export function registerAuth(app: Hono, x: Ctx): void {
       tag: user.tag_line,
       iat,
       exp,
+      ep: user.session_epoch,
     });
     return x.json(c, { token, expiresAt: iso(exp * 1000), user: authorFromUser(user) });
+  });
+
+  // Ends every session of the caller (all devices): their tokens carry the old epoch. The app signs in again
+  // with its Riot session when it needs to. 204 without a body.
+  app.post('/v1/auth/logout', (c) => {
+    const user = x.user(c, true);
+    x.repo.bumpSessionEpoch(user.id);
+    return x.noContent(c);
   });
 
   app.get('/v1/me', (c) => x.json(c, authorFromUser(x.user(c, true))));

@@ -44,6 +44,7 @@ export function buildExport(data: AccountData, baseUrl: string, now: number) {
       language: u.language,
       createdAt: iso(u.created_at),
       updatedAt: iso(u.updated_at),
+      consent: u.consent_version === null ? null : { version: u.consent_version, at: u.consent_at === null ? null : iso(u.consent_at) },
     },
     posts: data.posts.map((p) => ({
       id: p.id,
@@ -127,6 +128,19 @@ export function buildExport(data: AccountData, baseUrl: string, now: number) {
       status: m.status,
       attachedToPost: m.post_id,
       createdAt: iso(m.created_at),
+    })),
+    sanctions: data.sanctions.map((s) => ({
+      kind: s.kind,
+      reason: s.reason,
+      createdAt: iso(s.created_at),
+      until: s.until === null ? null : iso(s.until),
+      liftedAt: s.lifted_at === null ? null : iso(s.lifted_at),
+    })),
+    moderationLog: data.moderationLog.map((a) => ({
+      at: iso(a.at),
+      action: a.action,
+      targetType: a.target_type,
+      targetId: a.target_id,
     })),
   };
 }
