@@ -11,13 +11,12 @@ abstract final class LegalStrings {
 
   // About hub
   static const aboutIntro =
-      'Trợ thủ VALORANT bằng tiếng Việt: cửa hàng mỗi ngày, wishlist, rank, '
-      'trận đấu, nhiều tài khoản và cộng đồng người chơi, ngay trên điện '
-      'thoại.';
+      'Trợ thủ VALORANT của bạn: cửa hàng mỗi ngày, wishlist, rank, trận đấu, '
+      'nhiều tài khoản và cộng đồng người chơi, ngay trên thiết bị của bạn.';
   static const legalHeader = 'PHÁP LÝ';
-  static const thirdPartyLicenses = 'Thư viện bên thứ ba';
+  static const thirdPartyLicenses = 'Phần mềm bên thứ ba';
   static const thirdPartyLicensesBody =
-      'Giấy phép mã nguồn mở của các thư viện dùng trong ValVN';
+      'Giấy phép của các phần mềm mã nguồn mở mà ValVN sử dụng';
   static const contactHeader = 'LIÊN HỆ';
   static const contact = 'Liên hệ';
   static const contactBody = LegalInfo.contactEmail;

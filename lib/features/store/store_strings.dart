@@ -88,7 +88,7 @@ abstract final class StoreStrings {
   static const shareShowPriceHint = 'Quy đổi theo gói VP có lợi nhất.';
   static const sharePreparing = 'Đang tải ảnh skin…';
   static const shareButton = 'Chia sẻ';
-  static const shareFailed = 'Không tạo được ảnh. Vui lòng thử lại.';
+  static const shareFailed = 'Không tạo được ảnh. Hãy thử lại.';
   static const shareCardDaily = 'Cửa hàng hôm nay';
   static const shareCardNightMarket = 'Chợ Đêm';
   static const shareCardBrand = 'ValVN';

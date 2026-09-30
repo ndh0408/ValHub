@@ -30,8 +30,8 @@ abstract final class SocialStrings {
   static const reconnecting = 'Mất kết nối trò chuyện. Đang kết nối lại…';
   static const chatUnavailable = 'Trò chuyện đang ngoại tuyến.';
   static const friendsPrivacyNote =
-      'Danh sách bạn bè và tin nhắn được tải trực tiếp từ Riot, không lưu '
-      'trên máy chủ nào khác.';
+      'Danh sách bạn bè và tin nhắn lấy trực tiếp từ Riot. ValVN không lưu '
+      'chúng ở nơi nào khác.';
 
   // Status lines (SUMMARY §9.9, VF S60)
   static String inMatch(String? map, {int? ally, int? enemy}) {

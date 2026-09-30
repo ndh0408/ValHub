@@ -4,8 +4,8 @@ abstract final class AuthStrings {
   static const signInCta = 'Đăng nhập bằng tài khoản Riot';
   static const signInNote =
       'Bạn đăng nhập trên trang chính thức của Riot. ValVN chỉ lưu mật khẩu khi '
-      'bạn tự thêm ghi chú đăng nhập; token và ghi chú chỉ nằm trên thiết bị '
-      'của bạn.';
+      'bạn tự chọn lưu thông tin đăng nhập; dữ liệu đăng nhập và thông tin đã '
+      'lưu chỉ nằm trên thiết bị của bạn.';
   static const rememberMeHint =
       'Hãy bật "Duy trì đăng nhập" để không phải đăng nhập lại.';
   static const socialLoginHint =
@@ -15,12 +15,14 @@ abstract final class AuthStrings {
   static const preparing = 'Đang chuẩn bị trang đăng nhập…';
   static const loginFailed = 'Không thể hoàn tất đăng nhập';
   static const loginFailedBody =
-      'Riot không trả về phiên đăng nhập hợp lệ. Vui lòng thử lại.';
-  static const loginCancelledByRiot = 'Riot đã từ chối yêu cầu đăng nhập.';
+      'Riot chưa xác nhận đăng nhập của bạn. Hãy thử lại.';
+  static const loginCancelledByRiot =
+      'Riot đã từ chối lần đăng nhập này. Hãy thử lại.';
   static const stateMismatch =
-      'Phiên đăng nhập không khớp. Vui lòng đăng nhập lại từ đầu.';
+      'Lần đăng nhập này không hợp lệ. Hãy đăng nhập lại từ đầu.';
   static const missingCookies =
-      'Không lưu được phiên đăng nhập. Bạn sẽ phải đăng nhập lại khi token hết hạn.';
+      'Không lưu được đăng nhập trên thiết bị này, nên bạn sẽ phải đăng nhập '
+      'lại khi hết hạn.';
   static const pageLoadFailed =
       'Không tải được trang đăng nhập của Riot. Kiểm tra mạng rồi thử lại.';
   static const differentAccountTitle = 'Tài khoản khác';

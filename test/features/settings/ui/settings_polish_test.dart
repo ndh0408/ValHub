@@ -5,14 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/auth/auth_routes.dart';
+import 'package:valvn/core/l10n/account_strings.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
-import 'package:valvn/core/logging/session_log.dart';
-import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/theme/app_theme.dart';
-import 'package:valvn/core/util/clock.dart';
 import 'package:valvn/features/settings/settings_routes.dart';
 import 'package:valvn/features/settings/settings_strings.dart';
-import 'package:valvn/features/settings/ui/session_log_screen.dart';
 import 'package:valvn/features/settings/ui/widgets/settings_widgets.dart';
 
 import '../../../helpers/test_prefs.dart';
@@ -45,8 +42,8 @@ void main() {
               body: TextButton(
                 onPressed: () async => result = await confirmSettingsAction(
                   context,
-                  title: SettingsStrings.clearLog,
-                  message: SettingsStrings.clearLogConfirm,
+                  title: AccountStrings.signOutAll,
+                  message: AccountStrings.signOutAllConfirm,
                   confirmLabel: CommonStrings.delete,
                   destructive: true,
                 ),
@@ -161,75 +158,5 @@ void main() {
         expect(find.text('Player2#VN'), findsOneWidget);
       });
     }
-  });
-
-  group('session log filter', () {
-    SessionLog log() {
-      final l = SessionLog(clock: FixedClock(DateTime(2026, 9, 28, 14, 5, 9)));
-      l.add('http', status: 200);
-      l.add('reauth.ok', status: 503);
-      return l;
-    }
-
-    Future<Prefs> pump(
-      WidgetTester tester,
-      Map<String, Object> seed, {
-      SessionLog? entries,
-    }) async {
-      final prefs = await createTestPrefs(seed);
-      final env = SettingsTestEnv(prefs)..log = entries ?? log();
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            ...env.overrides,
-            clockProvider.overrideWithValue(
-              FixedClock(DateTime(2026, 9, 28, 15)),
-            ),
-          ],
-          child: const MaterialApp(home: SessionLogScreen()),
-        ),
-      );
-      await tester.pumpAndSettle();
-      return prefs;
-    }
-
-    testWidgets('restores the remembered filter and saves a new one', (
-      tester,
-    ) async {
-      final prefs = await pump(tester, {'ui.settings.log.level': 'errors'});
-      expect(find.text('reauth.ok'), findsOneWidget);
-      expect(find.text('http'), findsNothing);
-
-      await tester.tap(find.text(SettingsStrings.logFilterAll).first);
-      await tester.pumpAndSettle();
-      expect(find.text('http'), findsOneWidget);
-      expect(prefs.getString('ui.settings.log.level'), 'all');
-    });
-
-    testWidgets('an empty filter result shows a hint', (tester) async {
-      final onlyOk = SessionLog(clock: FixedClock(DateTime(2026, 9, 28, 14)))
-        ..add('http', status: 200);
-      await pump(tester, {'ui.settings.log.level': 'errors'}, entries: onlyOk);
-      expect(find.text(SettingsStrings.logFilterEmpty), findsOneWidget);
-      await tester.tap(find.text(SettingsStrings.logFilterHttp).first);
-      await tester.pumpAndSettle();
-      expect(find.text('http'), findsOneWidget);
-      expect(find.text(SettingsStrings.logFilterEmpty), findsNothing);
-    });
-
-    test('error classification', () {
-      expect(
-        SessionLogFilter.isErrorEntry(
-          SessionLogEntry(time: DateTime(2026), event: 'reauth.needsLogin'),
-        ),
-        isTrue,
-      );
-      expect(
-        SessionLogFilter.isErrorEntry(
-          SessionLogEntry(time: DateTime(2026), event: 'http', status: 204),
-        ),
-        isFalse,
-      );
-    });
   });
 }

@@ -7,7 +7,7 @@ abstract final class LoadoutStrings {
 
   /// Riot answered 200 but the re-GET shows the old version.
   static const notPersisted =
-      'Riot chưa ghi nhận thay đổi. Trang bị cũ đã được khôi phục.';
+      'Riot chưa lưu thay đổi của bạn nên trang bị vẫn như cũ. Hãy thử lại.';
 
   /// The change does not fit the loadout (unknown weapon, melee buddy…).
   static const invalidChange =

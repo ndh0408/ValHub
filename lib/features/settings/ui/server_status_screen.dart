@@ -74,7 +74,7 @@ class _ServerStatusScreenState extends ConsumerState<ServerStatusScreen> {
           : SegmentedTabs<String>(
               tabs: [
                 for (final r in regions)
-                  SegmentedTab(value: r, label: r.toUpperCase()),
+                  SegmentedTab(value: r, label: AccountStrings.regionName(r)),
               ],
               selected: region,
               onChanged: (r) => setState(() => _picked = r),

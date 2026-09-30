@@ -21,8 +21,8 @@ abstract final class HomeStrings {
 
   /// Body of the "sign in again" banner.
   static String needsLoginBody(String riotId) =>
-      'Phiên của $riotId đã hết hạn. Đăng nhập lại để xem cửa hàng, rank và '
-      'Battle Pass.';
+      'Đăng nhập của $riotId đã hết hạn. Đăng nhập lại để xem cửa hàng, rank '
+      'và Battle Pass.';
 
   /// Announced after a deep link scrolled to a card.
   static String focused(String name) => 'Đã chuyển đến $name';
@@ -79,7 +79,7 @@ abstract final class HomeStrings {
     String tier,
     bool wished,
   ) => '$name, $price, $tier${wished ? ', trong wishlist' : ''}';
-  static const storeWishlistIn = 'trong';
+  static const storeWishlistIn = 'trong wishlist';
 
   // Rank card
   static String rankToNext(int rr) => 'Còn $rr RR lên rank';
@@ -95,15 +95,15 @@ abstract final class HomeStrings {
   static String lossStreak(int n) => 'Chuỗi $n trận thua';
   static String matchesToRankUp(int n, String rank) => '≈ $n trận để lên $rank';
   static String previousAct(String rank) => 'Phần trước: $rank';
-  static String leaderboard(String pos) => 'Hạng $pos bảng xếp hạng';
+  static String leaderboard(String pos) => 'Hạng $pos trên bảng xếp hạng';
 
   // Friends card
   static String friendsPlaying(int n) => '$n bạn đang chơi';
   static const friendsConsentTitle = 'Xem bạn bè nào đang chơi?';
   static const friendsConsentBody =
-      'ValVN sẽ kết nối trò chuyện Riot của tài khoản đang dùng khi bạn mở '
-      'Trang chủ. Bạn bè có thể thấy bạn đang trực tuyến. Bạn có thể tắt '
-      'trong Tùy chỉnh Trang chủ.';
+      'Để biết bạn bè nào đang chơi, ValVN sẽ kết nối trò chuyện Riot của tài '
+      'khoản đang dùng mỗi khi bạn mở Trang chủ. Bạn bè sẽ thấy bạn đang '
+      'trực tuyến. Bạn có thể tắt trong Tùy chỉnh Trang chủ.';
   static const friendsConsentAllow = 'Bật';
   static const friendsConsentDecline = 'Không, ẩn thẻ';
   static const friendsSeeAll = 'Xem tất cả';
@@ -123,7 +123,7 @@ abstract final class HomeStrings {
 
   // Other accounts card
   static String otherAccountsTitle(int n) => 'Tài khoản khác ($n)';
-  static const otherWishlistHit = 'Có skin wishlist';
+  static const otherWishlistHit = 'Có skin trong wishlist';
   static String otherMore(int n) => '+$n tài khoản';
 
   // Server status card

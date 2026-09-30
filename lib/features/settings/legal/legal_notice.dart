@@ -15,8 +15,8 @@ const legalNotice = LegalDocument(
   sections: [
     LegalSection('Tuyên bố miễn trừ Riot Games', [
       LegalParagraph(
-        'ValVN được tạo ra theo chính sách "Legal Jibber Jabber" của Riot Games, '
-        'có sử dụng tài sản thuộc sở hữu của Riot Games. Riot Games không xác '
+        'ValVN được làm theo chính sách "Legal Jibber Jabber" của Riot Games '
+        'và có dùng tài sản thuộc sở hữu của Riot Games. Riot Games không xác '
         'nhận hay tài trợ cho dự án này.',
       ),
       LegalParagraph(
@@ -29,13 +29,13 @@ const legalNotice = LegalDocument(
       LegalParagraph(
         'Riot Games, VALORANT và mọi tài sản liên quan là thương hiệu hoặc '
         'thương hiệu đã đăng ký của Riot Games, Inc. Các tên, logo và nhãn hiệu '
-        'khác được nhắc đến trong Ứng dụng thuộc về chủ sở hữu tương ứng và chỉ '
+        'khác được nhắc đến trong Ứng dụng thuộc về chủ sở hữu của chúng và chỉ '
         'được dùng để nhận diện.',
       ),
     ]),
     LegalSection('Nội dung trò chơi', [
       LegalParagraph(
-        'Tên, hình ảnh, video và dữ liệu của skin, đặc vụ, bản đồ, rank, thẻ '
+        'Tên, hình ảnh, video và thông tin về skin, đặc vụ, bản đồ, rank, thẻ '
         'người chơi và các nội dung khác của VALORANT thuộc quyền sở hữu của '
         'Riot Games, Inc. Dữ liệu tài khoản của bạn (cửa hàng, ví, bộ sưu tập, '
         'trận đấu, xếp hạng) được lấy trực tiếp từ máy chủ của Riot Games.',
@@ -44,9 +44,9 @@ const legalNotice = LegalDocument(
     LegalSection('Nguồn dữ liệu và ghi công', [
       LegalList([
         LegalItem(
-          'dữ liệu và hình ảnh công khai về vật phẩm, đặc vụ, bản đồ và rank '
-          '(bản tiếng Việt). valorant-api.com là dự án cộng đồng độc lập, không '
-          'liên kết với ValVN hay Riot Games.',
+          'dữ liệu và hình ảnh công khai về vật phẩm, đặc vụ, bản đồ và rank. '
+          'valorant-api.com là dự án cộng đồng độc lập, không liên kết với '
+          'ValVN hay Riot Games.',
           lead: 'valorant-api.com:',
         ),
         LegalItem(
@@ -54,10 +54,10 @@ const legalNotice = LegalDocument(
           lead: 'techchrism/valorant-api-docs:',
         ),
         LegalItem(
-          'ValVN được xây dựng bằng Flutter cùng nhiều thư viện mã nguồn mở. '
-          'Danh sách và giấy phép của từng thư viện có tại mục "Thư viện bên '
-          'thứ ba" trong trang Giới thiệu & pháp lý.',
-          lead: 'Thư viện mã nguồn mở:',
+          'ValVN được xây dựng bằng Flutter cùng nhiều phần mềm mã nguồn mở '
+          'khác. Danh sách và giấy phép của từng phần mềm có ở mục "Phần mềm '
+          'bên thứ ba" trong trang Giới thiệu & pháp lý.',
+          lead: 'Phần mềm mã nguồn mở:',
         ),
       ]),
     ]),
@@ -70,10 +70,11 @@ const legalNotice = LegalDocument(
     LegalSection('Báo cáo vi phạm quyền sở hữu trí tuệ', [
       LegalParagraph(
         'Nếu bạn cho rằng nội dung trong ValVN, kể cả nội dung do người dùng '
-        'đăng trong Cộng đồng, vi phạm quyền sở hữu trí tuệ của bạn, vui lòng '
-        'gửi email tới $_email kèm: thông tin liên hệ của bạn, mô tả tác phẩm '
-        'được bảo hộ, vị trí nội dung vi phạm trong Ứng dụng và cam kết thông '
-        'tin bạn cung cấp là chính xác. Chúng tôi sẽ xem xét và xử lý kịp thời.',
+        'đăng trong Cộng đồng, vi phạm quyền sở hữu trí tuệ của bạn, hãy gửi '
+        'email tới $_email. Vui lòng nêu rõ: thông tin liên hệ của bạn, tác '
+        'phẩm nào của bạn được bảo hộ, nội dung vi phạm nằm ở đâu trong Ứng '
+        'dụng, và cam kết rằng thông tin bạn cung cấp là chính xác. Chúng tôi '
+        'sẽ xem xét và xử lý kịp thời.',
       ),
     ]),
   ],

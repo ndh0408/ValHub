@@ -12,6 +12,7 @@ import 'package:valvn/core/riot/pvp_api.dart';
 import 'package:valvn/core/storage/json_file_cache.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/storage/secure_store.dart';
+import 'package:valvn/features/settings/data/bug_report.dart';
 import 'package:valvn/features/settings/data/cache_stats.dart';
 import 'package:valvn/features/settings/providers/settings_providers.dart';
 
@@ -163,6 +164,10 @@ class SettingsTestEnv {
   final openedUrls = <Uri>[];
   bool urlOpens = true;
   final shared = <String>[];
+
+  /// Bug-report files handed to the share sheet ("Gửi báo lỗi cho ValVN").
+  final reports = <BugReportFile>[];
+  bool reportShareFails = false;
   Rect? lastShareOrigin;
 
   List<Override> get overrides => [
@@ -181,6 +186,11 @@ class SettingsTestEnv {
     }),
     textSharerProvider.overrideWithValue((text, {subject, origin}) async {
       shared.add(text);
+      lastShareOrigin = origin;
+    }),
+    bugReportSharerProvider.overrideWithValue((file, {origin}) async {
+      if (reportShareFails) throw StateError('share sheet');
+      reports.add(file);
       lastShareOrigin = origin;
     }),
   ];

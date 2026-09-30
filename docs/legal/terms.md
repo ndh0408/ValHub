@@ -6,7 +6,7 @@
 
 Chào mừng bạn đến với ValVN. Điều khoản sử dụng này ("Điều khoản") là thỏa thuận ràng buộc giữa bạn và Nguyễn Đức Huy ("chúng tôi") về việc tải, cài đặt và sử dụng ứng dụng ValVN trên iOS và Android, bao gồm cả các tính năng Cộng đồng (gọi chung là "Ứng dụng").
 
-> Tóm tắt: ValVN là ứng dụng đồng hành không chính thức, không thuộc Riot Games. Bạn đăng nhập bằng tài khoản Riot của chính mình trên trang chính thức của Riot, tự chịu trách nhiệm về tài khoản và mọi thao tác bạn thực hiện, cư xử văn minh trong Cộng đồng và không dùng ứng dụng để gian lận, tự động hóa hay khai thác trái phép. Ứng dụng được cung cấp nguyên trạng.
+> Tóm tắt: ValVN là ứng dụng đồng hành không chính thức, không thuộc Riot Games. Bạn đăng nhập bằng tài khoản Riot của chính mình trên trang chính thức của Riot. Bạn tự chịu trách nhiệm về tài khoản và mọi thao tác bạn thực hiện, cư xử văn minh trong Cộng đồng và không dùng ứng dụng để gian lận, tự động hóa hay khai thác trái phép. Ứng dụng được cung cấp nguyên trạng.
 
 ## 1. Chấp nhận Điều khoản
 
@@ -18,7 +18,7 @@ Nếu bạn không đồng ý với bất kỳ nội dung nào, vui lòng không
 
 - **"Ứng dụng":** ứng dụng ValVN, các bản cập nhật, nội dung và dịch vụ đi kèm do chúng tôi cung cấp.
 - **"Tài khoản Riot":** tài khoản của bạn tại Riot Games dùng để chơi VALORANT.
-- **"Cộng đồng":** các tính năng xã hội của ValVN như bảng tin, bài đăng, hình ảnh, bình luận, lượt thích, bình chọn skin và tìm đồng đội (LFG), vận hành trên máy chủ cộng đồng của ValVN.
+- **"Cộng đồng":** các tính năng xã hội của ValVN như bảng tin, bài đăng, hình ảnh, bình luận, lượt thích, bình chọn skin và tìm đồng đội, vận hành trên máy chủ Cộng đồng của ValVN.
 - **"Nội dung người dùng":** mọi văn bản, hình ảnh, mã tổ đội, bình chọn, báo cáo và thông tin khác bạn gửi lên Cộng đồng.
 
 ## 3. Điều kiện sử dụng
@@ -30,11 +30,11 @@ Nếu bạn không đồng ý với bất kỳ nội dung nào, vui lòng không
 
 ## 4. Tài khoản Riot và thông tin đăng nhập
 
-Bạn đăng nhập trong một cửa sổ web hiển thị trang đăng nhập chính thức của Riot Games. ValVN không nhận, không đọc và không lưu mật khẩu mà bạn nhập vào trang đó. Sau khi đăng nhập, phiên đăng nhập (token và cookie) chỉ được lưu trong vùng lưu trữ bảo mật của hệ điều hành trên thiết bị của bạn.
+Bạn đăng nhập trong một cửa sổ web hiển thị trang đăng nhập chính thức của Riot Games. ValVN không nhận, không đọc và không lưu mật khẩu mà bạn nhập vào trang đó. Sau khi đăng nhập, dữ liệu đăng nhập do Riot cấp (mã truy cập và cookie, tức là tệp giúp Riot nhớ bạn đã đăng nhập) chỉ được lưu trong vùng lưu trữ bảo mật của hệ điều hành trên thiết bị của bạn.
 
 - Bạn chỉ được thêm vào Ứng dụng những Tài khoản Riot mà bạn sở hữu hoặc được chủ sở hữu cho phép hợp pháp.
 - Bạn chịu trách nhiệm giữ an toàn thiết bị, mật khẩu, mã xác thực hai lớp và mọi hoạt động diễn ra trên Tài khoản Riot của mình.
-- Tính năng "Ghi chú đăng nhập" là tùy chọn: nếu bạn tự lưu tên đăng nhập và mật khẩu, chúng chỉ nằm trong vùng lưu trữ bảo mật trên thiết bị và chỉ được điền vào trang đăng nhập của Riot khi bạn yêu cầu. Bạn cân nhắc rủi ro khi lưu mật khẩu trên thiết bị dùng chung và có thể xóa ghi chú bất cứ lúc nào.
+- Tính năng "Thông tin đăng nhập đã lưu" là tùy chọn: nếu bạn tự lưu tên đăng nhập và mật khẩu, chúng chỉ nằm trong vùng lưu trữ bảo mật trên thiết bị và chỉ được điền vào trang đăng nhập của Riot khi bạn yêu cầu. Bạn cân nhắc rủi ro khi lưu mật khẩu trên thiết bị dùng chung và có thể xóa thông tin này bất cứ lúc nào.
 - Hãy đăng xuất khỏi Ứng dụng và đổi mật khẩu Riot ngay nếu bạn nghi ngờ thiết bị hoặc tài khoản bị truy cập trái phép.
 - Việc sử dụng Tài khoản Riot luôn phải tuân thủ Điều khoản dịch vụ và các chính sách của Riot Games. Riot Games có thể hạn chế hoặc khóa tài khoản của bạn theo chính sách riêng của họ; chúng tôi không có quyền can thiệp vào các quyết định đó.
 
@@ -50,15 +50,15 @@ Khi sử dụng Ứng dụng, bạn không được:
 
 - Sao chép, sửa đổi, dịch ngược, giải mã, tháo rời, tạo tác phẩm phái sinh hoặc cố gắng trích xuất mã nguồn của Ứng dụng, trừ khi pháp luật bắt buộc cho phép.
 - Bán, cho thuê, cho mượn, phân phối lại, đăng tải lại hoặc khai thác thương mại Ứng dụng hay bất kỳ phần nào của Ứng dụng.
-- Dùng Ứng dụng, bot, script hoặc công cụ tự động để gian lận, can thiệp vào trò chơi, thu thập dữ liệu hàng loạt, spam hàng chờ, hoặc bất kỳ hành vi nào vi phạm chính sách của Riot Games.
-- Truy cập hoặc cố truy cập tài khoản, dữ liệu, máy chủ hay hệ thống mà bạn không được phép; vượt qua giới hạn tần suất, cơ chế bảo mật hoặc kiểm duyệt của Ứng dụng và máy chủ cộng đồng.
+- Dùng Ứng dụng, bot, script (đoạn mã tự chạy) hoặc công cụ tự động để gian lận, can thiệp vào trò chơi, thu thập dữ liệu hàng loạt, spam hàng chờ, hoặc bất kỳ hành vi nào vi phạm chính sách của Riot Games.
+- Truy cập hoặc cố truy cập tài khoản, dữ liệu, máy chủ hay hệ thống mà bạn không được phép; vượt qua giới hạn số lần gửi yêu cầu, cơ chế bảo mật hoặc kiểm duyệt của Ứng dụng và máy chủ Cộng đồng.
 - Mạo danh người khác, cung cấp thông tin sai lệch về danh tính hoặc Riot ID, hoặc sử dụng tài khoản của người khác khi chưa được phép.
-- Phát tán mã độc, gây quá tải, làm gián đoạn hoặc làm suy giảm hoạt động của Ứng dụng, máy chủ cộng đồng hay dịch vụ của bên thứ ba.
+- Phát tán mã độc, gây quá tải, làm gián đoạn hoặc làm suy giảm hoạt động của Ứng dụng, máy chủ Cộng đồng hay dịch vụ của bên thứ ba.
 - Sử dụng Ứng dụng cho mục đích trái pháp luật Việt Nam hoặc pháp luật nơi bạn cư trú.
 
 ## 7. Thao tác trên Tài khoản Riot
 
-Một số tính năng cho phép thay đổi trạng thái Tài khoản Riot của bạn, ví dụ: thay đổi trang bị (loadout), chọn hoặc khóa đặc vụ, tham gia hay rời tổ đội, bắt đầu hoặc hủy tìm trận, rời trận đấu.
+Một số tính năng cho phép thay đổi trạng thái Tài khoản Riot của bạn, ví dụ: đổi trang bị, chọn hoặc khóa đặc vụ, tham gia hay rời tổ đội, bắt đầu hoặc hủy tìm trận, rời trận đấu.
 
 - Các thao tác này chỉ được thực hiện khi chính bạn bấm nút tương ứng; Ứng dụng không tự động thực hiện thay bạn.
 - Với thao tác có thể dẫn đến hình phạt trong trò chơi (ví dụ rời trận, né trận), Ứng dụng sẽ hiển thị cảnh báo và yêu cầu bạn xác nhận.
@@ -68,7 +68,7 @@ Một số tính năng cho phép thay đổi trạng thái Tài khoản Riot c�
 
 ### Xác minh Riot ID
 
-Để dùng Cộng đồng, Ứng dụng xác minh Riot ID của bạn với Riot Games thông qua máy chủ cộng đồng của ValVN như mô tả trong Chính sách quyền riêng tư. Tên hiển thị của bạn trong Cộng đồng là Riot ID đã được xác minh, kèm thẻ người chơi, rank và khu vực.
+Để dùng Cộng đồng, Ứng dụng xác minh Riot ID của bạn với Riot Games thông qua máy chủ Cộng đồng của ValVN, như mô tả trong Chính sách quyền riêng tư. Tên hiển thị của bạn trong Cộng đồng là Riot ID đã được xác minh, kèm thẻ người chơi, rank và khu vực.
 
 ### Trách nhiệm với nội dung
 
@@ -78,7 +78,7 @@ Một số tính năng cho phép thay đổi trạng thái Tài khoản Riot c�
 
 ### Quyền bạn cấp cho chúng tôi
 
-Bạn vẫn là chủ sở hữu Nội dung người dùng của mình. Khi đăng, bạn cấp cho chúng tôi quyền không độc quyền, miễn phí, có hiệu lực trên toàn thế giới để lưu trữ, sao chép kỹ thuật, định dạng lại (ví dụ nén hoặc đổi kích thước ảnh) và hiển thị nội dung đó cho người dùng khác trong Ứng dụng, chỉ nhằm mục đích vận hành Cộng đồng. Quyền này chấm dứt khi nội dung bị xóa khỏi hệ thống, trừ bản sao lưu còn tồn tại trong thời gian ngắn hoặc trường hợp pháp luật yêu cầu lưu giữ.
+Bạn vẫn là chủ sở hữu Nội dung người dùng của mình. Khi đăng, bạn cấp cho chúng tôi quyền không độc quyền, miễn phí, có hiệu lực trên toàn thế giới. Quyền này cho phép chúng tôi lưu trữ, sao chép kỹ thuật, định dạng lại (ví dụ nén hoặc đổi kích thước ảnh) và hiển thị nội dung đó cho người dùng khác trong Ứng dụng, chỉ nhằm mục đích vận hành Cộng đồng. Quyền này chấm dứt khi nội dung bị xóa khỏi hệ thống, trừ bản sao lưu còn tồn tại trong thời gian ngắn hoặc trường hợp pháp luật yêu cầu lưu giữ.
 
 ### Báo cáo và kiểm duyệt
 
@@ -99,10 +99,10 @@ VALORANT, Riot Games cùng tên, hình ảnh, biểu tượng và nội dung tro
 
 - **Riot Games:** đăng nhập, dữ liệu tài khoản, cửa hàng, bộ sưu tập, trận đấu, bạn bè và trò chuyện được lấy trực tiếp từ máy chủ của Riot Games.
 - **valorant-api.com:** tên, hình ảnh và dữ liệu công khai của vật phẩm, đặc vụ, bản đồ, rank do một dự án cộng đồng độc lập cung cấp.
-- **Cloudflare:** mạng chuyển tiếp (Cloudflare Tunnel) cho lưu lượng tới máy chủ cộng đồng do chúng tôi tự vận hành.
+- **Cloudflare:** mạng chuyển tiếp kết nối tới máy chủ Cộng đồng do chúng tôi tự vận hành.
 - **App Store và Google Play:** phân phối Ứng dụng và cập nhật.
 
-Các dịch vụ này có điều khoản và chính sách riêng mà bạn cần tuân thủ. Chúng tôi không kiểm soát và không chịu trách nhiệm về tính sẵn sàng, độ chính xác hay thay đổi của các dịch vụ đó. Nếu Riot Games thay đổi hoặc ngừng cung cấp giao diện kỹ thuật mà Ứng dụng sử dụng, một số tính năng có thể tạm thời hoặc vĩnh viễn không hoạt động.
+Các dịch vụ này có điều khoản và chính sách riêng mà bạn cần tuân thủ. Chúng tôi không kiểm soát và không chịu trách nhiệm về tính sẵn sàng, độ chính xác hay thay đổi của các dịch vụ đó. Nếu Riot Games thay đổi hoặc ngừng cung cấp cách kết nối kỹ thuật mà Ứng dụng dùng để làm việc với Riot, một số tính năng có thể tạm thời hoặc vĩnh viễn không hoạt động.
 
 ## 11. Không phải sản phẩm chính thức của Riot Games
 

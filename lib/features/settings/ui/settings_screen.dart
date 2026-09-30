@@ -16,10 +16,12 @@ import 'sections/preferences_sections.dart';
 /// the Trang chủ and Hồ sơ headers. Route `/settings`.
 ///
 /// Sections: TÀI KHOẢN (ending with "Đăng xuất tất cả tài khoản"), TÙY CHỌN,
-/// THÔNG BÁO, GIAO DIỆN, HỖ TRỢ (server status, session log, feedback),
-/// ỨNG DỤNG, and finally THÔNG TIN with the single "Giới thiệu & pháp lý"
-/// row (docs/design/IA.md). Pull-to-refresh re-measures the cache,
-/// re-reads the notification permission and the server status.
+/// THÔNG BÁO, GIAO DIỆN, HỖ TRỢ (server status, feedback), NÂNG CAO ("Gửi
+/// báo lỗi cho ValVN" and "Xóa dữ liệu tạm", the only technical actions; no
+/// log lines are ever shown), and finally THÔNG TIN with the single "Giới
+/// thiệu & pháp lý" row (docs/design/IA.md, docs/design/VOICE.md §6).
+/// Pull-to-refresh re-measures the temporary data, re-reads the notification
+/// permission and the server status.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 

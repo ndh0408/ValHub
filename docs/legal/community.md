@@ -25,7 +25,7 @@ Cộng đồng ValVN là nơi người chơi VALORANT khoe cửa hàng, bàn chu
 
 - Không quảng bá, chia sẻ hay hỏi mua phần mềm gian lận, hack, macro, công cụ can thiệp trò chơi.
 - Không mua bán, cho thuê, trao đổi tài khoản; không quảng cáo dịch vụ cày thuê (boosting), bán VP hay vật phẩm trái phép.
-- Không spam, đăng lặp lại, quảng cáo hay dẫn link tới trang web, nhóm hoặc dịch vụ thương mại khi chưa được phép.
+- Không spam, đăng lặp lại, quảng cáo hay dẫn liên kết tới trang web, nhóm hoặc dịch vụ thương mại khi chưa được phép.
 
 ## 4. Bảo vệ thông tin cá nhân
 
@@ -33,12 +33,12 @@ Cộng đồng ValVN là nơi người chơi VALORANT khoe cửa hàng, bàn chu
 - Không bao giờ chia sẻ mật khẩu, mã xác thực hay email đăng nhập Riot của bạn. ValVN và đội ngũ kiểm duyệt không bao giờ hỏi những thông tin này.
 - Cẩn thận khi chụp màn hình: hãy che thông tin bạn không muốn công khai.
 
-## 5. Tìm đồng đội (LFG)
+## 5. Tìm đồng đội
 
 - Chỉ đăng khi bạn thực sự đang tìm người, với đúng khu vực, chế độ chơi và số chỗ trống.
 - Mã tổ đội trong bài hiển thị với mọi người xem bài. Bài tự hết hạn sau 30 phút; hãy xóa bài hoặc tắt mã trong trò chơi khi đã đủ người.
 - Không dùng bài tìm đồng đội để spam, quảng cáo hay dẫn dụ người khác vào tổ đội nhằm quấy rối, phá game.
-- Khi vào trận, hãy cư xử như một đồng đội tốt: không cố tình phá trận, không AFK, không toxic.
+- Khi vào trận, hãy cư xử như một đồng đội tốt: không cố tình phá trận, không bỏ mặc đồng đội (AFK), không chửi bới hay công kích ai.
 
 ## 6. Hình ảnh và bình chọn
 

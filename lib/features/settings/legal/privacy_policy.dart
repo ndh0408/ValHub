@@ -9,11 +9,19 @@ const _email = LegalInfo.contactEmail;
 /// Facts must match the code: Riot secrets only in secure storage
 /// (`SecureStore`), the only Riot token that leaves the device goes to
 /// `POST /v1/auth/riot` (docs/community-api.md) after a one-time consent,
-/// no analytics / ads / crash SDK, local notifications only, scrubbed session
-/// log. The community server is a self-hosted Docker container (Node +
-/// SQLite + files on disk) reached through a Cloudflare Tunnel; features the
-/// server does not implement yet (deleting images with a post, data export)
-/// are written as commitments with a response time, never as done.
+/// no analytics / ads / crash SDK, local notifications only, scrubbed error
+/// report (the session log; it leaves the device only when the user picks
+/// "Gửi báo lỗi cho ValVN"). The community server is a self-hosted Docker
+/// container (Node + SQLite + files on disk) reached through a Cloudflare
+/// Tunnel; features the server does not implement yet (deleting images with
+/// a post, data export) are written as commitments with a response time,
+/// never as done.
+///
+/// The text shown to users is deliberately in plain words. Implementation
+/// names (Docker, SQLite, Cloudflare Tunnel, SHA-256 with a secret key) are
+/// not printed, only the facts they stand for: a self-operated server with a
+/// database and files on its disk, Cloudflare only relays the connection,
+/// and the PUUID is stored only as a one-way hash.
 const privacyPolicy = LegalDocument(
   id: 'privacy',
   title: 'Chính sách quyền riêng tư',
@@ -22,21 +30,22 @@ const privacyPolicy = LegalDocument(
   preamble: [
     LegalParagraph(
       'Chính sách này giải thích cách ValVN thu thập, sử dụng, lưu trữ và bảo '
-      'vệ dữ liệu cá nhân của bạn, và các quyền của bạn đối với dữ liệu đó. '
-      'Chính sách được xây dựng theo pháp luật Việt Nam về bảo vệ dữ liệu cá '
-      'nhân (Nghị định 13/2023/NĐ-CP), đồng thời tính đến các quy định bạn có '
-      'thể được hưởng ở nơi bạn sống như GDPR, UK GDPR, CCPA/CPRA hay LGPD '
+      'vệ dữ liệu cá nhân của bạn, cũng như các quyền của bạn đối với dữ liệu '
+      'đó. Chính sách được xây dựng theo pháp luật Việt Nam về bảo vệ dữ liệu '
+      'cá nhân (Nghị định 13/2023/NĐ-CP), đồng thời tính đến các quy định bạn '
+      'có thể được hưởng ở nơi bạn sống, như GDPR, UK GDPR, CCPA/CPRA hay LGPD '
       '(xem mục "Quyền của bạn theo luật nơi bạn sống"). ValVN dành cho người '
       'chơi VALORANT ở mọi quốc gia.',
     ),
     LegalCallout(
-      'Tóm tắt: Phần lớn dữ liệu của bạn chỉ nằm trên thiết bị. Token và '
-      'cookie Riot được lưu trong vùng lưu trữ bảo mật của hệ điều hành và '
-      'không gửi cho chúng tôi, với một ngoại lệ duy nhất: khi bạn lần đầu mở '
-      'Cộng đồng và xác nhận hộp thoại đồng ý một lần, access token được gửi '
-      'tới máy chủ ValVN để xác minh Riot ID rồi bị hủy ngay. Máy chủ không '
-      'lưu PUUID. ValVN không có quảng cáo, không dùng công cụ phân tích hay '
-      'theo dõi và không bán dữ liệu của bạn.',
+      'Tóm tắt: Phần lớn dữ liệu của bạn chỉ nằm trên thiết bị. Dữ liệu đăng '
+      'nhập Riot của bạn được lưu trong vùng lưu trữ bảo mật của hệ điều hành '
+      'và không gửi cho chúng tôi, trừ một trường hợp duy nhất: khi bạn lần '
+      'đầu mở Cộng đồng và xác nhận đồng ý trong hộp thoại hiện ra một lần, '
+      'mã truy cập Riot (access token) được gửi tới máy chủ ValVN để xác minh '
+      'Riot ID, rồi bị hủy ngay. Máy chủ không lưu PUUID (mã định danh người '
+      'chơi của bạn). ValVN không có quảng cáo, không dùng công cụ phân tích '
+      'hay theo dõi và không bán dữ liệu của bạn.',
     ),
   ],
   sections: [
@@ -51,43 +60,47 @@ const privacyPolicy = LegalDocument(
       LegalParagraph(
         'Chính sách áp dụng cho ứng dụng ValVN trên iOS và Android ở mọi quốc '
         'gia, bao gồm các tính năng Cộng đồng. Chính sách không áp dụng cho '
-        'dịch vụ của Riot '
-        'Games, valorant-api.com, Apple, Google hay các bên thứ ba khác; việc '
-        'xử lý dữ liệu của họ tuân theo chính sách riêng của từng bên.',
+        'dịch vụ của Riot Games, valorant-api.com, Apple, Google hay các bên '
+        'thứ ba khác. Mỗi bên xử lý dữ liệu theo chính sách riêng của họ.',
       ),
     ]),
     LegalSection('Dữ liệu được xử lý trên thiết bị của bạn', [
       LegalParagraph(
-        'Các dữ liệu sau được tạo ra hoặc lấy về trong quá trình sử dụng và '
-        'chỉ được lưu trên thiết bị của bạn. Chúng tôi không nhận được các dữ '
-        'liệu này.',
+        'Các dữ liệu dưới đây được tạo ra hoặc tải về khi bạn dùng ứng dụng, '
+        'và chỉ được lưu trên thiết bị của bạn. Chúng tôi không nhận được các '
+        'dữ liệu này.',
       ),
       LegalList([
         LegalItem(
-          'token truy cập, token quyền sở hữu và cookie phiên do Riot cấp sau '
-          'khi bạn đăng nhập trên trang chính thức của Riot. Lưu trong Keychain '
-          '(iOS) hoặc vùng lưu trữ mã hóa được bảo vệ bởi Keystore (Android). '
-          'ValVN không bao giờ thấy mật khẩu bạn nhập vào trang của Riot.',
-          lead: 'Phiên đăng nhập Riot:',
+          'dữ liệu do Riot cấp cho ứng dụng sau khi bạn đăng nhập trên trang '
+          'chính thức của Riot, gồm mã truy cập (access token), mã quyền sở '
+          'hữu (entitlement token) và cookie đăng nhập (tệp giúp Riot nhớ '
+          'rằng bạn đã đăng nhập). Chúng được lưu trong Keychain (iOS) hoặc '
+          'vùng lưu trữ mã hóa do Keystore bảo vệ (Android). ValVN không bao '
+          'giờ thấy mật khẩu bạn nhập vào trang của Riot.',
+          lead: 'Dữ liệu đăng nhập Riot:',
         ),
         LegalItem(
-          'nếu bạn chủ động lưu tên đăng nhập và mật khẩu Riot để đăng nhập '
-          'lại nhanh, ghi chú này chỉ nằm trong vùng lưu trữ bảo mật trên thiết '
-          'bị, không bao giờ được ghi nhật ký hay gửi đi đâu, ngoại trừ được '
-          'điền vào trang đăng nhập chính thức của Riot khi bạn yêu cầu.',
-          lead: 'Ghi chú đăng nhập (tùy chọn):',
+          'nếu bạn tự chọn lưu tên đăng nhập và mật khẩu Riot để đăng nhập lại '
+          'nhanh hơn, thông tin này chỉ nằm trong vùng lưu trữ bảo mật trên '
+          'thiết bị. Nó không bao giờ bị ghi vào báo lỗi hay gửi đi đâu, trừ '
+          'việc được điền vào trang đăng nhập chính thức của Riot khi bạn yêu '
+          'cầu.',
+          lead: 'Thông tin đăng nhập đã lưu (tùy chọn):',
         ),
         LegalItem(
           'Riot ID (tên#tag), mã định danh người chơi (PUUID), khu vực, nền '
-          'tảng, thẻ người chơi, cấp độ và rank của các tài khoản bạn thêm vào, '
-          'dùng để hiển thị danh sách và chuyển đổi tài khoản.',
+          'tảng, thẻ người chơi, cấp độ và rank của các tài khoản bạn thêm '
+          'vào. Ứng dụng dùng chúng để hiển thị danh sách và chuyển đổi giữa '
+          'các tài khoản.',
           lead: 'Danh sách tài khoản:',
         ),
         LegalItem(
           'cửa hàng, ví, bộ sưu tập, trang bị, Battle Pass, hợp đồng, lịch sử '
-          'đấu, rank, trận hiện tại, danh sách bạn bè, trạng thái trực tuyến và '
-          'tin nhắn trò chuyện. Ứng dụng đọc trực tiếp từ máy chủ Riot bằng '
-          'phiên đăng nhập của bạn và có thể lưu bản sao tạm để xem ngoại tuyến.',
+          'đấu, rank, trận hiện tại, danh sách bạn bè, trạng thái trực tuyến '
+          'và tin nhắn trò chuyện. Ứng dụng đọc trực tiếp từ máy chủ của Riot '
+          'bằng đăng nhập Riot của bạn và có thể lưu bản sao tạm để bạn xem '
+          'khi không có mạng.',
           lead: 'Dữ liệu trò chơi:',
         ),
         LegalItem(
@@ -95,62 +108,66 @@ const privacyPolicy = LegalDocument(
           lead: 'Wishlist và cài đặt:',
         ),
         LegalItem(
-          'tên, hình ảnh vật phẩm, đặc vụ, bản đồ từ valorant-api.com và ảnh '
-          'đã tải, lưu tạm để ứng dụng chạy nhanh hơn.',
-          lead: 'Bộ nhớ đệm nội dung:',
+          'tên và hình ảnh vật phẩm, đặc vụ, bản đồ lấy từ valorant-api.com, '
+          'cùng các ảnh đã tải, được lưu tạm để ứng dụng chạy nhanh hơn.',
+          lead: 'Dữ liệu tạm:',
         ),
         LegalItem(
-          'nhật ký kỹ thuật (tên yêu cầu, mã trạng thái, thời gian) giúp chẩn '
-          'đoán lỗi. Nhật ký được lọc để không chứa mật khẩu, token, cookie hay '
-          'ID tài khoản, và chỉ rời khỏi thiết bị khi bạn tự chia sẻ.',
-          lead: 'Nhật ký phiên:',
+          'bản ghi kỹ thuật trên thiết bị về những gì ứng dụng đã làm (tên các '
+          'yêu cầu gửi đi, kết quả và thời gian), dùng để tìm lỗi. Bản ghi '
+          'được lọc để không chứa mật khẩu, dữ liệu đăng nhập Riot hay ID tài '
+          'khoản, và chỉ rời khỏi thiết bị khi bạn tự chọn "Gửi báo lỗi cho '
+          'ValVN" trong Cài đặt > Nâng cao.',
+          lead: 'Báo lỗi:',
         ),
       ]),
     ]),
     LegalSection('Dữ liệu được xử lý trên máy chủ Cộng đồng', [
       LegalParagraph(
-        'Máy chủ Cộng đồng là một máy chủ do nhà phát hành tự vận hành (chạy '
-        'trong container Docker, dữ liệu lưu trong cơ sở dữ liệu SQLite và tệp '
-        'trên ổ đĩa của máy chủ đó). Lưu lượng từ Ứng dụng tới máy chủ đi qua '
-        'mạng của Cloudflare (Cloudflare Tunnel), Cloudflare chỉ chuyển tiếp '
-        'lưu lượng. Chỉ khi bạn sử dụng tính năng Cộng đồng, các dữ liệu sau '
-        'được gửi tới và lưu trên máy chủ này:',
+        'Máy chủ Cộng đồng là máy chủ do nhà phát hành tự vận hành. Dữ liệu '
+        'được lưu trong cơ sở dữ liệu và các tệp trên ổ đĩa của máy chủ đó. '
+        'Kết nối từ Ứng dụng tới máy chủ này đi qua mạng của Cloudflare; '
+        'Cloudflare chỉ chuyển tiếp kết nối. Chỉ khi bạn dùng tính năng Cộng '
+        'đồng, các dữ liệu dưới đây mới được gửi tới và lưu trên máy chủ này:',
       ),
       LegalList([
         LegalItem(
           'Riot ID (tên và tag), khu vực, thẻ người chơi, rank và ngôn ngữ '
-          'ứng dụng do Ứng dụng gửi lên. Đây là thông tin công khai với người '
-          'dùng khác trong Cộng đồng.',
+          'ứng dụng, do Ứng dụng gửi lên. Đây là thông tin công khai với '
+          'người dùng khác trong Cộng đồng.',
           lead: 'Hồ sơ Cộng đồng:',
         ),
         LegalItem(
-          'quốc gia của Tài khoản Riot của bạn (do Riot cung cấp khi xác minh, '
-          'bạn không thể chỉnh sửa), dùng để hiển thị Cộng đồng theo quốc gia.',
+          'quốc gia của Tài khoản Riot của bạn (do Riot cung cấp khi xác '
+          'minh, bạn không thể chỉnh sửa), dùng để hiển thị Cộng đồng theo '
+          'quốc gia.',
           lead: 'Quốc gia:',
         ),
         LegalItem(
-          'một mã băm một chiều (SHA-256 kèm khóa bí mật) được tạo từ PUUID. '
-          'Máy chủ không lưu và không trả về PUUID của bạn.',
+          'một mã băm một chiều (không thể suy ngược ra PUUID) được tạo từ '
+          'PUUID của bạn. Máy chủ không lưu và không trả về PUUID của bạn.',
           lead: 'Mã người dùng:',
         ),
         LegalItem(
-          'nội dung bài viết, hình ảnh bạn tải lên, dữ liệu cửa hàng hoặc Chợ '
-          'Đêm bạn chọn chia sẻ, bình luận, lượt thích và thời điểm đăng.',
+          'nội dung bài viết, hình ảnh bạn tải lên, thông tin cửa hàng hoặc '
+          'Chợ Đêm mà bạn chọn chia sẻ, bình luận, lượt thích và thời điểm '
+          'đăng.',
           lead: 'Bài đăng và bình luận:',
         ),
         LegalItem(
           'số sao, nội dung nhận xét và lượt "hữu ích" bạn dành cho đánh giá '
-          'của người khác, hiển thị công khai cùng Riot ID của bạn.',
+          'của người khác. Những thông tin này hiển thị công khai cùng Riot '
+          'ID của bạn.',
           lead: 'Đánh giá skin:',
         ),
         LegalItem(
           'mã tổ đội, chế độ chơi, khu vực, giới hạn rank, vai trò cần tìm, có '
           'yêu cầu micro hay không, ngôn ngữ, quy mô tổ đội, số chỗ trống, ghi '
-          'chú, trạng thái (mở, đủ người, đang chơi), số lượt bấm vào tổ đội và '
-          'tín hiệu "còn hoạt động" mà Ứng dụng gửi định kỳ khi bài đang mở. Bài '
-          'tự hết hạn 30 phút sau tín hiệu cuối cùng; mỗi người chỉ có một bài '
-          'đang hoạt động.',
-          lead: 'Bài tìm đồng đội (LFG):',
+          'chú, trạng thái (mở, đủ người, đang chơi), số lượt bấm vào tổ đội, '
+          'và tín hiệu "còn hoạt động" mà Ứng dụng gửi định kỳ khi bài đang '
+          'mở. Bài tự hết hạn 30 phút sau tín hiệu cuối cùng. Mỗi người chỉ '
+          'có một bài đang hoạt động.',
+          lead: 'Bài tìm đồng đội:',
         ),
         LegalItem(
           'skin bạn bình chọn, lượt thích và thời điểm thực hiện, dùng để xếp '
@@ -159,21 +176,22 @@ const privacyPolicy = LegalDocument(
         ),
         LegalItem(
           'nội dung bị báo cáo, lý do và người báo cáo (dưới dạng mã người '
-          'dùng), dùng cho kiểm duyệt.',
+          'dùng), dùng để kiểm duyệt.',
           lead: 'Báo cáo vi phạm:',
         ),
         LegalItem(
-          'máy chủ ghi lại phương thức, đường dẫn, mã trạng thái và thời gian '
-          'xử lý của mỗi yêu cầu để vận hành và chẩn đoán lỗi. Địa chỉ IP chỉ '
-          'được dùng dưới dạng mã băm có muối để giới hạn tần suất yêu cầu, '
-          'không được ghi ở dạng đọc được. Cloudflare có thể xử lý địa chỉ IP '
-          'khi chuyển tiếp lưu lượng theo chính sách riêng của họ.',
+          'máy chủ ghi lại loại yêu cầu, đường dẫn, kết quả và thời gian xử '
+          'lý của mỗi yêu cầu để vận hành và tìm lỗi. Địa chỉ IP chỉ được '
+          'dùng dưới dạng mã băm có muối (mã băm một chiều có thêm một chuỗi '
+          'ngẫu nhiên) để giới hạn số lần gửi yêu cầu, và không được ghi ở '
+          'dạng đọc được. Cloudflare có thể xử lý địa chỉ IP khi chuyển tiếp '
+          'kết nối, theo chính sách riêng của họ.',
           lead: 'Nhật ký truy cập của máy chủ:',
         ),
         LegalItem(
-          'hình ảnh bạn đăng được lưu dưới dạng tệp trên ổ đĩa của máy chủ '
-          'Cộng đồng và có thể truy cập qua đường dẫn công khai. Việc xóa ảnh '
-          'được nêu ở mục "Xóa dữ liệu".',
+          'hình ảnh bạn đăng được lưu thành tệp trên ổ đĩa của máy chủ Cộng '
+          'đồng và có thể mở qua một liên kết công khai. Cách xóa ảnh được '
+          'nêu ở mục "Xóa dữ liệu".',
           lead: 'Ảnh tải lên:',
         ),
         LegalItem(
@@ -183,29 +201,31 @@ const privacyPolicy = LegalDocument(
         ),
       ]),
     ]),
-    LegalSection('Token Riot và xác minh Riot ID', [
+    LegalSection('Mã truy cập Riot và xác minh Riot ID', [
       LegalParagraph(
-        'Token và cookie Riot của bạn không bao giờ được gửi cho chúng tôi, với '
-        'một ngoại lệ duy nhất phục vụ tính năng Cộng đồng:',
+        'Dữ liệu đăng nhập Riot của bạn (mã truy cập, mã quyền sở hữu và '
+        'cookie) không bao giờ được gửi cho chúng tôi, trừ một ngoại lệ duy '
+        'nhất phục vụ tính năng Cộng đồng:',
       ),
       LegalList([
         LegalItem(
-          'Ứng dụng chỉ gửi access token khi bạn lần đầu mở tính năng Cộng '
-          'đồng và xác nhận hộp thoại đồng ý một lần (và khi bạn kết nối lại '
-          'sau khi phiên Cộng đồng hết hạn). Nếu bạn không đồng ý, Cộng đồng '
-          'không hoạt động và không có token nào được gửi đi. Token được gửi '
-          'qua kết nối mã hóa HTTPS tới máy chủ ValVN.',
+          'Ứng dụng chỉ gửi mã truy cập Riot (access token) khi bạn lần đầu '
+          'mở tính năng Cộng đồng và xác nhận đồng ý trong hộp thoại hiện ra '
+          'một lần, hoặc khi bạn kết nối lại sau khi lần đăng nhập Cộng đồng '
+          'của bạn hết hạn. Nếu bạn không đồng ý, Cộng đồng không hoạt động '
+          'và không có mã nào được gửi đi. Mã được gửi tới máy chủ ValVN qua '
+          'kết nối mã hóa (HTTPS).',
         ),
         LegalItem(
-          'Máy chủ dùng token này đúng một lần để hỏi máy chủ của Riot Games '
-          'thông tin định danh của bạn (PUUID và Riot ID), sau đó hủy token '
-          'ngay lập tức. Token không được lưu, không được ghi nhật ký và không '
-          'được dùng cho bất kỳ mục đích nào khác.',
+          'Máy chủ dùng mã này đúng một lần để hỏi máy chủ của Riot Games về '
+          'thông tin định danh của bạn (PUUID và Riot ID), rồi hủy mã ngay '
+          'lập tức. Mã không được lưu, không được ghi vào nhật ký của máy '
+          'chủ và không được dùng cho bất kỳ mục đích nào khác.',
         ),
         LegalItem(
-          'Máy chủ cấp cho Ứng dụng một phiên Cộng đồng riêng (hiệu lực 30 '
-          'ngày), được lưu trong vùng lưu trữ bảo mật trên thiết bị và bị xóa '
-          'khi bạn đăng xuất tài khoản.',
+          'Máy chủ cấp cho Ứng dụng một mã đăng nhập Cộng đồng riêng, có hiệu '
+          'lực 30 ngày. Mã này được lưu trong vùng lưu trữ bảo mật trên thiết '
+          'bị và bị xóa khi bạn đăng xuất tài khoản.',
         ),
         LegalItem(
           'Máy chủ Cộng đồng không bao giờ thay mặt bạn thực hiện thao tác nào '
@@ -220,24 +240,24 @@ const privacyPolicy = LegalDocument(
           'tính năng bạn yêu cầu.',
         ),
         LegalItem(
-          'Gửi thông báo cục bộ về cửa hàng, wishlist và Chợ Đêm nếu bạn bật.',
+          'Gửi thông báo ngay trên thiết bị về cửa hàng, wishlist và Chợ Đêm '
+          'nếu bạn bật.',
         ),
         LegalItem(
-          'Vận hành Cộng đồng: xác minh người đăng là chủ Riot ID, hiển thị bài '
-          'đăng, bình luận, bài tìm đồng đội và bảng xếp hạng skin.',
+          'Vận hành Cộng đồng: xác minh người đăng là chủ Riot ID, hiển thị '
+          'bài đăng, bình luận, bài tìm đồng đội và bảng xếp hạng skin.',
         ),
         LegalItem(
-          'Bảo đảm an toàn: chống spam, lạm dụng, gian lận; kiểm duyệt nội dung '
-          'bị báo cáo; giới hạn tần suất.',
+          'Bảo đảm an toàn: chống spam, lạm dụng và gian lận; kiểm duyệt nội '
+          'dung bị báo cáo; giới hạn số lần gửi yêu cầu trong một khoảng thời '
+          'gian.',
         ),
-        LegalItem(
-          'Chẩn đoán và khắc phục lỗi khi bạn chủ động gửi nhật ký phiên.',
-        ),
+        LegalItem('Tìm và sửa lỗi khi bạn chủ động gửi báo lỗi cho ValVN.'),
         LegalItem('Tuân thủ nghĩa vụ theo quy định của pháp luật.'),
       ]),
       LegalParagraph(
-        'Chúng tôi không sử dụng dữ liệu của bạn cho quảng cáo, không lập hồ sơ '
-        'hành vi và không bán, cho thuê hay trao đổi dữ liệu cá nhân.',
+        'Chúng tôi không sử dụng dữ liệu của bạn cho quảng cáo, không lập hồ '
+        'sơ hành vi và không bán, cho thuê hay trao đổi dữ liệu cá nhân.',
       ),
     ]),
     LegalSection('Cơ sở pháp lý', [
@@ -245,8 +265,8 @@ const privacyPolicy = LegalDocument(
         LegalItem(
           'bạn đồng ý khi tiếp tục sử dụng Ứng dụng sau khi được thông báo về '
           'Chính sách này, và đồng ý riêng khi bạn xác nhận hộp thoại kết nối '
-          'Cộng đồng, bật thông báo hay lưu ghi chú đăng nhập. Bạn có thể rút '
-          'lại sự đồng ý bất cứ lúc nào.',
+          'Cộng đồng, bật thông báo hay lưu thông tin đăng nhập. Bạn có thể '
+          'rút lại sự đồng ý bất cứ lúc nào.',
           lead: 'Sự đồng ý của bạn:',
         ),
         LegalItem(
@@ -256,8 +276,8 @@ const privacyPolicy = LegalDocument(
         ),
         LegalItem(
           'bảo vệ Cộng đồng khỏi spam, lạm dụng và gian lận, kiểm duyệt nội '
-          'dung bị báo cáo và duy trì an ninh của máy chủ, với dữ liệu ở mức '
-          'tối thiểu cần thiết.',
+          'dung bị báo cáo và giữ an ninh cho máy chủ, với dữ liệu ở mức tối '
+          'thiểu cần thiết.',
           lead: 'Lợi ích chính đáng:',
         ),
         LegalItem(
@@ -271,9 +291,9 @@ const privacyPolicy = LegalDocument(
       LegalParagraph('Chúng tôi chỉ chia sẻ dữ liệu trong các trường hợp sau:'),
       LegalList([
         LegalItem(
-          'Ứng dụng kết nối trực tiếp tới máy chủ của Riot Games bằng phiên '
-          'đăng nhập của bạn để đọc dữ liệu tài khoản và thực hiện thao tác bạn '
-          'yêu cầu.',
+          'Ứng dụng kết nối trực tiếp tới máy chủ của Riot Games bằng đăng '
+          'nhập Riot của bạn để đọc dữ liệu tài khoản và thực hiện thao tác '
+          'bạn yêu cầu.',
           lead: 'Riot Games:',
         ),
         LegalItem(
@@ -282,21 +302,21 @@ const privacyPolicy = LegalDocument(
           lead: 'valorant-api.com:',
         ),
         LegalItem(
-          'Ứng dụng có thể tải trạng thái máy chủ công khai của Riot và tệp cấu '
-          'hình tĩnh của ValVN; các yêu cầu này không kèm dữ liệu cá nhân.',
+          'Ứng dụng có thể tải trạng thái máy chủ công khai của Riot và tệp '
+          'thiết lập chung của ValVN; các yêu cầu này không kèm dữ liệu cá '
+          'nhân.',
           lead: 'Tệp công khai:',
         ),
         LegalItem(
-          'cung cấp mạng chuyển tiếp (Cloudflare Tunnel) cho lưu lượng tới máy '
-          'chủ Cộng đồng. Cloudflare không lưu dữ liệu Cộng đồng của chúng tôi '
-          'nhưng có thể xử lý dữ liệu kỹ thuật như địa chỉ IP theo chính sách '
-          'riêng của họ.',
+          'cung cấp mạng chuyển tiếp kết nối tới máy chủ Cộng đồng. Cloudflare '
+          'không lưu dữ liệu Cộng đồng của chúng tôi nhưng có thể xử lý dữ '
+          'liệu kỹ thuật như địa chỉ IP theo chính sách riêng của họ.',
           lead: 'Cloudflare, Inc.:',
         ),
         LegalItem(
           'hồ sơ Cộng đồng, bài đăng, hình ảnh, bình luận và bài tìm đồng đội '
-          'của bạn hiển thị với người dùng ValVN khác. Hình ảnh đã đăng có thể '
-          'được truy cập qua đường dẫn công khai.',
+          'của bạn hiển thị với người dùng ValVN khác. Hình ảnh đã đăng có '
+          'thể mở được qua một liên kết công khai.',
           lead: 'Người dùng khác:',
         ),
         LegalItem(
@@ -308,21 +328,21 @@ const privacyPolicy = LegalDocument(
     ]),
     LegalSection('Chuyển dữ liệu qua biên giới', [
       LegalParagraph(
-        'Máy chủ Cộng đồng do nhà phát hành tự vận hành; lưu lượng tới máy chủ '
-        'đi qua mạng toàn cầu của Cloudflare, Inc. nên có thể đi qua nhiều quốc '
-        'gia. Dữ liệu Cộng đồng bạn đăng hiển thị với người dùng ValVN ở mọi '
-        'nơi. Khi bạn sử dụng Ứng dụng, thiết bị của bạn cũng kết nối trực tiếp '
-        'tới máy chủ của Riot Games. Chúng tôi áp dụng các biện pháp bảo vệ phù '
-        'hợp và thực hiện nghĩa vụ liên quan đến chuyển dữ liệu cá nhân qua '
-        'biên giới theo pháp luật Việt Nam và, khi bạn ở nơi có quy định tương '
-        'ứng, theo pháp luật nơi bạn sống.',
+        'Máy chủ Cộng đồng do nhà phát hành tự vận hành. Kết nối tới máy chủ '
+        'này đi qua mạng toàn cầu của Cloudflare, Inc., nên dữ liệu có thể đi '
+        'qua nhiều quốc gia. Dữ liệu Cộng đồng bạn đăng hiển thị với người '
+        'dùng ValVN ở mọi nơi. Khi bạn dùng Ứng dụng, thiết bị của bạn cũng '
+        'kết nối trực tiếp tới máy chủ của Riot Games. Chúng tôi áp dụng các '
+        'biện pháp bảo vệ phù hợp và thực hiện nghĩa vụ liên quan đến việc '
+        'chuyển dữ liệu cá nhân qua biên giới theo pháp luật Việt Nam và, khi '
+        'bạn ở nơi có quy định tương ứng, theo pháp luật nơi bạn sống.',
       ),
     ]),
     LegalSection('Thời gian lưu trữ', [
       LegalList([
         LegalItem(
-          'lưu cho đến khi bạn đăng xuất tài khoản tương ứng, xóa bộ nhớ đệm '
-          'hoặc gỡ Ứng dụng. Bộ nhớ đệm ảnh tự làm mới sau khoảng 30 ngày.',
+          'lưu cho đến khi bạn đăng xuất tài khoản tương ứng, xóa dữ liệu tạm '
+          'hoặc gỡ Ứng dụng. Ảnh lưu tạm tự làm mới sau khoảng 30 ngày.',
           lead: 'Dữ liệu trên thiết bị:',
         ),
         LegalItem(
@@ -337,14 +357,15 @@ const privacyPolicy = LegalDocument(
         ),
         LegalItem(
           'chỉ giữ tối đa 12 tháng để xử lý vi phạm và phòng chống lạm dụng, '
-          'rồi máy chủ tự xóa; báo cáo về nội dung đã bị xóa cũng bị xóa, và '
+          'rồi máy chủ tự xóa. Báo cáo về nội dung đã bị xóa cũng bị xóa, và '
           'báo cáo do chính bạn gửi được ẩn danh khi bạn xóa dữ liệu Cộng '
           'đồng.',
           lead: 'Báo cáo vi phạm:',
         ),
         LegalItem(
-          'chỉ mã băm có muối phục vụ giới hạn tần suất; nhật ký kỹ thuật chỉ '
-          'giữ trong thời gian cần để chẩn đoán lỗi và bảo mật.',
+          'chỉ giữ mã băm có muối (của địa chỉ IP) để giới hạn số lần gửi yêu '
+          'cầu; nhật ký kỹ thuật chỉ được giữ trong thời gian cần thiết để '
+          'tìm lỗi và bảo mật.',
           lead: 'Nhật ký truy cập của máy chủ:',
         ),
         LegalItem(
@@ -354,7 +375,7 @@ const privacyPolicy = LegalDocument(
         ),
         LegalItem(
           'hết hiệu lực sau 30 ngày và bị xóa khỏi thiết bị khi bạn đăng xuất.',
-          lead: 'Phiên Cộng đồng:',
+          lead: 'Mã đăng nhập Cộng đồng:',
         ),
       ]),
     ]),
@@ -362,14 +383,15 @@ const privacyPolicy = LegalDocument(
       LegalSubheading('Trên thiết bị'),
       LegalList([
         LegalItem(
-          'Đăng xuất một tài khoản trong Cài đặt sẽ xóa token, cookie, ghi chú '
-          'đăng nhập, phiên Cộng đồng, dữ liệu đã lưu tạm và thông báo đã lên '
-          'lịch của tài khoản đó khỏi thiết bị. Wishlist được giữ lại để dùng '
-          'khi bạn đăng nhập lại; bạn có thể tự xóa từng mục.',
+          'Đăng xuất một tài khoản trong Cài đặt sẽ xóa khỏi thiết bị dữ liệu '
+          'đăng nhập Riot (mã truy cập và cookie), thông tin đăng nhập đã '
+          'lưu, mã đăng nhập Cộng đồng, dữ liệu tạm và thông báo đã lên lịch '
+          'của tài khoản đó. Wishlist được giữ lại để dùng khi bạn đăng nhập '
+          'lại; bạn có thể tự xóa từng mục.',
         ),
         LegalItem(
-          '"Xóa bộ nhớ đệm" trong Cài đặt xóa ảnh và dữ liệu ngoại tuyến; "Xóa '
-          'nhật ký" xóa nhật ký phiên.',
+          '"Xóa dữ liệu tạm" trong Cài đặt > Nâng cao xóa ảnh, dữ liệu đã tải '
+          'để xem khi không có mạng và báo lỗi đã ghi trên thiết bị.',
         ),
         LegalItem(
           'Gỡ Ứng dụng sẽ xóa toàn bộ dữ liệu của Ứng dụng trên thiết bị.',
@@ -384,18 +406,18 @@ const privacyPolicy = LegalDocument(
         LegalItem(
           'Để xóa toàn bộ dữ liệu Cộng đồng gắn với Riot ID của bạn, vào Cài '
           'đặt > "Dữ liệu Cộng đồng của bạn" > "Xóa dữ liệu Cộng đồng của '
-          'tôi". Máy chủ xóa vĩnh viễn bài đăng, bình luận, đánh giá, lượt '
-          'thích, bình chọn, bài tìm đồng đội, ảnh và bản ghi tài khoản Cộng '
-          'đồng của bạn; việc này không thể hoàn tác. Bạn cũng có thể gửi '
-          'email tới $_email kèm Riot ID; chúng tôi có thể yêu cầu xác minh '
-          'bạn là chủ tài khoản và xử lý trong vòng 30 ngày.',
+          'tôi". Máy chủ sẽ xóa vĩnh viễn bài đăng, bình luận, đánh giá, lượt '
+          'thích, bình chọn, bài tìm đồng đội, ảnh và tài khoản Cộng đồng của '
+          'bạn. Việc này không thể hoàn tác. Bạn cũng có thể gửi email tới '
+          '$_email kèm Riot ID; chúng tôi có thể yêu cầu xác minh bạn là chủ '
+          'tài khoản và xử lý trong vòng 30 ngày.',
         ),
         LegalItem(
           'Hình ảnh: tệp ảnh bị xóa cùng bài đăng hoặc tài khoản. Ảnh của nội '
-          'dung bị ẩn vì báo cáo được cách ly khỏi truy cập công khai và bị '
-          'xóa sau 30 ngày; ảnh tải lên nhưng không được dùng bị xóa sau 24 '
-          'giờ. Máy chủ gỡ thông tin vị trí và siêu dữ liệu (EXIF) khỏi ảnh '
-          'khi tải lên.',
+          'dung bị ẩn vì bị báo cáo sẽ không còn truy cập công khai được và bị '
+          'xóa sau 30 ngày; ảnh đã tải lên nhưng không được dùng bị xóa sau 24 '
+          'giờ. Khi bạn tải ảnh lên, máy chủ gỡ thông tin vị trí và các dữ '
+          'liệu ẩn trong ảnh (siêu dữ liệu EXIF).',
         ),
         LegalItem(
           'Nội dung đã xóa có thể còn trong bản sao lưu tối đa 14 ngày trước '
@@ -409,41 +431,42 @@ const privacyPolicy = LegalDocument(
     ]),
     LegalSection('Thông báo và tác vụ nền', [
       LegalParagraph(
-        'ValVN chỉ dùng thông báo cục bộ do chính thiết bị tạo ra; chúng tôi '
-        'không vận hành máy chủ gửi thông báo đẩy và không thu thập mã thiết '
-        'bị. Ứng dụng đăng ký với hệ điều hành một tác vụ nền định kỳ chạy '
-        'ngay trên thiết bị để giữ phiên đăng nhập còn hiệu lực và, nếu bạn '
-        'bật, đọc cửa hàng trực tiếp từ Riot để báo skin trong wishlist hoặc '
-        'Chợ Đêm. Bạn có thể tắt thông báo trong Cài đặt của Ứng dụng hoặc của '
-        'hệ điều hành.',
+        'ValVN chỉ dùng thông báo cục bộ, tức là thông báo do chính thiết bị '
+        'của bạn tạo ra. Chúng tôi không vận hành máy chủ gửi thông báo đẩy và '
+        'không thu thập mã thiết bị. Ứng dụng đăng ký với hệ điều hành một '
+        'tác vụ chạy nền định kỳ, chạy ngay trên thiết bị, để giữ đăng nhập '
+        'Riot của bạn còn hiệu lực và, nếu bạn bật, đọc cửa hàng trực tiếp '
+        'từ Riot để báo skin trong wishlist hoặc Chợ Đêm. Bạn có thể tắt '
+        'thông báo trong Cài đặt của Ứng dụng hoặc của hệ điều hành.',
       ),
     ]),
     LegalSection('Phân tích, quảng cáo và theo dõi', [
       LegalParagraph(
-        'ValVN không tích hợp công cụ phân tích, báo cáo sự cố tự động, quảng '
-        'cáo hay theo dõi của bên thứ ba, không dùng mã định danh quảng cáo và '
-        'không theo dõi bạn giữa các ứng dụng hay trang web. Nếu điều này thay '
-        'đổi trong tương lai, chúng tôi sẽ cập nhật Chính sách và xin sự đồng ý '
-        'của bạn khi pháp luật yêu cầu.',
+        'ValVN không tích hợp công cụ phân tích, công cụ tự động báo cáo sự '
+        'cố, quảng cáo hay công cụ theo dõi của bên thứ ba. ValVN không dùng '
+        'mã định danh quảng cáo và không theo dõi bạn giữa các ứng dụng hay '
+        'trang web. Nếu điều này thay đổi trong tương lai, chúng tôi sẽ cập '
+        'nhật Chính sách và xin sự đồng ý của bạn khi pháp luật yêu cầu.',
       ),
     ]),
     LegalSection('Bảo mật dữ liệu', [
       LegalList([
         LegalItem(
-          'Thông tin bí mật (token, cookie, ghi chú đăng nhập, phiên Cộng đồng) '
-          'chỉ được lưu trong Keychain hoặc Keystore của hệ điều hành và được '
-          'xóa khi cài lại Ứng dụng.',
+          'Thông tin bí mật (dữ liệu đăng nhập Riot, thông tin đăng nhập đã '
+          'lưu, mã đăng nhập Cộng đồng) chỉ được lưu trong vùng lưu trữ bảo '
+          'mật của hệ điều hành (Keychain hoặc Keystore) và được xóa khi cài '
+          'lại Ứng dụng.',
         ),
-        LegalItem('Mọi kết nối mạng đều được mã hóa bằng HTTPS/TLS.'),
+        LegalItem('Mọi kết nối mạng đều được mã hóa (HTTPS/TLS).'),
         LegalItem(
-          'Nhật ký được lọc tự động để loại bỏ token, cookie, mật khẩu và ID '
-          'tài khoản.',
+          'Báo lỗi được lọc tự động để loại bỏ dữ liệu đăng nhập Riot, mật '
+          'khẩu và ID tài khoản.',
         ),
         LegalItem(
-          'Máy chủ Cộng đồng chỉ lưu mã băm của PUUID, giới hạn tần suất yêu '
-          'cầu (dựa trên mã băm có muối của địa chỉ IP), chỉ cho phép bạn xóa '
-          'nội dung của chính mình và giữ khóa bí mật trong cấu hình máy chủ, '
-          'không đưa vào mã nguồn.',
+          'Máy chủ Cộng đồng chỉ lưu mã băm một chiều của PUUID; giới hạn số '
+          'lần gửi yêu cầu (dựa trên mã băm có muối của địa chỉ IP); chỉ cho '
+          'phép bạn xóa nội dung của chính mình; và giữ khóa bí mật trong '
+          'phần thiết lập riêng của máy chủ, không đưa vào mã nguồn.',
         ),
         LegalItem(
           'Chúng tôi chỉ thu thập dữ liệu ở mức tối thiểu cần thiết cho tính '
@@ -519,8 +542,8 @@ const privacyPolicy = LegalDocument(
         'tới $_email. Chúng tôi xử lý yêu cầu trong vòng 30 ngày và có thể cần '
         'xác minh danh tính của bạn trước khi xử lý. Bạn cũng có thể tự tải '
         'bản sao dữ liệu Cộng đồng của mình (tệp JSON) tại Cài đặt > "Dữ liệu '
-        'Cộng đồng của bạn" > "Tải dữ liệu của tôi", và tự xóa chúng ngay '
-        'tại đó.',
+        'Cộng đồng của bạn" > "Tải dữ liệu của tôi", và tự xóa dữ liệu đó '
+        'ngay tại đây.',
       ),
     ]),
     LegalSection('Quyền của bạn theo luật nơi bạn sống', [

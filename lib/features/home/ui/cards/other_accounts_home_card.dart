@@ -97,8 +97,8 @@ class _AccountRow extends ConsumerWidget {
     final account = row.account;
     final activity = row.activity;
     final meta = [
-      account.region.toUpperCase(),
       if (account.level != null) AccountStrings.levelShort(account.level!),
+      AccountStrings.regionName(account.region),
     ].join(HomeStrings.dot);
     final needsLogin = account.needsLogin;
     final subtitle = needsLogin

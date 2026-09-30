@@ -18,5 +18,5 @@ abstract final class NotificationStrings {
 
   static const sessionExpiredTitle = 'Cần đăng nhập lại';
   static String sessionExpiredBody(String account) =>
-      'Phiên của $account đã hết hạn, thông báo wishlist tạm dừng.';
+      'Đăng nhập lại $account để tiếp tục nhận thông báo wishlist.';
 }

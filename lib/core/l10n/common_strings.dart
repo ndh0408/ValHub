@@ -3,7 +3,7 @@
 /// Feature-specific copy lives in `lib/features/<f>/<f>_strings.dart`.
 abstract final class CommonStrings {
   static const appName = 'ValVN';
-  static const tagline = 'Trợ thủ Valorant của bạn';
+  static const tagline = 'Trợ thủ VALORANT của bạn';
 
   // Navigation (VF §8.1)
   static const tabHome = 'Trang chủ';
@@ -51,42 +51,47 @@ abstract final class CommonStrings {
   // States
   static const loading = 'Đang tải…';
   static const pullToRefresh = 'Kéo để làm mới';
-  static const noData = 'Không có dữ liệu';
-  static const emptyGeneric = 'Chưa có dữ liệu.';
-  static const copied = 'Đã sao chép!';
-  static const unknownItem = 'Vật phẩm không xác định';
+  static const noData = 'Chưa có gì để xem';
+  static const emptyGeneric = 'Chưa có gì ở đây.';
+  static const copied = 'Đã sao chép';
+  static const unknownItem = 'Vật phẩm chưa rõ tên';
   static const estimatePrefix = '≈';
   static const dash = '–';
 
   /// "Cập nhật lúc 14:05" (the time part is already formatted).
   static String updatedAt(String time) => 'Cập nhật lúc $time';
 
-  /// "Đang ngoại tuyến — hiển thị dữ liệu đã lưu (14:05)."
+  /// "Không có mạng — đang hiển thị bản đã lưu (14:05)."
   static String offlineCached(String time) =>
-      'Đang ngoại tuyến — hiển thị dữ liệu đã lưu ($time).';
+      'Không có mạng — đang hiển thị bản đã lưu ($time).';
 
-  // Errors (VF §8.13, riot-auth §3.5)
-  static const errorGeneric = 'Đã xảy ra lỗi. Vui lòng thử lại.';
+  // Errors (VF §8.13, riot-auth §3.5): what happened + what to do, never a
+  // status code (docs/design/VOICE.md §5.1).
+  static const errorGeneric = 'Có gì đó trục trặc. Hãy thử lại.';
   static const errorTimeout =
       'Riot phản hồi quá lâu. Kiểm tra kết nối rồi thử lại.';
-  static const errorNetwork = 'Không thể kết nối. Kiểm tra mạng rồi thử lại.';
-  static const errorTransient =
-      'Máy chủ Riot đang bận. Vui lòng thử lại sau ít phút.';
+  static const errorNetwork =
+      'Không kết nối được mạng. Kiểm tra Wi-Fi hoặc dữ liệu di động rồi thử lại.';
+  static const errorTransient = 'Riot đang bận. Hãy thử lại sau ít phút.';
   static String errorTransientRetryIn(String duration) =>
-      'Máy chủ Riot đang bận. Thử lại sau $duration.';
+      'Riot đang bận. Hãy thử lại sau $duration.';
   static const errorMaintenance =
-      'Máy chủ VALORANT đang bảo trì. Vui lòng thử lại sau.';
+      'Máy chủ VALORANT đang bảo trì. Hãy quay lại sau.';
   static const errorNeedsLogin =
-      'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
+      'Đăng nhập Riot của bạn đã hết hạn. Hãy đăng nhập lại để tiếp tục.';
   static const errorNeedsLoginTitle = 'Cần đăng nhập lại';
-  static const errorNotFound = 'Không tìm thấy dữ liệu.';
+  static const errorNotFound = 'Không tìm thấy nội dung này.';
+
+  /// [status] is deliberately not shown to the player; it stays in the
+  /// session log.
   static String errorApi(int status) =>
-      'Riot trả về lỗi ($status). Vui lòng thử lại.';
+      'Riot đang gặp trục trặc. Hãy thử lại sau ít phút.';
   static const errorContentUnavailable =
-      'Không tải được dữ liệu vật phẩm. Kiểm tra mạng rồi thử lại.';
-  static const errorNoAccount = 'Chưa có tài khoản nào được đăng nhập.';
-  static const pageNotFound = 'Không tìm thấy trang này.';
-  static const goHome = 'Về trang chính';
+      'Không tải được thông tin skin, đặc vụ và bản đồ. Kiểm tra mạng rồi thử '
+      'lại.';
+  static const errorNoAccount = 'Bạn chưa đăng nhập tài khoản nào.';
+  static const pageNotFound = 'Không tìm thấy màn hình này.';
+  static const goHome = 'Về Trang chủ';
 
   // Maintenance banner
   static const maintenanceTitle = 'Bảo trì máy chủ';
@@ -162,7 +167,7 @@ abstract final class CommonStrings {
   static const priceOverrideSave = 'Lưu giá';
   static const priceOverrideRemove = 'Xóa giá đã nhập';
   static const priceOverrideInvalidCurrency =
-      'Nhập mã tiền tệ gồm 3 chữ cái (ISO 4217).';
+      'Nhập mã tiền tệ gồm 3 chữ cái, ví dụ VND hoặc USD.';
   static const priceOverrideInvalidNumber = 'Nhập một số lớn hơn 0.';
   static const priceOverrideSaved = 'Đã lưu giá gói VP của bạn.';
   static const priceOverrideRemoved = 'Đã xóa giá bạn nhập.';

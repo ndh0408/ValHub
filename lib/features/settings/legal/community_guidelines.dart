@@ -71,8 +71,8 @@ const communityGuidelines = LegalDocument(
           'cày thuê (boosting), bán VP hay vật phẩm trái phép.',
         ),
         LegalItem(
-          'Không spam, đăng lặp lại, quảng cáo hay dẫn link tới trang web, nhóm '
-          'hoặc dịch vụ thương mại khi chưa được phép.',
+          'Không spam, đăng lặp lại, quảng cáo hay dẫn liên kết tới trang web, '
+          'nhóm hoặc dịch vụ thương mại khi chưa được phép.',
         ),
       ]),
     ]),
@@ -92,7 +92,7 @@ const communityGuidelines = LegalDocument(
         ),
       ]),
     ]),
-    LegalSection('Tìm đồng đội (LFG)', [
+    LegalSection('Tìm đồng đội', [
       LegalList([
         LegalItem(
           'Chỉ đăng khi bạn thực sự đang tìm người, với đúng khu vực, chế độ '
@@ -107,8 +107,8 @@ const communityGuidelines = LegalDocument(
           'vào tổ đội nhằm quấy rối, phá game.',
         ),
         LegalItem(
-          'Khi vào trận, hãy cư xử như một đồng đội tốt: không cố tình phá trận, '
-          'không AFK, không toxic.',
+          'Khi vào trận, hãy cư xử như một đồng đội tốt: không cố tình phá '
+          'trận, không bỏ mặc đồng đội (AFK), không chửi bới hay công kích ai.',
         ),
       ]),
     ]),

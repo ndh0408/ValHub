@@ -112,8 +112,8 @@ abstract final class ProfileStrings {
   static String recentForm(int w, int l) =>
       'Phong độ gần đây: $w thắng – $l thua';
   static const rankUpFootnote =
-      'Ước tính dựa trên các trận xếp hạng gần đây, chưa tính giáp hạng và '
-      'trận phân hạng.';
+      'Ước tính dựa trên các trận xếp hạng gần đây, chưa tính các trận phân '
+      'hạng và cơ chế bảo vệ xuống hạng.';
   static const rankUpUnranked =
       'Hãy hoàn thành các trận phân hạng để dùng tính năng tính toán lên hạng.';
   static const rankUpImmortal =
@@ -270,10 +270,10 @@ abstract final class ProfileStrings {
   /// "7 ngày qua".
   static String lastDays(int n) => '$n ngày qua';
 
-  /// "Ngày tính theo giờ trên máy (UTC+7)".
+  /// "Ngày tính theo giờ thiết bị (UTC+7)".
   static String dayBoundary(String zone) => 'Ngày tính theo $zone';
 
-  /// The device time zone: "giờ trên máy (UTC+9)", "giờ trên máy
+  /// The device time zone: "giờ thiết bị (UTC+9)", "giờ thiết bị
   /// (UTC−3:30)".
   static String timeZoneLabel(Duration offset) {
     final sign = offset.isNegative ? '−' : '+';
@@ -283,7 +283,7 @@ abstract final class ProfileStrings {
     final utc = m == 0
         ? 'UTC$sign$h'
         : 'UTC$sign$h:${m.toString().padLeft(2, '0')}';
-    return 'giờ trên máy ($utc)';
+    return 'giờ thiết bị ($utc)';
   }
 
   /// "5 ngày có trận".

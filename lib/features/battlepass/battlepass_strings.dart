@@ -110,7 +110,7 @@ abstract final class BattlePassStrings {
       'Cột mốc hôm nay chưa sẵn sàng. Hãy vào game để bắt đầu ngày mới.';
   static const renewButton = 'Làm mới cột mốc';
   static const renewDone = 'Đã làm mới cột mốc hằng ngày.';
-  static const renewFailed = 'Không thể làm mới cột mốc. Vui lòng thử lại sau.';
+  static const renewFailed = 'Không thể làm mới cột mốc. Hãy thử lại sau.';
 
   // Weekly missions (P3)
   static const weeklyMissions = 'Nhiệm vụ hằng tuần';
@@ -121,7 +121,7 @@ abstract final class BattlePassStrings {
 
   /// "+38.400 XP".
   static String xpReward(String xp) => '+$xp XP';
-  static const unknownMission = 'Nhiệm vụ mới (đang cập nhật dữ liệu)';
+  static const unknownMission = 'Nhiệm vụ mới (chưa có mô tả)';
   static const missionDone = 'Đã hoàn thành';
 
   /// "2/3 hoàn thành".

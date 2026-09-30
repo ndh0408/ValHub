@@ -7,17 +7,18 @@ import 'package:valvn/core/accounts/account_providers.dart';
 import 'package:valvn/core/auth/auth_routes.dart';
 import 'package:valvn/core/l10n/account_strings.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
+import 'package:valvn/core/logging/session_log.dart';
 import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/core/settings/app_settings.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/theme/app_theme.dart';
+import 'package:valvn/core/util/clock.dart';
 import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/providers/consent_providers.dart';
 import 'package:valvn/features/settings/legal/legal_documents.dart';
 import 'package:valvn/features/settings/settings_routes.dart';
 import 'package:valvn/features/settings/settings_strings.dart';
 import 'package:valvn/features/settings/ui/legal_document_screen.dart';
-import 'package:valvn/features/settings/ui/session_log_screen.dart';
 
 import '../../../helpers/test_prefs.dart';
 import '../settings_fakes.dart';
@@ -97,8 +98,9 @@ void main() {
       expect(find.text('Player2#VN'), findsOneWidget);
       // Exactly one active marker (the first account is active by default).
       expect(find.byIcon(Icons.check), findsOneWidget);
-      expect(find.text(SettingsStrings.version('1.2.3')), findsOneWidget);
-      expect(find.text(SettingsStrings.buildNumber('42')), findsOneWidget);
+      // The version and build live on the About screen only.
+      expect(find.text(SettingsStrings.version('1.2.3')), findsNothing);
+      expect(find.text(SettingsStrings.buildNumber('42')), findsNothing);
       expect(find.text('5,0 MB'), findsOneWidget);
       // The Riot disclaimer lives in the "Giới thiệu & pháp lý" hub now.
       expect(find.text(CommonStrings.riotDisclaimer), findsNothing);
@@ -447,7 +449,7 @@ void main() {
     });
   });
 
-  group('ỨNG DỤNG and THÔNG TIN', () {
+  group('NÂNG CAO and THÔNG TIN', () {
     testWidgets('clearing the cache reports the freed size', (tester) async {
       await pumpSettings(tester, accounts: [testAccount(1)]);
 
@@ -471,12 +473,111 @@ void main() {
       await _drainSnackBars(tester);
     });
 
-    testWidgets('"Xuất nhật ký phiên" opens the session log', (tester) async {
+    testWidgets('"Nâng cao" holds exactly the report and the temp data', (
+      tester,
+    ) async {
+      await pumpSettings(tester, accounts: [testAccount(1)]);
+
+      expect(find.text(SettingsStrings.exportLog), findsOneWidget);
+      expect(find.text(SettingsStrings.exportLogSubtitle), findsOneWidget);
+      expect(find.text(SettingsStrings.clearCache), findsOneWidget);
+      // No log viewer, no HTTP filter, no raw ids on screen.
+      expect(find.text('HTTP'), findsNothing);
+    });
+
+    testWidgets('sending a bug report shares a file, not text on screen', (
+      tester,
+    ) async {
+      env.log = SessionLog(clock: FixedClock(DateTime(2026, 9, 28, 14, 5, 9)))
+        ..add('http.get', status: 200);
       await pumpSettings(tester, accounts: [testAccount(1)]);
 
       await tester.tap(find.text(SettingsStrings.exportLog));
       await tester.pumpAndSettle();
-      expect(find.byType(SessionLogScreen), findsOneWidget);
+
+      expect(env.reports, hasLength(1));
+      final file = env.reports.single;
+      expect(
+        file.fileName,
+        matches(RegExp(r'^valvn-bao-loi-\d{4}-\d{2}-\d{2}\.txt$')),
+      );
+      expect(
+        file.text,
+        startsWith(
+          SettingsStrings.logFileHeader(CommonStrings.appName, '1.2.3'),
+        ),
+      );
+      expect(file.text, contains('http.get'));
+      expect(env.shared, isEmpty);
+      // Nothing that looks like a log line is shown in the app.
+      expect(find.textContaining('http.get'), findsNothing);
+    });
+
+    testWidgets('with nothing recorded the report is not shared', (
+      tester,
+    ) async {
+      await pumpSettings(tester, accounts: [testAccount(1)]);
+
+      await tester.tap(find.text(SettingsStrings.exportLog));
+      await tester.pumpAndSettle();
+
+      expect(env.reports, isEmpty);
+      expect(find.text(SettingsStrings.exportLogEmpty), findsOneWidget);
+      await _drainSnackBars(tester);
+    });
+
+    testWidgets('a failing share sheet shows a plain message', (tester) async {
+      env.log = SessionLog()..add('http.get', status: 200);
+      env.reportShareFails = true;
+      await pumpSettings(tester, accounts: [testAccount(1)]);
+
+      await tester.tap(find.text(SettingsStrings.exportLog));
+      await tester.pumpAndSettle();
+
+      expect(find.text(SettingsStrings.logShareFailed), findsOneWidget);
+      await _drainSnackBars(tester);
+    });
+
+    testWidgets('clearing temporary data also clears the recorded report', (
+      tester,
+    ) async {
+      env.log = SessionLog()..add('http.get', status: 200);
+      await pumpSettings(tester, accounts: [testAccount(1)]);
+      expect(env.log.entries, isNotEmpty);
+
+      await tester.tap(find.text(SettingsStrings.clearCache));
+      await tester.pumpAndSettle();
+
+      expect(env.log.entries, isEmpty);
+      await _drainSnackBars(tester);
+    });
+
+    testWidgets('an old /settings/log link goes to Settings, not an error', (
+      tester,
+    ) async {
+      _smallPhoneTallSurface(tester);
+      await seedAccounts(prefs, [testAccount(1)]);
+      final router = GoRouter(
+        initialLocation: SettingsRoutes.log,
+        routes: [...settingsBranchRoutes, ...settingsTopLevelRoutes],
+      );
+      container = ProviderContainer.test(overrides: env.overrides);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp.router(
+            theme: buildDarkTheme(),
+            routerConfig: router,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        router.routerDelegate.currentConfiguration.uri.path,
+        SettingsRoutes.root,
+      );
+      expect(find.text(SettingsStrings.title), findsWidgets);
     });
 
     testWidgets('feedback opens the GitHub page; failures are reported', (

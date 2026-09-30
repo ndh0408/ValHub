@@ -30,21 +30,22 @@ abstract final class AccountStrings {
   static const statusUnknown = 'Chưa rõ trạng thái';
   static String onlineCount(int count) => '$count đang trực tuyến';
 
-  // Login note: the user's own Riot username / password per account
-  static const loginNote = 'Ghi chú đăng nhập';
-  static const loginNoteEmpty = 'Chưa có ghi chú đăng nhập';
+  // Saved login details ("login note"): the user's own Riot username and
+  // password per account, kept on this device only.
+  static const loginNote = 'Thông tin đăng nhập';
+  static const loginNoteEmpty = 'Chưa lưu thông tin đăng nhập';
   static const loginNoteHint =
-      'Chỉ lưu trên thiết bị này, trong bộ nhớ bảo mật. Dùng để xem lại hoặc '
-      'điền nhanh khi đăng nhập lại.';
+      'Chỉ lưu trên thiết bị này, được khóa an toàn. Dùng để xem lại hoặc điền '
+      'nhanh khi bạn đăng nhập lại.';
   static const loginNoteUsername = 'Tên đăng nhập Riot';
   static const loginNotePassword = 'Mật khẩu';
   static const showPassword = 'Hiện mật khẩu';
   static const hidePassword = 'Ẩn mật khẩu';
   static const copyUsername = 'Sao chép tên đăng nhập';
   static const copyPassword = 'Sao chép mật khẩu';
-  static const loginNoteSaved = 'Đã lưu ghi chú đăng nhập';
-  static const loginNoteDeleted = 'Đã xóa ghi chú đăng nhập';
-  static const deleteLoginNote = 'Xóa ghi chú';
+  static const loginNoteSaved = 'Đã lưu thông tin đăng nhập';
+  static const loginNoteDeleted = 'Đã xóa thông tin đăng nhập';
+  static const deleteLoginNote = 'Xóa thông tin';
   static const deleteLoginNoteConfirm =
       'Xóa tên đăng nhập và mật khẩu đã lưu của tài khoản này?';
 
@@ -52,10 +53,10 @@ abstract final class AccountStrings {
   static const quickFill = 'Điền nhanh';
   static const quickFillTitle = 'Điền tài khoản đã lưu';
   static const quickFillSubtitle =
-      'Chọn ghi chú đăng nhập để điền vào trang Riot';
-  static const quickFillDone = 'Đã điền, hãy bấm Đăng nhập.';
+      'Chọn tài khoản để điền vào trang đăng nhập Riot';
+  static const quickFillDone = 'Đã điền xong. Hãy bấm Đăng nhập.';
   static const quickFillNotReady =
-      'Chưa thấy ô đăng nhập. Đợi trang tải xong rồi thử lại.';
+      'Trang đăng nhập chưa tải xong. Đợi một chút rồi thử lại.';
   static const unknownPlayer = 'Người chơi';
 
   // Platforms (A8)
@@ -86,5 +87,5 @@ abstract final class AccountStrings {
   // Switcher sheet (S05)
   static String accountCount(int count, int max) => '$count/$max tài khoản';
   static const manageHint =
-      'Xóa tài khoản hoặc sửa ghi chú đăng nhập trong Cài đặt.';
+      'Xóa tài khoản hoặc sửa thông tin đăng nhập trong Cài đặt.';
 }
