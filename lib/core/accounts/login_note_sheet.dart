@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/services.dart' show Clipboard, ClipboardData;
+import 'secret_access.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -34,17 +35,42 @@ class LoginNoteSheet extends ConsumerStatefulWidget {
   ConsumerState<LoginNoteSheet> createState() => _LoginNoteSheetState();
 }
 
-class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet> {
+class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
+    with WidgetsBindingObserver {
   final _username = TextEditingController();
   final _password = TextEditingController();
   bool _obscure = true;
   bool _loaded = false;
   bool _saving = false;
+  bool _opened = false;
 
   String get _puuid => widget.account.puuid;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!_opened) return;
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
+      _username.clear();
+      _password.clear();
+      _loaded = false;
+      _obscure = true;
+      _opened = false;
+      ref.invalidate(loginNoteProvider(_puuid));
+      if (mounted) setState(() {});
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _username.dispose();
     _password.dispose();
     super.dispose();
@@ -59,7 +85,8 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet> {
 
   Future<void> _copy(String text) async {
     if (text.isEmpty) return;
-    await Clipboard.setData(ClipboardData(text: text));
+    if (!await ref.read(secretUnlockProvider)() || !mounted) return;
+    await ref.read(secretClipboardProvider).copy(text);
     if (mounted) showAppSnackBar(context, CommonStrings.copied);
   }
 
@@ -103,6 +130,22 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    if (!_opened) {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: FilledButton(
+          onPressed: () async {
+            ref.invalidate(loginNoteProvider(_puuid));
+            final note = await ref.read(loginNoteProvider(_puuid).future);
+            if (mounted) {
+              _fill(note);
+              setState(() => _opened = true);
+            }
+          },
+          child: const Text(AccountStrings.loginNoteLocked),
+        ),
+      );
+    }
     final async = ref.watch(loginNoteProvider(_puuid));
     if (async.hasValue) _fill(async.value);
     final hasNote = async.value != null;
@@ -163,7 +206,12 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet> {
                       tooltip: _obscure
                           ? AccountStrings.showPassword
                           : AccountStrings.hidePassword,
-                      onPressed: () => setState(() => _obscure = !_obscure),
+                      onPressed: () async {
+                        if (!_obscure ||
+                            await ref.read(secretUnlockProvider)()) {
+                          if (mounted) setState(() => _obscure = !_obscure);
+                        }
+                      },
                     ),
                     IconButton(
                       icon: const Icon(Icons.copy_rounded),

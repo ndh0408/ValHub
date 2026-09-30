@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../l10n/notification_strings.dart';
 import '../network/riot_exception.dart';
 import '../notifications/notification_service.dart';
@@ -38,7 +40,10 @@ Future<bool> _keepAlive(BackgroundContext ctx, Duration budget) async {
       continue;
     }
     try {
-      await ctx.sessions.session(account.puuid);
+      final remaining = budget - DateTime.now().difference(started);
+      if (remaining <= Duration.zero) break;
+      await ctx.sessions.session(account.puuid).timeout(remaining);
+      if (await ctx.accounts.findFresh(account.puuid) == null) continue;
       await ctx.prefs.setDateTime(lastKey, DateTime.now());
       await ctx.prefs.remove(notifiedKey);
     } on NeedsLoginException {
@@ -48,7 +53,7 @@ Future<bool> _keepAlive(BackgroundContext ctx, Duration budget) async {
           title: NotificationStrings.sessionExpiredTitle,
           body: NotificationStrings.sessionExpiredBody(account.riotId),
           channel: NotificationChannel.account,
-          payload: '/settings',
+          payload: '/login?reauth=${account.puuid}',
           accountPuuid: account.puuid,
         );
         await ctx.prefs.setBool(notifiedKey, true);

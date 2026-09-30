@@ -56,6 +56,7 @@ class RiotBootstrapClient {
            dio ??
            Dio(
              BaseOptions(
+               followRedirects: false,
                connectTimeout: AppConstants.networkTimeout,
                receiveTimeout: AppConstants.networkTimeout,
                sendTimeout: AppConstants.networkTimeout,

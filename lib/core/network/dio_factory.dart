@@ -58,7 +58,11 @@ class TokenEgressGuard extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    if (carriesAccessToken(options) && !_isAllowedHost(options.uri.host)) {
+    if (carriesAccessToken(options) &&
+        (options.uri.scheme != 'https' ||
+            options.uri.port != 443 ||
+            options.uri.userInfo.isNotEmpty ||
+            !_isAllowedHost(options.uri.host))) {
       handler.reject(
         DioException(
           requestOptions: options,

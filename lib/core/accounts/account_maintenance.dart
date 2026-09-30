@@ -48,17 +48,13 @@ Future<SweepReport> runAccountStartupMaintenance({
     }
 
     final pending = repo.pendingWipes;
-    final finished = await repo
-        .finishPendingWipes(
-          beforeWipe: cancelNotifications,
-          afterWipe: (puuid) async {
-            if (pending[puuid] == false) await eraser.eraseAccount(puuid);
-          },
-        )
-        .timeout(timeout);
-    final swept = await repo
-        .sweepOrphans(beforeWipe: cancelNotifications)
-        .timeout(timeout);
+    final finished = await repo.finishPendingWipes(
+      beforeWipe: cancelNotifications,
+      afterWipe: (puuid) async {
+        if (pending[puuid] == false) await eraser.eraseAccount(puuid);
+      },
+    );
+    final swept = await repo.sweepOrphans(beforeWipe: cancelNotifications);
     final report = SweepReport(
       accounts: swept.accounts,
       finishedSignOuts: finished.length,

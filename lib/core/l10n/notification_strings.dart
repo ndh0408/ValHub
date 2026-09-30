@@ -12,11 +12,29 @@ abstract final class NotificationStrings {
   static const channelAccountDescription =
       'Nhắc khi một tài khoản cần đăng nhập lại';
 
+  static const channelBattlePassName = 'Battle Pass';
+  static const channelBattlePassDescription =
+      'Nhắc tiến độ và ngày kết thúc Battle Pass';
+  static const channelRankName = 'Xếp hạng';
+  static const channelRankDescription =
+      'Báo thay đổi xếp hạng khi bạn cập nhật hồ sơ';
+  static const channelCommunityName = 'Cộng đồng';
+  static const channelCommunityDescription =
+      'Báo hoạt động cộng đồng khi bạn mở ValVN';
+  static const channelLfgName = 'Tổ đội';
+  static const channelLfgDescription =
+      'Báo người chơi tham gia tổ đội khi bạn mở ValVN';
+  static const privateAccount = 'tài khoản của bạn';
+  static const localOnlyHint =
+      'Chỉ báo trên thiết bị này khi ValVN cập nhật dữ liệu';
+  static const backgroundTimingHint =
+      'Chế độ tiết kiệm pin của thiết bị có thể làm thông báo đến muộn.';
+  static const storeResetBody = 'Skin mới đang chờ bạn trong cửa hàng.';
   static const nightMarketOpenTitle = 'Chợ Đêm đã mở!';
   static String nightMarketOpenBody(String cards, String account) =>
       'Lật $cards thẻ ưu đãi của $account ngay.';
 
   static const sessionExpiredTitle = 'Cần đăng nhập lại';
   static String sessionExpiredBody(String account) =>
-      'Phiên của $account đã hết hạn, thông báo wishlist tạm dừng.';
+      'Đăng nhập lại để tiếp tục nhận thông báo wishlist.';
 }

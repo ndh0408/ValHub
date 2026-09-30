@@ -105,12 +105,12 @@ void main() {
     final env = await _Env.create();
     await _pumpHost(tester, env);
 
-    expect(env.notifications.calls, hasLength(1));
-    final call = env.notifications.calls.single;
+    expect(env.notifications.calls, hasLength(7));
+    final call = env.notifications.calls.first;
     expect(call.id, NotificationIds.storeReset(Fx.puuid));
     expect(call.at, t0.add(const Duration(seconds: 17401, minutes: 1)));
     expect(call.title, StoreStrings.resetNotificationTitle);
-    expect(call.body, StoreStrings.resetNotificationBody(4, _a.riotId));
+    expect(call.body, 'Skin mới đang chờ bạn trong cửa hàng.');
     expect(call.channel, NotificationChannel.storeReset);
     expect(call.payload, '${StoreRoutes.root}?account=${Fx.puuid}');
     expect(call.accountPuuid, Fx.puuid);
@@ -118,7 +118,7 @@ void main() {
     // Rebuilds with the same storefront do not reschedule.
     await tester.pump(const Duration(seconds: 1));
     await settle(tester);
-    expect(env.notifications.calls, hasLength(1));
+    expect(env.notifications.calls, hasLength(7));
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
@@ -138,14 +138,14 @@ void main() {
   ) async {
     final env = await _Env.create();
     final container = await _pumpHost(tester, env);
-    expect(env.notifications.calls, hasLength(1));
+    expect(env.notifications.calls, hasLength(7));
 
     // The storefront refetches (e.g. at the daily reset): one more.
     container.invalidate(storefrontProvider(Fx.puuid));
     await settle(tester);
-    expect(env.notifications.calls, hasLength(2));
+    expect(env.notifications.calls, hasLength(14));
     await settle(tester);
-    expect(env.notifications.calls, hasLength(2));
+    expect(env.notifications.calls, hasLength(14));
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
@@ -162,7 +162,7 @@ void main() {
 
     container.read(activePuuidProvider.notifier).select(_b.puuid);
     await settle(tester);
-    final call = env.notifications.calls.lastWhere(
+    final call = env.notifications.calls.firstWhere(
       (c) => c.accountPuuid == _b.puuid,
     );
     expect(call.id, NotificationIds.storeReset(_b.puuid));
@@ -189,9 +189,9 @@ void main() {
       final forB = env.notifications.calls.where(
         (c) => c.accountPuuid == _b.puuid,
       );
-      expect(forB, hasLength(1));
+      expect(forB, hasLength(7));
       expect(
-        forB.single.at,
+        forB.first.at,
         t0
             .subtract(const Duration(hours: 1))
             .add(const Duration(seconds: 17401, minutes: 1)),
@@ -204,7 +204,9 @@ void main() {
     },
   );
 
-  testWidgets('an expired saved storefront schedules nothing', (tester) async {
+  testWidgets('an expired saved storefront advances to the next reset', (
+    tester,
+  ) async {
     final env = await _Env.create(accounts: const [_a, _b]);
     env.cache.entries[JsonFileCache.accountKey(
       _b.puuid,
@@ -217,7 +219,7 @@ void main() {
     await settle(tester);
     expect(
       env.notifications.calls.where((c) => c.accountPuuid == _b.puuid),
-      isEmpty,
+      hasLength(7),
     );
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
@@ -258,9 +260,9 @@ void main() {
       expect(find.byType(HomeScreen), findsOneWidget);
       // The Store branch is not built until it is opened.
       expect(find.byType(StoreScreen), findsNothing);
-      expect(env.notifications.calls, hasLength(1));
+      expect(env.notifications.calls, hasLength(7));
       expect(
-        env.notifications.calls.single.at,
+        env.notifications.calls.first.at,
         t0.add(const Duration(seconds: 17401, minutes: 1)),
       );
       await tester.pumpWidget(const SizedBox());

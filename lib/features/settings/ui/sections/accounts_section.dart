@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account.dart';
+import '../../../../core/accounts/sign_out_dialog.dart';
 import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/accounts/account_status.dart';
 import '../../../../core/accounts/login_note.dart';
@@ -38,19 +39,19 @@ class SettingsAccountsSection extends ConsumerWidget {
   }
 
   Future<void> _remove(BuildContext context, WidgetRef ref, Account a) async {
-    final ok = await confirmSettingsAction(
+    final keep = await chooseSignOutRetention(
       context,
       title: AccountStrings.removeAccount,
       message: AccountStrings.removeAccountConfirm(a.riotId),
       confirmLabel: CommonStrings.delete,
-      destructive: true,
-      icon: Icons.person_remove_outlined,
     );
-    if (!ok || !context.mounted) return;
+    if (keep == null || !context.mounted) return;
     // Capture before the await: removing the last account redirects to
     // /welcome and unmounts this screen.
     final messenger = ScaffoldMessenger.maybeOf(context);
-    await ref.read(accountsProvider.notifier).remove(a.puuid);
+    await ref
+        .read(accountsProvider.notifier)
+        .remove(a.puuid, keepLocalData: keep);
     messenger
       ?..hideCurrentSnackBar()
       ..showSnackBar(
@@ -73,6 +74,24 @@ class SettingsAccountsSection extends ConsumerWidget {
             ? '$header · ${AccountStrings.onlineCount(online).toUpperCase()}'
             : header,
         children: [
+          ListTile(
+            leading: const Icon(Icons.delete_sweep_outlined),
+            title: const Text(AccountStrings.clearLocalData),
+            onTap: () async {
+              final ok = await confirmSettingsAction(
+                context,
+                title: AccountStrings.clearLocalData,
+                message: AccountStrings.clearLocalDataConfirm,
+                confirmLabel: CommonStrings.delete,
+                destructive: true,
+              );
+              if (!ok || !context.mounted) return;
+              await ref.read(accountsProvider.notifier).clearLocalData();
+              if (context.mounted) {
+                showAppSnackBar(context, AccountStrings.localDataCleared);
+              }
+            },
+          ),
           if (accounts.isEmpty)
             ListTile(
               leading: SettingsIcon(
@@ -230,17 +249,15 @@ class SettingsSignOutAllRow extends ConsumerWidget {
   const SettingsSignOutAllRow({super.key});
 
   Future<void> _signOutAll(BuildContext context, WidgetRef ref) async {
-    final ok = await confirmSettingsAction(
+    final keep = await chooseSignOutRetention(
       context,
       title: AccountStrings.signOutAll,
       message: AccountStrings.signOutAllConfirm,
       confirmLabel: AccountStrings.signOutAll,
-      destructive: true,
-      icon: Icons.logout,
     );
-    if (!ok || !context.mounted) return;
+    if (keep == null || !context.mounted) return;
     final messenger = ScaffoldMessenger.maybeOf(context);
-    await ref.read(accountsProvider.notifier).signOutAll();
+    await ref.read(accountsProvider.notifier).signOutAll(keepLocalData: keep);
     messenger
       ?..hideCurrentSnackBar()
       ..showSnackBar(

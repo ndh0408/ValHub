@@ -7,6 +7,7 @@ import '../../features/community/providers/community_providers.dart'
 import '../auth/auth_callback.dart';
 import '../auth/auth_providers.dart';
 import '../auth/cookie_jar.dart';
+import '../background/background_tasks.dart';
 import '../config/app_constants.dart';
 import '../domain/competitive/names.dart' show nameResolverProvider;
 import '../domain/competitive/rr_history.dart' show rrHistoryStoreProvider;
@@ -109,6 +110,7 @@ class AccountsNotifier extends Notifier<List<Account>> {
     // this provider) picks it up when it rebuilds.
     await _repo.setActivePuuid(account.puuid);
     if (ref.mounted) state = _repo.loadAll();
+    await syncBackgroundWork(hasAccounts: true);
     return account;
   }
 
@@ -131,10 +133,14 @@ class AccountsNotifier extends Notifier<List<Account>> {
   ///
   /// The sign-out is written down first (`app.pendingWipe`) and cleared last:
   /// if the app is killed half-way the next start finishes it.
-  Future<void> remove(String puuid, {bool keepLocalData = true}) async {
+  Future<void> remove(String puuid, {bool keepLocalData = false}) async {
     final id = puuid.toLowerCase();
     await _repo.markPendingWipe(id, keepLocalData: keepLocalData);
-    await ref.read(notificationServiceProvider).cancelForAccount(id);
+    try {
+      await ref.read(notificationServiceProvider).cancelForAccount(id);
+    } on Object {
+      // A missing notification plugin must not prevent erasing secrets.
+    }
     // Metadata first: a re-auth still running (here or in the background
     // isolate) re-checks the account list before persisting anything.
     await _repo.removeMetadata(id);
@@ -161,6 +167,11 @@ class AccountsNotifier extends Notifier<List<Account>> {
       return settings.copyWith(wishlistNotificationsByAccount: choices);
     });
     final remaining = _repo.loadAll();
+    if (remaining.isEmpty) {
+      await ref.read(localDataEraserProvider).eraseSharedCaches();
+      ref.invalidate(nameResolverProvider);
+      await syncBackgroundWork(hasAccounts: false);
+    }
     if (_repo.activePuuid == id) {
       await _repo.setActivePuuid(remaining.firstOrNull?.puuid);
     }
@@ -170,7 +181,7 @@ class AccountsNotifier extends Notifier<List<Account>> {
 
   /// "Đăng xuất tất cả tài khoản". Other players' data (names, matches) always
   /// goes; the accounts' own local data goes unless [keepLocalData].
-  Future<void> signOutAll({bool keepLocalData = true}) async {
+  Future<void> signOutAll({bool keepLocalData = false}) async {
     for (final account in List.of(state)) {
       await remove(account.puuid, keepLocalData: keepLocalData);
     }

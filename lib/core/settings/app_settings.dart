@@ -35,6 +35,10 @@ class AppSettings {
     this.wishlistNotifications = false,
     this.wishlistNotificationsByAccount = const {},
     this.nightMarketNotifications = false,
+    this.battlePassNotifications = false,
+    this.rankNotifications = false,
+    this.communityNotifications = false,
+    this.lfgNotifications = false,
     this.showPriceEstimate = true,
   });
 
@@ -65,6 +69,10 @@ class AppSettings {
       },
       nightMarketNotifications:
           asBool(m['nightMarketNotifications']) ?? d.nightMarketNotifications,
+      battlePassNotifications: asBool(m['battlePassNotifications']) ?? false,
+      rankNotifications: asBool(m['rankNotifications']) ?? false,
+      communityNotifications: asBool(m['communityNotifications']) ?? false,
+      lfgNotifications: asBool(m['lfgNotifications']) ?? false,
       showPriceEstimate: asBool(m['showPriceEstimate']) ?? d.showPriceEstimate,
     );
   }
@@ -101,6 +109,10 @@ class AppSettings {
 
   /// "Hiện giá quy đổi ước tính": the local-currency estimate next to VP
   /// prices (ValVN extra).
+  final bool battlePassNotifications;
+  final bool rankNotifications;
+  final bool communityNotifications;
+  final bool lfgNotifications;
   final bool showPriceEstimate;
 
   JsonMap toJson() => {
@@ -113,6 +125,10 @@ class AppSettings {
     'wishlistNotifications': wishlistNotifications,
     'wishlistNotificationsByAccount': wishlistNotificationsByAccount,
     'nightMarketNotifications': nightMarketNotifications,
+    'battlePassNotifications': battlePassNotifications,
+    'rankNotifications': rankNotifications,
+    'communityNotifications': communityNotifications,
+    'lfgNotifications': lfgNotifications,
     'showPriceEstimate': showPriceEstimate,
   };
 
@@ -126,6 +142,10 @@ class AppSettings {
     bool? wishlistNotifications,
     Map<String, bool>? wishlistNotificationsByAccount,
     bool? nightMarketNotifications,
+    bool? battlePassNotifications,
+    bool? rankNotifications,
+    bool? communityNotifications,
+    bool? lfgNotifications,
     bool? showPriceEstimate,
   }) => AppSettings(
     themeMode: themeMode ?? this.themeMode,
@@ -140,6 +160,12 @@ class AppSettings {
         wishlistNotificationsByAccount ?? this.wishlistNotificationsByAccount,
     nightMarketNotifications:
         nightMarketNotifications ?? this.nightMarketNotifications,
+    battlePassNotifications:
+        battlePassNotifications ?? this.battlePassNotifications,
+    rankNotifications: rankNotifications ?? this.rankNotifications,
+    communityNotifications:
+        communityNotifications ?? this.communityNotifications,
+    lfgNotifications: lfgNotifications ?? this.lfgNotifications,
     showPriceEstimate: showPriceEstimate ?? this.showPriceEstimate,
   );
 
@@ -158,6 +184,10 @@ class AppSettings {
         wishlistNotificationsByAccount,
       ) &&
       other.nightMarketNotifications == nightMarketNotifications &&
+      other.battlePassNotifications == battlePassNotifications &&
+      other.rankNotifications == rankNotifications &&
+      other.communityNotifications == communityNotifications &&
+      other.lfgNotifications == lfgNotifications &&
       other.showPriceEstimate == showPriceEstimate;
 
   @override
@@ -175,6 +205,10 @@ class AppSettings {
       ),
     ),
     nightMarketNotifications,
+    battlePassNotifications,
+    rankNotifications,
+    communityNotifications,
+    lfgNotifications,
     showPriceEstimate,
   );
 }

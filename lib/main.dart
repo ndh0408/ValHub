@@ -4,6 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app/app.dart';
+import 'core/accounts/account_maintenance.dart';
+import 'core/accounts/account_repository.dart';
 import 'core/background/background_tasks.dart';
 import 'core/config/remote_config.dart';
 import 'core/l10n/intl_init.dart';
@@ -42,12 +44,20 @@ Future<void> main() async {
 
   final sessionLog = SessionLog.persistent();
   await sessionLog.load();
+  secureStore.onError = secureErrorToLog(sessionLog);
   sessionLog.add('app.start');
 
   final notifications = NotificationService(prefs: prefs);
   await notifications.init();
+  await runAccountStartupMaintenance(
+    prefs: prefs,
+    secureStore: secureStore,
+    notifications: notifications,
+    log: sessionLog,
+  );
 
-  unawaited(initBackgroundWork());
+  final accounts = AccountRepository(prefs: prefs, secureStore: secureStore);
+  unawaited(syncBackgroundWork(hasAccounts: accounts.loadAll().isNotEmpty));
 
   runApp(
     ProviderScope(

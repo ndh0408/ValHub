@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../storage/secure_store.dart';
 import '../util/json.dart';
 import 'account.dart';
+import 'secret_access.dart';
 import 'account_providers.dart';
 
 /// The user's own note of how to sign in to one account (Riot username +
@@ -74,6 +75,7 @@ class LoginNoteNotifier extends AsyncNotifier<LoginNote?> {
   @override
   Future<LoginNote?> build() async {
     try {
+      if (!await ref.read(secretUnlockProvider)()) return null;
       return LoginNote.tryParse(await _store.read(_key));
     } on Object {
       return null; // unreadable keystore entry: behave as "no note"
@@ -130,18 +132,15 @@ String loginNoteFillScript(LoginNote note) {
 /// page. [preferPuuid] (the account being signed in again) comes first.
 final savedLoginNotesProvider = FutureProvider.autoDispose
     .family<List<(Account, LoginNote)>, String?>((ref, preferPuuid) async {
-      final accounts = ref.watch(accountsProvider);
-      final notes = await Future.wait([
-        for (final a in accounts) ref.watch(loginNoteProvider(a.puuid).future),
-      ]);
+      // Metadata only. Read and decrypt just the selected note on tap.
+      final keys = await ref.watch(secureStoreProvider).readAllKeys();
       final result = <(Account, LoginNote)>[
-        for (var i = 0; i < accounts.length; i++)
-          if (notes[i] case final note?) (accounts[i], note),
+        for (final account in ref.watch(accountsProvider))
+          if (keys.contains(SecureKeys.loginNote(account.puuid)))
+            (account, const LoginNote()),
       ];
       final prefer = preferPuuid?.toLowerCase();
-      if (prefer != null) {
-        final i = result.indexWhere((e) => e.$1.puuid == prefer);
-        if (i > 0) result.insert(0, result.removeAt(i));
-      }
+      final i = result.indexWhere((e) => e.$1.puuid == prefer);
+      if (i > 0) result.insert(0, result.removeAt(i));
       return result;
     });

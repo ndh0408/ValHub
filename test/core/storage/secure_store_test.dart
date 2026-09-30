@@ -65,41 +65,23 @@ void main() {
       verifyNever(() => storage.deleteAll());
     });
 
-    test(
-      'an unusable store is reset visibly, then written once more',
-      () async {
-        var calls = 0;
-        when(() => storage.write(key: 'k', value: 'v')).thenAnswer((_) async {
-          if (++calls <= 2) throw _keystoreError();
-        });
-        when(() => storage.deleteAll()).thenAnswer((_) async {});
-        await store.write('k', 'v');
-        expect(calls, 3);
-        expect(reported, ['write', 'write.retry', 'reset']);
-        verify(() => storage.deleteAll()).called(1);
-      },
-    );
-
-    test('still failing after the reset surfaces the error', () async {
+    test('persistent write failures preserve other accounts', () async {
       when(() => storage.write(key: 'k', value: 'v'))
           .thenThrow(_keystoreError());
-      when(() => storage.deleteAll()).thenThrow(_keystoreError());
       await expectLater(
         store.write('k', 'v'),
         throwsA(isA<PlatformException>()),
       );
-      expect(reported, ['write', 'write.retry', 'reset.failed']);
+      expect(reported, ['write', 'write.retry']);
+      verifyNever(() => storage.deleteAll());
     });
   });
 
-  test(
-    'delete failures are reported and swallowed (the sweeper retries)',
-    () async {
-      when(() => storage.delete(key: 'k')).thenThrow(_keystoreError());
-      await store.delete('k');
-      expect(reported, ['delete']);
-    },
-  );
+  test('delete failures propagate so pending wipe is retried', () async {
+    when(() => storage.delete(key: 'k')).thenThrow(_keystoreError());
+    await expectLater(store.delete('k'), throwsA(isA<PlatformException>()));
+    expect(reported, ['delete']);
+  });
 
   group('readAllKeys', () {
     test('lists the keys without exposing values', () async {

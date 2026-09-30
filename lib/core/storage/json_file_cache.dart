@@ -154,7 +154,9 @@ class JsonFileCache {
       await _writeAtomically(key, contents);
     } finally {
       done.complete();
-      if (identical(_writing[rel], done.future)) _writing.remove(rel);
+      if (identical(_writing[rel], done.future)) {
+        _writing.removeWhere((key, _) => key == rel);
+      }
     }
   }
 

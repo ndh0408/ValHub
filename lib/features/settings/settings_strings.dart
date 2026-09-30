@@ -23,7 +23,8 @@ abstract final class SettingsStrings {
       'Bật thông báo để biết khi cửa hàng làm mới và khi skin trong wishlist '
       'xuất hiện.';
   static const primingPointStore = 'Nhắc khi cửa hàng hằng ngày làm mới';
-  static const primingPointStoreDetail = 'Mỗi ngày lúc 07:00 giờ Việt Nam';
+  static const primingPointStoreDetail =
+      'Nhắc sau khi cửa hàng của tài khoản làm mới';
   static const primingPointWishlist = 'Báo ngay khi skin bạn săn xuất hiện';
   static const primingPointWishlistDetail =
       'Kiểm tra cửa hàng của mọi tài khoản trong nền';

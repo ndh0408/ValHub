@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/accounts/account.dart';
 import 'package:valvn/core/accounts/login_note.dart';
+import 'package:valvn/core/accounts/secret_access.dart';
 import 'package:valvn/core/accounts/login_note_sheet.dart';
 import 'package:valvn/core/auth/auth_providers.dart';
 import 'package:valvn/core/auth/session_manager.dart';
@@ -83,6 +84,7 @@ void main() {
   });
 
   List<Override> overrides() => [
+    secretUnlockProvider.overrideWithValue(() async => true),
     prefsProvider.overrideWithValue(prefs),
     secureStoreProvider.overrideWithValue(secure),
     sessionManagerProvider.overrideWithValue(sessions),
@@ -120,9 +122,10 @@ void main() {
       ).encode();
       final c = ProviderContainer.test(overrides: overrides());
       final all = await c.read(savedLoginNotesProvider(null).future);
-      expect(all.map((e) => e.$2.username), ['one', 'three']);
+      expect(all.map((e) => e.$1.puuid), [_puuid(1), _puuid(3)]);
+      expect(all.every((e) => e.$2.isEmpty), isTrue);
       final relogin = await c.read(savedLoginNotesProvider(_puuid(3)).future);
-      expect(relogin.map((e) => e.$2.username), ['three', 'one']);
+      expect(relogin.map((e) => e.$1.puuid), [_puuid(3), _puuid(1)]);
     },
   );
 
@@ -150,6 +153,8 @@ void main() {
       ),
     );
     await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(AccountStrings.loginNoteLocked));
     await tester.pumpAndSettle();
 
     expect(find.text(AccountStrings.loginNote), findsOneWidget);
@@ -196,6 +201,8 @@ void main() {
       ),
     );
     await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(AccountStrings.loginNoteLocked));
     await tester.pumpAndSettle();
     // The shared sheet chrome: title, the Riot ID and a close button.
     expect(find.text(AccountStrings.loginNote), findsOneWidget);

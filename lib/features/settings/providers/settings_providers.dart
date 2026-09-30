@@ -65,19 +65,35 @@ final textSharerProvider = Provider<TextSharer>(
 );
 
 /// The three notification switches of S70 ("THÔNG BÁO").
-enum NotificationToggle { storeReset, wishlist, nightMarket }
+enum NotificationToggle {
+  storeReset,
+  wishlist,
+  nightMarket,
+  battlePass,
+  rank,
+  community,
+  lfg,
+}
 
 extension NotificationToggleX on NotificationToggle {
   bool valueIn(AppSettings s) => switch (this) {
     NotificationToggle.storeReset => s.storeResetNotifications,
     NotificationToggle.wishlist => s.wishlistNotifications,
     NotificationToggle.nightMarket => s.nightMarketNotifications,
+    NotificationToggle.battlePass => s.battlePassNotifications,
+    NotificationToggle.rank => s.rankNotifications,
+    NotificationToggle.community => s.communityNotifications,
+    NotificationToggle.lfg => s.lfgNotifications,
   };
 
   AppSettings apply(AppSettings s, bool on) => switch (this) {
     NotificationToggle.storeReset => s.copyWith(storeResetNotifications: on),
     NotificationToggle.wishlist => s.copyWith(wishlistNotifications: on),
     NotificationToggle.nightMarket => s.copyWith(nightMarketNotifications: on),
+    NotificationToggle.battlePass => s.copyWith(battlePassNotifications: on),
+    NotificationToggle.rank => s.copyWith(rankNotifications: on),
+    NotificationToggle.community => s.copyWith(communityNotifications: on),
+    NotificationToggle.lfg => s.copyWith(lfgNotifications: on),
   };
 }
 
@@ -122,6 +138,24 @@ class SettingsController {
     final service = _ref.read(notificationServiceProvider);
     final accounts = _ref.read(accountsProvider);
     for (final account in accounts) {
+      if (toggle == NotificationToggle.storeReset) {
+        for (var day = 0; day < 7; day++) {
+          await service.cancel(
+            NotificationIds.storeResetDay(account.puuid, day),
+          );
+        }
+        continue;
+      }
+      final channel = switch (toggle) {
+        NotificationToggle.battlePass => NotificationChannel.battlePass,
+        NotificationToggle.rank => NotificationChannel.rank,
+        NotificationToggle.community => NotificationChannel.community,
+        NotificationToggle.lfg => NotificationChannel.lfg,
+        _ => null,
+      };
+      if (channel != null) {
+        await service.cancelChannelForAccount(account.puuid, channel);
+      }
       final id = switch (toggle) {
         NotificationToggle.storeReset => NotificationIds.storeReset(
           account.puuid,
@@ -131,7 +165,11 @@ class SettingsController {
         ),
         // Wishlist hits are shown immediately by the background check;
         // nothing is scheduled ahead.
-        NotificationToggle.wishlist => null,
+        NotificationToggle.wishlist ||
+        NotificationToggle.battlePass ||
+        NotificationToggle.rank ||
+        NotificationToggle.community ||
+        NotificationToggle.lfg => null,
       };
       if (id != null) await service.cancel(id);
     }

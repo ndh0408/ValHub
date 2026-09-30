@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import '../../../../core/l10n/notification_strings.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -86,7 +88,7 @@ class _SettingsNotificationsSectionState
         allowed == false &&
         (settings.storeResetNotifications ||
             settings.nightMarketNotifications ||
-            accounts.any((a) => settings.wishlistNotificationsFor(a.puuid)));
+            anyNotificationEnabled(settings));
     return SettingsGroup(
       title: SettingsStrings.notificationsHeader,
       children: [
@@ -106,6 +108,30 @@ class _SettingsNotificationsSectionState
             SettingsStrings.notifNightMarket,
             SettingsStrings.notifNightMarketSubtitle,
           ),
+          (
+            NotificationToggle.battlePass,
+            Icons.notifications_outlined,
+            NotificationStrings.channelBattlePassName,
+            NotificationStrings.localOnlyHint,
+          ),
+          (
+            NotificationToggle.rank,
+            Icons.notifications_outlined,
+            NotificationStrings.channelRankName,
+            NotificationStrings.localOnlyHint,
+          ),
+          (
+            NotificationToggle.community,
+            Icons.notifications_outlined,
+            NotificationStrings.channelCommunityName,
+            NotificationStrings.localOnlyHint,
+          ),
+          (
+            NotificationToggle.lfg,
+            Icons.notifications_outlined,
+            NotificationStrings.channelLfgName,
+            NotificationStrings.localOnlyHint,
+          ),
         ])
           SettingsSwitchTile(
             icon: icon,
@@ -114,6 +140,10 @@ class _SettingsNotificationsSectionState
             value: toggle.valueIn(settings),
             onChanged: (v) => unawaited(_toggle(toggle, v)),
           ),
+        const Padding(
+          padding: EdgeInsets.all(16),
+          child: Text(NotificationStrings.backgroundTimingHint),
+        ),
         for (final account in accounts)
           SettingsSwitchTile(
             icon: Icons.favorite_border,

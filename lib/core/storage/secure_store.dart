@@ -122,16 +122,8 @@ class FlutterSecureStore implements SecureStore {
       return;
     } on Object catch (e) {
       _report('write.retry', e);
+      rethrow;
     }
-    // Unusable store: reset it visibly (what `resetOnError` did silently),
-    // then write once more.
-    try {
-      await _storage.deleteAll();
-      _report('reset', StateError('secure storage reset after write errors'));
-    } on Object catch (e) {
-      _report('reset.failed', e);
-    }
-    await _storage.write(key: key, value: value);
   }
 
   @override
@@ -141,6 +133,7 @@ class FlutterSecureStore implements SecureStore {
     } on Object catch (e) {
       // Best effort: the orphan sweeper retries at the next start.
       _report('delete', e);
+      rethrow;
     }
   }
 

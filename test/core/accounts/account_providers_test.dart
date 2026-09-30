@@ -199,7 +199,9 @@ void main() {
       });
 
       final c = container();
-      await c.read(accountsProvider.notifier).remove(_puuid(1));
+      await c
+          .read(accountsProvider.notifier)
+          .remove(_puuid(1), keepLocalData: true);
 
       expect(c.read(accountsProvider).map((a) => a.puuid), [_puuid(2)]);
       expect(c.read(activePuuidProvider), _puuid(2));

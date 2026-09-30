@@ -64,7 +64,7 @@ class PrefsAccountLock implements AccountLock {
     return List.generate(8, (_) => r.nextInt(16).toRadixString(16)).join();
   }
 
-  static String _key(String puuid) => 'lock.reauth.$puuid';
+  static String _key(String puuid) => 'acct.${puuid.toLowerCase()}.lock.reauth';
 
   @override
   Future<T> run<T>(String puuid, Future<T> Function() body) =>
@@ -102,7 +102,7 @@ class PrefsAccountLock implements AccountLock {
       try {
         value = await _prefs.getString(key);
       } on Object {
-        return; // Storage unavailable: proceed without the lock.
+        throw const TransientException(reason: 'lock_unavailable');
       }
       if (_isFree(value)) {
         try {
@@ -110,11 +110,13 @@ class PrefsAccountLock implements AccountLock {
             key,
             '$_owner|${DateTime.now().millisecondsSinceEpoch}',
           );
-          await Future<void>.delayed(const Duration(milliseconds: 30));
+          await Future<void>.delayed(
+            Duration(milliseconds: 60 + Random().nextInt(90)),
+          );
           final confirm = await _prefs.getString(key);
           if (confirm != null && confirm.startsWith('$_owner|')) return;
         } on Object {
-          return;
+          throw const TransientException(reason: 'lock_unavailable');
         }
       }
       if (DateTime.now().isAfter(deadline)) {

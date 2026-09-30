@@ -11,6 +11,7 @@ import '../../../core/domain/economy/economy.dart';
 import '../../../core/notifications/notification_service.dart';
 import '../store_routes.dart';
 import '../store_strings.dart';
+import '../../../core/l10n/notification_strings.dart';
 
 /// Fire a little after the reset so the new offers are already live.
 const kStoreResetReminderDelay = Duration(minutes: 1);
@@ -42,21 +43,26 @@ StoreResetReminder? storeResetReminderFor({
   required Account account,
   required Storefront store,
   required DateTime now,
+  int day = 0,
 }) {
   final resetAt = store.daily.expiresAt;
   if (resetAt == null) return null;
-  final at = resetAt.add(kStoreResetReminderDelay);
+  var first = resetAt.add(kStoreResetReminderDelay);
+  if (!first.isAfter(now)) {
+    final elapsed = now.difference(first).inMicroseconds;
+    first = first.add(
+      Duration(days: elapsed ~/ const Duration(days: 1).inMicroseconds + 1),
+    );
+  }
+  final at = first.add(Duration(days: day));
   if (!at.isAfter(now)) return null;
   final puuid = account.puuid;
   final uri = Uri(path: StoreRoutes.root, queryParameters: {'account': puuid});
   return StoreResetReminder(
-    id: NotificationIds.storeReset(puuid),
+    id: NotificationIds.storeResetDay(puuid, day),
     at: at,
     title: StoreStrings.resetNotificationTitle,
-    body: StoreStrings.resetNotificationBody(
-      store.daily.offers.length,
-      account.riotId,
-    ),
+    body: NotificationStrings.storeResetBody,
     payload: uri.toString(),
     accountPuuid: puuid,
   );
@@ -71,22 +77,25 @@ Future<bool> scheduleStoreResetReminder(
   required Storefront store,
   required DateTime now,
 }) async {
-  final reminder = storeResetReminderFor(
-    account: account,
-    store: store,
-    now: now,
-  );
-  if (reminder == null) return false;
   try {
-    await notifications.scheduleAt(
-      id: reminder.id,
-      at: reminder.at,
-      title: reminder.title,
-      body: reminder.body,
-      channel: NotificationChannel.storeReset,
-      payload: reminder.payload,
-      accountPuuid: reminder.accountPuuid,
-    );
+    for (var day = 0; day < 7; day++) {
+      final reminder = storeResetReminderFor(
+        account: account,
+        store: store,
+        now: now,
+        day: day,
+      );
+      if (reminder == null) return false;
+      await notifications.scheduleAt(
+        id: reminder.id,
+        at: reminder.at,
+        title: reminder.title,
+        body: reminder.body,
+        channel: NotificationChannel.storeReset,
+        payload: reminder.payload,
+        accountPuuid: reminder.accountPuuid,
+      );
+    }
     return true;
   } on Object {
     return false;

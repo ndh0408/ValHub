@@ -86,7 +86,15 @@ void main() {
     );
   });
 
-  tearDown(() => tmp.delete(recursive: true));
+  tearDown(() async {
+    try {
+      await repo.refresh();
+    } on Object {
+      /* offline */
+    }
+    await repo.dispose();
+    await tmp.delete(recursive: true);
+  });
 
   test(
     'downloads every endpoint with language=vi-VN, then serves from cache',
@@ -106,6 +114,7 @@ void main() {
 
       vapi.paths.clear();
       final again = await repo.load();
+      await repo.refresh();
       expect(again.weapons, isNotEmpty);
       expect(
         vapi.paths,
@@ -122,6 +131,7 @@ void main() {
       clock.advance(const Duration(days: 8));
       vapi.paths.clear();
       await repo.load();
+      await repo.refresh();
       expect(
         vapi.paths.where((p) => p.startsWith('/v1/weapons')),
         hasLength(1),

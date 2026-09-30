@@ -9,7 +9,7 @@ void main() {
       wishlist: (_) async => wishlistRan = true,
     );
     expect(wishlistRan, isTrue);
-    expect(ok, isFalse);
+    expect(ok, isTrue);
   });
 
   test('the wishlist step gets only what is left of one job budget', () async {

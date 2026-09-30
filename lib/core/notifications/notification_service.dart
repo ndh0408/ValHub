@@ -11,16 +11,18 @@ import 'package:timezone/timezone.dart' as tz;
 
 import '../l10n/notification_strings.dart';
 import '../storage/prefs.dart';
+import '../accounts/account.dart';
+import '../util/json.dart';
 
 /// Initialises the `timezone` database and the local zone (fallback
-/// `Asia/Ho_Chi_Minh`). Call once per isolate before scheduling.
+/// `UTC`). Call once per isolate before scheduling.
 Future<void> initTimeZone() async {
   tzdata.initializeTimeZones();
   try {
     final info = await FlutterTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(info.identifier));
   } on Object {
-    tz.setLocalLocation(tz.getLocation('Asia/Ho_Chi_Minh'));
+    tz.setLocalLocation(tz.getLocation('UTC'));
   }
 }
 
@@ -52,6 +54,26 @@ enum NotificationChannel {
     'account',
     NotificationStrings.channelAccountName,
     NotificationStrings.channelAccountDescription,
+  ),
+  battlePass(
+    'battle_pass',
+    NotificationStrings.channelBattlePassName,
+    NotificationStrings.channelBattlePassDescription,
+  ),
+  rank(
+    'rank',
+    NotificationStrings.channelRankName,
+    NotificationStrings.channelRankDescription,
+  ),
+  community(
+    'community',
+    NotificationStrings.channelCommunityName,
+    NotificationStrings.channelCommunityDescription,
+  ),
+  lfg(
+    'lfg',
+    NotificationStrings.channelLfgName,
+    NotificationStrings.channelLfgDescription,
   );
 
   const NotificationChannel(this.id, this.channelName, this.description);
@@ -73,6 +95,8 @@ abstract final class NotificationIds {
   }
 
   static int storeReset(String puuid) => forKey('store_reset:$puuid');
+  static int storeResetDay(String puuid, int day) =>
+      day == 0 ? storeReset(puuid) : forKey('store_reset:$puuid:$day');
   static int nightMarket(String puuid) => forKey('night_market:$puuid');
   static int wishlistHit(String puuid, String skinUuid) =>
       forKey('wishlist:$puuid:$skinUuid');
@@ -88,11 +112,16 @@ abstract final class NotificationIds {
 /// - Notifications created with an `accountPuuid` are tracked so sign-out can
 ///   cancel them ([cancelForAccount]).
 class NotificationService {
-  NotificationService({FlutterLocalNotificationsPlugin? plugin, this._prefs})
-    : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
+  NotificationService({
+    FlutterLocalNotificationsPlugin? plugin,
+    this._prefs,
+    DateTime Function()? now,
+  }) : _plugin = plugin ?? FlutterLocalNotificationsPlugin(),
+       _now = now ?? DateTime.now;
 
   final FlutterLocalNotificationsPlugin _plugin;
   final Prefs? _prefs;
+  final DateTime Function() _now;
   final StreamController<String> _taps = StreamController<String>.broadcast();
   bool _initialized = false;
   String? _launchPayload;
@@ -209,6 +238,11 @@ class NotificationService {
     }
   }
 
+  String _privateBody(String text, String? account) => text.replaceAll(
+    RegExp(r'[^\s#/]{2,}#[\p{L}\p{N}]{2,}', unicode: true),
+    NotificationStrings.privateAccount,
+  );
+
   NotificationDetails _details(NotificationChannel channel, {String? tag}) =>
       NotificationDetails(
         android: AndroidNotificationDetails(
@@ -220,6 +254,7 @@ class NotificationService {
           icon: _androidSmallIcon,
           color: _accent,
           tag: tag,
+          visibility: NotificationVisibility.private,
         ),
         iOS: const DarwinNotificationDetails(),
       );
@@ -237,18 +272,18 @@ class NotificationService {
     String? tag,
   }) async {
     await init();
-    if (!at.isAfter(DateTime.now())) return;
+    if (!at.isAfter(_now()) || !await _accountExists(accountPuuid)) return;
     await _plugin.cancel(id: id, tag: tag);
     await _plugin.zonedSchedule(
       id: id,
       title: title,
-      body: body,
+      body: _privateBody(body, accountPuuid),
       scheduledDate: tz.TZDateTime.from(at, tz.local),
       notificationDetails: _details(channel, tag: tag),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       payload: payload,
     );
-    await _track(accountPuuid, id);
+    await _track(accountPuuid, id, channel);
   }
 
   /// Shows a notification immediately.
@@ -262,14 +297,15 @@ class NotificationService {
     String? tag,
   }) async {
     await init();
+    if (!await _accountExists(accountPuuid)) return;
     await _plugin.show(
       id: id,
       title: title,
-      body: body,
+      body: _privateBody(body, accountPuuid),
       notificationDetails: _details(channel, tag: tag),
       payload: payload,
     );
-    await _track(accountPuuid, id);
+    await _track(accountPuuid, id, channel);
   }
 
   Future<void> cancel(int id, {String? tag}) async {
@@ -308,15 +344,59 @@ class NotificationService {
       final id = int.tryParse(raw);
       if (id != null) await cancel(id);
     }
+    final prefix = PrefKeys.account(puuid, 'notification.');
+    for (final tracked in await prefs.keysOnDisk()) {
+      if (!tracked.startsWith(prefix)) continue;
+      final id = int.tryParse(tracked.substring(prefix.length));
+      if (id != null) await cancel(id);
+      await prefs.remove(tracked);
+    }
     await prefs.remove(key);
   }
 
-  Future<void> _track(String? puuid, int id) async {
+  Future<bool> _accountExists(String? puuid) async {
+    if (puuid == null || _prefs == null) return true;
+    final raw = tryDecodeJson(
+      await _prefs.getStringFromDisk(PrefKeys.accounts),
+    );
+    return asList(raw)
+        .any((json) => Account.fromJson(json)?.puuid == puuid.toLowerCase());
+  }
+
+  /// Cancels one category without touching the account's other alerts.
+  Future<void> cancelChannelForAccount(
+    String puuid,
+    NotificationChannel channel,
+  ) async {
+    final prefs = _prefs;
+    if (prefs == null) return;
+    final prefix = PrefKeys.account(puuid, 'notification.');
+    for (final key in await prefs.keysOnDisk()) {
+      if (!key.startsWith(prefix) ||
+          await prefs.getStringFromDisk(key) != channel.id) {
+        continue;
+      }
+      final id = int.tryParse(key.substring(prefix.length));
+      if (id != null) await cancel(id);
+      await prefs.remove(key);
+    }
+  }
+
+  Future<void> _track(
+    String? puuid,
+    int id, [
+    NotificationChannel? channel,
+  ]) async {
     final prefs = _prefs;
     if (prefs == null || puuid == null) return;
-    final key = PrefKeys.account(puuid, 'notificationIds');
-    final ids = {...?prefs.getStringList(key), '$id'};
-    await prefs.setStringList(key, ids.toList());
+    if (!await _accountExists(puuid)) {
+      await cancel(id);
+      return;
+    }
+    await prefs.setString(
+      PrefKeys.account(puuid, 'notification.$id'),
+      channel?.id ?? '',
+    );
   }
 
   Future<void> dispose() => _taps.close();

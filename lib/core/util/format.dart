@@ -178,7 +178,7 @@ String formatRelative(DateTime then, DateTime now, {String? locale}) {
   return formatDate(localThen, locale: locale);
 }
 
-DateTime _dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
+DateTime _dateOnly(DateTime d) => DateTime.utc(d.year, d.month, d.day);
 
 /// `22/09/2026` (vi), `9/22/2026` (en_US) — device time zone.
 String formatDate(DateTime d, {String? locale}) {

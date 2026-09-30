@@ -106,52 +106,89 @@ class ContentRepository {
     bool force = false,
     bool preferCache = false,
   }) async {
-    if (preferCache && !force) {
-      final cached = await _readAll(language);
-      if (cached.length == endpoints.length) {
-        return _parser(cached, language, _versions.current.manifestId);
+    final cached = await _readAll(language);
+    if (!force && cached.containsKey(ContentEndpoints.weapons)) {
+      final db = await _parser(cached, language, _versions.current.manifestId);
+      if (!preferCache) {
+        unawaited(
+          refresh(language: language)
+              .then<void>((_) {}, onError: (Object _) {}),
+        );
       }
+      return db;
     }
-    // A slow /version must never block content served from the cache.
+    return refresh(language: language, force: force);
+  }
+
+  final _updates = StreamController<String>.broadcast();
+  Stream<String> get updates => _updates.stream;
+  final Map<String, Future<ContentDb>> _refreshing = {};
+
+  /// Single flight per locale. Endpoint freshness and retry windows are
+  /// independent: a failing optional endpoint never invalidates the others.
+  Future<ContentDb> refresh({String language = 'vi-VN', bool force = false}) {
+    final running = _refreshing[language];
+    if (running != null) return running;
+    final future = _refresh(language, force).whenComplete(() {
+      _refreshing.removeWhere((key, _) => key == language);
+    });
+    _refreshing[language] = future;
+    return future;
+  }
+
+  Future<ContentDb> _refresh(String language, bool force) async {
+    final cached = await _readAll(language);
     final version = await _versions.refresh().timeout(
       const Duration(seconds: 5),
       onTimeout: () => _versions.current,
     );
     final key = cacheKey(version.manifestId, language);
-    final meta = (await _cache.read(_metaKey(language)))?.map;
-    final cachedKey = asString(meta?['key']);
-    final fetchedAt = asDateTime(meta?['fetchedAt']);
-    final age = fetchedAt == null ? null : _clock.now().difference(fetchedAt);
-    final fresh =
-        cachedKey != null &&
-        (version.manifestId == null || cachedKey == key) &&
-        age != null &&
-        age < AppConstants.contentMaxAge;
-
-    if (fresh && !force) {
-      final cached = await _readAll(language);
-      if (cached.length == endpoints.length) {
-        return _parser(cached, language, version.manifestId);
-      }
+    final global = (await _cache.read(_metaKey(language)))?.map;
+    final due = <MapEntry<String, String>>[];
+    for (final endpoint in endpoints.entries) {
+      final meta =
+          (await _cache.read('$language/meta/${endpoint.key}'))?.map ?? global;
+      final at = asDateTime(meta?['fetchedAt']);
+      final failed = asDateTime(meta?['failedAt']);
+      final now = _clock.now();
+      final fresh =
+          cached.containsKey(endpoint.key) &&
+          at != null &&
+          now.difference(at) < AppConstants.contentMaxAge &&
+          (version.manifestId == null || asString(meta?['key']) == key);
+      final cooling =
+          failed != null && now.difference(failed) < const Duration(hours: 6);
+      if (force || (!fresh && !cooling)) due.add(endpoint);
     }
-
-    final downloaded = await _downloadAll(language);
-    final cached = await _readAll(language);
-    final merged = {...cached, ...downloaded};
-    if (!merged.containsKey(ContentEndpoints.weapons)) {
+    var changed = false;
+    for (var i = 0; i < due.length; i += 4) {
+      await Future.wait([
+        for (final endpoint in due.skip(i).take(4))
+          () async {
+            final raw = await _download(endpoint.value, language);
+            final metaKey = '$language/meta/${endpoint.key}';
+            final now = _clock.now().toUtc().toIso8601String();
+            if (raw == null) {
+              final prior = (await _cache.read(metaKey))?.map;
+              await _cache.write(metaKey, {...?prior, 'failedAt': now});
+              return;
+            }
+            await _cache.writeRaw(_fileKey(language, endpoint.key), raw);
+            await _cache.write(metaKey, {'key': key, 'fetchedAt': now});
+            cached[endpoint.key] = raw;
+            changed = true;
+          }(),
+      ]);
+    }
+    if (!cached.containsKey(ContentEndpoints.weapons)) {
       throw const TransientException(reason: 'content_unavailable');
     }
-    for (final e in downloaded.entries) {
-      await _cache.writeRaw(_fileKey(language, e.key), e.value);
-    }
-    if (downloaded.length == endpoints.length) {
-      await _cache.write(_metaKey(language), {
-        'key': key,
-        'fetchedAt': _clock.now().toUtc().toIso8601String(),
-      });
-    }
-    return _parser(merged, language, version.manifestId);
+    final db = await _parser(cached, language, version.manifestId);
+    if (changed && !_updates.isClosed) _updates.add(language);
+    return db;
   }
+
+  Future<void> dispose() => _updates.close();
 
   /// Whether a refresh after a content miss (a Riot UUID not in the cache)
   /// is allowed now — at most once every 6 h (CA §2.2 step 3). Records the
@@ -184,22 +221,6 @@ class ContentRepository {
     return out;
   }
 
-  Future<Map<String, String>> _downloadAll(String language) async {
-    final out = <String, String>{};
-    final entries = endpoints.entries.toList();
-    // Four at a time: ~1 MB gzip in total.
-    for (var i = 0; i < entries.length; i += 4) {
-      final batch = entries.skip(i).take(4);
-      await Future.wait([
-        for (final e in batch)
-          _download(e.value, language).then((raw) {
-            if (raw != null) out[e.key] = raw;
-          }),
-      ]);
-    }
-    return out;
-  }
-
   Future<String?> _download(String path, String language) async {
     final sep = path.contains('?') ? '&' : '?';
     try {
@@ -220,14 +241,16 @@ class ContentRepository {
 }
 
 /// App-wide content repository.
-final contentRepositoryProvider = Provider<ContentRepository>(
-  (ref) => ContentRepository(
+final contentRepositoryProvider = Provider<ContentRepository>((ref) {
+  final repo = ContentRepository(
     versions: ref.watch(clientVersionRepositoryProvider),
     dio: createBaseDio(log: ref.watch(sessionLogProvider)),
     prefs: ref.watch(prefsProvider),
     clock: ref.watch(clockProvider),
-  ),
-);
+  );
+  ref.onDispose(repo.dispose);
+  return repo;
+});
 
 /// The parsed content in the user's item-name language (VF §6.8). Kept alive
 /// for the app's lifetime; re-evaluates when the language setting changes.
@@ -238,7 +261,12 @@ final contentRepositoryProvider = Provider<ContentRepository>(
 /// ```
 final contentProvider = FutureProvider<ContentDb>((ref) {
   final language = ref.watch(appSettingsProvider.select((s) => s.itemLanguage));
-  return ref.watch(contentRepositoryProvider).load(language: language.apiCode);
+  final repo = ref.watch(contentRepositoryProvider);
+  final sub = repo.updates.listen((changed) {
+    if (changed == language.apiCode && ref.mounted) ref.invalidateSelf();
+  });
+  ref.onDispose(sub.cancel);
+  return repo.load(language: language.apiCode);
 });
 
 /// Re-runs [contentProvider] when it is in error (it is kept alive, so a

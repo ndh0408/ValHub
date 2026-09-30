@@ -40,6 +40,7 @@ class LocalDataEraser {
   Future<void> eraseSharedCaches() async {
     await _prefs.remove(NameResolver.prefsKey);
     await _cache.deletePrefix('matches');
+    await _cache.deletePrefix('names');
   }
 
   /// "Xóa dữ liệu cục bộ": RR history of everyone, loadout presets of every
@@ -49,6 +50,10 @@ class LocalDataEraser {
   Future<void> eraseAll({required Set<String> signedIn}) async {
     final keep = {for (final id in signedIn) id.trim().toLowerCase()};
     await _history.clear();
+    // Current and future account-scoped history recorders share this root.
+    for (final id in keep) {
+      await _cache.deletePrefix('acct/$id/store_history');
+    }
     for (final key in await _prefs.keysOnDisk()) {
       final id = keptKeyOwner(key);
       if (id == null) continue;

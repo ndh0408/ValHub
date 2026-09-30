@@ -16,10 +16,10 @@ abstract final class AccountStrings {
   static const active = 'Đang dùng';
   static const removeAccount = 'Xóa tài khoản';
   static String removeAccountConfirm(String account) =>
-      'Xóa $account khỏi thiết bị này? Wishlist của tài khoản vẫn được giữ lại.';
+      'Xóa $account khỏi thiết bị này? Bạn có thể chọn giữ dữ liệu đã lưu.';
   static const signOutAll = 'Đăng xuất tất cả tài khoản';
   static const signOutAllConfirm =
-      'Đăng xuất và xóa mọi tài khoản khỏi thiết bị này? Wishlist vẫn được giữ lại.';
+      'Đăng xuất và xóa mọi tài khoản khỏi thiết bị này? Bạn có thể chọn giữ dữ liệu đã lưu.';
   static String levelShort(int level) => 'Cấp $level';
 
   // Live activity of each account in the lists (VF §8: online / offline)
@@ -31,6 +31,15 @@ abstract final class AccountStrings {
   static String onlineCount(int count) => '$count đang trực tuyến';
 
   // Login note: the user's own Riot username / password per account
+  static const unlockLoginNote = 'Xác thực để mở ghi chú đăng nhập Riot';
+  static const loginNoteLocked = 'Mở khóa ghi chú đăng nhập';
+  static const keepLocalData = 'Giữ dữ liệu cục bộ';
+  static const keepLocalDataHint =
+      'Giữ wishlist, bộ trang bị và lịch sử trên thiết bị này';
+  static const clearLocalData = 'Xóa dữ liệu cục bộ';
+  static const clearLocalDataConfirm =
+      'Xóa lịch sử, bộ trang bị đã lưu và dữ liệu của tài khoản đã đăng xuất trên thiết bị này?';
+  static const localDataCleared = 'Đã xóa dữ liệu cục bộ';
   static const loginNote = 'Ghi chú đăng nhập';
   static const loginNoteEmpty = 'Chưa có ghi chú đăng nhập';
   static const loginNoteHint =

@@ -95,6 +95,12 @@ class BackgroundContext {
     );
     final notifications = NotificationService(prefs: prefs);
     await notifications.init();
+    // Use validated last-known-good headers when the version endpoint is down.
+    if (versions.current.fetchedAt == null ||
+        DateTime.now().difference(versions.current.fetchedAt!) >
+            const Duration(hours: 24)) {
+      unawaited(versions.refresh());
+    }
     return BackgroundContext._(
       prefs: prefs,
       remoteConfig: remote,

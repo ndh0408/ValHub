@@ -37,18 +37,23 @@ Future<bool> runPeriodicJob({
   final deadline = now().add(kBackgroundJobBudget);
   var keepAliveOk = false;
   try {
-    keepAliveOk = await keepAlive();
+    keepAliveOk = await keepAlive().timeout(kBackgroundJobBudget);
   } on Object catch (e) {
     debugPrint('Keep-alive failed: ${e.runtimeType}');
   }
   final rest = deadline.difference(now());
   var wishlistOk = false;
   try {
-    wishlistOk = await wishlist(rest.isNegative ? Duration.zero : rest);
+    if (rest > Duration.zero) {
+      wishlistOk = await wishlist(rest).timeout(rest);
+    }
   } on Object catch (e) {
     debugPrint('Wishlist check failed: ${e.runtimeType}');
   }
-  return keepAliveOk && wishlistOk;
+  // A periodic job already has a next run. Never spawn retry engines during
+  // an outage, a challenge or a time budget exhaustion (AR-007).
+  if (!keepAliveOk || !wishlistOk) debugPrint('Background job deferred');
+  return true;
 }
 
 /// Task name → handler. iOS background fetch arrives as
@@ -68,7 +73,7 @@ void callbackDispatcher() {
       return await handler(input);
     } on Object catch (e) {
       debugPrint('Background task failed: ${e.runtimeType}');
-      return false;
+      return true;
     }
   });
 }
@@ -89,5 +94,16 @@ Future<void> initBackgroundWork() async {
     );
   } on Object catch (e) {
     debugPrint('initBackgroundWork failed: ${e.runtimeType}');
+  }
+}
+
+/// Called at boot, after login and after removing the last account.
+Future<void> syncBackgroundWork({required bool hasAccounts}) async {
+  if (hasAccounts) return initBackgroundWork();
+  if (kIsWeb) return;
+  try {
+    await Workmanager().cancelByUniqueName(kWishlistCheckTask);
+  } on Object {
+    // Platform work is best effort; account checks still prevent requests.
   }
 }

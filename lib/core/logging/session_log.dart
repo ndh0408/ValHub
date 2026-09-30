@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -89,17 +90,21 @@ class SessionLog extends ChangeNotifier {
   });
 
   /// A log persisted to `<appSupport>/logs/session_log.jsonl`.
-  factory SessionLog.persistent({Clock clock = const Clock()}) => SessionLog(
-    clock: clock,
-    file: () async {
-      try {
-        final base = await getApplicationSupportDirectory();
-        return File('${base.path}/logs/session_log.jsonl');
-      } on Object {
-        return null;
-      }
-    },
-  );
+  factory SessionLog.persistent({Clock clock = const Clock()}) {
+    final writerId =
+        '${DateTime.now().microsecondsSinceEpoch}_${Random.secure().nextInt(1 << 32)}';
+    return SessionLog(
+      clock: clock,
+      file: () async {
+        try {
+          final base = await getApplicationSupportDirectory();
+          return File('${base.path}/logs/session_$writerId.jsonl');
+        } on Object {
+          return null;
+        }
+      },
+    );
+  }
 
   final Future<File?> Function()? _file;
   final Clock _clock;
@@ -107,6 +112,8 @@ class SessionLog extends ChangeNotifier {
   final List<SessionLogEntry> _entries = [];
   Timer? _flushTimer;
   bool _loaded = false;
+  final List<SessionLogEntry> _pending = [];
+  Future<void>? _flushing;
 
   List<SessionLogEntry> get entries => List.unmodifiable(_entries);
 
@@ -115,14 +122,23 @@ class SessionLog extends ChangeNotifier {
     if (_loaded) return;
     _loaded = true;
     final file = await _file?.call();
-    if (file == null || !file.existsSync()) return;
+    if (file == null || !await file.parent.exists()) return;
     try {
-      final lines = await file.readAsLines();
+      final files = await file.parent
+          .list()
+          .where((e) => e is File && e.path.endsWith('.jsonl'))
+          .cast<File>()
+          .toList();
+      final lines = <String>[];
+      for (final source in files) {
+        lines.addAll(await source.readAsLines());
+      }
       final loaded = [
         for (final line in lines)
           ?SessionLogEntry.fromJson(tryDecodeJson(line)),
       ];
       _entries.insertAll(0, loaded);
+      _entries.sort((a, b) => a.time.compareTo(b.time));
       _trim();
       notifyListeners();
     } on Object {
@@ -149,6 +165,7 @@ class SessionLog extends ChangeNotifier {
         detail: detail == null ? null : scrubText(detail),
       ),
     );
+    _pending.add(_entries.last);
     _trim();
     notifyListeners();
     _scheduleFlush();
@@ -174,23 +191,57 @@ class SessionLog extends ChangeNotifier {
   }
 
   /// Writes the buffer to disk now.
-  Future<void> flush() async {
+  Future<void> flush() => _flushing ??= _flush().whenComplete(() {
+    _flushing = null;
+  });
+
+  Future<void> _flush() async {
     _flushTimer?.cancel();
     final file = await _file?.call();
     if (file == null) return;
     try {
       await file.parent.create(recursive: true);
-      final text = _entries.map((e) => jsonEncode(e.toJson())).join('\n');
-      await file.writeAsString(text, flush: true);
+      while (_pending.isNotEmpty) {
+        final batch = List<SessionLogEntry>.of(_pending);
+        final text = '${batch.map((e) => jsonEncode(e.toJson())).join('\n')}\n';
+        await file.writeAsString(text, mode: FileMode.append, flush: true);
+        _pending.removeRange(0, batch.length);
+      }
+      // Bound each writer file without touching another isolate's active file.
+      if (await file.length() > capacity * 1024) {
+        final lines = await file.readAsLines();
+        await file.writeAsString(
+          '${lines.skip((lines.length - capacity).clamp(0, lines.length)).join('\n')}\n',
+          flush: true,
+        );
+      }
+      final oldBefore = _clock.now().subtract(const Duration(days: 7));
+      await for (final source in file.parent.list()) {
+        if (source is File &&
+            source.path != file.path &&
+            source.path.endsWith('.jsonl') &&
+            (await source.lastModified()).isBefore(oldBefore)) {
+          await source.delete();
+        }
+      }
     } on Object {
       // Logging must never break the app.
     }
   }
 
   Future<void> clear() async {
-    _entries.clear();
-    notifyListeners();
     await flush();
+    _entries.clear();
+    _pending.clear();
+    final file = await _file?.call();
+    if (file != null && await file.parent.exists()) {
+      await for (final source in file.parent.list()) {
+        if (source is File && source.path.endsWith('.jsonl')) {
+          await source.delete();
+        }
+      }
+    }
+    notifyListeners();
   }
 
   /// Plain-text export ("Xuất nhật ký phiên").
@@ -222,7 +273,10 @@ class SessionLog extends ChangeNotifier {
     caseSensitive: false,
   );
   static final RegExp _longSecret = RegExp(r'[A-Za-z0-9+/_=-]{32,}');
-  static final RegExp _riotId = RegExp(r'[^\s#/]{2,}#[A-Za-z0-9]{2,6}');
+  static final RegExp _riotId = RegExp(
+    r'[^\s#/]{2,}#[\p{L}\p{N}]{2,}',
+    unicode: true,
+  );
   static const _queryAllowlist = {
     'startIndex',
     'endIndex',

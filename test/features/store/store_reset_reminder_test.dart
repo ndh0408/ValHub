@@ -37,29 +37,32 @@ void main() {
       expect(r.id, NotificationIds.storeReset(Fx.puuid));
       expect(r.at, t0.add(const Duration(seconds: 17401, minutes: 1)));
       expect(r.title, 'Cửa hàng đã làm mới');
-      expect(r.body, 'Xem 4 skin mới hôm nay của Người Chơi#VN2.');
+      expect(r.body, 'Skin mới đang chờ bạn trong cửa hàng.');
       expect(r.payload, '/store?account=${Fx.puuid}');
       expect(r.accountPuuid, Fx.puuid);
     });
 
-    test('null without a reset time or once it has passed', () {
-      expect(
-        storeResetReminderFor(
-          account: testAccount,
-          store: Storefront.fromJson(const {}, receivedAt: t0),
-          now: t0,
-        ),
-        isNull,
-      );
-      expect(
-        storeResetReminderFor(
-          account: testAccount,
-          store: store,
-          now: t0.add(const Duration(hours: 5)),
-        ),
-        isNull,
-      );
-    });
+    test(
+      'null without a reset time; stale reset advances by a daily cadence',
+      () {
+        expect(
+          storeResetReminderFor(
+            account: testAccount,
+            store: Storefront.fromJson(const {}, receivedAt: t0),
+            now: t0,
+          ),
+          isNull,
+        );
+        expect(
+          storeResetReminderFor(
+            account: testAccount,
+            store: store,
+            now: t0.add(const Duration(hours: 5)),
+          )!.at,
+          t0.add(const Duration(days: 1, seconds: 17401, minutes: 1)),
+        );
+      },
+    );
 
     test('generic body when the daily shop is empty', () {
       expect(
@@ -79,7 +82,16 @@ void main() {
         now: t0,
       );
       expect(ok, isTrue);
-      expect(service.calls.single.channel, NotificationChannel.storeReset);
+      expect(service.calls, hasLength(7));
+      expect(
+        service.calls.every((c) => c.channel == NotificationChannel.storeReset),
+        isTrue,
+      );
+      expect(service.calls.map((c) => c.id).toSet(), hasLength(7));
+      expect(
+        service.calls.last.at.difference(service.calls.first.at),
+        const Duration(days: 6),
+      );
     });
 
     test('is best effort: platform failures return false', () async {

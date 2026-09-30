@@ -280,8 +280,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (scheme == 'about' || scheme == 'data' || scheme == 'blob') {
       return NavigationActionPolicy.ALLOW;
     }
-    if ((scheme == 'https' || scheme == 'http') &&
-        isAllowedLoginHost(url.host)) {
+    if (scheme == 'https' && isAllowedLoginHost(url.host)) {
       return NavigationActionPolicy.ALLOW;
     }
     // Help pages, legal links, app deep links: open outside the login WebView.
@@ -298,16 +297,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _quickFill(List<(Account, LoginNote)> saved) async {
     final controller = _controller;
     if (controller == null || saved.isEmpty) return;
-    var note = saved.first.$2;
+    var selected = saved.first.$1;
     if (saved.length > 1 || saved.first.$1.puuid != widget.reauthPuuid) {
       final picked = await _pickNote(saved);
       if (picked == null || !mounted) return;
-      note = picked;
+      selected = picked;
     }
+    ref.invalidate(loginNoteProvider(selected.puuid));
+    final note = await ref.read(loginNoteProvider(selected.puuid).future);
+    if (note == null || !mounted) return;
+    // Recheck the destination AFTER unlocking; navigation may have changed.
     final url = await controller.getUrl();
     final host = url?.host ?? '';
     // Riot's own pages only (never Google / Facebook / Apple sign-in).
-    if (host != 'riotgames.com' && !host.endsWith('.riotgames.com')) {
+    if (url?.scheme != 'https' ||
+        (host != 'auth.riotgames.com' &&
+            host != 'authenticate.riotgames.com')) {
       if (mounted) showAppSnackBar(context, AccountStrings.quickFillNotReady);
       return;
     }
@@ -328,8 +333,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  Future<LoginNote?> _pickNote(List<(Account, LoginNote)> saved) =>
-      showValSheet<LoginNote>(
+  Future<Account?> _pickNote(List<(Account, LoginNote)> saved) =>
+      showValSheet<Account>(
         context,
         title: AccountStrings.quickFillTitle,
         subtitle: AccountStrings.quickFillSubtitle,
@@ -339,16 +344,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           children: [
             GroupedSection(
               children: [
-                for (final (account, note) in saved)
+                for (final (account, _) in saved)
                   GroupedRow(
                     title: account.riotId,
-                    subtitle: note.username,
+                    subtitle: AccountStrings.loginNote,
                     leading: AccountAvatar(
                       account: account,
                       size: 40,
                       circle: true,
                     ),
-                    onTap: () => Navigator.of(context).pop(note),
+                    onTap: () => Navigator.of(context).pop(account),
                   ),
               ],
             ),
