@@ -283,6 +283,7 @@ describe('reports', () => {
   it('hides a post after 3 distinct reports', async () => {
     const author = await e.login('author');
     const reporters = await Promise.all(['r1', 'r2', 'r3'].map((n) => e.login(n)));
+    reporters.forEach((r) => e.mature(r.user.id));
     const id = (await e.req('POST', '/v1/posts', { token: author.token, body: { kind: 'text', body: 'spam' } })).json.id;
     const report = (token: string) =>
       e.req('POST', '/v1/reports', { token, body: { targetType: 'post', targetId: id, reason: 'spam' } });
@@ -303,6 +304,7 @@ describe('reports', () => {
   it('hides comments and LFG posts too', async () => {
     const author = await e.login('author');
     const reporters = await Promise.all(['r1', 'r2', 'r3'].map((n) => e.login(n)));
+    reporters.forEach((r) => e.mature(r.user.id));
     const postId = (await e.req('POST', '/v1/posts', { token: author.token, body: { kind: 'text', body: 'x' } })).json.id;
     const cid = (await e.req('POST', `/v1/posts/${postId}/comments`, { token: author.token, body: { body: 'bad' } }))
       .json.id;

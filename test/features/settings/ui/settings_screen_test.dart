@@ -11,6 +11,8 @@ import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/core/settings/app_settings.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/theme/app_theme.dart';
+import 'package:valvn/features/community/community_strings.dart';
+import 'package:valvn/features/community/providers/consent_providers.dart';
 import 'package:valvn/features/settings/legal/legal_documents.dart';
 import 'package:valvn/features/settings/settings_routes.dart';
 import 'package:valvn/features/settings/settings_strings.dart';
@@ -208,6 +210,71 @@ void main() {
       expect(find.text(AccountStrings.accountsHeader(0, 10)), findsOneWidget);
       expect(find.text(CommonStrings.errorNoAccount), findsOneWidget);
       expect(find.text(AccountStrings.signOutAll), findsNothing);
+    });
+  });
+
+  group('DỮ LIỆU CỘNG ĐỒNG', () {
+    final header = CommunityStrings.dataTitle.toUpperCase();
+
+    testWidgets('hidden until the active account joined the Community', (
+      tester,
+    ) async {
+      await pumpSettings(tester, accounts: [testAccount(1), testAccount(2)]);
+
+      expect(find.text(header), findsNothing);
+      expect(find.text(CommunityStrings.deleteDataTitle), findsNothing);
+    });
+
+    testWidgets('shown under the accounts, for the active account only', (
+      tester,
+    ) async {
+      await prefs.setString(communityConsentKey(testPuuid(1)), 'granted');
+      await pumpSettings(tester, accounts: [testAccount(1), testAccount(2)]);
+
+      expect(find.text(header), findsOneWidget);
+      expect(find.text(CommunityStrings.exportTitle), findsOneWidget);
+      expect(find.text(CommunityStrings.deleteDataTitle), findsOneWidget);
+      expect(find.text(CommunityStrings.withdrawTitle), findsOneWidget);
+      expect(
+        find.text(CommunityStrings.dataFooter('Player1#VN')),
+        findsOneWidget,
+      );
+      // Between "TÀI KHOẢN" and "TÙY CHỌN".
+      final accounts = tester.getTopLeft(
+        find.text(AccountStrings.accountsHeader(2, 10)),
+      );
+      final data = tester.getTopLeft(find.text(header));
+      final options = tester.getTopLeft(
+        find.text(SettingsStrings.optionsHeader),
+      );
+      expect(accounts.dy, lessThan(data.dy));
+      expect(data.dy, lessThan(options.dy));
+
+      // Account 2 never joined: switching to it hides the group.
+      await tester.tap(find.text('Player2#VN'));
+      await tester.pumpAndSettle();
+      expect(find.text(header), findsNothing);
+      await tester.tap(find.text('Player1#VN'));
+      await tester.pumpAndSettle();
+      expect(find.text(header), findsOneWidget);
+      await _drainSnackBars(tester);
+    });
+
+    testWidgets('signing the account out takes the group (and consent) away', (
+      tester,
+    ) async {
+      await prefs.setString(communityConsentKey(testPuuid(1)), 'granted');
+      await pumpSettings(tester, accounts: [testAccount(1)]);
+      expect(find.text(header), findsOneWidget);
+
+      await tester.tap(find.byTooltip(AccountStrings.removeAccount).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(CommonStrings.delete));
+      await tester.pumpAndSettle();
+
+      expect(find.text(header), findsNothing);
+      expect(prefs.getString(communityConsentKey(testPuuid(1))), isNull);
+      await _drainSnackBars(tester);
     });
   });
 

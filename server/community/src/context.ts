@@ -1,16 +1,38 @@
 import type { Context, Hono } from 'hono';
+import { FixedWindowLimiter, TtlCache } from './cache.js';
 import type { Config } from './config.js';
+import type { ContentCatalog, ContentKind } from './content.js';
 import { hashIp, verifySession } from './crypto.js';
 import type { AuthorCols, Repo, UserRow } from './db/repo.js';
-import { ApiError, unauthorized } from './errors.js';
+import { ApiError, invalid, unauthorized } from './errors.js';
 import type { MediaStore } from './media.js';
+import { deleteMedia, quarantineMedia, type MediaDeps } from './media-service.js';
 import type { RiotUserinfoFn } from './riot.js';
 import { parseJsonObject, type Json } from './validate.js';
+
+/** Tunable limits. Anything left out gets the default below (tests run with the cache off). */
+export type Tuning = Pick<
+  Config,
+  'mediaUserQuotaBytes' | 'mediaMaxTotalBytes' | 'anonReadLimitPerMin' | 'anonMediaLimitPerMin' | 'publicCacheTtlMs'
+>;
+
+export const DEFAULT_TUNING: Tuning = {
+  mediaUserQuotaBytes: 50 * 1024 * 1024,
+  mediaMaxTotalBytes: 2048 * 1024 * 1024,
+  anonReadLimitPerMin: 120,
+  anonMediaLimitPerMin: 1500,
+  publicCacheTtlMs: 0,
+};
+
+/** A report only counts toward hiding when the reporter's account is at least this old (and active). */
+export const REPORT_MIN_ACCOUNT_AGE_MS = 24 * 60 * 60_000;
 
 export interface AppDeps {
   repo: Repo;
   media: MediaStore;
-  config: Pick<Config, 'sessionSecret' | 'pepper' | 'publicBaseUrl' | 'trustProxy'>;
+  config: Pick<Config, 'sessionSecret' | 'pepper' | 'publicBaseUrl' | 'trustProxy'> & Partial<Tuning>;
+  /** Real VALORANT ids (skins / weapons / agents); omitted → ids are not checked. */
+  content?: ContentCatalog;
   /** Injectable Riot /userinfo call (stubbed in tests). */
   riotUserinfo: RiotUserinfoFn;
   /** Injectable clock (ms since epoch). */
@@ -34,15 +56,66 @@ export const LIMITS = {
   lfgPatch: { limit: 120, windowMs: 10 * 60_000 },
   lfgJoin: { limit: 30, windowMs: 10 * 60_000 },
   authIp: { limit: 30, windowMs: 10 * 60_000 },
+  accountExport: { limit: 5, windowMs: 60 * 60_000 },
+  accountDelete: { limit: 3, windowMs: 60 * 60_000 },
 } as const;
 export type LimitName = keyof typeof LIMITS;
 
 /** Shared helpers handed to every route module. */
 export class Ctx {
   readonly now: () => number;
+  readonly tuning: Tuning;
+  /** Unauthenticated reads per client IP (in memory: no database write per request). */
+  readonly anonLimiter = new FixedWindowLimiter();
+  /** Anonymous aggregate responses (skin top / votes / summary / reviews, communities). */
+  readonly publicCache = new TtlCache<{ body: string; type: string }>(500);
 
   constructor(readonly deps: AppDeps) {
     this.now = deps.now ?? (() => Date.now());
+    this.tuning = { ...DEFAULT_TUNING };
+    for (const k of Object.keys(DEFAULT_TUNING) as (keyof Tuning)[]) {
+      const v = deps.config[k];
+      if (typeof v === 'number') this.tuning[k] = v;
+    }
+  }
+
+  /** Drops expired in-memory entries (called by the periodic sweeper). */
+  pruneMemory(): void {
+    const now = this.now();
+    this.anonLimiter.prune(now);
+    this.publicCache.prune(now);
+  }
+
+  /** Dependencies of the media lifecycle helpers. */
+  get mediaDeps(): MediaDeps {
+    return { repo: this.deps.repo, media: this.deps.media, now: this.now, logError: this.deps.logError };
+  }
+
+  deleteMedia(keys: readonly string[]): Promise<void> {
+    return deleteMedia(this.mediaDeps, keys);
+  }
+
+  quarantineMedia(keys: readonly string[]): Promise<void> {
+    return quarantineMedia(this.mediaDeps, keys);
+  }
+
+  /**
+   * Rejects (400) an id the content catalog knows is not a real skin / weapon / agent. Fails open when
+   * there is no catalog, it has nothing yet, or it throws.
+   */
+  async assertContent(kind: ContentKind, uuid: string, field: string): Promise<void> {
+    const catalog = this.deps.content;
+    if (!catalog) return;
+    let known = true;
+    try {
+      known = await catalog.isKnown(kind, uuid);
+    } catch {
+      known = true;
+    }
+    if (!known) {
+      const what = kind === 'skin' ? 'skin' : kind === 'weapon' ? 'vũ khí' : 'đặc vụ';
+      throw invalid(`${field} không phải ${what} của VALORANT.`);
+    }
   }
 
   get repo(): Repo {

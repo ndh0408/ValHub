@@ -201,19 +201,23 @@ class LfgNotifier extends AsyncNotifier<PagedState<LfgPost>>
       cursor: cursor,
     );
     // The server filters too; keep the list honest if it does not.
-    return CommunityPage([
-      for (final p in page.items)
-        if (p.status == LfgStatus.open &&
-            (query.rank == null || p.acceptsRank(query.rank)) &&
-            (query.role == null ||
-                p.roles.isEmpty ||
-                p.roles.contains(query.role)) &&
-            (query.mic != true || p.mic == true) &&
-            (query.language == null ||
-                p.language == query.language ||
-                p.language == kLfgAnyLanguage))
-          p,
-    ], nextCursor: page.nextCursor);
+    return CommunityPage(
+      [
+        for (final p in page.items)
+          if (p.status == LfgStatus.open &&
+              (query.rank == null || p.acceptsRank(query.rank)) &&
+              (query.role == null ||
+                  p.roles.isEmpty ||
+                  p.roles.contains(query.role)) &&
+              (query.mic != true || p.mic == true) &&
+              (query.language == null ||
+                  p.language == query.language ||
+                  p.language == kLfgAnyLanguage))
+            p,
+      ],
+      nextCursor: page.nextCursor,
+      applied: page.applied,
+    );
   }
 
   @override

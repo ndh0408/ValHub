@@ -8,28 +8,39 @@ filter. API contract: [`docs/community-api.md`](../../docs/community-api.md).
 - Node 22 + TypeScript, [Hono](https://hono.dev) on `@hono/node-server`, listening on `PORT` (default 8080).
 - SQLite via `better-sqlite3` (WAL) at `$DATA_DIR/community.db`; migrations in `migrations/` are applied
   automatically at startup and tracked in `schema_migrations`.
-- Uploaded images on disk at `$DATA_DIR/media/u/<userId>/<random>.<ext>`.
-- Runs as a Docker container behind a Cloudflare Tunnel.
+- Uploaded images on disk at `$DATA_DIR/media/u/<userId>/<random>.<ext>` (public) and, when hidden by
+  reports, `$DATA_DIR/quarantine/…` (private).
+- Self-hosted: Docker on the owner's Debian server, behind a Cloudflare Tunnel (see Deploy).
 
 ## Layout
 
 ```
 src/
-  main.ts            process entry: config, DB, HTTP server, housekeeping timer, graceful shutdown
+  main.ts            process entry: config, DB, HTTP server, periodic sweeper, graceful shutdown
   app.ts             createApp(deps) — Hono app, error handling, body limits
-  context.ts         shared helpers: auth, rate limits, base URL, serializers
-  routes/            auth.ts, lfg.ts, skins.ts, reviews.ts, communities.ts, posts.ts (posts, likes, comments, reports), media.ts
+  context.ts         shared helpers: auth, rate limits, tuning, base URL, serializers, content checks
+  cli.ts             operator CLI (find / export / delete a user, quarantine, unhide, stats, sweep)
+  account.ts         right to erasure + export (used by the API and the CLI)
+  sweeper.ts         periodic housekeeping (orphan uploads, quarantine expiry, stray files, old reports, ...)
+  imaging.ts         metadata-stripping JPEG / PNG / WebP sanitiser (pure TypeScript)
+  media.ts           MediaStore (disk: public + quarantine areas), magic-byte sniffing
+  media-service.ts   delete / quarantine helpers shared by routes, sweeper and CLI
+  content.ts         valorant-api catalog (real skin / weapon / agent uuids), 24 h cache
+  cache.ts           in-memory TTL cache and fixed-window limiter (anonymous traffic)
+  routes/            auth, account, lfg, skins, reviews, communities, posts (+ likes, comments, reports),
+                     media, public-guard (anonymous rate limit + cache)
   geo/               countries.ts (ISO 3166-1 alpha-3 -> alpha-2, 249 entries), languages.ts (the 17 app languages),
                      scope.ts (country / region / global resolution + SQL condition)
   moderation/        filter.ts (normalise, match, mask/reject, links, phones, which lists apply), wordlists.ts (registry),
                      vi-wordlist.ts + en-wordlist.ts (reviewed), lists/<lang>.ts (14 best-effort lists, NEEDS NATIVE REVIEW)
   db/                database.ts (open + migrate), repo.ts (Repo interface), sqlite-repo.ts
-  config.ts crypto.ts cursor.ts errors.ts media.ts riot.ts validate.ts
-migrations/          0001_init.sql ... 0004_scopes.sql — additive; never edit an applied migration
-test/                vitest (in-memory SQLite + temp media dir, stubbed Riot /userinfo, fake clock)
+  config.ts crypto.ts cursor.ts errors.ts riot.ts validate.ts
+migrations/          0001_init.sql ... 0005_hardening.sql — additive; never edit an applied migration
+ops/backup-loop.sh   the valvn-backup service's loop        scripts/restore.sh   restore from a backup archive
+test/                vitest (in-memory SQLite + temp dirs, stubbed Riot /userinfo, fake clock)
 ```
 
-Everything external is injected into `createApp({ repo, media, config, riotUserinfo, now })`, so tests
+Everything external is injected into `createApp({ repo, media, config, riotUserinfo, content, now })`, so tests
 never touch the network or the real clock.
 
 ## Configuration (env)
@@ -37,13 +48,19 @@ never touch the network or the real clock.
 | Var | Required | Meaning |
 |---|---|---|
 | `SESSION_SECRET` | yes, ≥ 32 chars | HS256 key for community session tokens (30 days). Rotating it logs everyone out. |
-| `PEPPER` | yes, ≥ 32 chars | user id = `hex(sha256(PEPPER + puuid))[0..32]`. **Never change after launch.** |
-| `PUBLIC_BASE_URL` | no | Public origin used for media URLs, e.g. `https://community.example.com`. Empty → derived from the request (`X-Forwarded-Proto` / `X-Forwarded-Host`). |
+| `PEPPER` | yes, ≥ 32 chars | user id = `hex(sha256(PEPPER + puuid))[0..32]`; also salts the hashed IPs. **Never change after launch.** |
+| `PUBLIC_BASE_URL` | no | Public origin used for media URLs, e.g. `https://val.gianguyen.cloud`. Empty → derived from the request (`X-Forwarded-Proto` / `X-Forwarded-Host`). |
 | `TRUST_PROXY` | no (default `true`) | Trust `CF-Connecting-IP` / `X-Forwarded-*`. |
 | `PORT` | no (8080) | |
-| `DATA_DIR` | no (`/data`) | SQLite file + media directory. |
+| `DATA_DIR` | no (`/data`) | SQLite file + `media/` + `quarantine/`. |
+| `MEDIA_USER_QUOTA_MB` | no (50) | Per-user image storage. Over it: `400 invalid_input` with a readable message. |
+| `MEDIA_MAX_TOTAL_MB` | no (2048) | Total image storage. Over it: `507 storage_full`. |
+| `ANON_READ_LIMIT_PER_MIN` | no (120) | Requests without a session per client IP per minute (feed, skins, communities). |
+| `ANON_MEDIA_LIMIT_PER_MIN` | no (1500) | Same, for image files (generous: many phones share one carrier-grade-NAT address). |
+| `PUBLIC_CACHE_TTL_SECONDS` | no (45) | Cache of anonymous aggregate responses; `0` = off. |
+| `BACKUP_DIR`, `BACKUP_KEEP_DAYS`, `BACKUP_INTERVAL_SECONDS` | no | Backup service (compose): host directory (`./backups`), retention (14), period (86400). |
 
-The process exits immediately with a clear message if a secret is missing or too short.
+The process exits immediately with a clear message if a secret is missing / too short or a number is out of range.
 
 ## Development
 
@@ -56,70 +73,146 @@ cp .env.example .env   # fill secrets, set DATA_DIR=./data
 npm run dev         # tsx watch on :8080
 ```
 
-## Deploy (Debian 13 + Docker + Cloudflare Tunnel)
+## Deploy (self-hosted: Docker + Cloudflare Tunnel)
 
-On the server, from a checkout of this repo:
+Production is Docker Compose on the owner's Debian server (`/home/huy/stacks/valvn-community`), published as
+`https://val.gianguyen.cloud` through the Cloudflare Tunnel `cf-gianguyen`. `cloudflared` runs in its own stack and
+reaches the API over the shared Docker network `edge` (service `http://valvn-community:8080`).
 
 ```bash
 cd server/community
-cp .env.example .env
-# fill SESSION_SECRET and PEPPER (openssl rand -hex 32 for each) and PUBLIC_BASE_URL
+cp .env.example .env               # fill SESSION_SECRET, PEPPER (openssl rand -hex 32 each), PUBLIC_BASE_URL
 chmod 600 .env
+mkdir -p backups && chown 1000:1000 backups && chmod 700 backups
+cp docker-compose.override.example.yml docker-compose.override.yml   # joins the external `edge` network
 
 docker compose build
-docker compose up -d
-docker compose ps                      # STATUS should become "healthy"
-curl -s http://127.0.0.1:8787/healthz  # {"ok":true}
+docker compose up -d               # valvn-community (API) + valvn-backup (daily backups)
+docker compose ps                  # both "Up", the API becomes "healthy"
+curl -s http://127.0.0.1:8787/healthz   # {"ok":true}
 docker compose logs -f valvn-community
 ```
 
-The container publishes only `127.0.0.1:8787 → 8080`. Point the tunnel at it, e.g. in
-`/etc/cloudflared/config.yml`:
+- `docker-compose.yml` publishes only `127.0.0.1:8787 → 8080`. Without the shared network, point the tunnel at
+  `http://127.0.0.1:8787` instead (`cloudflared` on the host) — the override file is only for the `edge` network.
+- **Update:** `git pull && docker compose build && docker compose up -d` (migrations run at start; each one is
+  additive, so rolling back the image is safe: the previous version simply ignores the new columns).
+- **Hardening** (both services): read-only root filesystem, `cap_drop: [ALL]`, `no-new-privileges`, non-root
+  user, `mem_limit` (API 512 MB, backup 256 MB), `pids_limit` (128 / 64), size-limited `tmpfs /tmp`, json-file
+  logs rotated (10 MB × 3). The only writable paths are the data volume and `/tmp`.
+- **Moving from the old host-only setup:** the `valvn-backup` service used to live in
+  `docker-compose.override.yml` on the server, reading `backup-loop.sh` from the stack directory. It is now part
+  of `docker-compose.yml` with `ops/backup-loop.sh`: delete the `valvn-backup` block from the host's override
+  (keep only the `edge` network), set `BACKUP_DIR=/home/huy/backups/valvn-community` in `.env`, then
+  `docker compose up -d` (the container is recreated; existing archives are kept and count toward retention).
 
-```yaml
-ingress:
-  - hostname: community.example.com
-    service: http://127.0.0.1:8787
-  - service: http_status:404
-```
+### Restart policy and health
 
-If `cloudflared` itself runs in Docker, either use `network_mode: host` for it, or attach both
-containers to a shared network and use `service: http://valvn-community:8080`, e.g. with a
-`docker-compose.override.yml`:
-
-```yaml
-services:
-  valvn-community:
-    networks: [tunnel]
-networks:
-  tunnel:
-    external: true
-    name: ${TUNNEL_NETWORK:-cloudflared}
-```
-
-Then set `communityBaseUrl` in the app (or remote config) to `https://community.example.com`.
-
-Update: `git pull && docker compose up -d --build` (migrations run automatically on start).
-
-The container runs as the unprivileged `node` user with a read-only root filesystem; the only
-writable paths are the `valvn-community-data` volume (`/data`) and a tmpfs `/tmp`.
+`restart: unless-stopped` restarts a container whose process exits (crash, out-of-memory kill, host reboot) but
+Docker **never restarts a container only because its health check fails**. The API's health check (`GET /healthz`
+every 30 s, 3 retries) shows `unhealthy` in `docker compose ps`; act on it with monitoring, or add
+[`willfarrell/autoheal`](https://github.com/willfarrell/docker-autoheal) (label `autoheal=true` on the service) if
+you want automatic restarts. A stuck event loop is unlikely (SQLite calls are synchronous and short; the sweeper
+never holds a request), but an out-of-memory kill at `mem_limit` is handled by the restart policy.
 
 ### Backup
 
-All state lives in the `valvn-community-data` volume (`community.db` + `media/`).
+The `valvn-backup` service (compose) takes a consistent snapshot of the SQLite database (online backup API,
+integrity-checked) plus the `media/` directory every 24 h into `BACKUP_DIR` as `valvn-community-YYYYmmdd-HHMM.tgz`
+(mode 0600), keeps 14 days, and after a restart waits out the interval instead of taking an extra copy. The
+quarantine directory is not backed up. One-off backup: `docker compose run --rm -e BACKUP_ONCE=1 valvn-backup`.
+
+- **Retention and privacy:** data users delete (their account, posts, images) survives in backups until the
+  archive that contains it ages out, at most `BACKUP_KEEP_DAYS` (14) days. Keep `BACKUP_DIR` mode 700 and off
+  shared / synced folders. If you need a deletion to be immediate everywhere, delete the archives that contain it.
+- Keep `.env` (especially `PEPPER`) backed up **separately**: without it user ids cannot be reproduced.
+
+### Restore runbook
 
 ```bash
-# 1) consistent online snapshot of the SQLite DB (safe while running, WAL-aware)
-docker exec valvn-community node -e "const D=require('better-sqlite3');const d=new D('/data/community.db');d.backup('/data/backup.db').then(()=>d.close())"
-
-# 2) archive snapshot + media to the current directory
-docker run --rm -v valvn-community-data:/data:ro -v "$PWD":/backup debian:13-slim \
-  tar czf /backup/valvn-community-$(date +%F).tgz -C /data backup.db media
+cd server/community
+# 1. check the archive, change nothing
+scripts/restore.sh ~/backups/valvn-community/valvn-community-20260930-0300.tgz
+# 2. restore for real
+scripts/restore.sh ~/backups/valvn-community/valvn-community-20260930-0300.tgz --yes
 ```
 
-Restore: `docker compose down`, extract the archive into the volume, rename `backup.db` to
-`community.db` (removing any `community.db-wal` / `-shm`), then `docker compose up -d`.
-Keep `.env` (especially `PEPPER`) backed up separately — without it user ids cannot be reproduced.
+`--yes` verifies the archive (`integrity_check`), stops the services, **saves the current data as a normal
+backup archive in `BACKUP_DIR/pre-restore/`** (the undo), replaces `community.db` (+ WAL) and `media/`, drops rows of
+quarantined files (the quarantine directory is not in backups), starts the services, waits for `/healthz` and prints
+row counts. To undo, run the script on the archive in `pre-restore/`. Afterwards check `docker compose logs
+valvn-community` and open the app. Notes:
+
+- A restore also brings back what users deleted after that backup: **re-apply erasure requests received since**
+  (see the data-rights runbook; deleted accounts are listed in your mailbox, not in the database).
+- Restoring to a new host: install Docker, copy `.env` (same `PEPPER`), `docker compose build`, then run the script
+  (it starts from an empty volume: `docker compose up -d` once first, or `docker volume create valvn-community-data`).
+- Manual restore without the script: stop the services, extract `snap.db` as `community.db` and `media/` into the
+  volume, delete `community.db-wal` / `-shm`, start.
+
+## Data-rights runbook (requests by email)
+
+The API exposes both rights (for the app to call): `GET /v1/me/export` (JSON download, 5 / hour) and
+`DELETE /v1/me` (hard delete, 3 / hour). For a request that arrives by email, use the operator CLI inside the
+container — it runs exactly the same code as the API:
+
+```bash
+# 1. find the account by Riot ID (no PUUID is stored: the id is a salted hash)
+docker compose exec valvn-community node dist/cli.js find --riot "Name#TAG"
+
+# 2. ACCESS / PORTABILITY: everything we store about it, as JSON (media as URLs)
+docker compose exec valvn-community node dist/cli.js export --riot "Name#TAG" > export.json
+
+# 3. ERASURE: dry run first (prints what would go), then for real
+docker compose exec valvn-community node dist/cli.js delete --riot "Name#TAG"
+docker compose exec valvn-community node dist/cli.js delete --riot "Name#TAG" --yes
+```
+
+Erasure removes: posts (with their comments and likes), comments, reviews (with likes), likes, votes, LFG posts and
+joins, uploaded images (public and quarantined files), rate-limit counters and the user row. **Reports the user
+filed** are kept but anonymised (`reporter_id` → `anon-…`, free text cleared) because they may have hidden
+content; reports **about** their content are deleted. Backups keep older copies for up to 14 days (see Backup).
+**Verify who is asking** before acting (reply to the email of the Riot account, or ask them to add a marker to
+their in-game note); the community server cannot check a Riot ID by itself. Without the CLI, the same in SQL
+(`docker compose exec valvn-community node -e` with `better-sqlite3`, `PRAGMA foreign_keys = ON`):
+
+```sql
+-- id from: SELECT id FROM users WHERE game_name = 'Name' COLLATE NOCASE AND tag_line = 'TAG' COLLATE NOCASE;
+UPDATE skin_reviews SET like_count = MAX(0, like_count - 1) WHERE id IN (SELECT review_id FROM review_likes WHERE user_id = :id);
+DELETE FROM reports WHERE target_type = 'post'    AND target_id IN (SELECT id FROM posts WHERE user_id = :id);
+DELETE FROM reports WHERE target_type = 'comment' AND target_id IN (SELECT id FROM comments WHERE user_id = :id);
+DELETE FROM reports WHERE target_type = 'review'  AND target_id IN (SELECT id FROM skin_reviews WHERE user_id = :id);
+DELETE FROM reports WHERE target_type = 'lfg'     AND target_id IN (SELECT id FROM lfg_posts WHERE user_id = :id);
+UPDATE reports SET reporter_id = 'anon-' || lower(hex(randomblob(8))), reason = '' WHERE reporter_id = :id;
+DELETE FROM rate_limits WHERE bucket LIKE '%:' || :id;
+-- image files: SELECT key FROM media WHERE user_id = :id;  then delete /data/media/<key> and /data/quarantine/<key>
+DELETE FROM users WHERE id = :id;   -- cascades to posts, comments, reviews, likes, votes, LFG, media rows
+```
+
+## Moderation runbook
+
+- Content hidden by 3 reports of established accounts (see note 53) disappears from lists; its images move to
+  `quarantine/` (404 on `/v1/media`) and are purged after 30 days.
+- `node dist/cli.js quarantine list` lists them; `quarantine restore <key>` puts one back; `quarantine purge <key>`
+  deletes it now. **False reports:** `node dist/cli.js unhide post|comment|lfg|review <uuid>` un-hides the content,
+  forgets its reports and restores its images.
+- `node dist/cli.js stats` (row counts, image bytes, quarantined files) and `node dist/cli.js sweep` (run the
+  housekeeping now). The sweeper runs by itself every 10 minutes (and 5 s after start): orphan uploads (> 24 h),
+  quarantine (> 30 days), stray files without a database row, reports older than 12 months and reports about
+  deleted content, rate-limit windows, LFG rows expired for more than 8 days.
+
+## Privacy promises and where they are implemented
+
+| Promise | Implementation |
+|---|---|
+| Riot token never stored / logged | only in the `Authorization` header of the `/userinfo` call; access log has no query / headers |
+| PUUID never stored | `hex(sha256(PEPPER + puuid))[0..32]`; IPs only as peppered hashes in memory |
+| Photos carry no location / camera data | `imaging.ts` strips EXIF / GPS / XMP / IPTC / comments / thumbnails on upload (note 47) |
+| Deleted content is deleted | post delete removes its images; account delete removes everything (notes 50, 52); orphan uploads purged after 24 h |
+| Reports are kept 12 months at most | sweeper deletes reports older than 365 days and reports on deleted content |
+| Export and erasure on request | `GET /v1/me/export`, `DELETE /v1/me`, CLI runbook above |
+| Backups | 14 days, mode 0600 / dir 0700, quarantine excluded; deleted data lives on in them until they age out |
+| Riot IDs are public **by design** | authors of posts / comments / reviews / LFG show their Riot ID, region, country, rank and card to every reader (that is what makes the feature useful); users consent in the app before their first sign-in and can erase everything |
 
 ## Notes (spec gaps / decisions)
 
@@ -129,12 +222,12 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
    `GET /v1/media/{key}` (public) work without a token. All other endpoints, including
    `GET /v1/lfg`, `GET /v1/posts`, `GET /v1/posts/{id}` and comment lists, require a session.
    On auth-optional endpoints a *present but invalid/expired* token is still rejected with 401 so the
-   client knows to refresh.
+   client knows to refresh. (v3 made the feed public too, see 37; anonymous traffic is limited, see 54.)
 2. **Error body for 429:** `{"error": {"code": "rate_limited", "message": "…", "retryAfter": N}}`
    (retryAfter inside the error object) plus the `Retry-After` header.
-3. **Riot unreachable** (network error/timeout calling `/userinfo`) → `500 server_error`, not
-   `riot_rejected`, so the client does not discard a possibly valid Riot session. A 200 response
-   without a usable `sub` is treated as `riot_rejected`. Missing `game_name`/`tag_line` → empty strings.
+3. **Riot unreachable** (network error / timeout / 429 / 5xx / HTML) → `503 riot_unavailable`, not
+   `riot_rejected`, so the client does not discard a possibly valid Riot session (see 55).
+   Missing `game_name`/`tag_line` → empty strings.
 4. **PUUID normalisation:** the `sub` is trimmed and lower-cased before hashing.
 5. **UUID input** (path params, `weaponUuid`, `cardId`, `skinUuid` in payloads, `targetId`) is
    accepted in any case and normalised to lower-case; ids that are not UUIDs are rejected with 400
@@ -153,18 +246,19 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
    normalised (unknown fields dropped); `offers` must have 1–6 entries; costs are integers
    0..1,000,000; `discountPercent` 0..100; `discountCost ≤ baseCost`; `date` must be a real calendar
    date. `body` is trimmed. A media key that does not exist → 400; one owned by another user → 403.
-   Deleting a post deletes its likes and comments; uploaded image files are kept.
+   Deleting a post deletes its likes, comments and images (see 50).
 10. **Counts:** `comments` on a post counts only non-hidden comments. Likes on hidden posts → 404.
 11. **Reports:** `targetId` must be an existing UUID target (else 404); `reason` is free text,
-    1–200 chars. Re-reporting is idempotent; self-reports are accepted (204) but not counted.
+    1–200 chars. Re-reporting is idempotent; self-reports are accepted (204) but not counted; only reports
+    from established accounts count toward hiding (see 53).
     Hidden content is excluded from lists and returns 404 on direct GET; the author can still delete it.
 12. **Extra rate limits** not in the spec: likes 120/hour per user, and `POST /v1/auth/riot`
     30 / 10 min per client IP (`CF-Connecting-IP`, stored only as a peppered hash). Rate limits use
     fixed windows stored in SQLite, so they survive restarts.
 13. **Media:** content-type must be `image/jpeg|png|webp` *and* match the magic bytes. `GET` sends
     `Cache-Control: public, max-age=31536000, immutable`, an `ETag`, and honours `If-None-Match` (304).
-14. **Housekeeping:** every 10 minutes the server deletes rate-limit windows older than 1 day and LFG
-    posts that expired more than 1 day ago.
+    Files are sanitised on upload and served with hardened headers (see 47–49).
+14. **Housekeeping:** superseded by the sweeper (see 51).
 15. String length limits count Unicode code points (so Vietnamese diacritics count as one character).
 16. **Migrations** are strictly additive: `0002_reviews.sql` (skin_reviews, review_likes) and
     `0003_lfg_v2.sql` (`ALTER TABLE lfg_posts ADD COLUMN …` + lfg_joins). `reports.target_type` never had
@@ -296,3 +390,101 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
     Japanese / Thai), plus per-list `exceptions` (e.g. Korean `병신년`, Thai `เหี้ยม`, Japanese `おかまいなく`).
 45. Phone numbers: Vietnamese numbers as before, plus international numbers written with a leading `+` and a
     country code (8–15 digits, separators allowed). Local formats of other countries are not detected.
+
+### Hardening and privacy (migration 0005)
+
+46. **Migration `0005_hardening.sql`** (additive, safe on the live database): `media` gains `post_id`, `status`
+    (`active` | `quarantined`) and `quarantined_at` (backfilled from the posts' `media` JSON: files already used by a
+    post are attached to it); `reports` is rebuilt without its foreign key to `users` (same columns, data copied) so
+    a deleted account's reports can be anonymised instead of deleted; two indexes for the media sweep and the report
+    retention sweep. Old clients are unaffected: no request or response shape changed except the new error codes
+    (`riot_unavailable` 503, `storage_full` 507), which old clients show as their generic server-error message.
+47. **Uploads are sanitised** (`src/imaging.ts`, pure TypeScript, no native dependency). JPEG: only known structure is
+    kept (SOF, DQT, DHT, DAC, DRI, DNL, SOS + scan data, a canonical JFIF header without thumbnail, ICC profile,
+    Adobe marker); EXIF (incl. GPS), XMP, IPTC / Photoshop, comments, MPF, thumbnails and every unknown / extension
+    marker are dropped, and so is anything after EOI. PNG: whitelist of `IHDR PLTE IDAT IEND tRNS gAMA cHRM sRGB
+    iCCP sBIT bKGD` (text, `eXIf`, `tIME`, APNG chunks dropped; CRCs untouched), data after `IEND` dropped. WebP:
+    `VP8 VP8L VP8X ALPH ANIM ANMF ICCP` kept, `EXIF` / `XMP` dropped, RIFF size and VP8X flags rebuilt. **Only the EXIF
+    orientation** is kept, rewritten as a 26-byte block, so phone photos are not shown sideways. Files that are not
+    structurally valid images (truncated, bad segment lengths, no scan / IDAT / IEND) or larger than 50 megapixels /
+    16,384 px a side are refused with 400 (client-side decompression bombs). `sharp` was evaluated and not used: it
+    adds ~30 MB of prebuilt libvips per platform (glibc / musl / arm), more memory per upload and a larger attack
+    surface to do what a small parser does exactly; the trade-off is that pixels are not re-encoded (no generation
+    loss, but also no removal of data hidden *inside* the pixel stream). A fuzz test mutates valid files 1,500 times
+    and checks that nothing but `ImageError` is thrown, no metadata survives and a second pass changes nothing.
+48. **Storage quotas.** Per user (`MEDIA_USER_QUOTA_MB`, default 50, counted on the sanitised size of active +
+    quarantined files): `400 invalid_input` with a readable Vietnamese message (a user problem, and old clients
+    show `invalid_input` messages). Total (`MEDIA_MAX_TOTAL_MB`, default 2048): `507 storage_full` (a server
+    problem). Deleting posts / accounts frees space immediately.
+49. **Serving media.** `GET /v1/media/{key}` needs an *active database row*: deleted, quarantined and stray files are
+    404 even if bytes remain on disk. Responses carry `Content-Disposition: inline`, `X-Content-Type-Options: nosniff`,
+    `Content-Security-Policy: default-src 'none'; img-src 'self' data:; sandbox`, `Referrer-Policy: no-referrer`,
+    `Cross-Origin-Resource-Policy: cross-origin` and the 1-year immutable cache header (304s too).
+50. **Media lifecycle.** A file is attached to its post when the post is created (same transaction); it cannot be used by
+    a second post (400) and quarantined files cannot be attached. **Post deleted by its author** → files and rows deleted
+    (public and quarantined copies). **Post newly hidden by reports** → row `quarantined`, file moved to
+    `$DATA_DIR/quarantine/`, 404 on `/v1/media`, purged after 30 days; **un-hiding** is a moderator action
+    (`cli unhide`). **Account deleted** → all its files. **Uploaded but never attached** for 24 h → deleted. A file
+    on disk without a database row (failed delete, crash between file and row) is deleted by the sweeper after 1 h.
+    Files of posts hidden before this feature existed are quarantined by the first sweep.
+51. **Sweeper** (`src/sweeper.ts`, inside the server process, every 10 minutes and 5 s after start, `unref`'d, never
+    overlapping, each step independent and tolerant of failures): hidden-post media catch-up, orphan uploads (> 24 h),
+    quarantine expiry (> 30 days), stray files, **reports older than 12 months** (a report is personal data; a post that
+    was hidden stays hidden), **reports about content that no longer exists**, rate-limit windows older than 1 day,
+    LFG rows expired for more than 8 days, and the in-memory limiter / cache. Results are logged only when non-zero.
+52. **`DELETE /v1/me`** (auth, 3 / hour, `204`) hard-deletes the account: posts (with comments and likes), comments,
+    reviews (with likes), likes, votes, LFG posts and joins, media rows and files, rate-limit counters, the user row.
+    Reports it filed are anonymised (`reporter_id` = `anon-<random>`, `reason` cleared); reports about its content are
+    deleted; the like counters of other people's reviews are decremented; the (empty) upload directory is removed.
+    The session token stops working at once (401). Signing in again with the same Riot account creates an empty
+    account with the same id. **`GET /v1/me/export`** (auth, 5 / hour) returns one JSON document (`format:
+    valvn-community-export/1`, `Content-Disposition: attachment`, `no-store`): profile, posts (media as URLs, hidden
+    flag), comments, reviews, post / review likes, votes (with the country / region stored at vote time), LFG posts and
+    joins, reports it filed, media list. Nothing about other people's private data; no PUUID or IP exists to export.
+53. **Report-hiding rule.** A report is always accepted and stored (`204`), but only reports from **established accounts**
+    count toward the 3 that hide content: the reporter's account is at least **24 hours old** and has done at least
+    one thing on the service (a post, comment, review, vote or like). Eligibility is re-evaluated whenever a new
+    report about the same target arrives (so reports from accounts that have matured since count then). The author's
+    own reports never count (not even stored); duplicates are ignored; the answer is the same empty `204` in every
+    case, so a reporter cannot tell whether their report counted, hid the content, or who else reported. Reports are
+    exposed nowhere except in the reporter's own export (`reportsFiled`) and the operator CLI. Reviewers' and authors'
+    Riot IDs are public by design (privacy policy).
+54. **Anonymous traffic.** Requests without an `Authorization` header to the public reads (`/v1/posts…`, `/v1/skins/…`,
+    `/v1/communities`) are limited per client IP (`CF-Connecting-IP` behind the tunnel, else `X-Forwarded-For`, hashed
+    with the pepper, **in memory only**): `ANON_READ_LIMIT_PER_MIN` (120); image files have their own
+    `ANON_MEDIA_LIMIT_PER_MIN` (1500). Responses served from the cache are not counted (they cost no database work). Over the limit: `429` with `Retry-After`. Signed-in requests are limited per
+    user only. If no IP is known (in-process tests) the limit is skipped. **Cache:** anonymous `GET /v1/skins/top`,
+    `/votes`, `/{uuid}/summary`, `/{uuid}/reviews` and `/v1/communities` are cached for `PUBLIC_CACHE_TTL_SECONDS` (45)
+    per path + sorted query (max 500 entries, errors never cached): an anonymous viewer can see data up to 45 s old;
+    signed-in requests are never cached and see live data. Responses show `x-cache: hit|miss`.
+55. **Riot errors** (replaces note 3): `POST /v1/auth/riot` maps Riot's answer to `401 riot_rejected` only for a real
+    refusal of the token (400 / 401 / 403 with a non-HTML body). Everything else is `503 riot_unavailable` with
+    `Retry-After` (Riot's, clamped to 1–300 s, when present): 429, 5xx, 408, redirects, timeouts and network errors,
+    HTML pages (Cloudflare challenges, gateway errors), and `200` with a body that has no usable `sub`. The user row is
+    only written after a successful verification. Injected stubs may return `{ok: false, reason}`; no `reason` = rejected,
+    a thrown error = unavailable.
+56. **Real game content only.** Votes, reviews (`skinUuid`, `weaponUuid`), shared stores / Night Market (`payload.offers[].skinUuid`)
+    and LFG `agents` are checked against valorant-api.com (`/v1/weapons/skins` incl. level and chroma uuids, `/v1/weapons`,
+    `/v1/agents?isPlayableCharacter=true`), fetched by the server (no user data sent) and cached 24 h per kind. Unknown
+    ids → `400 invalid_input`. It fails open: while nothing has ever been fetched (start-up, outage) every well-formed
+    uuid is accepted and the catalog loads in the background (no request waits for the download); after that an outage keeps the stale cache; an unknown id triggers at most one refresh per
+    10 minutes so a skin released today is not rejected. Not validated: `cardId`, reads and deletes.
+57. **Filter evasion** (`src/moderation/filter.ts`), all read alongside the plain text so nothing that matched before
+    stops matching: invisible characters (zero-width space / joiners, soft hyphen, word joiner, bidi controls,
+    variation selectors, BOM, fillers, tag characters) are ignored **and** also tried as word separators; NFKC folds
+    full-width, math / circled / squared letters and digits; Cyrillic / Greek look-alike letters are folded to Latin (and
+    Latin letters inside a Cyrillic word to Cyrillic) as *additional* spellings of the word, and such text still counts
+    as Latin for the Vietnamese / country rules; leetspeak now includes `5` → s and `7` → t; words hidden by
+    separators (`f.u.c.k`, `f,u,c,k`, `f/u/c/k`, `f|u|c|k`, `f🔥u🔥c🔥k`, `dit_me`, `ngu-vl`) and **spelled-out runs of at
+    least three single letters** (`f u c k`, `đ i t m e`, `v c l`), including a listed word *inside* a longer run
+    (`I f u c k you`); phone numbers survive full-width digits, invisible characters, dots / dashes / slashes.
+    **Known gaps:** two-letter spaced words (`d m`, `시 발`, `傻 逼`) are not read as words (too many false
+    positives); look-alikes beyond the built-in table; accents added on purpose to defeat accent-exact entries
+    (`đĩ` with Zalgo marks); leetspeak with punctuation (`sh!t`); phonetic / transliterated spellings; text inside images.
+    The filter is a best-effort deterrent: reports and moderators remain the backstop. Worst case (1,000 adversarial
+    characters) costs ≈ 40 ms, typical text 1–3 ms; posts / comments are rate limited per user.
+58. **Ops.** Container `mem_limit` (512 MB / backup 256 MB), `pids_limit`, `cap_drop: [ALL]`, read-only root, size-limited
+    tmpfs; `valvn-backup` is part of `docker-compose.yml` (`ops/backup-loop.sh`: integrity-checked snapshots, atomic
+    archives, retention only after a successful backup, no extra backup after a restart, `BACKUP_ONCE=1`);
+    `scripts/restore.sh` verifies, saves an undo archive, restores, waits for health. The whole stack (build, start,
+    backup, CLI erase, restore, health) was exercised end to end in Docker for this change.

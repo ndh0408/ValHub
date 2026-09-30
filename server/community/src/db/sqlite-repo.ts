@@ -3,6 +3,7 @@ import { geoCondition, type GeoScope } from '../geo/scope.js';
 import type { ReportTarget } from '../validate.js';
 import type { Db } from './database.js';
 import type {
+  AccountData,
   AuthorCols,
   CommentRow,
   CommunityActivity,
@@ -15,9 +16,12 @@ import type {
   PostRow,
   PostView,
   RatingStats,
+  ReportOutcome,
   Repo,
+  ReviewRow,
   ReviewView,
   SkinCount,
+  SweepCounts,
   UserPatch,
   UserRow,
   UserUpsert,
@@ -55,6 +59,16 @@ function inList(prefix: string, values: readonly string[], params: Record<string
       return `@${prefix}${i}`;
     })
     .join(', ');
+}
+
+/** Media keys of a post's `media` JSON column (defensive: anything unexpected → none). */
+function parseKeys(json: string): string[] {
+  try {
+    const v: unknown = JSON.parse(json);
+    return Array.isArray(v) ? v.filter((k): k is string => typeof k === 'string') : [];
+  } catch {
+    return [];
+  }
 }
 
 function and(where: string[]): string {
@@ -561,12 +575,22 @@ export class SqliteRepo implements Repo {
   // ---- posts ---------------------------------------------------------------
 
   insertPost(p: PostRow): void {
-    this.db
-      .prepare(
-        `INSERT INTO posts (id, user_id, kind, body, media, payload, hidden, created_at, country, region, language)
-         VALUES (@id, @user_id, @kind, @body, @media, @payload, @hidden, @created_at, @country, @region, @language)`,
-      )
-      .run(p);
+    this.db.transaction(() => {
+      this.db
+        .prepare(
+          `INSERT INTO posts (id, user_id, kind, body, media, payload, hidden, created_at, country, region, language)
+           VALUES (@id, @user_id, @kind, @body, @media, @payload, @hidden, @created_at, @country, @region, @language)`,
+        )
+        .run(p);
+      // The files of a new post are attached to it in the same transaction (they stop being orphans).
+      const keys = parseKeys(p.media);
+      if (keys.length > 0) {
+        const params: Record<string, unknown> = { post: p.id, user: p.user_id };
+        this.db
+          .prepare(`UPDATE media SET post_id = @post WHERE user_id = @user AND key IN (${inList('k', keys, params)})`)
+          .run(params);
+      }
+    })();
   }
 
   getPost(id: string, viewerId: string): PostView | null {
@@ -709,7 +733,8 @@ export class SqliteRepo implements Repo {
   addReport(
     r: { type: ReportTarget; targetId: string; reporterId: string; reason: string; now: number },
     threshold: number,
-  ): number {
+    minReporterAgeMs: number,
+  ): ReportOutcome {
     const table = SqliteRepo.TARGET_TABLE[r.type];
     return this.db.transaction(() => {
       this.db
@@ -718,22 +743,53 @@ export class SqliteRepo implements Repo {
            ON CONFLICT(target_type, target_id, reporter_id) DO NOTHING`,
         )
         .run(r.type, r.targetId, r.reporterId, r.reason, r.now);
-      const n = (
+      const count = (
         this.db
           .prepare('SELECT COUNT(*) AS n FROM reports WHERE target_type = ? AND target_id = ?')
           .get(r.type, r.targetId) as { n: number }
       ).n;
+      // Only reporters with an established account count toward hiding: the account is at least
+      // `minReporterAgeMs` old and has done something on the service (post, comment, review, vote, like).
+      const eligible = (
+        this.db
+          .prepare(
+            `SELECT COUNT(*) AS n FROM reports r JOIN users u ON u.id = r.reporter_id
+             WHERE r.target_type = @type AND r.target_id = @id AND u.created_at <= @cutoff AND (
+               EXISTS (SELECT 1 FROM posts x WHERE x.user_id = u.id) OR
+               EXISTS (SELECT 1 FROM comments x WHERE x.user_id = u.id) OR
+               EXISTS (SELECT 1 FROM skin_reviews x WHERE x.user_id = u.id) OR
+               EXISTS (SELECT 1 FROM skin_votes x WHERE x.user_id = u.id) OR
+               EXISTS (SELECT 1 FROM post_likes x WHERE x.user_id = u.id) OR
+               EXISTS (SELECT 1 FROM review_likes x WHERE x.user_id = u.id))`,
+          )
+          .get({ type: r.type, id: r.targetId, cutoff: r.now - minReporterAgeMs }) as { n: number }
+      ).n;
       if (r.type === 'review') {
-        this.db.prepare('UPDATE skin_reviews SET report_count = ? WHERE id = ?').run(n, r.targetId);
+        this.db.prepare('UPDATE skin_reviews SET report_count = ? WHERE id = ?').run(eligible, r.targetId);
       }
-      if (n >= threshold) this.db.prepare(`UPDATE ${table} SET hidden = 1 WHERE id = ?`).run(r.targetId);
-      return n;
+      let newlyHidden = false;
+      if (eligible >= threshold) {
+        newlyHidden =
+          this.db.prepare(`UPDATE ${table} SET hidden = 1 WHERE id = ? AND hidden = 0`).run(r.targetId).changes > 0;
+      }
+      return { count, eligible, newlyHidden };
     })();
+  }
+
+  sweepReports(olderThan: number): SweepCounts {
+    const reportsExpired = this.db.prepare('DELETE FROM reports WHERE created_at < ?').run(olderThan).changes;
+    let reportsOrphaned = 0;
+    for (const [type, table] of Object.entries(SqliteRepo.TARGET_TABLE)) {
+      reportsOrphaned += this.db
+        .prepare(`DELETE FROM reports WHERE target_type = ? AND target_id NOT IN (SELECT id FROM ${table})`)
+        .run(type).changes;
+    }
+    return { reportsExpired, reportsOrphaned };
   }
 
   // ---- media ---------------------------------------------------------------
 
-  insertMedia(m: MediaRow): void {
+  insertMedia(m: Pick<MediaRow, 'key' | 'user_id' | 'content_type' | 'size' | 'created_at'>): void {
     this.db
       .prepare(
         `INSERT INTO media (key, user_id, content_type, size, created_at)
@@ -746,5 +802,160 @@ export class SqliteRepo implements Repo {
     if (keys.length === 0) return [];
     const params: Record<string, unknown> = {};
     return this.db.prepare(`SELECT * FROM media WHERE key IN (${inList('k', keys, params)})`).all(params) as MediaRow[];
+  }
+
+  getMedia(key: string): MediaRow | null {
+    return (this.db.prepare('SELECT * FROM media WHERE key = ?').get(key) as MediaRow | undefined) ?? null;
+  }
+
+  mediaBytes(userId?: string): number {
+    const row = (
+      userId === undefined
+        ? this.db.prepare('SELECT COALESCE(SUM(size), 0) AS n FROM media').get()
+        : this.db.prepare('SELECT COALESCE(SUM(size), 0) AS n FROM media WHERE user_id = ?').get(userId)
+    ) as { n: number };
+    return row.n;
+  }
+
+  mediaOfUser(userId: string): MediaRow[] {
+    return this.db.prepare('SELECT * FROM media WHERE user_id = ? ORDER BY created_at, key').all(userId) as MediaRow[];
+  }
+
+  mediaOrphans(cutoff: number): MediaRow[] {
+    return this.db
+      .prepare(`SELECT * FROM media WHERE status = 'active' AND post_id IS NULL AND created_at < ?`)
+      .all(cutoff) as MediaRow[];
+  }
+
+  mediaQuarantineDue(cutoff: number): MediaRow[] {
+    return this.db
+      .prepare(`SELECT * FROM media WHERE status = 'quarantined' AND quarantined_at < ?`)
+      .all(cutoff) as MediaRow[];
+  }
+
+  mediaOfHiddenPosts(): MediaRow[] {
+    return this.db
+      .prepare(`SELECT m.* FROM media m JOIN posts p ON p.id = m.post_id WHERE p.hidden = 1 AND m.status = 'active'`)
+      .all() as MediaRow[];
+  }
+
+  setMediaQuarantined(keys: string[], now: number): void {
+    if (keys.length === 0) return;
+    const params: Record<string, unknown> = { now };
+    this.db
+      .prepare(
+        `UPDATE media SET status = 'quarantined', quarantined_at = @now WHERE key IN (${inList('k', keys, params)})`,
+      )
+      .run(params);
+  }
+
+  setMediaActive(keys: string[]): void {
+    if (keys.length === 0) return;
+    const params: Record<string, unknown> = {};
+    this.db
+      .prepare(`UPDATE media SET status = 'active', quarantined_at = NULL WHERE key IN (${inList('k', keys, params)})`)
+      .run(params);
+  }
+
+  deleteMediaRows(keys: string[]): void {
+    if (keys.length === 0) return;
+    const params: Record<string, unknown> = {};
+    this.db.prepare(`DELETE FROM media WHERE key IN (${inList('k', keys, params)})`).run(params);
+  }
+
+  // ---- account data rights -----------------------------------------------------
+
+  accountData(userId: string): AccountData | null {
+    const user = this.getUser(userId);
+    if (!user) return null;
+    const all = <T>(sql: string) => this.db.prepare(sql).all(userId) as T[];
+    return {
+      user,
+      posts: all<PostRow>('SELECT * FROM posts WHERE user_id = ? ORDER BY created_at, id'),
+      comments: all<CommentRow>('SELECT * FROM comments WHERE user_id = ? ORDER BY created_at, id'),
+      reviews: all<ReviewRow>('SELECT * FROM skin_reviews WHERE user_id = ? ORDER BY created_at, id'),
+      postLikes: all('SELECT post_id, created_at FROM post_likes WHERE user_id = ? ORDER BY created_at, post_id'),
+      reviewLikes: all(
+        'SELECT review_id, created_at FROM review_likes WHERE user_id = ? ORDER BY created_at, review_id',
+      ),
+      votes: all(
+        'SELECT skin_uuid, weapon_uuid, country, region, created_at FROM skin_votes WHERE user_id = ? ORDER BY created_at, skin_uuid',
+      ),
+      lfgPosts: all<LfgRow>('SELECT * FROM lfg_posts WHERE user_id = ? ORDER BY created_at, id'),
+      lfgJoins: all('SELECT lfg_id, created_at FROM lfg_joins WHERE user_id = ? ORDER BY created_at, lfg_id'),
+      reportsFiled: all(
+        'SELECT target_type, target_id, reason, created_at FROM reports WHERE reporter_id = ? ORDER BY created_at, target_id',
+      ),
+      media: this.mediaOfUser(userId),
+    };
+  }
+
+  deleteAccountRows(userId: string): void {
+    this.db.transaction(() => {
+      // Reports about the user's content go with the content.
+      const owned: [string, string][] = [
+        ['post', 'posts'],
+        ['comment', 'comments'],
+        ['review', 'skin_reviews'],
+        ['lfg', 'lfg_posts'],
+      ];
+      for (const [type, table] of owned) {
+        this.db
+          .prepare(`DELETE FROM reports WHERE target_type = ? AND target_id IN (SELECT id FROM ${table} WHERE user_id = ?)`)
+          .run(type, userId);
+      }
+      // ... including reports about other people's comments on the user's posts (they cascade away).
+      this.db
+        .prepare(
+          `DELETE FROM reports WHERE target_type = 'comment' AND target_id IN
+             (SELECT c.id FROM comments c JOIN posts p ON p.id = c.post_id WHERE p.user_id = ?)`,
+        )
+        .run(userId);
+      // Reports the user filed stay (they may have hidden content) but lose their identity and free text.
+      this.db
+        .prepare(`UPDATE reports SET reporter_id = 'anon-' || lower(hex(randomblob(8))), reason = '' WHERE reporter_id = ?`)
+        .run(userId);
+      this.db.prepare(`DELETE FROM rate_limits WHERE bucket LIKE '%:' || ?`).run(userId);
+      // The denormalised like counters of other people's reviews must not keep counting this user's likes
+      // (the like rows themselves cascade away with the user).
+      this.db
+        .prepare(
+          `UPDATE skin_reviews SET like_count = MAX(0, like_count - 1)
+           WHERE id IN (SELECT review_id FROM review_likes WHERE user_id = ?)`,
+        )
+        .run(userId);
+      // Posts (+ comments, likes), comments, reviews (+ likes), likes, votes, LFG posts (+ joins) and
+      // media rows cascade from the user row.
+      this.db.prepare('DELETE FROM users WHERE id = ?').run(userId);
+    })();
+  }
+
+  restoreTarget(type: ReportTarget, id: string): boolean {
+    const table = SqliteRepo.TARGET_TABLE[type];
+    return this.db.transaction(() => {
+      const changed = this.db.prepare(`UPDATE ${table} SET hidden = 0 WHERE id = ?`).run(id).changes;
+      if (changed === 0) return false;
+      this.db.prepare('DELETE FROM reports WHERE target_type = ? AND target_id = ?').run(type, id);
+      if (type === 'review') this.db.prepare('UPDATE skin_reviews SET report_count = 0 WHERE id = ?').run(id);
+      return true;
+    })();
+  }
+
+  stats(): Record<string, number> {
+    const out: Record<string, number> = {};
+    for (const t of ['users', 'posts', 'comments', 'skin_reviews', 'skin_votes', 'lfg_posts', 'media', 'reports']) {
+      out[t] = (this.db.prepare(`SELECT COUNT(*) AS n FROM ${t}`).get() as { n: number }).n;
+    }
+    out.media_bytes = this.mediaBytes();
+    out.media_quarantined = (
+      this.db.prepare("SELECT COUNT(*) AS n FROM media WHERE status = 'quarantined'").get() as { n: number }
+    ).n;
+    return out;
+  }
+
+  findUsersByRiotId(gameName: string, tagLine: string): UserRow[] {
+    return this.db
+      .prepare('SELECT * FROM users WHERE game_name = ? COLLATE NOCASE AND tag_line = ? COLLATE NOCASE')
+      .all(gameName, tagLine) as UserRow[];
   }
 }

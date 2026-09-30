@@ -5,6 +5,8 @@ export type ErrorCode =
   | 'invalid_input'
   | 'rate_limited'
   | 'riot_rejected'
+  | 'riot_unavailable'
+  | 'storage_full'
   | 'server_error';
 
 const STATUS: Record<ErrorCode, number> = {
@@ -14,6 +16,8 @@ const STATUS: Record<ErrorCode, number> = {
   invalid_input: 400,
   rate_limited: 429,
   riot_rejected: 401,
+  riot_unavailable: 503,
+  storage_full: 507,
   server_error: 500,
 };
 

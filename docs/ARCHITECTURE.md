@@ -537,7 +537,25 @@ restored the next time the screen opens (deep links still win).
 - **Scopes (v3):** feed and skin leaderboard default to the viewer's country
   (`communityScopeProvider(ScopedSection)` remembered in `UiMemory`, resolved by
   `resolvedScopeProvider`; no country → the viewer's shard), LFG always shows one shard.
-  `GET /v1/communities` feeds the country picker.
+  `GET /v1/communities` feeds the country picker. The server's `appliedScope` (`AppliedScope`: on
+  `CommunityPage.applied` / `PagedState.applied`, `TopSkinsResult`, `SkinSummary`, `SkinStats`) wins
+  over the client's own resolution for what `ScopeBar(applied:)` highlights (fallbacks such as
+  country → shard → world); the LFG shard chip shows the applied shard.
+- **Data rights (Settings → "Dữ liệu Cộng đồng của bạn"):** `CommunityDataSection` (one line in
+  `settings_screen.dart`, visible only for the active account when consent is granted) runs
+  `communityDataRightsProvider`: `GET /v1/me/export` → indented UTF-8 JSON named
+  `valvn-community-<date>.json`, handed to the native share sheet through the overridable
+  `communityExportSharerProvider` (never kept on disk); `DELETE /v1/me` → after the server
+  answers, `CommunityAuth.forget` + `communityConsentProvider.revoke()` + reset of LFG / vote state
+  (a failed request changes nothing); "Rút lại đồng ý" does the same locally without any request.
+  Wiping bumps an epoch so a sign-in still in flight keeps nothing.
+- **Errors:** `riot_unavailable` (503 + `Retry-After`, from `POST /v1/auth/riot`) is retryable and is
+  never treated as a token refusal (no Riot refresh, session and consent untouched); `storage_full`
+  (507) is a non-retryable "no more photos" message; the per-user media quota is a normal
+  `invalid_input` whose server message is shown as is.
+- **Uploads:** `DeviceImagePicker` asks `image_picker` for max 1600 px and JPEG quality 85
+  (`kUploadMaxDimension`, `kUploadJpegQuality`); nothing else is stripped on the device (the server
+  removes EXIF and keeps only the orientation).
 - **Translation:** on-device only (`CommunityTranslator`, ML Kit `google_mlkit_translation` on
   Android / iOS, download confirmed with its size, Google attribution shown). **iOS needs
   CocoaPods for this plugin**: `ios/Podfile` (iOS 15.5) is checked in and the deployment target is

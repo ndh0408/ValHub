@@ -46,30 +46,54 @@ export function sniffImage(b: Uint8Array): ImageExt | null {
   return null;
 }
 
+export interface StoredFile {
+  key: string;
+  mtimeMs: number;
+  /** `media` = publicly servable; `quarantine` = kept privately for moderators. */
+  area: 'media' | 'quarantine';
+}
+
 /** Blob storage for uploaded images. */
 export interface MediaStore {
   put(key: string, bytes: Uint8Array): Promise<void>;
-  /** Returns null when missing. */
+  /** Returns null when missing (quarantined files are never returned). */
   get(key: string): Promise<Uint8Array | null>;
+  /** Deletes the public file; false when there was none. */
+  delete(key: string): Promise<boolean>;
+  /** Moves the public file to the private quarantine area; false when there was none. */
+  quarantine(key: string): Promise<boolean>;
+  /** Deletes the quarantined file; false when there was none. */
+  deleteQuarantined(key: string): Promise<boolean>;
+  /** Moves a quarantined file back to the public area (moderator action); false when there was none. */
+  restore(key: string): Promise<boolean>;
+  /** Every stored file (both areas), for the stray-file sweep. */
+  list(): Promise<StoredFile[]>;
 }
 
-/** Stores files under `<root>/<key>`; keys are validated so paths can never escape `root`. */
+const isNotFound = (e: unknown) => (e as NodeJS.ErrnoException).code === 'ENOENT';
+
+/**
+ * Stores files under `<root>/<key>` (public) and `<quarantineRoot>/<key>` (private); keys are
+ * validated so paths can never escape either root.
+ */
 export class DiskMediaStore implements MediaStore {
   private readonly root: string;
+  private readonly quarantineRoot: string;
 
-  constructor(root: string) {
+  constructor(root: string, quarantineRoot = path.join(path.dirname(path.resolve(root)), 'quarantine')) {
     this.root = path.resolve(root);
+    this.quarantineRoot = path.resolve(quarantineRoot);
   }
 
-  private resolve(key: string): string {
+  private resolve(base: string, key: string): string {
     if (!MEDIA_KEY_RE.test(key)) throw new Error('invalid media key');
-    const full = path.resolve(this.root, ...key.split('/'));
-    if (!full.startsWith(this.root + path.sep)) throw new Error('invalid media key');
+    const full = path.resolve(base, ...key.split('/'));
+    if (!full.startsWith(base + path.sep)) throw new Error('invalid media key');
     return full;
   }
 
   async put(key: string, bytes: Uint8Array): Promise<void> {
-    const full = this.resolve(key);
+    const full = this.resolve(this.root, key);
     await fs.mkdir(path.dirname(full), { recursive: true });
     const tmp = `${full}.${process.pid}.tmp`;
     await fs.writeFile(tmp, bytes, { flag: 'wx' });
@@ -79,10 +103,98 @@ export class DiskMediaStore implements MediaStore {
   async get(key: string): Promise<Uint8Array | null> {
     if (!MEDIA_KEY_RE.test(key)) return null;
     try {
-      return await fs.readFile(this.resolve(key));
+      return await fs.readFile(this.resolve(this.root, key));
     } catch (e) {
-      if ((e as NodeJS.ErrnoException).code === 'ENOENT') return null;
+      if (isNotFound(e)) return null;
       throw e;
     }
+  }
+
+  /** Removes a user's directory once it is empty (best effort), so no trace of the account id remains. */
+  private async pruneDir(file: string): Promise<void> {
+    try {
+      await fs.rmdir(path.dirname(file));
+    } catch {
+      // not empty / already gone
+    }
+  }
+
+  private async unlink(base: string, key: string): Promise<boolean> {
+    if (!MEDIA_KEY_RE.test(key)) return false;
+    try {
+      const file = this.resolve(base, key);
+      await fs.unlink(file);
+      await this.pruneDir(file);
+      return true;
+    } catch (e) {
+      if (isNotFound(e)) return false;
+      throw e;
+    }
+  }
+
+  delete(key: string): Promise<boolean> {
+    return this.unlink(this.root, key);
+  }
+
+  deleteQuarantined(key: string): Promise<boolean> {
+    return this.unlink(this.quarantineRoot, key);
+  }
+
+  private async move(from: string, to: string, key: string): Promise<boolean> {
+    if (!MEDIA_KEY_RE.test(key)) return false;
+    const src = this.resolve(from, key);
+    const dst = this.resolve(to, key);
+    try {
+      await fs.mkdir(path.dirname(dst), { recursive: true });
+      await fs.rename(src, dst);
+      await this.pruneDir(src);
+      return true;
+    } catch (e) {
+      if (isNotFound(e)) return false;
+      throw e;
+    }
+  }
+
+  quarantine(key: string): Promise<boolean> {
+    return this.move(this.root, this.quarantineRoot, key);
+  }
+
+  restore(key: string): Promise<boolean> {
+    return this.move(this.quarantineRoot, this.root, key);
+  }
+
+  async list(): Promise<StoredFile[]> {
+    const out: StoredFile[] = [];
+    for (const [base, area] of [
+      [this.root, 'media'],
+      [this.quarantineRoot, 'quarantine'],
+    ] as const) {
+      let users: string[];
+      try {
+        users = await fs.readdir(path.join(base, 'u'));
+      } catch (e) {
+        if (isNotFound(e)) continue;
+        throw e;
+      }
+      for (const user of users) {
+        let files: string[];
+        try {
+          files = await fs.readdir(path.join(base, 'u', user));
+        } catch {
+          continue;
+        }
+        for (const file of files) {
+          const key = `u/${user}/${file}`;
+          if (!MEDIA_KEY_RE.test(key)) continue; // temp files etc. are not ours to judge
+          try {
+            const st = await fs.stat(path.join(base, 'u', user, file));
+            out.push({ key, mtimeMs: st.mtimeMs, area });
+          } catch {
+            // vanished meanwhile
+          }
+        }
+      }
+    }
+    return out;
   }
 }

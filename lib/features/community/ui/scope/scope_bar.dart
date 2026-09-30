@@ -36,11 +36,18 @@ class ScopeBar extends ConsumerWidget {
     super.key,
     required this.section,
     required this.puuid,
+    this.applied,
     this.globalLabel = CommunityStrings.scopeGlobal,
   });
 
   final ScopedSection section;
   final String puuid;
+
+  /// The scope the server applied to the list on screen (`appliedScope`).
+  /// It wins over the client's own guess: the segment shown as selected is
+  /// the one that really filters the list (e.g. the server knows the
+  /// viewer's country when the app could not read it).
+  final AppliedScope? applied;
 
   /// Label of the international segment ("Quốc tế" / "Toàn cầu").
   final String globalLabel;
@@ -53,8 +60,16 @@ class ScopeBar extends ConsumerWidget {
     final myRegion = communityRegion(
       ref.watch(accountProvider(puuid).select((a) => a?.region)),
     );
-    final country = chosen.country ?? myCountry;
-    final region = chosen.region ?? myRegion;
+    final appliedNow = applied;
+    final country =
+        chosen.country ??
+        myCountry ??
+        (appliedNow?.scope == CommunityScope.country
+            ? appliedNow?.country
+            : null);
+    final region = appliedNow?.scope == CommunityScope.region
+        ? (appliedNow?.region ?? chosen.region ?? myRegion)
+        : (chosen.region ?? myRegion);
     // What is really shown (a missing country falls back to the shard, or to
     // the world for a reader who has not joined): highlight that segment.
     final shown = ref
@@ -62,6 +77,7 @@ class ScopeBar extends ConsumerWidget {
         .value
         ?.scope;
     final selected =
+        appliedNow?.scope ??
         shown ??
         (chosen.scope == CommunityScope.country && country == null
             ? CommunityScope.global

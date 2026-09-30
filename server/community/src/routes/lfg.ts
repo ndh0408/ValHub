@@ -137,6 +137,8 @@ export function registerLfg(app: Hono, x: Ctx): void {
     const agents =
       parseOptional(body, 'agents', (v) => parseUniqueArray(v, 'agents', 5, (a) => parseUuid(a, 'agents'))) ?? [];
 
+    for (const a of agents) await x.assertContent('agent', a, 'agents');
+
     x.rateLimit('lfg', user.id);
 
     const now = x.now();

@@ -9,6 +9,15 @@ export interface Config {
   publicBaseUrl: string;
   /** Trust CF-Connecting-IP / X-Forwarded-* (true behind the Cloudflare Tunnel). */
   trustProxy: boolean;
+  /** Per-user image storage quota (bytes). */
+  mediaUserQuotaBytes: number;
+  /** Total image storage cap (bytes); uploads are refused beyond it. */
+  mediaMaxTotalBytes: number;
+  /** Unauthenticated public reads allowed per client IP per minute (media files: anonMediaLimitPerMin). */
+  anonReadLimitPerMin: number;
+  anonMediaLimitPerMin: number;
+  /** How long anonymous aggregate responses (skin top / votes / summary / reviews, communities) are cached; 0 = off. */
+  publicCacheTtlMs: number;
 }
 
 const MIN_SECRET_LENGTH = 32;
@@ -41,6 +50,22 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
     }
   }
 
+  const num = (name: string, def: number, min: number, max: number): number => {
+    const raw = env[name];
+    if (raw === undefined || raw.trim() === '') return def;
+    const n = Number(raw);
+    if (!Number.isFinite(n) || n < min || n > max) {
+      problems.push(`${name} must be a number between ${min} and ${max}`);
+      return def;
+    }
+    return n;
+  };
+  const mediaUserQuotaMb = num('MEDIA_USER_QUOTA_MB', 50, 1, 10_000);
+  const mediaMaxTotalMb = num('MEDIA_MAX_TOTAL_MB', 2048, 1, 10_000_000);
+  const anonReadLimitPerMin = num('ANON_READ_LIMIT_PER_MIN', 120, 1, 100_000);
+  const anonMediaLimitPerMin = num('ANON_MEDIA_LIMIT_PER_MIN', 1500, 1, 1_000_000);
+  const cacheSeconds = num('PUBLIC_CACHE_TTL_SECONDS', 45, 0, 3600);
+
   if (problems.length > 0) throw new Error(`Invalid configuration:\n- ${problems.join('\n- ')}`);
 
   return {
@@ -50,5 +75,10 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
     pepper,
     publicBaseUrl,
     trustProxy: (env.TRUST_PROXY ?? 'true').toLowerCase() !== 'false',
+    mediaUserQuotaBytes: Math.round(mediaUserQuotaMb * 1024 * 1024),
+    mediaMaxTotalBytes: Math.round(mediaMaxTotalMb * 1024 * 1024),
+    anonReadLimitPerMin: Math.round(anonReadLimitPerMin),
+    anonMediaLimitPerMin: Math.round(anonMediaLimitPerMin),
+    publicCacheTtlMs: Math.round(cacheSeconds * 1000),
   };
 }

@@ -1,11 +1,12 @@
 import type { Context, Hono } from 'hono';
-import { author, iso, origin, type Ctx } from '../context.js';
+import { author, iso, origin, REPORT_MIN_ACCOUNT_AGE_MS, type Ctx } from '../context.js';
 import { decodeCursor, page } from '../cursor.js';
 import type { AuthorCols, CommentRow, PostView } from '../db/repo.js';
 import { forbidden, invalid, notFound } from '../errors.js';
 import { contentLanguage, parseLanguageList } from '../geo/languages.js';
 import { appliedScope, resolveScope } from '../geo/scope.js';
 import { MEDIA_KEY_RE } from '../media.js';
+import { postMediaKeys } from '../media-service.js';
 import { cleanUserText } from '../moderation/filter.js';
 import {
   isObject,
@@ -152,9 +153,15 @@ export function registerPosts(app: Hono, x: Ctx): void {
       const found = new Map(x.repo.getMediaMany(media).map((m) => [m.key, m]));
       for (const k of media) {
         const m = found.get(k);
-        if (!m) throw invalid('Ảnh không tồn tại, hãy tải lên lại.');
+        if (!m || m.status !== 'active') throw invalid('Ảnh không tồn tại, hãy tải lên lại.');
         if (m.user_id !== user.id) throw forbidden('Bạn chỉ có thể dùng ảnh do chính mình tải lên.');
+        if (m.post_id !== null) throw invalid('Ảnh này đã được dùng ở một bài viết khác, hãy tải lên lại.');
       }
+    }
+    // Shared stores / Night Market: only real VALORANT skins.
+    if (payload !== null) {
+      const offers = (payload as { offers?: { skinUuid: string }[] }).offers ?? [];
+      for (const [i, o] of offers.entries()) await x.assertContent('skin', o.skinUuid, `payload.offers[${i}].skinUuid`);
     }
 
     x.rateLimit('posts', user.id);
@@ -176,13 +183,15 @@ export function registerPosts(app: Hono, x: Ctx): void {
     return x.json(c, serializePost(x.repo.getPost(id, user.id)!, x.baseUrl(c)));
   });
 
-  app.delete('/v1/posts/:id', (c) => {
+  app.delete('/v1/posts/:id', async (c) => {
     const user = x.user(c, true);
     const id = c.req.param('id').toLowerCase();
     const p = isUuid(id) ? x.repo.getPost(id, user.id) : null;
     if (!p) throw notFound('Không tìm thấy bài viết.');
     if (p.user_id !== user.id) throw forbidden('Bạn chỉ có thể xóa bài viết của chính mình.');
     x.repo.deletePost(id);
+    // Its images go with it (files and rows), including quarantined copies.
+    await x.deleteMedia(postMediaKeys(p.media));
     return x.noContent(c);
   });
 
@@ -253,9 +262,19 @@ export function registerPosts(app: Hono, x: Ctx): void {
     x.rateLimit('reports', user.id);
     const owner = x.repo.reportTargetOwner(type, targetId);
     if (owner === null) throw notFound('Không tìm thấy nội dung cần báo cáo.');
-    // Self-reports are accepted but not counted.
+    // Self-reports are accepted but not counted. The answer is always the same 204: the reporter
+    // learns nothing about other reporters, whether their report counted, or whether it hid the content.
     if (owner !== user.id) {
-      x.repo.addReport({ type, targetId, reporterId: user.id, reason, now: x.now() }, REPORT_HIDE_THRESHOLD);
+      const out = x.repo.addReport(
+        { type, targetId, reporterId: user.id, reason, now: x.now() },
+        REPORT_HIDE_THRESHOLD,
+        REPORT_MIN_ACCOUNT_AGE_MS,
+      );
+      if (out.newlyHidden && type === 'post') {
+        // Hidden posts leave public serving; their files are kept privately for moderators for 30 days.
+        const post = x.repo.getPost(targetId, '');
+        if (post) await x.quarantineMedia(postMediaKeys(post.media));
+      }
     }
     return x.noContent(c);
   });

@@ -95,10 +95,16 @@ class PagedState<T> {
     this.loadingMore = false,
     this.loadMoreError,
     this.tag,
+    this.applied,
   });
 
   factory PagedState.fromPage(CommunityPage<T> page, {Object? tag}) =>
-      PagedState(items: page.items, nextCursor: page.nextCursor, tag: tag);
+      PagedState(
+        items: page.items,
+        nextCursor: page.nextCursor,
+        tag: tag,
+        applied: page.applied,
+      );
 
   final List<T> items;
   final String? nextCursor;
@@ -108,6 +114,10 @@ class PagedState<T> {
   /// What the list was loaded for (e.g. the [ScopeFilter]), so a screen can
   /// tell stale items of another scope from a plain refresh.
   final Object? tag;
+
+  /// The scope the server applied to the list (`appliedScope`), `null` for
+  /// unscoped lists or an older server.
+  final AppliedScope? applied;
 
   bool get hasMore => nextCursor != null;
 
@@ -125,6 +135,7 @@ class PagedState<T> {
     loadingMore: loadingMore ?? this.loadingMore,
     loadMoreError: loadMoreError == null ? this.loadMoreError : loadMoreError(),
     tag: tag,
+    applied: applied,
   );
 
   /// Appends [page], skipping items already present (by [idOf]).
@@ -138,6 +149,7 @@ class PagedState<T> {
       ],
       nextCursor: page.nextCursor,
       tag: tag,
+      applied: page.applied ?? applied,
     );
   }
 }

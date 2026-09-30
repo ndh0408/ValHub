@@ -264,6 +264,7 @@ describe('deleting reviews', () => {
 describe('review moderation', () => {
   it('hides a review after 3 distinct reports and excludes it from averages', async () => {
     const [author, r1, r2, r3, other] = await users(5);
+    for (const r of [r1, r2, r3]) e.mature(r!.user.id);
     const id = (await review(author!.token, SKIN_A, 1, 'spam spam')).json.id;
     await review(other!.token, SKIN_A, 5, 'ok');
     expect((await e.req('GET', `/v1/skins/${SKIN_A}/summary`)).json).toMatchObject({ ratingAvg: 3, ratingCount: 2 });

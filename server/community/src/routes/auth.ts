@@ -32,10 +32,20 @@ export function registerAuth(app: Hono, x: Ctx): void {
     try {
       identity = await x.deps.riotUserinfo(accessToken);
     } catch {
-      // Network failure / timeout talking to Riot (not a token rejection).
-      throw new ApiError('server_error', 'Không kết nối được tới máy chủ Riot.');
+      // Network failure / timeout talking to Riot: not a token rejection.
+      identity = { ok: false, reason: 'unavailable' };
     }
-    if (!identity.ok) throw new ApiError('riot_rejected', 'Riot từ chối phiên đăng nhập. Hãy đăng nhập lại.');
+    if (!identity.ok) {
+      if (identity.reason === 'unavailable') {
+        // 429 / 5xx / timeout / HTML from Riot: the token may be fine, so the client keeps its Riot session.
+        throw new ApiError(
+          'riot_unavailable',
+          'Máy chủ Riot đang bận hoặc không phản hồi, vui lòng thử lại sau ít phút.',
+          identity.retryAfter,
+        );
+      }
+      throw new ApiError('riot_rejected', 'Riot từ chối phiên đăng nhập. Hãy đăng nhập lại.');
+    }
 
     const now = x.now();
     const user = x.repo.upsertUser(

@@ -110,7 +110,7 @@ describe('migration 0004 on a database with 0001-0003 data', () => {
       posts: db.prepare('SELECT COUNT(*) AS n FROM posts').get(),
       votes: db.prepare('SELECT COUNT(*) AS n FROM skin_votes').get(),
     };
-    expect(migrate(db)).toEqual(['0004_scopes.sql']);
+    expect(migrate(db)).toEqual(['0004_scopes.sql', '0005_hardening.sql']);
     expect(migrate(db)).toEqual([]);
     expect(db.prepare('SELECT COUNT(*) AS n FROM users').get()).toEqual(before.users);
     expect(db.prepare('SELECT COUNT(*) AS n FROM posts').get()).toEqual(before.posts);

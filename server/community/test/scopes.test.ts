@@ -515,6 +515,7 @@ describe('GET /v1/communities', () => {
     const fresh = await post(c.us1.token, 'fresh');
     const spam = await post(c.us1.token, 'spam');
     for (const u of [c.vn1, c.vn2, c.th1]) {
+      e.mature(u.user.id);
       await e.req('POST', '/v1/reports', { token: u.token, body: { targetType: 'post', targetId: spam.json.id, reason: 'spam' } });
     }
     expect(fresh.status).toBe(200);

@@ -161,6 +161,42 @@ export interface MediaRow {
   content_type: string;
   size: number;
   created_at: number;
+  // migration 0005
+  /** The post the file is attached to; NULL = uploaded but never attached. */
+  post_id: string | null;
+  /** 'quarantined' = hidden by reports: never served, kept privately for moderators. */
+  status: string;
+  quarantined_at: number | null;
+}
+
+/** Result of recording a report. */
+export interface ReportOutcome {
+  /** Distinct reporters of the target. */
+  count: number;
+  /** Distinct reporters whose reports count toward hiding (see README: account age + activity). */
+  eligible: number;
+  /** True when this report made the target hidden. */
+  newlyHidden: boolean;
+}
+
+/** Everything the server stores about one account (GET /v1/me/export, CLI export). */
+export interface AccountData {
+  user: UserRow;
+  posts: PostRow[];
+  comments: CommentRow[];
+  reviews: ReviewRow[];
+  postLikes: { post_id: string; created_at: number }[];
+  reviewLikes: { review_id: string; created_at: number }[];
+  votes: { skin_uuid: string; weapon_uuid: string; country: string | null; region: string | null; created_at: number }[];
+  lfgPosts: LfgRow[];
+  lfgJoins: { lfg_id: string; created_at: number }[];
+  reportsFiled: { target_type: string; target_id: string; reason: string; created_at: number }[];
+  media: MediaRow[];
+}
+
+export interface SweepCounts {
+  reportsExpired: number;
+  reportsOrphaned: number;
 }
 
 export interface SkinCount {
@@ -316,8 +352,40 @@ export interface Repo {
   addReport(
     r: { type: ReportTarget; targetId: string; reporterId: string; reason: string; now: number },
     threshold: number,
-  ): number;
+    /** Reports from accounts younger than this (or without any activity) are stored but do not count. */
+    minReporterAgeMs: number,
+  ): ReportOutcome;
+  /** Deletes reports older than `olderThan` and reports whose target no longer exists. */
+  sweepReports(olderThan: number): SweepCounts;
 
-  insertMedia(m: MediaRow): void;
+  insertMedia(m: Pick<MediaRow, 'key' | 'user_id' | 'content_type' | 'size' | 'created_at'>): void;
   getMediaMany(keys: string[]): MediaRow[];
+  getMedia(key: string): MediaRow | null;
+  /** Bytes stored for a user (active + quarantined files), or for everyone when `userId` is omitted. */
+  mediaBytes(userId?: string): number;
+  mediaOfUser(userId: string): MediaRow[];
+  /** Active files that are not attached to any post and were uploaded before `cutoff`. */
+  mediaOrphans(cutoff: number): MediaRow[];
+  /** Quarantined files quarantined before `cutoff`. */
+  mediaQuarantineDue(cutoff: number): MediaRow[];
+  /** Active files of posts that are hidden (should be quarantined). */
+  mediaOfHiddenPosts(): MediaRow[];
+  setMediaQuarantined(keys: string[], now: number): void;
+  setMediaActive(keys: string[]): void;
+  deleteMediaRows(keys: string[]): void;
+
+  /** All data of an account (for the export). */
+  accountData(userId: string): AccountData | null;
+  /**
+   * Hard-deletes an account and everything cascading from it; reports against its content are
+   * deleted, reports it filed are anonymised, its rate-limit rows are removed. Media rows go with
+   * the user (delete the files first / after via the media service).
+   */
+  deleteAccountRows(userId: string): void;
+  /** Users by Riot ID (case-insensitive) — for the ops CLI only. */
+  findUsersByRiotId(gameName: string, tagLine: string): UserRow[];
+  /** Moderator action: un-hides a target and forgets its reports. Returns false when it does not exist. */
+  restoreTarget(type: ReportTarget, id: string): boolean;
+  /** Row counts and media bytes, for the ops CLI. */
+  stats(): Record<string, number>;
 }

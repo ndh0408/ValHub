@@ -61,6 +61,24 @@ class CommunityApi {
       ) ??
       (throw const CommunityException(CommunityException.badResponse));
 
+  // ---------------------------------------------------------- data rights
+
+  /// `GET /v1/me/export` (5 / hour): everything the server holds about the
+  /// account as one JSON document (`format: valvn-community-export/1`).
+  Future<Map<String, Object?>> exportMyData(String puuid) async {
+    final body = asMap(await _send('GET', '/v1/me/export', puuid: puuid));
+    if (body == null) {
+      throw const CommunityException(CommunityException.badResponse);
+    }
+    return body;
+  }
+
+  /// `DELETE /v1/me` (3 / hour, `204`): permanently deletes the account's
+  /// posts, comments, reviews, likes, votes, LFG posts and images. The
+  /// session token stops working at once; the caller then forgets it.
+  Future<void> deleteMyAccount(String puuid) =>
+      _send('DELETE', '/v1/me', puuid: puuid);
+
   // ----------------------------------------------------------------- LFG
 
   /// `GET /v1/lfg` (open posts, newest first). [rank] keeps posts whose
@@ -231,6 +249,25 @@ class CommunityApi {
     ScopeFilter? scope,
     int limit = 50,
     bool signIn = true,
+  }) async => (await topSkinsResult(
+    puuid: puuid,
+    weapon: weapon,
+    period: period,
+    sort: sort,
+    scope: scope,
+    limit: limit,
+    signIn: signIn,
+  )).rows;
+
+  /// [topSkins] with the scope the server applied (`appliedScope`).
+  Future<TopSkinsResult> topSkinsResult({
+    String? puuid,
+    String? weapon,
+    TopPeriod period = TopPeriod.all,
+    TopSort sort = TopSort.votes,
+    ScopeFilter? scope,
+    int limit = 50,
+    bool signIn = true,
   }) async {
     final body = await _send(
       'GET',
@@ -254,7 +291,10 @@ class CommunityApi {
       if (row != null && seen.add(row.skinUuid)) out.add(row);
     }
     out.sort((a, b) => a.rank.compareTo(b.rank));
-    return out;
+    return TopSkinsResult(
+      out,
+      applied: AppliedScope.fromJson(asMap(body)?['appliedScope']),
+    );
   }
 
   /// `GET /v1/skins/votes?ids=…` (≤ 50 ids; auth optional): votes and
@@ -274,9 +314,10 @@ class CommunityApi {
       signIn: signIn,
       query: {'ids': list.join(',')},
     );
+    final applied = AppliedScope.fromJson(asMap(body)?['appliedScope']);
     final stats = [
       for (final e in asList(asMap(body)?['items'] ?? body))
-        ?SkinStats.fromJson(e),
+        ?SkinStats.fromJson(e, applied: applied),
     ];
     return {for (final s in stats) s.skinUuid: s};
   }
