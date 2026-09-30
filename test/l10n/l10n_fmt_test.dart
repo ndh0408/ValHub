@@ -75,6 +75,52 @@ void main() {
     });
   });
 
+  group('the strings classes and their namespaces', () {
+    // (class, prefix) pairs of the codemod's table, in its order.
+    List<(String, String)> table() {
+      final source = File('tool/l10n_codemod/lib/src/known_classes.dart')
+          .readAsStringSync();
+      return [
+        for (final m in RegExp(
+          r"'([A-Za-z]+Strings)':\s*'([A-Za-z]+)'",
+        ).allMatches(source))
+          (m.group(1)!, m.group(2)!),
+      ];
+    }
+
+    test("the codemod's class table follows the namespace order", () {
+      expect(table().map((e) => e.$2).toList(), kKeyPrefixOrder);
+      for (final (cls, prefix) in table()) {
+        expect(
+          cls,
+          '${prefix[0].toUpperCase()}${prefix.substring(1)}Strings',
+          reason: 'class names derive from the prefix',
+        );
+      }
+    });
+
+    test('every *Strings class of lib/ is in that table', () {
+      final found = <String>{};
+      for (final f in Directory('lib').listSync(recursive: true)) {
+        if (f is! File || !f.path.endsWith('_strings.dart')) continue;
+        for (final m in RegExp(
+          r'class\s+(\w+Strings)',
+        ).allMatches(f.readAsStringSync())) {
+          found.add(m.group(1)!);
+        }
+      }
+      expect(
+        found,
+        table().map((e) => e.$1).toSet(),
+        reason:
+            'a new *Strings class needs an entry in '
+            'tool/l10n_codemod/lib/src/known_classes.dart and its prefix in '
+            'kKeyPrefixOrder (tool/l10n_fmt.dart): the migration extracts '
+            'exactly these classes',
+      );
+    });
+  });
+
   group('formatArb (template)', () {
     final messy = arb([
       ('storeBuy', 'Mua'),

@@ -1,0 +1,7 @@
+# Reference copies of the design prototypes: only compile errors matter here
+# (no lints, unlike the rest of the package).
+analyzer:
+  language:
+    strict-casts: false
+    strict-raw-types: false
+    strict-inference: false
