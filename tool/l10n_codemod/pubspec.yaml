@@ -1,0 +1,21 @@
+name: l10n_codemod
+description: >-
+  Deterministic, re-runnable, analyzer-based codemod that migrates ValVN's
+  *Strings classes to gen-l10n ARB messages (docs/design/I18N.md section 5).
+  Isolated from the app: its own dependency graph and lockfile, so the app's
+  pubspec never gains an `analyzer` dependency. Deleted at wave W4.
+publish_to: none
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  # Exact pin: validated against this repo on Dart 3.13.4 (I18N.md 5.1, V4).
+  # 14.4.0 exists (needs SDK ^3.11); upgrade separately after re-checking the
+  # element/fragment API renames.
+  analyzer: 10.2.0
+  args: ^2.7.0
+  path: ^1.9.1
+
+dev_dependencies:
+  test: ^1.26.0

@@ -1,4 +1,5 @@
-import { ApiError } from '../errors.js';
+import { reasonError } from '../errors.js';
+import { REASONS } from '../reasons.js';
 import type { ListKey, WordCategory } from './types.js';
 import { SHORTENER_DOMAINS } from './vi-wordlist.js';
 import { listKeyForLanguage, WORDLISTS } from './wordlists.js';
@@ -18,8 +19,25 @@ import { listKeyForLanguage, WORDLISTS } from './wordlists.js';
  * Text in a language without a list is never rejected for that reason: only listed words match.
  */
 
-export const MSG_INAPPROPRIATE = 'Nội dung chứa từ ngữ không phù hợp';
-export const MSG_SCAM = 'Không được quảng cáo mua bán tài khoản, cày thuê hoặc để lại số điện thoại.';
+export const MSG_INAPPROPRIATE = REASONS.content_inappropriate.vi;
+export const MSG_SCAM = REASONS.content_scam.vi;
+
+/**
+ * Work caps (CS-03). The fields that reach the filter are at most 1,000 code points, but the cost of one call grows
+ * with the number of words and isolated letters, so a text beyond these caps is refused instead of scanned: a
+ * legitimate 1,000-character text has ~200 words and no isolated-letter runs worth mentioning.
+ */
+export const MAX_INPUT_CHARS = 4000;
+export const MAX_TOKENS = 400;
+export const MAX_UNITS = 300;
+
+/** Thrown by the scanners when a text is beyond the caps above; `moderate()` turns it into a rejection. */
+export class TextTooComplexError extends Error {
+  constructor() {
+    super('text too complex for the content filter');
+    this.name = 'TextTooComplexError';
+  }
+}
 
 const REJECT_CATEGORIES: ReadonlySet<WordCategory> = new Set(['hate', 'sexual', 'harassment']);
 
@@ -44,7 +62,11 @@ const HAS_IGNORABLE = new RegExp(`[${IGN}]`, 'u');
  * circled / stylised letters and digits become plain ones; half-width kana widened), lower case, NFC,
  * Arabic letter variants (أ إ آ → ا, ى → ي, ة → ه, tatweel removed), ё → е, ß → ss.
  */
+const ASCII_ONLY = /^[\u0000-\u007F]*$/;
+
 export function canon(s: string): string {
+  // Plain ASCII has no invisible characters and nothing to compose or fold: only the case changes.
+  if (ASCII_ONLY.test(s)) return s.toLowerCase();
   return s
     .replace(IGNORABLE, '')
     .normalize('NFKC')
@@ -60,7 +82,9 @@ export function canon(s: string): string {
 
 /** canon() plus removal of every diacritic / tone mark (incl. đ → d). */
 export function stripDiacritics(s: string): string {
-  return canon(s).normalize('NFD').replace(/\p{M}/gu, '').replace(/đ/g, 'd').normalize('NFC');
+  const c = canon(s);
+  if (ASCII_ONLY.test(c)) return c;
+  return c.normalize('NFD').replace(/\p{M}/gu, '').replace(/đ/g, 'd').normalize('NFC');
 }
 
 const collapseRuns = (s: string): string => s.replace(/(.)\1+/gu, '$1');
@@ -302,7 +326,10 @@ function streamsOf(text: string, skip: [number, number][]): { streams: Token[][]
   const streams = [...bases];
   const runs: Unit[][] = [];
   for (const b of bases) {
-    const r = runsOf(unitsOf(b), text);
+    if (b.length > MAX_TOKENS) throw new TextTooComplexError();
+    const units = unitsOf(b);
+    if (units.length > MAX_UNITS) throw new TextTooComplexError();
+    const r = runsOf(units, text);
     runs.push(...r);
     const merged = mergedStream(b, r, text);
     if (merged) streams.push(merged);
@@ -330,6 +357,10 @@ interface Exceptions {
 
 interface Pattern {
   words: PatternWord[];
+  /** The words' letters joined without spaces ("dit me" -> "ditme"), and whether any word carries diacritics. */
+  joined: string;
+  joinedCollapsed: string;
+  joinedToned: boolean;
   /** `*part*`: substring match inside a token (single word). */
   substring: boolean;
   category: WordCategory;
@@ -372,14 +403,37 @@ function compileList(key: ListKey): Pattern[] {
       const trimmed = entry.trim();
       const single = parseWord(trimmed);
       if (single?.substring) {
-        out.push({ words: [single.word], substring: true, category, source: entry, list: key, exceptions });
+        out.push({
+          words: [single.word],
+          joined: single.word.word,
+          joinedCollapsed: collapseRuns(single.word.word),
+          joinedToned: single.word.toned,
+          substring: true,
+          category,
+          source: entry,
+          list: key,
+          exceptions,
+        });
         continue;
       }
       const words = trimmed
         .split(/\s+/)
         .map((w) => parseWord(w)?.word)
         .filter((w): w is PatternWord => w !== undefined);
-      if (words.length > 0) out.push({ words, substring: false, category, source: entry, list: key, exceptions });
+      if (words.length > 0) {
+        const joined = words.map((w) => w.word).join('');
+        out.push({
+          words,
+          joined,
+          joinedCollapsed: collapseRuns(joined),
+          joinedToned: words.some((w) => w.toned),
+          substring: false,
+          category,
+          source: entry,
+          list: key,
+          exceptions,
+        });
+      }
     }
   }
   COMPILED.set(key, out);
@@ -392,35 +446,90 @@ interface SquashIndex {
   plain: Map<string, Pattern[]>;
   tonedCollapsed: Map<string, Pattern[]>;
   plainCollapsed: Map<string, Pattern[]>;
-  /** Entries whose last word is a `stem*`. */
-  prefixes: { joined: string; toned: boolean; pattern: Pattern }[];
+  /** Entries whose last word is a `stem*`, by their joined letters (toned entries / untoned entries). */
+  prefixToned: Map<string, Pattern[]>;
+  prefixPlain: Map<string, Pattern[]>;
+  /** Distinct lengths of the keys above (a window of n letters is tried against each length <= n). */
+  prefixLens: number[];
+}
+
+/** Whole-word patterns of one list set, looked up by their FIRST word (a token is matched by hash, not by scanning). */
+interface FirstIndex {
+  tonedExact: Map<string, Pattern[]>;
+  tonedCollapsed: Map<string, Pattern[]>;
+  plainExact: Map<string, Pattern[]>;
+  plainCollapsed: Map<string, Pattern[]>;
+  /** Patterns whose first word is a `stem*`: few, checked one by one. */
+  prefixFirst: Pattern[];
 }
 
 interface Plan {
   words: Pattern[];
+  /** Position of each pattern in `words` (first match in this order wins: longest phrases first). */
+  order: Map<Pattern, number>;
   substrings: Pattern[];
   squash: SquashIndex;
+  first: FirstIndex;
+  /** Multi-word patterns that a spelled-out / separator-joined token may match (see squashMatches). */
+  squashable: Pattern[];
 }
 
 const PLAN_CACHE = new Map<string, Plan>();
 
+const putInto = (m: Map<string, Pattern[]>, k: string, p: Pattern) => {
+  const list = m.get(k);
+  if (list) list.push(p);
+  else m.set(k, [p]);
+};
+
 function buildSquashIndex(words: Pattern[]): SquashIndex {
-  const idx: SquashIndex = { toned: new Map(), plain: new Map(), tonedCollapsed: new Map(), plainCollapsed: new Map(), prefixes: [] };
-  const put = (m: Map<string, Pattern[]>, k: string, p: Pattern) => {
-    const list = m.get(k);
-    if (list) list.push(p);
-    else m.set(k, [p]);
+  const idx: SquashIndex = {
+    toned: new Map(),
+    plain: new Map(),
+    tonedCollapsed: new Map(),
+    plainCollapsed: new Map(),
+    prefixToned: new Map(),
+    prefixPlain: new Map(),
+    prefixLens: [],
   };
+  const lens = new Set<number>();
   for (const p of words) {
     if (p.words.slice(0, -1).some((w) => w.prefix)) continue;
     const joined = p.words.map((w) => w.word).join('');
     const toned = p.words.some((w) => w.toned);
     if (p.words[p.words.length - 1]!.prefix) {
-      idx.prefixes.push({ joined, toned, pattern: p });
+      putInto(toned ? idx.prefixToned : idx.prefixPlain, joined, p);
+      lens.add(joined.length);
       continue;
     }
-    put(toned ? idx.toned : idx.plain, joined, p);
-    put(toned ? idx.tonedCollapsed : idx.plainCollapsed, collapseRuns(joined), p);
+    putInto(toned ? idx.toned : idx.plain, joined, p);
+    putInto(toned ? idx.tonedCollapsed : idx.plainCollapsed, collapseRuns(joined), p);
+  }
+  idx.prefixLens = [...lens].sort((a, b) => a - b);
+  return idx;
+}
+
+function buildFirstIndex(words: Pattern[]): FirstIndex {
+  const idx: FirstIndex = {
+    tonedExact: new Map(),
+    tonedCollapsed: new Map(),
+    plainExact: new Map(),
+    plainCollapsed: new Map(),
+    prefixFirst: [],
+  };
+  for (const p of words) {
+    const w = p.words[0]!;
+    if (w.prefix) {
+      idx.prefixFirst.push(p);
+      continue;
+    }
+    if (w.toned) {
+      putInto(idx.tonedExact, w.word, p);
+      putInto(idx.tonedCollapsed, w.collapsed, p);
+    } else {
+      putInto(idx.plainExact, w.word, p);
+      putInto(idx.plainCollapsed, w.collapsed, p);
+    }
   }
   return idx;
 }
@@ -432,7 +541,14 @@ function planFor(lists: readonly ListKey[]): Plan {
   if (cached) return cached;
   const all = lists.flatMap((k) => compileList(k));
   const words = all.filter((p) => !p.substring).sort((a, b) => b.words.length - a.words.length);
-  const plan: Plan = { words, substrings: all.filter((p) => p.substring), squash: buildSquashIndex(words) };
+  const plan: Plan = {
+    words,
+    order: new Map(words.map((p, i) => [p, i] as [Pattern, number])),
+    substrings: all.filter((p) => p.substring),
+    squash: buildSquashIndex(words),
+    first: buildFirstIndex(words),
+    squashable: words.filter((p) => p.words.length >= 2 && !p.words.slice(0, -1).some((w) => w.prefix)),
+  };
   PLAN_CACHE.set(id, plan);
   return plan;
 }
@@ -458,15 +574,14 @@ function wordMatches(t: Token, w: PatternWord): boolean {
 function squashMatches(t: Token, p: Pattern): boolean {
   if (!t.squash || p.substring || p.words.length < 2) return false;
   if (p.words.slice(0, -1).some((w) => w.prefix)) return false;
-  const joined = p.words.map((w) => w.word).join('');
-  const toned = p.words.some((w) => w.toned);
+  const { joined, joinedCollapsed, joinedToned: toned } = p;
   const last = p.words[p.words.length - 1]!;
-  const forms: Form[] = [t, ...t.alts];
-  return forms.some((f) => {
+  const check = (f: Form): boolean => {
     const hay = toned ? f.toned : f.plain;
     if (last.prefix) return hay.startsWith(joined);
-    return hay === joined || collapseRuns(hay) === collapseRuns(joined);
-  });
+    return hay === joined || (toned ? f.tonedCollapsed : f.plainCollapsed) === joinedCollapsed;
+  };
+  return check(t) || t.alts.some(check);
 }
 
 /** Token-level exceptions: excepted whole words / prefixes, or a token containing an excepted `*part*`. */
@@ -499,6 +614,27 @@ export interface WordMatch {
   list: ListKey;
 }
 
+/** Patterns whose FIRST word matches `t` in some reading (hash lookups); the caller verifies the rest. */
+function candidatesFor(t: Token, plan: Plan): Pattern[] {
+  const idx = plan.first;
+  const out: Pattern[] = [];
+  const add = (l: Pattern[] | undefined) => {
+    if (l) for (const p of l) out.push(p);
+  };
+  add(idx.tonedExact.get(t.toned));
+  if (t.tonedCollapsed !== t.toned) add(idx.tonedCollapsed.get(t.tonedCollapsed));
+  add(idx.plainExact.get(t.plain));
+  if (t.plainCollapsed !== t.plain) add(idx.plainCollapsed.get(t.plainCollapsed));
+  for (const a of t.alts) {
+    add(idx.tonedExact.get(a.toned));
+    if (a.tonedCollapsed !== a.toned) add(idx.tonedCollapsed.get(a.tonedCollapsed));
+    add(idx.plainExact.get(a.plain));
+    if (a.plainCollapsed !== a.plain) add(idx.plainCollapsed.get(a.plainCollapsed));
+  }
+  for (const p of idx.prefixFirst) out.push(p);
+  return out;
+}
+
 function collect(tokens: Token[], plan: Plan, found: WordMatch[]): void {
   // Whole words, prefixes and phrases.
   let i = 0;
@@ -506,19 +642,35 @@ function collect(tokens: Token[], plan: Plan, found: WordMatch[]): void {
     let hit: Pattern | undefined;
     let used = 1;
     const first = tokens[i]!;
-    for (const p of plan.words) {
-      if (squashMatches(first, p)) {
+    if (first.squash) {
+      // A token joined across separators / spelled out may also match a multi-word entry: first match in list order.
+      for (const p of plan.words) {
+        if (squashMatches(first, p)) {
+          if (p.words.some((w) => w.prefix) && tokenExcepted(first, p.exceptions)) continue;
+          hit = p;
+          used = 1;
+          break;
+        }
+        if (i + p.words.length > tokens.length) continue;
+        if (!p.words.every((w, k) => wordMatches(tokens[i + k]!, w))) continue;
         if (p.words.some((w) => w.prefix) && tokenExcepted(first, p.exceptions)) continue;
         hit = p;
-        used = 1;
+        used = p.words.length;
         break;
       }
-      if (i + p.words.length > tokens.length) continue;
-      if (!p.words.every((w, k) => wordMatches(tokens[i + k]!, w))) continue;
-      if (p.words.some((w) => w.prefix) && tokenExcepted(first, p.exceptions)) continue;
-      hit = p;
-      used = p.words.length;
-      break;
+    } else {
+      // Ordinary token: only patterns whose first word matches it can hit; the earliest in list order wins.
+      let bestOrder = Infinity;
+      for (const p of candidatesFor(first, plan)) {
+        const order = plan.order.get(p)!;
+        if (order >= bestOrder) continue;
+        if (i + p.words.length > tokens.length) continue;
+        if (!p.words.every((w, k) => wordMatches(tokens[i + k]!, w))) continue;
+        if (p.words.some((w) => w.prefix) && tokenExcepted(first, p.exceptions)) continue;
+        hit = p;
+        used = p.words.length;
+        bestOrder = order;
+      }
     }
     if (hit) {
       found.push({
@@ -561,43 +713,90 @@ function collect(tokens: Token[], plan: Plan, found: WordMatch[]): void {
 
 /**
  * Words hidden inside a run of spelled-out letters ("I f u c k you", "a v c l b"): every window of at least
- * three letters is looked up as a word (all lookups are hash / prefix checks, so long runs stay cheap).
+ * three letters is looked up as a word. Each letter's forms are computed once per run and windows are built by
+ * concatenation, so a window costs a few hash lookups (no normalisation). Runs with look-alike-script letters or
+ * Hangul jamo (which compose across letters) take the exact, slower route.
  */
-function collectWindows(run: Unit[], plan: Plan, found: WordMatch[]): void {
-  const hits = (str: string): Pattern[] => {
-    const out: Pattern[] = [];
-    const seen = new Set<string>();
-    const add = (list: Pattern[] | undefined) => {
-      for (const p of list ?? []) if (!seen.has(p.source + p.list)) (seen.add(p.source + p.list), out.push(p));
-    };
-    const letters = /\p{L}/u.test(str);
-    const mapped = letters ? [...str].map((ch) => LEET[ch] ?? ch).join('') : str;
-    const spellings = [mapped];
-    if (HAS_LOOKALIKE_SCRIPT.test(mapped)) {
-      const latin = foldWith(mapped, LOOKALIKE_TO_LATIN);
-      if (latin !== mapped) spellings.push(latin);
-      if (/\p{Script=Cyrillic}/u.test(mapped) && /[a-z]/.test(mapped)) spellings.push(foldWith(mapped, LATIN_TO_CYRILLIC));
-    }
-    for (const toned of spellings) {
-      const plain = stripDiacritics(toned);
-      const tonedC = collapseRuns(toned);
-      const plainC = collapseRuns(plain);
-      add(plan.squash.toned.get(toned));
-      add(plan.squash.plain.get(plain));
-      if (tonedC !== toned) add(plan.squash.tonedCollapsed.get(tonedC));
-      if (plainC !== plain) add(plan.squash.plainCollapsed.get(plainC));
-      for (const pre of plan.squash.prefixes) {
-        if ((pre.toned ? toned : plain).startsWith(pre.joined)) add([pre.pattern]);
-      }
-    }
-    return out;
-  };
+const NEEDS_EXACT_WINDOWS = /[\p{Script=Cyrillic}\p{Script=Greek}\u1100-\u11FF\u3130-\u318F]/u;
 
-  for (let a = 0; a + 2 < run.length; a++) {
-    let str = run[a]!.piece + run[a + 1]!.piece;
-    for (let b = a + 2; b < run.length && b - a < MAX_WINDOW_UNITS; b++) {
-      str += run[b]!.piece;
-      for (const p of hits(str)) {
+function windowHits(plan: Plan, toned: string, plain: string, tonedC: string, plainC: string, out: Pattern[]): void {
+  const sq = plan.squash;
+  const add = (list: Pattern[] | undefined) => {
+    if (list) for (const p of list) if (!out.includes(p)) out.push(p);
+  };
+  add(sq.toned.get(toned));
+  add(sq.plain.get(plain));
+  if (tonedC !== toned) add(sq.tonedCollapsed.get(tonedC));
+  if (plainC !== plain) add(sq.plainCollapsed.get(plainC));
+  for (const len of sq.prefixLens) {
+    if (toned.length >= len) add(sq.prefixToned.get(toned.slice(0, len)));
+    if (plain.length >= len) add(sq.prefixPlain.get(plain.slice(0, len)));
+  }
+}
+
+/** Appends `piece` to a run-collapsed string ("aab" + "bc" -> "abc"): same as collapseRuns(whole) without a regex. */
+function appendCollapsed(acc: string, piece: string): string {
+  if (piece === '') return acc;
+  if (acc === '') return piece;
+  const n = acc.length;
+  const pair = n >= 2 ? acc.codePointAt(n - 2)! : 0;
+  const last = pair > 0xffff ? pair : acc.codePointAt(n - 1)!;
+  const first = piece.codePointAt(0)!;
+  return last === first ? acc + piece.slice(first > 0xffff ? 2 : 1) : acc + piece;
+}
+
+function collectWindows(run: Unit[], plan: Plan, found: WordMatch[]): void {
+  const n = run.length;
+  const exact = run.some((u) => NEEDS_EXACT_WINDOWS.test(u.piece));
+  const raw = run.map((u) => u.piece);
+  const leet = raw.map((p) => [...p].map((ch) => LEET[ch] ?? ch).join(''));
+  const rawPlain = exact ? raw : raw.map(stripDiacritics);
+  const leetPlain = exact ? leet : leet.map(stripDiacritics);
+  const letter = raw.map((p) => /\p{L}/u.test(p));
+  // Collapsed (elongation-tolerant) forms of each piece; joined incrementally below.
+  const rawC = raw.map(collapseRuns);
+  const leetC = leet.map(collapseRuns);
+  const rawPlC = rawPlain.map(collapseRuns);
+  const leetPlC = leetPlain.map(collapseRuns);
+
+  for (let a = 0; a + 2 < n; a++) {
+    let rawStr = raw[a]! + raw[a + 1]!;
+    let leetStr = leet[a]! + leet[a + 1]!;
+    let rawPl = rawPlain[a]! + rawPlain[a + 1]!;
+    let leetPl = leetPlain[a]! + leetPlain[a + 1]!;
+    let rawCol = appendCollapsed(rawC[a]!, rawC[a + 1]!);
+    let leetCol = appendCollapsed(leetC[a]!, leetC[a + 1]!);
+    let rawPlCol = appendCollapsed(rawPlC[a]!, rawPlC[a + 1]!);
+    let leetPlCol = appendCollapsed(leetPlC[a]!, leetPlC[a + 1]!);
+    let hasLetter = letter[a]! || letter[a + 1]!;
+    for (let b = a + 2; b < n && b - a < MAX_WINDOW_UNITS; b++) {
+      rawStr += raw[b]!;
+      leetStr += leet[b]!;
+      rawPl += rawPlain[b]!;
+      leetPl += leetPlain[b]!;
+      rawCol = appendCollapsed(rawCol, rawC[b]!);
+      leetCol = appendCollapsed(leetCol, leetC[b]!);
+      rawPlCol = appendCollapsed(rawPlCol, rawPlC[b]!);
+      leetPlCol = appendCollapsed(leetPlCol, leetPlC[b]!);
+      if (letter[b]) hasLetter = true;
+      const hits: Pattern[] = [];
+      if (!exact) {
+        if (hasLetter) windowHits(plan, leetStr, leetPl, leetCol, leetPlCol, hits);
+        else windowHits(plan, rawStr, rawPl, rawCol, rawPlCol, hits);
+      } else {
+        const mapped = hasLetter ? leetStr : rawStr;
+        const spellings = [mapped];
+        if (HAS_LOOKALIKE_SCRIPT.test(mapped)) {
+          const latin = foldWith(mapped, LOOKALIKE_TO_LATIN);
+          if (latin !== mapped) spellings.push(latin);
+          if (/\p{Script=Cyrillic}/u.test(mapped) && /[a-z]/.test(mapped)) spellings.push(foldWith(mapped, LATIN_TO_CYRILLIC));
+        }
+        for (const toned of spellings) {
+          const plain = stripDiacritics(toned);
+          windowHits(plan, toned, plain, collapseRuns(toned), collapseRuns(plain), hits);
+        }
+      }
+      for (const p of hits) {
         found.push({ start: run[a]!.start, end: run[b]!.end, category: p.category, source: p.source, list: p.list });
       }
     }
@@ -766,7 +965,7 @@ export function containsPhoneNumber(text: string): boolean {
 
 // ---- public API ------------------------------------------------------------------------------
 
-export type RejectReason = 'hate' | 'sexual' | 'harassment' | 'scam' | 'phone';
+export type RejectReason = 'hate' | 'sexual' | 'harassment' | 'scam' | 'phone' | 'complex';
 
 export interface ModerateOptions {
   /** Language of the text (or of its author): one of the 17 app languages; absent / 'any' → unknown. */
@@ -788,11 +987,22 @@ export interface ModerationResult {
 }
 
 export function moderate(input: string, opts: ModerateOptions = {}): ModerationResult {
+  if (input.length > MAX_INPUT_CHARS) {
+    return { text: input, rejected: 'complex', masked: 0, linksRemoved: 0, lists: [] };
+  }
   const nfc = input.normalize('NFC');
   const { text, removed } = stripLinks(nfc);
   const skip = linkRanges(text);
   const lists = listsFor(text, opts.language, opts.country);
-  const matches = findMatches(text, lists, skip);
+  let matches: WordMatch[];
+  try {
+    matches = findMatches(text, lists, skip);
+  } catch (e) {
+    if (e instanceof TextTooComplexError) {
+      return { text, rejected: 'complex', masked: 0, linksRemoved: removed, lists };
+    }
+    throw e;
+  }
   const base = { linksRemoved: removed, lists };
 
   const reject = matches.find((m) => REJECT_CATEGORIES.has(m.category));
@@ -824,7 +1034,8 @@ export function moderate(input: string, opts: ModerateOptions = {}): ModerationR
 export function cleanUserText(input: string, language?: string | null, country?: string | null): string {
   if (input === '') return input;
   const r = moderate(input, { language, country });
-  if (r.rejected === 'scam' || r.rejected === 'phone') throw new ApiError('invalid_input', MSG_SCAM);
-  if (r.rejected) throw new ApiError('invalid_input', MSG_INAPPROPRIATE);
+  if (r.rejected === 'complex') throw reasonError('invalid_input', 'content_too_complex');
+  if (r.rejected === 'scam' || r.rejected === 'phone') throw reasonError('invalid_input', 'content_scam');
+  if (r.rejected) throw reasonError('invalid_input', 'content_inappropriate');
   return r.text;
 }

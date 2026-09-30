@@ -4,6 +4,7 @@ import { createAppWithCtx } from './app.js';
 import { loadConfig } from './config.js';
 import { ValorantContentCatalog } from './content.js';
 import { openDatabase } from './db/database.js';
+import { startLoadMonitor } from './load.js';
 import { SqliteRepo } from './db/sqlite-repo.js';
 import { DiskMediaStore } from './media.js';
 import { fetchRiotUserinfo } from './riot.js';
@@ -23,12 +24,15 @@ const media = new DiskMediaStore(path.join(config.dataDir, 'media'), path.join(c
 const content = new ValorantContentCatalog({ log: (m) => console.error(m) });
 void content.warm(); // load the game-content catalog in the background (requests never wait for it)
 
+const load = startLoadMonitor(); // event-loop lag -> 503 load shedding (see load.ts)
+
 const { app, ctx } = createAppWithCtx({
   repo,
   media,
   config,
   content,
   riotUserinfo: fetchRiotUserinfo,
+  loadProbe: load.lagMs,
   logError: (m) => console.error(m),
 });
 
@@ -78,6 +82,7 @@ const shutdown = (signal: string) => {
   console.log(`${signal} received, shutting down`);
   clearInterval(timer);
   clearTimeout(first);
+  load.stop();
   server.close(() => {
     db.close();
     process.exit(0);

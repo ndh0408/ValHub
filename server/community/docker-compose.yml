@@ -19,6 +19,9 @@ services:
     environment:
       PORT: "8080"
       DATA_DIR: /data
+      # This stack is reached through the Cloudflare Tunnel only (loopback publish + the private `edge` network), so
+      # CF-Connecting-IP identifies the client. The server's own default is false (see README, CS-13).
+      TRUST_PROXY: ${TRUST_PROXY:-true}
     ports:
       - "127.0.0.1:8787:8080"
     volumes:

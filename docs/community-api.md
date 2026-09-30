@@ -12,13 +12,21 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
   by remote config key `communityBaseUrl`).
 - JSON everywhere (`content-type: application/json; charset=utf-8`) except media
   upload. Times are ISO-8601 UTC strings. UUIDs lowercase.
-- Errors: HTTP status + `{"error": {"code": "snake_case", "message": "…"}}`.
+- Errors: HTTP status + `{"error": {"code": "snake_case", "message": "…", "messageEn"?, "reason"?, "params"?}}`.
   Codes: `unauthorized` (401), `forbidden` (403), `not_found` (404),
   `invalid_input` (400), `rate_limited` (429, `retryAfter` seconds in the error object
   and `Retry-After` header), `riot_rejected` (401, Riot refused the token),
   `riot_unavailable` (503, Riot could not answer; `retryAfter` / `Retry-After` when
-  known), `storage_full` (507, the server's image storage is full), `server_error` (500).
-  `message` is a Vietnamese, human-readable text; clients switch on `code`.
+  known), `storage_full` (507, the server's image storage is full), `suspended` (403, the
+  account is banned or restricted; see "Sanctions"), `server_busy` (503, the server is
+  shedding load: retry after `Retry-After` seconds), `server_error` (500).
+  `message` is a Vietnamese, human-readable text kept for old clients; clients switch on
+  `code`. Errors may also carry (all additive): `reason` — a stable snake_case code for the
+  exact case (`content_inappropriate`, `field_too_long`, `rate_limited`, …) — `params` —
+  the numbers / field names behind it (`{"field": "body", "max": 500}`,
+  `{"bucket": "posts", "limit": 10, "windowSeconds": 3600}`) — and `messageEn`, the English
+  text of `message`. New clients should localise from `reason` + `params` and fall back to
+  `message`.
 - Pagination: `?cursor=<opaque>&limit=<1..50, default 20>` →
   `{"items": [...], "nextCursor": "…" | null}`.
 
@@ -31,7 +39,8 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
 - The PUUID is never stored or returned: the user id is
   `hex(sha256(PEPPER + puuid))[0..32]` (`PEPPER` = server secret).
 - The server issues its own session token: HS256 JWT signed with the server secret
-  `SESSION_SECRET`, claims `{sub: userId, name, tag, iat, exp}` (30 days).
+  `SESSION_SECRET`, claims `{sub: userId, name, tag, iat, exp, ep}` (30 days; `ep` = the
+  account's session epoch, header `kid` = key id), revocable: see `POST /v1/auth/logout`.
   Clients send `Authorization: Bearer <token>`. Riot ID is refreshed on every
   `/v1/auth/riot`.
 - Public author object (everywhere a user is shown):
@@ -55,22 +64,55 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
 
 | Method | Path | Body | Response |
 |---|---|---|---|
-| POST | `/v1/auth/riot` | `{"accessToken", "region", "cardId"?, "rankTier"?}` | `{"token", "expiresAt", "user": Author}` |
+| POST | `/v1/auth/riot` | `{"accessToken", "region", "cardId"?, "rankTier"?, "language"?, "consentVersion"?}` | `{"token", "expiresAt", "user": Author}` |
+| POST | `/v1/auth/logout` | — | `204` (ends every session of the account) |
 | GET | `/v1/me` | — | `Author` |
 | PATCH | `/v1/me` | `{"cardId"?, "rankTier"?, "region"?, "language"?}` | `Author` |
 | GET | `/v1/me/export` | — | JSON download of all the caller's data (see "Data rights") |
 | DELETE | `/v1/me` | — | `204` (hard delete of the account and its data) |
 
 `region` ∈ `ap, na, eu, kr, latam, br`. `rankTier` 0..27 (client-reported, shown
-as-is).
+as-is). `consentVersion` (optional, 1–32 characters of `A-Z a-z 0-9 . _ -`, e.g. `"2026-09"`)
+is the version of the privacy policy / community guidelines the user accepted in the app: the
+server stores the version and the time it first saw it (returned in the data export), nothing else.
+
+**`POST /v1/auth/logout`** (session required) ends **every** session of the account, on all
+devices: the tokens issued so far answer `401`, and the app signs in again with its Riot
+session when it needs to. A token issued before the account was erased is also refused after
+the same Riot account signs in again, and banning an account ends its sessions too.
 
 `POST /v1/auth/riot` errors: `400 invalid_input` (bad body, before Riot is called),
 `401 riot_rejected` (Riot refused the token: the client should refresh its Riot session
 once and retry), `503 riot_unavailable` (Riot rate-limited us, is down, timed out or
 answered with an error page: **the token may be fine**, so the client keeps its Riot
 session and retries later, after `Retry-After` when present, 1–300 s), `429 rate_limited`
-(30 attempts / 10 min per client IP). No user is created or changed unless Riot verified
-the token.
+(too many attempts or rejected tokens from one address, see "Anonymous access"). No user is
+created or changed unless Riot verified the token. `403 suspended` if the account is banned.
+
+### Sanctions (hạn chế và khóa tài khoản)
+
+The community guidelines allow temporary restrictions and permanent bans; moderators apply them
+from the operator tool. A sanctioned account gets **`403 suspended`** on the routes it may not use:
+
+```json
+{"error": {"code": "suspended", "reason": "account_restricted", "message": "…", "messageEn": "…",
+           "params": {"kind": "restrict", "until": "2026-10-07T12:00:00.000Z", "cause": "spam"}}}
+```
+
+- `reason`: `account_restricted` (read-only) or `account_banned` (no access). `params.kind` is
+  `restrict` or `ban`; `params.until` is when it ends (ISO-8601, `null` = permanent);
+  `params.cause` is a reason code: `spam`, `harassment`, `hate`, `scam`, `nsfw`, `evasion`,
+  `minor`, `illegal` or `other`.
+- A **restricted** account can read everything, delete its own content, edit its profile
+  (`PATCH /v1/me`) and sign out; it cannot post, comment, create LFG posts, vote, review, like,
+  report or upload (`403 suspended` on those).
+- A **banned** account can only export or erase its data (`GET /v1/me/export`, `DELETE /v1/me`)
+  and sign out. `POST /v1/auth/riot` also answers `403 suspended` (no session is issued), and
+  existing sessions were ended when the ban was applied (`401`, then the sign-in above).
+- Erasing an account does **not** lift a ban or restriction (the id is derived from the Riot
+  account, so it would return unchanged). The export lists the account's sanctions
+  (`sanctions`) and the moderator actions that concerned it (`moderationLog`).
+- Appeals: by email, quoting the Riot ID (community guidelines, section 9).
 
 ### Data rights (quyền về dữ liệu)
 
@@ -87,7 +129,7 @@ media as URLs; hidden content is included with `hidden: true`):
   "format": "valvn-community-export/1",
   "exportedAt": "…",
   "profile": {"id", "gameName", "tagLine", "cardId", "rankTier", "region", "country",
-              "language", "createdAt", "updatedAt"},
+              "language", "createdAt", "updatedAt", "consent": {"version", "at"} | null},
   "posts":    [{"id", "kind", "body", "media": [{"key", "url"}], "payload", "hidden",
                 "country", "region", "language", "createdAt"}],
   "comments": [{"id", "postId", "body", "hidden", "country", "region", "language", "createdAt"}],
@@ -102,7 +144,9 @@ media as URLs; hidden content is included with `hidden: true`):
   "lfgJoins": [{"lfgId", "createdAt"}],
   "reportsFiled": [{"targetType", "targetId", "reason", "createdAt"}],
   "media": [{"key", "url", "contentType", "size", "status": "active|quarantined",
-             "attachedToPost": "uuid|null", "createdAt"}]
+             "attachedToPost": "uuid|null", "createdAt"}],
+  "sanctions": [{"kind": "ban|restrict", "reason", "createdAt", "until": "…|null", "liftedAt": "…|null"}],
+  "moderationLog": [{"at", "action", "targetType", "targetId"}]
 }
 ```
 
@@ -224,6 +268,7 @@ from averages.
 |---|---|---|---|
 | GET | `/v1/posts` | `?kind=<kind>&cursor&limit` | page of `Post` (newest first, hidden excluded) |
 | GET | `/v1/posts/{id}` | — | `Post` |
+| GET | `/v1/me/posts` | `?cursor&limit` (session required) | page of the caller's own `Post`s, newest first, **hidden ones included** |
 | POST | `/v1/posts` | `{"kind", "body", "media"?: [key…], "payload"?}` | `Post` |
 | DELETE | `/v1/posts/{id}` | own only | `204` |
 | PUT / DELETE | `/v1/posts/{id}/like` | — | `{"likes", "liked"}` |
@@ -232,7 +277,7 @@ from averages.
 | DELETE | `/v1/comments/{id}` | own only | `204` |
 | POST | `/v1/reports` | `{"targetType": "post"\|"comment"\|"lfg"\|"review", "targetId", "reason"}` (`reason` 1–200 chars) | `204` |
 | POST | `/v1/media` | raw bytes, `content-type: image/jpeg\|image/png\|image/webp`, ≤ 2 MB | `{"key", "url"}` |
-| GET | `/v1/media/{key}` | — (public, cacheable 1 year) | image bytes |
+| GET | `/v1/media/{key}` | — (public; devices may cache 1 year, the CDN edge may not) | image bytes |
 
 - `kind` ∈ `text, store, nightmarket`. `body` ≤ 1000 chars (may be empty when
   `media` or `payload` is present). `media` ≤ 4 keys previously uploaded by the
@@ -246,6 +291,13 @@ from averages.
 - `Comment`: `{"id", "postId", "author": Author, "body", "createdAt"}`.
 - Moderation: 3 distinct **eligible** reports hide a post / comment / review / LFG post
   (see "Report eligibility"). Users can only delete their own content.
+- **Hidden content is explained to its author.** On the author's OWN items — `Post` (also in
+  `GET /v1/me/posts`), `Review` (also `myReview` of the summary) and `LfgPost` (also
+  `GET /v1/lfg/mine`) — the objects carry `"hidden": bool` and `"hiddenReason": null | "reports" |
+  "moderator"` (hidden automatically after enough reports, or by a moderator). Other viewers never
+  get these fields (and never get hidden items). A hidden post still answers `404` on
+  `GET /v1/posts/{id}`; its author finds it in `GET /v1/me/posts`, can delete it, and can appeal
+  by email (community guidelines, section 9).
 - Rate limits: posts 10 / hour, comments 30 / 10 min, media 20 / hour, reports 20 /
   hour per user; votes 120 / hour.
 - Real game content only: `skinUuid` and `weaponUuid` of votes and reviews, `skinUuid` of
@@ -291,7 +343,9 @@ reads (its author can still delete it); a hidden post's images are quarantined (
 - **Serving** (`GET /v1/media/{key}`, public, no session): only files that exist **and have
   an active record** are served; deleted files, files of deleted accounts and quarantined
   files answer `404 not_found`. Responses carry `Cache-Control: public, max-age=31536000,
-  immutable`, an `ETag` (`If-None-Match` → `304`), `Content-Disposition: inline`,
+  immutable` (for devices), `Cloudflare-CDN-Cache-Control: no-store` (the CDN edge must not keep
+  the file: a deleted or quarantined image must stop being served at once), an `ETag`
+  (`If-None-Match` → `304`), `Content-Disposition: inline`,
   `X-Content-Type-Options: nosniff`, `Content-Security-Policy: default-src 'none'; img-src
   'self' data:; sandbox`, `Referrer-Policy: no-referrer` and `Cross-Origin-Resource-Policy:
   cross-origin`.
@@ -376,27 +430,38 @@ filter must never reject text only because it is in an unsupported language.
 session. A token that is *present but invalid or expired* is `401` even on a public read, so
 the client can refresh it.
 
-**Limits for requests without a session** (per client IP, hashed with a server secret and
-kept in memory only; never stored or logged):
+**Limits for requests without a session** (per client address — an IPv6 address counts as its /64 —
+hashed with a server secret and kept in memory only; never stored or logged):
 
 | Requests | Limit |
 |---|---|
-| public reads other than image files | 120 / minute |
-| image files (`/v1/media/…`) | 1500 / minute |
+| public reads other than image files | 600 / minute |
+| image files (`/v1/media/…`) | 1500 / minute (an `Authorization` header does not exempt them) |
 
 Over the limit: `429 rate_limited` with `retryAfter` (seconds until the minute ends) in the
 error object and `Retry-After`. Signed-in requests are limited per user only (the per-user
 limits listed with each feature; `GET /v1/me/export` 5 / hour, `DELETE /v1/me` 3 / hour),
-never per IP. `POST /v1/auth/riot` is limited to 30 attempts / 10 min per client IP.
+never per IP (except sign-in below); on top of those, a signed-in user may make at most **240 requests per
+minute** in total (any method, any route: `429`, `reason: "rate_limited"`,
+`params: {"bucket": "requests", "limit": 240, "windowSeconds": 60}`). Per-action limits are
+counted **before** the text is checked, so a request that the content filter rejects still
+counts toward them. `POST /v1/auth/riot` is limited per client address to 300 attempts / 10 min, and to 30
+**rejected** tokens / 10 min (`429`, `params.bucket` `authIp` or `authFailures`); successful
+sign-ins do not count as failures, so many users behind one carrier address can sign in.
 
 **Cache:** anonymous `GET /v1/skins/top`, `/v1/skins/votes`, `/v1/skins/{uuid}/summary`,
 `/v1/skins/{uuid}/reviews` and `/v1/communities` are answered from a shared in-memory cache
 for **45 seconds** (per path and query string; parameter order does not matter; errors are
 never cached), so an anonymous viewer can see data up to 45 s old, and a cache hit does not
-count against the limit above. The response header `x-cache: hit|miss` tells which. Requests
-with a session are never cached and always see live data. The feed, single posts, comments
-and image files are not cached by the server (images are immutable and cacheable by clients
-and CDNs).
+count against the limit above. An anonymous feed page (`GET /v1/posts`) is cached for **5
+seconds** the same way. The response header `x-cache: hit|miss` tells which. Requests
+with a session are never cached and always see live data. Single posts, comments
+and image files are not cached by the server (images are immutable and cacheable by clients;
+the CDN edge is told not to store them, see "Media rules").
+
+**No shared caching.** Every response except a media `200` / `304` carries
+`Cache-Control: no-store` — errors (`404` included) and authenticated JSON alike — so no
+proxy or CDN may keep them.
 
 `GET /v1/communities` also accepts `period=all` (all time) besides the default
 `period=week`.

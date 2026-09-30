@@ -31,20 +31,41 @@ export class TtlCache<V> {
   }
 }
 
-/** In-memory fixed-window counter per key (used for unauthenticated reads: no database write per request). */
+/**
+ * In-memory fixed-window counter per key (unauthenticated reads, the per-user request bucket, sign-in attempts per
+ * IP: no database write per request). The map is capped (`maxEntries`, least recently used dropped first), so a
+ * flood of distinct keys (an IPv6 range, random ids) cannot grow it without bound between prunes.
+ */
 export class FixedWindowLimiter {
   private readonly windows = new Map<string, { start: number; count: number }>();
+
+  constructor(private readonly maxEntries = 100_000) {}
 
   /** Registers a hit; `retryAfterSeconds` is set once the limit is exceeded. */
   hit(key: string, limit: number, windowMs: number, now: number): { ok: boolean; retryAfterSeconds: number } {
     const start = Math.floor(now / windowMs) * windowMs;
     let w = this.windows.get(key);
-    if (!w || w.start !== start) {
-      w = { start, count: 0 };
-      this.windows.set(key, w);
+    if (w) {
+      // Refresh recency (Map keeps insertion order: the first key is the least recently used).
+      this.windows.delete(key);
+    } else if (this.windows.size >= this.maxEntries) {
+      const oldest = this.windows.keys().next().value;
+      if (oldest !== undefined) this.windows.delete(oldest);
     }
+    if (!w || w.start !== start) w = { start, count: 0 };
+    this.windows.set(key, w);
     w.count++;
     if (w.count > limit) {
+      return { ok: false, retryAfterSeconds: Math.max(1, Math.ceil((start + windowMs - now) / 1000)) };
+    }
+    return { ok: true, retryAfterSeconds: 0 };
+  }
+
+  /** Like `hit` but does not count: has this key already exceeded `limit` in the current window? */
+  peek(key: string, limit: number, windowMs: number, now: number): { ok: boolean; retryAfterSeconds: number } {
+    const start = Math.floor(now / windowMs) * windowMs;
+    const w = this.windows.get(key);
+    if (w && w.start === start && w.count >= limit) {
       return { ok: false, retryAfterSeconds: Math.max(1, Math.ceil((start + windowMs - now) / 1000)) };
     }
     return { ok: true, retryAfterSeconds: 0 };

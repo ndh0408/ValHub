@@ -8,7 +8,7 @@ import { DEFAULT_MIGRATIONS_DIR, migrate } from '../src/db/database.js';
 import { SqliteRepo } from '../src/db/sqlite-repo.js';
 import { DiskMediaStore } from '../src/media.js';
 import { sweep } from '../src/sweeper.js';
-import { PEPPER, PNG } from './helpers.js';
+import { migrationNames, PEPPER, PNG } from './helpers.js';
 
 const NOW = Date.UTC(2026, 8, 30, 12, 0, 0);
 const DAY = 86400_000;
@@ -63,7 +63,7 @@ afterEach(() => {
 
 describe('migration 0005 on a database with 0001-0004 data', () => {
   it('applies only 0005, keeps every row, backfills media attachment and rebuilds reports', () => {
-    expect(migrate(db)).toEqual(['0005_hardening.sql']);
+    expect(migrate(db)).toEqual(migrationNames().slice(4));
     expect(migrate(db)).toEqual([]);
     const rows = Object.fromEntries(
       (db.prepare('SELECT key, post_id, status, quarantined_at FROM media').all() as { key: string }[]).map((r) => [r.key, r]),

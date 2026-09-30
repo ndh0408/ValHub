@@ -9,11 +9,11 @@ afterEach(() => e?.close());
 const ip = (addr: string) => ({ 'cf-connecting-ip': addr });
 
 describe('unauthenticated reads are limited per client IP', () => {
-  it('120 / minute by default, per IP, resets each minute, never applies to signed-in requests', async () => {
+  it('600 / minute by default, per IP, resets each minute, never applies to signed-in requests', async () => {
     e = setup();
     const { token } = await e.login('alice');
     e.clock.t = Math.ceil(e.clock.t / 60_000) * 60_000 + 1000;
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0; i < 600; i++) {
       const r = await e.req('GET', '/v1/posts', { headers: ip('203.0.113.7') });
       expect(r.status, `request ${i + 1}`).toBe(200);
     }
@@ -38,9 +38,8 @@ describe('unauthenticated reads are limited per client IP', () => {
     expectError(await e.req('GET', '/v1/communities', { headers: ip('198.51.100.1') }), 429, 'rate_limited');
     // No IP header and no socket (in-process test requests): nothing to key on, so no limit.
     for (let i = 0; i < 10; i++) expect((await e.req('GET', '/v1/communities')).status).toBe(200);
-    // X-Forwarded-For is honoured behind the proxy when CF-Connecting-IP is missing.
-    for (let i = 0; i < 3; i++) expect((await e.req('GET', '/v1/communities', { headers: { 'x-forwarded-for': '192.0.2.9, 10.0.0.1' } })).status).toBe(200);
-    expectError(await e.req('GET', '/v1/communities', { headers: { 'x-forwarded-for': '192.0.2.9' } }), 429, 'rate_limited');
+    // X-Forwarded-For is never used: its leftmost value is chosen by the client, so it cannot name a limit bucket.
+    for (let i = 0; i < 10; i++) expect((await e.req('GET', '/v1/communities', { headers: { 'x-forwarded-for': `192.0.2.${i}` } })).status).toBe(200);
     // Raw IPs are never stored (the limiter is in memory; the database has no trace).
     expect(JSON.stringify(e.db.prepare('SELECT * FROM rate_limits').all())).not.toContain('198.51.100');
   });

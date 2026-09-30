@@ -1,5 +1,5 @@
 import type { Context, Hono } from 'hono';
-import { author, iso, origin, REPORT_MIN_ACCOUNT_AGE_MS, type Ctx } from '../context.js';
+import { author, iso, origin, ownHidden, REPORT_MIN_ACCOUNT_AGE_MS, type Ctx } from '../context.js';
 import { decodeCursor, page } from '../cursor.js';
 import type { AuthorCols, CommentRow, PostView } from '../db/repo.js';
 import { forbidden, invalid, notFound } from '../errors.js';
@@ -65,7 +65,7 @@ function safeJson(text: string | null): unknown {
 }
 
 export function registerPosts(app: Hono, x: Ctx): void {
-  const serializePost = (p: PostView, base: string) => {
+  const serializePost = (p: PostView, base: string, viewerId = '') => {
     const keys = safeJson(p.media);
     return {
       id: p.id,
@@ -81,6 +81,8 @@ export function registerPosts(app: Hono, x: Ctx): void {
       comments: p.comments,
       createdAt: iso(p.created_at),
       ...origin(p),
+      // Only the author is told whether (and why) their post is hidden.
+      ...(p.user_id === viewerId ? ownHidden(p) : {}),
     };
   };
 
@@ -115,12 +117,28 @@ export function registerPosts(app: Hono, x: Ctx): void {
     const limit = parseLimit(q.limit, 20, 50);
     const rows = x.repo.listPosts({ kind, cursor, limit, viewerId: user?.id ?? '', geo, languages });
     const base = x.baseUrl(c);
-    return x.json(c, { ...page(rows, limit, (p) => serializePost(p, base)), appliedScope: appliedScope(geo) });
+    return x.json(c, {
+      ...page(rows, limit, (p) => serializePost(p, base, user?.id ?? '')),
+      appliedScope: appliedScope(geo),
+    });
+  });
+
+  // The caller's own posts, newest first, including the ones that are hidden (with `hidden` / `hiddenReason`), so an
+  // author can see what was hidden and why (and appeal by email).
+  app.get('/v1/me/posts', (c) => {
+    const user = x.user(c, true);
+    const q = c.req.query();
+    const cursor = decodeCursor(q.cursor);
+    const limit = parseLimit(q.limit, 20, 50);
+    const rows = x.repo.listPosts({ cursor, limit, viewerId: user.id, ownOf: user.id });
+    const base = x.baseUrl(c);
+    return x.json(c, page(rows, limit, (p) => serializePost(p, base, user.id)));
   });
 
   app.get('/v1/posts/:id', (c) => {
     const viewerId = x.user(c, false)?.id ?? '';
-    return x.json(c, serializePost(visiblePost(c.req.param('id'), viewerId), x.baseUrl(c)));
+    // A hidden post answers 404 to everyone (its author finds it, with the reason, in GET /v1/me/posts).
+    return x.json(c, serializePost(visiblePost(c.req.param('id'), viewerId), x.baseUrl(c), viewerId));
   });
 
   app.post('/v1/posts', async (c) => {
@@ -128,10 +146,8 @@ export function registerPosts(app: Hono, x: Ctx): void {
     const body = await x.readJson(c);
     const kind = parseEnum(body.kind, POST_KINDS, 'kind');
     const language = contentLanguage(body, user.language);
-    const text =
-      body.body === undefined || body.body === null
-        ? ''
-        : cleanUserText(parseString(body.body, 'body', { max: 1000 }), language, user.country);
+    const rawText =
+      body.body === undefined || body.body === null ? '' : parseString(body.body, 'body', { max: 1000 });
 
     let media: string[] = [];
     if (body.media !== undefined && body.media !== null) {
@@ -145,6 +161,15 @@ export function registerPosts(app: Hono, x: Ctx): void {
       if (new Set(media).size !== media.length) throw invalid('media có key trùng lặp.');
     }
     const payload = parsePayload(kind, body.payload);
+    if (rawText === '' && media.length === 0 && payload === null) {
+      throw invalid('Bài viết không được để trống.');
+    }
+
+    // Rate limit BEFORE the expensive work (text filter, database checks, catalog lookups): an over-limit request
+    // costs almost nothing, and an attempt the filter rejects still counts (CS-03).
+    x.rateLimit('posts', user.id);
+
+    const text = cleanUserText(rawText, language, user.country);
     if (text === '' && media.length === 0 && payload === null) {
       throw invalid('Bài viết không được để trống.');
     }
@@ -164,8 +189,6 @@ export function registerPosts(app: Hono, x: Ctx): void {
       for (const [i, o] of offers.entries()) await x.assertContent('skin', o.skinUuid, `payload.offers[${i}].skinUuid`);
     }
 
-    x.rateLimit('posts', user.id);
-
     const id = crypto.randomUUID();
     x.repo.insertPost({
       id,
@@ -180,7 +203,7 @@ export function registerPosts(app: Hono, x: Ctx): void {
       region: user.region,
       language,
     });
-    return x.json(c, serializePost(x.repo.getPost(id, user.id)!, x.baseUrl(c)));
+    return x.json(c, serializePost(x.repo.getPost(id, user.id)!, x.baseUrl(c), user.id));
   });
 
   app.delete('/v1/posts/:id', async (c) => {
@@ -223,9 +246,10 @@ export function registerPosts(app: Hono, x: Ctx): void {
     const p = visiblePost(c.req.param('id'), user.id);
     const body = await x.readJson(c);
     const language = contentLanguage(body, user.language);
-    const text = cleanUserText(parseString(body.body, 'body', { min: 1, max: 500 }), language, user.country);
+    const rawText = parseString(body.body, 'body', { min: 1, max: 500 });
+    x.rateLimit('comments', user.id); // before the text filter (CS-03)
+    const text = cleanUserText(rawText, language, user.country);
     if (text === '') throw invalid('body không được để trống.');
-    x.rateLimit('comments', user.id);
     const id = crypto.randomUUID();
     x.repo.insertComment({
       id,

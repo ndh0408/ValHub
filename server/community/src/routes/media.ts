@@ -98,8 +98,12 @@ export function registerMedia(app: Hono, x: Ctx): void {
     const row = x.repo.getMedia(key);
     if (!row || row.status !== 'active') throw notFound('Không tìm thấy ảnh.');
     const etag = `"${key.slice(key.lastIndexOf('/') + 1)}"`;
+    const edge = x.tuning.mediaEdgeCacheSeconds;
     const headers = {
+      // Devices keep the file for a year; Cloudflare's edge must NOT (it caches by extension and would keep
+      // serving deleted / quarantined images): Cloudflare-CDN-Cache-Control overrides Cache-Control there.
       'cache-control': 'public, max-age=31536000, immutable',
+      'cloudflare-cdn-cache-control': edge > 0 ? `max-age=${edge}` : 'no-store',
       etag,
       'x-content-type-options': 'nosniff',
       'content-disposition': 'inline',

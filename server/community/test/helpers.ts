@@ -5,12 +5,20 @@ import { expect } from 'vitest';
 import { createApp } from '../src/app.js';
 import type { Tuning } from '../src/context.js';
 import type { ContentCatalog } from '../src/content.js';
-import { openDatabase, type Db } from '../src/db/database.js';
+import { DEFAULT_MIGRATIONS_DIR, openDatabase, type Db } from '../src/db/database.js';
 import { countryFromAlpha3 } from '../src/geo/countries.js';
 import { SqliteRepo } from '../src/db/sqlite-repo.js';
 import { DiskMediaStore } from '../src/media.js';
 import type { RiotUserinfoFn } from '../src/riot.js';
 import { makeJpeg, makePng, makeWebp } from './fixtures.js';
+
+/** Names of every migration file, in order (tests must not hard-code the list: each work package adds some). */
+export function migrationNames(): string[] {
+  return fs
+    .readdirSync(DEFAULT_MIGRATIONS_DIR)
+    .filter((f) => /^\d+_.*\.sql$/.test(f))
+    .sort();
+}
 
 export const SECRET = 'test-session-secret-0123456789abcdef';
 export const PEPPER = 'test-pepper-0123456789abcdef-0123456';
@@ -31,6 +39,10 @@ export interface SetupOptions {
   tuning?: Partial<Tuning>;
   content?: ContentCatalog;
   riot?: RiotUserinfoFn;
+  /** Event-loop lag probe for load shedding (ms). */
+  loadProbe?: () => number;
+  /** Overrides of the non-tuning config (rotation secret, proxy trust, public base URL). */
+  config?: { sessionSecretPrev?: string; trustProxy?: boolean; publicBaseUrl?: string };
 }
 
 export interface Res {
@@ -80,10 +92,11 @@ export function setup(opts: SetupOptions = {}) {
   const app = createApp({
     repo,
     media,
-    config: { sessionSecret: SECRET, pepper: PEPPER, publicBaseUrl: '', trustProxy: true, ...opts.tuning },
+    config: { sessionSecret: SECRET, pepper: PEPPER, publicBaseUrl: '', trustProxy: true, ...opts.tuning, ...opts.config },
     content: opts.content,
     riotUserinfo: opts.riot ?? riot,
     now: () => clock.t,
+    loadProbe: opts.loadProbe,
     logError: (m) => errors.push(m),
   });
 
@@ -122,7 +135,8 @@ export function setup(opts: SetupOptions = {}) {
    * activity (a vote). Direct DB access, so no rate limits or clock changes are involved.
    */
   function mature(userId: string) {
-    db.prepare('UPDATE users SET created_at = ? WHERE id = ?').run(clock.t - 2 * 86400_000, userId);
+    // Never moves the creation time forward: a token issued before it would be refused (see Ctx.user()).
+    db.prepare('UPDATE users SET created_at = MIN(created_at, ?) WHERE id = ?').run(clock.t - 2 * 86400_000, userId);
     db.prepare(
       "INSERT OR IGNORE INTO skin_votes (user_id, skin_uuid, weapon_uuid, created_at, country, region) VALUES (?, ?, ?, ?, NULL, 'ap')",
     ).run(userId, '99999999-9999-4999-8999-999999999999', WEAPON_1, clock.t - 86400_000);

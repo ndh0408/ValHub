@@ -1,5 +1,5 @@
 import type { Context, Hono } from 'hono';
-import { author, iso, origin, type Ctx } from '../context.js';
+import { author, iso, origin, ownHidden, type Ctx } from '../context.js';
 import { decodeCursor, page } from '../cursor.js';
 import type { ReviewView } from '../db/repo.js';
 import { forbidden, invalid, notFound } from '../errors.js';
@@ -22,6 +22,8 @@ export function registerReviews(app: Hono, x: Ctx): void {
     updatedAt: iso(r.updated_at),
     mine: r.user_id === viewerId,
     ...origin(r),
+    // Only the author is told whether (and why) their review is hidden.
+    ...(r.user_id === viewerId ? ownHidden(r) : {}),
   });
 
   /** Visible review by path id, or 404. */
@@ -38,18 +40,22 @@ export function registerReviews(app: Hono, x: Ctx): void {
     const body = await x.readJson(c);
     const weaponUuid = parseUuid(body.weaponUuid, 'weaponUuid');
     const rating = parseInt(body.rating, 1, 5, 'rating');
+    const language = contentLanguage(body, user.language);
+    const rawText =
+      body.body === undefined || body.body === null ? '' : parseString(body.body, 'body', { max: 500 });
+    // Rate limit BEFORE the catalog lookups and the text filter (CS-03).
+    x.rateLimit('reviews', user.id);
     await x.assertContent('skin', skinUuid, 'skinUuid');
     await x.assertContent('weapon', weaponUuid, 'weaponUuid');
-    const language = contentLanguage(body, user.language);
-    const text =
-      body.body === undefined || body.body === null
-        ? ''
-        : cleanUserText(parseString(body.body, 'body', { max: 500 }), language, user.country);
-    x.rateLimit('reviews', user.id);
+    const text = cleanUserText(rawText, language, user.country);
+    // One review per account per skin, whatever uuid the client uses: stored under the base skin uuid with the
+    // catalog's weapon (see PUT vote).
+    const canon = x.canonSkin(skinUuid);
     const id = x.repo.upsertReview({
       userId: user.id,
-      skinUuid,
-      weaponUuid,
+      skinUuid: canon?.skinUuid ?? skinUuid,
+      weaponUuid: canon?.weaponUuid ?? weaponUuid,
+      authoritativeWeapon: canon !== null,
       rating,
       body: text,
       now: x.now(),
@@ -65,14 +71,17 @@ export function registerReviews(app: Hono, x: Ctx): void {
   app.delete('/v1/skins/:skinUuid/review', (c) => {
     const user = x.user(c, true);
     const skinUuid = parseUuid(c.req.param('skinUuid'), 'skinUuid');
-    x.repo.deleteUserReview(user.id, skinUuid);
+    const canonical = x.canonSkin(skinUuid)?.skinUuid ?? skinUuid;
+    x.repo.deleteUserReview(user.id, canonical);
+    if (canonical !== skinUuid) x.repo.deleteUserReview(user.id, skinUuid); // stored before canonicalisation
     return x.noContent(c);
   });
 
   app.get('/v1/skins/:skinUuid/reviews', (c) => {
     const user = x.user(c, false);
     const viewerId = user?.id ?? '';
-    const skinUuid = parseUuid(c.req.param('skinUuid'), 'skinUuid');
+    const asked = parseUuid(c.req.param('skinUuid'), 'skinUuid');
+    const skinUuid = x.canonSkin(asked)?.skinUuid ?? asked;
     const q = c.req.query();
     const sort = q.sort ? parseEnum(q.sort, ['new', 'top'] as const, 'sort') : 'new';
     const geo = resolveScope(q, user, 'global');
@@ -94,13 +103,14 @@ export function registerReviews(app: Hono, x: Ctx): void {
 
   app.get('/v1/skins/:skinUuid/summary', (c) => {
     const user = x.user(c, false);
-    const skinUuid = parseUuid(c.req.param('skinUuid'), 'skinUuid');
+    const asked = parseUuid(c.req.param('skinUuid'), 'skinUuid');
+    const skinUuid = x.canonSkin(asked)?.skinUuid ?? asked;
     const geo = resolveScope(c.req.query(), user, 'global');
     const stats = x.repo.ratingStats([skinUuid], undefined, geo).get(skinUuid);
     // The author always sees their own review (even if hidden by reports), whatever the scope.
     const mine = user ? x.repo.getUserReview(user.id, skinUuid) : null;
     return x.json(c, {
-      skinUuid,
+      skinUuid: asked,
       weaponUuid: x.repo.skinWeapon(skinUuid),
       votes: x.repo.voteCounts([skinUuid], undefined, geo).get(skinUuid) ?? 0,
       voted: user ? x.repo.userVotes(user.id, [skinUuid]).has(skinUuid) : false,

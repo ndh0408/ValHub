@@ -1,5 +1,5 @@
 import type { Context, Hono } from 'hono';
-import { author, iso, type Ctx } from '../context.js';
+import { author, iso, ownHidden, type Ctx } from '../context.js';
 import { decodeCursor, page } from '../cursor.js';
 import type { LfgPatch, LfgRow, LfgView } from '../db/repo.js';
 import { forbidden, invalid, notFound } from '../errors.js';
@@ -36,7 +36,7 @@ function jsonArray(text: string): string[] {
   }
 }
 
-function serialize(r: LfgView) {
+function serialize(r: LfgView, viewerId = '') {
   return {
     id: r.id,
     author: author(r),
@@ -59,14 +59,20 @@ function serialize(r: LfgView) {
     joins: r.joins,
     updatedAt: iso(r.updated_at ?? r.created_at),
     country: r.country ?? null,
+    // Only the author is told whether (and why) their post is hidden.
+    ...(r.user_id === viewerId ? ownHidden(r) : {}),
   };
 }
 
-const parseNote = (body: Json, language: string | null, country: string | null) => {
-  const v = parseOptional(body, 'note', (x) =>
-    cleanUserText(parseString(x, 'note', { max: 140 }), language, country).trim(),
-  );
-  return v === undefined ? undefined : v ? v : null;
+/** Cheap validation of `note` (absent -> undefined, explicit null -> null). The text filter runs later. */
+const parseNoteRaw = (body: Json) => parseOptional(body, 'note', (v) => parseString(v, 'note', { max: 140 }));
+
+/** Runs the text filter on a validated note; an empty note is stored as null. */
+const cleanNote = (raw: string | null | undefined, language: string | null, country: string | null) => {
+  if (raw === undefined) return undefined;
+  if (raw === null) return null;
+  const text = cleanUserText(raw, language, country).trim();
+  return text === '' ? null : text;
 };
 
 export function registerLfg(app: Hono, x: Ctx): void {
@@ -100,13 +106,13 @@ export function registerLfg(app: Hono, x: Ctx): void {
     const cursor = decodeCursor(q.cursor);
     const limit = parseLimit(q.limit, 20, 50);
     const rows = x.repo.listLfg({ geo, mode, rank, role, mic, languages, status, now: x.now(), cursor, limit });
-    return x.json(c, { ...page(rows, limit, serialize), appliedScope: appliedScope(geo) });
+    return x.json(c, { ...page(rows, limit, (r) => serialize(r, user.id)), appliedScope: appliedScope(geo) });
   });
 
   app.get('/v1/lfg/mine', (c) => {
     const user = x.user(c, true);
     const post = x.repo.getActiveLfgForUser(user.id, x.now());
-    return x.json(c, post ? serialize(post) : null);
+    return x.json(c, post ? serialize(post, user.id) : null);
   });
 
   app.post('/v1/lfg', async (c) => {
@@ -132,17 +138,19 @@ export function registerLfg(app: Hono, x: Ctx): void {
     // Party language: the 17 app languages or 'any'. Default = the author's language, 'vi' when unknown
     // (what clients before v3 always got).
     const language = parseOptional(body, 'language', (v) => parseLfgLanguage(v, 'language')) ?? user.language ?? 'vi';
-    const note = parseNote(body, language === 'any' ? user.language : language, user.country) ?? null;
+    const noteRaw = parseNoteRaw(body);
     const partySize = parseOptional(body, 'partySize', (v) => parseInt(v, 1, 5, 'partySize')) ?? Math.max(1, 5 - slots);
     const agents =
       parseOptional(body, 'agents', (v) => parseUniqueArray(v, 'agents', 5, (a) => parseUuid(a, 'agents'))) ?? [];
 
-    for (const a of agents) await x.assertContent('agent', a, 'agents');
-
+    // Rate limit BEFORE the catalog lookups and the text filter (CS-03).
     x.rateLimit('lfg', user.id);
 
+    for (const a of agents) await x.assertContent('agent', a, 'agents');
+    const note = cleanNote(noteRaw, language === 'any' ? user.language : language, user.country) ?? null;
+
     const now = x.now();
-    const row: LfgRow = {
+    const row: Omit<LfgRow, 'hidden_reason'> = {
       id: crypto.randomUUID(),
       user_id: user.id,
       region,
@@ -166,7 +174,7 @@ export function registerLfg(app: Hono, x: Ctx): void {
       country: user.country,
     };
     x.repo.replaceLfg(row);
-    return x.json(c, serialize(x.repo.getLfg(row.id)!));
+    return x.json(c, serialize(x.repo.getLfg(row.id)!, user.id));
   });
 
   app.patch('/v1/lfg/:id', async (c) => {
@@ -180,16 +188,17 @@ export function registerLfg(app: Hono, x: Ctx): void {
     const slots = parseOptional(body, 'slots', (v) => parseInt(v, 1, 4, 'slots'));
     if (slots === null) throw invalid('slots không được để trống.');
     if (slots !== undefined) patch.slots = slots;
-    const note = parseNote(body, post.language === 'any' ? user.language : post.language, user.country);
-    if (note !== undefined) patch.note = note;
+    const noteRaw = parseNoteRaw(body);
     const status = parseOptional(body, 'status', (v) => parseEnum(v, LFG_STATUSES, 'status'));
     if (status === null) throw invalid('status không được để trống.');
     if (status !== undefined) patch.status = status;
 
-    x.rateLimit('lfgPatch', user.id);
+    x.rateLimit('lfgPatch', user.id); // before the text filter (CS-03)
+    const note = cleanNote(noteRaw, post.language === 'any' ? user.language : post.language, user.country);
+    if (note !== undefined) patch.note = note;
     const now = x.now();
     x.repo.updateLfg(post.id, patch, now, now + LFG_TTL_MS);
-    return x.json(c, serialize(x.repo.getLfg(post.id)!));
+    return x.json(c, serialize(x.repo.getLfg(post.id)!, user.id));
   });
 
   app.post('/v1/lfg/:id/join', async (c) => {

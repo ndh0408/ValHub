@@ -1,0 +1,165 @@
+name: i18n
+
+# Gates for the internationalization program (docs/design/I18N.md section 15).
+# A separate workflow so android.yml and ios.yml stay unchanged. Everything here
+# is language-independent tooling and tests; the locale-specific QA matrices
+# (overflow, RTL, accessibility) run on demand at the bottom.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * 1'   # Mondays: the QA matrices below
+
+permissions:
+  contents: read
+
+concurrency:
+  group: i18n-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: '3.47.5'
+
+jobs:
+  l10n:
+    name: ARB, generated code, analyze, tests (vi)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      # Also regenerates lib/l10n/gen (pubspec: flutter: generate: true).
+      - run: flutter pub get
+
+      - name: Generated code is up to date
+        run: |
+          flutter gen-l10n
+          if ! git diff --exit-code lib/l10n/gen; then
+            echo "::error::lib/l10n/gen is stale: run 'flutter gen-l10n' and commit the result (never merge generated Dart by hand)"
+            exit 1
+          fi
+
+      - name: ARB files are canonical
+        run: dart run tool/l10n_fmt.dart --check
+
+      - name: ARB validation
+        run: dart run tool/l10n_check.dart --ci
+
+      # After wave W4 (cutover): fail on any remaining *Strings reference.
+      # - run: dart run tool/l10n_codemod/bin/l10n.dart verify --ci
+
+      - name: Formatting
+        run: dart format --output=none --set-exit-if-changed lib test tool
+
+      - run: flutter analyze
+
+      - name: Tests, device locale vi
+        run: flutter test
+
+  english-pass:
+    name: Tests, device locale en (metric)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    # A metric, not a gate: the failures are tests that assert literal
+    # Vietnamese or vi date formats and are migrated to symbolic asserts over
+    # time (I18N.md 12.1).
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - run: flutter pub get
+
+      - run: flutter test --dart-define=TEST_LOCALE=en
+
+  codemod:
+    name: Codemod package (tool/l10n_codemod)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      # The codemod analyses the app through its package config.
+      - run: flutter pub get
+
+      - name: Resolve the codemod's own dependencies (analyzer pinned)
+        working-directory: tool/l10n_codemod
+        run: dart pub get
+
+      - name: Analyze
+        working-directory: tool/l10n_codemod
+        run: dart analyze
+
+      - name: Tests
+        working-directory: tool/l10n_codemod
+        run: dart test
+
+      # The inventory of the whole tree (about 2 minutes), for the wave
+      # planning; not on every pull request.
+      - name: Inventory (l10n scan)
+        if: github.event_name != 'pull_request'
+        run: dart run tool/l10n_codemod/bin/l10n.dart scan
+
+      - uses: actions/upload-artifact@v7
+        if: github.event_name != 'pull_request'
+        with:
+          name: l10n-scan
+          path: tool/l10n_codemod/reports/scan.json
+          if-no-files-found: error
+          retention-days: 14
+
+  matrices:
+    name: QA matrices (overflow, RTL, accessibility)
+    # Weekly, on demand, or on a pull request labelled `i18n-matrix`: they are
+    # slow and only meaningful once the layout waves (W7) have landed.
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.pull_request.labels.*.name, 'i18n-matrix')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Run the matrices that exist
+        run: |
+          files=""
+          for t in overflow_matrix_test rtl_smoke_test a11y_test; do
+            if [ -f "test/l10n/$t.dart" ]; then files="$files test/l10n/$t.dart"; fi
+          done
+          if [ -z "$files" ]; then
+            echo "No QA matrix tests yet (they arrive with wave W7)."
+          else
+            flutter test $files
+          fi
+
+# The macOS job of ios.yml additionally verifies the iOS locale codes
+# (CFBundleLocalizations, docs/design/I18N.md 11.5) once lane LP lands.

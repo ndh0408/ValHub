@@ -4,9 +4,12 @@ import type { ReportTarget } from '../validate.js';
 import type { Db } from './database.js';
 import type {
   AccountData,
+  AuditRow,
   AuthorCols,
+  CanonicalizeResult,
   CommentRow,
   CommunityActivity,
+  HiddenItem,
   LfgPatch,
   LfgQuery,
   LfgRow,
@@ -17,9 +20,12 @@ import type {
   PostView,
   RatingStats,
   ReportOutcome,
+  ReportedTarget,
   Repo,
   ReviewRow,
   ReviewView,
+  SanctionKind,
+  SanctionRow,
   SkinCount,
   SweepCounts,
   UserPatch,
@@ -31,7 +37,7 @@ const AUTHOR_SELECT = `u.id AS a_id, u.game_name AS a_game_name, u.tag_line AS a
   u.card_id AS a_card_id, u.rank_tier AS a_rank_tier, u.region AS a_region,
   u.country AS a_country, u.language AS a_language`;
 
-const POST_SELECT = `SELECT p.id, p.user_id, p.kind, p.body, p.media, p.payload, p.hidden, p.created_at,
+const POST_SELECT = `SELECT p.id, p.user_id, p.kind, p.body, p.media, p.payload, p.hidden, p.hidden_reason, p.created_at,
   p.country, p.region, p.language,
   ${AUTHOR_SELECT},
   (SELECT COUNT(*) FROM post_likes l WHERE l.post_id = p.id) AS likes,
@@ -89,15 +95,26 @@ export class SqliteRepo implements Repo {
     const cardId = u.cardId === undefined ? (existing?.card_id ?? null) : u.cardId;
     const rankTier = u.rankTier === undefined ? (existing?.rank_tier ?? null) : u.rankTier;
     const language = u.language === undefined ? (existing?.language ?? null) : u.language;
+    // The consent time is when this version was first recorded; the same version again keeps it.
+    const consentVersion = u.consentVersion ?? existing?.consent_version ?? null;
+    const consentAt =
+      u.consentVersion === undefined || u.consentVersion === existing?.consent_version
+        ? (existing?.consent_at ?? null)
+        : now;
     this.db
       .prepare(
-        `INSERT INTO users (id, game_name, tag_line, card_id, rank_tier, region, country, language, created_at, updated_at)
-         VALUES (@id, @gameName, @tagLine, @cardId, @rankTier, @region, @country, @language, @now, @now)
+        `INSERT INTO users (id, game_name, tag_line, card_id, rank_tier, region, country, language, created_at, updated_at,
+           consent_version, consent_at)
+         VALUES (@id, @gameName, @tagLine, @cardId, @rankTier, @region, @country, @language, @now, @now,
+           @consentVersion, @consentAt)
          ON CONFLICT(id) DO UPDATE SET game_name = excluded.game_name, tag_line = excluded.tag_line,
            card_id = excluded.card_id, rank_tier = excluded.rank_tier, region = excluded.region,
-           country = excluded.country, language = excluded.language, updated_at = excluded.updated_at`,
+           country = excluded.country, language = excluded.language, updated_at = excluded.updated_at,
+           consent_version = excluded.consent_version, consent_at = excluded.consent_at`,
       )
       .run({
+        consentVersion,
+        consentAt,
         id: u.id,
         gameName: u.gameName,
         tagLine: u.tagLine,
@@ -131,6 +148,13 @@ export class SqliteRepo implements Repo {
     return this.getUser(id);
   }
 
+  bumpSessionEpoch(id: string): number | null {
+    const row = this.db
+      .prepare('UPDATE users SET session_epoch = session_epoch + 1 WHERE id = ? RETURNING session_epoch')
+      .get(id) as { session_epoch: number } | undefined;
+    return row?.session_epoch ?? null;
+  }
+
   // ---- rate limits / maintenance ------------------------------------------
 
   hitRateLimit(bucket: string, windowStart: number): number {
@@ -147,11 +171,18 @@ export class SqliteRepo implements Repo {
   cleanup(now: number): void {
     this.db.prepare('DELETE FROM rate_limits WHERE window_start < ?').run(now - DAY_MS);
     this.db.prepare('DELETE FROM lfg_posts WHERE expires_at < ?').run(now - LFG_RETENTION_MS);
+    // Sanctions that ended (or were lifted) more than a year ago and operator log rows older than two years.
+    this.db
+      .prepare(
+        'DELETE FROM sanctions WHERE (lifted_at IS NOT NULL AND lifted_at < @old) OR (until IS NOT NULL AND until < @old)',
+      )
+      .run({ old: now - 365 * DAY_MS });
+    this.db.prepare('DELETE FROM moderation_audit WHERE at < ?').run(now - 730 * DAY_MS);
   }
 
   // ---- LFG ---------------------------------------------------------------
 
-  replaceLfg(post: LfgRow): void {
+  replaceLfg(post: Omit<LfgRow, 'hidden_reason'>): void {
     this.db.transaction(() => {
       // One active post per user: earlier posts expire now (kept for the weekly activity count).
       // A replacement starts a new join count even though old posts remain
@@ -265,20 +296,37 @@ export class SqliteRepo implements Repo {
 
   // ---- skin votes ----------------------------------------------------------
 
-  voteSkin(userId: string, skinUuid: string, weaponUuid: string, now: number, origin: Origin): boolean {
-    // The weapon of a skin is pinned by its first vote/review so a wrong client value cannot
-    // split a skin's count across weapons. The voter's country/region are captured now.
+  voteSkin(
+    userId: string,
+    skinUuid: string,
+    weaponUuid: string,
+    now: number,
+    origin: Origin,
+    authoritativeWeapon = false,
+  ): boolean {
+    // Without a catalog the weapon of a skin is pinned by its first vote/review so a wrong client value cannot
+    // split a skin's count across weapons; with one, the catalog's weapon is stored as given.
+    // The voter's country/region are captured now.
     const res = this.db
       .prepare(
         `INSERT INTO skin_votes (user_id, skin_uuid, weapon_uuid, created_at, country, region)
          VALUES (@userId, @skinUuid,
-           COALESCE((SELECT weapon_uuid FROM skin_votes WHERE skin_uuid = @skinUuid LIMIT 1),
-                    (SELECT weapon_uuid FROM skin_reviews WHERE skin_uuid = @skinUuid LIMIT 1),
-                    @weaponUuid),
+           CASE WHEN @authoritative = 1 THEN @weaponUuid ELSE
+             COALESCE((SELECT weapon_uuid FROM skin_votes WHERE skin_uuid = @skinUuid LIMIT 1),
+                      (SELECT weapon_uuid FROM skin_reviews WHERE skin_uuid = @skinUuid LIMIT 1),
+                      @weaponUuid) END,
            @now, @country, @region)
          ON CONFLICT(user_id, skin_uuid) DO NOTHING`,
       )
-      .run({ userId, skinUuid, weaponUuid, now, country: origin.country, region: origin.region });
+      .run({
+        userId,
+        skinUuid,
+        weaponUuid,
+        now,
+        country: origin.country,
+        region: origin.region,
+        authoritative: authoritativeWeapon ? 1 : 0,
+      });
     return res.changes > 0;
   }
 
@@ -331,6 +379,56 @@ export class SqliteRepo implements Repo {
       )
       .all(params) as { skin_uuid: string; weapon_uuid: string; votes: number }[];
     return rows.map((r) => ({ skinUuid: r.skin_uuid, weaponUuid: r.weapon_uuid, votes: r.votes }));
+  }
+
+  canonicalizeSkins(resolve: (uuid: string) => { skinUuid: string; weaponUuid: string } | null): CanonicalizeResult {
+    const out: CanonicalizeResult = { votesRewritten: 0, votesMerged: 0, reviewsRewritten: 0, reviewsMerged: 0, weaponsFixed: 0 };
+    this.db.transaction(() => {
+      const uuids = this.db
+        .prepare('SELECT skin_uuid FROM skin_votes UNION SELECT skin_uuid FROM skin_reviews')
+        .all() as { skin_uuid: string }[];
+      for (const { skin_uuid: uuid } of uuids) {
+        const ref = resolve(uuid);
+        if (!ref) continue;
+        if (ref.skinUuid !== uuid) {
+          // Votes: rows that would collide with the user's canonical vote stay behind and are dropped.
+          out.votesRewritten += this.db
+            .prepare('UPDATE OR IGNORE skin_votes SET skin_uuid = ?, weapon_uuid = ? WHERE skin_uuid = ?')
+            .run(ref.skinUuid, ref.weaponUuid, uuid).changes;
+          out.votesMerged += this.db.prepare('DELETE FROM skin_votes WHERE skin_uuid = ?').run(uuid).changes;
+          // Reviews: one per user and skin; on a collision the most recently edited one survives.
+          const aliasRows = this.db
+            .prepare('SELECT id, user_id, updated_at FROM skin_reviews WHERE skin_uuid = ?')
+            .all(uuid) as { id: string; user_id: string; updated_at: number }[];
+          for (const row of aliasRows) {
+            const other = this.db
+              .prepare('SELECT id, updated_at FROM skin_reviews WHERE user_id = ? AND skin_uuid = ?')
+              .get(row.user_id, ref.skinUuid) as { id: string; updated_at: number } | undefined;
+            if (other) {
+              out.reviewsMerged++;
+              if (row.updated_at > other.updated_at) {
+                this.db.prepare('DELETE FROM skin_reviews WHERE id = ?').run(other.id); // its likes cascade away
+              } else {
+                this.db.prepare('DELETE FROM skin_reviews WHERE id = ?').run(row.id);
+                continue;
+              }
+            } else {
+              out.reviewsRewritten++;
+            }
+            this.db
+              .prepare('UPDATE skin_reviews SET skin_uuid = ?, weapon_uuid = ? WHERE id = ?')
+              .run(ref.skinUuid, ref.weaponUuid, row.id);
+          }
+        }
+        // A skin filed under the wrong weapon (a client sent a wrong weaponUuid with the first vote).
+        for (const table of ['skin_votes', 'skin_reviews']) {
+          out.weaponsFixed += this.db
+            .prepare(`UPDATE ${table} SET weapon_uuid = ? WHERE skin_uuid = ? AND weapon_uuid <> ?`)
+            .run(ref.weaponUuid, ref.skinUuid, ref.weaponUuid).changes;
+        }
+      }
+    })();
+    return out;
   }
 
   skinWeapon(skinUuid: string): string | null {
@@ -414,6 +512,7 @@ export class SqliteRepo implements Repo {
     origin: Origin;
     language: string | null;
     updateLanguage: boolean;
+    authoritativeWeapon?: boolean;
   }) {
     return this.db.transaction(() => {
       const existing = this.db
@@ -447,7 +546,7 @@ export class SqliteRepo implements Repo {
           id,
           userId: r.userId,
           skinUuid: r.skinUuid,
-          weaponUuid: this.skinWeapon(r.skinUuid) ?? r.weaponUuid,
+          weaponUuid: r.authoritativeWeapon ? r.weaponUuid : (this.skinWeapon(r.skinUuid) ?? r.weaponUuid),
           rating: r.rating,
           body: r.body,
           now: r.now,
@@ -574,7 +673,7 @@ export class SqliteRepo implements Repo {
 
   // ---- posts ---------------------------------------------------------------
 
-  insertPost(p: PostRow): void {
+  insertPost(p: Omit<PostRow, 'hidden_reason'>): void {
     this.db.transaction(() => {
       this.db
         .prepare(
@@ -608,9 +707,12 @@ export class SqliteRepo implements Repo {
     viewerId: string;
     geo?: GeoScope;
     languages?: string[];
+    /** Only this author's posts, hidden ones included (their own list). */
+    ownOf?: string;
   }): PostView[] {
     const params: Record<string, unknown> = { viewer: q.viewerId, limit: q.limit + 1 };
-    const where = ['p.hidden = 0', geoCondition('p', q.geo, params)];
+    const where = [q.ownOf ? 'p.user_id = @ownOf' : 'p.hidden = 0', geoCondition('p', q.geo, params)];
+    if (q.ownOf) params.ownOf = q.ownOf;
     if (q.kind) {
       where.push('p.kind = @kind');
       params.kind = q.kind;
@@ -653,7 +755,7 @@ export class SqliteRepo implements Repo {
 
   // ---- comments --------------------------------------------------------------
 
-  insertComment(c: CommentRow): void {
+  insertComment(c: Omit<CommentRow, 'hidden_reason'>): void {
     this.db
       .prepare(
         `INSERT INTO comments (id, post_id, user_id, body, hidden, created_at, country, region, language)
@@ -730,6 +832,27 @@ export class SqliteRepo implements Repo {
     return row?.user_id ?? null;
   }
 
+  /**
+   * Reporters of a target whose report counts toward hiding: an established account (at least as old as
+   * `cutoff` says) that has done something on the service (post, comment, review, vote, like).
+   */
+  private eligibleReporters(type: ReportTarget, targetId: string, cutoff: number): number {
+    return (
+      this.db
+        .prepare(
+          `SELECT COUNT(*) AS n FROM reports r JOIN users u ON u.id = r.reporter_id
+           WHERE r.target_type = @type AND r.target_id = @id AND u.created_at <= @cutoff AND (
+             EXISTS (SELECT 1 FROM posts x WHERE x.user_id = u.id) OR
+             EXISTS (SELECT 1 FROM comments x WHERE x.user_id = u.id) OR
+             EXISTS (SELECT 1 FROM skin_reviews x WHERE x.user_id = u.id) OR
+             EXISTS (SELECT 1 FROM skin_votes x WHERE x.user_id = u.id) OR
+             EXISTS (SELECT 1 FROM post_likes x WHERE x.user_id = u.id) OR
+             EXISTS (SELECT 1 FROM review_likes x WHERE x.user_id = u.id))`,
+        )
+        .get({ type, id: targetId, cutoff }) as { n: number }
+    ).n;
+  }
+
   addReport(
     r: { type: ReportTarget; targetId: string; reporterId: string; reason: string; now: number },
     threshold: number,
@@ -748,29 +871,16 @@ export class SqliteRepo implements Repo {
           .prepare('SELECT COUNT(*) AS n FROM reports WHERE target_type = ? AND target_id = ?')
           .get(r.type, r.targetId) as { n: number }
       ).n;
-      // Only reporters with an established account count toward hiding: the account is at least
-      // `minReporterAgeMs` old and has done something on the service (post, comment, review, vote, like).
-      const eligible = (
-        this.db
-          .prepare(
-            `SELECT COUNT(*) AS n FROM reports r JOIN users u ON u.id = r.reporter_id
-             WHERE r.target_type = @type AND r.target_id = @id AND u.created_at <= @cutoff AND (
-               EXISTS (SELECT 1 FROM posts x WHERE x.user_id = u.id) OR
-               EXISTS (SELECT 1 FROM comments x WHERE x.user_id = u.id) OR
-               EXISTS (SELECT 1 FROM skin_reviews x WHERE x.user_id = u.id) OR
-               EXISTS (SELECT 1 FROM skin_votes x WHERE x.user_id = u.id) OR
-               EXISTS (SELECT 1 FROM post_likes x WHERE x.user_id = u.id) OR
-               EXISTS (SELECT 1 FROM review_likes x WHERE x.user_id = u.id))`,
-          )
-          .get({ type: r.type, id: r.targetId, cutoff: r.now - minReporterAgeMs }) as { n: number }
-      ).n;
+      const eligible = this.eligibleReporters(r.type, r.targetId, r.now - minReporterAgeMs);
       if (r.type === 'review') {
         this.db.prepare('UPDATE skin_reviews SET report_count = ? WHERE id = ?').run(eligible, r.targetId);
       }
       let newlyHidden = false;
       if (eligible >= threshold) {
         newlyHidden =
-          this.db.prepare(`UPDATE ${table} SET hidden = 1 WHERE id = ? AND hidden = 0`).run(r.targetId).changes > 0;
+          this.db
+            .prepare(`UPDATE ${table} SET hidden = 1, hidden_reason = 'reports' WHERE id = ? AND hidden = 0`)
+            .run(r.targetId).changes > 0;
       }
       return { count, eligible, newlyHidden };
     })();
@@ -887,6 +997,8 @@ export class SqliteRepo implements Repo {
         'SELECT target_type, target_id, reason, created_at FROM reports WHERE reporter_id = ? ORDER BY created_at, target_id',
       ),
       media: this.mediaOfUser(userId),
+      sanctions: all<SanctionRow>('SELECT * FROM sanctions WHERE user_id = ? ORDER BY created_at, id'),
+      moderationLog: all<AuditRow>('SELECT * FROM moderation_audit WHERE user_id = ? ORDER BY at, id'),
     };
   }
 
@@ -915,7 +1027,8 @@ export class SqliteRepo implements Repo {
       this.db
         .prepare(`UPDATE reports SET reporter_id = 'anon-' || lower(hex(randomblob(8))), reason = '' WHERE reporter_id = ?`)
         .run(userId);
-      this.db.prepare(`DELETE FROM rate_limits WHERE bucket LIKE '%:' || ?`).run(userId);
+      // rate_limits rows are NOT deleted: they hold only the id and a count, expire on their own (swept after a
+      // day) and deleting them would let delete + sign-in reset every per-user limit (CS-37).
       // The denormalised like counters of other people's reviews must not keep counting this user's likes
       // (the like rows themselves cascade away with the user).
       this.db
@@ -933,7 +1046,7 @@ export class SqliteRepo implements Repo {
   restoreTarget(type: ReportTarget, id: string): boolean {
     const table = SqliteRepo.TARGET_TABLE[type];
     return this.db.transaction(() => {
-      const changed = this.db.prepare(`UPDATE ${table} SET hidden = 0 WHERE id = ?`).run(id).changes;
+      const changed = this.db.prepare(`UPDATE ${table} SET hidden = 0, hidden_reason = NULL WHERE id = ?`).run(id).changes;
       if (changed === 0) return false;
       this.db.prepare('DELETE FROM reports WHERE target_type = ? AND target_id = ?').run(type, id);
       if (type === 'review') this.db.prepare('UPDATE skin_reviews SET report_count = 0 WHERE id = ?').run(id);
@@ -941,9 +1054,160 @@ export class SqliteRepo implements Repo {
     })();
   }
 
+  hideTarget(type: ReportTarget, id: string): { ownerId: string; newlyHidden: boolean } | null {
+    const table = SqliteRepo.TARGET_TABLE[type];
+    return this.db.transaction(() => {
+      const row = this.db.prepare(`SELECT user_id, hidden FROM ${table} WHERE id = ?`).get(id) as
+        | { user_id: string; hidden: number }
+        | undefined;
+      if (!row) return null;
+      // A moderator's decision replaces the automatic reason (the author is told which one applies).
+      this.db.prepare(`UPDATE ${table} SET hidden = 1, hidden_reason = 'moderator' WHERE id = ?`).run(id);
+      return { ownerId: row.user_id, newlyHidden: row.hidden === 0 };
+    })();
+  }
+
+  deleteTarget(type: ReportTarget, id: string): { ownerId: string; mediaKeys: string[] } | null {
+    const table = SqliteRepo.TARGET_TABLE[type];
+    return this.db.transaction(() => {
+      const row = this.db.prepare(`SELECT * FROM ${table} WHERE id = ?`).get(id) as
+        | { user_id: string; media?: string }
+        | undefined;
+      if (!row) return null;
+      const mediaKeys = type === 'post' ? parseKeys(row.media ?? '[]') : [];
+      // Reports about the item, and about comments that go away with a post.
+      if (type === 'post') {
+        this.db
+          .prepare(
+            `DELETE FROM reports WHERE target_type = 'comment' AND target_id IN (SELECT id FROM comments WHERE post_id = ?)`,
+          )
+          .run(id);
+      }
+      this.db.prepare('DELETE FROM reports WHERE target_type = ? AND target_id = ?').run(type, id);
+      if (type === 'post') {
+        // The files go with the post: their rows are removed here, the files by the caller.
+        if (mediaKeys.length > 0) {
+          const params: Record<string, unknown> = {};
+          this.db.prepare(`DELETE FROM media WHERE key IN (${inList('k', mediaKeys, params)})`).run(params);
+        }
+      }
+      this.db.prepare(`DELETE FROM ${table} WHERE id = ?`).run(id); // likes / comments / joins cascade
+      return { ownerId: row.user_id, mediaKeys };
+    })();
+  }
+
+  reportedTargets(q: { limit: number; now: number; minReporterAgeMs: number }): ReportedTarget[] {
+    const groups = this.db
+      .prepare(
+        `SELECT target_type AS type, target_id AS targetId, COUNT(*) AS reports, MAX(created_at) AS lastAt
+         FROM reports GROUP BY target_type, target_id ORDER BY lastAt DESC, target_id LIMIT ?`,
+      )
+      .all(q.limit) as { type: ReportTarget; targetId: string; reports: number; lastAt: number }[];
+    return groups.map((g) => {
+      const table = SqliteRepo.TARGET_TABLE[g.type];
+      const textCol = g.type === 'lfg' ? 'note' : 'body';
+      const row = this.db
+        .prepare(`SELECT user_id, hidden, hidden_reason, substr(COALESCE(${textCol}, ''), 1, 80) AS excerpt FROM ${table} WHERE id = ?`)
+        .get(g.targetId) as { user_id: string; hidden: number; hidden_reason: string | null; excerpt: string } | undefined;
+      const reasons = this.db
+        .prepare('SELECT DISTINCT reason FROM reports WHERE target_type = ? AND target_id = ? AND reason <> \'\' LIMIT 5')
+        .all(g.type, g.targetId) as { reason: string }[];
+      return {
+        type: g.type,
+        targetId: g.targetId,
+        reports: g.reports,
+        eligible: this.eligibleReporters(g.type, g.targetId, q.now - q.minReporterAgeMs),
+        lastAt: g.lastAt,
+        reasons: reasons.map((r) => r.reason),
+        ownerId: row?.user_id ?? null,
+        hidden: row?.hidden === 1,
+        hiddenReason: row?.hidden_reason ?? null,
+        excerpt: row?.excerpt ?? '',
+      };
+    });
+  }
+
+  hiddenItems(limit: number): HiddenItem[] {
+    return (
+      this.db
+        .prepare(
+          `SELECT type, id, ownerId, hiddenReason, createdAt, excerpt FROM (
+             SELECT 'post' AS type, id, user_id AS ownerId, hidden_reason AS hiddenReason, created_at AS createdAt, substr(body, 1, 80) AS excerpt FROM posts WHERE hidden = 1
+             UNION ALL
+             SELECT 'comment', id, user_id, hidden_reason, created_at, substr(body, 1, 80) FROM comments WHERE hidden = 1
+             UNION ALL
+             SELECT 'lfg', id, user_id, hidden_reason, created_at, substr(COALESCE(note, ''), 1, 80) FROM lfg_posts WHERE hidden = 1
+             UNION ALL
+             SELECT 'review', id, user_id, hidden_reason, created_at, substr(body, 1, 80) FROM skin_reviews WHERE hidden = 1
+           ) ORDER BY createdAt DESC, id LIMIT ?`,
+        )
+        .all(limit) as HiddenItem[]
+    );
+  }
+
+  // ---- sanctions and the operator audit log -----------------------------------------------------------------
+
+  addSanction(s: { userId: string; kind: SanctionKind; until: number | null; reason: string; now: number }): SanctionRow {
+    const res = this.db
+      .prepare('INSERT INTO sanctions (user_id, kind, until, reason, created_at) VALUES (?, ?, ?, ?, ?)')
+      .run(s.userId, s.kind, s.until, s.reason, s.now);
+    return this.db.prepare('SELECT * FROM sanctions WHERE id = ?').get(Number(res.lastInsertRowid)) as SanctionRow;
+  }
+
+  activeSanction(userId: string, now: number): SanctionRow | null {
+    return (
+      (this.db
+        .prepare(
+          `SELECT * FROM sanctions WHERE user_id = ? AND lifted_at IS NULL AND (until IS NULL OR until > ?)
+           ORDER BY CASE kind WHEN 'ban' THEN 0 ELSE 1 END, COALESCE(until, 9007199254740991) DESC, id DESC LIMIT 1`,
+        )
+        .get(userId, now) as SanctionRow | undefined) ?? null
+    );
+  }
+
+  liftSanctions(userId: string, now: number): number {
+    return this.db
+      .prepare('UPDATE sanctions SET lifted_at = ? WHERE user_id = ? AND lifted_at IS NULL AND (until IS NULL OR until > ?)')
+      .run(now, userId, now).changes;
+  }
+
+  listSanctions(q: { userId?: string; activeOnly: boolean; now: number; limit: number }): SanctionRow[] {
+    const where: string[] = [];
+    const params: Record<string, unknown> = { limit: q.limit, now: q.now };
+    if (q.userId) {
+      where.push('user_id = @userId');
+      params.userId = q.userId;
+    }
+    if (q.activeOnly) where.push('lifted_at IS NULL AND (until IS NULL OR until > @now)');
+    return this.db
+      .prepare(`SELECT * FROM sanctions ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY created_at DESC, id DESC LIMIT @limit`)
+      .all(params) as SanctionRow[];
+  }
+
+  addAudit(a: {
+    at: number;
+    action: string;
+    targetType?: string;
+    targetId?: string;
+    userId?: string;
+    detail?: unknown;
+  }): void {
+    this.db
+      .prepare('INSERT INTO moderation_audit (at, action, target_type, target_id, user_id, detail) VALUES (?, ?, ?, ?, ?, ?)')
+      .run(a.at, a.action, a.targetType ?? null, a.targetId ?? null, a.userId ?? null, a.detail === undefined ? null : JSON.stringify(a.detail));
+  }
+
+  listAudit(q: { userId?: string; limit: number }): AuditRow[] {
+    return (
+      q.userId
+        ? this.db.prepare('SELECT * FROM moderation_audit WHERE user_id = ? ORDER BY at DESC, id DESC LIMIT ?').all(q.userId, q.limit)
+        : this.db.prepare('SELECT * FROM moderation_audit ORDER BY at DESC, id DESC LIMIT ?').all(q.limit)
+    ) as AuditRow[];
+  }
+
   stats(): Record<string, number> {
     const out: Record<string, number> = {};
-    for (const t of ['users', 'posts', 'comments', 'skin_reviews', 'skin_votes', 'lfg_posts', 'media', 'reports']) {
+    for (const t of ['users', 'posts', 'comments', 'skin_reviews', 'skin_votes', 'lfg_posts', 'media', 'reports', 'sanctions']) {
       out[t] = (this.db.prepare(`SELECT COUNT(*) AS n FROM ${t}`).get() as { n: number }).n;
     }
     out.media_bytes = this.mediaBytes();
