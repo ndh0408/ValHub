@@ -900,7 +900,7 @@ export function listsFor(text: string, language?: string | null, country?: strin
     SCRIPT.otherNonLatin.test(folded)
   );
   if (latinOnly) {
-    if (!declared || declared === 'vi' || declared === 'en') set.add('vi');
+    if (declared === 'vi' || country?.toUpperCase() === 'VN') set.add('vi');
     for (const k of COUNTRY_LATIN_LISTS[(country ?? '').toUpperCase()] ?? []) set.add(k);
   }
   return [...set];
@@ -990,7 +990,9 @@ export function moderate(input: string, opts: ModerateOptions = {}): ModerationR
   if (input.length > MAX_INPUT_CHARS) {
     return { text: input, rejected: 'complex', masked: 0, linksRemoved: 0, lists: [] };
   }
+  // Keep joiners used by emoji and Indic/Arabic scripts, and newline. Drop bidi overrides and control floods.
   const nfc = input.normalize('NFC');
+  if (/\p{M}{9,}/u.test(nfc)) return { text: nfc, rejected: 'complex', masked: 0, linksRemoved: 0, lists: [] };
   const { text, removed } = stripLinks(nfc);
   const skip = linkRanges(text);
   const lists = listsFor(text, opts.language, opts.country);
@@ -1024,6 +1026,10 @@ export function moderate(input: string, opts: ModerateOptions = {}): ModerationR
   }
   let out = text;
   for (const [a, b] of [...merged].reverse()) out = `${out.slice(0, a)}***${out.slice(b)}`;
+  out = out.replace(/[\p{Cf}\p{Cc}]/gu, (c) => {
+    if (c === '\n' || c === '\u200c' || c === '\u200d' || (c === '\u200b' && SCRIPT.thai.test(out))) return c;
+    return c === '\t' ? ' ' : '';
+  }).replace(/\n{3,}/g, '\n\n');
   return { text: out, rejected: null, masked: merged.length, ...base };
 }
 

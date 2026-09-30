@@ -3,6 +3,7 @@ import { reasonMessages, type Reason, type ReasonParams } from './reasons.js';
 export type ErrorCode =
   | 'unauthorized'
   | 'forbidden'
+  | 'conflict'
   | 'suspended'
   | 'not_found'
   | 'invalid_input'
@@ -12,10 +13,12 @@ export type ErrorCode =
   | 'storage_full'
   | 'server_busy'
   | 'server_error';
+// A key reused for a different request is a conflict, not a validation failure.
 
 const STATUS: Record<ErrorCode, number> = {
   unauthorized: 401,
   forbidden: 403,
+  conflict: 409,
   suspended: 403,
   not_found: 404,
   invalid_input: 400,
@@ -49,6 +52,11 @@ export class ApiError extends Error {
     super(message);
     this.name = 'ApiError';
     this.status = STATUS[code];
+    // Legacy throws still get a stable fallback reason and English text. Specific validators supply sub-reasons.
+    if (!extra.reason) {
+      const fallback = reasonMessages(code, {});
+      this.extra = { ...extra, reason: code, messageEn: fallback.messageEn };
+    }
   }
 }
 

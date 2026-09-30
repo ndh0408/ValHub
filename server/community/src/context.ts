@@ -115,6 +115,7 @@ export const AUTH_FAILURES = { limit: 30, windowMs: 10 * 60_000 } as const;
 
 /** Shared helpers handed to every route module. */
 export class Ctx {
+  private readonly requestUsers = new WeakMap<Context, UserRow>();
   readonly now: () => number;
   readonly tuning: Tuning;
   /** Unauthenticated reads per client IP (in memory: no database write per request). */
@@ -175,7 +176,7 @@ export class Ctx {
     }
     if (!known) {
       const what = kind === 'skin' ? 'skin' : kind === 'weapon' ? 'vũ khí' : 'đặc vụ';
-      throw invalid(`${field} không phải ${what} của VALORANT.`);
+      throw reasonError('invalid_input', 'content_unknown', { field, kind });
     }
   }
 
@@ -214,6 +215,8 @@ export class Ctx {
   user(c: Context, required: true): UserRow;
   user(c: Context, required: false): UserRow | null;
   user(c: Context, required: boolean): UserRow | null {
+    const prior = this.requestUsers.get(c);
+    if (prior) return prior;
     const header = c.req.header('authorization');
     if (!header) {
       if (required) throw unauthorized('Cần đăng nhập.');
@@ -248,6 +251,7 @@ export class Ctx {
         bucket.retryAfterSeconds,
       );
     }
+    this.requestUsers.set(c, user);
     return user;
   }
 

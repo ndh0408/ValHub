@@ -9,6 +9,21 @@
  * `docs/community-api.md` ("Error reasons"). Never rename or reuse one: clients map them to translations.
  */
 export const REASONS = {
+  invalid_input: { vi: 'Thông tin không hợp lệ. Hãy kiểm tra rồi thử lại.', en: 'Some information is invalid. Please check it and try again.' },
+  unauthorized: { vi: 'Phiên đăng nhập không hợp lệ hoặc đã hết hạn.', en: 'Please sign in again.' },
+  suspended: { vi: 'Quyền sử dụng Cộng đồng đang bị hạn chế.', en: 'Your Community access is restricted.' },
+  conflict: { vi: 'Yêu cầu bị trùng với nội dung khác. Hãy thử lại.', en: 'This request conflicts with an earlier one. Please try again.' },
+  idempotency_conflict: { vi: 'Lần thử lại có nội dung khác, hãy gửi như một bài mới.', en: 'The retry has different content. Please send it as a new request.' },
+  idempotency_key_invalid: { vi: 'Không nhận diện được lần thử lại. Hãy gửi lại.', en: 'The retry reference is invalid. Please send it again.' },
+  forbidden: { vi: 'Bạn không có quyền thực hiện thao tác này.', en: 'You cannot perform this action.' },
+  not_found: { vi: 'Không tìm thấy.', en: 'The requested content was not found.' },
+  riot_rejected: { vi: 'Riot từ chối phiên đăng nhập. Hãy đăng nhập lại.', en: 'Riot could not verify your sign-in. Please sign in again.' },
+  riot_unavailable: { vi: 'Máy chủ Riot đang bận hoặc không phản hồi, vui lòng thử lại sau ít phút.', en: 'Riot is busy or unavailable. Please try again in a few minutes.' },
+  cursor_invalid: { vi: 'cursor không hợp lệ.', en: 'The page reference is invalid.' },
+  content_unknown: { vi: '{field} không phải nội dung của VALORANT.', en: 'This is not known VALORANT game content.' },
+  media_too_large: { vi: 'Ảnh tối đa {maxMb} MB.', en: 'Images must be at most {maxMb} MB.' },
+  media_invalid: { vi: 'Không đọc được ảnh (tệp hỏng hoặc kích thước quá lớn).', en: 'This image is damaged, animated, or too large to display.' },
+  media_empty: { vi: 'Không có dữ liệu ảnh.', en: 'No image was received.' },
   media_unavailable: { vi: 'Ảnh không còn dùng được, hãy tải lên lại.', en: 'The image is no longer available; please upload it again.' },
   quota_exceeded: { vi: 'Bạn đã dùng hết dung lượng ảnh ({maxMb} MB). Hãy xóa bớt bài viết có ảnh rồi thử lại.', en: 'Your image storage is full ({maxMb} MB). Delete some posts with images and try again.' },
   storage_full: { vi: 'Kho ảnh của máy chủ đã đầy, vui lòng thử lại sau.', en: 'Image storage is full, please try again later.' },

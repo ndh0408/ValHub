@@ -157,13 +157,7 @@ describe('parseUserinfo', () => {
     expect(parseUserinfo('<html>cloudflare</html>')).toEqual({ ok: false });
     expect(parseUserinfo('null')).toEqual({ ok: false });
     expect(parseUserinfo('{"acct":{"game_name":"A"}}')).toEqual({ ok: false });
-    expect(parseUserinfo('{"sub":"ABC-1","acct":null}')).toEqual({
-      ok: true,
-      puuid: 'abc-1',
-      gameName: '',
-      tagLine: '',
-      country: null,
-    });
+    expect(parseUserinfo('{"sub":"ABC-1","acct":null}')).toEqual({ ok: false, reason: 'unavailable' });
     expect(parseUserinfo('{"sub":"abc","acct":{"game_name":"KAYN","tag_line":"04082"}}')).toEqual({
       ok: true,
       puuid: 'abc',

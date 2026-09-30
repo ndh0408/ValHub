@@ -1,4 +1,6 @@
 import { countryFromAlpha3 } from './geo/countries.js';
+import { createHash } from 'node:crypto';
+import { TtlCache } from './cache.js';
 
 /**
  * Result of verifying a Riot access token against /userinfo.
@@ -43,6 +45,7 @@ export function parseUserinfo(text: string): RiotIdentity {
     typeof b.acct === 'object' && b.acct !== null ? (b.acct as Record<string, unknown>) : {};
   const gameName = typeof acct.game_name === 'string' ? acct.game_name.slice(0, 32) : '';
   const tagLine = typeof acct.tag_line === 'string' ? acct.tag_line.slice(0, 16) : '';
+  if (!gameName.trim() || !tagLine.trim()) return UNAVAILABLE;
   return { ok: true, puuid: sub, gameName, tagLine, country: countryFromAlpha3(b.country) };
 }
 
@@ -86,10 +89,52 @@ export const fetchRiotUserinfo: RiotUserinfoFn = async (accessToken) => {
       method: 'GET',
       headers: { Authorization: `Bearer ${accessToken}`, Accept: 'application/json' },
       signal: AbortSignal.timeout(10_000),
+      redirect: 'manual',
     });
   } catch {
     return UNAVAILABLE; // network error / timeout
   }
-  const text = await res.text().catch(() => '');
+  let text = '';
+  try {
+    if (Number(res.headers.get('content-length')) > 65536) { await res.body?.cancel(); return UNAVAILABLE; }
+    if (res.body) {
+      const reader = res.body.getReader();
+      const parts: Uint8Array[] = [];
+      let total = 0;
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        total += value.length;
+        if (total > 65536) { await reader.cancel(); return UNAVAILABLE; }
+        parts.push(value);
+      }
+      text = Buffer.concat(parts).toString('utf8');
+    }
+  } catch { return UNAVAILABLE; }
   return classifyUserinfoResponse(res.status, text, res.headers.get('retry-after'));
 };
+
+/** Global bulkhead/cooldown; token hashes exist only in a bounded, 60-second memory cache. */
+export function guardRiotUserinfo(verify: RiotUserinfoFn, now: () => number = Date.now, maxConcurrent = 20): RiotUserinfoFn {
+  let active = 0;
+  let cooldownUntil = 0;
+  const rejected = new TtlCache<boolean>(1000);
+  return async (token) => {
+    const key = createHash('sha256').update(token).digest('hex');
+    const time = now();
+    if (rejected.get(key, time)) return REJECTED;
+    if (time < cooldownUntil || active >= maxConcurrent) return { ...UNAVAILABLE, retryAfter: Math.max(1, Math.ceil((cooldownUntil - time) / 1000)) };
+    active++;
+    try {
+      const result = await verify(token);
+      if (!result.ok) {
+        if (result.reason === 'unavailable') cooldownUntil = now() + (result.retryAfter ?? 2) * 1000;
+        else rejected.set(key, true, 60_000, now());
+      }
+      return result;
+    } catch {
+      cooldownUntil = now() + 2000;
+      return UNAVAILABLE;
+    } finally { active--; }
+  };
+}

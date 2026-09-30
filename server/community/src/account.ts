@@ -2,6 +2,14 @@ import { iso } from './context.js';
 import type { AccountData } from './db/repo.js';
 import { deleteMedia, postMediaKeys, type MediaDeps } from './media-service.js';
 
+/** Schema coverage reviewed by tests: new account-related tables need an export/erasure policy. */
+export const ACCOUNT_TABLE_POLICIES = {
+  users: 'erase', posts: 'erase', comments: 'erase', post_likes: 'erase', skin_votes: 'erase',
+  skin_reviews: 'erase', review_likes: 'erase', lfg_posts: 'erase', lfg_joins: 'erase', media: 'erase',
+  request_keys: 'erase', reports: 'anonymize', sanctions: 'security-retention',
+  moderation_audit: 'security-retention', revoked_accounts: 'token-expiry',
+} as const;
+
 /**
  * Right to erasure: hard-deletes the account and everything that cascades from it (posts and their
  * comments / likes, comments, reviews and their likes, likes, votes, LFG posts and joins, media rows);
@@ -144,5 +152,6 @@ export function buildExport(data: AccountData, baseUrl: string, now: number) {
       targetType: a.target_type,
       targetId: a.target_id,
     })),
+    recentCreates: data.requestKeys.map((r) => ({ response: parseJson(r.body), status: r.status, expiresAt: iso(r.expires_at) })),
   };
 }

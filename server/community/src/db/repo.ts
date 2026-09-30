@@ -260,6 +260,7 @@ export interface AccountData {
   sanctions: SanctionRow[];
   /** Operator actions that concerned the account (action, target, time). */
   moderationLog: AuditRow[];
+  requestKeys: { id: string; body: string; status: number; expires_at: number }[];
 }
 
 export interface CanonicalizeResult {
@@ -316,6 +317,8 @@ export interface UserPatch {
  * implementation (better-sqlite3) is synchronous; swap freely in tests.
  */
 export interface Repo {
+  getRequestKey(id: string, now: number): StoredResponse | null;
+  saveRequestKey(row: StoredResponse & { id: string; userId: string; expiresAt: number }): void;
   ping(): boolean;
 
   upsertUser(u: UserUpsert, now: number): UserRow;
@@ -519,3 +522,5 @@ export interface Repo {
   /** Row counts and media bytes, for the ops CLI. */
   stats(): Record<string, number>;
 }
+
+export interface StoredResponse { fingerprint: string; body: string; status: number }

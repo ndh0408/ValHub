@@ -359,17 +359,17 @@ describe('script detection without a declared language', () => {
     ['このクソ野郎', 'この***'],
     ['Scheiße ist das', '*** ist das'],
     ['orospu çocuğu', '*** çocuğu'],
-    ['co mien nam dm', 'co mien nam ***'],
+    ['co mien nam dm', 'co mien nam dm'],
   ])('masks %s', (input, out) => {
     expect(moderate(input).text).toBe(out);
   });
 
   it('picks lists from the script and charset', () => {
-    expect(listsFor('hello there')).toEqual(['en', 'vi']);
-    expect(listsFor('hello there', 'en')).toEqual(['en', 'vi']);
+    expect(listsFor('hello there')).toEqual(['en']);
+    expect(listsFor('hello there', 'en')).toEqual(['en']);
     expect(listsFor('hola amigo', 'es')).toEqual(['en', 'es']);
     expect(listsFor('hola amigo', 'es', 'VN')).toEqual(['en', 'es', 'vi']);
-    expect(listsFor('hola amigo', 'en', 'MX')).toEqual(['en', 'vi', 'es']);
+    expect(listsFor('hola amigo', 'en', 'MX')).toEqual(['en', 'es']);
     expect(listsFor('hallo', 'de', 'CH')).toEqual(['en', 'de', 'fr', 'it']);
     expect(listsFor('привет', 'en')).toEqual(['en', 'ru']);
     expect(listsFor('привет')).toEqual(['en', 'ru']);
@@ -380,10 +380,10 @@ describe('script detection without a declared language', () => {
     expect(listsFor('สวัสดี')).toEqual(['en', 'th']);
     expect(listsFor('مرحبا')).toEqual(['en', 'ar']);
     expect(listsFor('tôi là người việt', 'es')).toEqual(['en', 'es', 'vi']);
-    expect(listsFor('Straße', 'en')).toEqual(['en', 'de', 'vi']);
-    expect(listsFor('¿qué?', 'en')).toEqual(['en', 'es', 'vi']);
-    expect(listsFor('łódź')).toEqual(['en', 'pl', 'vi']);
-    expect(listsFor('şık', 'en')).toEqual(['en', 'tr', 'vi']);
+    expect(listsFor('Straße', 'en')).toEqual(['en', 'de']);
+    expect(listsFor('¿qué?', 'en')).toEqual(['en', 'es']);
+    expect(listsFor('łódź')).toEqual(['en', 'pl']);
+    expect(listsFor('şık', 'en')).toEqual(['en', 'tr']);
     expect(listsFor('hello', 'zh-TW')).toEqual(['en', 'zh']);
     expect(listsFor('hello', 'pt-BR')).toEqual(['en', 'pt']);
   });

@@ -1,4 +1,4 @@
-import { invalid } from './errors.js';
+import { invalid, reasonError } from './errors.js';
 
 export interface Cursor {
   createdAt: number;
@@ -16,7 +16,7 @@ export function encodeCursor(c: Cursor): string {
 
 export function decodeCursor(raw: string | undefined): Cursor | undefined {
   if (raw === undefined || raw === '') return undefined;
-  if (raw.length > 200 || !/^[A-Za-z0-9_-]+$/.test(raw)) throw invalid('cursor không hợp lệ.');
+  if (raw.length > 200 || !/^[A-Za-z0-9_-]+$/.test(raw)) throw reasonError('invalid_input', 'cursor_invalid');
   try {
     const v: unknown = JSON.parse(Buffer.from(raw, 'base64url').toString('utf8'));
     if (
@@ -35,7 +35,7 @@ export function decodeCursor(raw: string | undefined): Cursor | undefined {
   } catch {
     // fall through
   }
-  throw invalid('cursor không hợp lệ.');
+  throw reasonError('invalid_input', 'cursor_invalid');
 }
 
 /** Builds a page from `limit + 1` fetched rows. */

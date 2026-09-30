@@ -209,7 +209,9 @@ describe('content catalog', () => {
     expect(await c.isKnown('skin', U(50))).toBe(false); // within 10 min: no re-fetch
     expect(calls.filter((x) => x.includes('/weapons/skins'))).toHaveLength(1);
     clock.t += 11 * 60_000;
-    expect(await c.isKnown('skin', U(50))).toBe(true); // unknown id triggered one re-fetch
+    expect(await c.isKnown('skin', U(50))).toBe(false); // refresh is background-only
+    await c.warm(['skin']);
+    expect(await c.isKnown('skin', U(50))).toBe(true);
     expect(calls.filter((x) => x.includes('/weapons/skins'))).toHaveLength(2);
     for (let i = 0; i < 5; i++) expect(await c.isKnown('skin', U(60 + i))).toBe(false);
     expect(calls.filter((x) => x.includes('/weapons/skins'))).toHaveLength(2); // no hammering valorant-api

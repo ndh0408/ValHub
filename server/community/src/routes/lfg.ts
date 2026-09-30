@@ -130,14 +130,13 @@ export function registerLfg(app: Hono, x: Ctx): void {
     // v2 fields
     const rankMin = parseOptional(body, 'rankMin', (v) => parseInt(v, 0, 27, 'rankMin')) ?? null;
     const rankMax = parseOptional(body, 'rankMax', (v) => parseInt(v, 0, 27, 'rankMax')) ?? null;
-    if (rankMin !== null && rankMax !== null && rankMin > rankMax) throw invalid('rankMin không được lớn hơn rankMax.');
+    if (rankMin && rankMax && rankMin > rankMax) throw invalid('rankMin không được lớn hơn rankMax.');
     const roles =
       parseOptional(body, 'roles', (v) =>
         parseUniqueArray(v, 'roles', 4, (r) => parseEnum(r, LFG_ROLES, 'roles')),
       ) ?? [];
     const mic = parseOptional(body, 'mic', (v) => parseBool(v, 'mic')) ?? false;
-    // Party language: the 17 app languages or 'any'. Default = the author's language, 'vi' when unknown
-    // (what clients before v3 always got).
+    // Party language defaults to the author's language, or 'any' when unknown.
     const language = parseOptional(body, 'language', (v) => parseLfgLanguage(v, 'language')) ?? user.language ?? 'any';
     const noteRaw = parseNoteRaw(body);
     const partySize = parseOptional(body, 'partySize', (v) => parseInt(v, 1, 5, 'partySize')) ?? Math.max(1, 5 - slots);

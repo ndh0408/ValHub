@@ -11,6 +11,7 @@ import { registerPosts } from './routes/posts.js';
 import { registerPublicGuard } from './routes/public-guard.js';
 import { registerReviews } from './routes/reviews.js';
 import { registerSkins } from './routes/skins.js';
+import { registerIdempotency } from './idempotency.js';
 
 export type { AppDeps } from './context.js';
 
@@ -40,6 +41,7 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
   app.use('*', async (c, next) => {
     await next();
     if (!c.res.headers.has('cache-control')) c.res.headers.set('cache-control', 'no-store');
+    if (c.res.status >= 400) x.stats.inc(`${c.res.status}:${c.req.routePath ?? 'unmatched'}`);
   });
 
   // Load shedding: while the event loop is lagging (sustained, see load.ts) answer 503 at once instead of
@@ -73,6 +75,7 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
   });
 
   registerPublicGuard(app, x);
+  registerIdempotency(app, x);
   registerAuth(app, x);
   registerAccount(app, x);
   registerLfg(app, x);
@@ -96,7 +99,7 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
       err = e;
     } else {
       // Only the error name/message is logged — never headers, bodies or tokens.
-      logError(`[${c.req.method} ${c.req.routePath}] ${e.name}: ${e.message}`);
+      logError(`[${c.req.method} ${c.req.routePath}] ${e.name}`);
       err = reasonError('server_error', 'server_error');
     }
     const headers: Record<string, string> = {

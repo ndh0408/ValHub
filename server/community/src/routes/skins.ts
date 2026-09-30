@@ -1,7 +1,7 @@
 import type { Hono } from 'hono';
 import type { Ctx } from '../context.js';
 import type { RatingStats } from '../db/repo.js';
-import { invalid } from '../errors.js';
+import { invalid, reasonError } from '../errors.js';
 import { appliedScope, resolveScope } from '../geo/scope.js';
 import { parseEnum, parseLimit, parseUuid } from '../validate.js';
 
@@ -113,8 +113,8 @@ export function registerSkins(app: Hono, x: Ctx): void {
     const user = x.user(c, false);
     const raw = c.req.query('ids') ?? '';
     const parts = raw.split(',').filter((s) => s.trim() !== '');
-    if (parts.length === 0) throw invalid('ids không được để trống.');
-    if (parts.length > MAX_IDS) throw invalid(`ids tối đa ${MAX_IDS} UUID.`);
+    if (parts.length === 0) throw reasonError('invalid_input', 'field_empty', { field: 'ids' });
+    if (parts.length > MAX_IDS) throw reasonError('invalid_input', 'array_bad_size', { field: 'ids', max: MAX_IDS });
     const ids = [...new Set(parts.map((p) => parseUuid(p, 'ids')))];
     // Levels and chromas count as their base skin; each item keeps the uuid that was asked for.
     const canon = ids.map(canonId);

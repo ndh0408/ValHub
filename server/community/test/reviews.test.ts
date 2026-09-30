@@ -5,7 +5,7 @@ const SKIN_D = '44444444-4444-4444-8444-444444444444';
 
 let e: Env;
 beforeEach(() => {
-  e = setup();
+  e = setup({ established: true });
 });
 afterEach(() => e.close());
 
@@ -318,44 +318,14 @@ describe('GET /v1/skins/top with reviews', () => {
     return us;
   }
 
-  it('sort=rating ranks by Bayesian average and requires 3 ratings', async () => {
-    const us = await seedRatings();
-    const res = await e.req('GET', '/v1/skins/top?sort=rating', { token: us[0]!.token });
+  it('sort=rating requires ten established ratings', async () => {
+    await seedRatings();
+    const res = await e.req('GET', '/v1/skins/top?sort=rating');
     expect(res.status).toBe(200);
     expect(res.json.items).toEqual([
-      {
-        rank: 1,
-        skinUuid: SKIN_B,
-        weaponUuid: WEAPON_2,
-        votes: 0,
-        voted: false,
-        ratingAvg: 4.9,
-        ratingCount: 10,
-        reviewCount: 6,
-      },
-      {
-        rank: 2,
-        skinUuid: SKIN_A,
-        weaponUuid: WEAPON_1,
-        votes: 0,
-        voted: false,
-        ratingAvg: 5,
-        ratingCount: 3,
-        reviewCount: 3,
-      },
-      {
-        rank: 3,
-        skinUuid: SKIN_D,
-        weaponUuid: WEAPON_1,
-        votes: 1,
-        voted: true,
-        ratingAvg: 1,
-        ratingCount: 5,
-        reviewCount: 0,
-      },
+      expect.objectContaining({ rank: 1, skinUuid: SKIN_B, ratingAvg: 4.9, ratingCount: 10, reviewCount: 6 }),
     ]);
-    const w = await e.req('GET', `/v1/skins/top?sort=rating&weapon=${WEAPON_1}&limit=1`);
-    expect(w.json.items.map((i: any) => i.skinUuid)).toEqual([SKIN_A]);
+    expect((await e.req('GET', `/v1/skins/top?sort=rating&weapon=${WEAPON_1}`)).json.items).toEqual([]);
   });
 
   it('sort=reviews ranks by written reviews, then ratings', async () => {
@@ -390,21 +360,21 @@ describe('GET /v1/skins/top with reviews', () => {
     // Recent activity.
     for (let i = 0; i < 3; i++) await review(us[i]!.token, SKIN_B, 4, i === 0 ? 'new' : '');
     await e.req('PUT', `/v1/skins/${SKIN_B}/vote`, { token: us[0]!.token, body: { weaponUuid: WEAPON_1 } });
-    // Editing an old review counts as recent activity.
+    // Editing keeps first-rating time: it cannot re-enter the weekly board.
     await review(us[3]!.token, SKIN_B, 3, 'edited');
 
-    const all = await e.req('GET', '/v1/skins/top?sort=rating');
+    const all = await e.req('GET', '/v1/skins/top?sort=reviews');
     expect(all.json.items.map((i: any) => [i.skinUuid, i.ratingCount])).toEqual([
       [SKIN_A, 3],
       [SKIN_B, 4],
     ]);
-    const week = await e.req('GET', '/v1/skins/top?sort=rating&period=week');
+    const week = await e.req('GET', '/v1/skins/top?sort=reviews&period=week');
     expect(week.json.items).toEqual([
-      expect.objectContaining({ skinUuid: SKIN_B, votes: 1, ratingCount: 4, ratingAvg: 3.8, reviewCount: 2 }),
+      expect.objectContaining({ skinUuid: SKIN_B, votes: 1, ratingCount: 3, ratingAvg: 4, reviewCount: 1 }),
     ]);
     const weekVotes = await e.req('GET', '/v1/skins/top?period=week');
     expect(weekVotes.json.items).toEqual([
-      expect.objectContaining({ skinUuid: SKIN_B, votes: 1, ratingCount: 4, ratingAvg: 3.8 }),
+      expect.objectContaining({ skinUuid: SKIN_B, votes: 1, ratingCount: 3, ratingAvg: 4 }),
     ]);
     const allVotes = await e.req('GET', '/v1/skins/top');
     expect(allVotes.json.items.map((i: any) => [i.skinUuid, i.votes, i.ratingAvg])).toEqual([

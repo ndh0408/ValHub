@@ -1,0 +1,38 @@
+name: Community server
+on:
+  pull_request:
+    paths: ['server/community/**', '.github/workflows/server.yml']
+  push:
+    paths: ['server/community/**', '.github/workflows/server.yml']
+  workflow_dispatch:
+  schedule:
+    - cron: '20 3 * * 1'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: server/community
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: server/community/package-lock.json
+      # Dependencies ship prebuilt binaries. No arbitrary lifecycle scripts are needed.
+      - run: npm ci --ignore-scripts
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npm audit --omit=dev
+      - run: docker build -t valvn-community:ci .
+      - run: docker run --rm --entrypoint sh valvn-community:ci -c 'sh -n ops/backup-loop.sh'
+      - uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: valvn-community:ci
+          exit-code: '1'
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true

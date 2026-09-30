@@ -2,7 +2,7 @@ import type { Context, Hono } from 'hono';
 import { author, iso, origin, ownHidden, type Ctx } from '../context.js';
 import { decodeCursor, page } from '../cursor.js';
 import type { ReviewView } from '../db/repo.js';
-import { forbidden, invalid, notFound } from '../errors.js';
+import { forbidden, invalid, notFound, reasonError } from '../errors.js';
 import { contentLanguage, parseLanguageList } from '../geo/languages.js';
 import { appliedScope, resolveScope } from '../geo/scope.js';
 import { cleanUserText } from '../moderation/filter.js';
@@ -87,7 +87,7 @@ export function registerReviews(app: Hono, x: Ctx): void {
     const geo = resolveScope(q, user, 'global');
     const languages = parseLanguageList(q.language);
     const cursor = decodeCursor(q.cursor);
-    if (cursor && (sort === 'top') !== (cursor.likes !== undefined)) throw invalid('cursor không hợp lệ.');
+    if (cursor && (sort === 'top') !== (cursor.likes !== undefined)) throw reasonError('invalid_input', 'cursor_invalid');
     const limit = parseLimit(q.limit, 20, 50);
     const rows = x.repo.listReviews({ skinUuid, sort, cursor, limit, viewerId, geo, languages });
     return x.json(c, {

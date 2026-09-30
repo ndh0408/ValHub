@@ -1,7 +1,7 @@
 import type { Hono } from 'hono';
 import type { Ctx } from '../context.js';
 import { randomHex } from '../crypto.js';
-import { ApiError, invalid, notFound } from '../errors.js';
+import { ApiError, invalid, notFound, reasonError } from '../errors.js';
 import { ImageError, sanitizeImage } from '../imaging.js';
 import { CONTENT_TYPES, MAX_MEDIA_BYTES, MEDIA_KEY_RE, sniffImage, type ImageExt } from '../media.js';
 
@@ -11,7 +11,7 @@ const ALLOWED: Record<string, ImageExt> = {
   'image/webp': 'webp',
 };
 
-const tooLarge = () => invalid('Ảnh tối đa 2 MB.');
+const tooLarge = () => reasonError('invalid_input', 'media_too_large', { maxMb: 2 });
 
 /** Reads a request body, aborting as soon as it exceeds `max` bytes. */
 async function readLimited(body: ReadableStream<Uint8Array> | null, max: number): Promise<Uint8Array> {
@@ -52,10 +52,10 @@ export function registerMedia(app: Hono, x: Ctx): void {
     x.rateLimit('media', user.id);
 
     const raw = await readLimited(c.req.raw.body, MAX_MEDIA_BYTES);
-    if (raw.length === 0) throw invalid('Không có dữ liệu ảnh.');
+    if (raw.length === 0) throw reasonError('invalid_input', 'media_empty');
     const sniffed = sniffImage(raw);
     if (sniffed === null || sniffed !== declared) {
-      throw invalid('Dữ liệu không phải ảnh hợp lệ hoặc không khớp content-type.');
+      throw reasonError('invalid_input', 'media_invalid');
     }
 
     // Strip EXIF / GPS and every other kind of metadata; refuse malformed or huge images.
@@ -63,7 +63,7 @@ export function registerMedia(app: Hono, x: Ctx): void {
     try {
       clean = sanitizeImage(raw);
     } catch (e) {
-      if (e instanceof ImageError) throw invalid('Không đọc được ảnh (tệp hỏng hoặc kích thước quá lớn).');
+      if (e instanceof ImageError) throw reasonError('invalid_input', 'media_invalid');
       throw e;
     }
 

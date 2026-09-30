@@ -1,4 +1,4 @@
-import { invalid } from './errors.js';
+import { invalid, reasonError } from './errors.js';
 
 export const REGIONS = ['ap', 'na', 'eu', 'kr', 'latam', 'br'] as const;
 export type Region = (typeof REGIONS)[number];
@@ -39,13 +39,13 @@ export function parseJsonObject(text: string): Json {
   try {
     parsed = text.length === 0 ? {} : JSON.parse(text);
   } catch {
-    throw invalid('Nội dung yêu cầu không phải JSON hợp lệ.');
+    throw reasonError('invalid_input', 'body_invalid_json');
   }
-  if (!isObject(parsed)) throw invalid('Nội dung yêu cầu phải là một đối tượng JSON.');
+  if (!isObject(parsed)) throw reasonError('invalid_input', 'body_not_object');
   return parsed;
 }
 
-/** Length in Unicode code points (what users perceive as characters, roughly). */
+/** Length in Unicode code points after NFC, not grapheme clusters. */
 export function charLength(s: string): number {
   let n = 0;
   for (const _ of s) n++;
@@ -54,9 +54,9 @@ export function charLength(s: string): number {
 
 /** Normalises and validates a UUID (accepts upper-case input, returns lower-case). */
 export function parseUuid(v: unknown, field: string): string {
-  if (typeof v !== 'string') throw invalid(`${field} phải là UUID.`);
+  if (typeof v !== 'string') throw reasonError('invalid_input', 'field_not_uuid', { field });
   const s = v.trim().toLowerCase();
-  if (!UUID_RE.test(s)) throw invalid(`${field} phải là UUID.`);
+  if (!UUID_RE.test(s)) throw reasonError('invalid_input', 'field_not_uuid', { field });
   return s;
 }
 
@@ -66,14 +66,14 @@ export function isUuid(v: string): boolean {
 
 export function parseEnum<T extends string>(v: unknown, allowed: readonly T[], field: string): T {
   if (typeof v !== 'string' || !(allowed as readonly string[]).includes(v)) {
-    throw invalid(`${field} phải là một trong: ${allowed.join(', ')}.`);
+    throw reasonError('invalid_input', 'field_not_in_list', { field, allowed: allowed.join(', ') });
   }
   return v as T;
 }
 
 export function parseInt(v: unknown, min: number, max: number, field: string): number {
   if (typeof v !== 'number' || !Number.isInteger(v) || v < min || v > max) {
-    throw invalid(`${field} phải là số nguyên từ ${min} đến ${max}.`);
+    throw reasonError('invalid_input', 'field_not_int', { field, min, max });
   }
   return v;
 }
@@ -94,13 +94,13 @@ export function parseString(
   field: string,
   opts: { max: number; min?: number },
 ): string {
-  if (typeof v !== 'string') throw invalid(`${field} phải là chuỗi.`);
-  if (v.includes('\u0000')) throw invalid(`${field} chứa ký tự không hợp lệ.`);
+  if (typeof v !== 'string') throw reasonError('invalid_input', 'field_not_string', { field });
+  if (v.includes('\u0000')) throw reasonError('invalid_input', 'field_bad_chars', { field });
   const s = v.normalize('NFC').trim();
   const len = charLength(s);
   const min = opts.min ?? 0;
-  if (len < min) throw invalid(`${field} không được để trống.`);
-  if (len > opts.max) throw invalid(`${field} tối đa ${opts.max} ký tự.`);
+  if (len < min) throw reasonError('invalid_input', 'field_empty', { field });
+  if (len > opts.max) throw reasonError('invalid_input', 'field_too_long', { field, max: opts.max, unit: 'code_points' });
   return s;
 }
 
@@ -115,11 +115,11 @@ export function parseRegion(v: unknown): Region {
 /** YYYY-MM-DD that is a real calendar date. */
 export function parseDate(v: unknown, field: string): string {
   if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) {
-    throw invalid(`${field} phải có dạng YYYY-MM-DD.`);
+    throw reasonError('invalid_input', 'field_not_date', { field });
   }
   const d = new Date(`${v}T00:00:00Z`);
   if (Number.isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== v) {
-    throw invalid(`${field} không phải ngày hợp lệ.`);
+    throw reasonError('invalid_input', 'field_bad_date', { field });
   }
   return v;
 }
@@ -127,21 +127,21 @@ export function parseDate(v: unknown, field: string): string {
 /** Pagination `limit` query param: 1..max, default `def`. */
 export function parseLimit(raw: string | undefined, def: number, max: number): number {
   if (raw === undefined || raw === '') return def;
-  if (!/^\d{1,4}$/.test(raw)) throw invalid(`limit phải là số nguyên từ 1 đến ${max}.`);
+  if (!/^\d{1,4}$/.test(raw)) throw reasonError('invalid_input', 'limit_out_of_range', { max });
   const n = Number(raw);
-  if (n < 1 || n > max) throw invalid(`limit phải là số nguyên từ 1 đến ${max}.`);
+  if (n < 1 || n > max) throw reasonError('invalid_input', 'limit_out_of_range', { max });
   return n;
 }
 
 export function parseBool(v: unknown, field: string): boolean {
-  if (typeof v !== 'boolean') throw invalid(`${field} phải là true hoặc false.`);
+  if (typeof v !== 'boolean') throw reasonError('invalid_input', 'field_not_bool', { field });
   return v;
 }
 
 /** Array of unique values, each parsed by `parse`, at most `max` entries. */
 export function parseUniqueArray<T>(v: unknown, field: string, max: number, parse: (x: unknown) => T): T[] {
-  if (!Array.isArray(v) || v.length > max) throw invalid(`${field} phải là mảng tối đa ${max} phần tử.`);
+  if (!Array.isArray(v) || v.length > max) throw reasonError('invalid_input', 'array_bad_size', { field, max });
   const out = v.map(parse);
-  if (new Set(out).size !== out.length) throw invalid(`${field} có phần tử trùng lặp.`);
+  if (new Set(out).size !== out.length) throw reasonError('invalid_input', 'array_duplicates', { field });
   return out;
 }

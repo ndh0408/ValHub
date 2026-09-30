@@ -5,7 +5,7 @@ const DAY = 86400_000;
 
 let e: Env;
 beforeEach(() => {
-  e = setup();
+  e = setup({ established: true });
 });
 afterEach(() => e.close());
 
@@ -196,7 +196,7 @@ describe('LFG scopes', () => {
     });
     // A client without a known language keeps the old default (vi).
     const old = await e.login('oldclient');
-    expect((await lfg(old)).json.language).toBe('vi');
+    expect((await lfg(old)).json.language).toBe('any');
   });
 
   it('defaults to the viewer region (the people you can party with)', async () => {
@@ -442,18 +442,28 @@ describe('skin reviews by reviewer country / region / language', () => {
       await review(u, SKIN_A, 1);
       await review(u, SKIN_B, 5);
     }
+    for (let i = 0; i < 7; i++) {
+      e.riotCountries[`extraVN${i}`] = 'vnm';
+      e.riotCountries[`extraUS${i}`] = 'usa';
+      const vn = await e.login(`extraVN${i}`, { region: 'ap', language: 'vi' });
+      const us = await e.login(`extraUS${i}`, { region: 'na', language: 'en' });
+      for (const [u, a, b] of [[vn, 5, 1], [us, 1, 5]] as const) {
+        await review(u, SKIN_A, a);
+        await review(u, SKIN_B, b);
+      }
+    }
     const order = async (qs: string) =>
       (await e.req('GET', `/v1/skins/top?sort=rating${qs}`)).json.items.map((i: any) => [i.skinUuid, i.ratingAvg, i.ratingCount]);
-    expect(await order('&country=VN')).toEqual([[SKIN_A, 5, 3], [SKIN_B, 1, 3]]);
-    expect(await order('&country=US')).toEqual([[SKIN_B, 5, 3], [SKIN_A, 1, 3]]);
+    expect(await order('&country=VN')).toEqual([[SKIN_A, 5, 10], [SKIN_B, 1, 10]]);
+    expect(await order('&country=US')).toEqual([[SKIN_B, 5, 10], [SKIN_A, 1, 10]]);
     // Globally they tie on 3 average; the tie-break is the skin uuid.
-    expect(await order('')).toEqual([[SKIN_A, 3, 6], [SKIN_B, 3, 6]]);
+    expect(await order('')).toEqual([[SKIN_A, 3, 20], [SKIN_B, 3, 20]]);
     // A country with fewer than 3 ratings per skin has no rating leaderboard.
     expect(await order('&country=TH')).toEqual([]);
-    expect(await order('&region=na')).toEqual([[SKIN_B, 5, 3], [SKIN_A, 1, 3]]);
+    expect(await order('&region=na')).toEqual([[SKIN_B, 5, 10], [SKIN_A, 1, 10]]);
     // Reviews leaderboard by country too.
     const rev = (await e.req('GET', '/v1/skins/top?sort=reviews&country=VN')).json.items.map((i: any) => [i.skinUuid, i.ratingCount]);
-    expect(rev).toEqual([[SKIN_A, 3], [SKIN_B, 3]]);
+    expect(rev).toEqual([[SKIN_A, 10], [SKIN_B, 10]]);
   });
 
   it('period=week counts only recent reviews in the chosen scope', async () => {
@@ -560,7 +570,7 @@ describe('old clients keep working', () => {
     await e.req('POST', '/v1/lfg', { token: a.token, body: { region: 'ap', mode: 'competitive', partyCode: 'AB12CD', slots: 2 } });
     const lfg = await e.req('GET', '/v1/lfg?region=ap&mode=competitive', { token: b.token });
     expect(lfg.json.items).toHaveLength(1);
-    expect(lfg.json.items[0]).toMatchObject({ language: 'vi', region: 'ap', status: 'open' });
+    expect(lfg.json.items[0]).toMatchObject({ language: 'any', region: 'ap', status: 'open' });
     // Votes and the leaderboard: global by default.
     await e.req('PUT', `/v1/skins/${SKIN_A}/vote`, { token: a.token, body: { weaponUuid: WEAPON_1 } });
     const topRes = await e.req('GET', '/v1/skins/top', { token: b.token });

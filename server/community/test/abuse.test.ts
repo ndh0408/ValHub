@@ -97,7 +97,7 @@ describe('anonymous aggregate queries are cached', () => {
   const top = (token?: string, qs = '') => e.req('GET', `/v1/skins/top${qs}`, { token });
 
   it('serves identical anonymous responses for 45 s, then refreshes; signed-in requests are never cached', async () => {
-    e = setup({ tuning: { publicCacheTtlMs: 45_000 } });
+    e = setup({ established: true, tuning: { publicCacheTtlMs: 45_000 } });
     const a = await e.login('alice');
     const b = await e.login('bob');
     await votes(a.token, SKIN_A);
@@ -124,7 +124,7 @@ describe('anonymous aggregate queries are cached', () => {
   });
 
   it('caches summary, reviews, votes and communities; keys ignore parameter order, differ by value', async () => {
-    e = setup({ tuning: { publicCacheTtlMs: 45_000 } });
+    e = setup({ established: true, tuning: { publicCacheTtlMs: 45_000 } });
     const a = await e.login('alice');
     const get = (p: string) => e.req('GET', p);
     for (const p of [`/v1/skins/${SKIN_A}/summary`, `/v1/skins/${SKIN_A}/reviews`, `/v1/skins/votes?ids=${SKIN_A}`, '/v1/communities']) {
@@ -141,11 +141,11 @@ describe('anonymous aggregate queries are cached', () => {
   });
 
   it('never caches errors, and is off unless configured', async () => {
-    e = setup({ tuning: { publicCacheTtlMs: 45_000 } });
+    e = setup({ established: true, tuning: { publicCacheTtlMs: 45_000 } });
     expectError(await e.req('GET', '/v1/skins/top?period=month'), 400, 'invalid_input');
     expectError(await e.req('GET', '/v1/skins/top?period=month'), 400, 'invalid_input');
     e.close();
-    e = setup(); // default tuning in tests: cache off
+    e = setup({ established: true }); // default tuning in tests: cache off
     const a = await e.login('alice');
     await votes(a.token, SKIN_A);
     expect((await top()).headers.get('x-cache')).toBeNull();

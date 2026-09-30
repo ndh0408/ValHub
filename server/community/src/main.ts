@@ -7,7 +7,7 @@ import { openDatabase } from './db/database.js';
 import { startLoadMonitor } from './load.js';
 import { SqliteRepo } from './db/sqlite-repo.js';
 import { DiskMediaStore } from './media.js';
-import { fetchRiotUserinfo } from './riot.js';
+import { fetchRiotUserinfo, guardRiotUserinfo } from './riot.js';
 import { sweep } from './sweeper.js';
 import { ErasureLedger } from './erasures.js';
 
@@ -37,7 +37,7 @@ const { app, ctx } = createAppWithCtx({
   config,
   erasureLedger,
   content,
-  riotUserinfo: fetchRiotUserinfo,
+  riotUserinfo: guardRiotUserinfo(fetchRiotUserinfo),
   loadProbe: load.lagMs,
   logError: (m) => console.error(m),
 });

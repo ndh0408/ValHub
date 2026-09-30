@@ -3,6 +3,7 @@ import { geoCondition, type GeoScope } from '../geo/scope.js';
 import type { ReportTarget } from '../validate.js';
 import type { Db } from './database.js';
 import { reasonError } from '../errors.js';
+import type { StoredResponse } from './repo.js';
 import type {
   AccountData,
   AuditRow,
@@ -84,6 +85,14 @@ function and(where: string[]): string {
 
 export class SqliteRepo implements Repo {
   constructor(private readonly db: Db, private readonly now: () => number = Date.now) {}
+
+  getRequestKey(id: string, now: number): StoredResponse | null {
+    return (this.db.prepare('SELECT fingerprint, body, status FROM request_keys WHERE id = ? AND expires_at > ?').get(id, now) as StoredResponse | undefined) ?? null;
+  }
+  saveRequestKey(row: StoredResponse & { id: string; userId: string; expiresAt: number }): void {
+    this.db.prepare(`INSERT OR REPLACE INTO request_keys (id, user_id, fingerprint, body, status, expires_at)
+      VALUES (@id, @userId, @fingerprint, @body, @status, @expiresAt)`).run(row);
+  }
 
   ping(): boolean {
     return (this.db.prepare('SELECT 1 AS ok').get() as { ok: number } | undefined)?.ok === 1;
@@ -170,6 +179,7 @@ export class SqliteRepo implements Repo {
   }
 
   cleanup(now: number): void {
+    this.db.prepare('DELETE FROM request_keys WHERE expires_at <= ?').run(now);
     this.db.prepare('DELETE FROM revoked_accounts WHERE expires_at <= ?').run(now);
     this.db.prepare('DELETE FROM rate_limits WHERE window_start < ?').run(now - DAY_MS);
     this.db.prepare('DELETE FROM lfg_posts WHERE expires_at < ?').run(now - LFG_RETENTION_MS);
@@ -1054,6 +1064,7 @@ export class SqliteRepo implements Repo {
       media: this.mediaOfUser(userId),
       sanctions: all<SanctionRow>('SELECT * FROM sanctions WHERE user_id = ? ORDER BY created_at, id'),
       moderationLog: all<AuditRow>('SELECT * FROM moderation_audit WHERE user_id = ? ORDER BY at, id'),
+      requestKeys: all('SELECT id, body, status, expires_at FROM request_keys WHERE user_id = ? ORDER BY expires_at, id'),
     };
   }
 
