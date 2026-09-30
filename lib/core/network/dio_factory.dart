@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import '../auth/session_manager.dart';
 import '../config/app_constants.dart';
@@ -33,8 +34,57 @@ Dio createBaseDio({
       headers: {'Accept-Encoding': 'gzip', 'User-Agent': ?userAgent},
     ),
   );
+  // First in the chain: a request that would leak the Riot token never leaves.
+  dio.interceptors.add(TokenEgressGuard());
   if (log != null) dio.interceptors.add(SessionLogInterceptor(log));
   return dio;
+}
+
+/// Refuses to send a Riot **access token** anywhere but the pinned community
+/// host (CLAUDE.md: the token goes only to `POST /v1/auth/riot` of the ValVN
+/// community server; AR-009). A request counts as carrying the token when it is
+/// the community sign-in path or its small JSON body has an `accessToken` key.
+/// The base URL is a compile-time constant already; this guard makes the rule
+/// hold even if a future change (a config, a provider override) points the
+/// transport somewhere else.
+class TokenEgressGuard extends Interceptor {
+  TokenEgressGuard({bool Function(String host)? isAllowedHost})
+    : _isAllowedHost = isAllowedHost ?? AppConstants.isCommunityHost;
+
+  final bool Function(String host) _isAllowedHost;
+
+  /// Path of the community sign-in that legitimately carries the token.
+  static const signInPath = '/v1/auth/riot';
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    if (carriesAccessToken(options) && !_isAllowedHost(options.uri.host)) {
+      handler.reject(
+        DioException(
+          requestOptions: options,
+          type: DioExceptionType.unknown,
+          error: const TransientException(reason: 'blocked_host'),
+        ),
+        true,
+      );
+      return;
+    }
+    handler.next(options);
+  }
+
+  /// Whether [options] would send a Riot access token.
+  @visibleForTesting
+  static bool carriesAccessToken(RequestOptions options) {
+    if (options.uri.path.endsWith(signInPath)) return true;
+    final data = options.data;
+    if (data is Map) return data.containsKey('accessToken');
+    if (data is String && data.length <= 4096) return _tokenKey.hasMatch(data);
+    return false;
+  }
+
+  /// `"accessToken":` as a JSON key (a user's text mentioning the word is
+  /// escaped inside a string and never matches).
+  static final RegExp _tokenKey = RegExp(r'"accessToken"\s*:');
 }
 
 /// Dio for PD / GLZ / shared: session log + [RiotAuthInterceptor].

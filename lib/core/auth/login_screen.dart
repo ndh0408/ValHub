@@ -42,6 +42,33 @@ import 'cookie_jar.dart';
 bool shouldPopAfterLogin({required bool hadAccounts, required bool canPop}) =>
     hadAccounts && canPop;
 
+/// Clears everything the login WebView keeps between runs: cookies, and where
+/// the platform supports it web storage (localStorage, IndexedDB, caches).
+/// Every step is best effort (the plugin is missing in tests).
+Future<void> clearLoginWebViewData() async {
+  try {
+    await CookieManager.instance().deleteAllCookies();
+  } on Object {
+    // Plugin unavailable (tests): continue.
+  }
+  try {
+    if (WebStorageManager.isMethodSupported(
+      PlatformWebStorageManagerMethod.deleteAllData,
+    )) {
+      await WebStorageManager.instance().deleteAllData();
+    } else if (WebStorageManager.isMethodSupported(
+      PlatformWebStorageManagerMethod.removeDataModifiedSince,
+    )) {
+      await WebStorageManager.instance().removeDataModifiedSince(
+        dataTypes: WebsiteDataType.values,
+        date: DateTime.fromMillisecondsSinceEpoch(0),
+      );
+    }
+  } on Object {
+    // Web storage cannot be cleared on this platform: cookies were.
+  }
+}
+
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key, this.reauthPuuid});
 
@@ -80,15 +107,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     unawaited(_prepare());
   }
 
-  /// Starts every login from a clean cookie store so a second account never
-  /// reuses the previous account's SSO session.
+  /// Starts every login from a clean cookie store and web storage so a second
+  /// account never reuses the previous account's SSO session.
   Future<void> _prepare() async {
-    try {
-      await CookieManager.instance().deleteAllCookies();
-    } on Object {
-      // Plugin unavailable (tests): continue.
-    }
+    await clearLoginWebViewData();
     if (mounted) setState(() => _phase = _Phase.web);
+  }
+
+  @override
+  void dispose() {
+    // Closing the page mid-flow must not leave the Riot session in the
+    // shared WebView (cookies, local storage, IndexedDB, HTTP cache).
+    unawaited(clearLoginWebViewData());
+    super.dispose();
   }
 
   Future<void> _restart() async {
@@ -199,13 +230,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return jar;
   }
 
-  Future<void> _clearWebCookies() async {
-    try {
-      await CookieManager.instance().deleteAllCookies();
-    } on Object {
-      // Nothing else to do.
-    }
-  }
+  Future<void> _clearWebCookies() => clearLoginWebViewData();
 
   Future<void> _complete(AuthTokens tokens, RiotCookieJar cookies) async {
     try {

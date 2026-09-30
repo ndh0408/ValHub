@@ -21,32 +21,41 @@ void main() {
   });
 
   group('base URL', () {
-    test('defaults to the constant, remote config overrides it', () {
-      final plain = ProviderContainer.test();
-      expect(
-        plain.read(communityBaseUrlProvider),
-        AppConstants.communityBaseUrl,
-      );
-      expect(plain.read(communityEnabledProvider), isTrue);
-      final remote = ProviderContainer.test(
-        overrides: [
-          remoteConfigProvider.overrideWithValue(
-            RemoteConfig.fromJson({'communityBaseUrl': 'https://other.test'}),
+    test(
+      'is the pinned constant; remote config cannot replace it (AR-009)',
+      () {
+        final plain = ProviderContainer.test();
+        expect(
+          plain.read(communityBaseUrlProvider),
+          AppConstants.communityBaseUrl,
+        );
+        expect(plain.read(communityEnabledProvider), isTrue);
+        final remote = ProviderContainer.test(
+          overrides: [
+            remoteConfigProvider.overrideWithValue(
+              RemoteConfig.fromJson({'communityBaseUrl': 'https://other.test'}),
+            ),
+          ],
+        );
+        expect(
+          remote.read(communityBaseUrlProvider),
+          AppConstants.communityBaseUrl,
+        );
+        expect(
+          AppConstants.isCommunityHost(
+            Uri.parse(remote.read(communityBaseUrlProvider)).host,
           ),
-        ],
-      );
-      expect(remote.read(communityBaseUrlProvider), 'https://other.test');
-    });
+          isTrue,
+        );
+      },
+    );
 
-    test('remote config parses, merges and serialises the key', () {
+    test('remote config never parses, merges or serialises the key', () {
       final a = RemoteConfig.fromJson({'communityBaseUrl': 'https://a.test'});
       final b = const RemoteConfig().merge(a);
-      expect(b.communityBaseUrl, 'https://a.test');
-      expect(b.toJson()['communityBaseUrl'], 'https://a.test');
-      expect(
-        RemoteConfig.fromJson({'communityBaseUrl': 3}).communityBaseUrl,
-        '3',
-      );
+      expect(a.communityBaseUrl, isNull);
+      expect(b.communityBaseUrl, isNull);
+      expect(b.toJson().containsKey('communityBaseUrl'), isFalse);
       expect(RemoteConfig.fromJson({}).communityBaseUrl, isNull);
     });
   });

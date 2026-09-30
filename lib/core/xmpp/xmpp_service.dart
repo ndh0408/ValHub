@@ -28,10 +28,15 @@ abstract interface class XmppCredentialSource {
 /// Production [XmppCredentialSource]: session tokens from [SessionManager],
 /// PAS token (A-7) and client config (A-8) from [PvpApi].
 class RiotXmppCredentialSource implements XmppCredentialSource {
-  RiotXmppCredentialSource({required this._sessions, required this._api});
+  RiotXmppCredentialSource({
+    required this._sessions,
+    required this._api,
+    this._onLog,
+  });
 
   final SessionManager _sessions;
   final PvpApi _api;
+  final void Function(String event, String? detail)? _onLog;
   final Map<String, JsonMap> _configs = {};
 
   @override
@@ -54,6 +59,8 @@ class RiotXmppCredentialSource implements XmppCredentialSource {
       pasToken: pas,
       clientConfig: config,
       region: session.region,
+      // A config host outside Riot's domains never gets our tokens.
+      onRejected: (reason) => _onLog?.call('xmpp.endpointRejected', reason),
     );
     if (endpoint == null) {
       throw const TransientException(reason: 'xmpp_no_endpoint');

@@ -245,4 +245,21 @@ void main() {
     expect(isAllowedLoginHost('riotgames.com.evil.io'), isFalse);
     expect(isAllowedLoginHost('example.com'), isFalse);
   });
+
+  test('lolstatic hosts: exact or .lolstatic.com suffix only (AR-021)', () {
+    expect(isAllowedLoginHost('lolstatic.com'), isTrue);
+    expect(isAllowedLoginHost('static.lolstatic.com'), isTrue);
+    expect(isAllowedLoginHost('LOLSTATIC-A.AKAMAIHD.NET'), isTrue);
+    for (final bad in [
+      'lolstatic.evil.com',
+      'lolstatic-evil.com',
+      'lolstatic',
+      'lolstatic.com.evil.io',
+      'evillolstatic.com',
+      'lolstatic-b.akamaihd.net',
+      'x.lolstatic-a.akamaihd.net',
+    ]) {
+      expect(isAllowedLoginHost(bad), isFalse, reason: bad);
+    }
+  });
 }

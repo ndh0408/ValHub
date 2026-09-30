@@ -244,6 +244,9 @@ CallbackResult validateCallback(
 
 /// Hosts the login WebView may navigate the **main frame** to
 /// (SUMMARY §3.2 step 3). Everything else opens in the system browser.
+///
+/// Every entry is an exact host or a `.domain` suffix: a prefix match such as
+/// `lolstatic*` would let `lolstatic.evil.com` through (AR-021).
 bool isAllowedLoginHost(String host) {
   final h = host.toLowerCase();
   bool under(String domain) => h == domain || h.endsWith('.$domain');
@@ -256,6 +259,5 @@ bool isAllowedLoginHost(String host) {
       under('facebook.com') ||
       under('hcaptcha.com') ||
       under('lolstatic.com') ||
-      h == 'lolstatic-a.akamaihd.net' ||
-      h.startsWith('lolstatic');
+      h == 'lolstatic-a.akamaihd.net';
 }

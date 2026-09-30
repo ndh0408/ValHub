@@ -359,6 +359,96 @@ void main() {
       expect(withAffinity.domain, 'jp1');
     });
 
+    test('only hosts under riotgames.com / pvp.net are ever used (AR-023)', () {
+      expect(isAllowedChatHost('jp1.chat.si.riotgames.com'), isTrue);
+      expect(isAllowedChatHost('JP1.CHAT.SI.RIOTGAMES.COM'), isTrue);
+      expect(isAllowedChatHost('chat.jp1.pvp.net'), isTrue);
+      for (final bad in [
+        'riotgames.com', // needs a label before the suffix
+        'evil.com',
+        'jp1.chat.si.riotgames.com.evil.com',
+        'jp1.chat.si.riotgames.com.evil.net',
+        'evilriotgames.com',
+        'xpvp.net',
+        'jp1.chat.si.riotgames.com/x',
+        'jp1.chat.si.riotgames.com:5223',
+        '10.0.0.1',
+        '',
+      ]) {
+        expect(isAllowedChatHost(bad), isFalse, reason: bad);
+      }
+    });
+
+    test(
+      'a valid-looking host outside Riot falls back to the region table',
+      () {
+        final rejected = <String>[];
+        final e = resolveXmppEndpoint(
+          pasToken: pas,
+          clientConfig: {
+            'chat.affinities': {'jp1': 'chat.evil.com'},
+            'chat.affinity_domains': {'jp1': 'jp1'},
+            'chat.port': 443,
+          },
+          region: 'ap',
+          onRejected: rejected.add,
+        )!;
+        expect(e.host, 'jp1.chat.si.riotgames.com');
+        expect(e.domain, 'jp1');
+        expect(rejected, ['host']);
+      },
+    );
+
+    test('riotgames.com.evil.net is rejected, pvp.net is accepted', () {
+      final evil = resolveXmppEndpoint(
+        pasToken: pas,
+        clientConfig: {
+          'chat.affinities': {'jp1': 'jp1.chat.si.riotgames.com.evil.net'},
+        },
+        region: 'ap',
+      )!;
+      expect(evil.host, 'jp1.chat.si.riotgames.com');
+      final ok = resolveXmppEndpoint(
+        pasToken: pas,
+        clientConfig: {
+          'chat.affinities': {'jp1': 'chat.jp1.pvp.net'},
+        },
+        region: 'ap',
+      )!;
+      expect(ok.host, 'chat.jp1.pvp.net');
+    });
+
+    test('a hostile affinity or domain never reaches a host name', () {
+      final evilPas = fakeJwt({'affinity': 'jp1.evil.com/x', 'sub': me});
+      final rejected = <String>[];
+      final e = resolveXmppEndpoint(
+        pasToken: evilPas,
+        clientConfig: null,
+        region: 'ap',
+        onRejected: rejected.add,
+      )!;
+      expect(e.host, 'jp1.chat.si.riotgames.com');
+      expect(e.affinity, isNull);
+      expect(rejected, contains('affinity'));
+      // Without a region there is nothing safe to fall back to.
+      expect(
+        resolveXmppEndpoint(pasToken: evilPas, clientConfig: null),
+        isNull,
+      );
+
+      final badDomain = resolveXmppEndpoint(
+        pasToken: pas,
+        clientConfig: {
+          'chat.affinities': {'jp1': 'jp1.chat.si.riotgames.com'},
+          'chat.affinity_domains': {'jp1': 'evil.com"><x'},
+        },
+        region: 'ap',
+        onRejected: rejected.add,
+      )!;
+      expect(badDomain.domain, 'jp1');
+      expect(rejected, contains('domain'));
+    });
+
     test('rejects hostile hosts and unknown regions', () {
       final e = resolveXmppEndpoint(
         pasToken: pas,

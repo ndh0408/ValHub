@@ -50,12 +50,14 @@ final xmppConnectorProvider = Provider<XmppConnector>(
 );
 
 /// Tokens + endpoint for the chat (session manager, A-7, A-8).
-final xmppCredentialSourceProvider = Provider<XmppCredentialSource>(
-  (ref) => RiotXmppCredentialSource(
+final xmppCredentialSourceProvider = Provider<XmppCredentialSource>((ref) {
+  final log = ref.watch(sessionLogProvider);
+  return RiotXmppCredentialSource(
     sessions: ref.watch(sessionManagerProvider),
     api: ref.watch(pvpApiProvider),
-  ),
-);
+    onLog: (event, detail) => log.add(event, detail: detail),
+  );
+});
 
 /// Riot chat of the **active** account; `null` when nobody is signed in.
 ///

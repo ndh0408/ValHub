@@ -20,6 +20,9 @@ abstract final class PrefKeys {
   static const installMarker = 'app.installed';
   static const clientVersion = 'app.clientVersion';
   static const remoteConfig = 'app.remoteConfig';
+
+  /// The last remote-config copy that loaded fine (AR-010).
+  static const remoteConfigLastGood = 'app.remoteConfigLastGood';
   static const appSettings = 'settings.app';
 
   /// Set once the single wishlist-alert switch was split per account.

@@ -93,9 +93,18 @@ abstract final class AppConstants {
   static const statusUrlTemplate =
       'https://valorant.secure.dyn.riotcdn.net/channels/public/x/status/{region}.json';
 
-  /// ValVN community server (docs/community-api.md). Overridden by the
-  /// remote-config key `communityBaseUrl`.
+  /// ValVN community server (docs/community-api.md). Fixed at compile time:
+  /// this is the only host that ever receives the Riot access token
+  /// (`POST /v1/auth/riot`), so remote config cannot replace it (AR-009).
   static const communityBaseUrl = 'https://val.gianguyen.cloud';
+
+  /// Hosts allowed to receive the Riot access token. Adding a host is a code
+  /// change (and a privacy-policy change), never a config change.
+  static const communityHosts = {'val.gianguyen.cloud'};
+
+  /// Whether [host] may receive the Riot access token.
+  static bool isCommunityHost(String host) =>
+      communityHosts.contains(host.trim().toLowerCase());
 
   /// Optional remote config URL (static JSON, no user data). Empty = disabled.
   static const remoteConfigUrl = '';

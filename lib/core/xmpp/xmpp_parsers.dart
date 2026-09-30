@@ -379,6 +379,21 @@ const kChatFallbackHosts = <String, String>{
 
 final _hostPattern = RegExp(r'^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9-]+)+$');
 
+/// `jp1`, `euw1`, `na2`: an affinity / XMPP domain prefix.
+final _labelPattern = RegExp(r'^[a-z0-9]([a-z0-9-]{0,30}[a-z0-9])?$');
+
+/// Domains the chat client may send its tokens to (SASL sends the access, PAS
+/// and entitlements tokens): Riot's chat hosts live under these (AR-023).
+const kChatHostSuffixes = ['.riotgames.com', '.pvp.net'];
+
+/// Whether [host] is a syntactically valid host under a Riot chat domain
+/// (`*.riotgames.com`, `*.pvp.net`). `riotgames.com.evil.net` is not.
+bool isAllowedChatHost(String host) {
+  final h = host.toLowerCase();
+  return _hostPattern.hasMatch(h) &&
+      kChatHostSuffixes.any((suffix) => h.endsWith(suffix));
+}
+
 Object? _configValue(JsonMap config, String group, String key) =>
     config['$group.$key'] ?? asMap(config[group])?[key];
 
@@ -390,9 +405,14 @@ XmppEndpoint? resolveXmppEndpoint({
   required String? pasToken,
   required Object? clientConfig,
   String? region,
+  void Function(String reason)? onRejected,
 }) {
-  final affinity = asNonEmptyString(decodeJwtPayload(pasToken)?['affinity'])
+  var affinity = asNonEmptyString(decodeJwtPayload(pasToken)?['affinity'])
       ?.toLowerCase();
+  if (affinity != null && !_labelPattern.hasMatch(affinity)) {
+    onRejected?.call('affinity');
+    affinity = null;
+  }
   final config = asMap(clientConfig) ?? const <String, Object?>{};
   final hosts = asMap(_configValue(config, 'chat', 'affinities'));
   final domains = asMap(_configValue(config, 'chat', 'affinity_domains'));
@@ -401,10 +421,19 @@ XmppEndpoint? resolveXmppEndpoint({
   String? host = affinity == null
       ? null
       : asNonEmptyString(hosts?[affinity])?.toLowerCase();
-  if (host != null && !_hostPattern.hasMatch(host)) host = null;
+  if (host != null && !isAllowedChatHost(host)) {
+    // A host outside Riot's chat domains would receive three tokens: use the
+    // region table instead.
+    onRejected?.call('host');
+    host = null;
+  }
   String? domain = affinity == null
       ? null
       : asNonEmptyString(domains?[affinity])?.toLowerCase();
+  if (domain != null && !_labelPattern.hasMatch(domain)) {
+    onRejected?.call('domain');
+    domain = null;
+  }
 
   if (host == null) {
     final prefix = kChatFallbackHosts[region?.toLowerCase()];
@@ -413,7 +442,7 @@ XmppEndpoint? resolveXmppEndpoint({
     domain ??= affinity ?? prefix;
   }
   domain ??= affinity ?? host.split('.').first;
-  if (!_hostPattern.hasMatch(host)) return null;
+  if (!isAllowedChatHost(host)) return null;
   return XmppEndpoint(
     host: host,
     domain: domain,
