@@ -13,8 +13,8 @@
         "type": "String"
       }
     },
-    "x-example": "Xin chào, Nguyễn Văn A!",
-    "x-context": "smoke/test"
+    "x-context": "smoke/test",
+    "x-example": "Xin chào, Nguyễn Văn A!"
   },
   "smokeCount": "{n, plural, other{{n} mục}}",
   "@smokeCount": {
@@ -24,7 +24,7 @@
         "type": "int"
       }
     },
-    "x-example": "5 mục",
-    "x-context": "smoke/test"
+    "x-context": "smoke/test",
+    "x-example": "5 mục"
   }
 }
