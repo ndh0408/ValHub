@@ -42,8 +42,13 @@ enum AccountActivity {
     final connection = asNonEmptyString(body['cxnState'])?.toUpperCase();
     if (connection != null && connection != 'CONNECTED') return offline;
     if (asBool(body['shouldForceInvalidate']) == true) return offline;
+    // `expiredTime` may be "0", 0 or "0001-01-01T00:00:00Z" on a live session
+    // (unset): only a real timestamp (VALORANT launched in 2020) that already
+    // passed proves the session is dead.
     final expires = asDateTime(body['expiredTime']);
-    if (expires != null && !expires.isAfter(now ?? DateTime.now())) {
+    if (expires != null &&
+        expires.year >= 2020 &&
+        !expires.isAfter(now ?? DateTime.now())) {
       return offline;
     }
     final loop = asNonEmptyString(body['loopState']);

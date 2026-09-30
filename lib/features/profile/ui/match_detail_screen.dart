@@ -171,15 +171,19 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
               padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
               child: GroupedSection(
                 children: [
-                  GroupedRow(
-                    icon: Icons.timeline_rounded,
-                    title: ProfileStrings.roundTimeline,
-                    trailing: Icon(
-                      _roundsExpanded ? Icons.expand_less : Icons.expand_more,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  // Screen readers announce "expanded / collapsed".
+                  Semantics(
+                    expanded: _roundsExpanded,
+                    child: GroupedRow(
+                      icon: Icons.timeline_rounded,
+                      title: ProfileStrings.roundTimeline,
+                      trailing: Icon(
+                        _roundsExpanded ? Icons.expand_less : Icons.expand_more,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      onTap: () =>
+                          setState(() => _roundsExpanded = !_roundsExpanded),
                     ),
-                    onTap: () =>
-                        setState(() => _roundsExpanded = !_roundsExpanded),
                   ),
                 ],
               ),

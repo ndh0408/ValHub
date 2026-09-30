@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart' show ThemeMode;
 
+import '../accounts/account.dart';
 import '../storage/prefs.dart';
 import '../util/json.dart';
 
@@ -181,6 +182,35 @@ class AppSettings {
 /// Loads [AppSettings] from prefs (also usable from background isolates).
 AppSettings readAppSettings(Prefs prefs) =>
     AppSettings.fromJson(prefs.getJson(PrefKeys.appSettings));
+
+/// One-time upgrade of the single "wishlist alerts" switch.
+///
+/// Before the per-account switches, one shared switch covered every account.
+/// Now each existing account gets an explicit copy of that choice and the
+/// shared switch is cleared, so an account added later starts with alerts
+/// OFF (opt-in) instead of silently inheriting an old "on". Runs once (guarded
+/// by [PrefKeys.wishlistPerAccountMigrated]); safe to call on every start.
+Future<void> migrateWishlistNotificationsPerAccount(Prefs prefs) async {
+  if (prefs.getBool(PrefKeys.wishlistPerAccountMigrated) ?? false) return;
+  final settings = readAppSettings(prefs);
+  if (settings.wishlistNotifications) {
+    final choices = {...settings.wishlistNotificationsByAccount};
+    for (final raw in asList(prefs.getJson(PrefKeys.accounts))) {
+      final puuid = Account.fromJson(raw)?.puuid;
+      if (puuid != null) choices.putIfAbsent(puuid, () => true);
+    }
+    await prefs.setJson(
+      PrefKeys.appSettings,
+      settings
+          .copyWith(
+            wishlistNotifications: false,
+            wishlistNotificationsByAccount: choices,
+          )
+          .toJson(),
+    );
+  }
+  await prefs.setBool(PrefKeys.wishlistPerAccountMigrated, true);
+}
 
 /// Persisted app settings.
 final appSettingsProvider = NotifierProvider<AppSettingsNotifier, AppSettings>(

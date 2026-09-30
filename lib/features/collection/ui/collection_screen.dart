@@ -26,6 +26,7 @@ import '../collection_routes.dart';
 import '../collection_strings.dart';
 import '../data/buddy_options.dart';
 import '../data/collection_items.dart';
+import '../data/hub_art.dart';
 import '../data/loadout_view.dart';
 import '../providers/collection_providers.dart';
 import 'browse_collection_screen.dart';
@@ -243,10 +244,10 @@ class _LoadoutSection extends ConsumerWidget {
     final cardArt = identity?.playerCardId == null
         ? null
         : db.card(identity!.playerCardId!)?.smallArt;
-    final equippedGun = snapshot?.loadout.guns.firstOrNull;
-    final weaponArt = equippedGun == null
-        ? null
-        : gunRender(equippedGun, db, weapon: db.weapon(equippedGun.weaponId));
+    final weaponArt = firstImage(
+      snapshot?.loadout.guns ?? const <GunLoadout>[],
+      (g) => gunRender(g, db, weapon: db.weapon(g.weaponId)),
+    );
     void go(String route) => unawaited(context.push(route));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -256,7 +257,7 @@ class _LoadoutSection extends ConsumerWidget {
           children: [
             HubRow(
               icon: Icons.flag_outlined,
-              leading: cardArt == null ? null : HubArtwork(cardArt),
+              image: cardArt,
               title: CollectionStrings.playerCardTitle,
               value: cardName,
               onTap: () => go(CollectionRoutes.card),
@@ -269,7 +270,7 @@ class _LoadoutSection extends ConsumerWidget {
             ),
             HubRow(
               icon: Icons.gps_fixed,
-              leading: weaponArt == null ? null : HubArtwork(weaponArt),
+              image: weaponArt,
               title: CollectionStrings.rowWeapons,
               onTap: () => go(CollectionRoutes.weapons),
             ),
@@ -408,7 +409,7 @@ class _BrowseSection extends ConsumerWidget {
       String? image,
     }) => HubRow(
       icon: icon,
-      leading: image == null ? null : HubArtwork(image),
+      image: image,
       title: type.label,
       value: value,
       onTap: () => unawaited(context.push(CollectionRoutes.browse(type))),
@@ -423,7 +424,9 @@ class _BrowseSection extends ConsumerWidget {
               CollectionBrowseType.skin,
               Icons.bolt_outlined,
               count((o) => o.ownedCollectibleSkins.length),
-              image: owned?.ownedCollectibleSkins.firstOrNull?.image,
+              image: owned == null
+                  ? null
+                  : showcaseSkinImage(owned.ownedCollectibleSkins, db),
             ),
             row(
               CollectionBrowseType.buddy,
@@ -431,11 +434,10 @@ class _BrowseSection extends ConsumerWidget {
               count((o) => buddyOptions(o, db, snapshot?.loadout).length),
               image: owned == null
                   ? null
-                  : buddyOptions(
-                      owned,
-                      db,
-                      snapshot?.loadout,
-                    ).firstOrNull?.buddy.image,
+                  : firstImage(
+                      buddyOptions(owned, db, snapshot?.loadout),
+                      (o) => o.buddy.image,
+                    ),
             ),
             row(
               CollectionBrowseType.spray,
@@ -443,7 +445,7 @@ class _BrowseSection extends ConsumerWidget {
               count((o) => ownedSprays(o, db).length),
               image: owned == null
                   ? null
-                  : ownedSprays(owned, db).firstOrNull?.image,
+                  : firstImage(ownedSprays(owned, db), (x) => x.image),
             ),
             row(
               CollectionBrowseType.card,
@@ -451,7 +453,7 @@ class _BrowseSection extends ConsumerWidget {
               count((o) => ownedCards(o, db).length),
               image: owned == null
                   ? null
-                  : ownedCards(owned, db).firstOrNull?.smallArt,
+                  : firstImage(ownedCards(owned, db), (x) => x.smallArt),
             ),
             row(
               CollectionBrowseType.title,
@@ -464,7 +466,7 @@ class _BrowseSection extends ConsumerWidget {
               count((o) => ownedFlex(o, db).length),
               image: owned == null
                   ? null
-                  : ownedFlex(owned, db).firstOrNull?.displayIcon,
+                  : firstImage(ownedFlex(owned, db), (x) => x.displayIcon),
             ),
             HubRow(
               icon: Icons.favorite_border,

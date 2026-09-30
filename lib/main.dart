@@ -10,6 +10,7 @@ import 'core/l10n/locale.dart';
 import 'core/logging/session_log.dart';
 import 'core/network/retry_policy.dart';
 import 'core/notifications/notification_service.dart';
+import 'core/settings/app_settings.dart';
 import 'core/storage/prefs.dart';
 import 'core/storage/secure_store.dart';
 
@@ -21,6 +22,7 @@ Future<void> main() async {
   final prefs = await Prefs.create();
   final secureStore = FlutterSecureStore();
   await _wipeSecretsAfterReinstall(prefs, secureStore);
+  await migrateWishlistNotificationsPerAccount(prefs);
 
   final remoteLoader = RemoteConfigLoader(prefs);
   final remoteConfig = await remoteLoader.load();

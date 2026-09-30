@@ -22,6 +22,9 @@ abstract final class PrefKeys {
   static const remoteConfig = 'app.remoteConfig';
   static const appSettings = 'settings.app';
 
+  /// Set once the single wishlist-alert switch was split per account.
+  static const wishlistPerAccountMigrated = 'settings.wishlistPerAccountV1';
+
   /// The user's own VP pack price (`VpPriceOverride`).
   static const vpPriceOverride = 'settings.vpPrice';
   static const notificationPrimingShown = 'app.notificationPrimingShown';

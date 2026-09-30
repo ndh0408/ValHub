@@ -96,6 +96,29 @@ void main() {
       );
     });
 
+    test('an unset expiredTime on a live session never means offline', () {
+      final now = DateTime.utc(2026, 9, 29, 12);
+      for (final unset in <Object?>[
+        '0',
+        0,
+        '0001-01-01T00:00:00Z',
+        '1970-01-01T00:00:00Z',
+        '',
+        null,
+      ]) {
+        expect(
+          AccountActivity.fromSession({
+            'loopState': 'MENUS',
+            'cxnState': 'CONNECTED',
+            'shouldForceInvalidate': false,
+            'expiredTime': unset,
+          }, now: now),
+          AccountActivity.online,
+          reason: 'expiredTime=$unset',
+        );
+      }
+    });
+
     test('isOnline', () {
       expect(AccountActivity.online.isOnline, isTrue);
       expect(AccountActivity.agentSelect.isOnline, isTrue);

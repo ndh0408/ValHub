@@ -407,7 +407,7 @@ class HubIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    width: 28,
+    width: kHubLeadingWidth,
     child: Icon(
       icon,
       size: 22,
@@ -420,17 +420,28 @@ class HubIcon extends StatelessWidget {
   );
 }
 
+/// Width of the leading slot of a [HubRow] (icon or artwork), so every row's
+/// title starts at the same x. Wide enough for a weapon render.
+const double kHubLeadingWidth = 44;
+
 /// Small artwork from the game content, used in collection navigation rows.
+/// Falls back to the row's outline [icon] when the image cannot load.
 class HubArtwork extends StatelessWidget {
-  const HubArtwork(this.image, {super.key});
+  const HubArtwork(this.image, {super.key, required this.icon});
 
   final String image;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    width: 28,
-    height: 28,
-    child: NetImage(image, fit: BoxFit.contain, showSkeleton: false),
+    width: kHubLeadingWidth,
+    height: 32,
+    child: NetImage(
+      image,
+      fit: BoxFit.contain,
+      showSkeleton: false,
+      error: HubIcon(icon),
+    ),
   );
 }
 
@@ -444,6 +455,7 @@ class HubRow extends StatelessWidget {
     this.value,
     this.onTap,
     this.leading,
+    this.image,
     this.trailing,
   });
 
@@ -452,8 +464,12 @@ class HubRow extends StatelessWidget {
   final String? value;
   final VoidCallback? onTap;
 
-  /// Replaces the icon (e.g. an image).
+  /// Replaces the icon (e.g. a custom widget).
   final Widget? leading;
+
+  /// Game artwork shown instead of the icon (the icon is the fallback when
+  /// the image is missing or fails to load).
+  final String? image;
 
   /// Replaces the "›" (e.g. a button).
   final Widget? trailing;
@@ -470,7 +486,10 @@ class HubRow extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
           child: Row(
             children: [
-              leading ?? HubIcon(icon),
+              leading ??
+                  (image == null
+                      ? HubIcon(icon)
+                      : HubArtwork(image!, icon: icon)),
               const SizedBox(width: 12),
               Expanded(
                 child: LayoutBuilder(
