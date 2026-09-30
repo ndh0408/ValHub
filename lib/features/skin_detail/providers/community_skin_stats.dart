@@ -10,6 +10,7 @@ import '../../community/providers/community_providers.dart';
 /// Anonymous ratings of visible cards: coalesced in batches of at most 50,
 /// retained for 30 minutes, bounded to 500 skins. No Riot account is sent.
 class CommunitySkinStats {
+  static const freshness = Duration(minutes: 30);
   CommunitySkinStats(this.api, this.clock);
   final CommunityApi api;
   final Clock clock;
@@ -23,15 +24,26 @@ class CommunitySkinStats {
     if (_disposed) return Future.value();
     final id = skinUuid.trim().toLowerCase();
     final cached = _cache[id];
-    if (cached != null && clock.now().difference(cached.at) < const Duration(minutes: 30)) {
+    if (cached != null && clock.now().difference(cached.at) < freshness) {
       return Future.value(cached.stats);
     }
     if (_inFlight[id] case final future?) return future;
     final completion = Completer<SkinStats?>();
     _pending[id] = completion;
     _inFlight[id] = completion.future;
-    _timer ??= Timer(const Duration(milliseconds: 20), () => unawaited(_flush()));
+    _timer ??= Timer(
+      const Duration(milliseconds: 20),
+      () => unawaited(_flush()),
+    );
     return completion.future;
+  }
+
+  /// Time left from the original fetch, including a cached empty response.
+  Duration? expiresIn(String skinUuid) {
+    final cached = _cache[skinUuid.trim().toLowerCase()];
+    if (cached == null) return null;
+    final left = freshness - clock.now().difference(cached.at);
+    return left.isNegative ? Duration.zero : left;
   }
 
   Future<void> _flush() async {
@@ -57,7 +69,7 @@ class CommunitySkinStats {
             _cache.remove(_cache.keys.first);
           }
         }
-        _inFlight.remove(id);
+        unawaited(_inFlight.remove(id));
         if (!pending[id]!.isCompleted) pending[id]!.complete(stats[id]);
       }
     }
@@ -75,12 +87,25 @@ class CommunitySkinStats {
 }
 
 final communitySkinStatsStoreProvider = Provider<CommunitySkinStats>((ref) {
-  final store = CommunitySkinStats(ref.watch(communityApiProvider), ref.watch(clockProvider));
+  final store = CommunitySkinStats(
+    ref.watch(communityApiProvider),
+    ref.watch(clockProvider),
+  );
   ref.onDispose(store.dispose);
   return store;
 });
 
-final communitySkinStatsProvider = FutureProvider.autoDispose.family<SkinStats?, String>((ref, id) {
-  if (!ref.watch(communityEnabledProvider)) return null;
-  return ref.watch(communitySkinStatsStoreProvider).get(id);
-});
+final communitySkinStatsProvider = FutureProvider.autoDispose
+    .family<SkinStats?, String>((ref, id) async {
+      if (!ref.watch(communityEnabledProvider)) return null;
+      final store = ref.watch(communitySkinStatsStoreProvider);
+      final stats = await store.get(id);
+      if (ref.mounted) {
+        final timer = Timer(
+          store.expiresIn(id) ?? CommunitySkinStats.freshness,
+          ref.invalidateSelf,
+        );
+        ref.onDispose(timer.cancel);
+      }
+      return stats;
+    });

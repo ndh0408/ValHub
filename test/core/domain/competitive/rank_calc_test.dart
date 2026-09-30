@@ -266,7 +266,10 @@ void main() {
         updateId(5),
       ]);
       expect(today.netRr, 54);
-      expect((today.wins, today.losses, today.draws), (2, 0, 1));
+      expect(
+        (today.wins, today.losses, today.draws, today.unknown),
+        (2, 0, 0, 1),
+      );
       expect((today.startTier, today.startRr), (17, 52));
       expect((today.endTier, today.endRr), (18, 6));
       expect(today.endSeasonId, actV);

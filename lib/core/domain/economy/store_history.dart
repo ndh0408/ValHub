@@ -93,9 +93,8 @@ class StoreHistoryDay {
     this.nightMarket = const [],
   });
 
-  /// Identity of the rotation: the sorted daily skin uuids (a rotation seen
-  /// twice is one day, whatever hour the shard resets at), or the UTC date
-  /// for a store without a daily shop.
+  /// UTC calendar day. Repeated fetches share an entry; identical offers on
+  /// different days remain separate observations.
   final String key;
 
   /// First and last time (UTC) a fetch showed this rotation.
@@ -136,7 +135,7 @@ class StoreHistoryDay {
     );
   }
 
-  /// `a,b,c,d` of the sorted daily uuids; `utc:2026-09-28` without any.
+  /// `utc:2026-09-28`, independent of the offered skins.
   static String rotationKey(List<HistoryDailyOffer> daily, DateTime at) {
     final d = at.toUtc();
     return 'utc:${d.year}-${d.month.toString().padLeft(2, '0')}-'
@@ -145,20 +144,22 @@ class StoreHistoryDay {
 
   /// This rotation seen again at [seenAt]: the newest contents win (a Night
   /// Market may have started or been revealed since).
-  StoreHistoryDay seenAgain(StoreHistoryDay later) => StoreHistoryDay(
-    key: key,
-    firstSeen: firstSeen.isBefore(later.firstSeen)
-        ? firstSeen
-        : later.firstSeen,
-    lastSeen: lastSeen.isAfter(later.lastSeen) ? lastSeen : later.lastSeen,
-    resetsAt: later.resetsAt ?? resetsAt,
-    daily: later.daily.isEmpty ? daily : later.daily,
-    nightMarket: later.nightMarket.isEmpty && later.lastSeen.isBefore(lastSeen)
-        ? nightMarket
-        : later.nightMarket.isNotEmpty
-        ? later.nightMarket
-        : nightMarket,
-  );
+  StoreHistoryDay seenAgain(StoreHistoryDay incoming) {
+    final newer = incoming.lastSeen.isBefore(lastSeen) ? this : incoming;
+    final older = identical(newer, this) ? incoming : this;
+    return StoreHistoryDay(
+      key: key,
+      firstSeen: firstSeen.isBefore(incoming.firstSeen)
+          ? firstSeen
+          : incoming.firstSeen,
+      lastSeen: newer.lastSeen,
+      resetsAt: newer.resetsAt ?? older.resetsAt,
+      daily: newer.daily.isEmpty ? older.daily : newer.daily,
+      nightMarket: newer.nightMarket.isEmpty
+          ? older.nightMarket
+          : newer.nightMarket,
+    );
+  }
 
   bool get hasNightMarket => nightMarket.isNotEmpty;
 
@@ -188,7 +189,8 @@ class StoreHistoryDay {
 class StoreHistory {
   StoreHistory({List<StoreHistoryDay> days = const []})
     : days = List<StoreHistoryDay>.unmodifiable(
-        <StoreHistoryDay>[...days]..sort((a, b) => b.firstSeen.compareTo(a.firstSeen)),
+        <StoreHistoryDay>[...days]
+          ..sort((a, b) => b.firstSeen.compareTo(a.firstSeen)),
       );
 
   final List<StoreHistoryDay> days;

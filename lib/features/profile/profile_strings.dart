@@ -161,8 +161,8 @@ abstract final class ProfileStrings {
       'không còn trả về.';
 
   /// "4 thắng – 2 thua" (+ " – 1 hòa").
-  static String winsLosses(int w, int l, int d) =>
-      d > 0 ? '$w thắng – $l thua – $d hòa' : '$w thắng – $l thua';
+  static String winsLosses(int w, int l, int d, [int unknown = 0]) =>
+      '$w thắng – $l thua${d > 0 ? ' – $d hòa' : ''}${unknown > 0 ? ' – $unknown trận chưa rõ kết quả' : ''}';
 
   /// "Vàng 2 → Vàng 3".
   static String rankChange(String from, String to) => '$from → $to';

@@ -88,8 +88,12 @@ class DailyOfferCard extends ConsumerWidget {
                       child: OwnedBadge(),
                     ),
                   if (skin != null)
-                    PositionedDirectional(start: 12, bottom: 2,
-                      child: CommunitySkinScore(skinUuid: skin.uuid)),
+                    PositionedDirectional(
+                      start: 12,
+                      end: 12,
+                      bottom: 2,
+                      child: CommunitySkinScore(skinUuid: skin.uuid),
+                    ),
                   PositionedDirectional(
                     top: 2,
                     end: 2,

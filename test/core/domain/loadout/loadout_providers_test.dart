@@ -99,6 +99,32 @@ void main() {
       );
     });
 
+    test(
+      'login and maintenance use the saved loadout, other errors propagate',
+      () async {
+        cache.entries['acct/${Lx.puuid}/loadout'] = CachedJson(
+          loadoutJson(version: 3),
+          DateTime(2026, 9, 28),
+        );
+        for (final error in <RiotException>[
+          const NeedsLoginException(),
+          const MaintenanceException(),
+        ]) {
+          when(() => api.playerLoadout(any())).thenThrow(error);
+          final c = makeContainer();
+          final saved = await readListened(c, loadoutProvider(Lx.puuid).future);
+          expect(saved.isFromCache, isTrue);
+          expect(saved.loadout.version, 3);
+        }
+        when(() => api.playerLoadout(any()))
+            .thenThrow(const NotFoundException());
+        await expectLater(
+          readListened(makeContainer(), loadoutProvider(Lx.puuid).future),
+          throwsA(isA<NotFoundException>()),
+        );
+      },
+    );
+
     test('apply: optimistic value, then the confirmed loadout', () async {
       final c = makeContainer();
       await readListened(c, loadoutProvider(Lx.puuid).future);

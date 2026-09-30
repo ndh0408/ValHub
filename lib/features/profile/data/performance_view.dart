@@ -40,6 +40,8 @@ class PerformanceView {
     required this.bucket,
     required this.trend,
     required this.chart,
+    required this.attackQualifies,
+    required this.defenseQualifies,
   });
 
   /// Matches stored for the account, before any filter.
@@ -75,6 +77,8 @@ class PerformanceView {
   /// The trend buckets with enough matches, the newest
   /// [kPerfMaxTrendPoints], oldest first.
   final List<PerfTrendPoint> chart;
+  final bool attackQualifies;
+  final bool defenseQualifies;
 
   bool get isEmpty => ledgerCount == 0;
 
@@ -124,5 +128,11 @@ PerformanceView buildPerformanceView(
     chart: qualified.length <= kPerfMaxTrendPoints
         ? qualified
         : qualified.sublist(qualified.length - kPerfMaxTrendPoints),
+    attackQualifies:
+        lines.where((l) => l.isRoundBased && !l.attack.isEmpty).length >=
+        kPerfMinGames,
+    defenseQualifies:
+        lines.where((l) => l.isRoundBased && !l.defense.isEmpty).length >=
+        kPerfMinGames,
   );
 }

@@ -143,6 +143,21 @@ final homeFriendsSnapshotProvider =
 
 // -------------------------------------------------------------- community
 
+/// Home owns these TTLs; the shared community previews stay untouched.
+final homeLfgPreviewProvider = FutureProvider.autoDispose
+    .family<List<LfgPost>, String>((ref, puuid) async {
+      final rows = await ref.watch(matchingLfgPreviewProvider(puuid).future);
+      cacheFor(ref, const Duration(minutes: 3));
+      return rows;
+    });
+
+final homeTrendingPreviewProvider = FutureProvider.autoDispose
+    .family<List<TopSkin>, TopPeriod>((ref, period) async {
+      final rows = await ref.watch(trendingSkinsProvider(period).future);
+      cacheFor(ref, const Duration(minutes: 30));
+      return rows;
+    });
+
 /// LFG posts that fit the viewer's rank (only when the account already
 /// agreed to the community) and this week's hot skins. Read-only: Home never
 /// signs in to the community server.
@@ -151,8 +166,8 @@ final homeCommunitySnapshotProvider = Provider.autoDispose
       if (!ref.watch(communityEnabledProvider)) {
         return const AsyncData<HomeCommunitySnapshot?>(null);
       }
-      final lfg = ref.watch(matchingLfgPreviewProvider(puuid));
-      final trending = ref.watch(trendingSkinsProvider(TopPeriod.week));
+      final lfg = ref.watch(homeLfgPreviewProvider(puuid));
+      final trending = ref.watch(homeTrendingPreviewProvider(TopPeriod.week));
       final wishlist = ref.watch(wishlistProvider(puuid));
       if (!lfg.hasValue && !trending.hasValue) {
         return lfg.hasError && trending.hasError

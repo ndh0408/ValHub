@@ -120,8 +120,8 @@ typedef _Outcome = ({RiotName? name, Object? error, StackTrace? stack});
 ///   network call carries at most 50 PUUIDs (U15) and calls run one after
 ///   another per viewer to stay under Cloudflare's burst limits.
 /// - Concurrent requests for the same PUUID share one call.
-/// - Results are cached in memory and in prefs (`f.competitive.names`,
-///   bounded to [maxEntries]); entries younger than [freshFor] are served
+/// - Results are cached in memory and `cache/names` for at most [retention],
+///   bounded to [maxEntries]; entries younger than [freshFor] are served
 ///   without a call, older ones are refreshed but still returned if the
 ///   refresh fails.
 class NameResolver {
@@ -156,6 +156,7 @@ class NameResolver {
   Timer? _persistTimer;
   Future<void> _writes = Future.value();
   bool _disposed = false;
+  int _generation = 0;
 
   static String _key(String puuid) => puuid.trim().toLowerCase();
 
@@ -170,7 +171,7 @@ class NameResolver {
   /// XMPP roster, the signed-in account's own Riot ID).
   void remember(String puuid, RiotName name) {
     final id = _key(puuid);
-    if (id.isEmpty || name.isBlank) return;
+    if (_disposed || id.isEmpty || name.isBlank) return;
     unawaited(_load());
     final previous = _cache[id]?.name;
     _cache[id] = _Entry(name, _clock.now());
@@ -186,6 +187,7 @@ class NameResolver {
     bool refresh = false,
   }) async {
     await _load();
+    if (_disposed) return const {};
     _prune();
     final now = _clock.now();
     final out = <String, RiotName>{};
@@ -271,6 +273,7 @@ class NameResolver {
     String viewer,
     Map<String, Completer<RiotName?>> byId,
   ) async {
+    final generation = _generation;
     final ids = byId.keys.toList();
     for (var i = 0; i < ids.length; i += batchSize) {
       final chunk = ids.sublist(
@@ -278,7 +281,19 @@ class NameResolver {
         i + batchSize > ids.length ? ids.length : i + batchSize,
       );
       try {
+        if (_disposed || generation != _generation) {
+          for (final id in chunk) {
+            if (!byId[id]!.isCompleted) byId[id]!.complete(null);
+          }
+          continue;
+        }
         final rows = await _api.names(viewer, chunk);
+        if (_disposed || generation != _generation) {
+          for (final id in chunk) {
+            if (!byId[id]!.isCompleted) byId[id]!.complete(null);
+          }
+          continue;
+        }
         final found = <String, RiotName>{};
         for (final row in rows) {
           final subject = lowerUuid(row['Subject']);
@@ -294,6 +309,12 @@ class NameResolver {
         }
         if (found.isNotEmpty) _persist();
       } on Object catch (e, s) {
+        if (_disposed || generation != _generation) {
+          for (final id in chunk) {
+            if (!byId[id]!.isCompleted) byId[id]!.complete(null);
+          }
+          continue;
+        }
         _forget(chunk);
         for (final id in chunk) {
           byId[id]?.completeError(e, s);
@@ -310,10 +331,11 @@ class NameResolver {
   Future<void> _load() => _loading ??= _loadFile();
 
   Future<void> _loadFile() async {
+    final generation = _generation;
     final legacy = asMap(_prefs?.getJson(prefsKey));
     final stored = asMap((await _files?.read(fileKey))?.data) ?? legacy;
     if (_prefs != null) await _prefs.remove(prefsKey);
-    if (stored == null) return;
+    if (stored == null || _disposed || generation != _generation) return;
     for (final MapEntry(:key, :value) in stored.entries) {
       final m = asMap(value);
       final name = RiotName.of(asString(m?['n']), asString(m?['t']));
@@ -326,7 +348,7 @@ class NameResolver {
       );
     }
     _prune();
-    if (legacy != null) _persist();
+    _persist(); // expires old file entries as well as migrating preferences
   }
 
   void _prune() {
@@ -374,6 +396,16 @@ class NameResolver {
   }
 
   Future<void> clear() async {
+    _generation++;
+    _timer?.cancel();
+    _timer = null;
+    for (final byId in _pending.values) {
+      for (final completion in byId.values) {
+        if (!completion.isCompleted) completion.complete(null);
+      }
+    }
+    _pending.clear();
+    _inFlight.clear();
     await _load();
     _persistTimer?.cancel();
     _cache.clear();

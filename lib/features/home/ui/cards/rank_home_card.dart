@@ -236,7 +236,12 @@ class _FormRow extends StatelessWidget {
           : net < 0
           ? colors.loss
           : colors.draw;
-      final record = HomeStrings.winsLosses(day.wins, day.losses, day.draws);
+      final record = HomeStrings.winsLosses(
+        day.wins,
+        day.losses,
+        day.draws,
+        day.unknown,
+      );
       final value = formatSignedRr(net);
       final label = snap.today != null
           ? HomeStrings.rrToday(value)

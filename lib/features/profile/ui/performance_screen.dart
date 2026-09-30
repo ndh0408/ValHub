@@ -49,117 +49,123 @@ class _PerformanceScreenState extends ConsumerState<PerformanceScreen> {
           );
     return SubPageScaffold(
       title: ProfileStrings.performanceTitle,
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (id == null)
-              const Text(CommonStrings.errorNoAccount)
-            else if (view == null)
-              const Center(child: CircularProgressIndicator())
-            else ...[
-              Text(
-                view.oldest == null
-                    ? ProfileStrings.performanceEmpty
-                    : ProfileStrings.performanceSince(
-                        formatDate(view.oldest!.toLocal()),
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (id == null)
+                  const Text(CommonStrings.errorNoAccount)
+                else if (view == null)
+                  const Center(child: CircularProgressIndicator())
+                else ...[
+                  Text(
+                    view.oldest == null
+                        ? ProfileStrings.performanceEmpty
+                        : ProfileStrings.performanceSince(
+                            formatDate(view.oldest!.toLocal()),
+                          ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      for (final period in PerfPeriod.values)
+                        ChoiceChip(
+                          label: Text(ProfileStrings.performancePeriod(period)),
+                          selected: _period == period,
+                          onSelected: (_) => setState(() => _period = period),
+                        ),
+                    ],
+                  ),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      ChoiceChip(
+                        label: const Text(ProfileStrings.filterAll),
+                        selected: _queue == null,
+                        onSelected: (_) => setState(() => _queue = null),
                       ),
-              ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                children: [
-                  for (final period in PerfPeriod.values)
-                    ChoiceChip(
-                      label: Text(ProfileStrings.performancePeriod(period)),
-                      selected: _period == period,
-                      onSelected: (_) => setState(() => _period = period),
-                    ),
-                ],
-              ),
-              Wrap(
-                spacing: 8,
-                children: [
-                  ChoiceChip(
-                    label: const Text(ProfileStrings.filterAll),
-                    selected: _queue == null,
-                    onSelected: (_) => setState(() => _queue = null),
+                      for (final queue in view.queues)
+                        ChoiceChip(
+                          label: Text(db.queueName(queue)),
+                          selected: _queue == queue,
+                          onSelected: (_) => setState(() => _queue = queue),
+                        ),
+                    ],
                   ),
-                  for (final queue in view.queues)
-                    ChoiceChip(
-                      label: Text(db.queueName(queue)),
-                      selected: _queue == queue,
-                      onSelected: (_) => setState(() => _queue = queue),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              _Summary(stats: view.overall),
-              const SizedBox(height: 12),
-              Text(ProfileStrings.performanceSample),
-              Wrap(
-                spacing: 8,
-                children: [
-                  for (final segment in PerfSegment.values)
-                    ChoiceChip(
-                      label: Text(ProfileStrings.performanceSegment(segment)),
-                      selected: _segment == segment,
-                      onSelected: (_) => setState(() => _segment = segment),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              if (view.filteredOut)
-                const Text(ProfileStrings.performanceNoMatches)
-              else if (_segment == PerfSegment.sides) ...[
-                Text(
-                  ProfileStrings.performanceSideCoverage(
-                    view.roundsWithSide,
-                    view.roundsTotal,
+                  const SizedBox(height: 12),
+                  _Summary(stats: view.overall),
+                  const SizedBox(height: 12),
+                  Text(ProfileStrings.performanceSample),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      for (final segment in PerfSegment.values)
+                        ChoiceChip(
+                          label: Text(
+                            ProfileStrings.performanceSegment(segment),
+                          ),
+                          selected: _segment == segment,
+                          onSelected: (_) => setState(() => _segment = segment),
+                        ),
+                    ],
                   ),
-                ),
-                _Side(
-                  title: ProfileStrings.performanceAttack,
-                  stats: view.overall.attack,
-                  qualifies: view.overall.roundGames >= kPerfMinGames,
-                ),
-                _Side(
-                  title: ProfileStrings.performanceDefense,
-                  stats: view.overall.defense,
-                  qualifies: view.overall.roundGames >= kPerfMinGames,
-                ),
-              ] else if (_segment == PerfSegment.trend) ...[
-                if (!view.hasTrend)
-                  const Text(ProfileStrings.performanceTrendEmpty),
-                for (final point in view.trend) ...[
-                  Text(formatDate(point.start)),
-                  _Summary(stats: point.aggregate),
                   const SizedBox(height: 12),
-                ],
-              ] else ...[
-                for (final group in switch (_segment) {
-                  PerfSegment.agents => view.byAgent,
-                  PerfSegment.maps => view.byMap,
-                  _ => view.byQueue,
-                }) ...[
-                  Text(switch (_segment) {
-                    PerfSegment.agents =>
-                      db.agent(group.key)?.displayName ??
-                          CommonStrings.unknownItem,
-                    PerfSegment.maps =>
-                      db.mapByUrl(group.key)?.displayName ??
-                          CommonStrings.unknownItem,
-                    _ => db.queueName(group.key),
-                  }, style: Theme.of(context).textTheme.titleMedium),
-                  _Summary(stats: group.aggregate),
-                  const SizedBox(height: 12),
+                  if (view.filteredOut)
+                    const Text(ProfileStrings.performanceNoMatches)
+                  else if (_segment == PerfSegment.sides) ...[
+                    Text(
+                      ProfileStrings.performanceSideCoverage(
+                        view.roundsWithSide,
+                        view.roundsTotal,
+                      ),
+                    ),
+                    _Side(
+                      title: ProfileStrings.performanceAttack,
+                      stats: view.overall.attack,
+                      qualifies: view.attackQualifies,
+                    ),
+                    _Side(
+                      title: ProfileStrings.performanceDefense,
+                      stats: view.overall.defense,
+                      qualifies: view.defenseQualifies,
+                    ),
+                  ] else if (_segment == PerfSegment.trend) ...[
+                    if (!view.hasTrend)
+                      const Text(ProfileStrings.performanceTrendEmpty),
+                    for (final point in view.trend) ...[
+                      Text(formatDate(point.start)),
+                      _Summary(stats: point.aggregate),
+                      const SizedBox(height: 12),
+                    ],
+                  ] else ...[
+                    for (final group in switch (_segment) {
+                      PerfSegment.agents => view.byAgent,
+                      PerfSegment.maps => view.byMap,
+                      _ => view.byQueue,
+                    }) ...[
+                      Text(switch (_segment) {
+                        PerfSegment.agents =>
+                          db.agent(group.key)?.displayName ??
+                              CommonStrings.unknownItem,
+                        PerfSegment.maps =>
+                          db.mapByUrl(group.key)?.displayName ??
+                              CommonStrings.unknownItem,
+                        _ => db.queueName(group.key),
+                      }, style: Theme.of(context).textTheme.titleMedium),
+                      _Summary(stats: group.aggregate),
+                      const SizedBox(height: 12),
+                    ],
+                  ],
                 ],
               ],
-            ],
-          ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

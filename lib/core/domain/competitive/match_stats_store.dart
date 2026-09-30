@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../storage/json_file_cache.dart';
+import '../../accounts/account_providers.dart';
 import '../../util/json.dart';
 import 'match_models.dart' show MatchModeKind, MatchOutcome;
 import 'performance.dart';
@@ -371,6 +372,7 @@ final matchStatsStoreProvider = Provider<MatchStatsStore>((ref) {
 final matchLedgerProvider = FutureProvider.autoDispose
     .family<MatchLedger, String>((ref, puuid) {
       final id = puuid.trim().toLowerCase();
+      if (ref.watch(accountProvider(id)) == null) return MatchLedger(puuid: id);
       final store = ref.watch(matchStatsStoreProvider);
       final sub = store.changes
           .where((changed) => changed == id)

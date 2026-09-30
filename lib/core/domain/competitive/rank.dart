@@ -38,7 +38,10 @@ final mmrProvider = FutureProvider.autoDispose.family<PlayerMmr, String>((
   final mmr = PlayerMmr.fromJson(await api.mmr(viewer, subject: subject));
   cacheFor(ref, const Duration(minutes: 3)); // only after a success
   final latest = mmr.latestCompetitiveUpdate;
-  if (latest != null && viewer == subject) {
+  if (latest != null &&
+      viewer == subject &&
+      ref.mounted &&
+      ref.read(accountProvider(subject)) != null) {
     unawaited(
       store.merge(subject, [latest]).then((_) {}, onError: (Object _) {}),
     );
@@ -284,6 +287,7 @@ final rrHistorySyncProvider = FutureProvider.autoDispose.family<int, String>((
           queue: queue,
         ),
       );
+      if (!ref.mounted || ref.read(accountProvider(id)) == null) return added;
       final fresh = page.matches
           .where((u) => !known.contains(u.matchId))
           .length;

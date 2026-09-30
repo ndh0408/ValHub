@@ -99,6 +99,26 @@ void main() {
     );
   });
 
+  test(
+    'needs-login and maintenance preserve the saved Battle Pass progress',
+    () async {
+      final cache = MemoryJsonCache();
+      cache.entries[contractsCacheKey(Bp.puuid)] = CachedJson(
+        contractsJson(level: 40),
+        t0,
+      );
+      for (final error in <RiotException>[
+        const NeedsLoginException(),
+        const MaintenanceException(),
+      ]) {
+        final c = await make(bpApi(contractsError: error), cache: cache);
+        final saved = await _read(c, playerContractsProvider(Bp.puuid).future);
+        expect(saved.isFromCache, isTrue);
+        expect(saved.progressFor(Bp.bpId)?.levelReached, 40);
+      }
+    },
+  );
+
   test('a successful fetch is stored for offline use', () async {
     final cache = MemoryJsonCache();
     final c = await make(bpApi(), cache: cache);

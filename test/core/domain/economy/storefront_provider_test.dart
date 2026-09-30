@@ -95,19 +95,24 @@ void main() {
       expect(c.read(observedPricesProvider), isEmpty);
     });
 
-    test('needs-login propagates (never hidden by the cache)', () async {
-      await cache.write(
-        JsonFileCache.accountKey(Fx.puuid, 'economy_storefront'),
-        economyFixture('storefront.json'),
-      );
-      when(() => api.storefront(Fx.puuid))
-          .thenThrow(const NeedsLoginException());
-      final c = container();
-      await expectLater(
-        readListened(c, storefrontProvider(Fx.puuid).future),
-        throwsA(isA<NeedsLoginException>()),
-      );
-    });
+    test(
+      'needs-login serves the saved storefront without fabricating a new day',
+      () async {
+        await cache.write(
+          JsonFileCache.accountKey(Fx.puuid, 'economy_storefront'),
+          economyFixture('storefront.json'),
+        );
+        when(() => api.storefront(Fx.puuid))
+            .thenThrow(const NeedsLoginException());
+        final c = container();
+        final saved = await readListened(
+          c,
+          storefrontProvider(Fx.puuid).future,
+        );
+        expect(saved.isFromCache, isTrue);
+        expect(saved.daily.offers, hasLength(4));
+      },
+    );
 
     testWidgets('refetches when the earliest countdown expires', (
       tester,

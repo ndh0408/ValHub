@@ -363,17 +363,24 @@ class MatchHistoryNotifier
 /// `CompetitiveStrings.matchPending`, retry later), other `RiotException`s.
 /// A failed load is never kept alive (AR-029): retrying fetches again.
 final matchDetailsProvider = FutureProvider.autoDispose
-    .family<MatchDetails, String>((ref, matchId) {
+    .family<MatchDetails, String>((ref, matchId) async {
       final viewer = ref.watch(activePuuidProvider);
       if (viewer == null) {
         throw const NeedsLoginException(reason: 'no_account');
       }
-      return ref.watch(
-        viewerMatchDetailsProvider((
-          viewer: viewer,
-          matchId: matchId.trim().toLowerCase(),
-        )).future,
-      );
+      final provider = viewerMatchDetailsProvider((
+        viewer: viewer,
+        matchId: matchId.trim().toLowerCase(),
+      ));
+      if (ref.read(provider).hasError) ref.invalidate(provider);
+      final loading = ref.keepAlive();
+      try {
+        final details = await ref.watch(provider.future);
+        cacheFor(ref, const Duration(minutes: 10));
+        return details;
+      } finally {
+        loading.close();
+      }
     });
 
 typedef ViewerMatchQuery = ({String viewer, String matchId});

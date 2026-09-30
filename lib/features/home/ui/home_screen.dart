@@ -203,6 +203,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ref.read(homeLayoutProvider).isHidden(HomeCardId.community)) {
       return;
     }
+    final box = _keys[HomeCardId.community]?.currentContext?.findRenderObject();
+    if (box is! RenderBox || !box.hasSize) return;
+    final top = box.localToGlobal(Offset.zero).dy;
+    if (top >= MediaQuery.sizeOf(context).height ||
+        top + box.size.height <= 0) {
+      return;
+    }
     ref.invalidate(matchingLfgPreviewProvider(puuid));
   }
 

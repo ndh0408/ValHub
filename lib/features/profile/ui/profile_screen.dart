@@ -158,6 +158,7 @@ class _DailyRrRow extends ConsumerWidget {
                           today.wins,
                           today.losses,
                           today.draws,
+                          today.unknown,
                         ),
                       ),
                 maxLines: 2,

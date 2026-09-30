@@ -16,9 +16,15 @@ class CommunitySkinScore extends ConsumerWidget {
     if (stats == null || (!stats.rating.hasRatings && stats.vote.votes == 0)) {
       return const SizedBox.shrink();
     }
-    return Text(SkinDetailStrings.communityScore(
-      stats.rating.hasRatings ? formatRating(stats.rating.average!) : null,
-      formatNumber(stats.rating.count), formatNumber(stats.vote.votes),
-    ), style: Theme.of(context).textTheme.labelSmall);
+    return Text(
+      SkinDetailStrings.communityScore(
+        stats.rating.hasRatings ? formatRating(stats.rating.average!) : null,
+        formatNumber(stats.rating.count),
+        formatNumber(stats.vote.votes),
+      ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: Theme.of(context).textTheme.labelSmall,
+    );
   }
 }

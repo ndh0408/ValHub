@@ -3,6 +3,7 @@
 library;
 
 import 'dart:math' as math;
+import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -783,7 +784,9 @@ final storefrontProvider = FutureProvider.autoDispose
         return storefront;
       }
       scheduleProviderRefresh(ref, storefront.nextRefreshAt(now), now: now);
-      await recordStoreHistoryFor(ref, puuid, storefront, fetched.receivedAt);
+      unawaited(
+        recordStoreHistoryFor(ref, puuid, storefront, fetched.receivedAt),
+      );
       await ref
           .read(observedPricesProvider.notifier)
           .record(storefront.observedSkinPrices());

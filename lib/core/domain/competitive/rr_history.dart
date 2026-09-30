@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../storage/json_file_cache.dart';
+import '../../storage/prefs.dart';
+import '../../accounts/account_providers.dart';
 import '../../util/json.dart';
 import 'match_models.dart' show MatchOutcome;
 import 'rank_models.dart';
@@ -39,8 +42,8 @@ class RrHistory {
 /// Persists [RrHistory] per PUUID as JSON files.
 ///
 /// Stored under `keep/<puuid>/rr_history` in its own `history` namespace, so
-/// neither "Xóa bộ nhớ đệm" nor signing out erases it (like the wishlist,
-/// VF W6); call [delete] / [clear] to erase it explicitly. Rows are
+/// "Xóa bộ nhớ đệm" leaves it intact. Account removal must call [delete]
+/// unless the user chose to keep local data (WP-CORE owns that flow). Rows are
 /// de-duplicated by `MatchID` and capped at [maxRows] (newest kept). Writes
 /// for one PUUID are serialised; storage failures degrade to in-memory data.
 class RrHistoryStore {
@@ -58,6 +61,23 @@ class RrHistoryStore {
 
   static String key(String puuid) =>
       'keep/${puuid.trim().toLowerCase()}/rr_history';
+
+  /// Remove legacy third-party files, retaining signed-in accounts and
+  /// accounts identified by their own kept preferences (wishlist/presets).
+  Future<void> pruneUnowned(Set<String> ownAccounts) async {
+    final retained = {for (final id in ownAccounts) id.trim().toLowerCase()};
+    final directory = (await _files.fileFor('keep/index')).parent;
+    if (!await directory.exists()) return;
+    await for (final entity in directory.list(followLinks: false)) {
+      if (entity is! Directory) continue;
+      final id = entity.path
+          .replaceAll('\\', '/')
+          .split('/')
+          .last
+          .toLowerCase();
+      if (!retained.contains(id)) await delete(id);
+    }
+  }
 
   /// Emits the PUUID whose history changed.
   Stream<String> get changes => _changes.stream;
@@ -158,6 +178,9 @@ class RrHistoryStore {
         }
       }
       if (!changed) return;
+      while (next.length > maxRows) {
+        next.remove(next.keys.first);
+      }
       await _save(RrHistory(puuid: id, rows: current.rows, outcomes: next));
     });
   }
@@ -277,6 +300,13 @@ class RrHistoryStore {
 /// The app-wide [RrHistoryStore] (`<appSupport>/history`).
 final rrHistoryStoreProvider = Provider<RrHistoryStore>((ref) {
   final store = RrHistoryStore(JsonFileCache.appSupport('history'));
+  final retained = {
+    for (final a in ref.read(accountsProvider)) a.puuid,
+    for (final key in ref.read(prefsProvider).keys)
+      if (RegExp(r'^keep\.([^\.]+)\.').firstMatch(key) case final match?)
+        match.group(1)!,
+  };
+  unawaited(store.pruneUnowned(retained).catchError((Object _) {}));
   ref.onDispose(store.dispose);
   return store;
 });

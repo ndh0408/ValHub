@@ -201,7 +201,10 @@ void main() {
       final s = _snapshot(_mmr(), history: h)!;
       expect(s.today, isNotNull);
       expect(s.today!.netRr, 26);
-      expect((s.today!.wins, s.today!.losses, s.today!.draws), (2, 1, 1));
+      expect(
+        (s.today!.wins, s.today!.losses, s.today!.draws, s.today!.unknown),
+        (2, 1, 0, 1),
+      );
       expect(s.lastDay, isNull);
     });
 

@@ -511,6 +511,7 @@ class DailyRr {
     required this.wins,
     required this.losses,
     required this.draws,
+    this.unknown = 0,
   });
 
   /// Local midnight of the day.
@@ -524,6 +525,7 @@ class DailyRr {
   final int wins;
   final int losses;
   final int draws;
+  final int unknown;
 
   CompetitiveUpdate get first => matches.first;
   CompetitiveUpdate get last => matches.last;
@@ -543,7 +545,7 @@ class DailyRr {
 /// (SUMMARY §9.6; days cut at local midnight). Newest day first, matches
 /// oldest first inside a day. Wins/losses come from [outcomes] (P-14
 /// `teams[].won`, keyed by match id) when known, otherwise from the RR sign
-/// (0 → draw / remake). [toLocal] converts UTC start times (default:
+/// (0 without a known outcome → unknown). [toLocal] converts UTC start times (default:
 /// device time zone).
 List<DailyRr> groupDailyRr(
   Iterable<CompetitiveUpdate> rows, {
@@ -569,20 +571,25 @@ List<DailyRr> groupDailyRr(
         var wins = 0;
         var losses = 0;
         var draws = 0;
+        var unknown = 0;
         var net = 0;
         for (final u in list) {
           net += u.rrEarned;
           final known = outcomes[u.matchId];
           final o = known == null || known == MatchOutcome.unknown
-              ? MatchOutcome.fromRr(u.rrEarned)
+              ? (u.rrEarned == 0
+                    ? MatchOutcome.unknown
+                    : MatchOutcome.fromRr(u.rrEarned))
               : known;
           switch (o) {
             case MatchOutcome.win:
               wins++;
             case MatchOutcome.loss:
               losses++;
-            case MatchOutcome.draw || MatchOutcome.unknown:
+            case MatchOutcome.draw:
               draws++;
+            case MatchOutcome.unknown:
+              unknown++;
           }
         }
         return DailyRr(
@@ -592,6 +599,7 @@ List<DailyRr> groupDailyRr(
           wins: wins,
           losses: losses,
           draws: draws,
+          unknown: unknown,
         );
       }(),
   ];
@@ -625,6 +633,7 @@ class WeekSummary {
     required this.matches,
     required this.daysPlayed,
     required this.trend,
+    this.unknown = 0,
   });
 
   /// Σ RR earned in the window.
@@ -632,6 +641,7 @@ class WeekSummary {
   final int wins;
   final int losses;
   final int draws;
+  final int unknown;
   final int matches;
 
   /// Days of the window with at least one ranked match.
@@ -669,6 +679,7 @@ WeekSummary weekSummary(
     wins: week.fold<int>(0, (a, d) => a + d.wins),
     losses: week.fold<int>(0, (a, d) => a + d.losses),
     draws: week.fold<int>(0, (a, d) => a + d.draws),
+    unknown: week.fold<int>(0, (a, d) => a + d.unknown),
     matches: week.fold<int>(0, (a, d) => a + d.matches.length),
     daysPlayed: week.length,
     trend: List.unmodifiable(

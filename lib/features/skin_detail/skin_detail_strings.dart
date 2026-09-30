@@ -1,7 +1,9 @@
 /// Vietnamese strings of the skin-detail sheet (VF §6.2 S15–S16, §8.4).
 abstract final class SkinDetailStrings {
   static String communityScore(String? average, String count, String votes) =>
-      average == null ? 'Cộng đồng: $votes lượt thích' : 'Cộng đồng: ★ $average ($count đánh giá) · $votes lượt thích';
+      average == null
+      ? 'Cộng đồng: $votes lượt thích'
+      : 'Cộng đồng: ★ $average ($count đánh giá) · $votes lượt thích';
   static const historyDelete = 'Xóa lịch sử cửa hàng';
   static const historyDeleteBody =
       'Xóa tất cả ngày cửa hàng đã ghi cho tài khoản này trên thiết bị?';

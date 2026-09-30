@@ -834,10 +834,11 @@ Neither ValBuddy nor Daily Val has a social layer on its first screen.
 - "+{n} thông báo" when there are several.
 - "Chi tiết ›".
 
-**Taps.** The card opens `showServerStatusSheet(context, status)`, a Home-owned bottom sheet with:
-- every notice with its region label and `formatRelative(createdAt)`;
-- the full text;
-- "Mở trang trạng thái Riot", which opens `AppConstants.riotStatusPageUrl` (**new** constant; exact URL to verify) through `url_launcher`.
+**Taps (accepted implementation, PR-24, 2026-09-30).** The card pushes the
+existing `/settings/status` screen with Back returning to Home. That screen
+already presents all notices and the Riot status link. Reuse is accepted to
+keep one implementation of the detail view. The originally proposed
+`showServerStatusSheet` is not required.
 
 **Refresh.**
 - `HomeCardPoller(every: kHomeStatusRefresh /*5 min*/)` (SUMMARY §10: "Status JSON 5 min").
@@ -978,7 +979,15 @@ class HomeLayoutNotifier extends Notifier<HomeLayout> {
 - **Columns:**
   - `contentWidth ≥ 1000` gives 3 columns; `≥ 568` gives 2; otherwise 1.
   - Then `columns = min(columns, max(1, floor(contentWidth / (300 × clamp(textScale, 1, 2)))))`, so large text means fewer columns.
-- **One column:** `SliverList` with `ValueKey(cardId)` (lazy).
+- **One column (WP-DOMAIN, 2026-09-30):** accepted implementation uses
+  `HomeColumns` in a `SliverToBoxAdapter`, with the same keyed card slots as
+  the multi-column layout. The page has at most eight cards. Keeping their
+  geometry available preserves focus links and scroll anchoring when a live
+  match or incident appears. Presence providers still read every enabled
+  card to decide which cards exist; a lazy widget list alone would not defer
+  those reads. Viewport checks limit LFG polling to the visible community
+  card (three minutes). A lazy list plus deferred presence reads belongs to
+  the adaptive shell work (DEVICES); rail and re-tap scroll-to-top remain P1/P2.
 - **Several columns:**
   - Round-robin by flow index (`i % n`), in a `Row` of `Column`s.
   - Pinned cards span the full width above.

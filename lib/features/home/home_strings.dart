@@ -21,8 +21,8 @@ abstract final class HomeStrings {
 
   /// Body of the "sign in again" banner.
   static String needsLoginBody(String riotId) =>
-      'Phiên của $riotId đã hết hạn. Đăng nhập lại để xem cửa hàng, rank và '
-      'Battle Pass.';
+      'Đăng nhập lại để cập nhật cửa hàng, rank và Battle Pass của $riotId. '
+      'Bạn vẫn có thể xem bản đã lưu trên thiết bị.';
 
   /// Announced after a deep link scrolled to a card.
   static String focused(String name) => 'Đã chuyển đến $name';
@@ -94,8 +94,8 @@ abstract final class HomeStrings {
   static String rrTodaySemantics(int net, int wins, int losses) =>
       'Hôm nay ${net >= 0 ? 'tăng' : 'giảm'} ${net.abs()} RR, $wins thắng, '
       '$losses thua';
-  static String winsLosses(int w, int l, int d) =>
-      d > 0 ? '$w thắng – $l thua, $d hòa' : '$w thắng – $l thua';
+  static String winsLosses(int w, int l, int d, [int unknown = 0]) =>
+      '$w thắng – $l thua${d > 0 ? ', $d hòa' : ''}${unknown > 0 ? ', $unknown trận chưa rõ kết quả' : ''}';
   static const noRankedToday = 'Hôm nay chưa đấu xếp hạng';
 
   /// The Home streak counts **ranked** matches only (Profile's form card

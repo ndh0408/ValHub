@@ -202,6 +202,7 @@ class _WeekCard extends StatelessWidget {
                                   summary.wins,
                                   summary.losses,
                                   summary.draws,
+                                  summary.unknown,
                                 ),
                                 ProfileStrings.matchCount(summary.matches),
                                 ProfileStrings.daysPlayed(summary.daysPlayed),
@@ -355,7 +356,12 @@ class _DayCard extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                   ProfileStrings.joined([
-                    ProfileStrings.winsLosses(day.wins, day.losses, day.draws),
+                    ProfileStrings.winsLosses(
+                      day.wins,
+                      day.losses,
+                      day.draws,
+                      day.unknown,
+                    ),
                     ProfileStrings.matchCount(day.matches.length),
                   ]),
                   maxLines: 2,
