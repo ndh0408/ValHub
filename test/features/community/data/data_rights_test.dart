@@ -113,20 +113,20 @@ void main() {
       expect(e.isRetryable, isFalse);
       final d = describeCommunityError(e);
       expect(d.message, CommunityStrings.errorStorageFull);
-      expect(d.message, contains('đầy dung lượng ảnh'));
+      expect(d.message, contains('Kho ảnh của Cộng đồng đã đầy'));
       expect(d.canRetry, isFalse);
       // A bare 507 (no JSON) is the same thing.
       expect(fromBody(507, null).code, CommunityException.storageFull);
     });
 
-    test('the per-user media quota (400 invalid_input) is shown as-is', () {
+    test('a legacy validation message is replaced by player copy', () {
       const message =
           'Bạn đã dùng hết 50 MB dung lượng ảnh. Hãy xóa bớt bài có ảnh.';
       final e = fromBody(400, {
         'error': {'code': 'invalid_input', 'message': message},
       });
       expect(e.code, CommunityException.invalidInput);
-      expect(describeCommunityError(e).message, message);
+      expect(describeCommunityError(e).message, CommunityStrings.errorInvalid);
       expect(describeCommunityError(e).canRetry, isFalse);
     });
 

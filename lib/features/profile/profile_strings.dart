@@ -70,7 +70,7 @@ abstract final class ProfileStrings {
       'Không có trận nào trên bản đồ này trong các '
       'trận đã tải.';
   static const endOfHistory = 'Đã hiển thị tất cả trận đấu';
-  static const matchUnavailable = 'Không tải được trận đấu';
+  static const matchUnavailable = 'Chưa tải được trận đấu';
 
   /// "5/9/1".
   static String kdaValue(int k, int d, int a) => '$k/$d/$a';
@@ -176,8 +176,8 @@ abstract final class ProfileStrings {
   static const firstHalf = 'Hiệp 1';
   static const secondHalf = 'Hiệp 2';
   static const overtime = 'Hiệp phụ';
-  static const noRounds = 'Trận này không có dữ liệu vòng đấu.';
-  static const noPlayers = 'Trận này không có dữ liệu người chơi.';
+  static const noRounds = 'Chưa có thông tin từng vòng của trận này.';
+  static const noPlayers = 'Chưa có thông tin người chơi của trận này.';
 
   /// "3 hạ gục".
   static String roundKills(int n) => '$n hạ gục';
@@ -238,7 +238,7 @@ abstract final class ProfileStrings {
       joined([map, result, ?score]);
   static const kast = 'KAST';
   static const kastHint =
-      'Tỉ lệ vòng bạn có hạ gục, hỗ trợ, sống sót hoặc được đồng đội trả thù';
+      'Tỉ lệ vòng bạn hạ gục, hỗ trợ, sống sót hoặc được đồng đội hạ đối thủ vừa hạ bạn';
   static const hitDistribution = 'Phân bố phát bắn trúng';
   static const hitHead = 'Đầu';
   static const hitBody = 'Thân';
@@ -249,7 +249,7 @@ abstract final class ProfileStrings {
 
   // Round timeline: kill feed per round
   static const roundsHint = 'Chạm vào một vòng để xem từng pha hạ gục.';
-  static const noKillsInRound = 'Vòng này không có dữ liệu hạ gục.';
+  static const noKillsInRound = 'Chưa có thông tin hạ gục trong vòng này.';
   static const spike = 'Spike';
   static const fallDamage = 'Rơi từ trên cao';
   static const ability = 'Kỹ năng';

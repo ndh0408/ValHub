@@ -9,9 +9,9 @@ abstract final class CommunityStrings {
   static const sectionSkins = 'Xếp hạng skin';
 
   // ------------------------------------------------------- general states
-  static const unavailableTitle = 'Cộng đồng chưa sẵn sàng';
+  static const unavailableTitle = 'Chưa kết nối được Cộng đồng';
   static const unavailableBody =
-      'Cộng đồng ValVN đang được chuẩn bị. Bạn quay lại sau nhé!';
+      'Chưa kết nối được Cộng đồng ValVN. Hãy thử lại sau ít phút.';
   static const noAccountTitle = 'Đăng nhập để tham gia';
   static const noAccountBody =
       'Thêm tài khoản Riot để đăng bài, tìm đồng đội và bình chọn skin.';
@@ -27,7 +27,7 @@ abstract final class CommunityStrings {
   static String pageOf(String i, String n) => '$i/$n';
   static String charCount(String n, String max) => '$n/$max';
   static const retry = 'Thử lại';
-  static const loadMoreFailed = 'Không tải thêm được.';
+  static const loadMoreFailed = 'Chưa tải thêm được bài. Hãy thử lại.';
 
   // --------------------------------------------------------------- errors
   static const errorGeneric = 'Có gì đó trục trặc. Hãy thử lại.';
@@ -48,20 +48,21 @@ abstract final class CommunityStrings {
   static const errorStorageFull =
       'Kho ảnh của Cộng đồng đã đầy. Bạn vẫn đăng bài được, nhưng chưa thể kèm '
       'ảnh. Hãy thử lại sau.';
-  static const errorForbidden = 'Bạn không có quyền làm việc này.';
+  static const errorForbidden =
+      'Bạn chưa thể thực hiện việc này. Hãy xem Tiêu chuẩn cộng đồng hoặc liên hệ ValVN.';
   static const errorNotFound = 'Nội dung này không còn tồn tại.';
   static const errorInvalid =
       'Nội dung chưa được chấp nhận. Hãy kiểm tra lại rồi thử lại.';
   static const errorRateLimited =
-      'Bạn thao tác hơi nhanh. Hãy thử lại sau ít phút.';
+      'Cộng đồng đang nhận quá nhiều yêu cầu. Hãy thử lại sau ít phút.';
   static String errorRateLimitedIn(String duration) =>
-      'Bạn thao tác hơi nhanh. Hãy thử lại sau $duration.';
+      'Cộng đồng đang nhận quá nhiều yêu cầu. Hãy thử lại sau $duration.';
   static const errorImageTooLarge =
       'Ảnh quá lớn (tối đa 2 MB). Hãy chọn ảnh khác.';
-  static const errorImageType = 'Chỉ hỗ trợ ảnh JPEG, PNG hoặc WebP.';
-  static const errorPickImage = 'Không mở được thư viện ảnh.';
-  static const errorTitle = 'Có lỗi xảy ra';
-  static const rateLimitedTitle = 'Chậm lại một chút';
+  static const errorImageType = 'Hãy chọn ảnh JPEG, PNG hoặc WebP.';
+  static const errorPickImage = 'Chưa mở được thư viện ảnh. Hãy thử lại.';
+  static const errorTitle = 'Chưa hoàn tất';
+  static const rateLimitedTitle = 'Hãy đợi một chút';
 
   // ----------------------------------------------------------------- feed
   static const feedEmptyTitle = 'Bảng tin còn trống';
@@ -213,7 +214,7 @@ abstract final class CommunityStrings {
     'kr' => 'Hàn Quốc',
     'latam' => 'Mỹ Latinh',
     'br' => 'Brazil',
-    _ => region.toUpperCase(),
+    _ => 'Chưa rõ máy chủ',
   };
 
   // ---------------------------------------------------------- skin votes
@@ -280,7 +281,8 @@ abstract final class CommunityStrings {
   static const rankFrom = 'Từ';
   static const rankTo = 'Đến';
   static String rankBetween(String a, String b) => '$a – $b';
-  static const rankRangeInvalid = 'Rank thấp nhất phải nhỏ hơn rank cao nhất.';
+  static const rankRangeInvalid =
+      'Hãy chọn rank thấp nhất không cao hơn rank cao nhất.';
   static const roles = 'Vai trò cần';
   static const roleFlex = 'Linh hoạt';
   static const mic = 'Cần mic';
@@ -349,7 +351,7 @@ abstract final class CommunityStrings {
 
   // ------------------------------------------------------------ previews
   static const lfgPreviewTitle = 'Tìm đồng đội hợp rank';
-  static const trendingTitle = 'Skin hot trong tuần';
+  static const trendingTitle = 'Skin được yêu thích trong tuần';
 
   // --------------------------------------------------------- scopes (v3)
   static const scopeCountry = 'Nước bạn';
@@ -372,7 +374,7 @@ abstract final class CommunityStrings {
   static const apply = 'Áp dụng';
   static const feedEmptyScopeTitle = 'Chưa có bài trong phạm vi này';
   static const feedEmptyScopeBody =
-      'Hãy là người đầu tiên đăng bài, hoặc mở rộng sang khu vực / quốc tế để xem thêm.';
+      'Đăng bài đầu tiên hoặc chọn Khu vực hay Quốc tế để xem thêm.';
   static const lfgSameShardNote = 'Chỉ người cùng máy chủ mới vào tổ đội được.';
   static String lfgOtherShardNote(String region) =>
       'Bạn đang xem máy chủ $region — chỉ người cùng máy chủ với tài khoản của bạn mới vào tổ đội được.';
@@ -508,7 +510,7 @@ abstract final class CommunityStrings {
   static const translateUnavailable = 'Thiết bị này chưa hỗ trợ dịch trên máy.';
   static const translateDownloadTitle = 'Tải gói dịch trên máy?';
   static String translateDownloadBody(String from, String to, String size) =>
-      'Để dịch từ $from sang $to, ValVN cần tải gói ngôn ngữ (khoảng $size). '
+      'Để dịch từ $from sang $to, ValVN cần tải gói ngôn ngữ từ Google (khoảng $size). '
       'Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và '
       'không gửi tới máy chủ nào.';
   static String modelSize(int mb) => '$mb MB';

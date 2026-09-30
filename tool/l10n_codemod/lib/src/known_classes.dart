@@ -31,6 +31,7 @@ const Map<String, String> kStringsClassPrefixes = {
   'StoreStrings': 'store',
   'WishlistStrings': 'wishlist',
   'HomeStrings': 'home',
+  'CommunityErrorStrings': 'communityError',
 };
 
 /// The class names, in canonical order.

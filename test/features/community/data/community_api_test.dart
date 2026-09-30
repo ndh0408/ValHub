@@ -10,6 +10,8 @@ import 'package:valvn/features/community/data/community_api.dart';
 import 'package:valvn/features/community/data/community_exception.dart';
 import 'package:valvn/features/community/data/community_http.dart';
 import 'package:valvn/features/community/data/community_models.dart';
+import 'package:valvn/features/community/community_strings.dart';
+import 'package:valvn/core/l10n/community_error_strings.dart';
 import 'package:valvn/features/community/providers/community_providers.dart';
 
 import '../community_test_env.dart';
@@ -197,7 +199,7 @@ void main() {
     expect(ex.retryAfter, const Duration(minutes: 2));
     expect(
       describeCommunityError(ex).message,
-      'Bạn thao tác hơi nhanh. Thử lại sau 2 phút.',
+      CommunityStrings.errorRateLimitedIn('2 phút'),
     );
 
     final e2 = await api
@@ -247,7 +249,7 @@ void main() {
       describeCommunityError(
         const CommunityException(CommunityException.serverError),
       ).message,
-      contains('Máy chủ Cộng đồng'),
+      CommunityStrings.errorServer,
     );
   });
 
@@ -424,11 +426,12 @@ void main() {
     expect(env.server.requests, isEmpty);
   });
 
-  test('moderation / validation: the server message is shown', () async {
+  test('moderation uses a reason, never the raw server message', () async {
     env.server.json('POST /v1/posts', {
       'error': {
         'code': 'invalid_input',
         'message': 'Nội dung chứa từ ngữ không phù hợp',
+        'reason': 'content_inappropriate',
       },
     }, status: 400);
     final e = await api
@@ -436,13 +439,13 @@ void main() {
         .then<Object?>((_) => null, onError: (Object e) => e);
     expect(
       describeCommunityError(e!).message,
-      'Nội dung chứa từ ngữ không phù hợp',
+      CommunityErrorStrings.forReason('content_inappropriate'),
     );
     expect(
       describeCommunityError(
         const CommunityException(CommunityException.invalidInput),
       ).message,
-      'Nội dung chưa hợp lệ. Kiểm tra lại rồi thử lại.',
+      CommunityStrings.errorInvalid,
     );
   });
 

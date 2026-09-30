@@ -164,7 +164,10 @@ void main() {
       await pumpSheet(tester);
       await tester.longPress(find.text('Jett'));
       await settle(tester);
-      expect(find.text('Không thể khóa đặc vụ này.'), findsOneWidget);
+      expect(
+        find.text('Chưa khóa được đặc vụ này. Hãy làm mới rồi thử lại.'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('your team: names, "Ẩn danh", BẠN, party, levels', (
@@ -334,7 +337,7 @@ void main() {
       await settle(tester);
       await tester.tap(find.widgetWithText(FilledButton, 'Rời trận'));
       await settle(tester);
-      expect(find.textContaining('Không thể rời trận.'), findsOneWidget);
+      expect(find.textContaining('Chưa rời được trận.'), findsOneWidget);
     });
 
     testWidgets('no overflow at 320 dp with 130 % text', (tester) async {

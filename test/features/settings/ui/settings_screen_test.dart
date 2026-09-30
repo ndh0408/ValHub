@@ -499,7 +499,7 @@ void main() {
       final file = env.reports.single;
       expect(
         file.fileName,
-        matches(RegExp(r'^valvn-bao-loi-\d{4}-\d{2}-\d{2}\.txt$')),
+        matches(RegExp(r'^valvn-bug-report-\d{4}-\d{2}-\d{2}\.txt$')),
       );
       expect(
         file.text,

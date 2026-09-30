@@ -41,7 +41,7 @@ abstract final class CollectionStrings {
   static String valueRewardCount(int n) =>
       '$n skin phần thưởng không được tính';
   static const cachedLoadout =
-      'Không có mạng — trang bị đang hiển thị là bản đã lưu. Kéo để làm mới '
+      'Đang hiển thị trang bị đã lưu. Kéo để làm mới '
       'trước khi thay đổi.';
 
   // --------------------------------------------------- S31 / S32 pickers
@@ -118,7 +118,7 @@ abstract final class CollectionStrings {
   static const move = 'Chuyển';
   static const noBuddies = 'Bạn chưa có phụ kiện súng nào.';
   static const buddyUnavailable =
-      'Không tìm thấy bản sao nào của phụ kiện này để gắn.';
+      'Chưa gắn được phụ kiện này. Hãy làm mới hoặc chọn phụ kiện khác.';
   static String buddyFor(String weapon) => 'Cho $weapon';
 
   // ---------------------------------------------------- S37 expressions

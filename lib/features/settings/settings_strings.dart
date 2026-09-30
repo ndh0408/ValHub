@@ -12,11 +12,11 @@ abstract final class SettingsStrings {
   // Welcome (S01)
   static const logoPrefix = 'Val';
   static const logoSuffix = 'VN';
-  static const welcomeBulletStore = 'Cửa hàng, Chợ Đêm, Bundle mỗi ngày';
+  static const welcomeBulletStore = 'Cửa hàng hằng ngày, Chợ Đêm và bundle';
   static const welcomeBulletProfile = 'Rank, lịch sử đấu, trận đang diễn ra';
   static const welcomeBulletWishlist = 'Wishlist & thông báo';
   static const welcomeFootnote =
-      'Bạn đăng nhập trên trang chính thức của Riot. ValVN không bao giờ thấy mật khẩu của bạn.';
+      'Bạn đăng nhập trên trang chính thức của Riot. ValVN chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập.';
   static const legalNotice = 'Thông báo pháp lý';
 
   // Notification priming (S04)
@@ -26,7 +26,7 @@ abstract final class SettingsStrings {
       'xuất hiện.';
   static const primingPointStore = 'Nhắc khi cửa hàng hằng ngày làm mới';
   static const primingPointStoreDetail = 'Mỗi ngày, vào giờ cửa hàng làm mới';
-  static const primingPointWishlist = 'Báo ngay khi skin bạn săn xuất hiện';
+  static const primingPointWishlist = 'Báo khi skin bạn săn xuất hiện';
   static const primingPointWishlistDetail =
       'Kiểm tra cửa hàng của mọi tài khoản, kể cả khi bạn không mở ứng dụng';
   static const primingPointNightMarket = 'Biết khi Chợ Đêm mở';
@@ -62,7 +62,7 @@ abstract final class SettingsStrings {
   static const optionPlatform = 'Nền tảng';
   static const platformPickerTitle = 'Chọn nền tảng';
   static const platformHint =
-      'Người chơi console chọn đúng nền tảng để xem lịch sử đấu chính xác.';
+      'Chọn PC, PlayStation hoặc Xbox theo nơi bạn chơi để xem đúng lịch sử đấu.';
   static String platformAppliesTo(String account) => 'Áp dụng cho $account';
   static const optionShowPrice = 'Hiện giá quy đổi ước tính';
   static String optionShowPriceSubtitle(String vp, String price) =>
@@ -122,7 +122,7 @@ abstract final class SettingsStrings {
   // HỖ TRỢ
   static const feedback = 'Góp ý cho ValVN';
   static const feedbackSubtitle = 'Mở trang góp ý của ValVN';
-  static const linkOpenFailed = 'Không mở được liên kết.';
+  static const linkOpenFailed = 'Chưa mở được liên kết. Hãy thử lại.';
   static const serverStatus = 'Trạng thái máy chủ';
   static const serverStatusSubtitle = 'Bảo trì và sự cố VALORANT theo máy chủ';
   static const serverStatusMaintenance = 'Đang bảo trì';
@@ -140,8 +140,7 @@ abstract final class SettingsStrings {
       'Bạn có thể chưa vào được game, và ValVN có thể tạm thời chưa tải được '
       'thông tin.';
   static const statusIssues = 'Riot đang xử lý sự cố';
-  static String statusIssuesBody(int n) =>
-      '$n thông báo đang mở ở máy chủ này.';
+  static String statusIssuesBody(int n) => 'Máy chủ này có $n thông báo sự cố.';
   static const statusScheduled = 'Sắp có bảo trì';
   static String statusScheduledBody(int n) =>
       '$n lịch bảo trì đã được Riot thông báo.';
@@ -172,7 +171,7 @@ abstract final class SettingsStrings {
     'android' => 'Android',
     'ios' => 'iOS',
     'mobile' => 'Di động',
-    _ => id,
+    _ => 'Nền tảng khác',
   };
 
   // Sign out
@@ -189,7 +188,7 @@ abstract final class SettingsStrings {
   static const welcomeKicker = 'TRỢ THỦ VALORANT';
   static const welcomeBulletStoreDetail = 'Xem giá, độ hiếm, đếm ngược làm mới';
   static const welcomeBulletProfileDetail = 'RR từng trận, rank đối thủ';
-  static const welcomeBulletWishlistDetail = 'Báo ngay khi skin bạn săn lên kệ';
+  static const welcomeBulletWishlistDetail = 'Báo khi skin bạn săn lên kệ';
 
   // About screen (S72)
   static const aboutCreditsHeader = 'NGUỒN DỮ LIỆU';

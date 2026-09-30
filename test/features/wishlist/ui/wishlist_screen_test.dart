@@ -108,7 +108,7 @@ void main() {
     await unmount(tester);
   });
 
-  testWidgets('search, no-match state and "Xóa bộ lọc"', (tester) async {
+  testWidgets('search, no-match state and "Bỏ lọc"', (tester) async {
     await _pump(tester, prefs: await _prefs());
     await tester.enterText(find.byType(TextField), 'dau bep');
     await settle(tester);

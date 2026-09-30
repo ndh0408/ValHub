@@ -44,8 +44,8 @@ abstract final class CommonStrings {
   static const sortRarity = 'Độ hiếm';
   static const sortName = 'Tên A–Z';
   static const sortWeapon = 'Vũ khí';
-  static const sortPriceHigh = 'Giá cao → thấp';
-  static const sortPriceLow = 'Giá thấp → cao';
+  static const sortPriceHigh = 'Giá giảm dần';
+  static const sortPriceLow = 'Giá tăng dần';
   static const sortNewest = 'Mới nhất';
 
   // States
@@ -142,7 +142,7 @@ abstract final class CommonStrings {
   static String priceSourceOfficial(String country) =>
       'Theo bảng giá gói VP ở khu vực $country';
   static const priceSourceUser = 'Theo giá gói VP do bạn nhập';
-  static String priceSource(String url) => 'Nguồn: $url';
+  static String priceSource(String url) => 'Xem nguồn bảng giá';
   static String priceUpdated(String date) => 'Cập nhật bảng giá: $date';
   static const pricePacksTitle = 'Các gói VP';
   static const priceOpenSource = 'Mở trang nguồn';

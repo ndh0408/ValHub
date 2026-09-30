@@ -81,7 +81,7 @@ abstract final class StoreStrings {
   static const shareDailyTitle = 'Chia sẻ cửa hàng hôm nay';
   static const shareNightMarketTitle = 'Chia sẻ Chợ Đêm';
   static const shareSubtitle =
-      'Tạo ảnh đẹp để khoe với bạn bè qua bất kỳ ứng dụng nào.';
+      'Chia sẻ ảnh cửa hàng với bạn bè qua ứng dụng bạn chọn.';
   static const shareShowRiotId = 'Hiện Riot ID trên ảnh';
   static const shareShowRiotIdHint = 'Tắt sẵn để giữ riêng tư cho bạn.';
   static const shareShowPrice = 'Hiện giá quy đổi ước tính';
@@ -111,9 +111,9 @@ abstract final class StoreStrings {
   static const shareSubjectNightMarket = 'Chợ Đêm VALORANT của mình';
 
   /// ASCII file names ("valvn-cua-hang-2026-09-29.png").
-  static String shareFileDaily(String stamp) => 'valvn-cua-hang-$stamp.png';
+  static String shareFileDaily(String stamp) => 'valvn-store-$stamp.png';
   static String shareFileNightMarket(String stamp) =>
-      'valvn-cho-dem-$stamp.png';
+      'valvn-night-market-$stamp.png';
 
   // Shared badges and actions.
   static const ownedBadge = 'Đã sở hữu';

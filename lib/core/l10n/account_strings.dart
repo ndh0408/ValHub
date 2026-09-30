@@ -10,7 +10,7 @@ abstract final class AccountStrings {
       'Thêm tài khoản ($count/$max)';
   static String accountsHeader(int count, int max) => 'TÀI KHOẢN ($count/$max)';
   static String maxAccounts(int max) => 'Đã đạt tối đa $max tài khoản.';
-  static const switchFailed = 'Không thể chuyển tài khoản. Thử lại?';
+  static const switchFailed = 'Chưa chuyển được tài khoản. Hãy thử lại.';
   static String switchTo(String account) => 'Chuyển sang $account';
   static const needsLogin = 'Cần đăng nhập lại';
   static const active = 'Đang dùng';
@@ -50,7 +50,7 @@ abstract final class AccountStrings {
       'Xóa tên đăng nhập và mật khẩu đã lưu của tài khoản này?';
 
   // Quick fill on the Riot login page
-  static const quickFill = 'Điền nhanh';
+  static const quickFill = 'Điền tài khoản đã lưu';
   static const quickFillTitle = 'Điền tài khoản đã lưu';
   static const quickFillSubtitle =
       'Chọn tài khoản để điền vào trang đăng nhập Riot';
@@ -73,7 +73,7 @@ abstract final class AccountStrings {
   static const regionBr = 'Brazil';
 
   /// Vietnamese name of a Riot region id (`ap` → "Châu Á - Thái Bình
-  /// Dương"); unknown ids are shown upper-cased.
+  /// Dương"); unknown ids use a friendly fallback.
   static String regionName(String region) => switch (region.toLowerCase()) {
     'ap' => regionAp,
     'na' => regionNa,
@@ -81,7 +81,7 @@ abstract final class AccountStrings {
     'kr' => regionKr,
     'latam' => regionLatam,
     'br' => regionBr,
-    _ => region.toUpperCase(),
+    _ => 'Chưa rõ máy chủ',
   };
 
   // Switcher sheet (S05)

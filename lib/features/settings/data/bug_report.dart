@@ -22,11 +22,11 @@ class BugReportFile {
   Uint8List get bytes => Uint8List.fromList(utf8.encode(text));
 }
 
-/// `valvn-bao-loi-2026-09-30.txt` for a report made on [day] (local time).
+/// `valvn-bug-report-2026-09-30.txt` for a report made on [day] (local time).
 String bugReportFileName(DateTime day) {
   String two(int n) => n.toString().padLeft(2, '0');
   final d = day.toLocal();
-  return 'valvn-bao-loi-${d.year}-${two(d.month)}-${two(d.day)}.txt';
+  return 'valvn-bug-report-${d.year}-${two(d.month)}-${two(d.day)}.txt';
 }
 
 /// Builds the report from [log]; [version] is the app version (or `null`).
@@ -36,13 +36,35 @@ BugReportFile buildBugReport(
   String? version,
 }) => BugReportFile(
   fileName: bugReportFileName(now),
-  text: log.exportText(
-    header: SettingsStrings.logFileHeader(
-      CommonStrings.appName,
-      version ?? CommonStrings.dash,
+  text: _scrubReport(
+    log.exportText(
+      header: SettingsStrings.logFileHeader(
+        CommonStrings.appName,
+        version ?? CommonStrings.dash,
+      ),
     ),
   ),
 );
+
+// Scrub again at the sharing boundary, including older on-disk entries.
+// Unicode Riot tags are not covered by the legacy SessionLog scrubber.
+String _scrubReport(String text) {
+  final riotId = RegExp(r'[^\s#/]+#[\p{L}\p{N}]+', unicode: true);
+  final password = RegExp(
+    r'(password|passwd|pwd)(\s*[=:]\s*)[^;&\s,]+',
+    caseSensitive: false,
+  );
+  return text
+      .split('\n')
+      .map(
+        (line) => SessionLog.scrubText(
+          line
+              .replaceAll(riotId, '{riotId}')
+              .replaceAllMapped(password, (m) => '${m[1]}${m[2]}{redacted}'),
+        ),
+      )
+      .join('\n');
+}
 
 /// Hands the report to the platform's native share sheet (mail, messages,
 /// "Lưu vào Tệp"…). [origin] anchors the iPad popover.

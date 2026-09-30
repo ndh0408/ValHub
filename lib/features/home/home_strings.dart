@@ -42,7 +42,7 @@ abstract final class HomeStrings {
   static const cardFriendsDesc = 'Bạn bè đang trong trận hoặc đang tìm trận.';
   static const cardCommunity = 'Cộng đồng';
   static const cardCommunityDesc =
-      'Tìm đồng đội hợp rank và skin hot trong tuần.';
+      'Tìm đồng đội hợp rank và skin được yêu thích trong tuần.';
   static const cardOtherAccounts = 'Tài khoản khác';
   static const cardOtherAccountsDesc =
       'Trạng thái và wishlist của các tài khoản còn lại.';
@@ -113,7 +113,7 @@ abstract final class HomeStrings {
   // Community card
   static const lfgTitle = 'Tìm đồng đội hợp rank bạn';
   static String lfgNeeds(int n) => 'Cần $n người';
-  static const trendingTitle = 'Skin hot tuần này';
+  static const trendingTitle = 'Skin được yêu thích tuần này';
   static String trendingVotes(int n) => '$n lượt thích';
   static const openLfg = 'Xem tất cả tin tìm đồng đội';
   static const openRanking = 'Xem bảng xếp hạng skin';
