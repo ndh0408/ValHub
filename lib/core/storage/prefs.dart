@@ -16,6 +16,14 @@ import '../util/json.dart';
 ///   `keep.<puuid>.<name>` (use [PrefKeys.accountKept]).
 abstract final class PrefKeys {
   static const accounts = 'app.accounts';
+
+  /// Bumped on every write of [accounts], so any isolate can tell cheaply that
+  /// the list changed on disk since it last read it.
+  static const accountsVersion = 'app.accountsVersion';
+
+  /// Sign-outs that started but did not finish (`{puuid: keepLocalData}`):
+  /// finished (or swept) at the next start.
+  static const pendingWipe = 'app.pendingWipe';
   static const activePuuid = 'app.activePuuid';
   static const installMarker = 'app.installed';
   static const clientVersion = 'app.clientVersion';
@@ -40,6 +48,10 @@ abstract final class PrefKeys {
 
   /// Per-account key that survives sign-out (e.g. wishlist).
   static String accountKept(String puuid, String name) => 'keep.$puuid.$name';
+
+  /// Prefix of every per-account key that survives sign-out (wishlist,
+  /// loadout presets): erased only when the user chooses not to keep them.
+  static String accountKeptPrefix(String puuid) => 'keep.$puuid.';
 
   /// Remembered UI choice (last segment / filter) — see `UiMemory`.
   static String ui(String name) => 'ui.$name';
@@ -95,6 +107,24 @@ class Prefs {
     return op(_prefs);
   }
 
+  /// Key prefixes whose writes are dropped (sign-out tombstones): an
+  /// in-flight fetch that finishes after the account was wiped must not
+  /// re-create `acct.<puuid>.*` keys. Lifted again when the account is added
+  /// back ([allowWrites]). Removals are never blocked.
+  final Set<String> _blockedPrefixes = {};
+
+  void blockWrites(String prefix) => _blockedPrefixes.add(prefix);
+
+  void allowWrites(String prefix) => _blockedPrefixes.remove(prefix);
+
+  bool _blocked(String key) {
+    if (_blockedPrefixes.isEmpty) return false;
+    for (final prefix in _blockedPrefixes) {
+      if (key.startsWith(prefix)) return true;
+    }
+    return false;
+  }
+
   Set<String> get keys => _prefs.keys;
   bool containsKey(String key) => _prefs.containsKey(key);
 
@@ -113,6 +143,15 @@ class Prefs {
       return await SharedPreferencesAsync().getString(key);
     } on Object {
       return getString(key);
+    }
+  }
+
+  /// [getInt] straight from disk (see [getStringFromDisk]).
+  Future<int?> getIntFromDisk(String key) async {
+    try {
+      return await SharedPreferencesAsync().getInt(key);
+    } on Object {
+      return getInt(key);
     }
   }
 
@@ -135,16 +174,21 @@ class Prefs {
     }
   }
 
-  Future<void> setString(String key, String value) =>
-      _write((p) => p.setString(key, value));
-  Future<void> setInt(String key, int value) =>
-      _write((p) => p.setInt(key, value));
-  Future<void> setDouble(String key, double value) =>
-      _write((p) => p.setDouble(key, value));
-  Future<void> setBool(String key, bool value) =>
-      _write((p) => p.setBool(key, value));
-  Future<void> setStringList(String key, List<String> value) =>
-      _write((p) => p.setStringList(key, value));
+  Future<void> setString(String key, String value) => _blocked(key)
+      ? Future<void>.value()
+      : _write((p) => p.setString(key, value));
+  Future<void> setInt(String key, int value) => _blocked(key)
+      ? Future<void>.value()
+      : _write((p) => p.setInt(key, value));
+  Future<void> setDouble(String key, double value) => _blocked(key)
+      ? Future<void>.value()
+      : _write((p) => p.setDouble(key, value));
+  Future<void> setBool(String key, bool value) => _blocked(key)
+      ? Future<void>.value()
+      : _write((p) => p.setBool(key, value));
+  Future<void> setStringList(String key, List<String> value) => _blocked(key)
+      ? Future<void>.value()
+      : _write((p) => p.setStringList(key, value));
 
   Future<void> remove(String key) => _write((p) => p.remove(key));
 

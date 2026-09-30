@@ -2,10 +2,15 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/community/providers/community_providers.dart'
+    show communityAuthProvider;
 import '../auth/auth_callback.dart';
 import '../auth/auth_providers.dart';
 import '../auth/cookie_jar.dart';
 import '../config/app_constants.dart';
+import '../domain/competitive/names.dart' show nameResolverProvider;
+import '../domain/competitive/rr_history.dart' show rrHistoryStoreProvider;
+import '../domain/loadout/loadout_providers.dart' show loadoutPresetsProvider;
 import '../notifications/notification_service.dart';
 import '../riot/riot_hosts.dart';
 import '../settings/app_settings.dart';
@@ -14,6 +19,7 @@ import '../storage/prefs.dart';
 import '../storage/secure_store.dart';
 import 'account.dart';
 import 'account_repository.dart';
+import 'local_data.dart';
 
 /// Account metadata persistence (prefs) + per-account data wipe.
 final accountRepositoryProvider = Provider<AccountRepository>(
@@ -21,6 +27,16 @@ final accountRepositoryProvider = Provider<AccountRepository>(
     prefs: ref.watch(prefsProvider),
     secureStore: ref.watch(secureStoreProvider),
     fileCache: ref.watch(jsonFileCacheProvider),
+  ),
+);
+
+/// Erases the local data ValVN keeps beyond the session (RR history, presets,
+/// names, matches; see [LocalDataEraser]).
+final localDataEraserProvider = Provider<LocalDataEraser>(
+  (ref) => LocalDataEraser(
+    prefs: ref.watch(prefsProvider),
+    cache: ref.watch(jsonFileCacheProvider),
+    history: ref.watch(rrHistoryStoreProvider),
   ),
 );
 
@@ -106,18 +122,37 @@ class AccountsNotifier extends Notifier<List<Account>> {
   }
 
   /// Signs one account out (A11): cancels its notifications, deletes its
-  /// cookies, tokens, `acct.<puuid>.*` prefs and `acct/<puuid>/…` caches.
-  /// The wishlist (`keep.<puuid>.*`) is kept (VF W6).
-  Future<void> remove(String puuid) async {
+  /// cookies, tokens, login note, community session, `acct.<puuid>.*` prefs
+  /// and `acct/<puuid>/…` caches.
+  ///
+  /// With [keepLocalData] (the default, VF W6) the wishlist, loadout presets
+  /// and RR history of the account stay on the device for a later login;
+  /// without it they are erased too (decision D3).
+  ///
+  /// The sign-out is written down first (`app.pendingWipe`) and cleared last:
+  /// if the app is killed half-way the next start finishes it.
+  Future<void> remove(String puuid, {bool keepLocalData = true}) async {
     final id = puuid.toLowerCase();
+    await _repo.markPendingWipe(id, keepLocalData: keepLocalData);
     await ref.read(notificationServiceProvider).cancelForAccount(id);
     // Metadata first: a re-auth still running (here or in the background
     // isolate) re-checks the account list before persisting anything.
     await _repo.removeMetadata(id);
     // Waits for an in-flight re-auth and deletes under the account lock.
     await ref.read(sessionManagerProvider).forget(id);
-    // Backstop: deletes the secrets again, plus prefs and file caches.
-    await _repo.wipeAccountData(id);
+    // The community session is also held in memory (AR-018).
+    try {
+      await ref.read(communityAuthProvider).forget(id);
+    } on Object {
+      // Best effort: its secure-storage key is wiped below anyway.
+    }
+    // Backstop: deletes the secrets again, plus prefs and file caches, and
+    // blocks late writes from in-flight fetches.
+    await _repo.wipeAccountData(id, keepLocalData: keepLocalData);
+    if (!keepLocalData) {
+      await ref.read(localDataEraserProvider).eraseAccount(id);
+      ref.invalidate(loadoutPresetsProvider(id));
+    }
     await ref.read(appSettingsProvider.notifier).update((settings) {
       if (!settings.wishlistNotificationsByAccount.containsKey(id)) {
         return settings;
@@ -129,14 +164,35 @@ class AccountsNotifier extends Notifier<List<Account>> {
     if (_repo.activePuuid == id) {
       await _repo.setActivePuuid(remaining.firstOrNull?.puuid);
     }
+    await _repo.clearPendingWipe(id);
     if (ref.mounted) state = remaining;
   }
 
-  /// "Đăng xuất tất cả tài khoản".
-  Future<void> signOutAll() async {
+  /// "Đăng xuất tất cả tài khoản". Other players' data (names, matches) always
+  /// goes; the accounts' own local data goes unless [keepLocalData].
+  Future<void> signOutAll({bool keepLocalData = true}) async {
     for (final account in List.of(state)) {
-      await remove(account.puuid);
+      await remove(account.puuid, keepLocalData: keepLocalData);
     }
+    final eraser = ref.read(localDataEraserProvider);
+    if (keepLocalData) {
+      await eraser.eraseSharedCaches();
+    } else {
+      await eraser.eraseAll(signedIn: const {});
+    }
+    ref.invalidate(nameResolverProvider);
+  }
+
+  /// "Xóa dữ liệu cục bộ" (Settings): RR history, loadout presets, looked-up
+  /// names, opened matches, and what is still kept for accounts that were
+  /// signed out. Signed-in accounts and their wishlists stay.
+  Future<void> clearLocalData() async {
+    await ref
+        .read(localDataEraserProvider)
+        .eraseAll(signedIn: {for (final a in state) a.puuid});
+    ref
+      ..invalidate(nameResolverProvider)
+      ..invalidate(loadoutPresetsProvider);
   }
 }
 

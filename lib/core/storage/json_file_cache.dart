@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -35,6 +36,27 @@ class JsonFileCache {
 
   final Future<Directory> Function() _root;
   Directory? _resolved;
+
+  /// Relative key prefixes whose writes are dropped (sign-out tombstones):
+  /// a fetch that finishes after the account was wiped must not re-create
+  /// `acct/<puuid>/…`. Lifted when the account is added back
+  /// ([allowWrites]). Reads and deletions are never blocked.
+  final Set<String> _blockedPrefixes = {};
+
+  void blockWrites(String prefix) => _blockedPrefixes.add(_relative(prefix));
+
+  void allowWrites(String prefix) => _blockedPrefixes.remove(_relative(prefix));
+
+  bool _blocked(String relativeKey) {
+    for (final prefix in _blockedPrefixes) {
+      if (relativeKey == prefix || relativeKey.startsWith('$prefix/')) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  static int _tmpCounter = 0;
 
   /// Key for per-account data: `acct/<puuid>/<name>`.
   static String accountKey(String puuid, String name) => 'acct/$puuid/$name';
@@ -79,6 +101,9 @@ class JsonFileCache {
       );
     } on FileSystemException {
       return null;
+    } on FormatException {
+      // Invalid UTF-8 (a torn or corrupt file) reads as "not cached".
+      return null;
     }
   }
 
@@ -98,16 +123,78 @@ class JsonFileCache {
       return file.existsSync() ? await file.readAsString() : null;
     } on FileSystemException {
       return null;
+    } on FormatException {
+      return null;
     }
   }
 
+  /// Writes of one key run one after another (in this isolate), each through
+  /// its own temp file + rename, so two writes of the same key never share
+  /// (and corrupt) a temp file nor race on the rename. A write to a blocked
+  /// prefix ([blockWrites]) is dropped.
+  final Map<String, Future<void>> _writing = {};
+
   /// Writes a raw string atomically (temp file + rename).
   Future<void> writeRaw(String key, String contents) async {
+    final rel = _relative(key);
+    if (_blocked(rel)) return;
+    final previous = _writing[rel];
+    final done = Completer<void>();
+    _writing[rel] = done.future;
+    try {
+      if (previous != null) {
+        try {
+          await previous;
+        } on Object {
+          // The earlier write failed for its own caller.
+        }
+      }
+      // Blocked while it waited (the account was signed out meanwhile).
+      if (_blocked(rel)) return;
+      await _writeAtomically(key, contents);
+    } finally {
+      done.complete();
+      if (identical(_writing[rel], done.future)) _writing.remove(rel);
+    }
+  }
+
+  Future<void> _writeAtomically(String key, String contents) async {
     final file = await fileFor(key);
     await file.parent.create(recursive: true);
-    final tmp = File('${file.path}.tmp');
-    await tmp.writeAsString(contents, flush: true);
-    await tmp.rename(file.path);
+    final tmp = File(
+      '${file.path}.${DateTime.now().microsecondsSinceEpoch}.'
+      '${_tmpCounter++}.tmp',
+    );
+    try {
+      await tmp.writeAsString(contents, flush: true);
+      await tmp.rename(file.path);
+    } on Object {
+      try {
+        if (tmp.existsSync()) await tmp.delete();
+      } on Object {
+        // Nothing more to clean up.
+      }
+      rethrow;
+    }
+  }
+
+  /// Names of the sub-directories directly under [prefix] (e.g. the PUUIDs
+  /// under `acct`); empty when [prefix] does not exist.
+  Future<List<String>> listDirectories(String prefix) async {
+    try {
+      final dir = Directory('${(await _dir()).path}/${_relative(prefix)}');
+      if (!dir.existsSync()) return const [];
+      return [
+        await for (final entity in dir.list())
+          if (entity is Directory)
+            entity.uri.pathSegments.lastWhere(
+              (segment) => segment.isNotEmpty,
+              orElse: () => '',
+            ),
+      ]..removeWhere((name) => name.isEmpty);
+    } on FileSystemException {
+      return const [];
+    }
   }
 
   Future<bool> exists(String key) async => (await fileFor(key)).existsSync();
