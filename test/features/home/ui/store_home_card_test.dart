@@ -43,10 +43,13 @@ void main() {
       find.textContaining(HomeStrings.storeTotal(formatVp(6500))),
       findsOneWidget,
     );
+    // 2.440 VP buys ONE of the offers (1.275 + 1.275 = 2.550 > 2.440), never
+    // "4 skin" (PR-04).
     expect(
-      find.textContaining(HomeStrings.storeWallet(formatVp(2440), 4)),
+      find.textContaining(HomeStrings.storeWalletCanBuy(formatVp(2440), 1)),
       findsOneWidget,
     );
+    expect(find.textContaining('đủ mua tối đa 4'), findsNothing);
     // Prices sit on the tiles.
     expect(find.text('2.175'), findsOneWidget);
     homeExpectNoException(tester);

@@ -35,8 +35,8 @@ final mmrProvider = FutureProvider.autoDispose.family<PlayerMmr, String>((
   final viewer = watchViewer(ref, subject);
   final api = ref.watch(pvpApiProvider);
   final store = ref.watch(rrHistoryStoreProvider);
-  cacheFor(ref, const Duration(minutes: 3));
   final mmr = PlayerMmr.fromJson(await api.mmr(viewer, subject: subject));
+  cacheFor(ref, const Duration(minutes: 3)); // only after a success
   final latest = mmr.latestCompetitiveUpdate;
   if (latest != null && viewer == subject) {
     unawaited(
@@ -155,10 +155,10 @@ class CompetitiveUpdatesNotifier
         kCompetitiveQueue;
     final api = ref.watch(pvpApiProvider);
     final store = ref.watch(rrHistoryStoreProvider);
-    cacheFor(ref, const Duration(minutes: 3));
     final page = CompetitiveUpdatesPage.fromJson(
       await api.competitiveUpdates(_viewer, subject: _subject, queue: _queue),
     );
+    cacheFor(ref, const Duration(minutes: 3)); // only after a success
     final known = await _knownIds(store);
     final newest = page.matches.firstOrNull?.matchId;
     if (newest != null) known.remove(newest);

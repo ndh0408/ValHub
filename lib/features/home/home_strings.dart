@@ -65,21 +65,27 @@ abstract final class HomeStrings {
   static const storeWishlistHit = 'Có skin trong wishlist!';
   static String storeWishlistHits(int n) => '$n skin trong wishlist đang bán';
   static String storeTotal(String vp) => 'Tổng $vp';
-  static String storeWallet(String vp, int affordable) =>
-      'Ví $vp · đủ mua $affordable skin';
+  static String storeWallet(String vp) => 'Ví $vp';
+
+  /// "Ví 2.440 VP · đủ mua tối đa 1 skin": [n] skins bought together, the
+  /// cheapest first (never a count of skins bought one by one).
+  static String storeWalletCanBuy(String vp, int n) =>
+      'Ví $vp · đủ mua tối đa $n skin';
   static const nightMarketTitle = 'Chợ Đêm';
   static String nightMarketWaiting(int n) => '$n ưu đãi đang chờ bạn lật';
   static String nightMarketBest(String pct, String name, String price) =>
       '$pct · $name · $price';
   static const nightMarketNew = 'Mới';
   static String nightMarketEndsIn(String time) => 'Còn $time';
+
+  /// Screen-reader label of a daily skin tile: two whole sentences, never a
+  /// sentence plus a suffix fragment (GL-10).
   static String skinTileSemantics(
     String name,
     String price,
     String tier,
     bool wished,
-  ) => '$name, $price, $tier${wished ? ', trong wishlist' : ''}';
-  static const storeWishlistIn = 'trong';
+  ) => wished ? '$name, $price, $tier, trong wishlist' : '$name, $price, $tier';
 
   // Rank card
   static String rankToNext(int rr) => 'Còn $rr RR lên rank';
@@ -91,8 +97,11 @@ abstract final class HomeStrings {
   static String winsLosses(int w, int l, int d) =>
       d > 0 ? '$w thắng – $l thua, $d hòa' : '$w thắng – $l thua';
   static const noRankedToday = 'Hôm nay chưa đấu xếp hạng';
-  static String winStreak(int n) => 'Chuỗi $n trận thắng';
-  static String lossStreak(int n) => 'Chuỗi $n trận thua';
+
+  /// The Home streak counts **ranked** matches only (Profile's form card
+  /// counts the queue chip's matches), so the scope is in the text (PR-19).
+  static String winStreak(int n) => 'Chuỗi $n trận thắng xếp hạng';
+  static String lossStreak(int n) => 'Chuỗi $n trận thua xếp hạng';
   static String matchesToRankUp(int n, String rank) => '≈ $n trận để lên $rank';
   static String previousAct(String rank) => 'Phần trước: $rank';
   static String leaderboard(String pos) => 'Hạng $pos bảng xếp hạng';
@@ -115,6 +124,11 @@ abstract final class HomeStrings {
   static String lfgNeeds(int n) => 'Cần $n người';
   static const trendingTitle = 'Skin hot tuần này';
   static String trendingVotes(int n) => '$n lượt thích';
+
+  /// Screen-reader label of a trending skin: "Reaver Vandal, 120 lượt thích,
+  /// trong wishlist" (two whole messages, GL-10).
+  static String trendingSkinSemantics(String name, String votes, bool wished) =>
+      wished ? '$name, $votes, trong wishlist' : '$name, $votes';
   static const openLfg = 'Xem tất cả tin tìm đồng đội';
   static const openRanking = 'Xem bảng xếp hạng skin';
   static String lfgRowSemantics(String author, String details) =>

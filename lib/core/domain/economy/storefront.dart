@@ -202,7 +202,35 @@ class DailyStore {
   /// Σ known VP prices ("Tổng 7.775 VP").
   int get totalVp => offers.fold(0, (sum, o) => sum + (o.vpCost ?? 0));
 
+  /// How many of the daily skins [walletVp] can pay **all at once**
+  /// ([maxAffordableTogether] over the offers whose price is known).
+  int affordableTogether(int walletVp) =>
+      maxAffordableTogether([for (final o in offers) ?o.vpCost], walletVp);
+
   bool get isEmpty => offers.isEmpty;
+}
+
+/// The largest number of [prices] that [wallet] can pay together (PR-04).
+///
+/// Buying the cheapest items first is optimal for the *count*, so the answer
+/// is the longest prefix of the ascending prices whose sum fits in [wallet].
+/// A wallet of 2,440 VP against 2,175 / 1,275 / 1,775 / 1,275 buys one skin
+/// (1,275 + 1,275 = 2,550 > 2,440), not four. Non-positive prices and a
+/// non-positive wallet count for nothing (an unknown price is never "free").
+int maxAffordableTogether(Iterable<int> prices, int wallet) {
+  if (wallet <= 0) return 0;
+  final sorted = [
+    for (final p in prices)
+      if (p > 0) p,
+  ]..sort();
+  var left = wallet;
+  var count = 0;
+  for (final p in sorted) {
+    if (p > left) break;
+    left -= p;
+    count++;
+  }
+  return count;
 }
 
 // ----------------------------------------------------------------- bundles

@@ -15,7 +15,6 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
-import '../../../profile/data/recent_form.dart' show StreakKind;
 import '../../../profile/profile_routes.dart';
 import '../../../profile/ui/widgets/rank_card.dart' show formatRr;
 import '../../data/home_card.dart';

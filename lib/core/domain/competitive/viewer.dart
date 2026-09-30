@@ -42,7 +42,12 @@ bool watchIsConsole(Ref ref, String viewer) {
 /// Keeps an auto-dispose provider's value for [duration] after it was
 /// built, so re-opening a screen within that window does not refetch
 /// (SUMMARY §10 cache TTLs).
+///
+/// Call it **after** the fetch succeeded (AR-029): a provider that failed
+/// must not stay cached for minutes, the next visit retries at once. It is a
+/// no-op when the provider was disposed while the fetch was running.
 void cacheFor(Ref ref, Duration duration) {
+  if (!ref.mounted) return;
   final link = ref.keepAlive();
   final timer = Timer(duration, link.close);
   ref.onDispose(timer.cancel);

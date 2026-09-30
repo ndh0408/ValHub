@@ -11,7 +11,9 @@ import '../../storage/json_file_cache.dart';
 import '../../util/json.dart';
 import 'match_models.dart';
 import 'match_privacy.dart';
+import 'match_stats_store.dart';
 import 'names.dart';
+import 'performance.dart';
 import 'paging.dart';
 import 'rank_models.dart' show kCompetitiveQueue;
 import 'rr_history.dart';
@@ -110,12 +112,18 @@ class MatchHistoryPage {
 /// Stores [MatchDetails.toJson] (a compact copy without positions) under the
 /// global key `matches/<matchId>` of the general cache, so "Xóa bộ nhớ đệm"
 /// clears it. Only completed matches are cached. Least recently used files
-/// are pruned beyond [keep].
+/// are pruned beyond [keep]: asynchronously, and only every [pruneEvery]
+/// writes (AR-029: never a directory scan on the UI isolate after every
+/// write).
 class MatchDetailsCache {
-  MatchDetailsCache(this._files, {this.keep = 200});
+  MatchDetailsCache(this._files, {this.keep = 200, this.pruneEvery = 10});
 
   final JsonFileCache _files;
   final int keep;
+  final int pruneEvery;
+
+  var _writesSincePrune = 0;
+  Future<void>? _pruning;
 
   static String key(String matchId) =>
       'matches/${matchId.trim().toLowerCase()}';
@@ -138,25 +146,34 @@ class MatchDetailsCache {
     if (!details.info.isCompleted || details.matchId.isEmpty) return;
     try {
       await _files.write(key(details.matchId), details.toJson());
-      await prune();
+      if (++_writesSincePrune >= pruneEvery) {
+        _writesSincePrune = 0;
+        unawaited(prune());
+      }
     } on Object {
       // Disk full / unavailable: the next open refetches.
     }
   }
 
-  /// Deletes the least recently used entries beyond [keep].
-  Future<void> prune() async {
+  /// Deletes the least recently used entries beyond [keep]. Runs once at a
+  /// time; a call while one is running joins it.
+  Future<void> prune() => _pruning ??= _prune().whenComplete(() {
+    _pruning = null;
+  });
+
+  Future<void> _prune() async {
     try {
       final dir = (await _files.fileFor(key('x'))).parent;
       if (!dir.existsSync()) return;
-      final files = [
-        for (final e in dir.listSync())
-          if (e is File && e.path.endsWith('.json')) e,
-      ];
-      if (files.length <= keep) return;
-      final stamped = [for (final f in files) (f, f.lastModifiedSync())]
-        ..sort((a, b) => a.$2.compareTo(b.$2));
-      for (final (file, _) in stamped.take(files.length - keep)) {
+      final stamped = <(File, DateTime)>[];
+      await for (final e in dir.list()) {
+        if (e is File && e.path.endsWith('.json')) {
+          stamped.add((e, await e.lastModified()));
+        }
+      }
+      if (stamped.length <= keep) return;
+      stamped.sort((a, b) => a.$2.compareTo(b.$2));
+      for (final (file, _) in stamped.take(stamped.length - keep)) {
         await file.delete();
       }
     } on Object {
@@ -277,8 +294,8 @@ class MatchHistoryNotifier
       console: watchIsConsole(ref, _viewer),
     );
     final repo = ref.watch(matchRepositoryProvider);
-    cacheFor(ref, const Duration(minutes: 3));
     final page = await repo.history(_viewer, subject: _subject, queue: _queue);
+    cacheFor(ref, const Duration(minutes: 3)); // only after a success
     _nextIndex = page.entries.length;
     return PagedState(
       items: page.entries,
@@ -328,34 +345,45 @@ class MatchHistoryNotifier
   }
 }
 
-/// Typed match details (R10–R12, G11), cached on disk forever (completed
-/// matches) and for 10 minutes in memory. Blank Riot IDs are filled via
-/// [NameResolver] (best effort: names stay blank if name-service fails).
-/// Also records the match outcome of every signed-in participant for Daily
-/// RR (SUMMARY §9.6).
+/// Typed match details as the **active account** sees them (R10–R12, G11),
+/// cached on disk forever (completed matches) and for 10 minutes in memory.
+/// Blank Riot IDs are filled via [NameResolver] (best effort: names stay
+/// blank if name-service fails). Also records the match outcome of every
+/// signed-in participant for Daily RR (SUMMARY §9.6) and their stat line in
+/// the performance ledger (PR-01).
+///
+/// The provider *watches* the active account (AR-015): after an account
+/// switch it rebuilds for the new viewer, so names, the Incognito set and a
+/// `NeedsLoginException` of the previous account are never served to the
+/// next one. The Incognito players' names are removed from the returned
+/// value ([MatchDetails.withoutNames]) and the lookup of their Riot ID is
+/// skipped altogether (SUMMARY U16).
 ///
 /// Errors: [NotFoundException] right after a match (show
 /// `CompetitiveStrings.matchPending`, retry later), other `RiotException`s.
+/// A failed load is never kept alive (AR-029): retrying fetches again.
 final matchDetailsProvider = FutureProvider.autoDispose
     .family<MatchDetails, String>((ref, matchId) async {
       final id = matchId.trim().toLowerCase();
-      final repo = ref.watch(matchRepositoryProvider);
-      final resolver = ref.watch(nameResolverProvider);
-      final viewer = ref.read(activePuuidProvider);
+      final viewer = ref.watch(activePuuidProvider);
       if (viewer == null) {
         throw const NeedsLoginException(reason: 'no_account');
       }
+      final repo = ref.watch(matchRepositoryProvider);
+      final resolver = ref.watch(nameResolverProvider);
       ref.watch(accountProvider(viewer).select((a) => a?.needsLogin));
-      cacheFor(ref, const Duration(minutes: 10));
+      // Everything the provider needs from `ref` is taken before the first
+      // await: a provider read without a listener may be disposed while the
+      // match is loading, and a disposed Ref cannot be used any more.
+      final privacyStore = ref.read(matchPrivacyStoreProvider);
+      final accounts = ref.read(accountsProvider);
+      final rr = ref.read(rrHistoryStoreProvider);
+      final ledger = ref.read(matchStatsStoreProvider);
 
       final details = await repo.details(viewer, id);
       // Incognito players seen during the live match (U16): their Riot ID
       // is never looked up, and the UI shows them as anonymous.
-      final hidden = ref
-          .read(matchPrivacyStoreProvider)
-          .read(viewer, id)
-          .hiddenIn(details, viewer);
-      final accounts = ref.read(accountsProvider);
+      final hidden = privacyStore.read(viewer, id).hiddenIn(details, viewer);
       final names = <String, RiotName>{};
       for (final a in accounts) {
         final n = RiotName.of(a.gameName, a.tagLine);
@@ -376,19 +404,28 @@ final matchDetailsProvider = FutureProvider.autoDispose
           // Names are cosmetic: keep the scoreboard.
         }
       }
-      if (baseQueueId(details.info.queueId) == kCompetitiveQueue) {
-        final store = ref.read(rrHistoryStoreProvider);
-        for (final a in accounts) {
-          if (details.player(a.puuid) == null) continue;
+      final competitive =
+          baseQueueId(details.info.queueId) == kCompetitiveQueue;
+      for (final a in accounts) {
+        if (details.player(a.puuid) == null) continue;
+        if (competitive) {
           final outcome = details.resultFor(a.puuid).outcome;
           unawaited(
-            store
+            rr
                 .recordOutcomes(a.puuid, {id: outcome}, force: true)
                 .catchError((Object _) {}),
           );
         }
+        final line = MatchStatLine.fromDetails(details, a.puuid);
+        if (line != null) {
+          unawaited(
+            ledger.record(a.puuid, [line]).then((_) {}, onError: (Object _) {}),
+          );
+        }
       }
-      return details.withNames(names);
+      // Only a successful load stays cached (AR-029).
+      cacheFor(ref, const Duration(minutes: 10));
+      return details.withNames(names).withoutNames(hidden);
     });
 
 /// Family key of [matchSummaryProvider].

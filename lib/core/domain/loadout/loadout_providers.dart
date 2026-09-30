@@ -224,15 +224,14 @@ class LoadoutPresetsNotifier extends Notifier<List<LoadoutPreset>> {
   List<LoadoutPreset> build() =>
       ref.watch(loadoutPresetStoreProvider).read(puuid);
 
-  /// Name proposed in the "Tên bộ trang bị" dialog.
-  String get suggestedName {
-    final names = {for (final p in state) p.name};
-    var n = state.length + 1;
-    while (names.contains(LoadoutStrings.defaultPresetName(n))) {
-      n++;
-    }
-    return LoadoutStrings.defaultPresetName(n);
-  }
+  int get _nextNumber => nextDefaultPresetNumber(
+    state,
+    legacyName: LoadoutStrings.defaultPresetName,
+  );
+
+  /// Name proposed in the "Tên bộ trang bị" dialog. Its number is unique
+  /// among the account's presets whatever language their names are in.
+  String get suggestedName => LoadoutStrings.defaultPresetName(_nextNumber);
 
   bool get isFull => state.length >= kMaxLoadoutPresets;
 
@@ -240,11 +239,18 @@ class LoadoutPresetsNotifier extends Notifier<List<LoadoutPreset>> {
   /// is dropped beyond [kMaxLoadoutPresets].
   Future<LoadoutPreset> save(Loadout loadout, {String? name}) async {
     final now = ref.read(clockProvider).now();
+    final number = _nextNumber;
+    final proposed = LoadoutStrings.defaultPresetName(number);
+    final typed = normalizePresetName(name);
+    // The dialog is pre-filled with the proposal: keeping it means an
+    // automatic name (its number is remembered), changing it a custom one.
+    final automatic = typed == null || typed == proposed;
     final preset = LoadoutPreset.fromLoadout(
       loadout,
       id: 'p${now.microsecondsSinceEpoch}_${_idCounter++}',
-      name: normalizePresetName(name) ?? suggestedName,
+      name: typed ?? proposed,
       createdAt: now,
+      defaultNumber: automatic ? number : null,
     );
     await _set([preset, ...state].take(kMaxLoadoutPresets).toList());
     return preset;

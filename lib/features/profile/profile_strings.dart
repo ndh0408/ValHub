@@ -207,6 +207,23 @@ abstract final class ProfileStrings {
   static String formSemantics(int w, int l, int games) =>
       '$games trận gần nhất: $w thắng, $l thua';
 
+  /// Which matches the form card counts: "Mọi chế độ", "Xếp hạng",
+  /// "Xếp hạng · Ascent".
+  static String formScope({String? queue, String? map}) =>
+      joined([queue ?? 'Mọi chế độ', ?map]);
+
+  /// Under the form tiles when a Deathmatch-like match is in the window.
+  static String formRoundStatsNote(int roundGames, int games) =>
+      'K/D, ACS, ADR, HS% chỉ tính $roundGames/$games trận theo vòng đấu';
+
+  /// No round-based match in the window: the tiles are hidden.
+  static const formNoRoundStats =
+      'K/D, ACS, HS% chỉ tính cho các chế độ theo vòng đấu.';
+
+  /// Map filter: listed matches whose details are not loaded yet.
+  static String formPending(int n) =>
+      '$n trận trong danh sách chưa được tải để tính.';
+
   // Match history (redesign)
   static const clearMap = 'Bỏ lọc bản đồ';
 

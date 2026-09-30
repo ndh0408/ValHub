@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/domain/competitive/competitive.dart';
 import 'package:valvn/core/util/json.dart';
 import 'package:valvn/features/home/data/home_rank.dart';
-import 'package:valvn/features/profile/data/recent_form.dart' show StreakKind;
 
 import '../../profile/profile_test_env.dart';
 

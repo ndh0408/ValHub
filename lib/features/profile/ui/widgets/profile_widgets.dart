@@ -22,6 +22,14 @@ Color outcomeColor(BuildContext context, MatchOutcome outcome) {
   };
 }
 
+/// Glyph of a match outcome, so a result never depends on colour alone
+/// (PR-16): check for a win, cross for a loss, dash for a draw / unknown.
+IconData outcomeGlyph(MatchOutcome outcome) => switch (outcome) {
+  MatchOutcome.win => Icons.check_rounded,
+  MatchOutcome.loss => Icons.close_rounded,
+  MatchOutcome.draw || MatchOutcome.unknown => Icons.remove_rounded,
+};
+
 /// Color of an RR change.
 Color rrColor(BuildContext context, int rr) {
   final c = valColorsOf(context);

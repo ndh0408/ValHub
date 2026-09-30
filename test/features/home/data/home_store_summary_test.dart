@@ -80,18 +80,42 @@ void main() {
     expect(s.daily, hasLength(4));
   });
 
-  test('affordable skins with and without a wallet', () {
+  test('skins the wallet buys together, not one by one (PR-04)', () {
+    // Offers: 2.175 / 1.275 / 1.775 / 1.275 VP.
     final without = _summary(_store())!;
     expect(without.walletVp, isNull);
-    expect(without.affordableCount, 0);
+    expect(without.affordableTogether, 0);
 
+    // Each 1.275 VP skin alone fits 1.300 VP, but only one of them can be
+    // bought: the second would need 2.550 VP.
     final some = _summary(_store(), wallet: _wallet(1300))!;
     expect(some.walletVp, 1300);
-    expect(some.affordableCount, 2); // both 1.275 VP skins
+    expect(some.affordableTogether, 1);
 
-    final all = _summary(_store(), wallet: _wallet(2440))!;
-    expect(all.affordableCount, 4);
-    expect(_summary(_store(), wallet: _wallet(0))!.affordableCount, 0);
+    // 2.440 VP is enough for one skin at a time (the old "4" was wrong):
+    // 1.275 + 1.275 = 2.550 > 2.440.
+    expect(_summary(_store(), wallet: _wallet(2440))!.affordableTogether, 1);
+    expect(_summary(_store(), wallet: _wallet(2550))!.affordableTogether, 2);
+    // 1.275 + 1.275 + 1.775 = 4.325.
+    expect(_summary(_store(), wallet: _wallet(4325))!.affordableTogether, 3);
+    expect(_summary(_store(), wallet: _wallet(6500))!.affordableTogether, 4);
+    expect(_summary(_store(), wallet: _wallet(0))!.affordableTogether, 0);
+    expect(_summary(_store(), wallet: _wallet(1274))!.affordableTogether, 0);
+  });
+
+  test('maxAffordableTogether: cheapest first is optimal for the count', () {
+    expect(maxAffordableTogether(const [2175, 1275, 1775, 1275], 2440), 1);
+    expect(maxAffordableTogether(const [2175, 1275, 1775, 1275], 2550), 2);
+    expect(maxAffordableTogether(const [100, 100, 100], 250), 2);
+    expect(maxAffordableTogether(const [100, 100, 100], 300), 3);
+    // Order of the input does not matter.
+    expect(maxAffordableTogether(const [500, 100, 300, 200], 600), 3);
+    // Unknown / zero prices are never "free"; an empty or broke wallet buys
+    // nothing.
+    expect(maxAffordableTogether(const [0, -5, 300], 300), 1);
+    expect(maxAffordableTogether(const [], 1000), 0);
+    expect(maxAffordableTogether(const [100], 0), 0);
+    expect(maxAffordableTogether(const [100], -50), 0);
   });
 
   test('wishlist hits are live only, one per skin, daily first', () {

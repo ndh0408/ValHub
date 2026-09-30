@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 
 import '../../../core/content/content_db.dart';
 import '../../../core/domain/competitive/competitive.dart';
-import '../../profile/data/recent_form.dart' show StreakKind;
 
 /// A ranked streak older than this is not shown.
 const kHomeStreakMaxAge = Duration(days: 7);
@@ -16,54 +15,30 @@ const kHomeRecentRrDays = 7;
 /// Fewer decided games than this is not a streak.
 const kHomeMinStreak = 2;
 
-/// The current run of wins or losses in ranked.
-@immutable
-class RankedStreak {
-  const RankedStreak(this.kind, this.count);
-
-  final StreakKind kind;
-  final int count;
-
-  @override
-  bool operator ==(Object other) =>
-      other is RankedStreak && other.kind == kind && other.count == count;
-
-  @override
-  int get hashCode => Object.hash(kind, count);
-}
+/// The current run of wins or losses in **ranked** (the scope is part of the
+/// number: Profile's form card counts the queue chip's matches instead).
+typedef RankedStreak = Streak;
 
 /// The ranked streak of [history] (newest row first). Each row's outcome is
-/// the known match outcome, else the sign of its RR; a draw, a remake (0 RR)
-/// or an unknown outcome ends the walk (same semantics as Profile's recent
-/// form). `null` for fewer than [kHomeMinStreak] games, or when the newest
-/// game is older than [kHomeStreakMaxAge].
+/// the known match outcome, else the sign of its RR; a draw or a remake
+/// (0 RR) ends the walk. The run itself is the one streak rule shared with
+/// Profile's recent form ([currentStreak], PR-19). `null` for fewer than
+/// [kHomeMinStreak] games, or when the newest game is older than
+/// [kHomeStreakMaxAge].
 RankedStreak? rankedStreakOf(RrHistory history, {required DateTime now}) {
   final rows = history.rows;
   if (rows.isEmpty) return null;
   final newest = rows.first.matchStartTime;
   if (newest == null || now.difference(newest) > kHomeStreakMaxAge) return null;
-  StreakKind? kind;
-  var count = 0;
-  for (final u in rows) {
-    final known = history.outcomes[u.matchId];
-    final outcome = known == null || known == MatchOutcome.unknown
-        ? MatchOutcome.fromRr(u.rrEarned)
-        : known;
-    final k = switch (outcome) {
-      MatchOutcome.win => StreakKind.win,
-      MatchOutcome.loss => StreakKind.loss,
-      _ => null,
-    };
-    if (k == null) break;
-    if (kind == null) {
-      kind = k;
-    } else if (k != kind) {
-      break;
-    }
-    count++;
-  }
-  if (kind == null || count < kHomeMinStreak) return null;
-  return RankedStreak(kind, count);
+  final streak = currentStreak([
+    for (final u in rows)
+      switch (history.outcomes[u.matchId]) {
+        final known? when known != MatchOutcome.unknown => known,
+        _ => MatchOutcome.fromRr(u.rrEarned),
+      },
+  ]);
+  if (streak == null || streak.count < kHomeMinStreak) return null;
+  return streak;
 }
 
 /// What the rank card shows.
@@ -129,6 +104,7 @@ HomeRankSnapshot? buildHomeRankSnapshot(
 
   final ranked = !current.isUnranked;
   final belowImmortal = ranked && current.normalizedTier < kRankUpMaxTier;
+  final progress = rankProgress(current);
 
   DailyRr? today;
   DailyRr? lastDay;
@@ -174,12 +150,8 @@ HomeRankSnapshot? buildHomeRankSnapshot(
 
   return HomeRankSnapshot(
     current: current,
-    progress: belowImmortal && !current.isPlacement
-        ? (current.rr / kRrPerTier).clamp(0.0, 1.0)
-        : null,
-    rrToNext: belowImmortal && !current.isPlacement
-        ? (kRrPerTier - current.rr).clamp(0, kRrPerTier)
-        : null,
+    progress: progress?.fraction,
+    rrToNext: progress?.rrToNext,
     today: today,
     lastDay: lastDay,
     streak: streak,

@@ -401,6 +401,252 @@ void main() {
     });
   });
 
+  group('normalizeTier does not read the localized name (GL-24)', () {
+    /// A table whose names carry no ASCII numeral at all: only `division`
+    /// and the tier NUMBER identify the position.
+    CompetitiveTierTable table(String uuid, Map<int, String> divisionOf) =>
+        CompetitiveTierTable.fromJson({
+          'uuid': uuid,
+          'tiers': [
+            for (final e in divisionOf.entries)
+              {
+                'tier': e.key,
+                // Arabic-Indic, CJK and unnumbered names: none end with an
+                // ASCII digit.
+                'tierName': switch (e.key % 3) {
+                  0 => 'الذهب ١',
+                  1 => '黄金 ②',
+                  _ => 'Золото',
+                },
+                'division': 'ECompetitiveDivision::${e.value}',
+              },
+          ],
+        })!;
+
+    test('Episode 5 table: sub-tier is tier − division start', () {
+      final t = table(_e5Table, {
+        for (var i = 3; i <= 5; i++) i: 'IRON',
+        for (var i = 18; i <= 20; i++) i: 'DIAMOND',
+        for (var i = 21; i <= 23; i++) i: 'ASCENDANT',
+        for (var i = 24; i <= 26; i++) i: 'IMMORTAL',
+        27: 'RADIANT',
+      });
+      expect(
+        [
+          for (final i in [3, 4, 5]) normalizeTier(i, t),
+        ],
+        [3, 4, 5],
+      );
+      expect(
+        [
+          for (final i in [18, 19, 20]) normalizeTier(i, t),
+        ],
+        [18, 19, 20],
+      );
+      expect(
+        [
+          for (final i in [21, 22, 23]) normalizeTier(i, t),
+        ],
+        [21, 22, 23],
+      );
+      expect(
+        [
+          for (final i in [24, 25, 26]) normalizeTier(i, t),
+        ],
+        [24, 25, 26],
+      );
+      expect(normalizeTier(27, t), 27);
+    });
+
+    test('a partial table (only one tier of a division) is still exact', () {
+      // Just Gold 3: the position comes from the number, not from which
+      // other tiers the table happens to list.
+      final t = table(_e5Table, {14: 'GOLD'});
+      expect(normalizeTier(14, t), 14);
+      final ascendant2 = table(_e5Table, {22: 'ASCENDANT'});
+      expect(normalizeTier(22, ascendant2), 22);
+    });
+
+    test('legacy tables: Immortal 1-3 are 21-23, Radiant is 24', () {
+      final t = table(_e1Table, {
+        for (var i = 18; i <= 20; i++) i: 'DIAMOND',
+        for (var i = 21; i <= 23; i++) i: 'IMMORTAL',
+        24: 'RADIANT',
+      });
+      expect(
+        [
+          for (final i in [21, 22, 23]) normalizeTier(i, t),
+        ],
+        [24, 25, 26],
+      );
+      expect(normalizeTier(24, t), 27);
+      expect(normalizeTier(19, t), 19);
+      // Same number in a current table is Ascendant, not Immortal.
+      final e5 = table(_e5Table, {
+        for (var i = 21; i <= 23; i++) i: 'ASCENDANT',
+      });
+      expect(normalizeTier(22, e5), 22);
+    });
+
+    test('an unknown division id falls back to the raw tier', () {
+      final t = table(_e5Table, {15: 'FUTUREDIVISION'});
+      expect(normalizeTier(15, t), 15);
+      expect(normalizeTier(15, null), 15);
+    });
+  });
+
+  group('weekSummary (PR-15)', () {
+    DateTime at(int day, int hour) => DateTime(2026, 9, day, hour);
+    CompetitiveUpdate row(String id, DateTime t, int earned) =>
+        CompetitiveUpdate(matchId: id, matchStartTime: t, rrEarned: earned);
+
+    // 28th: +20 −10, 27th: +15, 24th: −12 (outside a 7-day window from the
+    // 30th), 22nd: +30.
+    final days = groupDailyRr([
+      row('a', at(28, 10), 20),
+      row('b', at(28, 12), -10),
+      row('c', at(27, 21), 15),
+      row('d', at(24, 9), -12),
+      row('e', at(22, 9), 30),
+    ], toLocal: (d) => d);
+
+    test('sums the last seven local days', () {
+      final w = weekSummary(days, DateTime(2026, 9, 28, 22), toLocal: (d) => d);
+      // Window: 22nd … 28th.
+      expect(w.netRr, 20 - 10 + 15 - 12 + 30);
+      expect((w.wins, w.losses, w.draws), (3, 2, 0));
+      expect(w.matches, 5);
+      expect(w.daysPlayed, 4);
+      expect(w.isEmpty, isFalse);
+    });
+
+    test('the window follows "now", not the newest day', () {
+      final w = weekSummary(days, DateTime(2026, 9, 30, 8), toLocal: (d) => d);
+      // Window: 24th … 30th.
+      expect(w.netRr, 20 - 10 + 15 - 12);
+      expect(w.daysPlayed, 3);
+      final empty = weekSummary(
+        days,
+        DateTime(2026, 10, 20),
+        toLocal: (d) => d,
+      );
+      expect(empty.isEmpty, isTrue);
+      expect(empty.netRr, 0);
+      expect(empty.trend, hasLength(4)); // the trend is the listed days
+    });
+
+    test('the trend is the net RR of the newest listed days, oldest first', () {
+      final w = weekSummary(days, DateTime(2026, 9, 28), toLocal: (d) => d);
+      expect(w.trend, [30, -12, 15, 10]);
+      expect(w.trendNet, 43);
+      final short = weekSummary(
+        days,
+        DateTime(2026, 9, 28),
+        trendDays: 2,
+        toLocal: (d) => d,
+      );
+      expect(short.trend, [15, 10]);
+    });
+
+    test('days are calendar days of the injected zone (DST safe)', () {
+      // A window start built from the calendar date, not from "now − 6 × 24 h".
+      final w = weekSummary(
+        groupDailyRr([
+          row('x', DateTime(2026, 3, 25, 12), 5),
+        ], toLocal: (d) => d),
+        DateTime(2026, 3, 31, 12),
+        toLocal: (d) => d,
+      );
+      expect(w.daysPlayed, 1); // 25 Mar is within 25…31 Mar
+      final out = weekSummary(
+        groupDailyRr([
+          row('x', DateTime(2026, 3, 24, 23), 5),
+        ], toLocal: (d) => d),
+        DateTime(2026, 3, 31, 12),
+        toLocal: (d) => d,
+      );
+      expect(out.daysPlayed, 0);
+    });
+
+    test('no days at all', () {
+      final w = weekSummary(const [], DateTime(2026, 9, 28));
+      expect(w.isEmpty, isTrue);
+      expect(w.trend, isEmpty);
+      expect(w.trendNet, 0);
+    });
+  });
+
+  group('rank progress (PR-15)', () {
+    test('rr / 100 below Immortal, clamped', () {
+      final r = RankInfo.resolve(db, tier: 18, rr: 6, actUuid: actV);
+      final p = rankProgress(r)!;
+      expect(p.fraction, closeTo(0.06, 1e-9));
+      expect(p.rrToNext, 94);
+      expect(
+        rankProgress(RankInfo.resolve(db, tier: 18, rr: 100))!.rrToNext,
+        0,
+      );
+      expect(rankProgress(RankInfo.resolve(db, tier: 18, rr: 0))!.fraction, 0);
+      // Out-of-range RR never escapes 0–100.
+      expect(
+        rankProgress(RankInfo.resolve(db, tier: 18, rr: 140))!.fraction,
+        1,
+      );
+    });
+
+    test('none when unranked, in placements, or from Immortal 1 up', () {
+      expect(rankProgress(RankInfo.resolve(db, tier: 0)), isNull);
+      expect(
+        rankProgress(RankInfo.resolve(db, tier: 0, gamesNeeded: 3)),
+        isNull,
+      );
+      expect(rankProgress(RankInfo.resolve(db, tier: 24, rr: 120)), isNull);
+      expect(rankProgress(RankInfo.resolve(db, tier: 27, rr: 300)), isNull);
+      expect(rankProgress(RankInfo.resolve(db, tier: 23, rr: 50)), isNotNull);
+    });
+
+    test('rank-up progress and the nearest win rate row', () {
+      final est = estimateRankUp(
+        currentTier: 12,
+        currentRr: 36,
+        targetTier: 14,
+        form: const RankUpForm(avgGain: 20, avgLoss: 15, wins: 12, losses: 8),
+      )!;
+      // 164 RR of 200 are still missing.
+      expect(est.progress, closeTo(36 / 200, 1e-9));
+      // Own win rate is 60 %: only the 60 % row is highlighted.
+      expect(
+        [for (final r in kRankUpWinRates) est.isNearestWinRate(r)],
+        [false, false, false, true, false],
+      );
+      final none = estimateRankUp(
+        currentTier: 12,
+        currentRr: 0,
+        targetTier: 13,
+        form: const RankUpForm(),
+      )!;
+      expect(none.isNearestWinRate(0.5), isFalse);
+      final start = estimateRankUp(
+        currentTier: 12,
+        currentRr: 0,
+        targetTier: 13,
+        form: const RankUpForm(avgGain: 20, avgLoss: 15, wins: 1, losses: 1),
+      )!;
+      expect(start.progress, 0);
+      expect(
+        RankUpEstimate(
+          currentTier: 12,
+          currentRr: 99,
+          targetTier: 12,
+          rrNeeded: -1,
+          form: const RankUpForm(),
+          byWinRate: const [],
+        ).progress,
+        1,
+      );
+    });
+  });
+
   group('dailyRrOn (shared with Home)', () {
     final days = groupDailyRr([
       CompetitiveUpdate(

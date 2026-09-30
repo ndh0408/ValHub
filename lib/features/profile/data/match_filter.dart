@@ -56,6 +56,32 @@ class MatchFilter {
   int get hashCode => Object.hash(queue, mapUrl);
 }
 
+/// What a map filter does to a list of matches: how many pass it, and how
+/// many are not known well enough to tell (PR-26).
+typedef MapFilterCounts = ({int visible, int unknown});
+
+/// Counts, for the listed [ids], the matches whose map passes [filter]
+/// (`visible`) and the ones whose map is not known yet (`unknown`).
+/// [mapOf] returns `null` for a match that has not been looked at and must
+/// never start a request: the callers pass the on-device ledger.
+MapFilterCounts countMapFilter(
+  Iterable<String> ids, {
+  required MatchFilter filter,
+  required ({String? map})? Function(String matchId) mapOf,
+}) {
+  var visible = 0;
+  var unknown = 0;
+  for (final id in ids) {
+    final known = mapOf(id);
+    if (known == null) {
+      unknown++;
+    } else if (filter.acceptsMap(known.map)) {
+      visible++;
+    }
+  }
+  return (visible: visible, unknown: unknown);
+}
+
 final RegExp _nonPlayableMap = RegExp(
   r'/(poveglia|npe|npev2|range)\b',
   caseSensitive: false,
