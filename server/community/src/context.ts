@@ -3,7 +3,7 @@ import { FixedWindowLimiter, TtlCache } from './cache.js';
 import type { Config } from './config.js';
 import type { ContentCatalog, ContentKind } from './content.js';
 import { hashIp, verifySession } from './crypto.js';
-import type { AuthorCols, Repo, UserRow } from './db/repo.js';
+import type { AuthorCols, Repo, SanctionRow, UserRow } from './db/repo.js';
 import { invalid, reasonError, unauthorized } from './errors.js';
 import type { MediaStore } from './media.js';
 import { Counters } from './metrics.js';
@@ -38,10 +38,36 @@ export const DEFAULT_TUNING: Tuning = {
 /** A report only counts toward hiding when the reporter's account is at least this old (and active). */
 export const REPORT_MIN_ACCOUNT_AGE_MS = 24 * 60 * 60_000;
 
+/** The 403 `suspended` error of a sanction: ban (no access) or restriction (read-only), with its end and cause. */
+export function suspendedError(s: SanctionRow) {
+  return reasonError('suspended', s.kind === 'ban' ? 'account_banned' : 'account_restricted', {
+    kind: s.kind,
+    until: s.until === null ? null : new Date(s.until).toISOString(),
+    cause: s.reason,
+  });
+}
+
+/**
+ * What a sanctioned account may still do. A restricted account is read-only: GET, HEAD, undoing things (DELETE) and
+ * editing its own profile / signing out. A banned account can only exercise its data rights (export, erase) and
+ * sign out; everything else is refused with 403 `suspended`.
+ */
+export function sanctionAllows(s: SanctionRow, method: string, path: string): boolean {
+  const m = method.toUpperCase();
+  if (m === 'POST' && path === '/v1/auth/logout') return true;
+  if (s.kind === 'ban') {
+    return (m === 'GET' && path === '/v1/me/export') || (m === 'DELETE' && path === '/v1/me');
+  }
+  if (m === 'GET' || m === 'HEAD' || m === 'OPTIONS' || m === 'DELETE') return true;
+  return m === 'PATCH' && path === '/v1/me';
+}
+
 export interface AppDeps {
   repo: Repo;
   media: MediaStore;
-  config: Pick<Config, 'sessionSecret' | 'pepper' | 'publicBaseUrl' | 'trustProxy'> & Partial<Tuning>;
+  config: Pick<Config, 'sessionSecret' | 'pepper' | 'publicBaseUrl' | 'trustProxy'> &
+    Partial<Pick<Config, 'sessionSecretPrev'>> &
+    Partial<Tuning>;
   /** Real VALORANT ids (skins / weapons / agents); omitted → ids are not checked. */
   content?: ContentCatalog;
   /** Injectable Riot /userinfo call (stubbed in tests). */
@@ -87,7 +113,11 @@ export class Ctx {
   /** Anonymous aggregate responses (skin top / votes / summary / reviews, communities). */
   readonly publicCache = new TtlCache<{ body: string; type: string }>(500);
 
+  /** Secrets accepted for verifying session tokens: the current one first, then the one being rotated out. */
+  readonly sessionSecrets: readonly string[];
+
   constructor(readonly deps: AppDeps) {
+    this.sessionSecrets = [deps.config.sessionSecret, deps.config.sessionSecretPrev ?? ''].filter((s) => s !== '');
     this.now = deps.now ?? (() => Date.now());
     this.tuning = { ...DEFAULT_TUNING };
     for (const k of Object.keys(DEFAULT_TUNING) as (keyof Tuning)[]) {
@@ -166,10 +196,22 @@ export class Ctx {
     }
     const m = /^Bearer\s+(\S+)$/i.exec(header.trim());
     if (!m?.[1]) throw unauthorized();
-    const claims = verifySession(this.deps.config.sessionSecret, m[1], this.now());
+    const claims = verifySession(this.sessionSecrets, m[1], this.now());
     if (!claims) throw unauthorized();
     const user = this.repo.getUser(claims.sub);
     if (!user) throw unauthorized();
+    // A token issued before this account row existed belongs to an account that was erased and has since been
+    // re-created (same Riot account = same id): it must not come back to life. Seconds vs milliseconds: a token
+    // signed in the same second as the row was created is fine.
+    if (claims.iat < Math.floor(user.created_at / 1000)) throw unauthorized();
+    // Logout / ban bumped the epoch: older tokens are revoked.
+    if ((claims.ep ?? 0) !== user.session_epoch) throw unauthorized();
+    // Sanctions (bans, temporary restrictions) are enforced here, before anything else touches the account.
+    const sanction = this.repo.activeSanction(user.id, this.now());
+    if (sanction && !sanctionAllows(sanction, c.req.method, c.req.path)) {
+      this.stats.inc(`suspended:${sanction.kind}`);
+      throw suspendedError(sanction);
+    }
     // Coarse valve above the per-action limits: every request of a signed-in user, any route and method
     // (reads, deletes and profile calls have no other limit). In memory: no database write per request.
     const bucket = this.userLimiter.hit(user.id, this.tuning.userRequestLimitPerMin, 60_000, this.now());
@@ -268,6 +310,15 @@ export function authorFromUser(u: UserRow) {
     country: u.country ?? null,
     language: u.language ?? null,
   };
+}
+
+/**
+ * What the AUTHOR of an item sees about its visibility (never shown to other viewers): `hidden` and, when hidden,
+ * `hiddenReason` = `reports` (hidden automatically after enough reports) or `moderator` (hidden by an operator).
+ */
+export function ownHidden(r: { hidden: number; hidden_reason: string | null }) {
+  const hidden = r.hidden === 1;
+  return { hidden, hiddenReason: hidden ? (r.hidden_reason ?? 'reports') : null };
 }
 
 /** Country / region / language of a content row (stored at creation time). */

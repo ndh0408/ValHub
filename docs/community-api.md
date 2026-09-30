@@ -39,7 +39,8 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
 - The PUUID is never stored or returned: the user id is
   `hex(sha256(PEPPER + puuid))[0..32]` (`PEPPER` = server secret).
 - The server issues its own session token: HS256 JWT signed with the server secret
-  `SESSION_SECRET`, claims `{sub: userId, name, tag, iat, exp}` (30 days).
+  `SESSION_SECRET`, claims `{sub: userId, name, tag, iat, exp, ep}` (30 days; `ep` = the
+  account's session epoch, header `kid` = key id), revocable: see `POST /v1/auth/logout`.
   Clients send `Authorization: Bearer <token>`. Riot ID is refreshed on every
   `/v1/auth/riot`.
 - Public author object (everywhere a user is shown):
@@ -63,14 +64,22 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
 
 | Method | Path | Body | Response |
 |---|---|---|---|
-| POST | `/v1/auth/riot` | `{"accessToken", "region", "cardId"?, "rankTier"?}` | `{"token", "expiresAt", "user": Author}` |
+| POST | `/v1/auth/riot` | `{"accessToken", "region", "cardId"?, "rankTier"?, "language"?, "consentVersion"?}` | `{"token", "expiresAt", "user": Author}` |
+| POST | `/v1/auth/logout` | — | `204` (ends every session of the account) |
 | GET | `/v1/me` | — | `Author` |
 | PATCH | `/v1/me` | `{"cardId"?, "rankTier"?, "region"?, "language"?}` | `Author` |
 | GET | `/v1/me/export` | — | JSON download of all the caller's data (see "Data rights") |
 | DELETE | `/v1/me` | — | `204` (hard delete of the account and its data) |
 
 `region` ∈ `ap, na, eu, kr, latam, br`. `rankTier` 0..27 (client-reported, shown
-as-is).
+as-is). `consentVersion` (optional, 1–32 characters of `A-Z a-z 0-9 . _ -`, e.g. `"2026-09"`)
+is the version of the privacy policy / community guidelines the user accepted in the app: the
+server stores the version and the time it first saw it (returned in the data export), nothing else.
+
+**`POST /v1/auth/logout`** (session required) ends **every** session of the account, on all
+devices: the tokens issued so far answer `401`, and the app signs in again with its Riot
+session when it needs to. A token issued before the account was erased is also refused after
+the same Riot account signs in again, and banning an account ends its sessions too.
 
 `POST /v1/auth/riot` errors: `400 invalid_input` (bad body, before Riot is called),
 `401 riot_rejected` (Riot refused the token: the client should refresh its Riot session
@@ -79,6 +88,31 @@ answered with an error page: **the token may be fine**, so the client keeps its 
 session and retries later, after `Retry-After` when present, 1–300 s), `429 rate_limited`
 (30 attempts / 10 min per client IP). No user is created or changed unless Riot verified
 the token.
+
+### Sanctions (hạn chế và khóa tài khoản)
+
+The community guidelines allow temporary restrictions and permanent bans; moderators apply them
+from the operator tool. A sanctioned account gets **`403 suspended`** on the routes it may not use:
+
+```json
+{"error": {"code": "suspended", "reason": "account_restricted", "message": "…", "messageEn": "…",
+           "params": {"kind": "restrict", "until": "2026-10-07T12:00:00.000Z", "cause": "spam"}}}
+```
+
+- `reason`: `account_restricted` (read-only) or `account_banned` (no access). `params.kind` is
+  `restrict` or `ban`; `params.until` is when it ends (ISO-8601, `null` = permanent);
+  `params.cause` is a reason code: `spam`, `harassment`, `hate`, `scam`, `nsfw`, `evasion`,
+  `minor`, `illegal` or `other`.
+- A **restricted** account can read everything, delete its own content, edit its profile
+  (`PATCH /v1/me`) and sign out; it cannot post, comment, create LFG posts, vote, review, like,
+  report or upload (`403 suspended` on those).
+- A **banned** account can only export or erase its data (`GET /v1/me/export`, `DELETE /v1/me`)
+  and sign out. `POST /v1/auth/riot` also answers `403 suspended` (no session is issued), and
+  existing sessions were ended when the ban was applied (`401`, then the sign-in above).
+- Erasing an account does **not** lift a ban or restriction (the id is derived from the Riot
+  account, so it would return unchanged). The export lists the account's sanctions
+  (`sanctions`) and the moderator actions that concerned it (`moderationLog`).
+- Appeals: by email, quoting the Riot ID (community guidelines, section 9).
 
 ### Data rights (quyền về dữ liệu)
 
@@ -95,7 +129,7 @@ media as URLs; hidden content is included with `hidden: true`):
   "format": "valvn-community-export/1",
   "exportedAt": "…",
   "profile": {"id", "gameName", "tagLine", "cardId", "rankTier", "region", "country",
-              "language", "createdAt", "updatedAt"},
+              "language", "createdAt", "updatedAt", "consent": {"version", "at"} | null},
   "posts":    [{"id", "kind", "body", "media": [{"key", "url"}], "payload", "hidden",
                 "country", "region", "language", "createdAt"}],
   "comments": [{"id", "postId", "body", "hidden", "country", "region", "language", "createdAt"}],
@@ -110,7 +144,9 @@ media as URLs; hidden content is included with `hidden: true`):
   "lfgJoins": [{"lfgId", "createdAt"}],
   "reportsFiled": [{"targetType", "targetId", "reason", "createdAt"}],
   "media": [{"key", "url", "contentType", "size", "status": "active|quarantined",
-             "attachedToPost": "uuid|null", "createdAt"}]
+             "attachedToPost": "uuid|null", "createdAt"}],
+  "sanctions": [{"kind": "ban|restrict", "reason", "createdAt", "until": "…|null", "liftedAt": "…|null"}],
+  "moderationLog": [{"at", "action", "targetType", "targetId"}]
 }
 ```
 
@@ -232,6 +268,7 @@ from averages.
 |---|---|---|---|
 | GET | `/v1/posts` | `?kind=<kind>&cursor&limit` | page of `Post` (newest first, hidden excluded) |
 | GET | `/v1/posts/{id}` | — | `Post` |
+| GET | `/v1/me/posts` | `?cursor&limit` (session required) | page of the caller's own `Post`s, newest first, **hidden ones included** |
 | POST | `/v1/posts` | `{"kind", "body", "media"?: [key…], "payload"?}` | `Post` |
 | DELETE | `/v1/posts/{id}` | own only | `204` |
 | PUT / DELETE | `/v1/posts/{id}/like` | — | `{"likes", "liked"}` |
@@ -254,6 +291,13 @@ from averages.
 - `Comment`: `{"id", "postId", "author": Author, "body", "createdAt"}`.
 - Moderation: 3 distinct **eligible** reports hide a post / comment / review / LFG post
   (see "Report eligibility"). Users can only delete their own content.
+- **Hidden content is explained to its author.** On the author's OWN items — `Post` (also in
+  `GET /v1/me/posts`), `Review` (also `myReview` of the summary) and `LfgPost` (also
+  `GET /v1/lfg/mine`) — the objects carry `"hidden": bool` and `"hiddenReason": null | "reports" |
+  "moderator"` (hidden automatically after enough reports, or by a moderator). Other viewers never
+  get these fields (and never get hidden items). A hidden post still answers `404` on
+  `GET /v1/posts/{id}`; its author finds it in `GET /v1/me/posts`, can delete it, and can appeal
+  by email (community guidelines, section 9).
 - Rate limits: posts 10 / hour, comments 30 / 10 min, media 20 / hour, reports 20 /
   hour per user; votes 120 / hour.
 - Real game content only: `skinUuid` and `weaponUuid` of votes and reviews, `skinUuid` of

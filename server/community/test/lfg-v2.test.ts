@@ -5,7 +5,7 @@ import Database from 'better-sqlite3';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { DEFAULT_MIGRATIONS_DIR, migrate } from '../src/db/database.js';
 import { SqliteRepo } from '../src/db/sqlite-repo.js';
-import { expectError, setup, type Env } from './helpers.js';
+import { expectError, migrationNames, setup, type Env } from './helpers.js';
 
 const AGENT_1 = 'add6443a-41bd-e414-f6ad-e58d267f4e95';
 const AGENT_2 = 'a3bfb853-43b2-7238-a4f1-ad90e9e46bcc';
@@ -290,7 +290,7 @@ describe('migration from a v1 database', () => {
          VALUES ('00000000-0000-4000-8000-000000000001', '${'a'.repeat(32)}', 'ap', 'unrated', 'AAAAAA', 3, 1000, 9999999999999)`,
       ).run();
 
-      expect(migrate(db)).toEqual(['0002_reviews.sql', '0003_lfg_v2.sql', '0004_scopes.sql', '0005_hardening.sql']);
+      expect(migrate(db)).toEqual(migrationNames().slice(1));
       const repo = new SqliteRepo(db);
       const row = repo.getLfg('00000000-0000-4000-8000-000000000001')!;
       expect(row).toMatchObject({

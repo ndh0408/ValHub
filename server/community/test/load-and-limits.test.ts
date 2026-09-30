@@ -158,21 +158,36 @@ describe('CS-03: load shedding on event-loop lag', () => {
     expect((await e.req('GET', '/v1/posts')).status).toBe(200);
   });
 
-  it('the real monitor reports a blocked event loop', async () => {
-    const monitor = startLoadMonitor(100, 10);
+  it('the monitor turns the histogram into a lag reading (deterministic, fake histogram)', async () => {
+    let p95ms = 12; // a healthy loop: ticks arrive about one resolution apart
+    let resets = 0;
+    const monitor = startLoadMonitor(20, 10, () => ({
+      enable: () => true,
+      disable: () => true,
+      reset: () => void resets++,
+      percentile: () => p95ms * 1e6,
+    }));
     try {
+      await new Promise((r) => setTimeout(r, 60));
+      expect(monitor.lagMs()).toBe(2); // 12 ms between ticks - the 10 ms resolution
+      expect(resets).toBeGreaterThan(0);
+      p95ms = 410; // a blocked loop
+      await new Promise((r) => setTimeout(r, 60));
+      expect(monitor.lagMs()).toBe(400);
+      p95ms = 3; // never negative
+      await new Promise((r) => setTimeout(r, 60));
+      expect(monitor.lagMs()).toBe(0);
+    } finally {
+      monitor.stop();
+    }
+  });
+
+  it('the real monitor starts, reads a sane value and stops', async () => {
+    const monitor = startLoadMonitor(50, 10);
+    try {
+      await new Promise((r) => setTimeout(r, 120));
       expect(monitor.lagMs()).toBeGreaterThanOrEqual(0);
-      await new Promise((r) => setTimeout(r, 30));
-      const until = Date.now() + 350; // block the loop
-      while (Date.now() < until) {
-        /* busy */
-      }
-      let worst = 0;
-      for (let i = 0; i < 15; i++) {
-        await new Promise((r) => setTimeout(r, 20));
-        worst = Math.max(worst, monitor.lagMs());
-      }
-      expect(worst).toBeGreaterThan(100);
+      expect(Number.isFinite(monitor.lagMs())).toBe(true);
     } finally {
       monitor.stop();
     }

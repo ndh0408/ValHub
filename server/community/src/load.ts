@@ -1,4 +1,4 @@
-import { monitorEventLoopDelay } from 'node:perf_hooks';
+import { monitorEventLoopDelay, type IntervalHistogram } from 'node:perf_hooks';
 
 /**
  * Event-loop lag monitor for load shedding (CS-03). Node runs every request on one thread and SQLite is
@@ -14,8 +14,15 @@ export interface LoadMonitor {
   stop(): void;
 }
 
-export function startLoadMonitor(windowMs = 1000, resolutionMs = 20): LoadMonitor {
-  const histogram = monitorEventLoopDelay({ resolution: resolutionMs });
+/** The part of `perf_hooks.IntervalHistogram` the monitor uses (a fake one is injected in tests). */
+export type DelayHistogram = Pick<IntervalHistogram, 'enable' | 'disable' | 'reset' | 'percentile'>;
+
+export function startLoadMonitor(
+  windowMs = 1000,
+  resolutionMs = 20,
+  makeHistogram: (resolutionMs: number) => DelayHistogram = (r) => monitorEventLoopDelay({ resolution: r }),
+): LoadMonitor {
+  const histogram = makeHistogram(resolutionMs);
   histogram.enable();
   let current = 0;
   const timer = setInterval(() => {

@@ -1,5 +1,5 @@
 import type { Context, Hono } from 'hono';
-import { author, iso, type Ctx } from '../context.js';
+import { author, iso, ownHidden, type Ctx } from '../context.js';
 import { decodeCursor, page } from '../cursor.js';
 import type { LfgPatch, LfgRow, LfgView } from '../db/repo.js';
 import { forbidden, invalid, notFound } from '../errors.js';
@@ -36,7 +36,7 @@ function jsonArray(text: string): string[] {
   }
 }
 
-function serialize(r: LfgView) {
+function serialize(r: LfgView, viewerId = '') {
   return {
     id: r.id,
     author: author(r),
@@ -59,6 +59,8 @@ function serialize(r: LfgView) {
     joins: r.joins,
     updatedAt: iso(r.updated_at ?? r.created_at),
     country: r.country ?? null,
+    // Only the author is told whether (and why) their post is hidden.
+    ...(r.user_id === viewerId ? ownHidden(r) : {}),
   };
 }
 
@@ -104,13 +106,13 @@ export function registerLfg(app: Hono, x: Ctx): void {
     const cursor = decodeCursor(q.cursor);
     const limit = parseLimit(q.limit, 20, 50);
     const rows = x.repo.listLfg({ geo, mode, rank, role, mic, languages, status, now: x.now(), cursor, limit });
-    return x.json(c, { ...page(rows, limit, serialize), appliedScope: appliedScope(geo) });
+    return x.json(c, { ...page(rows, limit, (r) => serialize(r, user.id)), appliedScope: appliedScope(geo) });
   });
 
   app.get('/v1/lfg/mine', (c) => {
     const user = x.user(c, true);
     const post = x.repo.getActiveLfgForUser(user.id, x.now());
-    return x.json(c, post ? serialize(post) : null);
+    return x.json(c, post ? serialize(post, user.id) : null);
   });
 
   app.post('/v1/lfg', async (c) => {
@@ -148,7 +150,7 @@ export function registerLfg(app: Hono, x: Ctx): void {
     const note = cleanNote(noteRaw, language === 'any' ? user.language : language, user.country) ?? null;
 
     const now = x.now();
-    const row: LfgRow = {
+    const row: Omit<LfgRow, 'hidden_reason'> = {
       id: crypto.randomUUID(),
       user_id: user.id,
       region,
@@ -172,7 +174,7 @@ export function registerLfg(app: Hono, x: Ctx): void {
       country: user.country,
     };
     x.repo.replaceLfg(row);
-    return x.json(c, serialize(x.repo.getLfg(row.id)!));
+    return x.json(c, serialize(x.repo.getLfg(row.id)!, user.id));
   });
 
   app.patch('/v1/lfg/:id', async (c) => {
@@ -196,7 +198,7 @@ export function registerLfg(app: Hono, x: Ctx): void {
     if (note !== undefined) patch.note = note;
     const now = x.now();
     x.repo.updateLfg(post.id, patch, now, now + LFG_TTL_MS);
-    return x.json(c, serialize(x.repo.getLfg(post.id)!));
+    return x.json(c, serialize(x.repo.getLfg(post.id)!, user.id));
   });
 
   app.post('/v1/lfg/:id/join', async (c) => {

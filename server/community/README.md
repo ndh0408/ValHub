@@ -19,7 +19,8 @@ src/
   main.ts            process entry: config, DB, HTTP server, periodic sweeper, graceful shutdown
   app.ts             createApp(deps) — Hono app, error handling, body limits
   context.ts         shared helpers: auth, rate limits, tuning, base URL, serializers, content checks
-  cli.ts             operator CLI (find / export / delete a user, quarantine, unhide, stats, sweep)
+  cli.ts             operator CLI (find / export / delete a user, ban / restrict / unban, hide / delete-content,
+                     reports list, hidden list, audit list, quarantine, unhide, stats, sweep)
   account.ts         right to erasure + export (used by the API and the CLI)
   sweeper.ts         periodic housekeeping (orphan uploads, quarantine expiry, stray files, old reports, ...)
   imaging.ts         metadata-stripping JPEG / PNG / WebP sanitiser (pure TypeScript)
@@ -34,8 +35,10 @@ src/
   moderation/        filter.ts (normalise, match, mask/reject, links, phones, which lists apply), wordlists.ts (registry),
                      vi-wordlist.ts + en-wordlist.ts (reviewed), lists/<lang>.ts (14 best-effort lists, NEEDS NATIVE REVIEW)
   db/                database.ts (open + migrate), repo.ts (Repo interface), sqlite-repo.ts
+  load.ts            event-loop lag monitor (load shedding)      metrics.ts   aggregate counters (no user data)
+  reasons.ts         stable error reason codes + Vietnamese / English texts
   config.ts crypto.ts cursor.ts errors.ts riot.ts validate.ts
-migrations/          0001_init.sql ... 0005_hardening.sql — additive; never edit an applied migration
+migrations/          0001_init.sql ... 0007_sessions.sql — additive; never edit an applied migration
 ops/backup-loop.sh   the valvn-backup service's loop        scripts/restore.sh   restore from a backup archive
 test/                vitest (in-memory SQLite + temp dirs, stubbed Riot /userinfo, fake clock)
 ```
@@ -47,7 +50,8 @@ never touch the network or the real clock.
 
 | Var | Required | Meaning |
 |---|---|---|
-| `SESSION_SECRET` | yes, ≥ 32 chars | HS256 key for community session tokens (30 days). Rotating it logs everyone out. |
+| `SESSION_SECRET` | yes, ≥ 32 chars | HS256 key for community session tokens (30 days). Replacing it logs everyone out unless you rotate with `SESSION_SECRET_PREV` (note 61). |
+| `SESSION_SECRET_PREV` | no, ≥ 32 chars | The previous secret during a rotation: tokens signed with it are still accepted (never used to sign). Remove it after 30 days. |
 | `PEPPER` | yes, ≥ 32 chars | user id = `hex(sha256(PEPPER + puuid))[0..32]`; also salts the hashed IPs. **Never change after launch.** |
 | `PUBLIC_BASE_URL` | no | Public origin used for media URLs, e.g. `https://val.gianguyen.cloud`. Empty → derived from the request (`X-Forwarded-Proto` / `X-Forwarded-Host`). |
 | `TRUST_PROXY` | no (default `true`) | Trust `CF-Connecting-IP` / `X-Forwarded-*`. |
@@ -221,6 +225,25 @@ DELETE FROM users WHERE id = :id;   -- cascades to posts, comments, reviews, lik
 - `node dist/cli.js quarantine list` lists them; `quarantine restore <key>` puts one back; `quarantine purge <key>`
   deletes it now. **False reports:** `node dist/cli.js unhide post|comment|lfg|review <uuid>` un-hides the content,
   forgets its reports and restores its images.
+- **Sanctions and takedowns (note 62).** All commands are run as `docker compose exec valvn-community node dist/cli.js …`; a
+  command that changes something needs `--yes` (without it: a dry run, exit code 2) and writes a row to the audit table.
+  `--reason` is a code: `spam harassment hate scam nsfw evasion minor illegal other` (the user sees the code, never free text).
+
+  ```bash
+  ... reports list                          # reported items: reporters, eligible reporters, state, excerpt (newest first)
+  ... hidden list                           # everything hidden, by reports or by a moderator
+  ... hide post <uuid>                      # hide one post / comment / lfg / review now (post images are quarantined)
+  ... delete-content review <uuid> --yes    # delete one item for good (its comments, likes, images and reports too)
+  ... restrict --riot "Name#TAG" --days 7 --reason spam --yes   # read-only for 7 days
+  ... ban --riot "Name#TAG" --reason harassment --yes            # permanent (add --days N for a timed ban)
+  ... unban --riot "Name#TAG"               # lift every active sanction of the account
+  ... sanctions list --active               # who is sanctioned now (also: --id, --riot, --limit)
+  ... audit list --riot "Name#TAG"          # what operators did about an account (also without --riot: latest actions)
+  ```
+
+  **Appeals** (community guidelines, section 9): the author writes to the address in the app's legal notice with their
+  Riot ID; look at `audit list --riot …`, `reports list` and `hidden list`, then `unhide` / `unban`. The author sees
+  that something is hidden, and by whom (`hidden: true`, `hiddenReason` `reports` or `moderator`), in their own lists.
 - `node dist/cli.js stats` (row counts, image bytes, quarantined files) and `node dist/cli.js sweep` (run the
   housekeeping now). The sweeper runs by itself every 10 minutes (and 5 s after start): orphan uploads (> 24 h),
   quarantine (> 30 days), stray files without a database row, reports older than 12 months and reports about
@@ -235,6 +258,7 @@ DELETE FROM users WHERE id = :id;   -- cascades to posts, comments, reviews, lik
 | Photos carry no location / camera data | `imaging.ts` strips EXIF / GPS / XMP / IPTC / comments / thumbnails on upload (note 47) |
 | Deleted content is deleted | post delete removes its images; account delete removes everything (notes 50, 52); orphan uploads purged after 24 h |
 | Reports are kept 12 months at most | sweeper deletes reports older than 365 days and reports on deleted content |
+| Sanctions outlive an erasure (abuse prevention, legitimate interest) | `sanctions` has no foreign key to users: a ban / restriction (user id hash, kind, end, reason code, time) stays after `DELETE /v1/me` so an erased account cannot start over; ended sanctions are swept after 12 months, operator log rows after 24 months (note 62). **The privacy policy must say so.** |
 | Export and erasure on request | `GET /v1/me/export`, `DELETE /v1/me`, CLI runbook above |
 | Backups | 14 days, mode 0600 / dir 0700, quarantine excluded; deleted data lives on in them until they age out |
 | Riot IDs are public **by design** | authors of posts / comments / reviews / LFG show their Riot ID, region, country, rank and card to every reader (that is what makes the feature useful); users consent in the app before their first sign-in and can erase everything |
@@ -535,3 +559,30 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
 60. **Error format (CS-33 / GL-15 / GL-28, additive).** Errors may carry `reason` (stable code, `src/reasons.ts`),
     `params` (limits, field names) and `messageEn` next to the unchanged Vietnamese `message`. New codes: `suspended`
     (403, note 62) and `server_busy` (503). Rate-limit errors return `params: {bucket, limit, windowSeconds}`.
+61. **CS-04: sessions can be revoked.** Every account has a `session_epoch` (migration 0007) that is put in the `ep` claim
+    of each token; a token whose epoch differs from the account's is refused (`401`). `POST /v1/auth/logout` (auth, `204`)
+    bumps it, ending the account's sessions on **all** devices (the app signs in again with its Riot session when needed);
+    banning an account bumps it too. Tokens issued before the account row existed are refused (`iat` older than
+    `created_at`, compared in whole seconds), so a token stolen before an erasure does not come back when the same Riot
+    account signs in again. Tokens issued before this change (no `ep`, header without `kid`) are epoch 0 and keep working.
+    **Rotating `SESSION_SECRET` without logging anyone out:** put the current value in `SESSION_SECRET_PREV`, set a new
+    `SESSION_SECRET`, restart. New tokens are signed with the new secret and carry `kid` (first 8 hex characters of a hash
+    of the secret that signed them); a token is checked against the secret its `kid` names (or against both when it has no
+    `kid`). After 30 days (the token lifetime) remove `SESSION_SECRET_PREV`.
+62. **CS-02: sanctions and takedown tools** (migration 0006: `sanctions`, `moderation_audit`, `hidden_reason` columns).
+    Two kinds. **restrict** = read-only: reading, `DELETE` (undoing), `PATCH /v1/me` and logout work; every other write is
+    refused. **ban** = no access at all except data rights (`GET /v1/me/export`, `DELETE /v1/me`) and logout, and no new
+    session (`POST /v1/auth/riot` refuses after verifying the Riot token, before creating anything). Both answer
+    `403 suspended` with `reason` `account_banned` / `account_restricted` and `params {kind, until (ISO or null), cause}`.
+    The check is in `Ctx.user()`, one indexed lookup per authenticated request. A ban is permanent unless `--days` is given;
+    a ban beats a restriction; the longest sanction of a kind wins. **Sanctions survive an erasure**: the id is a hash of
+    the Riot account, so without this a banned user would delete the account and sign in again. Nothing else about the
+    account survives. Content hidden by an operator has `hidden_reason = 'moderator'`, by reports `'reports'` (rows hidden
+    before the migration are `'reports'`). The audit table records action, target and structured details, never free text.
+    **Authors are told what is hidden:** their own `Post`, `Review` and `LfgPost` objects carry `hidden` and `hiddenReason`
+    (`reports` | `moderator`); the new `GET /v1/me/posts` lists their posts including hidden ones (a hidden post still
+    answers 404 on `GET /v1/posts/{id}`, for everyone). Other viewers never see those fields.
+63. **CS-34: consent record.** `POST /v1/auth/riot` accepts an optional `consentVersion` (1-32 characters of `A-Z a-z 0-9 . _ -`);
+    the server stores the version and the time it first saw that version (`users.consent_version` / `consent_at`), keeps the
+    time while the version is unchanged, and returns it in the export (`profile.consent`). Nothing is stored for clients that
+    do not send it. It goes with the account on erasure.

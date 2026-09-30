@@ -1,5 +1,5 @@
 import type { Context, Hono } from 'hono';
-import { author, iso, origin, type Ctx } from '../context.js';
+import { author, iso, origin, ownHidden, type Ctx } from '../context.js';
 import { decodeCursor, page } from '../cursor.js';
 import type { ReviewView } from '../db/repo.js';
 import { forbidden, invalid, notFound } from '../errors.js';
@@ -22,6 +22,8 @@ export function registerReviews(app: Hono, x: Ctx): void {
     updatedAt: iso(r.updated_at),
     mine: r.user_id === viewerId,
     ...origin(r),
+    // Only the author is told whether (and why) their review is hidden.
+    ...(r.user_id === viewerId ? ownHidden(r) : {}),
   });
 
   /** Visible review by path id, or 404. */

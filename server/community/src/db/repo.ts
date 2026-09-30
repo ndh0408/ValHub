@@ -16,6 +16,65 @@ export interface UserRow {
   country: string | null;
   /** App language (one of the 17 codes); NULL for clients that never sent one. */
   language: string | null;
+  // migration 0007
+  /** Put in the `ep` claim of session tokens; bumped to end every existing session (logout, ban). */
+  session_epoch: number;
+  /** Policy version the client said the user accepted, and when the server first saw that version. */
+  consent_version: string | null;
+  consent_at: number | null;
+}
+
+export type SanctionKind = 'ban' | 'restrict';
+
+/** A ban (no access) or temporary restriction (read-only) of an account (migration 0006). */
+export interface SanctionRow {
+  id: number;
+  user_id: string;
+  kind: SanctionKind;
+  /** ms since epoch; NULL = permanent. */
+  until: number | null;
+  /** Reason code (spam, harassment, ...), never free text. */
+  reason: string;
+  created_at: number;
+  lifted_at: number | null;
+}
+
+export interface AuditRow {
+  id: number;
+  at: number;
+  action: string;
+  target_type: string | null;
+  target_id: string | null;
+  user_id: string | null;
+  /** JSON, structured values only. */
+  detail: string | null;
+}
+
+/** One reported item with its report summary (operator CLI: `reports list`). */
+export interface ReportedTarget {
+  type: ReportTarget;
+  targetId: string;
+  /** Distinct reporters. */
+  reports: number;
+  /** Reporters whose report counts toward hiding. */
+  eligible: number;
+  lastAt: number;
+  /** A few distinct reporter-supplied reasons (free text, for the operator only). */
+  reasons: string[];
+  ownerId: string | null;
+  hidden: boolean;
+  hiddenReason: string | null;
+  excerpt: string;
+}
+
+/** One hidden item (operator CLI: `hidden list`). */
+export interface HiddenItem {
+  type: ReportTarget;
+  id: string;
+  ownerId: string;
+  hiddenReason: string | null;
+  createdAt: number;
+  excerpt: string;
 }
 
 /** Author columns joined onto content rows (prefixed a_). */
@@ -46,6 +105,8 @@ export interface LfgRow {
   rank_tier: number | null;
   note: string | null;
   hidden: number;
+  /** 'reports' | 'moderator' when hidden (migration 0006). */
+  hidden_reason: string | null;
   created_at: number;
   expires_at: number;
   // v2 (migration 0003)
@@ -100,6 +161,7 @@ export interface ReviewRow {
   rating: number;
   body: string;
   hidden: number;
+  hidden_reason: string | null;
   report_count: number;
   like_count: number;
   created_at: number;
@@ -129,6 +191,7 @@ export interface PostRow {
   media: string;
   payload: string | null;
   hidden: number;
+  hidden_reason: string | null;
   created_at: number;
   // v3
   country: string | null;
@@ -148,6 +211,7 @@ export interface CommentRow {
   user_id: string;
   body: string;
   hidden: number;
+  hidden_reason: string | null;
   created_at: number;
   // v3
   country: string | null;
@@ -192,6 +256,10 @@ export interface AccountData {
   lfgJoins: { lfg_id: string; created_at: number }[];
   reportsFiled: { target_type: string; target_id: string; reason: string; created_at: number }[];
   media: MediaRow[];
+  /** Sanctions applied to the account (they survive an erasure, see README). */
+  sanctions: SanctionRow[];
+  /** Operator actions that concerned the account (action, target, time). */
+  moderationLog: AuditRow[];
 }
 
 export interface SweepCounts {
@@ -224,6 +292,8 @@ export interface UserUpsert {
   /** undefined → keep existing value. */
   cardId?: string | null;
   rankTier?: number | null;
+  /** Policy version accepted by the user; the time is recorded when the version changes. */
+  consentVersion?: string;
 }
 
 export interface UserPatch {
@@ -243,6 +313,8 @@ export interface Repo {
   upsertUser(u: UserUpsert, now: number): UserRow;
   getUser(id: string): UserRow | null;
   updateUser(id: string, patch: UserPatch, now: number): UserRow | null;
+  /** Ends every session of the account (their tokens carry the old epoch); returns the new epoch, or null. */
+  bumpSessionEpoch(id: string): number | null;
 
   /** Increments the counter for (bucket, windowStart) and returns the new count. */
   hitRateLimit(bucket: string, windowStart: number): number;
@@ -250,7 +322,7 @@ export interface Repo {
   cleanup(now: number): void;
 
   /** Expires the user's previous LFG posts and inserts the new one atomically. */
-  replaceLfg(post: LfgRow): void;
+  replaceLfg(post: Omit<LfgRow, 'hidden_reason'>): void;
   listLfg(q: LfgQuery): LfgView[];
   getLfg(id: string): LfgView | null;
   /** The user's current (unexpired) post, whatever its status. */
@@ -321,7 +393,7 @@ export interface Repo {
   /** Visible rating counts [n1..n5] for a skin (reviewers in `geo`). */
   ratingDistribution(skinUuid: string, geo?: GeoScope): [number, number, number, number, number];
 
-  insertPost(p: PostRow): void;
+  insertPost(p: Omit<PostRow, 'hidden_reason'>): void;
   getPost(id: string, viewerId: string): PostView | null;
   listPosts(q: {
     kind?: string;
@@ -330,12 +402,14 @@ export interface Repo {
     viewerId: string;
     geo?: GeoScope;
     languages?: string[];
+    /** Only this author's posts, hidden ones included (their own list). */
+    ownOf?: string;
   }): PostView[];
   deletePost(id: string): void;
   setLike(postId: string, userId: string, liked: boolean, now: number): void;
   likeCount(postId: string): number;
 
-  insertComment(c: CommentRow): void;
+  insertComment(c: Omit<CommentRow, 'hidden_reason'>): void;
   getComment(id: string): (CommentRow & AuthorCols) | null;
   listComments(q: { postId: string; cursor?: Cursor; limit: number }): (CommentRow & AuthorCols)[];
   deleteComment(id: string): void;
@@ -386,6 +460,34 @@ export interface Repo {
   findUsersByRiotId(gameName: string, tagLine: string): UserRow[];
   /** Moderator action: un-hides a target and forgets its reports. Returns false when it does not exist. */
   restoreTarget(type: ReportTarget, id: string): boolean;
+  /** Moderator action: hides one item now (hidden_reason 'moderator'); null when it does not exist. */
+  hideTarget(type: ReportTarget, id: string): { ownerId: string; newlyHidden: boolean } | null;
+  /**
+   * Moderator action: hard-deletes one item (comments, likes, joins and reports about it go with it).
+   * Returns its owner and the image files to remove afterwards, or null when it does not exist.
+   */
+  deleteTarget(type: ReportTarget, id: string): { ownerId: string; mediaKeys: string[] } | null;
+  /** Reported items, newest report first, with a summary of who reported what (operator CLI). */
+  reportedTargets(q: { limit: number; now: number; minReporterAgeMs: number }): ReportedTarget[];
+  /** Hidden items of every kind, newest first (operator CLI). */
+  hiddenItems(limit: number): HiddenItem[];
+
+  // ---- sanctions and the operator audit log ----------------------------------------------------------------
+  addSanction(s: { userId: string; kind: SanctionKind; until: number | null; reason: string; now: number }): SanctionRow;
+  /** The sanction that applies now (a ban beats a restriction; the longest one wins), or null. */
+  activeSanction(userId: string, now: number): SanctionRow | null;
+  /** Lifts every active sanction of the account; returns how many. */
+  liftSanctions(userId: string, now: number): number;
+  listSanctions(q: { userId?: string; activeOnly: boolean; now: number; limit: number }): SanctionRow[];
+  addAudit(a: {
+    at: number;
+    action: string;
+    targetType?: string;
+    targetId?: string;
+    userId?: string;
+    detail?: unknown;
+  }): void;
+  listAudit(q: { userId?: string; limit: number }): AuditRow[];
   /** Row counts and media bytes, for the ops CLI. */
   stats(): Record<string, number>;
 }

@@ -4,6 +4,11 @@ export interface Config {
   port: number;
   dataDir: string;
   sessionSecret: string;
+  /**
+   * The previous session secret during a rotation: tokens signed with it are still accepted (never used to sign),
+   * so nobody is logged out. Empty when no rotation is in progress.
+   */
+  sessionSecretPrev: string;
   pepper: string;
   /** e.g. https://community.example.com — no trailing slash. Empty → derive from request. */
   publicBaseUrl: string;
@@ -44,6 +49,14 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
   };
   const sessionSecret = secret('SESSION_SECRET');
   const pepper = secret('PEPPER');
+  const sessionSecretPrev = (env.SESSION_SECRET_PREV ?? '').trim();
+  if (sessionSecretPrev !== '') {
+    if (sessionSecretPrev.length < MIN_SECRET_LENGTH) {
+      problems.push(`SESSION_SECRET_PREV must be empty or at least ${MIN_SECRET_LENGTH} characters long`);
+    } else if (sessionSecretPrev === sessionSecret) {
+      problems.push('SESSION_SECRET_PREV must differ from SESSION_SECRET (remove it when the rotation is over)');
+    }
+  }
 
   const portRaw = env.PORT ?? '8080';
   const port = Number(portRaw);
@@ -85,6 +98,7 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
     port,
     dataDir: path.resolve(env.DATA_DIR || '/data'),
     sessionSecret,
+    sessionSecretPrev,
     pepper,
     publicBaseUrl,
     trustProxy: (env.TRUST_PROXY ?? 'true').toLowerCase() !== 'false',

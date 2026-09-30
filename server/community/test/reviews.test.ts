@@ -39,6 +39,8 @@ describe('PUT /v1/skins/{skin}/review', () => {
       country: null,
       region: 'ap',
       language: null,
+      hidden: false,
+      hiddenReason: null,
     });
     const noBody = await review(token, SKIN_B, 5);
     expect(noBody.json.body).toBe('');

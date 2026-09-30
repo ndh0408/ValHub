@@ -10,7 +10,7 @@ import { DEFAULT_MIGRATIONS_DIR, migrate } from '../src/db/database.js';
 import { SqliteRepo } from '../src/db/sqlite-repo.js';
 import { DiskMediaStore } from '../src/media.js';
 import type { RiotUserinfoFn } from '../src/riot.js';
-import { PEPPER, SECRET, SKIN_A, SKIN_B, WEAPON_1 } from './helpers.js';
+import { migrationNames, PEPPER, SECRET, SKIN_A, SKIN_B, WEAPON_1 } from './helpers.js';
 
 const BASE = 'http://community.test';
 const NOW = Date.UTC(2026, 8, 1, 12, 0, 0);
@@ -110,7 +110,7 @@ describe('migration 0004 on a database with 0001-0003 data', () => {
       posts: db.prepare('SELECT COUNT(*) AS n FROM posts').get(),
       votes: db.prepare('SELECT COUNT(*) AS n FROM skin_votes').get(),
     };
-    expect(migrate(db)).toEqual(['0004_scopes.sql', '0005_hardening.sql']);
+    expect(migrate(db)).toEqual(migrationNames().slice(3));
     expect(migrate(db)).toEqual([]);
     expect(db.prepare('SELECT COUNT(*) AS n FROM users').get()).toEqual(before.users);
     expect(db.prepare('SELECT COUNT(*) AS n FROM posts').get()).toEqual(before.posts);
