@@ -1,0 +1,23 @@
+# gen-l10n configuration (docs/design/I18N.md section 3.5).
+#
+# Deliberately NO `synthetic-package` key: on Flutter 3.47.5 it is rejected
+# (`localizations_utils.dart`), and the generated code is committed under
+# lib/l10n/gen so `dart analyze` works on a fresh clone. Import it with a
+# relative path, never `package:flutter_gen`.
+arb-dir: lib/l10n/arb
+template-arb-file: app_vi.arb
+output-dir: lib/l10n/gen
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false
+# Every message carries @key metadata (descriptions feed the translators).
+required-resource-attributes: true
+untranslated-messages-file: build/l10n_untranslated.json
+format: true
+# French/Italian/English apostrophes are common; literal { } are forbidden by
+# tool/l10n_check.dart instead.
+use-escaping: false
+relax-syntax: false
+# Positional arguments in the @key.placeholders order keep call sites
+# byte-identical with the old *Strings functions.
+use-named-parameters: false
