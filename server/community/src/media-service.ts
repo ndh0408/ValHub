@@ -1,5 +1,6 @@
 import type { Repo } from './db/repo.js';
 import type { MediaStore } from './media.js';
+import type { ErasureLedger } from './erasures.js';
 
 /** What the media lifecycle helpers need (kept small so the sweeper / CLI can use them too). */
 export interface MediaDeps {
@@ -7,6 +8,7 @@ export interface MediaDeps {
   media: MediaStore;
   now: () => number;
   logError?: (msg: string) => void;
+  erasureLedger?: ErasureLedger;
 }
 
 /**

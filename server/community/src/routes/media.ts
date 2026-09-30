@@ -80,13 +80,17 @@ export function registerMedia(app: Hono, x: Ctx): void {
 
     const key = `u/${user.id}/${randomHex(16)}.${clean.ext}`;
     await x.deps.media.put(key, clean.bytes);
-    x.repo.insertMedia({
+    try { x.repo.insertMedia({
       key,
       user_id: user.id,
       content_type: CONTENT_TYPES[clean.ext],
       size: clean.bytes.length,
       created_at: x.now(),
-    });
+    }, { user: userQuota, total: totalCap });
+    } catch (e) {
+      await x.deps.media.delete(key).catch(() => {});
+      throw e;
+    }
     return x.json(c, { key, url: x.mediaUrl(x.baseUrl(c), key) });
   });
 

@@ -240,9 +240,7 @@ export class ValorantContentCatalog implements ContentCatalog {
     if (entry.ids.has(id)) return true;
     // Unknown: it may have been released since the last refresh.
     if (this.now() - entry.loadedAt >= this.recheckGapMs) {
-      await this.refresh(kind, true);
-      entry = this.sets.get(kind)!;
-      return entry.ids.has(id);
+      void this.refresh(kind);
     }
     return false;
   }
@@ -331,7 +329,7 @@ export class ValorantContentCatalog implements ContentCatalog {
     } catch {
       return false;
     }
-    if (typeof snap !== 'object' || snap === null || snap.v !== 1 || typeof snap.loadedAt !== 'object') return false;
+    if (typeof snap !== 'object' || snap === null || snap.v !== 1 || typeof snap.loadedAt !== 'object' || snap.loadedAt === null) return false;
     const ids = (v: unknown): Set<string> | null => {
       if (!Array.isArray(v)) return null;
       const out = new Set<string>();

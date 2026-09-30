@@ -8,8 +8,8 @@ import { parseEnum, parseLimit, parseUuid } from '../validate.js';
 export const WEEK_MS = 7 * 24 * 60 * 60_000;
 const MAX_IDS = 50;
 /** Bayesian prior weight C and minimum number of ratings for sort=rating. */
-export const BAYES_C = 5;
-export const MIN_RATINGS_FOR_RANK = 3;
+export const BAYES_C = 15;
+export const MIN_RATINGS_FOR_RANK = 10;
 
 /** Average rounded to 1 decimal, or null without ratings. */
 export function ratingAvg(s: RatingStats | undefined): number | null {

@@ -9,6 +9,9 @@
  * `docs/community-api.md` ("Error reasons"). Never rename or reuse one: clients map them to translations.
  */
 export const REASONS = {
+  media_unavailable: { vi: 'Ảnh không còn dùng được, hãy tải lên lại.', en: 'The image is no longer available; please upload it again.' },
+  quota_exceeded: { vi: 'Bạn đã dùng hết dung lượng ảnh ({maxMb} MB). Hãy xóa bớt bài viết có ảnh rồi thử lại.', en: 'Your image storage is full ({maxMb} MB). Delete some posts with images and try again.' },
+  storage_full: { vi: 'Kho ảnh của máy chủ đã đầy, vui lòng thử lại sau.', en: 'Image storage is full, please try again later.' },
   // ---- request shape --------------------------------------------------------------------------------------------
   body_invalid_json: { vi: 'Nội dung yêu cầu không phải JSON hợp lệ.', en: 'The request body is not valid JSON.' },
   body_not_object: { vi: 'Nội dung yêu cầu phải là một đối tượng JSON.', en: 'The request body must be a JSON object.' },

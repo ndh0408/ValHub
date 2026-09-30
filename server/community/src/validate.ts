@@ -22,7 +22,6 @@ export const REPORT_TARGETS = ['post', 'comment', 'lfg', 'review'] as const;
 export type ReportTarget = (typeof REPORT_TARGETS)[number];
 
 export const LFG_ROLES = ['duelist', 'initiator', 'controller', 'sentinel', 'flex'] as const;
-export const LFG_LANGUAGES = ['vi', 'en', 'any'] as const;
 export const LFG_STATUSES = ['open', 'full', 'in_game'] as const;
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;

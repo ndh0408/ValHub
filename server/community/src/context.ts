@@ -8,6 +8,7 @@ import { ipKey, isPrivateAddress } from './ip.js';
 import type { AuthorCols, Repo, SanctionRow, UserRow } from './db/repo.js';
 import { invalid, reasonError, unauthorized } from './errors.js';
 import type { MediaStore } from './media.js';
+import type { ErasureLedger } from './erasures.js';
 import { Counters } from './metrics.js';
 import { deleteMedia, quarantineMedia, type MediaDeps } from './media-service.js';
 import type { RiotUserinfoFn } from './riot.js';
@@ -70,7 +71,7 @@ export interface AppDeps {
   repo: Repo;
   media: MediaStore;
   config: Pick<Config, 'sessionSecret' | 'pepper' | 'publicBaseUrl' | 'trustProxy'> &
-    Partial<Pick<Config, 'sessionSecretPrev'>> &
+    Partial<Pick<Config, 'sessionSecretPrev' | 'lfgCodeInList'>> &
     Partial<Tuning>;
   /** Real VALORANT ids (skins / weapons / agents); omitted → ids are not checked. */
   content?: ContentCatalog;
@@ -80,6 +81,7 @@ export interface AppDeps {
   now?: () => number;
   /** Current event-loop lag in ms (see load.ts); omitted -> the server never sheds load (tests). */
   loadProbe?: () => number;
+  erasureLedger?: ErasureLedger;
   /** Error sink; receives only error names/messages, never request data. */
   logError?: (msg: string) => void;
 }
@@ -147,7 +149,7 @@ export class Ctx {
 
   /** Dependencies of the media lifecycle helpers. */
   get mediaDeps(): MediaDeps {
-    return { repo: this.deps.repo, media: this.deps.media, now: this.now, logError: this.deps.logError };
+    return { repo: this.deps.repo, media: this.deps.media, now: this.now, logError: this.deps.logError, erasureLedger: this.deps.erasureLedger };
   }
 
   deleteMedia(keys: readonly string[]): Promise<void> {

@@ -1,6 +1,7 @@
 import path from 'node:path';
 
 export interface Config {
+  lfgCodeInList: boolean;
   port: number;
   dataDir: string;
   sessionSecret: string;
@@ -74,11 +75,13 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
     try {
       const u = new URL(publicBaseUrl);
       if (u.protocol !== 'https:' && u.protocol !== 'http:') throw new Error('protocol');
+      if (u.username || u.password || u.search || u.hash || (env.NODE_ENV === 'production' && (u.protocol !== 'https:' || /(^|\.)example\.(com|net|org)$/.test(u.hostname)))) throw new Error('invalid production origin');
       publicBaseUrl = u.origin + u.pathname.replace(/\/+$/, '');
     } catch {
       problems.push('PUBLIC_BASE_URL must be an absolute http(s) URL');
     }
   }
+  if (env.NODE_ENV === 'production' && publicBaseUrl === '') problems.push('PUBLIC_BASE_URL is required in production');
 
   const num = (name: string, def: number, min: number, max: number): number => {
     const raw = env[name];
@@ -103,6 +106,7 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
   if (problems.length > 0) throw new Error(`Invalid configuration:\n- ${problems.join('\n- ')}`);
 
   return {
+    lfgCodeInList: (env.LFG_CODE_IN_LIST ?? 'true').trim().toLowerCase() === 'true',
     port,
     dataDir: path.resolve(env.DATA_DIR || '/data'),
     sessionSecret,

@@ -10,7 +10,9 @@ import { deleteMedia, postMediaKeys, type MediaDeps } from './media-service.js';
  * Returns false when there is no such user.
  */
 export async function deleteAccount(d: MediaDeps, userId: string): Promise<boolean> {
-  if (!d.repo.getUser(userId)) return false;
+  const user = d.repo.getUser(userId);
+  if (!user) return false;
+  d.erasureLedger?.append({ id: userId, at: d.now(), epoch: user.session_epoch });
   const keys = d.repo.mediaOfUser(userId).map((m) => m.key);
   d.repo.deleteAccountRows(userId);
   await deleteMedia(d, keys); // rows are already gone with the user; this removes the files

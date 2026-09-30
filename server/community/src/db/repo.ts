@@ -336,7 +336,7 @@ export interface Repo {
   /** The user's current (unexpired) post, whatever its status. */
   getActiveLfgForUser(userId: string, now: number): LfgView | null;
   /** Applies the patch and sets updated_at = now, expires_at = expiresAt. */
-  updateLfg(id: string, patch: LfgPatch, now: number, expiresAt: number): void;
+  updateLfg(id: string, patch: LfgPatch, now: number, expiresAt: number, userId?: string): boolean;
   deleteLfg(id: string): void;
   /** Idempotent per user; returns the post's join count. */
   joinLfg(id: string, userId: string, now: number): number;
@@ -460,7 +460,7 @@ export interface Repo {
   /** Deletes reports older than `olderThan` and reports whose target no longer exists. */
   sweepReports(olderThan: number): SweepCounts;
 
-  insertMedia(m: Pick<MediaRow, 'key' | 'user_id' | 'content_type' | 'size' | 'created_at'>): void;
+  insertMedia(m: Pick<MediaRow, 'key' | 'user_id' | 'content_type' | 'size' | 'created_at'>, limits?: { user: number; total: number }): void;
   getMediaMany(keys: string[]): MediaRow[];
   getMedia(key: string): MediaRow | null;
   /** Bytes stored for a user (active + quarantined files), or for everyone when `userId` is omitted. */
