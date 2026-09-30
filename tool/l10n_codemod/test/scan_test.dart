@@ -190,7 +190,8 @@ void main() {
       final missing = report['missingKnownClasses']! as List<Object?>;
       expect(missing, isNot(contains('CommonStrings')));
       expect(missing, contains('StoreStrings'));
-      expect(report['knownClasses'], hasLength(20));
+      expect(report['knownClasses'], hasLength(21));
+      expect(report['knownClasses'], contains('CommunityErrorStrings'));
     });
 
     test('unreferenced members are listed', () {
