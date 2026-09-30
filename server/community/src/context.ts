@@ -1,7 +1,7 @@
 import type { Context, Hono } from 'hono';
 import { FixedWindowLimiter, TtlCache } from './cache.js';
 import type { Config } from './config.js';
-import type { ContentCatalog, ContentKind } from './content.js';
+import type { ContentCatalog, ContentKind, SkinRef } from './content.js';
 import { isIP } from 'node:net';
 import { hashIp, verifySession } from './crypto.js';
 import { ipKey, isPrivateAddress } from './ip.js';
@@ -174,6 +174,18 @@ export class Ctx {
     if (!known) {
       const what = kind === 'skin' ? 'skin' : kind === 'weapon' ? 'vũ khí' : 'đặc vụ';
       throw invalid(`${field} không phải ${what} của VALORANT.`);
+    }
+  }
+
+  /**
+   * The base skin uuid and weapon of a skin / level / chroma uuid, from the game catalog; null while the catalog is
+   * not loaded or does not know the uuid (callers then keep what the client sent: fail open).
+   */
+  canonSkin(uuid: string): SkinRef | null {
+    try {
+      return this.deps.content?.resolveSkin?.(uuid) ?? null;
+    } catch {
+      return null;
     }
   }
 

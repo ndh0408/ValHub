@@ -6,6 +6,7 @@ import type {
   AccountData,
   AuditRow,
   AuthorCols,
+  CanonicalizeResult,
   CommentRow,
   CommunityActivity,
   HiddenItem,
@@ -295,20 +296,37 @@ export class SqliteRepo implements Repo {
 
   // ---- skin votes ----------------------------------------------------------
 
-  voteSkin(userId: string, skinUuid: string, weaponUuid: string, now: number, origin: Origin): boolean {
-    // The weapon of a skin is pinned by its first vote/review so a wrong client value cannot
-    // split a skin's count across weapons. The voter's country/region are captured now.
+  voteSkin(
+    userId: string,
+    skinUuid: string,
+    weaponUuid: string,
+    now: number,
+    origin: Origin,
+    authoritativeWeapon = false,
+  ): boolean {
+    // Without a catalog the weapon of a skin is pinned by its first vote/review so a wrong client value cannot
+    // split a skin's count across weapons; with one, the catalog's weapon is stored as given.
+    // The voter's country/region are captured now.
     const res = this.db
       .prepare(
         `INSERT INTO skin_votes (user_id, skin_uuid, weapon_uuid, created_at, country, region)
          VALUES (@userId, @skinUuid,
-           COALESCE((SELECT weapon_uuid FROM skin_votes WHERE skin_uuid = @skinUuid LIMIT 1),
-                    (SELECT weapon_uuid FROM skin_reviews WHERE skin_uuid = @skinUuid LIMIT 1),
-                    @weaponUuid),
+           CASE WHEN @authoritative = 1 THEN @weaponUuid ELSE
+             COALESCE((SELECT weapon_uuid FROM skin_votes WHERE skin_uuid = @skinUuid LIMIT 1),
+                      (SELECT weapon_uuid FROM skin_reviews WHERE skin_uuid = @skinUuid LIMIT 1),
+                      @weaponUuid) END,
            @now, @country, @region)
          ON CONFLICT(user_id, skin_uuid) DO NOTHING`,
       )
-      .run({ userId, skinUuid, weaponUuid, now, country: origin.country, region: origin.region });
+      .run({
+        userId,
+        skinUuid,
+        weaponUuid,
+        now,
+        country: origin.country,
+        region: origin.region,
+        authoritative: authoritativeWeapon ? 1 : 0,
+      });
     return res.changes > 0;
   }
 
@@ -361,6 +379,56 @@ export class SqliteRepo implements Repo {
       )
       .all(params) as { skin_uuid: string; weapon_uuid: string; votes: number }[];
     return rows.map((r) => ({ skinUuid: r.skin_uuid, weaponUuid: r.weapon_uuid, votes: r.votes }));
+  }
+
+  canonicalizeSkins(resolve: (uuid: string) => { skinUuid: string; weaponUuid: string } | null): CanonicalizeResult {
+    const out: CanonicalizeResult = { votesRewritten: 0, votesMerged: 0, reviewsRewritten: 0, reviewsMerged: 0, weaponsFixed: 0 };
+    this.db.transaction(() => {
+      const uuids = this.db
+        .prepare('SELECT skin_uuid FROM skin_votes UNION SELECT skin_uuid FROM skin_reviews')
+        .all() as { skin_uuid: string }[];
+      for (const { skin_uuid: uuid } of uuids) {
+        const ref = resolve(uuid);
+        if (!ref) continue;
+        if (ref.skinUuid !== uuid) {
+          // Votes: rows that would collide with the user's canonical vote stay behind and are dropped.
+          out.votesRewritten += this.db
+            .prepare('UPDATE OR IGNORE skin_votes SET skin_uuid = ?, weapon_uuid = ? WHERE skin_uuid = ?')
+            .run(ref.skinUuid, ref.weaponUuid, uuid).changes;
+          out.votesMerged += this.db.prepare('DELETE FROM skin_votes WHERE skin_uuid = ?').run(uuid).changes;
+          // Reviews: one per user and skin; on a collision the most recently edited one survives.
+          const aliasRows = this.db
+            .prepare('SELECT id, user_id, updated_at FROM skin_reviews WHERE skin_uuid = ?')
+            .all(uuid) as { id: string; user_id: string; updated_at: number }[];
+          for (const row of aliasRows) {
+            const other = this.db
+              .prepare('SELECT id, updated_at FROM skin_reviews WHERE user_id = ? AND skin_uuid = ?')
+              .get(row.user_id, ref.skinUuid) as { id: string; updated_at: number } | undefined;
+            if (other) {
+              out.reviewsMerged++;
+              if (row.updated_at > other.updated_at) {
+                this.db.prepare('DELETE FROM skin_reviews WHERE id = ?').run(other.id); // its likes cascade away
+              } else {
+                this.db.prepare('DELETE FROM skin_reviews WHERE id = ?').run(row.id);
+                continue;
+              }
+            } else {
+              out.reviewsRewritten++;
+            }
+            this.db
+              .prepare('UPDATE skin_reviews SET skin_uuid = ?, weapon_uuid = ? WHERE id = ?')
+              .run(ref.skinUuid, ref.weaponUuid, row.id);
+          }
+        }
+        // A skin filed under the wrong weapon (a client sent a wrong weaponUuid with the first vote).
+        for (const table of ['skin_votes', 'skin_reviews']) {
+          out.weaponsFixed += this.db
+            .prepare(`UPDATE ${table} SET weapon_uuid = ? WHERE skin_uuid = ? AND weapon_uuid <> ?`)
+            .run(ref.weaponUuid, ref.skinUuid, ref.weaponUuid).changes;
+        }
+      }
+    })();
+    return out;
   }
 
   skinWeapon(skinUuid: string): string | null {
@@ -444,6 +512,7 @@ export class SqliteRepo implements Repo {
     origin: Origin;
     language: string | null;
     updateLanguage: boolean;
+    authoritativeWeapon?: boolean;
   }) {
     return this.db.transaction(() => {
       const existing = this.db
@@ -477,7 +546,7 @@ export class SqliteRepo implements Repo {
           id,
           userId: r.userId,
           skinUuid: r.skinUuid,
-          weaponUuid: this.skinWeapon(r.skinUuid) ?? r.weaponUuid,
+          weaponUuid: r.authoritativeWeapon ? r.weaponUuid : (this.skinWeapon(r.skinUuid) ?? r.weaponUuid),
           rating: r.rating,
           body: r.body,
           now: r.now,

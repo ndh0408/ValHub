@@ -18,9 +18,13 @@ export function ratingAvg(s: RatingStats | undefined): number | null {
 }
 
 export function registerSkins(app: Hono, x: Ctx): void {
+  /** The uuid votes / reviews of a skin are stored under: its base skin uuid when the catalog knows it. */
+  const canonId = (uuid: string): string => x.canonSkin(uuid)?.skinUuid ?? uuid;
+
+  // `skinUuid` in the answer is the one the client asked about; the counts are those of the canonical skin.
   const voteResponse = (skinUuid: string, voted: boolean) => ({
     skinUuid,
-    votes: x.repo.voteCounts([skinUuid]).get(skinUuid) ?? 0,
+    votes: x.repo.voteCounts([canonId(skinUuid)]).get(canonId(skinUuid)) ?? 0,
     voted,
   });
 
@@ -32,10 +36,18 @@ export function registerSkins(app: Hono, x: Ctx): void {
     await x.assertContent('skin', skinUuid, 'skinUuid');
     await x.assertContent('weapon', weaponUuid, 'weaponUuid');
     x.rateLimit('votes', user.id);
-    x.repo.voteSkin(user.id, skinUuid, weaponUuid, x.now(), {
-      country: user.country,
-      region: user.region,
-    });
+    // One vote per account per skin, whatever uuid the client uses (skin, level or chroma): stored under the base
+    // skin uuid with the weapon the catalog says it belongs to (the client's weapon is only used when the catalog
+    // cannot answer, and the sweeper re-canonicalises such rows once it can).
+    const canon = x.canonSkin(skinUuid);
+    x.repo.voteSkin(
+      user.id,
+      canon?.skinUuid ?? skinUuid,
+      canon?.weaponUuid ?? weaponUuid,
+      x.now(),
+      { country: user.country, region: user.region },
+      canon !== null,
+    );
     return x.json(c, voteResponse(skinUuid, true));
   });
 
@@ -43,7 +55,8 @@ export function registerSkins(app: Hono, x: Ctx): void {
     const user = x.user(c, true);
     const skinUuid = parseUuid(c.req.param('skinUuid'), 'skinUuid');
     x.rateLimit('votes', user.id);
-    x.repo.unvoteSkin(user.id, skinUuid);
+    x.repo.unvoteSkin(user.id, canonId(skinUuid));
+    if (canonId(skinUuid) !== skinUuid) x.repo.unvoteSkin(user.id, skinUuid); // a vote stored before canonicalisation
     return x.json(c, voteResponse(skinUuid, false));
   });
 
@@ -103,18 +116,24 @@ export function registerSkins(app: Hono, x: Ctx): void {
     if (parts.length === 0) throw invalid('ids không được để trống.');
     if (parts.length > MAX_IDS) throw invalid(`ids tối đa ${MAX_IDS} UUID.`);
     const ids = [...new Set(parts.map((p) => parseUuid(p, 'ids')))];
+    // Levels and chromas count as their base skin; each item keeps the uuid that was asked for.
+    const canon = ids.map(canonId);
+    const lookup = [...new Set(canon)];
     const geo = resolveScope(c.req.query(), user, 'global');
-    const counts = x.repo.voteCounts(ids, undefined, geo);
-    const stats = x.repo.ratingStats(ids, undefined, geo);
-    const voted = user ? x.repo.userVotes(user.id, ids) : new Set<string>();
+    const counts = x.repo.voteCounts(lookup, undefined, geo);
+    const stats = x.repo.ratingStats(lookup, undefined, geo);
+    const voted = user ? x.repo.userVotes(user.id, lookup) : new Set<string>();
     return x.json(c, {
-      items: ids.map((id) => ({
-        skinUuid: id,
-        votes: counts.get(id) ?? 0,
-        voted: voted.has(id),
-        ratingAvg: ratingAvg(stats.get(id)),
-        ratingCount: stats.get(id)?.count ?? 0,
-      })),
+      items: ids.map((id, i) => {
+        const key = canon[i]!;
+        return {
+          skinUuid: id,
+          votes: counts.get(key) ?? 0,
+          voted: voted.has(key),
+          ratingAvg: ratingAvg(stats.get(key)),
+          ratingCount: stats.get(key)?.count ?? 0,
+        };
+      }),
       appliedScope: appliedScope(geo),
     });
   });

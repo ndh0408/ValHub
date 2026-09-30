@@ -48,10 +48,14 @@ export function registerReviews(app: Hono, x: Ctx): void {
     await x.assertContent('skin', skinUuid, 'skinUuid');
     await x.assertContent('weapon', weaponUuid, 'weaponUuid');
     const text = cleanUserText(rawText, language, user.country);
+    // One review per account per skin, whatever uuid the client uses: stored under the base skin uuid with the
+    // catalog's weapon (see PUT vote).
+    const canon = x.canonSkin(skinUuid);
     const id = x.repo.upsertReview({
       userId: user.id,
-      skinUuid,
-      weaponUuid,
+      skinUuid: canon?.skinUuid ?? skinUuid,
+      weaponUuid: canon?.weaponUuid ?? weaponUuid,
+      authoritativeWeapon: canon !== null,
       rating,
       body: text,
       now: x.now(),
@@ -67,14 +71,17 @@ export function registerReviews(app: Hono, x: Ctx): void {
   app.delete('/v1/skins/:skinUuid/review', (c) => {
     const user = x.user(c, true);
     const skinUuid = parseUuid(c.req.param('skinUuid'), 'skinUuid');
-    x.repo.deleteUserReview(user.id, skinUuid);
+    const canonical = x.canonSkin(skinUuid)?.skinUuid ?? skinUuid;
+    x.repo.deleteUserReview(user.id, canonical);
+    if (canonical !== skinUuid) x.repo.deleteUserReview(user.id, skinUuid); // stored before canonicalisation
     return x.noContent(c);
   });
 
   app.get('/v1/skins/:skinUuid/reviews', (c) => {
     const user = x.user(c, false);
     const viewerId = user?.id ?? '';
-    const skinUuid = parseUuid(c.req.param('skinUuid'), 'skinUuid');
+    const asked = parseUuid(c.req.param('skinUuid'), 'skinUuid');
+    const skinUuid = x.canonSkin(asked)?.skinUuid ?? asked;
     const q = c.req.query();
     const sort = q.sort ? parseEnum(q.sort, ['new', 'top'] as const, 'sort') : 'new';
     const geo = resolveScope(q, user, 'global');
@@ -96,13 +103,14 @@ export function registerReviews(app: Hono, x: Ctx): void {
 
   app.get('/v1/skins/:skinUuid/summary', (c) => {
     const user = x.user(c, false);
-    const skinUuid = parseUuid(c.req.param('skinUuid'), 'skinUuid');
+    const asked = parseUuid(c.req.param('skinUuid'), 'skinUuid');
+    const skinUuid = x.canonSkin(asked)?.skinUuid ?? asked;
     const geo = resolveScope(c.req.query(), user, 'global');
     const stats = x.repo.ratingStats([skinUuid], undefined, geo).get(skinUuid);
     // The author always sees their own review (even if hidden by reports), whatever the scope.
     const mine = user ? x.repo.getUserReview(user.id, skinUuid) : null;
     return x.json(c, {
-      skinUuid,
+      skinUuid: asked,
       weaponUuid: x.repo.skinWeapon(skinUuid),
       votes: x.repo.voteCounts([skinUuid], undefined, geo).get(skinUuid) ?? 0,
       voted: user ? x.repo.userVotes(user.id, [skinUuid]).has(skinUuid) : false,

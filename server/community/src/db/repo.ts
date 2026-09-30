@@ -262,6 +262,14 @@ export interface AccountData {
   moderationLog: AuditRow[];
 }
 
+export interface CanonicalizeResult {
+  votesRewritten: number;
+  votesMerged: number;
+  reviewsRewritten: number;
+  reviewsMerged: number;
+  weaponsFixed: number;
+}
+
 export interface SweepCounts {
   reportsExpired: number;
   reportsOrphaned: number;
@@ -333,11 +341,29 @@ export interface Repo {
   /** Idempotent per user; returns the post's join count. */
   joinLfg(id: string, userId: string, now: number): number;
 
-  /** Idempotent (the first vote's time and voter origin are kept). Returns true if a new vote was created. */
-  voteSkin(userId: string, skinUuid: string, weaponUuid: string, now: number, origin: Origin): boolean;
+  /**
+   * Idempotent (the first vote's time and voter origin are kept). Returns true if a new vote was created.
+   * `authoritativeWeapon`: the weapon comes from the game catalog, so it is stored as given instead of being
+   * pinned by the first vote / review of the skin.
+   */
+  voteSkin(
+    userId: string,
+    skinUuid: string,
+    weaponUuid: string,
+    now: number,
+    origin: Origin,
+    authoritativeWeapon?: boolean,
+  ): boolean;
   unvoteSkin(userId: string, skinUuid: string): void;
   /** Vote counts per skin, optionally only votes cast since `since` by voters in `geo`. */
   voteCounts(skinUuids: string[], since?: number, geo?: GeoScope): Map<string, number>;
+  /**
+   * Rewrites votes / reviews stored under a skin-level, chroma or any other alias uuid to the base skin uuid (and
+   * the weapon the catalog says it belongs to), merging the duplicates a user created by voting or reviewing the
+   * same skin under several uuids (the newest review wins; a vote keeps the existing canonical row). Also fixes a
+   * wrongly pinned weapon. `resolve` is the catalog's synchronous lookup; unknown uuids are left alone.
+   */
+  canonicalizeSkins(resolve: (uuid: string) => { skinUuid: string; weaponUuid: string } | null): CanonicalizeResult;
   /** Weapon a skin is pinned to (by its first vote or review), or null if unknown. */
   skinWeapon(skinUuid: string): string | null;
   userVotes(userId: string, skinUuids: string[]): Set<string>;
@@ -371,6 +397,8 @@ export interface Repo {
     origin: Origin;
     language: string | null;
     updateLanguage: boolean;
+    /** The weapon comes from the game catalog: store it as given instead of the skin's pinned one. */
+    authoritativeWeapon?: boolean;
   }): string;
   getReview(id: string, viewerId: string): ReviewView | null;
   getUserReview(userId: string, skinUuid: string): ReviewView | null;
