@@ -58,7 +58,14 @@ class TokenEgressGuard extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    if (carriesAccessToken(options) &&
+    final hasToken = carriesAccessToken(options);
+    if (hasToken) {
+      // Native HTTP redirects bypass Dio's interceptor chain; a 307/308
+      // could otherwise forward this body to a host outside the allow-list.
+      options.followRedirects = false;
+      options.maxRedirects = 0;
+    }
+    if (hasToken &&
         (options.uri.scheme != 'https' ||
             options.uri.port != 443 ||
             options.uri.userInfo.isNotEmpty ||

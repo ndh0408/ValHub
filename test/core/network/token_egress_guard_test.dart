@@ -73,6 +73,16 @@ void main() {
     expect(adapter.requests, isEmpty);
   });
 
+  test('token-bearing requests cannot opt into native redirects', () async {
+    await dio.post<String>(
+      '$pinned/v1/auth/riot',
+      data: {'accessToken': 'T'},
+      options: Options(followRedirects: true, maxRedirects: 5),
+    );
+    expect(adapter.requests.single.followRedirects, isFalse);
+    expect(adapter.requests.single.maxRedirects, 0);
+  });
+
   test(
     'a body with an accessToken key is blocked on any path elsewhere',
     () async {
