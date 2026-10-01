@@ -12,9 +12,14 @@ export class ErasureLedger {
     fs.mkdirSync(path.dirname(this.file), { recursive: true });
     const fd = fs.openSync(this.file, 'a', 0o600);
     try {
-      fs.writeSync(fd, `${JSON.stringify(entry)}\n`);
+      fs.writeFileSync(fd, `${JSON.stringify(entry)}\n`);
       fs.fsyncSync(fd);
     } finally { fs.closeSync(fd); }
+    // A newly created ledger also needs its directory entry durable on Linux.
+    if (process.platform !== 'win32') {
+      const parent = fs.openSync(path.dirname(this.file), 'r');
+      try { fs.fsyncSync(parent); } finally { fs.closeSync(parent); }
+    }
   }
 
   entries(): Erasure[] {

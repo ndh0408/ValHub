@@ -60,8 +60,11 @@ export async function stageBackup(data: string, stage: string): Promise<void> {
   await fs.mkdir(stage, { recursive: true, mode: 0o700 });
   const source = new Database(path.join(data, 'community.db'), { fileMustExist: true });
   try { await source.backup(path.join(stage, 'snap.db')); } finally { source.close(); }
-  const snap = new Database(path.join(stage, 'snap.db'), { readonly: true });
+  const snap = new Database(path.join(stage, 'snap.db'));
   try {
+    // The online snapshot inherits WAL mode. Make it a standalone DB so verification
+    // cannot leave snap.db-wal/-shm files in the archive (restore rejects extra paths).
+    snap.pragma('journal_mode = DELETE');
     const rows = snap.prepare("SELECT key FROM media WHERE status = 'active'").all() as { key: string }[];
     await fs.mkdir(path.join(stage, 'media'), { recursive: true });
     for (const row of rows) {

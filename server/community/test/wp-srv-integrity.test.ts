@@ -148,6 +148,7 @@ describe('WP-SRV integrity', () => {
     const stage = path.join(e.dataDir, 'stage');
     await stageBackup(e.dataDir, stage);
     expect((await verifyBackup(stage)).users).toBe(1);
+    expect((await fs.readdir(stage)).sort()).toEqual(['erasures.jsonl', 'media', 'snap.db']);
     expect((await drillBackup(stage)).users).toBe(0);
     await fs.writeFile(path.join(stage, 'snap.db'), 'invalid database');
     await expect(verifyBackup(stage)).rejects.toThrow();

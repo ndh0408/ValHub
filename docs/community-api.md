@@ -308,8 +308,9 @@ from averages.
   hour per user; votes 120 / hour.
 - Real game content only: `skinUuid` and `weaponUuid` of votes and reviews, `skinUuid` of
   shared store / Night Market offers and the `agents` of an LFG post are checked against
-  valorant-api.com. Base, level and chroma skin UUIDs resolve to one base skin UUID; responses
-  use that canonical UUID and the server derives its weapon. Historic duplicate choices
+  valorant-api.com. Base, level and chroma skin UUIDs share one base skin's stored choices;
+  the server derives its weapon. Vote/bulk/summary responses echo the requested UUID for
+  compatibility; review rows and leaderboard entries use the base UUID. Historic duplicate choices
   are merged, keeping first creation time and latest review body/hidden state/likes/reports.
   The request still supplies a valid-shaped `weaponUuid` for legacy compatibility. An unknown id is
   `400 invalid_input`. The check never blocks users when the catalog is not available

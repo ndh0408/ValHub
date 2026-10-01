@@ -29,7 +29,8 @@ jobs:
       - run: npm test
       - run: npm audit --omit=dev
       - run: docker build -t valvn-community:ci .
-      - run: docker run --rm --entrypoint sh valvn-community:ci -c 'sh -n ops/backup-loop.sh'
+      - run: sh -n ops/backup-loop.sh scripts/restore.sh test/ops-smoke.sh
+      - run: docker run --rm --entrypoint sh -v "$PWD/test/ops-smoke.sh:/ops-smoke.sh:ro" valvn-community:ci /ops-smoke.sh
       - uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: valvn-community:ci

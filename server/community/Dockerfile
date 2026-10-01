@@ -21,7 +21,7 @@ COPY --from=build --chown=root:root /app/dist ./dist
 COPY --chown=root:root package.json ./
 COPY --chown=root:root migrations ./migrations
 COPY --chown=root:root ops ./ops
-RUN mkdir -p /data && chown node:node /data
+RUN sed -i 's/\r$//' ops/*.sh && mkdir -p /data && chown node:node /data
 USER node
 EXPOSE 8080
 VOLUME ["/data"]
