@@ -97,6 +97,20 @@ void main() {
     expect(adapter.requests, hasLength(4));
   });
 
+  test(
+    'pinned host cannot receive secrets over HTTP or a custom port',
+    () async {
+      final host = Uri.parse(pinned).host;
+      await expectBlocked(
+        post('http://$host/v1/auth/riot', {'accessToken': 'T'}),
+      );
+      await expectBlocked(
+        post('https://$host:8443/v1/auth/riot', {'accessToken': 'T'}),
+      );
+      expect(adapter.requests, isEmpty);
+    },
+  );
+
   test('a text that merely quotes the key is not mistaken for a token', () {
     final text = jsonEncode({'text': 'the "accessToken": field is secret'});
     final options = RequestOptions(path: 'https://x.example/p', data: text);

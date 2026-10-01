@@ -13,6 +13,7 @@ import '../l10n/notification_strings.dart';
 import '../storage/prefs.dart';
 import '../accounts/account.dart';
 import '../util/json.dart';
+import '../settings/app_settings.dart';
 
 /// Initialises the `timezone` database and the local zone (fallback
 /// `UTC`). Call once per isolate before scheduling.
@@ -152,12 +153,18 @@ class NotificationService {
         ),
         onDidReceiveNotificationResponse: (response) {
           final payload = response.payload;
-          if (payload != null && payload.isNotEmpty) _taps.add(payload);
+          if (payload != null && payload.isNotEmpty) {
+            unawaited(_publishTap(payload));
+          }
         },
       );
       final launch = await _plugin.getNotificationAppLaunchDetails();
       if (launch?.didNotificationLaunchApp ?? false) {
         _launchPayload = launch?.notificationResponse?.payload;
+        if (_launchPayload != null &&
+            !await _linkAccountExists(_launchPayload!)) {
+          _launchPayload = null;
+        }
       }
     } on Object catch (e) {
       debugPrint('NotificationService.init failed: ${e.runtimeType}');
@@ -272,11 +279,15 @@ class NotificationService {
     String? tag,
   }) async {
     await init();
-    if (!at.isAfter(_now()) || !await _accountExists(accountPuuid)) return;
+    if (!at.isAfter(_now()) ||
+        !await _accountExists(accountPuuid) ||
+        !_channelEnabled(channel)) {
+      return;
+    }
     await _plugin.cancel(id: id, tag: tag);
     await _plugin.zonedSchedule(
       id: id,
-      title: title,
+      title: _privateBody(title, accountPuuid),
       body: _privateBody(body, accountPuuid),
       scheduledDate: tz.TZDateTime.from(at, tz.local),
       notificationDetails: _details(channel, tag: tag),
@@ -298,14 +309,52 @@ class NotificationService {
   }) async {
     await init();
     if (!await _accountExists(accountPuuid)) return;
+    // Older LFG callers used the account channel. Keep their local route
+    // contract while moving their alert to its own muteable category.
+    final uri = Uri.tryParse(payload ?? '');
+    final effectiveChannel =
+        channel == NotificationChannel.account &&
+            uri?.path == '/community' &&
+            uri?.queryParameters['section'] == 'lfg'
+        ? NotificationChannel.lfg
+        : channel;
+    if (!_channelEnabled(effectiveChannel)) return;
     await _plugin.show(
       id: id,
-      title: title,
+      title: effectiveChannel == NotificationChannel.lfg
+          ? NotificationStrings.lfgJoinedTitle
+          : _privateBody(title, accountPuuid),
       body: _privateBody(body, accountPuuid),
-      notificationDetails: _details(channel, tag: tag),
+      notificationDetails: _details(effectiveChannel, tag: tag),
       payload: payload,
     );
-    await _track(accountPuuid, id, channel);
+    await _track(accountPuuid, id, effectiveChannel);
+  }
+
+  Future<bool> _linkAccountExists(String payload) async {
+    final uri = Uri.tryParse(payload);
+    final id =
+        uri?.queryParameters['account'] ?? uri?.queryParameters['reauth'];
+    return _accountExists(id);
+  }
+
+  Future<void> _publishTap(String payload) async {
+    if (await _linkAccountExists(payload) && !_taps.isClosed) {
+      _taps.add(payload);
+    }
+  }
+
+  bool _channelEnabled(NotificationChannel channel) {
+    final prefs = _prefs;
+    if (prefs == null) return true;
+    final settings = readAppSettings(prefs);
+    return switch (channel) {
+      NotificationChannel.battlePass => settings.battlePassNotifications,
+      NotificationChannel.rank => settings.rankNotifications,
+      NotificationChannel.community => settings.communityNotifications,
+      NotificationChannel.lfg => settings.lfgNotifications,
+      _ => true,
+    };
   }
 
   Future<void> cancel(int id, {String? tag}) async {

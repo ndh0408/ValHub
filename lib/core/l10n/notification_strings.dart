@@ -25,11 +25,14 @@ abstract final class NotificationStrings {
   static const channelLfgDescription =
       'Báo người chơi tham gia tổ đội khi bạn mở ValVN';
   static const privateAccount = 'tài khoản của bạn';
+  static const lfgJoinedTitle = 'Có người chơi tham gia tổ đội';
   static const localOnlyHint =
       'Chỉ báo trên thiết bị này khi ValVN cập nhật dữ liệu';
   static const backgroundTimingHint =
       'Chế độ tiết kiệm pin của thiết bị có thể làm thông báo đến muộn.';
   static const storeResetBody = 'Skin mới đang chờ bạn trong cửa hàng.';
+  static const resetTimingUnknown =
+      'Mở cửa hàng để cập nhật giờ làm mới trên thiết bị của bạn.';
   static const nightMarketOpenTitle = 'Chợ Đêm đã mở!';
   static String nightMarketOpenBody(String cards, String account) =>
       'Lật $cards thẻ ưu đãi của $account ngay.';

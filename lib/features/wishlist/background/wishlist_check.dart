@@ -12,6 +12,8 @@
 /// nhập lại" once. Never throws.
 library;
 
+import 'dart:async';
+
 import '../../../core/accounts/account.dart';
 import '../../../core/background/background_context.dart';
 import '../../../core/content/content_db.dart';
@@ -22,7 +24,7 @@ import '../../../core/notifications/notification_service.dart';
 import '../../../core/settings/app_settings.dart';
 import '../../../core/storage/prefs.dart';
 import '../../../core/util/format.dart';
-import '../../settings/settings_routes.dart';
+import '../../store/providers/store_reset_reminder.dart';
 import '../../store/store_routes.dart';
 import '../../store/ui/store_screen.dart' show StoreSegment;
 import 'wishlist_alerts.dart';
@@ -34,19 +36,20 @@ const kNightMarketFallbackLength = Duration(days: 14);
 
 /// Entry point used by `core/background/background_tasks.dart`.
 ///
-/// Returns `true` on success, `false` to let Android retry with backoff
-/// (network trouble, or accounts left over when the time budget ran out).
+/// Returns `true` even on transient failures; the next periodic run retries
+/// without asking the OS to spawn another engine during an outage.
 Future<bool> runWishlistCheck({
   Duration budget = const Duration(seconds: 25),
 }) async {
   try {
     final ctx = await BackgroundContext.instance();
     try {
-      final report = await WishlistChecker(
+      await WishlistChecker(
         BackgroundWishlistCheckEnv(ctx),
         budget: budget,
       ).run();
-      return report.ok;
+      // The next periodic task handles transient failures; avoid OS retries.
+      return true;
     } finally {
       try {
         await ctx.finish();
@@ -55,7 +58,7 @@ Future<bool> runWishlistCheck({
       }
     }
   } on Object {
-    return false;
+    return true;
   }
 }
 
@@ -145,12 +148,21 @@ class WishlistChecker {
 
   Future<WishlistCheckReport> run() async {
     final report = WishlistCheckReport();
+    final wall = Stopwatch()..start();
+    final started = env.now();
+    Duration remaining() {
+      final elapsed = env.now().difference(started);
+      return budget - (elapsed > wall.elapsed ? elapsed : wall.elapsed);
+    }
+
     try {
-      await _guard(env.reload);
+      if (budget <= Duration.zero) return report;
+      await env.reload().timeout(budget);
       final settings = readAppSettings(env.prefs);
       final accounts = env.accounts();
       final nightMarketOn = settings.nightMarketNotifications;
       if (!nightMarketOn &&
+          !settings.storeResetNotifications &&
           !accounts.any((a) => settings.wishlistNotificationsFor(a.puuid))) {
         report.disabled = true;
         return report;
@@ -159,13 +171,14 @@ class WishlistChecker {
           settings.wishlistNotificationsFor(a.puuid) &&
           env.wishlist(a.puuid).isNotEmpty;
 
-      final started = env.now();
       final state = WishlistCheckState(env.prefs);
       final due = [
         for (final a in accounts)
           if (!a.needsLogin &&
               !state.checkedToday(a.puuid, started) &&
-              (nightMarketOn || wantsWishlist(a)))
+              (nightMarketOn ||
+                  wantsWishlist(a) ||
+                  settings.storeResetNotifications))
             a,
       ];
       if (due.isEmpty) return report;
@@ -174,7 +187,11 @@ class WishlistChecker {
       ContentDb? db;
       if (due.any(wantsWishlist)) {
         try {
-          db = await env.loadContent(settings.itemLanguage.apiCode);
+          final rest = remaining();
+          if (rest <= Duration.zero) return report;
+          db = await env
+              .loadContent(settings.itemLanguage.apiCode)
+              .timeout(rest);
         } on Object catch (e) {
           _log('wishlist.check.content_failed', e.runtimeType.toString());
           report.retry = true;
@@ -182,8 +199,9 @@ class WishlistChecker {
         }
       }
 
-      for (final (i, account) in due.indexed) {
-        if (i > 0 && env.now().difference(started) > budget) {
+      for (final account in due) {
+        final rest = remaining();
+        if (rest <= Duration.zero) {
           report.retry = true;
           break;
         }
@@ -193,6 +211,12 @@ class WishlistChecker {
           state,
           report,
           nightMarket: nightMarketOn,
+          expired: () => remaining() <= Duration.zero,
+        ).timeout(
+          rest,
+          onTimeout: () {
+            report.retry = true;
+          },
         );
       }
     } on Object catch (e) {
@@ -211,13 +235,21 @@ class WishlistChecker {
     WishlistCheckState state,
     WishlistCheckReport report, {
     required bool nightMarket,
+    required bool Function() expired,
   }) async {
     final puuid = account.puuid;
     final now = env.now();
     try {
       await env.ensureSession(puuid);
+      if (expired()) return;
       final json = await env.storefront(puuid);
+      if (expired() || !env.accounts().any((a) => a.puuid == puuid)) return;
       final store = Storefront.fromJson(json, receivedAt: now);
+      if (env case final StoreResetCheckEnv scheduler) {
+        if (readAppSettings(env.prefs).storeResetNotifications) {
+          await scheduler.scheduleReset(account, store, now);
+        }
+      }
       await _guard(
         () => ObservedPriceStore(env.prefs).record(store.observedSkinPrices()),
       );
@@ -227,12 +259,14 @@ class WishlistChecker {
       if (db != null) {
         await _alertWishlist(account, store, db, state, report, now);
       }
-      await state.markChecked(puuid, now);
+      if (expired()) return;
+      await state.markChecked(puuid, now, expiresAt: store.daily.expiresAt);
       if (state.needsLoginNotified(puuid)) {
         await state.setNeedsLoginNotified(puuid, false);
       }
       report.checked++;
     } on NeedsLoginException {
+      if (expired() || !env.accounts().any((a) => a.puuid == puuid)) return;
       report.needsLogin++;
       await _guard(() => env.markNeedsLogin(puuid));
       if (!state.needsLoginNotified(puuid)) {
@@ -242,7 +276,7 @@ class WishlistChecker {
             title: NotificationStrings.sessionExpiredTitle,
             body: NotificationStrings.sessionExpiredBody(account.riotId),
             channel: NotificationChannel.account,
-            payload: SettingsRoutes.root,
+            payload: '/login?reauth=$puuid',
             accountPuuid: puuid,
           ),
         );
@@ -394,10 +428,30 @@ class WishlistChecker {
 }
 
 /// [WishlistCheckEnv] backed by the background isolate's services.
-class BackgroundWishlistCheckEnv implements WishlistCheckEnv {
+abstract interface class StoreResetCheckEnv {
+  Future<void> scheduleReset(Account account, Storefront store, DateTime now);
+}
+
+class BackgroundWishlistCheckEnv
+    implements WishlistCheckEnv, StoreResetCheckEnv {
   BackgroundWishlistCheckEnv(this._ctx);
 
   final BackgroundContext _ctx;
+
+  @override
+  Future<void> scheduleReset(
+    Account account,
+    Storefront store,
+    DateTime now,
+  ) async {
+    if (await _ctx.accounts.findFresh(account.puuid) == null) return;
+    await scheduleStoreResetReminder(
+      _ctx.notifications,
+      account: account,
+      store: store,
+      now: now,
+    );
+  }
 
   @override
   Prefs get prefs => _ctx.prefs;

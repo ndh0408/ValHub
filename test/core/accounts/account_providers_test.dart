@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/accounts/account.dart';
+import 'package:valvn/core/accounts/local_data.dart';
 import 'package:valvn/core/accounts/account_providers.dart';
 import 'package:valvn/core/auth/auth_callback.dart';
 import 'package:valvn/core/auth/auth_providers.dart';
@@ -78,6 +79,9 @@ void main() {
       sessionManagerProvider.overrideWithValue(sessions),
       notificationServiceProvider.overrideWithValue(notifications),
       jsonFileCacheProvider.overrideWithValue(JsonFileCache(() async => tmp)),
+      retainedHistoryFilesProvider.overrideWithValue(
+        JsonFileCache(() async => Directory('${tmp.path}/history')),
+      ),
     ],
   );
 

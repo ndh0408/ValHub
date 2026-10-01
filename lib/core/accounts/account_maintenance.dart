@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import '../domain/competitive/rr_history.dart';
 import '../logging/session_log.dart';
 import '../notifications/notification_service.dart';
@@ -19,26 +17,32 @@ import 'local_data.dart';
 ///    fetch that finished after a sign-out, a crash). It never touches
 ///    `keep.*`.
 ///
-/// Best effort and bounded by [timeout]: a slow keystore never delays the
-/// first frame for long, and any failure is only logged.
+/// Destructive work finishes before the UI may start another login.
+/// Failures are logged and unfinished markers remain for the next launch.
 Future<SweepReport> runAccountStartupMaintenance({
   required Prefs prefs,
   required SecureStore secureStore,
   NotificationService? notifications,
   JsonFileCache? cache,
   RrHistoryStore? history,
+  JsonFileCache? historyFiles,
   SessionLog? log,
-  Duration timeout = const Duration(seconds: 3),
 }) async {
   try {
     final files = cache ?? JsonFileCache.appSupport('cache');
-    final rr = history ?? RrHistoryStore(JsonFileCache.appSupport('history'));
+    final keptFiles = historyFiles ?? JsonFileCache.appSupport('history');
+    final rr = history ?? RrHistoryStore(keptFiles);
     final repo = AccountRepository(
       prefs: prefs,
       secureStore: secureStore,
       fileCache: files,
     );
-    final eraser = LocalDataEraser(prefs: prefs, cache: files, history: rr);
+    final eraser = LocalDataEraser(
+      prefs: prefs,
+      cache: files,
+      history: rr,
+      historyFiles: keptFiles,
+    );
     Future<void> cancelNotifications(String puuid) async {
       try {
         await notifications?.cancelForAccount(puuid);
@@ -52,9 +56,15 @@ Future<SweepReport> runAccountStartupMaintenance({
       beforeWipe: cancelNotifications,
       afterWipe: (puuid) async {
         if (pending[puuid] == false) await eraser.eraseAccount(puuid);
+        if (repo.loadAll().isEmpty) await eraser.eraseSharedCaches();
       },
     );
     final swept = await repo.sweepOrphans(beforeWipe: cancelNotifications);
+    final active = repo.activePuuid;
+    if (active != null && repo.find(active) == null) {
+      await repo.setActivePuuid(repo.loadAll().firstOrNull?.puuid);
+    }
+    if (history == null) rr.dispose();
     final report = SweepReport(
       accounts: swept.accounts,
       finishedSignOuts: finished.length,

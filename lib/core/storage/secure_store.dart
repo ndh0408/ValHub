@@ -66,9 +66,8 @@ typedef SecureErrorSink = void Function(String operation, Object error);
 ///   - a failed **read** is reported to [onError] and reads as "no value", so
 ///     the account simply needs a new login while the data is kept (the
 ///     Keystore may recover);
-///   - a failed **write** is reported, retried once, and only when the store
-///     is really unusable it is reset (reported too) and written once more:
-///     the visible equivalent of the plugin's silent reset.
+///   - a failed **write** is reported and retried once, then rethrown. It
+///     never resets unrelated accounts' secrets.
 /// - iOS: `first_unlock_this_device` so background tasks can read it while the
 ///   phone is locked; never synchronised to iCloud.
 class FlutterSecureStore implements SecureStore {

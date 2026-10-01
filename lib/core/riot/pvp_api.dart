@@ -568,10 +568,14 @@ class PvpApi {
     }
     TransientException cancelled() =>
         TransientException(reason: deadlineHit ? 'timeout' : 'cancelled');
+    Future<T> bounded<T>(Future<T> operation) => Future.any<T>([
+      operation,
+      token.whenCancel.then<T>((_) => throw cancelled()),
+    ]);
     try {
       final RiotHosts hosts;
       try {
-        hosts = (await _sessions.session(id).timeout(deadline)).hosts;
+        hosts = (await bounded(_sessions.session(id))).hosts;
       } on TimeoutException {
         throw const TransientException(reason: 'timeout');
       } on Object catch (e) {
@@ -597,22 +601,24 @@ class PvpApi {
         }
         Duration wait;
         try {
-          final res = await _dio.requestUri<Object?>(
-            query == null || query.isEmpty
-                ? uri
-                : uri.replace(
-                    queryParameters: {
-                      ...uri.queryParameters,
-                      for (final e in query.entries) e.key: '${e.value}',
-                    },
-                  ),
-            data: data,
-            cancelToken: token,
-            options: Options(
-              method: method,
-              responseType: responseType,
-              contentType: data == null ? null : Headers.jsonContentType,
-              extra: {RequestExtras.puuid: id},
+          final res = await bounded(
+            _dio.requestUri<Object?>(
+              query == null || query.isEmpty
+                  ? uri
+                  : uri.replace(
+                      queryParameters: {
+                        ...uri.queryParameters,
+                        for (final e in query.entries) e.key: '${e.value}',
+                      },
+                    ),
+              data: data,
+              cancelToken: token,
+              options: Options(
+                method: method,
+                responseType: responseType,
+                contentType: data == null ? null : Headers.jsonContentType,
+                extra: {RequestExtras.puuid: id},
+              ),
             ),
           );
           _limiter.recordSuccess(host);

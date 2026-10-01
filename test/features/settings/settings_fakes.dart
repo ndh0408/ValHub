@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:mocktail/mocktail.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:valvn/core/accounts/account.dart';
+import 'package:valvn/core/accounts/local_data.dart';
+import 'package:valvn/core/domain/competitive/rr_history.dart';
 import 'package:valvn/core/auth/auth_providers.dart';
 import 'package:valvn/core/auth/session_manager.dart';
 import 'package:valvn/core/logging/session_log.dart';
@@ -169,6 +171,12 @@ class SettingsTestEnv {
     prefsProvider.overrideWithValue(prefs),
     secureStoreProvider.overrideWithValue(MemorySecureStore()),
     jsonFileCacheProvider.overrideWithValue(fileCache),
+    retainedHistoryFilesProvider.overrideWithValue(FakeJsonFileCache()),
+    rrHistoryStoreProvider.overrideWith((ref) {
+      final store = RrHistoryStore(FakeJsonFileCache());
+      ref.onDispose(store.dispose);
+      return store;
+    }),
     notificationServiceProvider.overrideWithValue(notifications),
     pvpApiProvider.overrideWithValue(api),
     sessionManagerProvider.overrideWithValue(sessions),

@@ -137,7 +137,10 @@ class SessionLog extends ChangeNotifier {
         for (final line in lines)
           ?SessionLogEntry.fromJson(tryDecodeJson(line)),
       ];
-      _entries.insertAll(0, loaded);
+      _entries
+        ..clear()
+        ..addAll(loaded)
+        ..addAll(_pending);
       _entries.sort((a, b) => a.time.compareTo(b.time));
       _trim();
       notifyListeners();

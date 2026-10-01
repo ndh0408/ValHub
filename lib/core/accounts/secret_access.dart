@@ -1,10 +1,34 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 
 import '../l10n/account_strings.dart';
+
+const _secretChannel = MethodChannel('valvn/secrets');
+
+Future<void> setSecretPrivacy(bool enabled) async {
+  if (!Platform.isAndroid) return;
+  try {
+    await _secretChannel.invokeMethod<void>('privacy', enabled);
+  } on Object {
+    // Tests and platforms without the native adapter.
+  }
+}
+
+Future<void> _copySecret(String text) async {
+  if (Platform.isAndroid) {
+    try {
+      await _secretChannel.invokeMethod<void>('copy', text);
+      return;
+    } on Object {
+      // Fall back to Flutter's clipboard when the adapter is unavailable.
+    }
+  }
+  await Clipboard.setData(ClipboardData(text: text));
+}
 
 final secretUnlockProvider = Provider<Future<bool> Function()>((ref) {
   final auth = LocalAuthentication();
@@ -25,7 +49,7 @@ class SecretClipboard {
     Future<void> Function(String)? write,
     Future<String?> Function()? read,
     this.expiry = const Duration(seconds: 45),
-  }) : _write = write ?? ((s) => Clipboard.setData(ClipboardData(text: s))),
+  }) : _write = write ?? _copySecret,
        _read =
            read ?? (() async => (await Clipboard.getData('text/plain'))?.text);
 

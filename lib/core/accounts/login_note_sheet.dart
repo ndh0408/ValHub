@@ -50,6 +50,7 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    unawaited(setSecretPrivacy(true));
   }
 
   @override
@@ -71,6 +72,7 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    unawaited(setSecretPrivacy(false));
     _username.dispose();
     _password.dispose();
     super.dispose();

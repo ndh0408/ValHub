@@ -440,8 +440,9 @@ void main() {
       expect(
         env.notifications.cancelled,
         unorderedEquals([
-          NotificationIds.storeReset(testPuuid(1)),
-          NotificationIds.storeReset(testPuuid(2)),
+          for (var account = 1; account <= 2; account++)
+            for (var day = 0; day < 7; day++)
+              NotificationIds.storeResetDay(testPuuid(account), day),
         ]),
       );
     });

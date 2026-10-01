@@ -46,6 +46,10 @@ class _StoreResetReminderHostState
     _scheduled[puuid] = store;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      if (!ref.read(appSettingsProvider).storeResetNotifications ||
+          ref.read(accountProvider(puuid)) == null) {
+        return;
+      }
       unawaited(
         scheduleStoreResetReminder(
           ref.read(notificationServiceProvider),

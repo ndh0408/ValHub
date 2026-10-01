@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account_providers.dart';
+import '../../../../core/domain/economy/saved_storefront.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/notifications/notification_service.dart';
 import '../../../../core/settings/app_settings.dart';
@@ -21,11 +22,19 @@ import '../widgets/settings_widgets.dart';
 /// Night Market. Turning a switch on primes the OS permission first (S04);
 /// a warning row appears while a switch is on but the OS blocks
 /// notifications (VF §8.5 notifPermissionMissing).
-/// The daily store resets at 00:00 UTC: the next reset after [now] (shown
-/// in the device's local time, e.g. 07:00 in Vietnam, 08:00 in UTC+8).
-DateTime nextDailyStoreReset(DateTime now) {
-  final utc = now.toUtc();
-  return DateTime.utc(utc.year, utc.month, utc.day + 1);
+/// Advances the last reset returned by Riot along its daily cadence.
+/// Without a known expiry, the reset time remains unknown.
+DateTime? nextDailyStoreReset(DateTime now, {DateTime? expiresAt}) {
+  if (expiresAt == null) return null;
+  if (expiresAt.isAfter(now)) return expiresAt;
+  return expiresAt.add(
+    Duration(
+      days:
+          now.difference(expiresAt).inMicroseconds ~/
+              const Duration(days: 1).inMicroseconds +
+          1,
+    ),
+  );
 }
 
 class SettingsNotificationsSection extends ConsumerStatefulWidget {
@@ -84,6 +93,14 @@ class _SettingsNotificationsSectionState
     final settings = ref.watch(appSettingsProvider);
     final accounts = ref.watch(accountsProvider);
     final allowed = ref.watch(notificationsAllowedProvider).value;
+    final active = ref.watch(activeAccountProvider);
+    final savedStore = active == null
+        ? null
+        : ref.watch(savedStorefrontProvider(active.puuid)).value;
+    final resetAt = nextDailyStoreReset(
+      ref.watch(clockProvider).now(),
+      expiresAt: savedStore?.daily.expiresAt,
+    );
     final showWarning =
         allowed == false &&
         (settings.storeResetNotifications ||
@@ -98,9 +115,9 @@ class _SettingsNotificationsSectionState
             NotificationToggle.storeReset,
             Icons.storefront_outlined,
             SettingsStrings.notifStoreReset,
-            SettingsStrings.notifStoreResetSubtitle(
-              formatTime(nextDailyStoreReset(ref.watch(clockProvider).now())),
-            ),
+            resetAt == null
+                ? NotificationStrings.resetTimingUnknown
+                : SettingsStrings.notifStoreResetSubtitle(formatTime(resetAt)),
           ),
           (
             NotificationToggle.nightMarket,

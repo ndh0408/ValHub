@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,6 +21,8 @@ class _Vapi implements HttpClientAdapter {
 
   final Map<String, String> fixtures;
   bool offline = false;
+  final failedPaths = <String>{};
+  Completer<void>? gate;
   final paths = <String>[];
 
   @override
@@ -28,6 +31,7 @@ class _Vapi implements HttpClientAdapter {
     Stream<List<int>>? s,
     Future<void>? c,
   ) async {
+    await gate?.future;
     if (offline) {
       throw DioException(
         requestOptions: o,
@@ -35,6 +39,9 @@ class _Vapi implements HttpClientAdapter {
       );
     }
     paths.add('${o.uri.path}?${o.uri.query}');
+    if (failedPaths.contains(o.uri.path)) {
+      return ResponseBody.fromString('{}', 503);
+    }
     if (o.uri.path == '/v1/version') {
       return ResponseBody.fromString(
         '{"status":200,"data":{"manifestId":"M1","riotClientVersion":"release-13.06-shipping-13-5435758","riotClientBuild":"111.0.0.3261.5663"}}',
@@ -155,6 +162,40 @@ void main() {
     clock.advance(const Duration(hours: 7));
     expect(await repo.allowMissRefresh('vi-VN'), isTrue);
   });
+
+  test('stale content renders while the network is blocked', () async {
+    await repo.load();
+    clock.advance(const Duration(days: 8));
+    final gate = Completer<void>();
+    vapi.gate = gate;
+    final stale = await repo.load().timeout(const Duration(seconds: 1));
+    expect(stale.weapons, isNotEmpty);
+    gate.complete();
+    vapi.gate = null;
+    await repo.refresh();
+  });
+
+  test(
+    'one failing endpoint does not force a full download next launch',
+    () async {
+      vapi.failedPaths.add('/v1/events');
+      await repo.load();
+      vapi.paths.clear();
+      await repo.refresh();
+      expect(
+        vapi.paths,
+        isEmpty,
+        reason: 'failed endpoint has a six-hour cooldown',
+      );
+      clock.advance(const Duration(hours: 7));
+      vapi.paths.clear();
+      vapi.failedPaths.clear();
+      await repo.refresh();
+      expect(vapi.paths.where((p) => !p.startsWith('/v1/version')).toList(), [
+        '/v1/events?language=vi-VN',
+      ]);
+    },
+  );
 
   test('cache key includes manifest, language and schema', () {
     expect(ContentRepository.cacheKey('M1', 'vi-VN'), 'M1|vi-VN|schema=1');

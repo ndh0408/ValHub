@@ -180,6 +180,10 @@ String formatRelative(DateTime then, DateTime now, {String? locale}) {
 
 DateTime _dateOnly(DateTime d) => DateTime.utc(d.year, d.month, d.day);
 
+/// Calendar-day distance, independent of a 23/25-hour DST transition.
+int calendarDayDifference(DateTime later, DateTime earlier) =>
+    _dateOnly(later).difference(_dateOnly(earlier)).inDays;
+
 /// `22/09/2026` (vi), `9/22/2026` (en_US) — device time zone.
 String formatDate(DateTime d, {String? locale}) {
   final t = d.toLocal();

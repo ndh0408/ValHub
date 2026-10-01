@@ -41,11 +41,28 @@ class WishlistCheckState {
     return DateTime.utc(u.year, u.month, u.day + 1);
   }
 
-  bool checkedToday(String puuid, DateTime now) =>
-      _prefs.getString(checkedDayKey(puuid)) == utcDay(now);
+  bool checkedToday(String puuid, DateTime now) {
+    final until = _prefs.getDateTime(
+      PrefKeys.account(puuid, 'wishlist.checkedUntil'),
+    );
+    return until != null
+        ? now.isBefore(until)
+        : _prefs.getString(checkedDayKey(puuid)) == utcDay(now);
+  }
 
-  Future<void> markChecked(String puuid, DateTime now) =>
-      _prefs.setString(checkedDayKey(puuid), utcDay(now));
+  Future<void> markChecked(
+    String puuid,
+    DateTime now, {
+    DateTime? expiresAt,
+  }) async {
+    await _prefs.setString(checkedDayKey(puuid), utcDay(now));
+    if (expiresAt != null && expiresAt.isAfter(now)) {
+      await _prefs.setDateTime(
+        PrefKeys.account(puuid, 'wishlist.checkedUntil'),
+        expiresAt,
+      );
+    }
+  }
 
   /// Notified hit keys whose offer is still on sale at [now].
   Map<String, DateTime> notified(String puuid, DateTime now) {

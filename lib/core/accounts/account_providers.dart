@@ -38,6 +38,7 @@ final localDataEraserProvider = Provider<LocalDataEraser>(
     prefs: ref.watch(prefsProvider),
     cache: ref.watch(jsonFileCacheProvider),
     history: ref.watch(rrHistoryStoreProvider),
+    historyFiles: ref.watch(retainedHistoryFilesProvider),
   ),
 );
 
@@ -127,7 +128,7 @@ class AccountsNotifier extends Notifier<List<Account>> {
   /// cookies, tokens, login note, community session, `acct.<puuid>.*` prefs
   /// and `acct/<puuid>/…` caches.
   ///
-  /// With [keepLocalData] (the default, VF W6) the wishlist, loadout presets
+  /// With [keepLocalData] explicitly selected the wishlist, loadout presets
   /// and RR history of the account stay on the device for a later login;
   /// without it they are erased too (decision D3).
   ///

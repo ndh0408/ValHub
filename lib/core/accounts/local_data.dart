@@ -4,6 +4,13 @@ import '../domain/loadout/loadout_presets.dart' show LoadoutPresetStore;
 import '../storage/json_file_cache.dart';
 import '../storage/prefs.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+/// Direct erasure backstop: the domain store's delete API swallows disk errors.
+final retainedHistoryFilesProvider = Provider<JsonFileCache>(
+  (ref) => JsonFileCache.appSupport('history'),
+);
+
 /// The data ValVN keeps on the device **beyond** the signed-in session, and how
 /// to erase it (decision D3, AR-002):
 ///
@@ -14,18 +21,20 @@ import '../storage/prefs.dart';
 /// | Player names (Riot IDs) | prefs `f.competitive.names` | [eraseSharedCaches] |
 /// | Matches seen | `cache/matches/` | [eraseSharedCaches] |
 ///
-/// Only public APIs of the stores are used (`RrHistoryStore.delete` / `clear`);
-/// their internals belong to the competitive domain.
+/// Public APIs clear in-memory data; a direct disk deletion also reports
+/// errors that those APIs intentionally swallow.
 class LocalDataEraser {
   LocalDataEraser({
     required this._prefs,
     required this._cache,
     required this._history,
+    required this._historyFiles,
   });
 
   final Prefs _prefs;
   final JsonFileCache _cache;
   final RrHistoryStore _history;
+  final JsonFileCache _historyFiles;
 
   /// What an account chose to keep is erased: its `keep.<puuid>.*` prefs
   /// (wishlist, presets) and its RR history.
@@ -33,6 +42,8 @@ class LocalDataEraser {
     final id = puuid.trim().toLowerCase();
     await _prefs.removePrefix(PrefKeys.accountKeptPrefix(id));
     await _history.delete(id);
+    // Propagate a disk failure so app.pendingWipe remains for the next start.
+    await _historyFiles.deletePrefix('keep/$id');
   }
 
   /// The caches that hold **other players'** data: Riot IDs looked up by
@@ -50,6 +61,7 @@ class LocalDataEraser {
   Future<void> eraseAll({required Set<String> signedIn}) async {
     final keep = {for (final id in signedIn) id.trim().toLowerCase()};
     await _history.clear();
+    await _historyFiles.deletePrefix('keep');
     // Current and future account-scoped history recorders share this root.
     for (final id in keep) {
       await _cache.deletePrefix('acct/$id/store_history');

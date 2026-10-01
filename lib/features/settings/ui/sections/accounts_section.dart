@@ -164,7 +164,12 @@ class _AccountRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scheme = Theme.of(context).colorScheme;
-    final hasNote = ref.watch(loginNoteProvider(account.puuid)).value != null;
+    final hasNote =
+        ref
+            .watch(savedLoginNotesProvider(null))
+            .value
+            ?.any((entry) => entry.$1.puuid == account.puuid) ??
+        false;
     // Active marker: a red accent bar (always) plus a check mark when there
     // is room. The tile is not `selected`: a red title would read like the
     // "Cần đăng nhập lại" error of another row.

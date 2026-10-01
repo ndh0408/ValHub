@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/storage/json_file_cache.dart';
@@ -66,6 +67,18 @@ void main() {
   });
 
   group('blocked prefixes (sign-out tombstones)', () {
+    test('a wipe drains a write already waiting for its directory', () async {
+      final root = Completer<Directory>();
+      cache = JsonFileCache(() => root.future);
+      final writing = cache.write('acct/p1/wallet', {'vp': 1});
+      cache.blockWrites('acct/p1');
+      final wiping = cache.deletePrefix('acct/p1');
+      root.complete(tmp);
+      await Future.wait([writing, wiping]);
+      expect(await cache.exists('acct/p1/wallet'), isFalse);
+      expect(leftovers(), isEmpty);
+    });
+
     test('writes under a blocked prefix are dropped', () async {
       cache.blockWrites('acct/p1');
       await cache.write('acct/p1/wallet', {'vp': 1});

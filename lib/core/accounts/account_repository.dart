@@ -52,7 +52,11 @@ class AccountRepository {
     r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
   );
 
-  Future<void> _tail = Future<void>.value();
+  // Repository instances sharing one prefs store also share the queue.
+  // Separate stores (including independent tests) never block each other.
+  static final _queues = Expando<Future<void>>();
+  Future<void> get _tail => _queues[_prefs] ?? Future<void>.value();
+  set _tail(Future<void> value) => _queues[_prefs] = value;
 
   /// Runs [body] after every earlier queued operation finished (a failure
   /// of one never blocks the next).
@@ -229,6 +233,10 @@ class AccountRepository {
     for (final key in SecureKeys.allFor(id)) {
       await _secure.delete(key);
     }
+    for (final key in await _secure.readAllKeys()) {
+      if (SecureKeys.puuidOf(key) == id) await _secure.delete(key);
+    }
+    await _prefs.remove('lock.reauth.$id');
     await _prefs.removePrefix(PrefKeys.accountPrefix(id));
     await _files?.deletePrefix(JsonFileCache.accountPrefix(id));
     if (!keepLocalData) {

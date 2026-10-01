@@ -89,13 +89,24 @@ class LoginNoteNotifier extends AsyncNotifier<LoginNote?> {
       password: note.password,
     );
     if (trimmed.isEmpty) return clear();
+    if (await ref.read(accountRepositoryProvider).findFresh(_puuid) == null) {
+      return;
+    }
     await _store.write(_key, trimmed.encode());
-    if (ref.mounted) state = AsyncData(trimmed);
+    if (await ref.read(accountRepositoryProvider).findFresh(_puuid) == null) {
+      await _store.delete(_key);
+      return;
+    }
+    if (ref.mounted) {
+      state = AsyncData(trimmed);
+      ref.invalidate(savedLoginNotesProvider);
+    }
   }
 
   Future<void> clear() async {
     await _store.delete(_key);
     if (ref.mounted) state = const AsyncData(null);
+    if (ref.mounted) ref.invalidate(savedLoginNotesProvider);
   }
 }
 

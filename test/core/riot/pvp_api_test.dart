@@ -507,6 +507,29 @@ void main() {
       );
       expect(adapter.requests, isEmpty);
     });
+
+    test(
+      'cancelling while awaiting a session does not wait for its deadline',
+      () async {
+        when(() => sessions.session(any()))
+            .thenAnswer((_) => Completer<RiotSession>().future);
+        final token = CancelToken();
+        final call = build().matchDetails(_puuid, 'm1', cancelToken: token);
+        final outcome = expectLater(
+          call,
+          throwsA(
+            isA<TransientException>().having(
+              (e) => e.reason,
+              'reason',
+              'cancelled',
+            ),
+          ),
+        );
+        token.cancel('screen closed');
+        await outcome.timeout(const Duration(seconds: 1));
+        expect(adapter.requests, isEmpty);
+      },
+    );
   });
 }
 

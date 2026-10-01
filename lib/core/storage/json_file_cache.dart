@@ -169,6 +169,10 @@ class JsonFileCache {
     );
     try {
       await tmp.writeAsString(contents, flush: true);
+      if (_blocked(_relative(key))) {
+        await tmp.delete();
+        return;
+      }
       await tmp.rename(file.path);
     } on Object {
       try {
@@ -209,8 +213,14 @@ class JsonFileCache {
   /// Deletes every entry whose key starts with [prefix] (a directory prefix
   /// such as `acct/<puuid>`, or a file prefix).
   Future<void> deletePrefix(String prefix) async {
-    final dir = await _dir();
     final rel = _relative(prefix);
+    // A wipe blocks this prefix first. Drain already-started writes before
+    // deleting so their rename cannot resurrect a signed-out account.
+    await Future.wait([
+      for (final entry in _writing.entries)
+        if (entry.key == rel || entry.key.startsWith('$rel/')) entry.value,
+    ]);
+    final dir = await _dir();
     final asDir = Directory('${dir.path}/$rel');
     if (asDir.existsSync()) await asDir.delete(recursive: true);
     final parent = File('${dir.path}/$rel').parent;

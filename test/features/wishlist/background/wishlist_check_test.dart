@@ -226,12 +226,12 @@ void main() {
     expect(ObservedPriceStore(e.prefs).read(), isNotEmpty);
   });
 
-  test('at most once per account per UTC day', () async {
+  test('at most once until the returned storefront reset', () async {
     final e = await env();
     await WishlistChecker(e).run();
     expect(e.storefrontCalls, [puuid1]);
 
-    e.now0 = DateTime.utc(2026, 9, 28, 23, 59);
+    e.now0 = monday.add(const Duration(minutes: 10));
     final again = await WishlistChecker(e).run();
     expect(again.checked, 0);
     expect(e.storefrontCalls, [puuid1], reason: 'same UTC day');
@@ -337,7 +337,7 @@ void main() {
       NotificationStrings.sessionExpiredBody('Người Chơi#VN2'),
     );
     expect(expired.single.id, NotificationIds.sessionExpired(puuid1));
-    expect(expired.single.payload, '/settings');
+    expect(expired.single.payload, '/login?reauth=$puuid1');
     expect(WishlistCheckState(e.prefs).needsLoginNotified(puuid1), isTrue);
 
     // Even if the account is not flagged (another isolate reset it), the
@@ -441,7 +441,7 @@ void main() {
       e,
       budget: const Duration(seconds: 25),
     ).run();
-    expect(e.storefrontCalls, [puuid1]);
+    expect(e.storefrontCalls, isEmpty);
     expect(report.retry, isTrue);
   });
 
@@ -555,12 +555,12 @@ void main() {
   group('WishlistCheckState', () {
     test('UTC day and next midnight', () {
       expect(
-        WishlistCheckState.utcDay(DateTime.utc(2026, 9, 28, 23, 59)),
+        WishlistCheckState.utcDay(DateTime.utc(2026, 9, 28, 13)),
         '2026-09-28',
       );
       // 06:59 in Vietnam (UTC+7) is still the previous UTC day.
       expect(
-        WishlistCheckState.utcDay(DateTime.utc(2026, 9, 28, 23, 59).toLocal()),
+        WishlistCheckState.utcDay(DateTime.utc(2026, 9, 28, 13).toLocal()),
         '2026-09-28',
       );
       expect(
