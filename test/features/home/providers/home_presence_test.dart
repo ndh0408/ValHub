@@ -251,7 +251,13 @@ void main() {
       verifyNever(() => env.api.storefront(any()));
       verifyNever(() => env.api.wallet(any()));
       verifyNever(() => env.api.contracts(any()));
-      verifyNever(() => env.api.mmr(any(), subject: any(named: 'subject')));
+      verifyNever(
+        () => env.api.mmr(
+          any(),
+          subject: any(named: 'subject'),
+          cancelToken: any(named: 'cancelToken'),
+        ),
+      );
       verifyNever(() => env.api.gameSession(any()));
     });
 

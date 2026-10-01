@@ -34,6 +34,23 @@ void main() {
   });
 
   test(
+    'late RR and outcomes after sign-out cannot recreate retained history',
+    () async {
+      var signedIn = true;
+      final store = RrHistoryStore(files, canRecord: (_) async => signedIn);
+      await store.merge('me', [_row('a', 1)]);
+      signedIn = false;
+      await store.delete('me');
+      await store.merge('me', [_row('b', 2)]);
+      await store.recordOutcomes('me', {'b': MatchOutcome.win}, force: true);
+      expect((await store.read('me')).rows, isEmpty);
+      expect((await store.read('me')).outcomes, isEmpty);
+      expect(await files.read(RrHistoryStore.key('me')), isNull);
+      store.dispose();
+    },
+  );
+
+  test(
     'legacy third-party files are erased while retained own accounts stay',
     () async {
       final store = RrHistoryStore(files);

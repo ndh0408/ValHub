@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account.dart';
+import '../../../../core/geo/region_picker.dart';
+import '../../../../core/l10n/l10n.dart';
 import '../../../../core/accounts/sign_out_dialog.dart';
 import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/accounts/account_status.dart';
@@ -13,6 +15,7 @@ import '../../../../core/accounts/login_note_sheet.dart';
 import '../../../../core/accounts/account_widgets.dart';
 import '../../../../core/auth/auth_routes.dart';
 import '../../../../core/config/app_constants.dart';
+import '../../../../core/domain/competitive/rank.dart';
 import '../../../../core/l10n/account_strings.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -92,6 +95,39 @@ class SettingsAccountsSection extends ConsumerWidget {
               }
             },
           ),
+          if (active != null)
+            ListTile(
+              leading: const Icon(Icons.public_outlined),
+              title: Text(context.l10n.settingsGeoConnection),
+              subtitle: Text(
+                ref.watch(accountProvider(active))!.needsRegionSelection
+                    ? context.l10n.settingsGeoNoRegion
+                    : AccountStrings.regionName(
+                        ref.watch(accountProvider(active))!.region,
+                      ),
+              ),
+              onTap: () =>
+                  showRegionPicker(context, ref.read(accountProvider(active))!),
+            ),
+          if (active != null)
+            ListTile(
+              leading: const Icon(Icons.history_outlined),
+              title: const Text(AccountStrings.clearRrHistory),
+              onTap: () async {
+                final ok = await confirmSettingsAction(
+                  context,
+                  title: AccountStrings.clearRrHistory,
+                  message: AccountStrings.clearRrHistoryConfirm,
+                  confirmLabel: CommonStrings.delete,
+                  destructive: true,
+                );
+                if (!ok || !context.mounted) return;
+                await ref.read(deleteRrHistoryProvider(active))();
+                if (context.mounted) {
+                  showAppSnackBar(context, AccountStrings.rrHistoryCleared);
+                }
+              },
+            ),
           if (accounts.isEmpty)
             ListTile(
               leading: SettingsIcon(

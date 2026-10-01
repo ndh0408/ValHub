@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -70,6 +71,8 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: MaterialApp.router(
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: const [Locale('vi')],
           theme: buildDarkTheme(),
           routerConfig: buildRouter(),
         ),
@@ -231,6 +234,10 @@ void main() {
       tester,
     ) async {
       await prefs.setString(communityConsentKey(testPuuid(1)), 'granted');
+      await prefs.setString(
+        communityConsentVersionKey(testPuuid(1)),
+        communityConsentVersion,
+      );
       await pumpSettings(tester, accounts: [testAccount(1), testAccount(2)]);
 
       expect(find.text(header), findsOneWidget);
@@ -266,6 +273,10 @@ void main() {
       tester,
     ) async {
       await prefs.setString(communityConsentKey(testPuuid(1)), 'granted');
+      await prefs.setString(
+        communityConsentVersionKey(testPuuid(1)),
+        communityConsentVersion,
+      );
       await pumpSettings(tester, accounts: [testAccount(1)]);
       expect(find.text(header), findsOneWidget);
 
@@ -567,6 +578,8 @@ void main() {
         UncontrolledProviderScope(
           container: container,
           child: MaterialApp.router(
+            localizationsDelegates: appLocalizationsDelegates,
+            supportedLocales: const [Locale('vi')],
             theme: buildDarkTheme(),
             routerConfig: router,
           ),
@@ -613,7 +626,7 @@ void main() {
         same(LegalDocuments.privacy),
       );
 
-      await tester.pageBack();
+      await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
       await tester.tap(find.text(LegalDocuments.terms.title));
       await tester.pumpAndSettle();

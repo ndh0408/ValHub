@@ -14,6 +14,8 @@ import '../store_strings.dart';
 import '../../../core/l10n/notification_strings.dart';
 
 /// Fire a little after the reset so the new offers are already live.
+const kStoreResetReminderDays = 5;
+
 const kStoreResetReminderDelay = Duration(minutes: 1);
 
 /// Everything needed to schedule one reset reminder.
@@ -78,7 +80,7 @@ Future<bool> scheduleStoreResetReminder(
   required DateTime now,
 }) async {
   try {
-    for (var day = 0; day < 7; day++) {
+    for (var day = 0; day < kStoreResetReminderDays; day++) {
       final reminder = storeResetReminderFor(
         account: account,
         store: store,

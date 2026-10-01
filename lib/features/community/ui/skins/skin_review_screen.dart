@@ -1,3 +1,5 @@
+import '../../providers/hidden_authors.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -181,14 +183,20 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
         ),
       ];
     }
+    final hidden = key.puuid == null
+        ? <String, HiddenAuthor>{}
+        : ref.watch(hiddenAuthorsProvider(key.puuid!));
+    final reviews = state.items
+        .where((r) => !hidden.containsKey(r.author.id))
+        .toList();
     final notifier = ref.read(skinReviewsProvider(key).notifier);
     return [
       SliverPadding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
         sliver: SliverList.builder(
-          itemCount: state.items.length + 1,
+          itemCount: reviews.length + 1,
           itemBuilder: (context, i) {
-            if (i == state.items.length) {
+            if (i == reviews.length) {
               return PagedFooter(
                 hasMore: state.hasMore,
                 loading: state.loadingMore,
@@ -196,7 +204,7 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
                 onLoadMore: () => unawaited(notifier.loadMore()),
               );
             }
-            final r = state.items[i];
+            final r = reviews[i];
             final mine = r.mine || (meId != null && r.author.id == meId);
             return Padding(
               key: ValueKey(r.id),
@@ -728,6 +736,7 @@ class ReviewTile extends ConsumerWidget {
             isMe: isMine,
             avatarSize: 36,
             trailing: ContentMenuButton(
+              author: review.author,
               isMine: isMine,
               deleteLabel: CommunityStrings.deleteReview,
               onSelected: onAction,

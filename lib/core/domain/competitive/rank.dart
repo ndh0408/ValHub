@@ -5,6 +5,7 @@ library;
 
 import 'dart:async';
 
+import 'package:dio/dio.dart' show CancelToken;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../accounts/account_providers.dart';
@@ -17,6 +18,7 @@ import 'rank_calc.dart';
 import 'rank_models.dart';
 import 'rr_history.dart';
 import 'viewer.dart';
+import '../progress_events.dart';
 
 export 'paging.dart';
 export 'rank_calc.dart';
@@ -35,7 +37,11 @@ final mmrProvider = FutureProvider.autoDispose.family<PlayerMmr, String>((
   final viewer = watchViewer(ref, subject);
   final api = ref.watch(pvpApiProvider);
   final store = ref.watch(rrHistoryStoreProvider);
-  final mmr = PlayerMmr.fromJson(await api.mmr(viewer, subject: subject));
+  final cancel = CancelToken();
+  ref.onDispose(cancel.cancel);
+  final mmr = PlayerMmr.fromJson(
+    await api.mmr(viewer, subject: subject, cancelToken: cancel),
+  );
   cacheFor(ref, const Duration(minutes: 3)); // only after a success
   final latest = mmr.latestCompetitiveUpdate;
   if (latest != null &&
@@ -109,6 +115,11 @@ final rankSummaryProvider = FutureProvider.autoDispose
               .catchError((Object _) {}),
         );
       }
+      if (account != null && current.actUuid != null) {
+        ref
+            .read(progressEventsProvider)
+            .emit(RankObserved(id, current.actUuid!, current.tier));
+      }
       return summary;
     });
 
@@ -134,6 +145,7 @@ class CompetitiveUpdatesNotifier
   late String _subject;
   late String _queue;
   int _nextIndex = 0;
+  late CancelToken _cancel;
 
   /// First-page rows that were not in the local history before this load
   /// (used by [rrHistorySyncProvider] to decide whether to backfill). The
@@ -149,6 +161,9 @@ class CompetitiveUpdatesNotifier
 
   @override
   Future<PagedState<CompetitiveUpdate>> build() async {
+    final cancel = CancelToken();
+    _cancel = cancel;
+    ref.onDispose(cancel.cancel);
     _subject = puuid.trim().toLowerCase();
     _viewer = watchViewer(ref, _subject);
     _queue =
@@ -160,7 +175,12 @@ class CompetitiveUpdatesNotifier
     final api = ref.watch(pvpApiProvider);
     final store = ref.watch(rrHistoryStoreProvider);
     final page = CompetitiveUpdatesPage.fromJson(
-      await api.competitiveUpdates(_viewer, subject: _subject, queue: _queue),
+      await api.competitiveUpdates(
+        _viewer,
+        subject: _subject,
+        queue: _queue,
+        cancelToken: cancel,
+      ),
     );
     cacheFor(ref, const Duration(minutes: 3)); // only after a success
     final known = await _knownIds(store);
@@ -194,6 +214,7 @@ class CompetitiveUpdatesNotifier
               startIndex: start,
               endIndex: start + kRiotPageSize,
               queue: _queue,
+              cancelToken: _cancel,
             ),
       );
       if (!ref.mounted) return;
@@ -263,6 +284,8 @@ final rrHistorySyncProvider = FutureProvider.autoDispose.family<int, String>((
   final console = watchIsConsole(ref, viewer);
   final api = ref.watch(pvpApiProvider);
   final store = ref.watch(rrHistoryStoreProvider);
+  final cancel = CancelToken();
+  ref.onDispose(cancel.cancel);
   final firstFuture = ref.watch(competitiveUpdatesProvider(id).future);
   try {
     final first = await firstFuture;
@@ -285,6 +308,7 @@ final rrHistorySyncProvider = FutureProvider.autoDispose.family<int, String>((
           startIndex: start,
           endIndex: start + kRiotPageSize,
           queue: queue,
+          cancelToken: cancel,
         ),
       );
       if (!ref.mounted || ref.read(accountProvider(id)) == null) return added;

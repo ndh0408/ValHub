@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/storage/prefs.dart';
+import '../data/consent_version.dart';
+export '../data/consent_version.dart' show communityConsentVersion;
 
 /// The user's decision about sharing their Riot ID with the community
 /// server (asked once per account, before the first `POST /v1/auth/riot`).
@@ -18,6 +20,12 @@ enum CommunityConsent {
 }
 
 /// Pref key (wiped with the account: `acct.<puuid>.community.consent`).
+
+String communityConsentVersionKey(String puuid) =>
+    PrefKeys.account(puuid.toLowerCase(), 'community.consentVersion');
+String communityConsentAtKey(String puuid) =>
+    PrefKeys.account(puuid.toLowerCase(), 'community.consentAt');
+
 String communityConsentKey(String puuid) =>
     PrefKeys.account(puuid.toLowerCase(), 'community.consent');
 
@@ -40,7 +48,11 @@ class CommunityConsentNotifier extends Notifier<CommunityConsent> {
     return switch (ref
         .read(prefsProvider)
         .getString(communityConsentKey(puuid))) {
-      'granted' => CommunityConsent.granted,
+      'granted' =>
+        ref.read(prefsProvider).getString(communityConsentVersionKey(puuid)) ==
+                communityConsentVersion
+            ? CommunityConsent.granted
+            : CommunityConsent.unknown,
       'declined' => CommunityConsent.declined,
       _ => CommunityConsent.unknown,
     };
@@ -54,11 +66,25 @@ class CommunityConsentNotifier extends Notifier<CommunityConsent> {
   /// back to "never asked" and the Community tab is anonymous again.
   Future<void> revoke() async {
     state = CommunityConsent.unknown;
-    await ref.read(prefsProvider).remove(communityConsentKey(puuid));
+    final prefs = ref.read(prefsProvider);
+    await prefs.remove(communityConsentKey(puuid));
+    await prefs.remove(communityConsentVersionKey(puuid));
+    await prefs.remove(communityConsentAtKey(puuid));
   }
 
   Future<void> _set(CommunityConsent value, String stored) async {
-    state = value;
-    await ref.read(prefsProvider).setString(communityConsentKey(puuid), stored);
+    final prefs = ref.read(prefsProvider);
+    if (value == CommunityConsent.granted) {
+      await prefs.setString(
+        communityConsentVersionKey(puuid),
+        communityConsentVersion,
+      );
+      await prefs.setString(
+        communityConsentAtKey(puuid),
+        DateTime.now().toUtc().toIso8601String(),
+      );
+    }
+    await prefs.setString(communityConsentKey(puuid), stored);
+    if (ref.mounted) state = value;
   }
 }

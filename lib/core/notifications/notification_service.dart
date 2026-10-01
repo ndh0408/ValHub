@@ -125,6 +125,9 @@ class NotificationService {
   final DateTime Function() _now;
   final StreamController<String> _taps = StreamController<String>.broadcast();
   bool _initialized = false;
+  Future<void>? _initializing;
+  Future<void> _scheduling = Future.value();
+  static const maxPending = 60;
   String? _launchPayload;
 
   /// Route locations from tapped notifications.
@@ -138,9 +141,16 @@ class NotificationService {
   }
 
   /// Initialises the plugin without prompting for permission.
-  Future<void> init() async {
-    if (_initialized) return;
-    _initialized = true;
+  Future<void> init() {
+    if (_initialized) return Future.value();
+    final pending = _initializing;
+    if (pending != null) return pending;
+    final task = _initialize();
+    _initializing = task;
+    return task.whenComplete(() => _initializing = null);
+  }
+
+  Future<void> _initialize() async {
     try {
       await _plugin.initialize(
         settings: const InitializationSettings(
@@ -158,6 +168,25 @@ class NotificationService {
           }
         },
       );
+      final prefs = _prefs;
+      if (prefs != null &&
+          prefs.getInt('app.notificationScheduleSchema') != 2) {
+        // Earlier builds scheduled seven reset days. Remove their last two
+        // slots before adding the one-per-account Battle Pass reminder.
+        for (final row in asList(prefs.getJson(PrefKeys.accounts))) {
+          final account = Account.fromJson(row);
+          if (account == null) continue;
+          for (final day in [5, 6]) {
+            final id = NotificationIds.storeResetDay(account.puuid, day);
+            await _plugin.cancel(id: id);
+            await prefs.remove(
+              PrefKeys.account(account.puuid, 'notification.$id'),
+            );
+          }
+        }
+        await prefs.setInt('app.notificationScheduleSchema', 2);
+      }
+      _initialized = true;
       final launch = await _plugin.getNotificationAppLaunchDetails();
       if (launch?.didNotificationLaunchApp ?? false) {
         _launchPayload = launch?.notificationResponse?.payload;
@@ -292,11 +321,42 @@ class NotificationService {
     String? payload,
     String? accountPuuid,
     String? tag,
+  }) {
+    final task = _scheduling.then(
+      (_) => _scheduleAt(
+        id: id,
+        at: at,
+        title: title,
+        body: body,
+        channel: channel,
+        payload: payload,
+        accountPuuid: accountPuuid,
+        tag: tag,
+      ),
+    );
+    _scheduling = task.catchError((Object _) {});
+    return task;
+  }
+
+  Future<void> _scheduleAt({
+    required int id,
+    required DateTime at,
+    required String title,
+    required String body,
+    required NotificationChannel channel,
+    String? payload,
+    String? accountPuuid,
+    String? tag,
   }) async {
     await init();
     if (!at.isAfter(_now()) ||
         !await _accountExists(accountPuuid) ||
         !_channelEnabled(channel)) {
+      return;
+    }
+    final pending = await _plugin.pendingNotificationRequests();
+    if (pending.length >= maxPending &&
+        !pending.any((request) => request.id == id)) {
       return;
     }
     await _plugin.cancel(id: id, tag: tag);

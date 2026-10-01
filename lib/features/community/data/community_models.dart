@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/l10n/locale.dart';
+import '../../../core/accounts/account.dart';
 
 import '../../../core/util/json.dart';
 
@@ -12,11 +13,15 @@ import '../../../core/util/json.dart';
 /// Regions accepted by the server (`region`).
 const kCommunityRegions = ['ap', 'na', 'eu', 'kr', 'latam', 'br'];
 
-/// Normalises an account region to a community region (`ap` fallback).
+/// Unknown regions remain unresolved; never route an unknown account to AP.
 String communityRegion(String? region) {
   final r = region?.toLowerCase().trim();
-  return kCommunityRegions.contains(r) ? r! : 'ap';
+  return kCommunityRegions.contains(r) ? r! : '';
 }
+
+/// Community/LFG identity follows Riot's detection, independently of a local connection override.
+String communityAccountRegion(Account? account) =>
+    communityRegion(account?.detectedRegion ?? account?.region);
 
 /// ISO 3166-1 alpha-2 country code (upper case) or `null`.
 String? countryCode(Object? value) {

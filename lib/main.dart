@@ -1,6 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart' show kReleaseMode;
+
+import 'core/ui/release_error_view.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app/app.dart';
@@ -46,6 +50,18 @@ Future<void> main() async {
   await sessionLog.load();
   secureStore.onError = secureErrorToLog(sessionLog);
   sessionLog.add('app.start');
+  FlutterError.onError = (details) {
+    sessionLog.add(
+      'app.flutter.error',
+      detail: details.exception.runtimeType.toString(),
+    );
+    if (!kReleaseMode) FlutterError.presentError(details);
+  };
+  WidgetsBinding.instance.platformDispatcher.onError = (error, stack) {
+    sessionLog.add('app.async.error', detail: error.runtimeType.toString());
+    return kReleaseMode;
+  };
+  if (kReleaseMode) ErrorWidget.builder = (_) => const ReleaseErrorView();
 
   final notifications = NotificationService(prefs: prefs);
   await notifications.init();

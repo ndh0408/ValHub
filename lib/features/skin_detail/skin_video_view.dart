@@ -76,12 +76,25 @@ class _SkinVideoViewState extends State<SkinVideoView> {
     try {
       await c.initialize();
       if (!mounted || !identical(_controller, c)) return;
-      await c.setLooping(true);
+      final reduced = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+      await c.setLooping(!reduced);
       await c.setVolume(_muted ? 0 : 1);
-      await c.play();
+      if (!reduced) await c.play();
       if (mounted && identical(_controller, c)) setState(() => _ready = true);
     } on Object catch (e) {
       if (mounted && identical(_controller, c)) setState(() => _error = e);
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) {
+      final c = _controller;
+      if (c != null && c.value.isInitialized) {
+        unawaited(c.pause());
+        unawaited(c.setLooping(false));
+      }
     }
   }
 

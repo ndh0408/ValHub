@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'consent_version.dart';
+
 import '../../../core/accounts/account.dart';
 import '../../../core/auth/session_manager.dart';
 import '../../../core/storage/secure_store.dart';
@@ -69,13 +71,16 @@ class CommunityAuth {
   /// The cached, unexpired session of [puuid] (memory, then secure store).
   Future<CommunitySession?> cachedSession(String puuid) async {
     final id = puuid.toLowerCase();
+    final epoch = _forgotten[id] ?? 0;
     final now = _now();
     final inMemory = _memory[id];
     if (inMemory != null && !inMemory.isExpired(now)) return inMemory;
     try {
       final raw = await _store.read(SecureKeys.community(id));
       final stored = CommunitySession.fromJson(tryDecodeJson(raw));
-      if (stored != null && !stored.isExpired(now)) {
+      if (stored != null &&
+          !stored.isExpired(now) &&
+          (_forgotten[id] ?? 0) == epoch) {
         return _memory[id] = stored;
       }
     } on Object {
@@ -120,20 +125,41 @@ class CommunityAuth {
     }
   }
 
-  /// Drops every trace of [puuid]'s community session on this device
-  /// (memory and secure storage). Used after the user deleted their
-  /// community data or withdrew their consent; nothing is sent to the
-  /// server. A sign-in that is running finishes without keeping its result.
+  /// Wipes local credentials immediately and revokes the server session
+  /// in the background. Offline revocation cannot delay signing out.
   Future<void> forget(String puuid) async {
     final id = puuid.toLowerCase();
     _forgotten[id] = (_forgotten[id] ?? 0) + 1;
-    _memory.remove(id);
+    final cached = _memory.remove(id);
     unawaited(_inFlight.remove(id));
+    String? token = cached?.token;
+    try {
+      token ??= CommunitySession.fromJson(
+        tryDecodeJson(await _store.read(SecureKeys.community(id))),
+      )?.token;
+    } on Object {
+      // Continue erasing if secure storage cannot be read.
+    }
     try {
       await _store.delete(SecureKeys.community(id));
     } on Object {
-      // Best effort: a stale token is useless without consent (and dead on
-      // the server after a deletion).
+      // AccountRepository retries erasure through its pending-wipe marker.
+    }
+    if (token != null) unawaited(_revoke(token));
+  }
+
+  Future<void> _revoke(String token) async {
+    try {
+      await _http
+          .send(
+            'POST',
+            '/v1/auth/logout',
+            token: token,
+            json: const <String, Object?>{},
+          )
+          .timeout(const Duration(seconds: 5));
+    } on Object {
+      // Offline: local credentials are already gone; server TTL still applies.
     }
   }
 
@@ -149,7 +175,10 @@ class CommunityAuth {
       '/v1/auth/riot',
       json: {
         'accessToken': accessToken,
-        'region': communityRegion(account?.region ?? riot.region),
+        'consentVersion': communityConsentVersion,
+        'region': account == null
+            ? communityRegion(riot.region)
+            : communityAccountRegion(account),
         'cardId': ?account?.cardId,
         'rankTier': ?account?.rankTier,
         'language': ?_language?.call(),

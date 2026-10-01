@@ -10,6 +10,10 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/accounts/account.dart';
+import 'package:valvn/core/domain/competitive/match_stats_store.dart';
+import 'package:valvn/core/domain/economy/store_history.dart';
+import 'package:valvn/core/accounts/local_data.dart';
+import 'package:valvn/core/domain/competitive/rr_history.dart';
 import 'package:valvn/core/auth/auth_providers.dart';
 import 'package:valvn/core/auth/riot_session.dart';
 import 'package:valvn/core/auth/session_manager.dart';
@@ -381,6 +385,14 @@ class MemoryJsonFileCache extends JsonFileCache {
       entries.removeWhere((k, _) => k.startsWith(prefix));
 }
 
+class MemoryStoreHistory extends StoreHistoryStore {
+  MemoryStoreHistory(this.files) : super(files);
+  final MemoryJsonFileCache files;
+  @override
+  Future<void> delete(String puuid) =>
+      files.delete(StoreHistoryStore.key(puuid));
+}
+
 /// Records `showNow` calls (no plugin).
 class RecordingNotifications extends NotificationService {
   RecordingNotifications(Prefs prefs) : super(prefs: prefs);
@@ -419,6 +431,10 @@ class CommunityTestEnv {
     if (account != null) {
       if (consent) {
         await prefs.setString(communityConsentKey(account.puuid), 'granted');
+        await prefs.setString(
+          communityConsentVersionKey(account.puuid),
+          communityConsentVersion,
+        );
       }
       await prefs.setJson(PrefKeys.accounts, [account.toJson()]);
       await prefs.setString(PrefKeys.activePuuid, account.puuid);
@@ -451,6 +467,22 @@ class CommunityTestEnv {
     sessionManagerProvider.overrideWithValue(sessions),
     pvpApiProvider.overrideWithValue(pvp),
     jsonFileCacheProvider.overrideWithValue(MemoryJsonFileCache()),
+    retainedHistoryFilesProvider.overrideWithValue(MemoryJsonFileCache()),
+    rrHistoryStoreProvider.overrideWith((ref) {
+      final store = RrHistoryStore(MemoryJsonFileCache());
+      ref.onDispose(store.dispose);
+      return store;
+    }),
+    matchStatsStoreProvider.overrideWith((ref) {
+      final store = MatchStatsStore(MemoryJsonFileCache());
+      ref.onDispose(store.dispose);
+      return store;
+    }),
+    storeHistoryStoreProvider.overrideWith((ref) {
+      final store = MemoryStoreHistory(MemoryJsonFileCache());
+      ref.onDispose(store.dispose);
+      return store;
+    }),
     contentProvider.overrideWith((ref) async => fixtureContent),
     clockProvider.overrideWithValue(clock),
     communityBaseUrlProvider.overrideWithValue(baseUrl),

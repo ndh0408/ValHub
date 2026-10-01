@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/l10n.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,6 +59,8 @@ Future<GoRouter> _pumpShell(
     ProviderScope(
       overrides: [prefsProvider.overrideWithValue(prefs)],
       child: MaterialApp.router(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: const [Locale('vi')],
         theme: theme ?? buildDarkTheme(),
         routerConfig: router,
         builder: (context, child) => MediaQuery(
@@ -150,19 +154,31 @@ void main() {
     }
   });
 
-  testWidgets('wide screens show every label', (tester) async {
-    await _pumpShell(tester, size: const Size(600, 900));
-    final nav = tester.widget<FloatingNavBar>(find.byType(FloatingNavBar));
-    expect(nav.compact, isFalse);
+  testWidgets('wide screens show a rail and preserve the branch on resize', (
+    tester,
+  ) async {
+    final router = await _pumpShell(tester, size: const Size(600, 900));
+    expect(find.byType(FloatingNavBar), findsNothing);
+    expect(find.byType(NavigationRail), findsOneWidget);
     for (final label in labels) {
       expect(
         find.descendant(
-          of: find.byType(FloatingNavBar),
+          of: find.byType(NavigationRail),
           matching: find.text(label),
         ),
         findsOneWidget,
       );
     }
+    router.go('/t1/detail');
+    await tester.pumpAndSettle();
+    tester.view.physicalSize = const Size(360, 800);
+    await tester.pumpAndSettle();
+    expect(find.byType(FloatingNavBar), findsOneWidget);
+    expect(find.text('chi tiết 1'), findsOneWidget);
+    tester.view.physicalSize = const Size(1024, 768);
+    await tester.pumpAndSettle();
+    expect(find.byType(NavigationRail), findsOneWidget);
+    expect(find.text('chi tiết 1'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -199,6 +215,8 @@ void main() {
       ProviderScope(
         overrides: [prefsProvider.overrideWithValue(prefs)],
         child: MaterialApp.router(
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: const [Locale('vi')],
           theme: buildDarkTheme(),
           routerConfig: router,
         ),

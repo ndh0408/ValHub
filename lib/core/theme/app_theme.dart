@@ -440,8 +440,8 @@ ThemeData _build({
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: accent,
-        foregroundColor: scheme.onPrimary,
+        backgroundColor: const Color(0xFFD42A38),
+        foregroundColor: Colors.white,
         minimumSize: const Size(64, 48),
         padding: const EdgeInsets.symmetric(horizontal: 20),
         shape: buttonShape,

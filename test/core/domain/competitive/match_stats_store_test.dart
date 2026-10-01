@@ -62,6 +62,22 @@ void main() {
     if (tmp.existsSync()) await tmp.delete(recursive: true);
   });
 
+  test(
+    'a late match after sign-out cannot recreate the ledger in memory or disk',
+    () async {
+      var signedIn = true;
+      final store = MatchStatsStore(files, canRecord: (_) async => signedIn);
+      await store.record('me', [_line(_id(1))]);
+      await store.flush();
+      signedIn = false;
+      await store.delete('me');
+      expect(await store.record('me', [_line(_id(2))]), 0);
+      expect((await store.read('me')).isEmpty, isTrue);
+      expect(await files.read(MatchStatsStore.key('me')), isNull);
+      store.dispose();
+    },
+  );
+
   test('records lines newest first, unique by match id', () async {
     final store = MatchStatsStore(files);
     expect(await store.record(me, [_line('a', day: 1), _line('b', day: 3)]), 2);

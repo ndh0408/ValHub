@@ -18,6 +18,11 @@ class FriendsLiveConsent extends Notifier<bool> {
       ref.watch(accountProvider(_puuid)) != null &&
       (ref.watch(prefsProvider).getBool(_key) ?? false);
 
+  Future<void> clearConsent() async {
+    await ref.read(prefsProvider).remove(_key);
+    if (ref.mounted) state = false;
+  }
+
   Future<void> setConsent(bool allowed) async {
     if (await ref.read(accountRepositoryProvider).findFresh(_puuid) == null) {
       return;

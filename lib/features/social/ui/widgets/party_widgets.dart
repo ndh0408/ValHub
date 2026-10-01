@@ -491,8 +491,8 @@ class PartyMemberTile extends ConsumerWidget {
   }
 }
 
-/// "24 ms" with a signal icon colored by quality (players in Vietnam
-/// usually see 30–60 ms to the Singapore / Hong Kong servers).
+/// Absolute round-trip latency, independent of the account region.
+/// Below 60 ms is low latency; 60–99 ms is moderate; 100+ ms is high.
 class _PingLabel extends StatelessWidget {
   const _PingLabel({required this.ms});
 

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account_providers.dart';
+import '../../../../core/domain/competitive/names.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/logging/session_log.dart';
 import '../../../../core/riot/platform_status.dart';
@@ -181,6 +182,7 @@ class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
     String message;
     try {
       final freed = await ref.read(cacheServiceProvider).clear();
+      await ref.read(nameResolverProvider).clear();
       await ref.read(sessionLogProvider).clear();
       message = SettingsStrings.cacheCleared(formatBytes(freed));
     } on Object {

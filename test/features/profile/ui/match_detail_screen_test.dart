@@ -137,7 +137,13 @@ void main() {
     tester,
   ) async {
     var calls = 0;
-    when(() => env.api.matchDetails(any(), any())).thenAnswer((_) async {
+    when(
+      () => env.api.matchDetails(
+        any(),
+        any(),
+        cancelToken: any(named: 'cancelToken'),
+      ),
+    ).thenAnswer((_) async {
       calls++;
       if (calls == 1) throw const NotFoundException();
       return competitiveFixtureMap('match_competitive');
@@ -157,8 +163,13 @@ void main() {
   });
 
   testWidgets('other errors show the error view', (tester) async {
-    when(() => env.api.matchDetails(any(), any()))
-        .thenThrow(const TransientException(reason: 'timeout'));
+    when(
+      () => env.api.matchDetails(
+        any(),
+        any(),
+        cancelToken: any(named: 'cancelToken'),
+      ),
+    ).thenThrow(const TransientException(reason: 'timeout'));
     await pumpProfile(tester, env, const MatchDetailScreen(matchId: compMatch));
     await settle(tester);
     expect(find.text(CommonStrings.errorTimeout), findsOneWidget);

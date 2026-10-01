@@ -36,6 +36,11 @@ class ErrorDescription {
 ErrorDescription describeError(Object error) {
   final e = error is RiotException ? error : classifyError(error);
   return switch (e) {
+    UnsupportedRegionException() => const ErrorDescription(
+      message: CommonStrings.errorUnsupportedRegion,
+      canRetry: false,
+      icon: Icons.public_off_outlined,
+    ),
     NeedsLoginException(:final puuid) => ErrorDescription(
       title: CommonStrings.errorNeedsLoginTitle,
       message: CommonStrings.errorNeedsLogin,
@@ -98,7 +103,12 @@ class ErrorView extends StatelessWidget {
   Widget build(BuildContext context) {
     final d = describeError(error);
     final theme = Theme.of(context);
-    final button = d.needsLogin
+    final button = error is UnsupportedRegionException
+        ? FilledButton(
+            onPressed: () => context.push('/settings'),
+            child: const Text(CommonStrings.tabSettings),
+          )
+        : d.needsLogin
         ? FilledButton(
             onPressed: () => context.push(
               AuthRoutes.loginPath(reauthPuuid: d.puuid ?? puuid),

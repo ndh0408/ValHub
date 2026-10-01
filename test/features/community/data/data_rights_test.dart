@@ -366,6 +366,10 @@ void main() {
       env.server.on('DELETE /v1/me', (_) => const FakeResponse(204));
       const other = '11111111-2222-3333-4444-555555555555';
       await env.prefs.setString(communityConsentKey(other), 'granted');
+      await env.prefs.setString(
+        communityConsentVersionKey(other),
+        communityConsentVersion,
+      );
       env.secure.values[SecureKeys.community(other)] = jsonEncode(
         sessionJson(token: 'other-1'),
       );

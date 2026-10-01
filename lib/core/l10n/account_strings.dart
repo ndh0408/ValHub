@@ -39,6 +39,10 @@ abstract final class AccountStrings {
   static const clearLocalData = 'Xóa dữ liệu cục bộ';
   static const clearLocalDataConfirm =
       'Xóa lịch sử, bộ trang bị đã lưu và dữ liệu của tài khoản đã đăng xuất trên thiết bị này?';
+  static const clearRrHistory = 'Xóa lịch sử RR';
+  static const clearRrHistoryConfirm =
+      'Xóa lịch sử RR của tài khoản đang chọn trên thiết bị này?';
+  static const rrHistoryCleared = 'Đã xóa lịch sử RR';
   static const localDataCleared = 'Đã xóa dữ liệu cục bộ';
   static const loginNote = 'Thông tin đăng nhập';
   static const loginNoteEmpty = 'Chưa lưu thông tin đăng nhập';
@@ -66,6 +70,9 @@ abstract final class AccountStrings {
   static const quickFillNotReady =
       'Trang đăng nhập chưa tải xong. Đợi một chút rồi thử lại.';
   static const unknownPlayer = 'Người chơi';
+
+  static const linkAccountMissing =
+      'Tài khoản trong thông báo đã đăng xuất. Hãy đăng nhập lại rồi mở thông báo.';
 
   // Platforms (A8)
   static const platformPc = 'PC';

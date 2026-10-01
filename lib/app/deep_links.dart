@@ -42,7 +42,31 @@ class DeepLink {
 /// [AppConstants.linkNonceParam], so tapping the same link twice still
 /// switches the Store segment / reopens the wishlist skin sheet.
 DeepLink parseDeepLink(String payload, {String? nonce}) {
-  final uri = Uri.tryParse(payload.trim());
+  var uri = Uri.tryParse(payload.trim());
+  if (uri?.scheme == 'valvn' && uri?.userInfo == '' && !uri!.hasPort) {
+    final path = uri.host.isEmpty ? uri.path : '/${uri.host}${uri.path}';
+    // The custom scheme opens only public navigation destinations, never
+    // the auth callback, WebView URLs or arbitrary external hosts.
+    const roots = {
+      'home',
+      'store',
+      'community',
+      'collection',
+      'profile',
+      'player',
+      'match',
+      'post',
+      'skin',
+      'battlepass',
+      'settings',
+    };
+    if (!roots.contains(
+      path.split('/').where((s) => s.isNotEmpty).firstOrNull,
+    )) {
+      return const DeepLink(location: '/');
+    }
+    uri = Uri(path: path, query: uri.query);
+  }
   if (uri == null || uri.hasScheme || !uri.path.startsWith('/')) {
     return const DeepLink(location: '/');
   }

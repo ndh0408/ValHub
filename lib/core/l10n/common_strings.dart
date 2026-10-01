@@ -67,6 +67,8 @@ abstract final class CommonStrings {
 
   // Errors (VF §8.13, riot-auth §3.5): what happened + what to do, never a
   // status code (docs/design/VOICE.md §5.1).
+  static const errorUnsupportedRegion =
+      'Chưa xác định được khu vực Riot. Hãy chọn khu vực trong Cài đặt.';
   static const errorGeneric = 'Có gì đó trục trặc. Hãy thử lại.';
   static const errorTimeout =
       'Riot phản hồi quá lâu. Kiểm tra kết nối rồi thử lại.';

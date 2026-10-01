@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dio/dio.dart' show CancelToken;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -211,6 +213,7 @@ class MatchRepository {
     int startIndex = 0,
     int endIndex = kRiotPageSize,
     String? queue,
+    CancelToken? cancelToken,
   }) async {
     final q = queue?.trim();
     final json = await _api.matchHistory(
@@ -219,6 +222,7 @@ class MatchRepository {
       startIndex: startIndex,
       endIndex: endIndex,
       queue: q == null || q.isEmpty ? null : q,
+      cancelToken: cancelToken,
     );
     return MatchHistoryPage.fromJson(json);
   }
@@ -229,13 +233,14 @@ class MatchRepository {
     String viewer,
     String matchId, {
     bool refresh = false,
+    CancelToken? cancelToken,
   }) async {
     final id = matchId.trim().toLowerCase();
     if (!refresh) {
       final cached = await _cache.read(id);
       if (cached != null) return cached;
     }
-    final json = await _api.matchDetails(viewer, id);
+    final json = await _api.matchDetails(viewer, id, cancelToken: cancelToken);
     final details = MatchDetails.fromJson(json, matchId: id);
     await _cache.write(details);
     return details;
@@ -284,9 +289,13 @@ class MatchHistoryNotifier
   late String _subject;
   String? _queue;
   int _nextIndex = 0;
+  late CancelToken _cancel;
 
   @override
   Future<PagedState<MatchHistoryEntry>> build() async {
+    final token = CancelToken();
+    _cancel = token;
+    ref.onDispose(token.cancel);
     _subject = query.puuid.trim().toLowerCase();
     _viewer = watchViewer(ref, _subject);
     _queue = queueForPlatform(
@@ -294,7 +303,12 @@ class MatchHistoryNotifier
       console: watchIsConsole(ref, _viewer),
     );
     final repo = ref.watch(matchRepositoryProvider);
-    final page = await repo.history(_viewer, subject: _subject, queue: _queue);
+    final page = await repo.history(
+      _viewer,
+      subject: _subject,
+      queue: _queue,
+      cancelToken: _cancel,
+    );
     cacheFor(ref, const Duration(minutes: 3)); // only after a success
     _nextIndex = page.entries.length;
     return PagedState(
@@ -319,6 +333,7 @@ class MatchHistoryNotifier
             startIndex: start,
             endIndex: start + kRiotPageSize,
             queue: _queue,
+            cancelToken: _cancel,
           );
       if (!ref.mounted) return;
       _nextIndex = start + page.entries.length;
@@ -403,7 +418,9 @@ final viewerMatchDetailsProvider = FutureProvider.autoDispose
       final rr = ref.read(rrHistoryStoreProvider);
       final ledger = ref.read(matchStatsStoreProvider);
 
-      final details = await repo.details(viewer, id);
+      final cancel = CancelToken();
+      ref.onDispose(cancel.cancel);
+      final details = await repo.details(viewer, id, cancelToken: cancel);
       if (!ref.mounted) {
         return details.withoutNames({
           for (final p in details.players) p.subject,

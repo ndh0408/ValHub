@@ -25,6 +25,7 @@ import 'data/community_models.dart';
 import 'providers/community_providers.dart';
 import 'providers/consent_providers.dart';
 import 'providers/lfg_providers.dart';
+import 'providers/hidden_authors.dart';
 import 'ui/community_screen.dart' show CommunitySection;
 import 'ui/lfg/lfg_bits.dart';
 import 'ui/skins/star_rating.dart';
@@ -41,7 +42,8 @@ final matchingLfgPreviewProvider = FutureProvider.autoDispose
         return const [];
       }
       final account = ref.watch(accountProvider(puuid));
-      if (account == null) return const [];
+      if (account == null || account.needsRegionSelection) return const [];
+      final hidden = ref.watch(hiddenAuthorsProvider(puuid));
       final api = ref.watch(communityApiProvider);
       // A preview on another screen (Trang chủ) never signs in: only a
       // session the Cộng đồng tab already created is used, otherwise the
@@ -52,7 +54,7 @@ final matchingLfgPreviewProvider = FutureProvider.autoDispose
       final rank = lfgViewerRank(account);
       final page = await api.lfg(
         puuid,
-        region: communityRegion(account.region),
+        region: communityAccountRegion(account),
         rank: rank,
         limit: 6,
       );
@@ -61,7 +63,7 @@ final matchingLfgPreviewProvider = FutureProvider.autoDispose
         for (final p in page.items)
           if (p.status == LfgStatus.open &&
               !p.isExpired(now) &&
-              p.hasValidCode &&
+              !hidden.containsKey(p.author.id) &&
               p.author.id != session.user.id &&
               p.acceptsRank(rank))
             p,

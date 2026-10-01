@@ -1,8 +1,11 @@
+import 'dart:math' as math;
+
 import 'package:material_ui/material_ui.dart';
 
 import '../accounts/account_widgets.dart';
 import '../theme/app_theme.dart';
 import 'adaptive.dart';
+import 'window_info.dart';
 import 'maintenance_banner.dart';
 import 'segmented_tabs.dart';
 
@@ -34,9 +37,11 @@ class TabPageScaffold extends StatelessWidget {
     this.floatingActionButton,
     this.headerHeight = 60,
     this.controller,
+    this.maxContentWidth = 960,
   }) : assert(slivers != null || body != null, 'Provide slivers or body');
 
   final String title;
+  final double maxContentWidth;
   final List<Widget> actions;
 
   /// Pull-to-refresh callback (typically `ref.refresh(p.future)`).
@@ -60,13 +65,14 @@ class TabPageScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final window = WindowInfo.of(context);
     final headerWidget = header;
     final scroll = CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverAppBar(
           pinned: true,
-          toolbarHeight: 72,
+          toolbarHeight: window.toolbarHeight,
           titleSpacing: 20,
           title: Text(
             title,
@@ -86,7 +92,7 @@ class TabPageScaffold extends StatelessWidget {
           const SliverToBoxAdapter(child: MaintenanceBanner()),
         if (headerWidget != null)
           SliverPersistentHeader(
-            pinned: true,
+            pinned: !window.short,
             delegate: GlassHeaderDelegate(
               child: headerWidget,
               height: headerHeight,
@@ -104,9 +110,19 @@ class TabPageScaffold extends StatelessWidget {
         : PrimaryScrollController(controller: controller, child: scroll);
     return Scaffold(
       floatingActionButton: floatingActionButton,
-      body: refresh == null
-          ? page
-          : AdaptiveRefresh(onRefresh: refresh, child: page),
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            width: math.min(MediaQuery.sizeOf(context).width, maxContentWidth),
+            child: refresh == null
+                ? page
+                : AdaptiveRefresh(onRefresh: refresh, child: page),
+          ),
+        ),
+      ),
     );
   }
 }

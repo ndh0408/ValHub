@@ -24,6 +24,21 @@ void main() {
   tearDown(() async => deleteTempDir(temp));
 
   test(
+    'a live result finishing after sign-out cannot recreate store history',
+    () async {
+      var signedIn = true;
+      final store = StoreHistoryStore(files, canRecord: (_) async => signedIn);
+      await store.record('me', shop(now), now);
+      signedIn = false;
+      await store.delete('me');
+      expect(await store.record('me', shop(now), now), isFalse);
+      expect((await store.read('me')).isEmpty, isTrue);
+      expect(await files.read(StoreHistoryStore.key('me')), isNull);
+      store.dispose();
+    },
+  );
+
+  test(
     'UTC day dedupes fetches but identical skins on another day count again',
     () async {
       final store = StoreHistoryStore(files);

@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../core/l10n/common_strings.dart';
 import '../core/ui/floating_nav_bar.dart';
+import '../core/ui/window_info.dart';
 import '../features/collection/collection_routes.dart';
 import '../features/community/community_routes.dart';
 import '../features/home/home_routes.dart';
@@ -83,21 +84,56 @@ class AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final compact = MediaQuery.sizeOf(context).width < compactWidth;
-    return Scaffold(
-      body: LiveGameOverlayHost(
-        child: StoreResetReminderHost(child: navigationShell),
-      ),
-      // Floating frosted capsule; styling lives in FloatingNavBar.
-      bottomNavigationBar: FloatingNavBar(
-        selectedIndex: navigationShell.currentIndex,
-        compact: compact,
-        emphasizedIndex: AppTab.community.index,
-        // Tapping the active tab pops that branch to its root.
-        onDestinationSelected: (i) => navigationShell.goBranch(
-          i,
-          initialLocation: i == navigationShell.currentIndex,
+    final window = WindowInfo.of(context);
+    final rail = window.useRail;
+    void select(int i) => navigationShell.goBranch(
+      i,
+      initialLocation: i == navigationShell.currentIndex,
+    );
+    return UsableWindow(
+      child: Scaffold(
+        body: SafeArea(
+          bottom: false,
+          top: false,
+          child: Row(
+            children: [
+              if (rail)
+                NavigationRail(
+                  scrollable: true,
+                  selectedIndex: navigationShell.currentIndex,
+                  onDestinationSelected: select,
+                  labelType: NavigationRailLabelType.all,
+                  groupAlignment: window.short ? -1 : 0,
+                  destinations: [
+                    for (final d in _destinations)
+                      NavigationRailDestination(
+                        icon: d.icon,
+                        selectedIcon: d.selectedIcon,
+                        label: Text(d.label),
+                      ),
+                  ],
+                ),
+              Expanded(
+                child: LiveGameOverlayHost(
+                  child: StoreResetReminderHost(child: navigationShell),
+                ),
+              ),
+            ],
+          ),
         ),
-        destinations: _destinations,
+        bottomNavigationBar: rail
+            ? null
+            : SafeArea(
+                top: false,
+                bottom: false,
+                child: FloatingNavBar(
+                  selectedIndex: navigationShell.currentIndex,
+                  compact: compact || window.short,
+                  emphasizedIndex: AppTab.community.index,
+                  onDestinationSelected: select,
+                  destinations: _destinations,
+                ),
+              ),
       ),
     );
   }

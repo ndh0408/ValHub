@@ -6,6 +6,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:valvn/core/accounts/account.dart';
 import 'package:valvn/core/accounts/local_data.dart';
 import 'package:valvn/core/domain/competitive/rr_history.dart';
+import 'package:valvn/core/domain/competitive/match_stats_store.dart';
+import 'package:valvn/core/domain/economy/store_history.dart';
 import 'package:valvn/core/auth/auth_providers.dart';
 import 'package:valvn/core/auth/session_manager.dart';
 import 'package:valvn/core/logging/session_log.dart';
@@ -51,7 +53,24 @@ class FakeJsonFileCache extends JsonFileCache {
   }
 
   @override
+  Future<List<String>> listDirectories(String prefix) async => [
+    for (final key in entries.keys)
+      if (key.startsWith('$prefix/') &&
+          key.substring(prefix.length + 1).contains('/'))
+        key.substring(prefix.length + 1).split('/').first,
+  ];
+
+  @override
   Future<int> sizeBytes() async => size;
+}
+
+/// Settings tests exercise erasure without acquiring an OS file lock.
+class FakeStoreHistoryStore extends StoreHistoryStore {
+  FakeStoreHistoryStore(this.files) : super(files);
+  final FakeJsonFileCache files;
+  @override
+  Future<void> delete(String puuid) =>
+      files.delete(StoreHistoryStore.key(puuid));
 }
 
 /// Records permission requests and cancellations; never touches a plugin.
@@ -179,6 +198,16 @@ class SettingsTestEnv {
     retainedHistoryFilesProvider.overrideWithValue(FakeJsonFileCache()),
     rrHistoryStoreProvider.overrideWith((ref) {
       final store = RrHistoryStore(FakeJsonFileCache());
+      ref.onDispose(store.dispose);
+      return store;
+    }),
+    matchStatsStoreProvider.overrideWith((ref) {
+      final store = MatchStatsStore(FakeJsonFileCache());
+      ref.onDispose(store.dispose);
+      return store;
+    }),
+    storeHistoryStoreProvider.overrideWith((ref) {
+      final store = FakeStoreHistoryStore(FakeJsonFileCache());
       ref.onDispose(store.dispose);
       return store;
     }),

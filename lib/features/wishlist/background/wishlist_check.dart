@@ -18,6 +18,7 @@ import '../../../core/accounts/account.dart';
 import '../../../core/background/background_context.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/domain/economy/economy.dart';
+import '../../../core/domain/economy/store_history.dart';
 import '../../../core/l10n/notification_strings.dart';
 import '../../../core/network/riot_exception.dart';
 import '../../../core/notifications/notification_service.dart';
@@ -474,7 +475,25 @@ class BackgroundWishlistCheckEnv
   }
 
   @override
-  Future<Object?> storefront(String puuid) => _ctx.pvp.storefront(puuid);
+  Future<Object?> storefront(String puuid) async {
+    final receivedAt = now();
+    final raw = await _ctx.pvp.storefront(puuid);
+    final history = StoreHistoryStore.onDevice(
+      canRecord: (id) async => await _ctx.accounts.findFresh(id) != null,
+    );
+    try {
+      await history.record(
+        puuid,
+        Storefront.fromJson(raw, receivedAt: receivedAt),
+        receivedAt,
+      );
+    } on Object {
+      // Recording must not break the existing notification check.
+    } finally {
+      history.dispose();
+    }
+    return raw;
+  }
 
   @override
   Future<ContentDb> loadContent(String language) =>

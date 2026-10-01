@@ -115,7 +115,7 @@ final resolvedScopeProvider = FutureProvider.autoDispose
     .family<ScopeFilter, ResolvedScopeKey>((ref, key) async {
       final chosen = ref.watch(communityScopeProvider(key.section));
       final account = ref.watch(accountProvider(key.puuid));
-      final myRegion = communityRegion(account?.region);
+      final myRegion = communityAccountRegion(account);
       final joined =
           ref.watch(communityConsentProvider(key.puuid)) ==
           CommunityConsent.granted;

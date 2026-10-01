@@ -4,9 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../core/accounts/account_providers.dart';
+import '../core/accounts/account_link_guard.dart';
+import '../core/auth/auth_routes.dart';
+import '../core/l10n/account_strings.dart';
+
+import 'package:go_router/go_router.dart';
+
 import '../core/config/client_version.dart';
 import '../core/content/content_repository.dart';
 import '../core/l10n/common_strings.dart';
+import '../core/notifications/progress_notifications.dart';
 import '../core/l10n/l10n.dart' show appLocalizationsDelegates;
 import '../core/l10n/locale.dart';
 import '../core/notifications/notification_service.dart';
@@ -25,19 +32,32 @@ class ValVnApp extends ConsumerStatefulWidget {
   ConsumerState<ValVnApp> createState() => _ValVnAppState();
 }
 
-class _ValVnAppState extends ConsumerState<ValVnApp> {
+class _ValVnAppState extends ConsumerState<ValVnApp>
+    with WidgetsBindingObserver {
   StreamSubscription<String>? _taps;
   AppLifecycleListener? _lifecycle;
+  DeepLink? _pendingLink;
+  late final GoRouter _router;
+  final _messenger = GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _router = ref.read(routerProvider);
+    _router.routeInformationProvider.addListener(_resumePendingLink);
     final notifications = ref.read(notificationServiceProvider);
     _taps = notifications.taps.listen(_openDeepLink);
     _lifecycle = AppLifecycleListener(onResume: _onResume);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final launch = notifications.takeLaunchPayload();
-      if (launch != null) _openDeepLink(launch);
+      final external =
+          WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+      if (launch != null) {
+        _openDeepLink(launch);
+      } else if (Uri.tryParse(external)?.scheme == 'valvn') {
+        _openDeepLink(external);
+      }
     });
     unawaited(ref.read(clientVersionRepositoryProvider).refresh());
   }
@@ -56,16 +76,57 @@ class _ValVnAppState extends ConsumerState<ValVnApp> {
       payload,
       nonce: '${DateTime.now().microsecondsSinceEpoch}',
     );
-    final account = link.accountPuuid;
-    if (account != null &&
-        ref.read(accountsProvider).any((a) => a.puuid == account)) {
-      ref.read(activePuuidProvider.notifier).select(account);
+    _navigateLink(link);
+  }
+
+  void _navigateLink(DeepLink link) {
+    if (!mounted) return;
+    final decision = accountLinkDecision(
+      accountPuuid: link.accountPuuid,
+      signedIn: ref.read(accountsProvider).map((a) => a.puuid),
+      currentPath: _router.routeInformationProvider.value.uri.path,
+    );
+    switch (decision) {
+      case AccountLinkDecision.deferLogin:
+        _pendingLink = link;
+      case AccountLinkDecision.unknownAccount:
+        _pendingLink = null;
+        _messenger.currentState?.showSnackBar(
+          const SnackBar(content: Text(AccountStrings.linkAccountMissing)),
+        );
+      case AccountLinkDecision.open:
+        _pendingLink = null;
+        if (link.accountPuuid case final id?) {
+          ref.read(activePuuidProvider.notifier).select(id);
+        }
+        openAppLink(_router, link);
     }
-    openAppLink(ref.read(routerProvider), link);
+  }
+
+  void _resumePendingLink() {
+    final link = _pendingLink;
+    if (link == null ||
+        _router.routeInformationProvider.value.uri.path == AuthRoutes.login) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && identical(_pendingLink, link)) _navigateLink(link);
+    });
+  }
+
+  @override
+  Future<bool> didPushRouteInformation(
+    RouteInformation routeInformation,
+  ) async {
+    if (routeInformation.uri.scheme != 'valvn') return false;
+    _openDeepLink(routeInformation.uri.toString());
+    return true;
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _router.routeInformationProvider.removeListener(_resumePendingLink);
     unawaited(_taps?.cancel());
     _lifecycle?.dispose();
     super.dispose();
@@ -74,6 +135,7 @@ class _ValVnAppState extends ConsumerState<ValVnApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      scaffoldMessengerKey: _messenger,
       title: CommonStrings.appName,
       debugShowCheckedModeBanner: false,
       theme: buildLightTheme(),
@@ -90,7 +152,9 @@ class _ValVnAppState extends ConsumerState<ValVnApp> {
       // resolve flutter/material Theme/Localizations; bridge them (FS §2).
       // ignore: deprecated_member_use
       builder: (context, child) => MaterialUiCompatibilityBridge(
-        child: child ?? const SizedBox.shrink(),
+        child: ProgressNotificationHost(
+          child: child ?? const SizedBox.shrink(),
+        ),
       ),
       routerConfig: ref.watch(routerProvider),
     );

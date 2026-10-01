@@ -1,3 +1,5 @@
+import '../providers/hidden_authors.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -98,6 +100,9 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
       return SkeletonColumn(item: (_) => const PostCardSkeleton(), count: 1);
     }
 
+    if (ref.watch(hiddenAuthorsProvider(puuid)).containsKey(post.author.id)) {
+      return const Center(child: Text(CommunityStrings.hiddenAuthorsHint));
+    }
     final comments = ref.watch(commentsProvider(key));
     final notifier = ref.read(postDetailProvider(key).notifier);
     return Column(
@@ -194,11 +199,15 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
       ];
     }
     final notifier = ref.read(commentsProvider(key).notifier);
+    final hidden = ref.watch(hiddenAuthorsProvider(puuid));
+    final comments = state.items
+        .where((c) => !hidden.containsKey(c.author.id))
+        .toList();
     return [
       SliverList.builder(
-        itemCount: state.items.length + 1,
+        itemCount: comments.length + 1,
         itemBuilder: (context, i) {
-          if (i == state.items.length) {
+          if (i == comments.length) {
             return PagedFooter(
               hasMore: state.hasMore,
               loading: state.loadingMore,
@@ -206,7 +215,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
               onLoadMore: () => unawaited(notifier.loadMore()),
             );
           }
-          final c = state.items[i];
+          final c = comments[i];
           final mine = meId != null && c.author.id == meId;
           return _CommentTile(
             key: ValueKey(c.id),
@@ -391,6 +400,7 @@ class _CommentTile extends StatelessWidget {
             isMe: isMine,
             avatarSize: 32,
             trailing: ContentMenuButton(
+              author: comment.author,
               isMine: isMine,
               deleteLabel: CommunityStrings.deleteComment,
               onSelected: onAction,

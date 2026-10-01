@@ -157,10 +157,10 @@ void main() {
     expect(CommunitySession.fromJson({'user': <String, Object?>{}}), isNull);
   });
 
-  test('communityRegion falls back to ap', () {
+  test('communityRegion refuses unknown routing', () {
     expect(communityRegion('EU'), 'eu');
-    expect(communityRegion('pbe'), 'ap');
-    expect(communityRegion(null), 'ap');
+    expect(communityRegion('pbe'), '');
+    expect(communityRegion(null), '');
   });
 
   group('ComposeDraft', () {

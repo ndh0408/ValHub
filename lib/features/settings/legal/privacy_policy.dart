@@ -26,7 +26,7 @@ const privacyPolicy = LegalDocument(
   id: 'privacy',
   title: 'Chính sách quyền riêng tư',
   summary: 'Dữ liệu nào được xử lý, ở đâu và quyền của bạn',
-  version: '1.0',
+  version: '1.1',
   preamble: [
     LegalParagraph(
       'Chính sách này giải thích cách ValVN thu thập, sử dụng, lưu trữ và bảo '
@@ -374,7 +374,8 @@ const privacyPolicy = LegalDocument(
           lead: 'Bản sao lưu:',
         ),
         LegalItem(
-          'hết hiệu lực sau 30 ngày và bị xóa khỏi thiết bị khi bạn đăng xuất.',
+          'hết hiệu lực sau 30 ngày, bị xóa khỏi thiết bị khi đăng xuất và '
+          'được thu hồi trên máy chủ khi có kết nối mạng.',
           lead: 'Mã đăng nhập Cộng đồng:',
         ),
       ]),
@@ -386,12 +387,19 @@ const privacyPolicy = LegalDocument(
           'Đăng xuất một tài khoản trong Cài đặt sẽ xóa khỏi thiết bị dữ liệu '
           'đăng nhập Riot (mã truy cập và cookie), thông tin đăng nhập đã '
           'lưu, mã đăng nhập Cộng đồng, dữ liệu tạm và thông báo đã lên lịch '
-          'của tài khoản đó. Wishlist được giữ lại để dùng khi bạn đăng nhập '
-          'lại; bạn có thể tự xóa từng mục.',
+          'của tài khoản đó. Wishlist, cấu hình trang bị và lịch sử RR, trận '
+          'đấu, cửa hàng cũng bị xóa, trừ khi bạn chọn giữ dữ liệu cục bộ '
+          'trong hộp xác nhận để dùng khi đăng nhập lại.',
         ),
         LegalItem(
           '"Xóa dữ liệu tạm" trong Cài đặt > Nâng cao xóa ảnh, dữ liệu đã tải '
-          'để xem khi không có mạng và báo lỗi đã ghi trên thiết bị.',
+          'để xem khi không có mạng, tên người chơi đã tra cứu và báo lỗi đã '
+          'ghi trên thiết bị. Lịch sử riêng của bạn được giữ lại.',
+        ),
+        LegalItem(
+          '"Xóa dữ liệu cục bộ" xóa các lịch sử, cấu hình trang bị và dữ liệu '
+          'đã giữ của tài khoản đăng xuất. Wishlist của tài khoản đang đăng '
+          'nhập vẫn còn; bạn có thể tự xóa trong Wishlist.',
         ),
         LegalItem(
           'Gỡ Ứng dụng sẽ xóa toàn bộ dữ liệu của Ứng dụng trên thiết bị.',

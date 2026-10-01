@@ -40,4 +40,13 @@ abstract final class NotificationStrings {
   static const sessionExpiredTitle = 'Cần đăng nhập lại';
   static String sessionExpiredBody(String account) =>
       'Đăng nhập lại để tiếp tục nhận thông báo wishlist.';
+  static const rankChangedTitle = 'Xếp hạng đã thay đổi';
+  static String rankChangedBody(String rank) =>
+      'Xếp hạng hiện tại: $rank. Dữ liệu vừa cập nhật từ Riot.';
+  static const passEndingTitle = 'Battle Pass sắp kết thúc';
+  static const passEndingBody =
+      'Battle Pass còn khoảng một ngày. Mở ValVN để xem tiến độ mới nhất.';
+  static const passProgressTitle = 'Tiến độ Battle Pass';
+  static String passProgressBody(int level) =>
+      'Bạn đã đạt cấp $level trong Battle Pass hiện tại.';
 }

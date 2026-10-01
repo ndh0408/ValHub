@@ -80,8 +80,13 @@ void main() {
   });
 
   testWidgets('MMR error shows "Thử lại"', (tester) async {
-    when(() => env.api.mmr(any(), subject: any(named: 'subject')))
-        .thenThrow(const MaintenanceException());
+    when(
+      () => env.api.mmr(
+        any(),
+        subject: any(named: 'subject'),
+        cancelToken: any(named: 'cancelToken'),
+      ),
+    ).thenThrow(const MaintenanceException());
     await pump(tester);
     expect(find.text(CommonStrings.errorMaintenance), findsOneWidget);
     expect(find.text(CommonStrings.retry), findsOneWidget);

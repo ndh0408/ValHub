@@ -161,7 +161,7 @@ int? lfgViewerRank(Account account) {
 /// The LFG query shown for [account] with [filter].
 LfgQuery lfgQueryFor(Account account, LfgFilter filter) => (
   puuid: account.puuid,
-  region: filter.region ?? communityRegion(account.region),
+  region: filter.region ?? communityAccountRegion(account),
   mode: filter.mode,
   rank: filter.matchRank ? lfgViewerRank(account) : null,
   role: filter.role,
@@ -388,14 +388,11 @@ Future<void> removeLfgPost(
 /// records the join (best effort). User-initiated only, after a
 /// confirmation.
 Future<void> joinLfgPost(WidgetRef ref, String puuid, LfgPost post) async {
-  await ref
-      .read(pvpApiProvider)
-      .partyJoinByCode(puuid, post.partyCode.trim().toUpperCase());
-  try {
-    await ref.read(communityApiProvider).recordLfgJoin(puuid, post.id);
-  } on Object {
-    // The Riot join succeeded; the counter is cosmetic.
-  }
+  final join = await ref
+      .read(communityApiProvider)
+      .requestLfgJoin(puuid, post.id);
+  if (!ref.context.mounted || ref.read(accountProvider(puuid)) == null) return;
+  await ref.read(pvpApiProvider).partyJoinByCode(puuid, join.partyCode);
 }
 
 /// Joins a party by code with the active account (G-19).

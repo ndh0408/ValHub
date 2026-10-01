@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../l10n/locale.dart';
+import '../geo/country_preference.dart';
+export '../geo/country_preference.dart' show deviceCountryProvider;
 import '../settings/app_settings.dart';
 import '../storage/prefs.dart';
 import '../util/format.dart';
@@ -52,10 +53,6 @@ class LocalPrice {
       formatCurrency(price, currency, locale: locale);
 }
 
-/// Region of the device's primary locale (overridden in tests). A country
-/// picker may replace it later.
-final deviceCountryProvider = Provider<String?>((ref) => deviceCountryCode());
-
 /// The user's own pack price, persisted in prefs.
 final vpPriceOverrideProvider =
     NotifierProvider<VpPriceOverrideNotifier, VpPriceOverride?>(
@@ -89,7 +86,7 @@ final localPriceSourceProvider = Provider<LocalPrice?>((ref) {
   if (override != null) {
     return LocalPrice(table: override.toTable(), source: LocalPriceSource.user);
   }
-  final country = ref.watch(deviceCountryProvider);
+  final country = ref.watch(selectedCountryProvider);
   final table = ref.watch(
     remoteConfigProvider.select((c) => c.vpPrices.forCountry(country)),
   );

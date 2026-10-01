@@ -127,6 +127,12 @@ const communityGuidelines = LegalDocument(
     ]),
     LegalSection('Báo cáo vi phạm', [
       LegalParagraph(
+        'Bạn có thể ẩn người đăng hoặc chặn trên thiết bị từ menu nội dung. '
+        'Lựa chọn này chỉ ẩn nội dung của họ với tài khoản đang dùng trên '
+        'thiết bị này; họ vẫn có thể xem nội dung công khai của bạn. '
+        'Bạn có thể bỏ ẩn trong Cài đặt. Tính năng này không thay cho Báo cáo.',
+      ),
+      LegalParagraph(
         'Thấy nội dung vi phạm? Hãy dùng nút Báo cáo trên bài đăng, bình luận '
         'hoặc bài tìm đồng đội và chọn lý do phù hợp. Báo cáo được giữ kín, '
         'người bị báo cáo không biết ai đã báo cáo.',

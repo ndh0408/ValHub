@@ -159,20 +159,42 @@ void main() {
     tearDown(() => tmp.delete(recursive: true));
 
     test('details: network once, then the disk cache', () async {
-      when(() => api.matchDetails(me, compMatch))
-          .thenAnswer((_) async => competitiveFixtureMap('match_competitive'));
+      when(
+        () => api.matchDetails(
+          me,
+          compMatch,
+          cancelToken: any(named: 'cancelToken'),
+        ),
+      ).thenAnswer((_) async => competitiveFixtureMap('match_competitive'));
       final first = await repo.details(me, compMatch.toUpperCase());
       final second = await repo.details(me, compMatch);
       expect(first.matchId, compMatch);
       expect(second.statsFor(me)!.acs, 200);
-      verify(() => api.matchDetails(me, compMatch)).called(1);
+      verify(
+        () => api.matchDetails(
+          me,
+          compMatch,
+          cancelToken: any(named: 'cancelToken'),
+        ),
+      ).called(1);
       await repo.details(me, compMatch, refresh: true);
-      verify(() => api.matchDetails(me, compMatch)).called(1);
+      verify(
+        () => api.matchDetails(
+          me,
+          compMatch,
+          cancelToken: any(named: 'cancelToken'),
+        ),
+      ).called(1);
     });
 
     test('404 while Riot processes the match propagates', () async {
-      when(() => api.matchDetails(any(), any()))
-          .thenAnswer((_) async => throw const NotFoundException());
+      when(
+        () => api.matchDetails(
+          any(),
+          any(),
+          cancelToken: any(named: 'cancelToken'),
+        ),
+      ).thenAnswer((_) async => throw const NotFoundException());
       await expectLater(
         repo.details(me, 'x'),
         throwsA(isA<NotFoundException>()),
@@ -187,6 +209,7 @@ void main() {
           startIndex: any(named: 'startIndex'),
           endIndex: any(named: 'endIndex'),
           queue: any(named: 'queue'),
+          cancelToken: any(named: 'cancelToken'),
         ),
       ).thenAnswer((_) async => {'History': null});
       when(
@@ -196,6 +219,7 @@ void main() {
           startIndex: 20,
           endIndex: 40,
           queue: 'competitive',
+          cancelToken: any(named: 'cancelToken'),
         ),
       ).thenAnswer((_) async => competitiveFixtureMap('match_history'));
       final page = await repo.history(
@@ -215,6 +239,7 @@ void main() {
           startIndex: 0,
           endIndex: 20,
           queue: null,
+          cancelToken: any(named: 'cancelToken'),
         ),
       ).called(1);
     });

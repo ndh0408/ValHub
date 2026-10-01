@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -27,7 +28,12 @@ void main() {
       ],
     );
     await tester.pumpWidget(
-      MaterialApp.router(theme: buildDarkTheme(), routerConfig: router),
+      MaterialApp.router(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: const [Locale('vi')],
+        theme: buildDarkTheme(),
+        routerConfig: router,
+      ),
     );
     await tester.pumpAndSettle();
   }
@@ -73,7 +79,7 @@ void main() {
       same(LegalDocuments.terms),
     );
 
-    await tester.pageBack();
+    await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
     await tester.ensureVisible(consent);
     await tester.pumpAndSettle();

@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:timezone/data/latest_all.dart' as tzdata;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:valvn/core/accounts/account.dart';
 import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/core/settings/app_settings.dart';
@@ -14,6 +18,10 @@ class RecordingPlugin extends Mock implements FlutterLocalNotificationsPlugin {
   String? title;
   String? body;
   int shows = 0;
+  int initializations = 0;
+  Completer<void>? initializationGate;
+  bool pendingFails = false;
+  final pending = <int, PendingNotificationRequest>{};
   final cancelled = <int>[];
   @override
   Future<bool?> initialize({
@@ -22,6 +30,8 @@ class RecordingPlugin extends Mock implements FlutterLocalNotificationsPlugin {
     DidReceiveBackgroundNotificationResponseCallback?
     onDidReceiveBackgroundNotificationResponse,
   }) async {
+    initializations++;
+    await initializationGate?.future;
     onTap = onDidReceiveNotificationResponse;
     return true;
   }
@@ -45,8 +55,30 @@ class RecordingPlugin extends Mock implements FlutterLocalNotificationsPlugin {
   }
 
   @override
-  Future<void> cancel({required int id, String? tag}) async =>
-      cancelled.add(id);
+  Future<void> cancel({required int id, String? tag}) async {
+    cancelled.add(id);
+    pending.remove(id);
+  }
+
+  @override
+  Future<List<PendingNotificationRequest>> pendingNotificationRequests() async {
+    if (pendingFails) throw StateError('probe unavailable');
+    return pending.values.toList();
+  }
+
+  @override
+  Future<void> zonedSchedule({
+    required int id,
+    required tz.TZDateTime scheduledDate,
+    required NotificationDetails notificationDetails,
+    required AndroidScheduleMode androidScheduleMode,
+    String? title,
+    String? body,
+    String? payload,
+    DateTimeComponents? matchDateTimeComponents,
+  }) async {
+    pending[id] = PendingNotificationRequest(id, title, body, payload);
+  }
 }
 
 void main() {
@@ -61,12 +93,75 @@ void main() {
     shard: 'ap',
   );
   setUp(() async {
+    tzdata.initializeTimeZones();
     prefs = await createTestPrefs();
     await prefs.setJson(PrefKeys.accounts, [account.toJson()]);
     plugin = RecordingPlugin();
     service = NotificationService(plugin: plugin, prefs: prefs);
   });
   tearDown(() => service.dispose());
+
+  Future<void> schedule(int id, {String body = 'body'}) => service.scheduleAt(
+    id: id,
+    at: DateTime.now().add(const Duration(days: 1)),
+    title: 'title',
+    body: body,
+    channel: NotificationChannel.storeReset,
+    accountPuuid: account.puuid,
+  );
+
+  test(
+    'parallel schedules preserve the 60-slot budget; replacement works',
+    () async {
+      await Future.wait([for (var i = 0; i < 70; i++) schedule(i)]);
+      expect(plugin.pending.length, NotificationService.maxPending);
+      expect(plugin.pending.containsKey(60), isFalse);
+      await schedule(0, body: 'replacement');
+      expect(plugin.pending.length, NotificationService.maxPending);
+      expect(plugin.pending[0]!.body, 'replacement');
+    },
+  );
+
+  test(
+    'failed pending probe preserves old reminders and next schedule recovers',
+    () async {
+      await schedule(0);
+      plugin.pendingFails = true;
+      await expectLater(schedule(0, body: 'new'), throwsStateError);
+      expect(plugin.pending[0]!.body, 'body');
+      plugin.pendingFails = false;
+      await schedule(0, body: 'new');
+      expect(plugin.pending[0]!.body, 'new');
+    },
+  );
+
+  test(
+    'concurrent init waits for native completion and migrates once',
+    () async {
+      plugin.initializationGate = Completer<void>();
+      final first = service.init();
+      final second = service.init();
+      final queued = schedule(1);
+      await Future<void>.delayed(Duration.zero);
+      expect(plugin.initializations, 1);
+      expect(plugin.pending, isEmpty);
+      plugin.initializationGate!.complete();
+      await Future.wait([first, second, queued]);
+      expect(plugin.initializations, 1);
+      for (final day in [5, 6]) {
+        expect(
+          plugin.cancelled
+              .where((id) => id == NotificationIds.storeResetDay('a', day))
+              .length,
+          1,
+        );
+      }
+      expect(prefs.getInt('app.notificationScheduleSchema'), 2);
+      expect(plugin.pending.keys, [1]);
+      await service.init();
+      expect(plugin.initializations, 1);
+    },
+  );
 
   test('private visibility; Riot IDs removed on both platforms', () async {
     await service.showNow(

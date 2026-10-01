@@ -182,6 +182,27 @@ class CommunityApi {
       ) ??
       (throw const CommunityException(CommunityException.badResponse));
 
+  /// Requests the private party code before joining Riot. Public lists may
+  /// omit it. A malformed reply must never trigger a Riot mutation.
+  Future<({String partyCode, int joins})> requestLfgJoin(
+    String puuid,
+    String id,
+  ) async {
+    final body = asMap(
+      await _send(
+        'POST',
+        '/v1/lfg/${Uri.encodeComponent(id)}/join',
+        puuid: puuid,
+        json: const <String, Object?>{},
+      ),
+    );
+    final code = asNonEmptyString(body?['partyCode'])?.toUpperCase();
+    if (code == null || !partyCodePattern.hasMatch(code)) {
+      throw const CommunityException(CommunityException.badResponse);
+    }
+    return (partyCode: code, joins: asInt(body?['joins']) ?? 0);
+  }
+
   /// `POST /v1/lfg/{id}/join` after a successful Riot join. Returns the
   /// join count.
   Future<int> recordLfgJoin(String puuid, String id) async =>

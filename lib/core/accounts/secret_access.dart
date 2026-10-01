@@ -10,7 +10,7 @@ import '../l10n/account_strings.dart';
 const _secretChannel = MethodChannel('valvn/secrets');
 
 Future<void> setSecretPrivacy(bool enabled) async {
-  if (!Platform.isAndroid) return;
+  if (!Platform.isAndroid && !Platform.isIOS) return;
   try {
     await _secretChannel.invokeMethod<void>('privacy', enabled);
   } on Object {
@@ -19,12 +19,14 @@ Future<void> setSecretPrivacy(bool enabled) async {
 }
 
 Future<void> _copySecret(String text) async {
-  if (Platform.isAndroid) {
+  if (Platform.isAndroid || Platform.isIOS) {
     try {
       await _secretChannel.invokeMethod<void>('copy', text);
       return;
     } on Object {
-      // Fall back to Flutter's clipboard when the adapter is unavailable.
+      // iOS must never fall back to the cross-device clipboard.
+      if (Platform.isIOS) rethrow;
+      // Android can fall back when the sensitive-content adapter is unavailable.
     }
   }
   await Clipboard.setData(ClipboardData(text: text));

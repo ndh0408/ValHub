@@ -254,7 +254,10 @@ void main() {
           )
           .first,
     );
-    await tester.tap(row);
+    await _settle(tester);
+    await Scrollable.ensureVisible(tester.element(row), alignment: 0.5);
+    await _settle(tester);
+    await tester.tap(row.hitTestable());
     await _settle(tester);
     expect(find.byType(BattlePassScreen), findsOneWidget);
     expect(_selectedTab(tester), AppTab.profile.index);

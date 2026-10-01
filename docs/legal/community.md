@@ -47,6 +47,8 @@ Cộng đồng ValVN là nơi người chơi VALORANT khoe cửa hàng, bàn chu
 
 ## 7. Báo cáo vi phạm
 
+Bạn có thể ẩn người đăng hoặc chặn trên thiết bị từ menu nội dung. Lựa chọn này chỉ ẩn nội dung của họ với tài khoản đang dùng trên thiết bị này; họ vẫn có thể xem nội dung công khai của bạn. Bạn có thể bỏ ẩn trong Cài đặt. Tính năng này không thay cho Báo cáo.
+
 Thấy nội dung vi phạm? Hãy dùng nút Báo cáo trên bài đăng, bình luận hoặc bài tìm đồng đội và chọn lý do phù hợp. Báo cáo được giữ kín, người bị báo cáo không biết ai đã báo cáo.
 
 - Nội dung nhận đủ báo cáo từ nhiều người dùng khác nhau sẽ được tự động ẩn trong khi chờ xem xét.

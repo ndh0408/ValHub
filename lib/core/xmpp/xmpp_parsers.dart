@@ -1,3 +1,5 @@
+import '../geo/region_data.g.dart';
+
 import 'dart:convert';
 
 import 'package:xml/xml.dart';
@@ -368,14 +370,7 @@ List<ChatMessage> parseArchive(
 
 /// Chat host prefixes by game region when client config lacks the PAS
 /// affinity (SUMMARY §6.5, from GinzaTech/Vshop).
-const kChatFallbackHosts = <String, String>{
-  'ap': 'jp1',
-  'eu': 'euw1',
-  'na': 'na2',
-  'kr': 'kr1',
-  'br': 'br',
-  'latam': 'la1',
-};
+const kChatFallbackHosts = regionChatAffinities;
 
 final _hostPattern = RegExp(r'^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9-]+)+$');
 

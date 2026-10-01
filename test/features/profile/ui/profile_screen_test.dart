@@ -112,6 +112,7 @@ void main() {
         startIndex: any(named: 'startIndex'),
         endIndex: any(named: 'endIndex'),
         queue: 'deathmatch',
+        cancelToken: any(named: 'cancelToken'),
       ),
     ).called(1);
     expect(find.byType(MatchCard), findsNothing);
@@ -127,6 +128,7 @@ void main() {
         startIndex: any(named: 'startIndex'),
         endIndex: any(named: 'endIndex'),
         queue: any(named: 'queue'),
+        cancelToken: any(named: 'cancelToken'),
       ),
     ).thenAnswer((_) async {
       if (fail) throw const TransientException(reason: 'network');
@@ -165,6 +167,7 @@ void main() {
         startIndex: any(named: 'startIndex'),
         endIndex: any(named: 'endIndex'),
         queue: any(named: 'queue'),
+        cancelToken: any(named: 'cancelToken'),
       ),
     ).thenAnswer((_) => pending.future);
     await pumpProfile(tester, env, screen, height: 2600);
@@ -220,6 +223,7 @@ void main() {
         startIndex: any(named: 'startIndex'),
         endIndex: any(named: 'endIndex'),
         queue: any(named: 'queue'),
+        cancelToken: any(named: 'cancelToken'),
       ),
     ).thenAnswer((inv) async {
       pages++;
@@ -305,6 +309,7 @@ void main() {
         startIndex: any(named: 'startIndex'),
         endIndex: any(named: 'endIndex'),
         queue: any(named: 'queue'),
+        cancelToken: any(named: 'cancelToken'),
       ),
     ).thenAnswer((inv) async {
       final start = inv.namedArguments[#startIndex] as int;
@@ -329,6 +334,7 @@ void main() {
         startIndex: 20,
         endIndex: 40,
         queue: any(named: 'queue'),
+        cancelToken: any(named: 'cancelToken'),
       ),
     ).called(1);
     await tester.scrollUntilVisible(

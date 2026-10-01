@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 import '../l10n/account_strings.dart';
+import '../geo/regions.dart';
+import '../geo/countries.dart' show normalizeCountry;
 import '../riot/riot_hosts.dart';
 import '../util/json.dart';
 
@@ -25,6 +27,8 @@ enum GamePlatform {
   bool get isConsole => this != GamePlatform.pc;
 }
 
+enum RegionMode { auto, manual }
+
 /// Non-secret account metadata (stored in prefs; SUMMARY §3.5). Secrets
 /// (cookies, tokens) live in secure storage under the same PUUID.
 @immutable
@@ -35,6 +39,10 @@ class Account {
     required this.tagLine,
     required this.region,
     required this.shard,
+    this.regionMode = RegionMode.auto,
+    this.detectedRegion,
+    this.manualRegion,
+    this.country,
     this.platform = GamePlatform.pc,
     this.needsLogin = false,
     this.cardId,
@@ -48,14 +56,25 @@ class Account {
     final m = asMap(json);
     final puuid = lowerUuid(m?['puuid']);
     if (m == null || puuid == null) return null;
-    final region = asNonEmptyString(m['region'])?.toLowerCase() ?? 'ap';
+    final mode = m['regionMode'] == 'manual'
+        ? RegionMode.manual
+        : RegionMode.auto;
+    final detected =
+        asNonEmptyString(m['detectedRegion'])?.toLowerCase() ??
+        asNonEmptyString(m['region'])?.toLowerCase();
+    final manual = RegionTable.normalize(m['manualRegion']);
+    final region = (mode == RegionMode.manual ? manual : detected) ?? '';
+    final country = normalizeCountry(m['country']);
     return Account(
       puuid: puuid,
       gameName: asString(m['gameName']) ?? '',
       tagLine: asString(m['tagLine']) ?? '',
       region: region,
-      shard:
-          asNonEmptyString(m['shard'])?.toLowerCase() ?? shardForRegion(region),
+      shard: shardForRegion(region),
+      regionMode: mode,
+      detectedRegion: detected,
+      manualRegion: manual,
+      country: country,
       platform: GamePlatform.parse(m['platform']),
       needsLogin: asBool(m['needsLogin']) ?? false,
       cardId: lowerUuid(m['cardId']),
@@ -75,6 +94,14 @@ class Account {
 
   /// PD shard (e.g. `ap`).
   final String shard;
+  final RegionMode regionMode;
+  final String? detectedRegion;
+  String? get autoRegion =>
+      detectedRegion ??
+      (regionMode == RegionMode.auto && region.isNotEmpty ? region : null);
+  final String? manualRegion;
+  final String? country;
+  bool get needsRegionSelection => RegionTable.normalize(region) == null;
   final GamePlatform platform;
 
   /// Cookies are dead; the account must sign in again (never loops).
@@ -104,6 +131,11 @@ class Account {
     'tagLine': tagLine,
     'region': region,
     'shard': shard,
+    'regionMode': regionMode.name,
+    'detectedRegion':
+        detectedRegion ?? (regionMode == RegionMode.auto ? region : null),
+    'manualRegion': manualRegion,
+    'country': country,
     'platform': platform.name,
     'needsLogin': needsLogin,
     'cardId': cardId,
@@ -118,26 +150,44 @@ class Account {
     String? tagLine,
     String? region,
     String? shard,
+    RegionMode? regionMode,
+    String? detectedRegion,
+    String? manualRegion,
+    String? country,
     GamePlatform? platform,
     bool? needsLogin,
     String? cardId,
     int? level,
     int? rankTier,
     String? rankSeasonId,
-  }) => Account(
-    puuid: puuid,
-    gameName: gameName ?? this.gameName,
-    tagLine: tagLine ?? this.tagLine,
-    region: region ?? this.region,
-    shard: shard ?? this.shard,
-    platform: platform ?? this.platform,
-    needsLogin: needsLogin ?? this.needsLogin,
-    cardId: cardId ?? this.cardId,
-    level: level ?? this.level,
-    rankTier: rankTier ?? this.rankTier,
-    rankSeasonId: rankSeasonId ?? this.rankSeasonId,
-    addedAt: addedAt,
-  );
+  }) {
+    final mode = regionMode ?? this.regionMode;
+    final detected =
+        detectedRegion ??
+        (region != null && mode == RegionMode.auto
+            ? region
+            : this.detectedRegion ?? this.region);
+    final manual = manualRegion ?? this.manualRegion;
+    final effective = mode == RegionMode.manual ? manual ?? '' : detected;
+    return Account(
+      puuid: puuid,
+      gameName: gameName ?? this.gameName,
+      tagLine: tagLine ?? this.tagLine,
+      region: effective,
+      shard: shardForRegion(effective),
+      regionMode: mode,
+      detectedRegion: detected,
+      manualRegion: manual,
+      country: country ?? this.country,
+      platform: platform ?? this.platform,
+      needsLogin: needsLogin ?? this.needsLogin,
+      cardId: cardId ?? this.cardId,
+      level: level ?? this.level,
+      rankTier: rankTier ?? this.rankTier,
+      rankSeasonId: rankSeasonId ?? this.rankSeasonId,
+      addedAt: addedAt,
+    );
+  }
 
   @override
   bool operator ==(Object other) =>
@@ -147,6 +197,10 @@ class Account {
       other.tagLine == tagLine &&
       other.region == region &&
       other.shard == shard &&
+      other.regionMode == regionMode &&
+      other.autoRegion == autoRegion &&
+      other.manualRegion == manualRegion &&
+      other.country == country &&
       other.platform == platform &&
       other.needsLogin == needsLogin &&
       other.cardId == cardId &&
@@ -161,6 +215,10 @@ class Account {
     tagLine,
     region,
     shard,
+    regionMode,
+    autoRegion,
+    manualRegion,
+    country,
     platform,
     needsLogin,
     cardId,

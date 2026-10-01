@@ -5,9 +5,11 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/riot/platform_status.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../../community/ui/data_rights/community_data_section.dart';
+import '../../community/ui/hidden_authors_sheet.dart';
 import '../providers/settings_providers.dart';
 import '../settings_strings.dart';
 import 'sections/accounts_section.dart';
+import 'sections/country_section.dart';
 import 'sections/app_info_sections.dart';
 import 'sections/notifications_section.dart';
 import 'sections/preferences_sections.dart';
@@ -48,6 +50,8 @@ class SettingsScreen extends ConsumerWidget {
             delegate: SliverChildListDelegate.fixed([
               SettingsAccountsSection(),
               CommunityDataSection(),
+              SettingsHiddenAuthorsSection(),
+              SettingsCountrySection(),
               SettingsOptionsSection(),
               SettingsNotificationsSection(),
               SettingsAppearanceSection(),

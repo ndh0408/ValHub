@@ -159,7 +159,10 @@ class HomeTestEnv {
     }
     if (layout != null) await prefs.setJson(kHomeLayoutPrefKey, layout);
     if (friendsConsent != null) {
-      await prefs.setBool(kHomeFriendsPrefKey, friendsConsent);
+      await prefs.setBool(
+        PrefKeys.account(accounts.first.puuid, 'home.friendsLive'),
+        friendsConsent,
+      );
     }
     for (final e in extraPrefs.entries) {
       await prefs.setString(e.key, e.value);

@@ -226,29 +226,37 @@ Future<ScanResult> scan(Project project, {List<String> only = const []}) async {
         if (path.endsWith('.dart')) path,
   ]..sort();
 
-  for (final path in paths) {
-    final rel = project.rel(path);
-    if (!rel.startsWith('lib/') && !rel.startsWith('test/')) continue;
-    if (!matchesAny(globs, rel)) continue;
-    final ctx = collection.contextFor(path);
-    final res = await ctx.currentSession.getResolvedUnit(path);
-    if (res is! ResolvedUnitResult) continue;
-    c.files++;
-    for (final d in res.diagnostics) {
-      if (d.severity.name == 'ERROR') {
-        c.diagnostics.add({'file': rel, 'message': d.message});
-        break;
+  try {
+    for (final path in paths) {
+      final rel = project.rel(path);
+      if (!rel.startsWith('lib/') && !rel.startsWith('test/')) continue;
+      if (rel.startsWith('lib/l10n/gen/') ||
+          rel == 'test/l10n/vi_parity_test.dart') {
+        continue;
       }
+      if (!matchesAny(globs, rel)) continue;
+      final ctx = collection.contextFor(path);
+      final res = await ctx.currentSession.getResolvedUnit(path);
+      if (res is! ResolvedUnitResult) continue;
+      c.files++;
+      for (final d in res.diagnostics) {
+        if (d.severity.name == 'ERROR') {
+          c.diagnostics.add({'file': rel, 'message': d.message});
+          break;
+        }
+      }
+      if (rel.endsWith('_strings.dart')) {
+        _collectMembers(project, c, path, res.unit);
+      }
+      res.unit.accept(_RefVisitor(project, c, path, res.unit, res.content));
     }
-    if (rel.endsWith('_strings.dart')) {
-      _collectMembers(project, c, path, res.unit);
-    }
-    res.unit.accept(_RefVisitor(project, c, path, res.unit, res.content));
-  }
 
-  final json = _report(project, c, globs);
-  final elapsed = DateTime.now().difference(started);
-  return ScanResult(json, _summary(json, elapsed), elapsed);
+    final json = _report(project, c, globs);
+    final elapsed = DateTime.now().difference(started);
+    return ScanResult(json, _summary(json, elapsed), elapsed);
+  } finally {
+    await collection.dispose();
+  }
 }
 
 /// Writes [result] to [outFile] (parents created).

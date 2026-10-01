@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/auth/bootstrap_client.dart';
 import 'package:valvn/core/riot/riot_hosts.dart';
+import 'package:valvn/core/network/riot_exception.dart';
 
 void main() {
   test('region → shard (SUMMARY §4)', () {
@@ -11,7 +12,8 @@ void main() {
     expect(shardForRegion('eu'), 'eu');
     expect(shardForRegion('kr'), 'kr');
     expect(shardForRegion('AP'), 'ap');
-    expect(shardForRegion('pbe'), 'pbe');
+    expect(shardForRegion('pbe'), '');
+    expect(shardForRegion(''), '');
   });
 
   test('hosts keep region and shard separate', () {
@@ -22,6 +24,18 @@ void main() {
     final ap = RiotHosts.forRegion('ap');
     expect(ap.pd, 'https://pd.ap.a.pvp.net');
     expect(ap.glz, 'https://glz-ap-1.ap.a.pvp.net');
+  });
+
+  test('unknown or inconsistent routing never constructs a Riot host', () {
+    for (final hosts in [
+      RiotHosts.forRegion('pbe'),
+      RiotHosts.forRegion(''),
+      const RiotHosts(region: 'ap', shard: 'na'),
+    ]) {
+      expect(() => hosts.pd, throwsA(isA<UnsupportedRegionException>()));
+      expect(() => hosts.glz, throwsA(isA<UnsupportedRegionException>()));
+      expect(() => hosts.shared, throwsA(isA<UnsupportedRegionException>()));
+    }
   });
 
   test('riot-geo affinities.live parsing', () {

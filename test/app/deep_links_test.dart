@@ -2,6 +2,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/app/deep_links.dart';
 
 void main() {
+  test('custom scheme links resolve allowed routes and reject auth or foreign schemes', () {
+    expect(
+      parseDeepLink('valvn://store?account=ABC&segment=nightmarket'),
+      const DeepLink(
+        location: '/store?segment=nightmarket',
+        accountPuuid: 'abc',
+      ),
+    );
+    expect(parseDeepLink('valvn:///post/p1').location, '/post/p1');
+    expect(parseDeepLink('valvn://login').location, '/');
+    expect(parseDeepLink('valvn://evil.example/store').location, '/');
+    expect(parseDeepLink('valvn://user@store').location, '/');
+    expect(parseDeepLink('valvn://store:80').location, '/');
+  });
+
   test('extracts the account and keeps other query parameters', () {
     expect(
       parseDeepLink('/store?account=ABC&segment=nightmarket'),

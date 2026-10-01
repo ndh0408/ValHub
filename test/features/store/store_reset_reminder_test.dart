@@ -82,15 +82,15 @@ void main() {
         now: t0,
       );
       expect(ok, isTrue);
-      expect(service.calls, hasLength(7));
+      expect(service.calls, hasLength(5));
       expect(
         service.calls.every((c) => c.channel == NotificationChannel.storeReset),
         isTrue,
       );
-      expect(service.calls.map((c) => c.id).toSet(), hasLength(7));
+      expect(service.calls.map((c) => c.id).toSet(), hasLength(5));
       expect(
         service.calls.last.at.difference(service.calls.first.at),
-        const Duration(days: 6),
+        const Duration(days: 4),
       );
     });
 

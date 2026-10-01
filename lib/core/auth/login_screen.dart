@@ -10,6 +10,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../accounts/account.dart';
+import '../geo/region_picker.dart';
 import '../accounts/account_providers.dart';
 import '../accounts/account_widgets.dart';
 import '../accounts/login_note.dart';
@@ -234,10 +235,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _complete(AuthTokens tokens, RiotCookieJar cookies) async {
     try {
-      await ref
+      final account = await ref
           .read(accountsProvider.notifier)
           .completeLogin(tokens: tokens, cookies: cookies);
       if (!mounted) return;
+      if (account.needsRegionSelection) {
+        await showRegionPicker(context, account);
+        if (!mounted) return;
+      }
       if (!cookies.has(AuthConstants.sessionCookie)) {
         showAppSnackBar(context, AuthStrings.missingCookies);
       } else if (widget.reauthPuuid != null) {

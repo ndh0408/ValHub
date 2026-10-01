@@ -26,6 +26,14 @@ final class NeedsLoginException extends RiotException {
   String toString() => 'NeedsLoginException(${reason ?? ''})';
 }
 
+/// The account has no supported effective Riot region; user selection is needed.
+final class UnsupportedRegionException extends RiotException {
+  const UnsupportedRegionException({this.puuid});
+  final String? puuid;
+  @override
+  String toString() => 'UnsupportedRegionException';
+}
+
 /// Network error, timeout, Cloudflare HTML 403, 429 or 5xx. Keep the session
 /// and show cached data; retry after [retryAfter] when present.
 final class TransientException extends RiotException {

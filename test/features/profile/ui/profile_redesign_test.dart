@@ -65,6 +65,7 @@ void main() {
         startIndex: any(named: 'startIndex'),
         endIndex: any(named: 'endIndex'),
         queue: 'deathmatch',
+        cancelToken: any(named: 'cancelToken'),
       ),
     ).called(1);
     expect(find.byType(MatchCard), findsNothing);

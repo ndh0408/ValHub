@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../community_strings.dart';
 import '../../data/community_api.dart';
+import '../../data/community_models.dart';
+import '../../providers/hidden_authors.dart';
+import '../../../../core/accounts/account_providers.dart';
 import '../../providers/community_providers.dart';
 import '../consent/consent_sheet.dart';
 import '../widgets/community_widgets.dart';
@@ -11,30 +16,58 @@ import '../widgets/community_widgets.dart';
 /// Overflow actions of a post / comment / LFG post.
 enum ContentAction { delete, report }
 
+enum _MenuAction { delete, report, mute, block }
+
 /// "⋯" button: "Xóa" on the user's own content, "Báo cáo" on others'.
-class ContentMenuButton extends StatelessWidget {
+class ContentMenuButton extends ConsumerWidget {
   const ContentMenuButton({
     super.key,
     required this.isMine,
     required this.onSelected,
     this.deleteLabel = CommunityStrings.delete,
+    this.author,
   });
 
   final bool isMine;
+  final CommunityAuthor? author;
   final ValueChanged<ContentAction> onSelected;
   final String deleteLabel;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final account = ref.watch(activeAccountProvider);
     final muted = Theme.of(context).colorScheme.onSurfaceVariant;
-    return PopupMenuButton<ContentAction>(
+    return PopupMenuButton<_MenuAction>(
       tooltip: CommunityStrings.moreActions,
       icon: Icon(Icons.more_horiz_rounded, color: muted),
-      onSelected: onSelected,
+      onSelected: (action) {
+        if (action == _MenuAction.mute || action == _MenuAction.block) {
+          final target = author;
+          if (account != null && target != null) {
+            unawaited(
+              ref
+                  .read(hiddenAuthorsProvider(account.puuid).notifier)
+                  .hide(
+                    target.id,
+                    target.riotId ?? target.id,
+                    action == _MenuAction.block
+                        ? AuthorVisibilityRule.blocked
+                        : AuthorVisibilityRule.muted,
+                  ),
+            );
+          }
+        } else {
+          onSelected(
+            action == _MenuAction.delete
+                ? ContentAction.delete
+                : ContentAction.report,
+          );
+        }
+      },
       itemBuilder: (context) => [
         if (isMine)
           PopupMenuItem(
-            value: ContentAction.delete,
+            value: _MenuAction.delete,
             child: _MenuRow(
               icon: Icons.delete_outline_rounded,
               label: deleteLabel,
@@ -43,12 +76,28 @@ class ContentMenuButton extends StatelessWidget {
           )
         else
           const PopupMenuItem(
-            value: ContentAction.report,
+            value: _MenuAction.report,
             child: _MenuRow(
               icon: Icons.flag_outlined,
               label: CommunityStrings.report,
             ),
           ),
+        if (!isMine && author != null && account != null) ...[
+          const PopupMenuItem(
+            value: _MenuAction.mute,
+            child: _MenuRow(
+              icon: Icons.visibility_off_outlined,
+              label: CommunityStrings.muteAuthor,
+            ),
+          ),
+          const PopupMenuItem(
+            value: _MenuAction.block,
+            child: _MenuRow(
+              icon: Icons.block,
+              label: CommunityStrings.blockAuthor,
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -67,7 +116,9 @@ class _MenuRow extends StatelessWidget {
       children: [
         Icon(icon, size: 20, color: color),
         const SizedBox(width: 12),
-        Text(label, style: TextStyle(color: color)),
+        Expanded(
+          child: Text(label, style: TextStyle(color: color)),
+        ),
       ],
     );
   }

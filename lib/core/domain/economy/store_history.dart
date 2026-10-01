@@ -324,12 +324,18 @@ SkinStoreHistory summarizeSkin(StoreHistory history, Iterable<String> levels) {
 /// Every [record] reads the file again before writing, so the UI isolate and
 /// the background check (another isolate) do not overwrite each other's days.
 class StoreHistoryStore {
-  StoreHistoryStore(this._files, {this.maxDays = 365});
+  StoreHistoryStore(this._files, {this.maxDays = 365, this.canRecord});
+
+  final Future<bool> Function(String id)? canRecord;
 
   /// The store on the app's history directory (usable from a background
   /// isolate, which has no Riverpod).
-  factory StoreHistoryStore.onDevice() =>
-      StoreHistoryStore(JsonFileCache.appSupport('history'));
+  factory StoreHistoryStore.onDevice({
+    Future<bool> Function(String id)? canRecord,
+  }) => StoreHistoryStore(
+    JsonFileCache.appSupport('history'),
+    canRecord: canRecord,
+  );
 
   final JsonFileCache _files;
   final int maxDays;
@@ -370,6 +376,7 @@ class StoreHistoryStore {
       return Future.value(false);
     }
     return _locked(id, () async {
+      if (canRecord != null && !await canRecord!(id)) return false;
       final current = await _load(id);
       final days = [...current.days];
       final i = days.indexWhere((d) => d.key == incoming.key);
@@ -566,7 +573,10 @@ class StoreHistoryStore {
 
 /// The app-wide [StoreHistoryStore] (`<appSupport>/history`).
 final storeHistoryStoreProvider = Provider<StoreHistoryStore>((ref) {
-  final store = StoreHistoryStore.onDevice();
+  final repo = ref.watch(accountRepositoryProvider);
+  final store = StoreHistoryStore.onDevice(
+    canRecord: (id) async => await repo.findFresh(id) != null,
+  );
   ref.onDispose(store.dispose);
   return store;
 });

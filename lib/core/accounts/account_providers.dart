@@ -9,6 +9,8 @@ import '../auth/auth_providers.dart';
 import '../auth/cookie_jar.dart';
 import '../background/background_tasks.dart';
 import '../config/app_constants.dart';
+import '../domain/competitive/match_stats_store.dart';
+import '../domain/economy/store_history.dart';
 import '../domain/competitive/names.dart' show nameResolverProvider;
 import '../domain/competitive/rr_history.dart' show rrHistoryStoreProvider;
 import '../domain/loadout/loadout_providers.dart' show loadoutPresetsProvider;
@@ -17,6 +19,7 @@ import '../riot/riot_hosts.dart';
 import '../settings/app_settings.dart';
 import '../storage/json_file_cache.dart';
 import '../storage/prefs.dart';
+import '../geo/countries.dart';
 import '../storage/secure_store.dart';
 import 'account.dart';
 import 'account_repository.dart';
@@ -39,6 +42,8 @@ final localDataEraserProvider = Provider<LocalDataEraser>(
     cache: ref.watch(jsonFileCacheProvider),
     history: ref.watch(rrHistoryStoreProvider),
     historyFiles: ref.watch(retainedHistoryFilesProvider),
+    matchStats: ref.watch(matchStatsStoreProvider),
+    storeHistory: ref.watch(storeHistoryStoreProvider),
   ),
 );
 
@@ -102,8 +107,10 @@ class AccountsNotifier extends Notifier<List<Account>> {
             .copyWith(
               gameName: info.gameName ?? existing?.gameName ?? '',
               tagLine: info.tagLine ?? existing?.tagLine ?? '',
+              detectedRegion: region,
               region: region,
               shard: shardForRegion(region),
+              country: normalizeCountry(info.country),
               needsLogin: false,
             );
     await _repo.upsert(account);
@@ -137,6 +144,11 @@ class AccountsNotifier extends Notifier<List<Account>> {
   Future<void> remove(String puuid, {bool keepLocalData = false}) async {
     final id = puuid.toLowerCase();
     await _repo.markPendingWipe(id, keepLocalData: keepLocalData);
+    if (keepLocalData) {
+      await ref
+          .read(prefsProvider)
+          .setBool(PrefKeys.accountKept(id, 'retainedHistory'), true);
+    }
     try {
       await ref.read(notificationServiceProvider).cancelForAccount(id);
     } on Object {

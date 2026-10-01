@@ -56,6 +56,7 @@ class PostCard extends StatelessWidget {
               createdAt: post.createdAt,
               isMe: isMine,
               trailing: ContentMenuButton(
+                author: post.author,
                 isMine: isMine,
                 deleteLabel: CommunityStrings.deletePost,
                 onSelected: onAction,

@@ -48,7 +48,9 @@ class MatchLedger {
 /// defense ×6, m2, m3, m4, m5], …]}` with `-1` for "unknown"; queue, map and
 /// agent are indexes into the dictionaries. About 130 bytes per match.
 class MatchStatsStore {
-  MatchStatsStore(this._files, {this.maxRows = 5000});
+  MatchStatsStore(this._files, {this.maxRows = 5000, this.canRecord});
+
+  final Future<bool> Function(String id)? canRecord;
 
   final JsonFileCache _files;
   final int maxRows;
@@ -81,7 +83,9 @@ class MatchStatsStore {
     final incoming = lines.toList();
     if (id.isEmpty || incoming.isEmpty) return Future.value(0);
     return _locked(id, () async {
+      if (canRecord != null && !await canRecord!(id)) return 0;
       final current = await _load(id);
+      if (canRecord != null && !await canRecord!(id)) return 0;
       final byId = {for (final l in current.lines) l.matchId: l};
       var added = 0;
       var changed = false;
@@ -362,7 +366,11 @@ class MatchStatsStore {
 
 /// The app-wide [MatchStatsStore] (`<appSupport>/history`).
 final matchStatsStoreProvider = Provider<MatchStatsStore>((ref) {
-  final store = MatchStatsStore(JsonFileCache.appSupport('history'));
+  final accounts = ref.watch(accountRepositoryProvider);
+  final store = MatchStatsStore(
+    JsonFileCache.appSupport('history'),
+    canRecord: (id) async => await accounts.findFresh(id) != null,
+  );
   ref.onDispose(store.dispose);
   return store;
 });

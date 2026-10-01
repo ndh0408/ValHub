@@ -2,7 +2,7 @@
 
 # Chính sách quyền riêng tư
 
-**ValVN** · Phiên bản 1.0 · Hiệu lực từ: 29/09/2026
+**ValVN** · Phiên bản 1.1 · Hiệu lực từ: 29/09/2026
 
 Chính sách này giải thích cách ValVN thu thập, sử dụng, lưu trữ và bảo vệ dữ liệu cá nhân của bạn, cũng như các quyền của bạn đối với dữ liệu đó. Chính sách được xây dựng theo pháp luật Việt Nam về bảo vệ dữ liệu cá nhân (Nghị định 13/2023/NĐ-CP), đồng thời tính đến các quy định bạn có thể được hưởng ở nơi bạn sống, như GDPR, UK GDPR, CCPA/CPRA hay LGPD (xem mục "Quyền của bạn theo luật nơi bạn sống"). ValVN dành cho người chơi VALORANT ở mọi quốc gia.
 
@@ -94,14 +94,15 @@ Máy chủ Cộng đồng do nhà phát hành tự vận hành. Kết nối tớ
 - **Báo cáo vi phạm:** chỉ giữ tối đa 12 tháng để xử lý vi phạm và phòng chống lạm dụng, rồi máy chủ tự xóa. Báo cáo về nội dung đã bị xóa cũng bị xóa, và báo cáo do chính bạn gửi được ẩn danh khi bạn xóa dữ liệu Cộng đồng.
 - **Nhật ký truy cập của máy chủ:** chỉ giữ mã băm có muối (của địa chỉ IP) để giới hạn số lần gửi yêu cầu; nhật ký kỹ thuật chỉ được giữ trong thời gian cần thiết để tìm lỗi và bảo mật.
 - **Bản sao lưu:** giữ 14 ngày rồi bị ghi đè; nội dung đã xóa vì thế có thể còn trong bản sao lưu tối đa 14 ngày.
-- **Mã đăng nhập Cộng đồng:** hết hiệu lực sau 30 ngày và bị xóa khỏi thiết bị khi bạn đăng xuất.
+- **Mã đăng nhập Cộng đồng:** hết hiệu lực sau 30 ngày, bị xóa khỏi thiết bị khi đăng xuất và được thu hồi trên máy chủ khi có kết nối mạng.
 
 ## 11. Xóa dữ liệu
 
 ### Trên thiết bị
 
-- Đăng xuất một tài khoản trong Cài đặt sẽ xóa khỏi thiết bị dữ liệu đăng nhập Riot (mã truy cập và cookie), thông tin đăng nhập đã lưu, mã đăng nhập Cộng đồng, dữ liệu tạm và thông báo đã lên lịch của tài khoản đó. Wishlist được giữ lại để dùng khi bạn đăng nhập lại; bạn có thể tự xóa từng mục.
-- "Xóa dữ liệu tạm" trong Cài đặt > Nâng cao xóa ảnh, dữ liệu đã tải để xem khi không có mạng và báo lỗi đã ghi trên thiết bị.
+- Đăng xuất một tài khoản trong Cài đặt sẽ xóa khỏi thiết bị dữ liệu đăng nhập Riot (mã truy cập và cookie), thông tin đăng nhập đã lưu, mã đăng nhập Cộng đồng, dữ liệu tạm và thông báo đã lên lịch của tài khoản đó. Wishlist, cấu hình trang bị và lịch sử RR, trận đấu, cửa hàng cũng bị xóa, trừ khi bạn chọn giữ dữ liệu cục bộ trong hộp xác nhận để dùng khi đăng nhập lại.
+- "Xóa dữ liệu tạm" trong Cài đặt > Nâng cao xóa ảnh, dữ liệu đã tải để xem khi không có mạng, tên người chơi đã tra cứu và báo lỗi đã ghi trên thiết bị. Lịch sử riêng của bạn được giữ lại.
+- "Xóa dữ liệu cục bộ" xóa các lịch sử, cấu hình trang bị và dữ liệu đã giữ của tài khoản đăng xuất. Wishlist của tài khoản đang đăng nhập vẫn còn; bạn có thể tự xóa trong Wishlist.
 - Gỡ Ứng dụng sẽ xóa toàn bộ dữ liệu của Ứng dụng trên thiết bị.
 
 ### Trên máy chủ Cộng đồng

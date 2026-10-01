@@ -1,15 +1,11 @@
 import 'package:flutter/foundation.dart';
 
+import '../geo/regions.dart';
+import '../network/riot_exception.dart';
+
 /// Maps a riot-geo `affinities.live` region to its PD shard (SUMMARY §4).
-/// Unknown regions fall back to themselves.
-String shardForRegion(String region) => switch (region.toLowerCase()) {
-  'na' || 'latam' || 'br' => 'na',
-  'eu' => 'eu',
-  'ap' => 'ap',
-  'kr' => 'kr',
-  'pbe' => 'pbe',
-  final other => other,
-};
+/// Unknown regions stay unresolved; no token is sent to guessed hosts.
+String shardForRegion(String region) => RegionTable.shardFor(region) ?? '';
 
 /// Regions ValVN supports (PBE hosts are unverified and hidden, U22).
 const supportedRegions = {'ap', 'na', 'latam', 'br', 'eu', 'kr'};
@@ -30,13 +26,28 @@ class RiotHosts {
   final String shard;
 
   /// `https://pd.{shard}.a.pvp.net`
-  String get pd => 'https://pd.$shard.a.pvp.net';
+  void _validate() {
+    if (RegionTable.shardFor(region) != shard || shard.isEmpty) {
+      throw const UnsupportedRegionException();
+    }
+  }
+
+  String get pd {
+    _validate();
+    return 'https://pd.$shard.a.pvp.net';
+  }
 
   /// `https://glz-{region}-1.{shard}.a.pvp.net`
-  String get glz => 'https://glz-$region-1.$shard.a.pvp.net';
+  String get glz {
+    _validate();
+    return 'https://glz-$region-1.$shard.a.pvp.net';
+  }
 
   /// `https://shared.{shard}.a.pvp.net`
-  String get shared => 'https://shared.$shard.a.pvp.net';
+  String get shared {
+    _validate();
+    return 'https://shared.$shard.a.pvp.net';
+  }
 
   @override
   bool operator ==(Object other) =>

@@ -122,30 +122,37 @@ void main() {
     await unmount(tester);
   });
 
-  testWidgets('join: confirm → G-19 → POST join → hint', (tester) async {
-    env.server
-      ..json('GET /v1/lfg', page([lfgJson('l1')]))
-      ..json('POST /v1/lfg/l1/join', {'joins': 3});
-    when(() => env.pvp.partyJoinByCode(any(), any()))
-        .thenAnswer((_) async => {});
-    await _open(tester, env);
+  testWidgets(
+    'join: confirm → server authorizes and returns code → G-19 → hint',
+    (tester) async {
+      env.server
+        ..json('GET /v1/lfg', page([lfgJson('l1')]))
+        ..json('POST /v1/lfg/l1/join', {'joins': 3, 'partyCode': 'DEF456'});
+      when(() => env.pvp.partyJoinByCode(any(), any()))
+          .thenAnswer((_) async => {});
+      await _open(tester, env);
 
-    await tester.tap(find.text(CommunityStrings.joinParty));
-    await settle(tester);
-    expect(find.text(CommunityStrings.joinConfirmTitle), findsOneWidget);
-    verifyNever(() => env.pvp.partyJoinByCode(any(), any()));
+      await tester.tap(find.text(CommunityStrings.joinParty));
+      await settle(tester);
+      expect(find.text(CommunityStrings.joinConfirmTitle), findsOneWidget);
+      verifyNever(() => env.pvp.partyJoinByCode(any(), any()));
 
-    await tester.tap(find.text(CommunityStrings.join));
-    await settle(tester);
+      await tester.tap(find.text(CommunityStrings.join));
+      await settle(tester);
 
-    verify(() => env.pvp.partyJoinByCode(mePuuid, 'ABC123')).called(1);
-    expect(env.server.calls('POST /v1/lfg/l1/join'), hasLength(1));
-    expect(find.text(CommunityStrings.joinedHint), findsOneWidget);
-    await unmount(tester);
-  });
+      verify(() => env.pvp.partyJoinByCode(mePuuid, 'DEF456')).called(1);
+      expect(env.server.calls('POST /v1/lfg/l1/join'), hasLength(1));
+      expect(find.text(CommunityStrings.joinedHint), findsOneWidget);
+      await unmount(tester);
+    },
+  );
 
   testWidgets('join errors are explained and offer a refresh', (tester) async {
     env.server.json('GET /v1/lfg', page([lfgJson('l1')]));
+    env.server.json('POST /v1/lfg/l1/join', {
+      'partyCode': 'ABC123',
+      'joins': 1,
+    });
     when(() => env.pvp.partyJoinByCode(any(), any()))
         .thenThrow(const RiotApiException(400, errorCode: 'PARTY_FULL'));
     await _open(tester, env);
@@ -157,7 +164,7 @@ void main() {
     await settle(tester);
 
     expect(find.text(CommunityStrings.joinPartyFull), findsOneWidget);
-    expect(env.server.calls('POST /v1/lfg/l1/join'), isEmpty);
+    expect(env.server.calls('POST /v1/lfg/l1/join'), hasLength(1));
     await tester.tap(find.text(CommunityStrings.refreshList));
     await settle(tester);
     expect(env.server.calls('GET /v1/lfg').length, greaterThan(before));

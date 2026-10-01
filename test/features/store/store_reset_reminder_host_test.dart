@@ -105,7 +105,7 @@ void main() {
     final env = await _Env.create();
     await _pumpHost(tester, env);
 
-    expect(env.notifications.calls, hasLength(7));
+    expect(env.notifications.calls, hasLength(5));
     final call = env.notifications.calls.first;
     expect(call.id, NotificationIds.storeReset(Fx.puuid));
     expect(call.at, t0.add(const Duration(seconds: 17401, minutes: 1)));
@@ -118,7 +118,7 @@ void main() {
     // Rebuilds with the same storefront do not reschedule.
     await tester.pump(const Duration(seconds: 1));
     await settle(tester);
-    expect(env.notifications.calls, hasLength(7));
+    expect(env.notifications.calls, hasLength(5));
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
@@ -138,14 +138,14 @@ void main() {
   ) async {
     final env = await _Env.create();
     final container = await _pumpHost(tester, env);
-    expect(env.notifications.calls, hasLength(7));
+    expect(env.notifications.calls, hasLength(5));
 
     // The storefront refetches (e.g. at the daily reset): one more.
     container.invalidate(storefrontProvider(Fx.puuid));
     await settle(tester);
-    expect(env.notifications.calls, hasLength(14));
+    expect(env.notifications.calls, hasLength(10));
     await settle(tester);
-    expect(env.notifications.calls, hasLength(14));
+    expect(env.notifications.calls, hasLength(10));
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
@@ -189,7 +189,7 @@ void main() {
       final forB = env.notifications.calls.where(
         (c) => c.accountPuuid == _b.puuid,
       );
-      expect(forB, hasLength(7));
+      expect(forB, hasLength(5));
       expect(
         forB.first.at,
         t0
@@ -219,7 +219,7 @@ void main() {
     await settle(tester);
     expect(
       env.notifications.calls.where((c) => c.accountPuuid == _b.puuid),
-      hasLength(7),
+      hasLength(5),
     );
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
@@ -260,7 +260,7 @@ void main() {
       expect(find.byType(HomeScreen), findsOneWidget);
       // The Store branch is not built until it is opened.
       expect(find.byType(StoreScreen), findsNothing);
-      expect(env.notifications.calls, hasLength(7));
+      expect(env.notifications.calls, hasLength(5));
       expect(
         env.notifications.calls.first.at,
         t0.add(const Duration(seconds: 17401, minutes: 1)),

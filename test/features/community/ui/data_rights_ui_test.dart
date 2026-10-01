@@ -373,39 +373,43 @@ void main() {
   });
 
   group('Rút lại đồng ý', () {
-    testWidgets('explains what remains; confirm forgets locally only', (
-      tester,
-    ) async {
-      env = await CommunityTestEnv.create();
-      _serve(env);
-      env.secure.values[SecureKeys.community(mePuuid)] = jsonEncode(
-        sessionJson(token: 'stored-1'),
-      );
-      await _open(tester, env);
+    testWidgets(
+      'explains what remains; confirm wipes locally and revokes the server session',
+      (tester) async {
+        env = await CommunityTestEnv.create();
+        _serve(env);
+        env.secure.values[SecureKeys.community(mePuuid)] = jsonEncode(
+          sessionJson(token: 'stored-1'),
+        );
+        await _open(tester, env);
 
-      await tester.tap(_withdrawRow);
-      await settle(tester);
+        await tester.tap(_withdrawRow);
+        await settle(tester);
 
-      expect(find.text(CommunityStrings.withdrawConfirmTitle), findsOneWidget);
-      final body = tester
-          .widgetList<Text>(find.byType(Text))
-          .map((t) => t.data ?? '')
-          .firstWhere((t) => t.contains('vẫn còn'));
-      expect(body, contains('Bài viết'));
-      expect(body, contains('vẫn hiện Riot ID'));
-      expect(body, contains(CommunityStrings.deleteDataTitle));
+        expect(
+          find.text(CommunityStrings.withdrawConfirmTitle),
+          findsOneWidget,
+        );
+        final body = tester
+            .widgetList<Text>(find.byType(Text))
+            .map((t) => t.data ?? '')
+            .firstWhere((t) => t.contains('vẫn còn'));
+        expect(body, contains('Bài viết'));
+        expect(body, contains('vẫn hiện Riot ID'));
+        expect(body, contains(CommunityStrings.deleteDataTitle));
 
-      await tester.tap(find.text(CommunityStrings.withdrawConfirm));
-      await settle(tester, frames: 30);
+        await tester.tap(find.text(CommunityStrings.withdrawConfirm));
+        await settle(tester, frames: 30);
 
-      // Nothing was sent (the server keeps what was posted).
-      expect(env.server.requests, isEmpty);
-      expect(env.secure.values[SecureKeys.community(mePuuid)], isNull);
-      expect(env.prefs.getString(communityConsentKey(mePuuid)), isNull);
-      expect(find.text(CommunityStrings.exportTitle), findsNothing);
-      expect(find.text(CommunityStrings.consentWithdrawn), findsOneWidget);
-      await unmount(tester);
-    });
+        // Revokes the session only; published content is kept.
+        expect(env.server.calls('POST /v1/auth/logout'), hasLength(1));
+        expect(env.secure.values[SecureKeys.community(mePuuid)], isNull);
+        expect(env.prefs.getString(communityConsentKey(mePuuid)), isNull);
+        expect(find.text(CommunityStrings.exportTitle), findsNothing);
+        expect(find.text(CommunityStrings.consentWithdrawn), findsOneWidget);
+        await unmount(tester);
+      },
+    );
 
     testWidgets('cancel keeps everything', (tester) async {
       env = await CommunityTestEnv.create();

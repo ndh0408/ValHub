@@ -7,6 +7,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/storage/prefs.dart';
+import '../../../core/accounts/account_providers.dart';
+import '../../../core/accounts/friends_consent.dart';
 import '../data/home_card.dart';
 import '../data/home_layout.dart';
 
@@ -56,25 +58,31 @@ final homeFriendsConsentProvider =
     );
 
 class HomeFriendsConsentNotifier extends Notifier<bool?> {
-  @override
-  bool? build() => ref.watch(prefsProvider).getBool(kHomeFriendsPrefKey);
+  String? _id;
 
-  Future<void> set({required bool allowed}) async {
-    state = allowed;
-    try {
-      await ref.read(prefsProvider).setBool(kHomeFriendsPrefKey, allowed);
-    } on Object {
-      // Kept for this session.
-    }
+  @override
+  bool? build() {
+    _id = ref.watch(activePuuidProvider);
+    final id = _id;
+    if (id == null) return null;
+    final allowed = ref.watch(friendsLiveConsentProvider(id));
+    final answered = ref
+        .watch(prefsProvider)
+        .containsKey(PrefKeys.account(id, 'home.friendsLive'));
+    return answered ? allowed : null;
   }
 
-  /// Forgets the answer (the undo of "Không, ẩn thẻ"): Home asks again.
+  Future<void> set({required bool allowed}) async {
+    final id = _id;
+    if (id == null) return;
+    await ref.read(friendsLiveConsentProvider(id).notifier).setConsent(allowed);
+    if (ref.mounted && _id == id) ref.invalidateSelf();
+  }
+
   Future<void> clear() async {
-    state = null;
-    try {
-      await ref.read(prefsProvider).remove(kHomeFriendsPrefKey);
-    } on Object {
-      // Kept for this session.
-    }
+    final id = _id;
+    if (id == null) return;
+    await ref.read(friendsLiveConsentProvider(id).notifier).clearConsent();
+    if (ref.mounted && _id == id) ref.invalidateSelf();
   }
 }

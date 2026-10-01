@@ -113,6 +113,14 @@ class _Fixture {
     _put('lib/core/l10n/common_strings.dart', _commonStrings);
     _put('lib/features/store/ui/store_screen.dart', _storeScreen);
     _put('test/features/store/store_test.dart', _storeTest);
+    _put(
+      'lib/l10n/gen/app_localizations_vi.dart',
+      "String generated() => 'Xin chào';",
+    );
+    _put(
+      'test/l10n/vi_parity_test.dart',
+      "import 'package:valvn/core/l10n/common_strings.dart'; String parity() => CommonStrings.retry;",
+    );
   }
 
   final Directory root;

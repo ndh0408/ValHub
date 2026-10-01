@@ -591,4 +591,11 @@ abstract final class CommunityStrings {
       'skin bình thường.';
   static const errorConsent =
       'Hãy đồng ý chia sẻ Riot ID với Cộng đồng để tiếp tục.';
+  static const muteAuthor = 'Ẩn người này';
+  static const blockAuthor = 'Chặn trên thiết bị';
+  static const hiddenAuthors = 'Người đã ẩn và chặn';
+  static const hiddenAuthorsEmpty = 'Chưa ẩn hoặc chặn ai';
+  static const hiddenAuthorsHint =
+      'Áp dụng riêng cho tài khoản này trên thiết bị này. Nội dung của họ được ẩn; họ vẫn có thể xem nội dung công khai của bạn.';
+  static const unhideAuthor = 'Bỏ ẩn / bỏ chặn';
 }

@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:valvn/core/storage/prefs.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/xmpp/xmpp.dart';
 import 'package:valvn/features/home/data/home_card.dart';
 import 'package:valvn/features/home/home_strings.dart';
-import 'package:valvn/features/home/providers/home_layout_provider.dart';
 import 'package:valvn/features/home/ui/cards/friends_home_card.dart';
 import 'package:valvn/features/home/ui/home_card_frame.dart';
 
@@ -73,7 +73,10 @@ void main() {
       await tester.tap(find.text(HomeStrings.friendsConsentAllow));
       await homeSettle(tester);
 
-      expect(env.prefs.getBool(kHomeFriendsPrefKey), isTrue);
+      expect(
+        env.prefs.getBool(PrefKeys.account(homeMe.puuid, 'home.friendsLive')),
+        isTrue,
+      );
       expect(env.xmppCreated, greaterThan(0));
       // The prompt gave way to the friends who are playing.
       expect(find.text(HomeStrings.friendsConsentTitle), findsNothing);
@@ -90,7 +93,10 @@ void main() {
 
       await tester.tap(find.text(HomeStrings.friendsConsentDecline));
       await homeSettle(tester);
-      expect(env.prefs.getBool(kHomeFriendsPrefKey), isFalse);
+      expect(
+        env.prefs.getBool(PrefKeys.account(homeMe.puuid, 'home.friendsLive')),
+        isFalse,
+      );
       expect(find.text(HomeStrings.friendsConsentTitle), findsNothing);
       expect(find.byType(FriendsHomeCard), findsNothing);
       expect(
@@ -101,7 +107,12 @@ void main() {
 
       await tester.tap(find.text(HomeStrings.undo));
       await homeSettle(tester);
-      expect(env.prefs.containsKey(kHomeFriendsPrefKey), isFalse);
+      expect(
+        env.prefs.containsKey(
+          PrefKeys.account(homeMe.puuid, 'home.friendsLive'),
+        ),
+        isFalse,
+      );
       expect(find.text(HomeStrings.friendsConsentTitle), findsOneWidget);
       await homeUnmount(tester);
     });

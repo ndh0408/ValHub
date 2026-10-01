@@ -31,9 +31,9 @@ void main() {
           {...lfgJson('low'), 'rankMin': 3, 'rankMax': 8},
           lfgJson('old', left: const Duration(minutes: -1)),
           {...lfgJson('full'), 'status': 'full'},
-          // The viewer's own post and one with a broken party code.
+          // Own posts are excluded. A missing list code is valid: join supplies it.
           lfgJson('mine', author: authorJson(id: meId)),
-          lfgJson('bad', code: 'x'),
+          lfgJson('no-list-code', code: ''),
           lfgJson('b'),
           lfgJson('c'),
         ]),
@@ -49,7 +49,7 @@ void main() {
         matchingLfgPreviewProvider(mePuuid).future,
       );
 
-      expect(posts.map((p) => p.id), ['a', 'b']);
+      expect(posts.map((p) => p.id), ['a', 'no-list-code']);
       final q = env.server.calls('GET /v1/lfg').single.query;
       expect((q['region'], q['rank']), ('ap', '18'));
     },

@@ -10,6 +10,7 @@ import '../../data/community_api.dart';
 import '../../data/community_models.dart';
 import '../../providers/community_providers.dart';
 import '../../providers/feed_providers.dart';
+import '../../providers/hidden_authors.dart';
 import '../../providers/scope_providers.dart';
 import '../consent/consent_sheet.dart';
 import '../scope/scope_bar.dart';
@@ -81,7 +82,10 @@ class FeedSliver extends ConsumerWidget {
     }
 
     final state = async.requireValue;
-    final items = state.items;
+    final hidden = ref.watch(hiddenAuthorsProvider(puuid));
+    final items = state.items
+        .where((p) => !hidden.containsKey(p.author.id))
+        .toList();
     final staleError = async.hasError && !async.isLoading ? async.error : null;
     if (items.isEmpty) {
       return SliverToBoxAdapter(

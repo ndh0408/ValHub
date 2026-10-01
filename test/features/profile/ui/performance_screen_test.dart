@@ -32,7 +32,13 @@ void main() {
       expect(find.textContaining('Lịch sử trên thiết bị, từ'), findsOneWidget);
       expect(find.text('100%'), findsWidgets);
       expect(find.text('200'), findsWidgets);
-      verifyNever(() => env.api.matchDetails(any(), any()));
+      verifyNever(
+        () => env.api.matchDetails(
+          any(),
+          any(),
+          cancelToken: any(named: 'cancelToken'),
+        ),
+      );
       final ranked = testContent().queueName('competitive');
       await tester.tap(find.text(ranked).first);
       await settle(tester);
@@ -52,7 +58,13 @@ void main() {
     await pumpProfile(tester, env, const PerformanceScreen());
     await settle(tester);
     expect(find.text(ProfileStrings.performanceEmpty), findsOneWidget);
-    verifyNever(() => env.api.matchDetails(any(), any()));
+    verifyNever(
+      () => env.api.matchDetails(
+        any(),
+        any(),
+        cancelToken: any(named: 'cancelToken'),
+      ),
+    );
     await tester.pumpWidget(const SizedBox.shrink());
   });
 

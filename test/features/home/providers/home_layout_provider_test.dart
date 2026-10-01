@@ -7,6 +7,9 @@ import 'package:valvn/features/home/data/home_layout.dart';
 import 'package:valvn/features/home/providers/home_layout_provider.dart';
 
 import '../../../helpers/test_prefs.dart';
+import '../home_test_env.dart';
+
+import 'package:valvn/core/accounts/account_providers.dart';
 
 /// A [Prefs] whose writes fail (a full disk, a locked store…).
 class _FailingPrefs extends Prefs {
@@ -98,37 +101,39 @@ void main() {
   });
 
   group('friends consent', () {
-    test('null until answered, then persisted', () async {
-      final prefs = await createTestPrefs();
-      final c = _container(prefs);
-      expect(c.read(homeFriendsConsentProvider), isNull);
-
-      await c.read(homeFriendsConsentProvider.notifier).set(allowed: true);
-      expect(c.read(homeFriendsConsentProvider), isTrue);
-      expect(prefs.getBool(kHomeFriendsPrefKey), isTrue);
-      expect(_container(prefs).read(homeFriendsConsentProvider), isTrue);
-
-      await c.read(homeFriendsConsentProvider.notifier).set(allowed: false);
-      expect(_container(prefs).read(homeFriendsConsentProvider), isFalse);
-    });
-
-    test('clear() forgets the answer (undo of "Không, ẩn thẻ")', () async {
-      final prefs = await createTestPrefs({kHomeFriendsPrefKey: false});
-      final c = _container(prefs);
+    String key(String id) => PrefKeys.account(id, 'home.friendsLive');
+    test(
+      'asks separately after switching accounts and ignores legacy consent',
+      () async {
+        final env = await HomeTestEnv.create(accounts: [homeMe, homeAlt1]);
+        await env.prefs.setBool(kHomeFriendsPrefKey, true);
+        final c = ProviderContainer.test(overrides: env.overrides);
+        expect(c.read(homeFriendsConsentProvider), isNull);
+        await c.read(homeFriendsConsentProvider.notifier).set(allowed: true);
+        expect(c.read(homeFriendsConsentProvider), isTrue);
+        expect(env.prefs.getBool(key(homeMe.puuid)), isTrue);
+        c.read(activePuuidProvider.notifier).select(homeAlt1.puuid);
+        expect(c.read(homeFriendsConsentProvider), isNull);
+        await c.read(homeFriendsConsentProvider.notifier).set(allowed: false);
+        expect(c.read(homeFriendsConsentProvider), isFalse);
+        c.read(activePuuidProvider.notifier).select(homeMe.puuid);
+        expect(c.read(homeFriendsConsentProvider), isTrue);
+      },
+    );
+    test('undo removes only the current account answer', () async {
+      final env = await HomeTestEnv.create(friendsConsent: false);
+      final c = ProviderContainer.test(overrides: env.overrides);
       expect(c.read(homeFriendsConsentProvider), isFalse);
       await c.read(homeFriendsConsentProvider.notifier).clear();
       expect(c.read(homeFriendsConsentProvider), isNull);
-      expect(prefs.containsKey(kHomeFriendsPrefKey), isFalse);
+      expect(env.prefs.containsKey(key(homeMe.puuid)), isFalse);
     });
-
-    test('a failed write keeps the answer for this session', () async {
-      await createTestPrefs();
-      final real = await SharedPreferencesWithCache.create(
-        cacheOptions: const SharedPreferencesWithCacheOptions(),
-      );
-      final c = _container(_FailingPrefs(real));
+    test('without an account no consent can be granted', () async {
+      final prefs = await createTestPrefs();
+      final c = _container(prefs);
       await c.read(homeFriendsConsentProvider.notifier).set(allowed: true);
-      expect(c.read(homeFriendsConsentProvider), isTrue);
+      expect(c.read(homeFriendsConsentProvider), isNull);
+      expect(prefs.containsKey(kHomeFriendsPrefKey), isFalse);
     });
   });
 }

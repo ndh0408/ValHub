@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "dataVersion": 1,
+  "regions": {
+    "ap": {
+      "shard": "ap",
+      "feed": "ap",
+      "chat": "jp1",
+      "order": 1
+    },
+    "eu": {
+      "shard": "eu",
+      "feed": "eu",
+      "chat": "euw1",
+      "order": 2
+    },
+    "na": {
+      "shard": "na",
+      "feed": "na",
+      "chat": "na2",
+      "order": 3
+    },
+    "latam": {
+      "shard": "na",
+      "feed": "latam",
+      "chat": "la1",
+      "order": 4
+    },
+    "br": {
+      "shard": "na",
+      "feed": "br",
+      "chat": "br",
+      "order": 5
+    },
+    "kr": {
+      "shard": "kr",
+      "feed": "kr",
+      "chat": "kr1",
+      "order": 6
+    }
+  }
+}

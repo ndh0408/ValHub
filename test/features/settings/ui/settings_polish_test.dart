@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:cupertino_ui/cupertino_ui.dart'
     show CupertinoActionSheet, CupertinoAlertDialog;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,6 +37,8 @@ void main() {
       bool? result;
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: const [Locale('vi')],
           theme: buildDarkTheme().copyWith(platform: platform),
           home: Builder(
             builder: (context) => Scaffold(
@@ -80,6 +83,8 @@ void main() {
     String? picked;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: const [Locale('vi')],
         theme: buildDarkTheme().copyWith(platform: TargetPlatform.iOS),
         home: Builder(
           builder: (context) => Scaffold(
@@ -124,7 +129,14 @@ void main() {
           ],
         );
         await tester.pumpWidget(
-          _bigText(MaterialApp.router(theme: theme, routerConfig: router)),
+          _bigText(
+            MaterialApp.router(
+              localizationsDelegates: appLocalizationsDelegates,
+              supportedLocales: const [Locale('vi')],
+              theme: theme,
+              routerConfig: router,
+            ),
+          ),
         );
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
@@ -149,7 +161,12 @@ void main() {
           ProviderScope(
             overrides: env.overrides,
             child: _bigText(
-              MaterialApp.router(theme: theme, routerConfig: router),
+              MaterialApp.router(
+                localizationsDelegates: appLocalizationsDelegates,
+                supportedLocales: const [Locale('vi')],
+                theme: theme,
+                routerConfig: router,
+              ),
             ),
           ),
         );

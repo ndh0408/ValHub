@@ -211,8 +211,13 @@ class SocialTestEnv {
 
   void _stub() {
     when(() => sessions.events).thenAnswer((_) => const Stream.empty());
-    when(() => api.mmr(any(), subject: any(named: 'subject')))
-        .thenThrow(const NotFoundException());
+    when(
+      () => api.mmr(
+        any(),
+        subject: any(named: 'subject'),
+        cancelToken: any(named: 'cancelToken'),
+      ),
+    ).thenThrow(const NotFoundException());
     when(() => api.names(any(), any())).thenAnswer(
       (inv) async => [
         for (final id in (inv.positionalArguments[1] as Iterable<String>))

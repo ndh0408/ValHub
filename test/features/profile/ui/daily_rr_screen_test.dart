@@ -76,6 +76,7 @@ void main() {
         startIndex: any(named: 'startIndex'),
         endIndex: any(named: 'endIndex'),
         queue: any(named: 'queue'),
+        cancelToken: any(named: 'cancelToken'),
       ),
     ).thenThrow(const TransientException(reason: 'network'));
     await pump(tester);

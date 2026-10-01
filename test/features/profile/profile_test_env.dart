@@ -219,8 +219,13 @@ class ProfileTestEnv {
     when(() => sessions.events).thenAnswer((_) => const Stream.empty());
     when(() => api.platformStatus(any()))
         .thenAnswer((_) async => <String, dynamic>{});
-    when(() => api.mmr(any(), subject: any(named: 'subject')))
-        .thenAnswer((_) async => mmr);
+    when(
+      () => api.mmr(
+        any(),
+        subject: any(named: 'subject'),
+        cancelToken: any(named: 'cancelToken'),
+      ),
+    ).thenAnswer((_) async => mmr);
     when(
       () => api.competitiveUpdates(
         any(),
@@ -228,6 +233,7 @@ class ProfileTestEnv {
         startIndex: any(named: 'startIndex'),
         endIndex: any(named: 'endIndex'),
         queue: any(named: 'queue'),
+        cancelToken: any(named: 'cancelToken'),
       ),
     ).thenAnswer((inv) async {
       final start = inv.namedArguments[#startIndex] as int;
@@ -240,6 +246,7 @@ class ProfileTestEnv {
         startIndex: any(named: 'startIndex'),
         endIndex: any(named: 'endIndex'),
         queue: any(named: 'queue'),
+        cancelToken: any(named: 'cancelToken'),
       ),
     ).thenAnswer((inv) async {
       final queue = inv.namedArguments[#queue] as String?;
@@ -251,7 +258,13 @@ class ProfileTestEnv {
           ? page
           : {'Subject': me, 'Total': 0, 'History': <Object>[]};
     });
-    when(() => api.matchDetails(any(), any())).thenAnswer((inv) async {
+    when(
+      () => api.matchDetails(
+        any(),
+        any(),
+        cancelToken: any(named: 'cancelToken'),
+      ),
+    ).thenAnswer((inv) async {
       final id = (inv.positionalArguments[1] as String).toLowerCase();
       final json = matches[id];
       if (json == null) {

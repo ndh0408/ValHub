@@ -82,6 +82,31 @@ void main() {
     );
   });
 
+  test(
+    'manual region validation reads only the candidate host and own subject',
+    () async {
+      when(() => sessions.forRegionValidation(_puuid, 'eu')).thenAnswer(
+        (_) async => _session('T1').copyWith(hosts: RiotHosts.forRegion('eu')),
+      );
+      adapter.reply(200, {'Subject': _puuid.toUpperCase()});
+      expect(await api.validateRegion(_puuid, 'eu'), true);
+      expect(adapter.requests.single.method, 'GET');
+      expect(
+        adapter.requests.single.uri.toString(),
+        'https://pd.eu.a.pvp.net/mmr/v1/players/$_puuid',
+      );
+      verifyNever(() => sessions.session(any()));
+      verifyNever(
+        () => sessions.refreshAfterAuthFailure(
+          any(),
+          failedAccessToken: any(named: 'failedAccessToken'),
+        ),
+      );
+      adapter.reply(200, {'Subject': 'another-account'});
+      expect(await api.validateRegion(_puuid, 'eu'), false);
+    },
+  );
+
   test('storefront: POST {} with every game header', () async {
     adapter.reply(200, {'SkinsPanelLayout': <String, dynamic>{}});
     final json = await api.storefront(_puuid);

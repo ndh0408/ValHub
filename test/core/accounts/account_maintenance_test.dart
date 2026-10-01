@@ -66,7 +66,7 @@ void main() {
     secure.values['acct.$_id.futureSecret'] = 'secret';
     await prefs.setString(PrefKeys.accountKept(_id, 'wishlist'), 'skin');
     await cache.write('names/map', {'name': 'Player#TAG'});
-    await cache.write('acct/$_id/store_history', {'seen': true});
+    await historyFiles.write('acct/$_id/store_history', {'seen': true});
     await historyFiles.write(RrHistoryStore.key(_id), {
       'v': 1,
       'rows': <Object?>[],
@@ -98,7 +98,7 @@ void main() {
       expect(prefs.getString(PrefKeys.accountKept(_id, 'wishlist')), isNull);
       expect(await historyFiles.exists(RrHistoryStore.key(_id)), isFalse);
       expect(await cache.exists('names/map'), isFalse);
-      expect(await cache.exists('acct/$_id/store_history'), isFalse);
+      expect(await historyFiles.exists('acct/$_id/store_history'), isFalse);
     },
   );
 
@@ -108,6 +108,7 @@ void main() {
     expect(secure.values, isEmpty);
     expect(prefs.getString(PrefKeys.accountKept(_id, 'wishlist')), 'skin');
     expect(await historyFiles.exists(RrHistoryStore.key(_id)), isTrue);
+    expect(await historyFiles.exists('acct/$_id/store_history'), isTrue);
   });
 
   test(

@@ -92,6 +92,7 @@ class LfgCard extends ConsumerWidget {
             trailing: isMine
                 ? const SizedBox(width: 8)
                 : ContentMenuButton(
+                    author: post.author,
                     isMine: false,
                     onSelected: (_) => onReport(),
                   ),
@@ -221,7 +222,8 @@ class LfgCard extends ConsumerWidget {
                 : SizedBox(
                     height: 50,
                     child: FilledButton.icon(
-                      onPressed: expired || joining || !post.hasValidCode
+                      onPressed:
+                          expired || joining || post.status != LfgStatus.open
                           ? null
                           : onJoin,
                       icon: joining

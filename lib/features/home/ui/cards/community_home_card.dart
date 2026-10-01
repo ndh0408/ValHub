@@ -21,6 +21,7 @@ import '../../../../core/ui/rank_badge.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 import '../../../community/community_routes.dart';
+import '../../../community/providers/hidden_authors.dart';
 import '../../../community/community_strings.dart';
 import '../../../community/data/community_models.dart';
 import '../../../community/ui/community_screen.dart' show CommunitySection;
@@ -40,22 +41,26 @@ class CommunityHomeCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final snap = ref.watch(homeCommunitySnapshotProvider(puuid)).value;
     if (snap == null) return const SizedBox.shrink();
+    final hidden = ref.watch(hiddenAuthorsProvider(puuid));
+    final lfg = snap.lfg
+        .where((p) => !hidden.containsKey(p.author.id))
+        .toList();
     final theme = Theme.of(context);
     return HomeCardFrame(
       card: HomeCardId.community,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (snap.lfg.isNotEmpty) ...[
+          if (lfg.isNotEmpty) ...[
             _SectionTitle(HomeStrings.lfgTitle),
-            for (final p in snap.lfg) _LfgRow(post: p),
+            for (final p in lfg) _LfgRow(post: p),
             _LinkButton(
               label: HomeStrings.openLfg,
               onPressed: () =>
                   context.go(CommunityRoutes.section(CommunitySection.lfg)),
             ),
           ],
-          if (snap.lfg.isNotEmpty && snap.trending.isNotEmpty)
+          if (lfg.isNotEmpty && snap.trending.isNotEmpty)
             const SizedBox(height: 8),
           if (snap.trending.isNotEmpty) ...[
             _SectionTitle(HomeStrings.trendingTitle),

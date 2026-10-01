@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/accounts/account_providers.dart';
+import '../../../core/domain/progress_events.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/viewer.dart' show cacheFor;
@@ -129,6 +130,23 @@ final battlePassOverviewProvider = FutureProvider.autoDispose
               .report()
               .catchError((Object _) {}),
         );
+      }
+      final pass = overview.battlePass;
+      if (ref.mounted &&
+          !contracts.isFromCache &&
+          pass != null &&
+          ref.read(accountProvider(id)) != null) {
+        ref
+            .read(progressEventsProvider)
+            .emit(
+              PassObserved(
+                id,
+                pass.contract.uuid,
+                pass.level,
+                pass.levelCount,
+                overview.actEndsAt,
+              ),
+            );
       }
       return overview;
     });

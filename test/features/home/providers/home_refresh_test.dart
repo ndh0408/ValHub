@@ -50,8 +50,13 @@ void main() {
         .thenAnswer((_) async => contractsJson());
     when(() => env.api.dailyTicket(any()))
         .thenAnswer((_) async => dailyTicketJson());
-    when(() => env.api.mmr(any(), subject: any(named: 'subject')))
-        .thenAnswer((_) async => throw const TransientException(reason: 'x'));
+    when(
+      () => env.api.mmr(
+        any(),
+        subject: any(named: 'subject'),
+        cancelToken: any(named: 'cancelToken'),
+      ),
+    ).thenAnswer((_) async => throw const TransientException(reason: 'x'));
     when(
       () => env.api.competitiveUpdates(
         any(),
@@ -59,6 +64,7 @@ void main() {
         startIndex: any(named: 'startIndex'),
         endIndex: any(named: 'endIndex'),
         queue: any(named: 'queue'),
+        cancelToken: any(named: 'cancelToken'),
       ),
     ).thenAnswer((_) async => throw const TransientException(reason: 'x'));
   });
@@ -82,7 +88,13 @@ void main() {
     verify(() => env.api.storefront(_puuid)).called(1);
     verify(() => env.api.wallet(_puuid)).called(1);
     verifyNever(() => env.api.contracts(any()));
-    verifyNever(() => env.api.mmr(any(), subject: any(named: 'subject')));
+    verifyNever(
+      () => env.api.mmr(
+        any(),
+        subject: any(named: 'subject'),
+        cancelToken: any(named: 'cancelToken'),
+      ),
+    );
     await homeUnmount(tester);
   });
 

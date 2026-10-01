@@ -1,6 +1,7 @@
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:valvn/core/storage/prefs.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/features/home/data/home_card.dart';
 import 'package:valvn/features/home/data/home_layout.dart';
@@ -234,7 +235,10 @@ void main() {
       await tester.tap(find.text(HomeStrings.friendsConsentAllow).last);
       await homeSettle(tester);
       expect(container.read(homeFriendsConsentProvider), isTrue);
-      expect(env.prefs.getBool(kHomeFriendsPrefKey), isTrue);
+      expect(
+        env.prefs.getBool(PrefKeys.account(homeMe.puuid, 'home.friendsLive')),
+        isTrue,
+      );
       expect(
         container.read(homeLayoutProvider).isHidden(HomeCardId.friends),
         isFalse,

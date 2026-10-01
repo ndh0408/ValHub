@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/l10n.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,6 +39,8 @@ void main() {
       ProviderScope(
         overrides: env.overrides,
         child: MaterialApp.router(
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: const [Locale('vi')],
           theme: theme ?? buildDarkTheme(),
           builder: (context, child) => MediaQuery(
             data: MediaQuery.of(context)
@@ -94,7 +98,7 @@ void main() {
         find.byType(LegalDocumentScreen),
       );
       expect(screen.document, same(doc));
-      await tester.pageBack();
+      await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
     }
   });

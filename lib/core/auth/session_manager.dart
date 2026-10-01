@@ -187,6 +187,7 @@ class SessionManager {
   /// runs its `retryAfter` is the time left).
   Future<RiotSession> session(String puuid) async {
     final id = puuid.toLowerCase();
+    _ensureUsable(id);
     final cached = _cache[id];
     if (cached != null && !cached.isExpiringSoon(_clock.now())) {
       return _withCurrentVersion(cached);
@@ -237,6 +238,24 @@ class SessionManager {
 
   /// The cached session without any network call (may be expired or null).
   RiotSession? peek(String puuid) => _cache[puuid.toLowerCase()];
+
+  /// Short-lived candidate for an explicit region validation. Does not change
+  /// metadata, cookies, cache routing or initiate silent re-authentication.
+  Future<RiotSession> forRegionValidation(String puuid, String region) async {
+    final id = puuid.toLowerCase();
+    final account = _accounts.find(id);
+    if (account == null || account.needsLogin) {
+      throw NeedsLoginException(puuid: id, reason: 'region_validation');
+    }
+    final hosts = RiotHosts.forRegion(region);
+    hosts.pd; // Reject unsupported region before reading or sending secrets.
+    final session =
+        _cache[id] ?? await _readTokenCache(id, account, hostsOverride: hosts);
+    if (session == null || session.isExpiringSoon(_clock.now())) {
+      throw NeedsLoginException(puuid: id, reason: 'region_validation_expired');
+    }
+    return session.copyWith(hosts: hosts);
+  }
 
   /// Drops the session and deletes the account's secrets (sign-out).
   ///
@@ -310,6 +329,11 @@ class SessionManager {
           cached.accessToken,
           cached.idToken,
         );
+        if (account.regionMode == RegionMode.manual) {
+          await _accounts.patch(id, (a) => a.copyWith(detectedRegion: region));
+          _log?.add('reauth.manualRegionMismatch');
+          return;
+        }
         if (supportedRegions.contains(region) && region != account.region) {
           await _accounts.patch(
             id,
@@ -335,9 +359,11 @@ class SessionManager {
   RiotSession _withCurrentVersion(RiotSession s) {
     final version = _versions.current.riotClientVersion;
     final ua = _versions.apiUserAgent;
-    return (s.clientVersion == version && s.userAgent == ua)
+    final account = _accounts.find(s.puuid);
+    final hosts = account?.hosts ?? s.hosts;
+    return (s.clientVersion == version && s.userAgent == ua && s.hosts == hosts)
         ? s
-        : s.copyWith(clientVersion: version, userAgent: ua);
+        : s.copyWith(clientVersion: version, userAgent: ua, hosts: hosts);
   }
 
   /// Unknown or dead accounts fail before the cross-isolate lock (≈ 5 prefs
@@ -349,6 +375,9 @@ class SessionManager {
     }
     if (account.needsLogin) {
       throw NeedsLoginException(puuid: id, reason: 'marked');
+    }
+    if (account.needsRegionSelection) {
+      throw UnsupportedRegionException(puuid: id);
     }
   }
 
@@ -415,6 +444,9 @@ class SessionManager {
     }
     if (account.needsLogin) {
       throw NeedsLoginException(puuid: id, reason: 'marked');
+    }
+    if (account.needsRegionSelection) {
+      throw UnsupportedRegionException(puuid: id);
     }
 
     // Another isolate (or an earlier run) may already hold fresh tokens.
@@ -626,10 +658,16 @@ class SessionManager {
       // Bootstrap first: if it fails, nothing is left in secure storage for
       // an account that was never added.
       final userInfo = await _bootstrap.fetchUserInfo(tokens.accessToken);
-      final region = await _bootstrap.fetchRegion(
-        tokens.accessToken,
-        tokens.idToken,
-      );
+      var region = '';
+      try {
+        region = await _bootstrap.fetchRegion(
+          tokens.accessToken,
+          tokens.idToken,
+        );
+      } on TransientException catch (e) {
+        if (e.reason != 'no_region') rethrow;
+        // Identity and secrets remain usable; a region selection resolves routing.
+      }
       final entitlements = await _bootstrap.fetchEntitlementsToken(
         tokens.accessToken,
       );
@@ -688,7 +726,11 @@ class SessionManager {
     await _secure.delete(SecureKeys.tokenExpiry(id));
   }
 
-  Future<RiotSession?> _readTokenCache(String id, Account account) async {
+  Future<RiotSession?> _readTokenCache(
+    String id,
+    Account account, {
+    RiotHosts? hostsOverride,
+  }) async {
     final access = await _secure.read(SecureKeys.accessToken(id));
     final idToken = await _secure.read(SecureKeys.idToken(id));
     final ent = await _secure.read(SecureKeys.entitlementsToken(id));
@@ -696,14 +738,16 @@ class SessionManager {
     if (access == null || idToken == null || ent == null || expiryMs == null) {
       return null;
     }
-    if (!supportedRegions.contains(account.region)) return null;
+    if (hostsOverride == null && !supportedRegions.contains(account.region)) {
+      return null;
+    }
     return RiotSession(
       puuid: id,
       accessToken: access,
       idToken: idToken,
       entitlementsToken: ent,
       expiresAt: DateTime.fromMillisecondsSinceEpoch(expiryMs),
-      hosts: account.hosts,
+      hosts: hostsOverride ?? account.hosts,
       clientVersion: _versions.current.riotClientVersion,
       userAgent: _versions.apiUserAgent,
     );

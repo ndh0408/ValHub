@@ -112,9 +112,13 @@ void main() {
     );
   }
 
-  void stubMmr() =>
-      when(() => api.mmr(any(), subject: any(named: 'subject')))
-          .thenAnswer((_) async => competitiveFixtureMap('mmr'));
+  void stubMmr() => when(
+    () => api.mmr(
+      any(),
+      subject: any(named: 'subject'),
+      cancelToken: any(named: 'cancelToken'),
+    ),
+  ).thenAnswer((_) async => competitiveFixtureMap('mmr'));
 
   void stubUpdates(JsonMap Function(int start, String queue) page) =>
       when(
@@ -124,6 +128,7 @@ void main() {
           startIndex: any(named: 'startIndex'),
           endIndex: any(named: 'endIndex'),
           queue: any(named: 'queue'),
+          cancelToken: any(named: 'cancelToken'),
         ),
       ).thenAnswer(
         (inv) async => page(
@@ -139,7 +144,13 @@ void main() {
       await c.read(contentProvider.future);
       final mmr = await c.read(mmrProvider(me.toUpperCase()).future);
       expect(mmr.subject, me);
-      verify(() => api.mmr(me, subject: me)).called(1);
+      verify(
+        () => api.mmr(
+          me,
+          subject: me,
+          cancelToken: any(named: 'cancelToken'),
+        ),
+      ).called(1);
       await pumpEventQueue();
       final history = await c.read(rrHistoryProvider(me).future);
       expect(history.forMatch(updateId(5))!.rrEarned, 32);
@@ -149,7 +160,13 @@ void main() {
       stubMmr();
       final c = await container();
       await c.read(mmrProvider(friend).future);
-      verify(() => api.mmr(me, subject: friend)).called(1);
+      verify(
+        () => api.mmr(
+          me,
+          subject: friend,
+          cancelToken: any(named: 'cancelToken'),
+        ),
+      ).called(1);
       await pumpEventQueue();
       expect((await store.read(friend)).isEmpty, isTrue);
     });
@@ -199,6 +216,7 @@ void main() {
           startIndex: 0,
           endIndex: 20,
           queue: 'console_competitive',
+          cancelToken: any(named: 'cancelToken'),
         ),
       ).called(1);
 
@@ -260,6 +278,7 @@ void main() {
           startIndex: 20,
           endIndex: 40,
           queue: 'competitive',
+          cancelToken: any(named: 'cancelToken'),
         ),
       ).called(1);
       expect((await store.read(me)).rows, hasLength(25));
@@ -363,7 +382,13 @@ void main() {
           region: 'ap',
           shard: 'ap',
         );
-        when(() => api.matchDetails(any(), any())).thenAnswer((inv) async {
+        when(
+          () => api.matchDetails(
+            any(),
+            any(),
+            cancelToken: any(named: 'cancelToken'),
+          ),
+        ).thenAnswer((inv) async {
           if (inv.positionalArguments[0] == me) {
             throw const NeedsLoginException();
           }
@@ -379,7 +404,13 @@ void main() {
         await pumpEventQueue();
         final details = await c.read(matchDetailsProvider(compMatch).future);
         expect(details.matchId, compMatch);
-        verify(() => api.matchDetails(friend, compMatch)).called(1);
+        verify(
+          () => api.matchDetails(
+            friend,
+            compMatch,
+            cancelToken: any(named: 'cancelToken'),
+          ),
+        ).called(1);
         sub.close();
       },
     );
@@ -391,6 +422,7 @@ void main() {
           startIndex: any(named: 'startIndex'),
           endIndex: any(named: 'endIndex'),
           queue: any(named: 'queue'),
+          cancelToken: any(named: 'cancelToken'),
         ),
       ).thenAnswer((_) async => competitiveFixtureMap('match_history'));
       final c = await container();
@@ -410,13 +442,19 @@ void main() {
           startIndex: 0,
           endIndex: 20,
           queue: 'competitive',
+          cancelToken: any(named: 'cancelToken'),
         ),
       ).called(1);
     });
 
     test('details: names resolved, outcome recorded, disk cache', () async {
-      when(() => api.matchDetails(any(), any()))
-          .thenAnswer((_) async => competitiveFixtureMap('match_competitive'));
+      when(
+        () => api.matchDetails(
+          any(),
+          any(),
+          cancelToken: any(named: 'cancelToken'),
+        ),
+      ).thenAnswer((_) async => competitiveFixtureMap('match_competitive'));
       final c = await container();
       final sub = c.listen(matchDetailsProvider(compMatch), (_, _) {});
       final d = await c.read(matchDetailsProvider(compMatch).future);
@@ -433,7 +471,13 @@ void main() {
 
       c.invalidate(matchDetailsProvider(compMatch));
       await c.read(matchDetailsProvider(compMatch).future);
-      verify(() => api.matchDetails(me, compMatch)).called(1);
+      verify(
+        () => api.matchDetails(
+          me,
+          compMatch,
+          cancelToken: any(named: 'cancelToken'),
+        ),
+      ).called(1);
 
       final summary = await c.read(
         matchSummaryProvider((matchId: compMatch, puuid: me)).future,
@@ -444,8 +488,13 @@ void main() {
     });
 
     test('name-service failure keeps the scoreboard', () async {
-      when(() => api.matchDetails(any(), any()))
-          .thenAnswer((_) async => competitiveFixtureMap('match_deathmatch'));
+      when(
+        () => api.matchDetails(
+          any(),
+          any(),
+          cancelToken: any(named: 'cancelToken'),
+        ),
+      ).thenAnswer((_) async => competitiveFixtureMap('match_deathmatch'));
       when(() => api.names(any(), any()))
           .thenAnswer((_) async => throw const TransientException(status: 403));
       final c = await container();

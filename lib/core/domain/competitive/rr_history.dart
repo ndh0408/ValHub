@@ -47,7 +47,9 @@ class RrHistory {
 /// de-duplicated by `MatchID` and capped at [maxRows] (newest kept). Writes
 /// for one PUUID are serialised; storage failures degrade to in-memory data.
 class RrHistoryStore {
-  RrHistoryStore(this._files, {this.maxRows = 5000});
+  RrHistoryStore(this._files, {this.maxRows = 5000, this.canRecord});
+
+  final Future<bool> Function(String id)? canRecord;
 
   final JsonFileCache _files;
   final int maxRows;
@@ -245,6 +247,7 @@ class RrHistoryStore {
   }
 
   Future<void> _save(RrHistory history) async {
+    if (canRecord != null && !await canRecord!(history.puuid)) return;
     _remember(history);
     try {
       await _files.write(key(history.puuid), encode(history));
@@ -299,7 +302,11 @@ class RrHistoryStore {
 
 /// The app-wide [RrHistoryStore] (`<appSupport>/history`).
 final rrHistoryStoreProvider = Provider<RrHistoryStore>((ref) {
-  final store = RrHistoryStore(JsonFileCache.appSupport('history'));
+  final accounts = ref.watch(accountRepositoryProvider);
+  final store = RrHistoryStore(
+    JsonFileCache.appSupport('history'),
+    canRecord: (id) async => await accounts.findFresh(id) != null,
+  );
   final retained = {
     for (final a in ref.read(accountsProvider)) a.puuid,
     for (final key in ref.read(prefsProvider).keys)

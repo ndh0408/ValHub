@@ -1,0 +1,2625 @@
+{
+  "schema": 1,
+  "dataVersion": 1,
+  "cldr": "48.0.0",
+  "countries": {
+    "AD": {
+      "a3": "AND",
+      "m49": "020",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AE": {
+      "a3": "ARE",
+      "m49": "784",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AF": {
+      "a3": "AFG",
+      "m49": "004",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AG": {
+      "a3": "ATG",
+      "m49": "028",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AI": {
+      "a3": "AIA",
+      "m49": "660",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AL": {
+      "a3": "ALB",
+      "m49": "008",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AM": {
+      "a3": "ARM",
+      "m49": "051",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AO": {
+      "a3": "AGO",
+      "m49": "024",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AQ": {
+      "a3": "ATA",
+      "m49": "010",
+      "region": null,
+      "conf": "none",
+      "status": "na",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AR": {
+      "a3": "ARG",
+      "m49": "032",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AS": {
+      "a3": "ASM",
+      "m49": "016",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AT": {
+      "a3": "AUT",
+      "m49": "040",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AU": {
+      "a3": "AUS",
+      "m49": "036",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": true,
+      "notes": [],
+      "src": [
+        "riot-console"
+      ],
+      "via": "area:riot-console"
+    },
+    "AW": {
+      "a3": "ABW",
+      "m49": "533",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AX": {
+      "a3": "ALA",
+      "m49": "248",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "AZ": {
+      "a3": "AZE",
+      "m49": "031",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BA": {
+      "a3": "BIH",
+      "m49": "070",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BB": {
+      "a3": "BRB",
+      "m49": "052",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BD": {
+      "a3": "BGD",
+      "m49": "050",
+      "region": "ap",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BE": {
+      "a3": "BEL",
+      "m49": "056",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BF": {
+      "a3": "BFA",
+      "m49": "854",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BG": {
+      "a3": "BGR",
+      "m49": "100",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BH": {
+      "a3": "BHR",
+      "m49": "048",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BI": {
+      "a3": "BDI",
+      "m49": "108",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BJ": {
+      "a3": "BEN",
+      "m49": "204",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BL": {
+      "a3": "BLM",
+      "m49": "652",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BM": {
+      "a3": "BMU",
+      "m49": "060",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BN": {
+      "a3": "BRN",
+      "m49": "096",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "BO": {
+      "a3": "BOL",
+      "m49": "068",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BQ": {
+      "a3": "BES",
+      "m49": "535",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BR": {
+      "a3": "BRA",
+      "m49": "076",
+      "region": "br",
+      "conf": "region",
+      "status": "available",
+      "console": true,
+      "notes": [],
+      "src": [
+        "riot-gift",
+        "riot-console"
+      ],
+      "via": "area:riot-gift"
+    },
+    "BS": {
+      "a3": "BHS",
+      "m49": "044",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BT": {
+      "a3": "BTN",
+      "m49": "064",
+      "region": "ap",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BV": {
+      "a3": "BVT",
+      "m49": "074",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BW": {
+      "a3": "BWA",
+      "m49": "072",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BY": {
+      "a3": "BLR",
+      "m49": "112",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "BZ": {
+      "a3": "BLZ",
+      "m49": "084",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CA": {
+      "a3": "CAN",
+      "m49": "124",
+      "region": "na",
+      "conf": "region",
+      "status": "available",
+      "console": true,
+      "notes": [],
+      "src": [
+        "riot-gift",
+        "riot-console"
+      ],
+      "via": "area:riot-gift"
+    },
+    "CC": {
+      "a3": "CCK",
+      "m49": "166",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CD": {
+      "a3": "COD",
+      "m49": "180",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CF": {
+      "a3": "CAF",
+      "m49": "140",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CG": {
+      "a3": "COG",
+      "m49": "178",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CH": {
+      "a3": "CHE",
+      "m49": "756",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CI": {
+      "a3": "CIV",
+      "m49": "384",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CK": {
+      "a3": "COK",
+      "m49": "184",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CL": {
+      "a3": "CHL",
+      "m49": "152",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CM": {
+      "a3": "CMR",
+      "m49": "120",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CN": {
+      "a3": "CHN",
+      "m49": "156",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CO": {
+      "a3": "COL",
+      "m49": "170",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CR": {
+      "a3": "CRI",
+      "m49": "188",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CU": {
+      "a3": "CUB",
+      "m49": "192",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CV": {
+      "a3": "CPV",
+      "m49": "132",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CW": {
+      "a3": "CUW",
+      "m49": "531",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CX": {
+      "a3": "CXR",
+      "m49": "162",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CY": {
+      "a3": "CYP",
+      "m49": "196",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "CZ": {
+      "a3": "CZE",
+      "m49": "203",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "DE": {
+      "a3": "DEU",
+      "m49": "276",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "DJ": {
+      "a3": "DJI",
+      "m49": "262",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "DK": {
+      "a3": "DNK",
+      "m49": "208",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "DM": {
+      "a3": "DMA",
+      "m49": "212",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "DO": {
+      "a3": "DOM",
+      "m49": "214",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "DZ": {
+      "a3": "DZA",
+      "m49": "012",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "EC": {
+      "a3": "ECU",
+      "m49": "218",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "EE": {
+      "a3": "EST",
+      "m49": "233",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "EG": {
+      "a3": "EGY",
+      "m49": "818",
+      "region": "eu",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-gift"
+      ],
+      "via": "area:riot-gift"
+    },
+    "EH": {
+      "a3": "ESH",
+      "m49": "732",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "ER": {
+      "a3": "ERI",
+      "m49": "232",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "ES": {
+      "a3": "ESP",
+      "m49": "724",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "ET": {
+      "a3": "ETH",
+      "m49": "231",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "FI": {
+      "a3": "FIN",
+      "m49": "246",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "FJ": {
+      "a3": "FJI",
+      "m49": "242",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "FK": {
+      "a3": "FLK",
+      "m49": "238",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "FM": {
+      "a3": "FSM",
+      "m49": "583",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "FO": {
+      "a3": "FRO",
+      "m49": "234",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "FR": {
+      "a3": "FRA",
+      "m49": "250",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GA": {
+      "a3": "GAB",
+      "m49": "266",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GB": {
+      "a3": "GBR",
+      "m49": "826",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GD": {
+      "a3": "GRD",
+      "m49": "308",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GE": {
+      "a3": "GEO",
+      "m49": "268",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GF": {
+      "a3": "GUF",
+      "m49": "254",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GG": {
+      "a3": "GGY",
+      "m49": "831",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GH": {
+      "a3": "GHA",
+      "m49": "288",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GI": {
+      "a3": "GIB",
+      "m49": "292",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GL": {
+      "a3": "GRL",
+      "m49": "304",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GM": {
+      "a3": "GMB",
+      "m49": "270",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GN": {
+      "a3": "GIN",
+      "m49": "324",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GP": {
+      "a3": "GLP",
+      "m49": "312",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GQ": {
+      "a3": "GNQ",
+      "m49": "226",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GR": {
+      "a3": "GRC",
+      "m49": "300",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GS": {
+      "a3": "SGS",
+      "m49": "239",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GT": {
+      "a3": "GTM",
+      "m49": "320",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GU": {
+      "a3": "GUM",
+      "m49": "316",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GW": {
+      "a3": "GNB",
+      "m49": "624",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "GY": {
+      "a3": "GUY",
+      "m49": "328",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "HK": {
+      "a3": "HKG",
+      "m49": "344",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "HM": {
+      "a3": "HMD",
+      "m49": "334",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "HN": {
+      "a3": "HND",
+      "m49": "340",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "HR": {
+      "a3": "HRV",
+      "m49": "191",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "HT": {
+      "a3": "HTI",
+      "m49": "332",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "HU": {
+      "a3": "HUN",
+      "m49": "348",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "ID": {
+      "a3": "IDN",
+      "m49": "360",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "IE": {
+      "a3": "IRL",
+      "m49": "372",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "IL": {
+      "a3": "ISR",
+      "m49": "376",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "IM": {
+      "a3": "IMN",
+      "m49": "833",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "IN": {
+      "a3": "IND",
+      "m49": "356",
+      "region": "ap",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "IO": {
+      "a3": "IOT",
+      "m49": "086",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "IQ": {
+      "a3": "IRQ",
+      "m49": "368",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "IR": {
+      "a3": "IRN",
+      "m49": "364",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "IS": {
+      "a3": "ISL",
+      "m49": "352",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "IT": {
+      "a3": "ITA",
+      "m49": "380",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "JE": {
+      "a3": "JEY",
+      "m49": "832",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "JM": {
+      "a3": "JAM",
+      "m49": "388",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "JO": {
+      "a3": "JOR",
+      "m49": "400",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "JP": {
+      "a3": "JPN",
+      "m49": "392",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": true,
+      "notes": [],
+      "src": [
+        "riot-console"
+      ],
+      "via": "area:riot-console"
+    },
+    "KE": {
+      "a3": "KEN",
+      "m49": "404",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "KG": {
+      "a3": "KGZ",
+      "m49": "417",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "KH": {
+      "a3": "KHM",
+      "m49": "116",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "KI": {
+      "a3": "KIR",
+      "m49": "296",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "KM": {
+      "a3": "COM",
+      "m49": "174",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "KN": {
+      "a3": "KNA",
+      "m49": "659",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "KP": {
+      "a3": "PRK",
+      "m49": "408",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "KR": {
+      "a3": "KOR",
+      "m49": "410",
+      "region": "kr",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-gift"
+      ],
+      "via": "area:riot-gift"
+    },
+    "KW": {
+      "a3": "KWT",
+      "m49": "414",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "KY": {
+      "a3": "CYM",
+      "m49": "136",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "KZ": {
+      "a3": "KAZ",
+      "m49": "398",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "LA": {
+      "a3": "LAO",
+      "m49": "418",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "LB": {
+      "a3": "LBN",
+      "m49": "422",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "LC": {
+      "a3": "LCA",
+      "m49": "662",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "LI": {
+      "a3": "LIE",
+      "m49": "438",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "LK": {
+      "a3": "LKA",
+      "m49": "144",
+      "region": "ap",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "LR": {
+      "a3": "LBR",
+      "m49": "430",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "LS": {
+      "a3": "LSO",
+      "m49": "426",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "LT": {
+      "a3": "LTU",
+      "m49": "440",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "LU": {
+      "a3": "LUX",
+      "m49": "442",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "LV": {
+      "a3": "LVA",
+      "m49": "428",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "LY": {
+      "a3": "LBY",
+      "m49": "434",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MA": {
+      "a3": "MAR",
+      "m49": "504",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MC": {
+      "a3": "MCO",
+      "m49": "492",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MD": {
+      "a3": "MDA",
+      "m49": "498",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "ME": {
+      "a3": "MNE",
+      "m49": "499",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MF": {
+      "a3": "MAF",
+      "m49": "663",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MG": {
+      "a3": "MDG",
+      "m49": "450",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MH": {
+      "a3": "MHL",
+      "m49": "584",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MK": {
+      "a3": "MKD",
+      "m49": "807",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "ML": {
+      "a3": "MLI",
+      "m49": "466",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MM": {
+      "a3": "MMR",
+      "m49": "104",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "MN": {
+      "a3": "MNG",
+      "m49": "496",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MO": {
+      "a3": "MAC",
+      "m49": "446",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "MP": {
+      "a3": "MNP",
+      "m49": "580",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MQ": {
+      "a3": "MTQ",
+      "m49": "474",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MR": {
+      "a3": "MRT",
+      "m49": "478",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MS": {
+      "a3": "MSR",
+      "m49": "500",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MT": {
+      "a3": "MLT",
+      "m49": "470",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MU": {
+      "a3": "MUS",
+      "m49": "480",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MV": {
+      "a3": "MDV",
+      "m49": "462",
+      "region": "ap",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MW": {
+      "a3": "MWI",
+      "m49": "454",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MX": {
+      "a3": "MEX",
+      "m49": "484",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "MY": {
+      "a3": "MYS",
+      "m49": "458",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "MZ": {
+      "a3": "MOZ",
+      "m49": "508",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "NA": {
+      "a3": "NAM",
+      "m49": "516",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "NC": {
+      "a3": "NCL",
+      "m49": "540",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "NE": {
+      "a3": "NER",
+      "m49": "562",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "NF": {
+      "a3": "NFK",
+      "m49": "574",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "NG": {
+      "a3": "NGA",
+      "m49": "566",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "NI": {
+      "a3": "NIC",
+      "m49": "558",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "NL": {
+      "a3": "NLD",
+      "m49": "528",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "NO": {
+      "a3": "NOR",
+      "m49": "578",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "NP": {
+      "a3": "NPL",
+      "m49": "524",
+      "region": "ap",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "NR": {
+      "a3": "NRU",
+      "m49": "520",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "NU": {
+      "a3": "NIU",
+      "m49": "570",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "NZ": {
+      "a3": "NZL",
+      "m49": "554",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": true,
+      "notes": [],
+      "src": [
+        "riot-console"
+      ],
+      "via": "area:riot-console"
+    },
+    "OM": {
+      "a3": "OMN",
+      "m49": "512",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "PA": {
+      "a3": "PAN",
+      "m49": "591",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "PE": {
+      "a3": "PER",
+      "m49": "604",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "PF": {
+      "a3": "PYF",
+      "m49": "258",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "PG": {
+      "a3": "PNG",
+      "m49": "598",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "PH": {
+      "a3": "PHL",
+      "m49": "608",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "PK": {
+      "a3": "PAK",
+      "m49": "586",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "PL": {
+      "a3": "POL",
+      "m49": "616",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "PM": {
+      "a3": "SPM",
+      "m49": "666",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "PN": {
+      "a3": "PCN",
+      "m49": "612",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "PR": {
+      "a3": "PRI",
+      "m49": "630",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "PS": {
+      "a3": "PSE",
+      "m49": "275",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "PT": {
+      "a3": "PRT",
+      "m49": "620",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "PW": {
+      "a3": "PLW",
+      "m49": "585",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "PY": {
+      "a3": "PRY",
+      "m49": "600",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "QA": {
+      "a3": "QAT",
+      "m49": "634",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "RE": {
+      "a3": "REU",
+      "m49": "638",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "RO": {
+      "a3": "ROU",
+      "m49": "642",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "RS": {
+      "a3": "SRB",
+      "m49": "688",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "RU": {
+      "a3": "RUS",
+      "m49": "643",
+      "region": "eu",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-gift"
+      ],
+      "via": "area:riot-gift"
+    },
+    "RW": {
+      "a3": "RWA",
+      "m49": "646",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SA": {
+      "a3": "SAU",
+      "m49": "682",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SB": {
+      "a3": "SLB",
+      "m49": "090",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SC": {
+      "a3": "SYC",
+      "m49": "690",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SD": {
+      "a3": "SDN",
+      "m49": "729",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SE": {
+      "a3": "SWE",
+      "m49": "752",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SG": {
+      "a3": "SGP",
+      "m49": "702",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "SH": {
+      "a3": "SHN",
+      "m49": "654",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SI": {
+      "a3": "SVN",
+      "m49": "705",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SJ": {
+      "a3": "SJM",
+      "m49": "744",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SK": {
+      "a3": "SVK",
+      "m49": "703",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SL": {
+      "a3": "SLE",
+      "m49": "694",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SM": {
+      "a3": "SMR",
+      "m49": "674",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SN": {
+      "a3": "SEN",
+      "m49": "686",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SO": {
+      "a3": "SOM",
+      "m49": "706",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SR": {
+      "a3": "SUR",
+      "m49": "740",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SS": {
+      "a3": "SSD",
+      "m49": "728",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "ST": {
+      "a3": "STP",
+      "m49": "678",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SV": {
+      "a3": "SLV",
+      "m49": "222",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SX": {
+      "a3": "SXM",
+      "m49": "534",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SY": {
+      "a3": "SYR",
+      "m49": "760",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "SZ": {
+      "a3": "SWZ",
+      "m49": "748",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "TC": {
+      "a3": "TCA",
+      "m49": "796",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "TD": {
+      "a3": "TCD",
+      "m49": "148",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "TF": {
+      "a3": "ATF",
+      "m49": "260",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "TG": {
+      "a3": "TGO",
+      "m49": "768",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "TH": {
+      "a3": "THA",
+      "m49": "764",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "TJ": {
+      "a3": "TJK",
+      "m49": "762",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "TK": {
+      "a3": "TKL",
+      "m49": "772",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "TL": {
+      "a3": "TLS",
+      "m49": "626",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "TM": {
+      "a3": "TKM",
+      "m49": "795",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "TN": {
+      "a3": "TUN",
+      "m49": "788",
+      "region": "eu",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "TO": {
+      "a3": "TON",
+      "m49": "776",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "TR": {
+      "a3": "TUR",
+      "m49": "792",
+      "region": "eu",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-gift"
+      ],
+      "via": "area:riot-gift"
+    },
+    "TT": {
+      "a3": "TTO",
+      "m49": "780",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "TV": {
+      "a3": "TUV",
+      "m49": "798",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "TW": {
+      "a3": "TWN",
+      "m49": "158",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "TZ": {
+      "a3": "TZA",
+      "m49": "834",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "UA": {
+      "a3": "UKR",
+      "m49": "804",
+      "region": "eu",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-gift"
+      ],
+      "via": "area:riot-gift"
+    },
+    "UG": {
+      "a3": "UGA",
+      "m49": "800",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "UM": {
+      "a3": "UMI",
+      "m49": "581",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "US": {
+      "a3": "USA",
+      "m49": "840",
+      "region": "na",
+      "conf": "region",
+      "status": "available",
+      "console": true,
+      "notes": [],
+      "src": [
+        "riot-gift",
+        "riot-console"
+      ],
+      "via": "area:riot-gift"
+    },
+    "UY": {
+      "a3": "URY",
+      "m49": "858",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "UZ": {
+      "a3": "UZB",
+      "m49": "860",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "VA": {
+      "a3": "VAT",
+      "m49": "336",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "VC": {
+      "a3": "VCT",
+      "m49": "670",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "VE": {
+      "a3": "VEN",
+      "m49": "862",
+      "region": "latam",
+      "conf": "unverified",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "VG": {
+      "a3": "VGB",
+      "m49": "092",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "VI": {
+      "a3": "VIR",
+      "m49": "850",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "VN": {
+      "a3": "VNM",
+      "m49": "704",
+      "region": "ap",
+      "conf": "region",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-sea",
+        "riot-gift"
+      ],
+      "via": "area:riot-sea"
+    },
+    "VU": {
+      "a3": "VUT",
+      "m49": "548",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "WF": {
+      "a3": "WLF",
+      "m49": "876",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "WS": {
+      "a3": "WSM",
+      "m49": "882",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "XK": {
+      "a3": "XKK",
+      "m49": "983",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": [],
+      "nonIso": true
+    },
+    "YE": {
+      "a3": "YEM",
+      "m49": "887",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "YT": {
+      "a3": "MYT",
+      "m49": "175",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "ZA": {
+      "a3": "ZAF",
+      "m49": "710",
+      "region": "eu",
+      "conf": "official",
+      "status": "available",
+      "console": null,
+      "notes": [],
+      "src": [
+        "riot-capetown"
+      ],
+      "via": "named"
+    },
+    "ZM": {
+      "a3": "ZMB",
+      "m49": "894",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    },
+    "ZW": {
+      "a3": "ZWE",
+      "m49": "716",
+      "region": null,
+      "conf": "none",
+      "status": "unknown",
+      "console": null,
+      "notes": [],
+      "src": []
+    }
+  },
+  "sources": {
+    "riot-gift": {
+      "url": "https://support.riotgames.com/en-us/valorant/store/gifting-in-valorant",
+      "kind": "official",
+      "checked": "2026-10-01"
+    },
+    "riot-sea": {
+      "url": "https://support.riotgames.com/en-us/valorant/billing/methods-of-payment-for-valorant-southeast-asia",
+      "kind": "official",
+      "checked": "2026-10-01"
+    },
+    "riot-console": {
+      "url": "https://support.riotgames.com/en-us/valorant/gameplay/valorant-console-guide",
+      "kind": "official",
+      "checked": "2026-10-01"
+    },
+    "riot-capetown": {
+      "url": "https://playvalorant.com/en-us/news/dev/valorant-s-cape-town-servers-are-live/",
+      "kind": "official",
+      "checked": "2026-10-01"
+    }
+  }
+}

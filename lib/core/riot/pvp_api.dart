@@ -56,6 +56,39 @@ class PvpApi {
   /// See [callDeadline].
   final Duration deadline;
 
+  /// One non-mutating own-account read before a user saves a manual region.
+  /// Uses the shared limiter and candidate hosts without changing live routing.
+  Future<bool> validateRegion(
+    String puuid,
+    String region, {
+    CancelToken? cancelToken,
+  }) async {
+    final cancel = cancelToken ?? CancelToken();
+    final timer = Timer(deadline, () => cancel.cancel('deadline'));
+    var acquired = false;
+    String? host;
+    try {
+      final session = await _sessions.forRegionValidation(puuid, region);
+      final uri = Uri.parse(
+        '${session.hosts.pd}/mmr/v1/players/${session.puuid}',
+      );
+      host = uri.host;
+      await _limiter.acquire(host, cancelled: cancel.whenCancel);
+      acquired = true;
+      final response = await _dio.getUri<Object?>(
+        uri,
+        options: Options(headers: session.gameHeaders),
+        cancelToken: cancel,
+      );
+      return lowerUuid(asMap(response.data)?['Subject']) == session.puuid;
+    } on Object catch (e) {
+      throw classifyError(e);
+    } finally {
+      timer.cancel();
+      if (acquired && host != null) _limiter.release(host);
+    }
+  }
+
   // ------------------------------------------------------------------ PD (§6.2)
 
   /// P-1 `POST /store/v3/storefront/{puuid}` with body `{}` (400 without it).

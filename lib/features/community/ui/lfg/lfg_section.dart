@@ -1,3 +1,5 @@
+import '../../providers/hidden_authors.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -81,7 +83,7 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
     final header = _Filters(
       filter: filter,
       region: appliedRegion ?? query.region,
-      myRegion: communityRegion(account.region),
+      myRegion: communityAccountRegion(account),
       hasRank: viewerRank != null,
     );
 
@@ -97,7 +99,10 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
     }
 
     final state = async.requireValue;
-    final live0 = state.items.where((p) => !p.isExpired(now)).toList();
+    final hidden = ref.watch(hiddenAuthorsProvider(query.puuid));
+    final live0 = state.items
+        .where((p) => !p.isExpired(now) && !hidden.containsKey(p.author.id))
+        .toList();
     LfgPost? mine;
     if (remembered != null && !remembered.isExpired(now)) mine = remembered;
     if (mine == null && meId != null) {

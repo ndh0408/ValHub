@@ -32,5 +32,25 @@ import workmanager_apple
       GeneratedPluginRegistrant.register(with: registry)
     }
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+    guard let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "ValvnSecrets") else { return }
+    let channel = FlutterMethodChannel(name: "valvn/secrets", binaryMessenger: registrar.messenger())
+    channel.setMethodCallHandler { call, result in
+      switch call.method {
+      case "privacy":
+        SceneDelegate.secretPrivacyEnabled = (call.arguments as? Bool) ?? false
+        result(nil)
+      case "copy":
+        guard let text = call.arguments as? String else {
+          result(FlutterError(code: "invalid_argument", message: nil, details: nil))
+          return
+        }
+        UIPasteboard.general.setItems([["public.utf8-plain-text": text]], options: [
+          .localOnly: true, .expirationDate: Date(timeIntervalSinceNow: 45)
+        ])
+        result(nil)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
   }
 }

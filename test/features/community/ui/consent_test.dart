@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/accounts/account_providers.dart';
-import 'package:valvn/core/accounts/local_data.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/storage/secure_store.dart';
 import 'package:valvn/features/community/community_previews.dart';
@@ -216,12 +215,7 @@ void main() {
         // Sign-out now verifies retained-history erasure as well. Keep this
         // consent test independent of the native application directory.
         final container = ProviderContainer.test(
-          overrides: [
-            ...env.overrides,
-            retainedHistoryFilesProvider.overrideWithValue(
-              MemoryJsonFileCache(),
-            ),
-          ],
+          overrides: env.overrides,
           retry: (_, _) => null,
         );
         final sub = container.listen(
@@ -247,6 +241,32 @@ void main() {
       },
     );
   });
+
+  test(
+    'consent to an older terms version never authorizes Riot-token sharing',
+    () async {
+      await env.prefs.setString(communityConsentKey(mePuuid), 'granted');
+      await env.prefs.setString(communityConsentVersionKey(mePuuid), 'old');
+      final container = env.container();
+      expect(
+        container.read(communityConsentProvider(mePuuid)),
+        CommunityConsent.unknown,
+      );
+      expect(
+        container.read(communityAuthProvider).hasConsent(mePuuid),
+        isFalse,
+      );
+      await container.read(communityConsentProvider(mePuuid).notifier).grant();
+      expect(
+        env.prefs.getString(communityConsentVersionKey(mePuuid)),
+        communityConsentVersion,
+      );
+      expect(
+        DateTime.tryParse(env.prefs.getString(communityConsentAtKey(mePuuid))!),
+        isNotNull,
+      );
+    },
+  );
 
   group('browsing without joining', () {
     testWidgets('the tab opens on the feed, anonymously, with the banner', (

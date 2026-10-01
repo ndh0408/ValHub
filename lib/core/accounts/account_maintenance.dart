@@ -55,11 +55,19 @@ Future<SweepReport> runAccountStartupMaintenance({
     final finished = await repo.finishPendingWipes(
       beforeWipe: cancelNotifications,
       afterWipe: (puuid) async {
-        if (pending[puuid] == false) await eraser.eraseAccount(puuid);
+        if (pending[puuid] == false) {
+          await eraser.eraseAccount(puuid);
+        } else {
+          await prefs.setBool(
+            PrefKeys.accountKept(puuid, 'retainedHistory'),
+            true,
+          );
+        }
         if (repo.loadAll().isEmpty) await eraser.eraseSharedCaches();
       },
     );
     final swept = await repo.sweepOrphans(beforeWipe: cancelNotifications);
+    await eraser.sweepHistory({for (final a in repo.loadAll()) a.puuid});
     final active = repo.activePuuid;
     if (active != null && repo.find(active) == null) {
       await repo.setActivePuuid(repo.loadAll().firstOrNull?.puuid);

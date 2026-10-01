@@ -486,9 +486,20 @@ class LiveTestEnv {
         {'Subject': enemy2, 'GameName': 'Kẻ Thù', 'TagLine': 'EN2'},
       ],
     );
-    when(() => api.mmr(any(), subject: any(named: 'subject')))
-        .thenAnswer((_) async => asMap(competitiveFixture('mmr'))!);
-    when(() => api.matchDetails(any(), any())).thenAnswer((inv) async {
+    when(
+      () => api.mmr(
+        any(),
+        subject: any(named: 'subject'),
+        cancelToken: any(named: 'cancelToken'),
+      ),
+    ).thenAnswer((_) async => asMap(competitiveFixture('mmr'))!);
+    when(
+      () => api.matchDetails(
+        any(),
+        any(),
+        cancelToken: any(named: 'cancelToken'),
+      ),
+    ).thenAnswer((inv) async {
       final id = (inv.positionalArguments[1] as String).toLowerCase();
       final json = matches[id];
       if (json == null) throw const NotFoundException();

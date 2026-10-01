@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/theme/app_theme.dart';
@@ -18,6 +19,8 @@ void main() {
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: const [Locale('vi')],
         theme: theme ?? buildDarkTheme(),
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context)

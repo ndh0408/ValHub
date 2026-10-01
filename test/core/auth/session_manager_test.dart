@@ -306,6 +306,33 @@ void main() {
     },
   );
 
+  test(
+    'missing geo preserves login identity but ordinary requests fail closed',
+    () async {
+      when(() => bootstrap.fetchUserInfo(any())).thenAnswer(
+        (_) async =>
+            const RiotUserInfo(puuid: _puuid, gameName: 'Name', tagLine: 'TAG'),
+      );
+      when(() => bootstrap.fetchRegion(any(), any()))
+          .thenThrow(const TransientException(reason: 'no_region'));
+      final result = await manager.establishFromLogin(
+        tokens: _tokens(clock.now()),
+        cookies: const RiotCookieJar({'ssid': 'fresh'}),
+      );
+      expect(result.userInfo.puuid, _puuid);
+      expect(result.session.region, '');
+      await accounts.patch(_puuid, (a) => a.copyWith(region: ''));
+      await expectLater(
+        manager.session(_puuid),
+        throwsA(isA<UnsupportedRegionException>()),
+      );
+      final candidate = await manager.forRegionValidation(_puuid, 'eu');
+      expect(candidate.hosts.pd, 'https://pd.eu.a.pvp.net');
+      expect(accounts.find(_puuid)!.region, '');
+      expect(manager.peek(_puuid)!.region, '');
+    },
+  );
+
   test('forget wipes every secret of the account', () async {
     secure.values[SecureKeys.accessToken(_puuid)] = 'x';
     await manager.forget(_puuid);

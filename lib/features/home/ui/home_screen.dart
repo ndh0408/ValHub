@@ -283,6 +283,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         every: kHomeLfgRefresh,
         onTick: _pollLfg,
         child: TabPageScaffold(
+          maxContentWidth: double.infinity,
           title: HomeStrings.title,
           showAccountChip: false,
           // The server-status card replaces the banner (no duplicate).

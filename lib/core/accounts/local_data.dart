@@ -1,5 +1,7 @@
 import '../domain/competitive/names.dart' show NameResolver;
 import '../domain/competitive/rr_history.dart';
+import '../domain/competitive/match_stats_store.dart';
+import '../domain/economy/store_history.dart';
 import '../domain/loadout/loadout_presets.dart' show LoadoutPresetStore;
 import '../storage/json_file_cache.dart';
 import '../storage/prefs.dart';
@@ -29,8 +31,12 @@ class LocalDataEraser {
     required this._cache,
     required this._history,
     required this._historyFiles,
+    this._matchStats,
+    this._storeHistory,
   });
 
+  final MatchStatsStore? _matchStats;
+  final StoreHistoryStore? _storeHistory;
   final Prefs _prefs;
   final JsonFileCache _cache;
   final RrHistoryStore _history;
@@ -43,7 +49,10 @@ class LocalDataEraser {
     await _prefs.removePrefix(PrefKeys.accountKeptPrefix(id));
     await _history.delete(id);
     // Propagate a disk failure so app.pendingWipe remains for the next start.
+    await _matchStats?.delete(id);
+    await _storeHistory?.delete(id);
     await _historyFiles.deletePrefix('keep/$id');
+    await _historyFiles.deletePrefix('acct/$id');
   }
 
   /// The caches that hold **other players'** data: Riot IDs looked up by
@@ -60,12 +69,18 @@ class LocalDataEraser {
   /// that is still signed in stays: it has its own screen.
   Future<void> eraseAll({required Set<String> signedIn}) async {
     final keep = {for (final id in signedIn) id.trim().toLowerCase()};
+    final historyIds = {
+      ...keep,
+      ...await _historyFiles.listDirectories('keep'),
+      ...await _historyFiles.listDirectories('acct'),
+    };
+    for (final id in historyIds) {
+      await _matchStats?.delete(id);
+      await _storeHistory?.delete(id);
+    }
     await _history.clear();
     await _historyFiles.deletePrefix('keep');
-    // Current and future account-scoped history recorders share this root.
-    for (final id in keep) {
-      await _cache.deletePrefix('acct/$id/store_history');
-    }
+    await _historyFiles.deletePrefix('acct');
     for (final key in await _prefs.keysOnDisk()) {
       final id = keptKeyOwner(key);
       if (id == null) continue;
@@ -73,6 +88,19 @@ class LocalDataEraser {
       if (isPreset || !keep.contains(id)) await _prefs.remove(key);
     }
     await eraseSharedCaches();
+  }
+
+  /// Removes late-written histories of signed-out accounts that did not
+  /// explicitly retain local data. Kept account markers survive sign-out.
+  Future<void> sweepHistory(Set<String> signedIn) async {
+    final retained = {
+      ...signedIn,
+      for (final key in await _prefs.keysOnDisk())
+        if (keptKeyOwner(key) case final String id) id,
+    };
+    for (final id in await _historyFiles.listDirectories('acct')) {
+      if (!retained.contains(id)) await eraseAccount(id);
+    }
   }
 
   /// The PUUID a `keep.<puuid>.<name>` pref key belongs to, or `null`.
