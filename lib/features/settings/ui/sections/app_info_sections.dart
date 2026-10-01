@@ -6,7 +6,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/domain/competitive/names.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/logging/session_log.dart';
 import '../../../../core/riot/platform_status.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -19,20 +18,21 @@ import '../../settings_routes.dart';
 import '../../settings_strings.dart';
 import '../widgets/settings_widgets.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Opens [uri] outside the app; a snackbar reports failures.
 Future<void> openSettingsLink(
   BuildContext context,
   WidgetRef ref,
   Uri uri,
 ) async {
+  final l10n = context.l10n;
   final messenger = ScaffoldMessenger.maybeOf(context);
   final ok = await ref.read(externalUrlOpenerProvider)(uri);
   if (!ok) {
     messenger
       ?..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(content: Text(SettingsStrings.linkOpenFailed)),
-      );
+      ..showSnackBar(SnackBar(content: Text(l10n.settingsLinkOpenFailed)));
   }
 }
 
@@ -44,19 +44,19 @@ class SettingsSupportSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SettingsGroup(
-      title: SettingsStrings.supportHeader,
+      title: context.l10n.settingsSupportHeader,
       children: [
         ListTile(
           leading: const SettingsIcon(Icons.dns_outlined),
-          title: const Text(SettingsStrings.serverStatus),
-          subtitle: const Text(SettingsStrings.serverStatusSubtitle),
+          title: Text(context.l10n.settingsServerStatus),
+          subtitle: Text(context.l10n.settingsServerStatusSubtitle),
           trailing: const _ServerStatusValue(),
           onTap: () => unawaited(context.push(SettingsRoutes.status)),
         ),
         ListTile(
           leading: const SettingsIcon(Icons.forum_outlined),
-          title: const Text(SettingsStrings.feedback),
-          subtitle: const Text(SettingsStrings.feedbackSubtitle),
+          title: Text(context.l10n.settingsFeedback),
+          subtitle: Text(context.l10n.settingsFeedbackSubtitle),
           trailing: const SettingsChevron(icon: Icons.open_in_new),
           onTap: () =>
               unawaited(openSettingsLink(context, ref, SettingsLinks.feedback)),
@@ -84,12 +84,12 @@ class _ServerStatusValue extends ConsumerWidget {
     if (status == null || status.isEmpty) {
       badge = null;
     } else if (status.activeMaintenances.isNotEmpty) {
-      badge = (SettingsStrings.serverStatusMaintenance, colors.warning);
+      badge = (context.l10n.settingsServerStatusMaintenance, colors.warning);
     } else {
       final count = status.maintenances.length + status.incidents.length;
       final critical = status.incidents.any((i) => i.severity == 'critical');
       badge = (
-        SettingsStrings.serverStatusNotices(count),
+        context.l10n.settingsServerStatusNotices(count),
         critical ? scheme.error : colors.warning,
       );
     }
@@ -146,9 +146,10 @@ class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
   }
 
   Future<void> _sendReport(BuildContext rowContext) async {
+    final l10n = rowContext.l10n;
     final log = ref.read(sessionLogProvider);
     if (log.entries.isEmpty) {
-      _snack(SettingsStrings.exportLogEmpty);
+      _snack(rowContext.l10n.settingsExportLogEmpty);
       return;
     }
     final box = rowContext.findRenderObject();
@@ -170,13 +171,14 @@ class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
     try {
       await ref.read(bugReportSharerProvider)(report, origin: origin);
     } on Object {
-      if (mounted) _snack(SettingsStrings.logShareFailed);
+      if (mounted) _snack(l10n.settingsLogShareFailed);
     }
   }
 
   /// Clears the image / offline-response caches and the recorded bug-report
   /// data; sign-in, wishlist and settings are never touched.
   Future<void> _clearCache() async {
+    final l10n = context.l10n;
     setState(() => _clearing = true);
     final messenger = ScaffoldMessenger.maybeOf(context);
     String message;
@@ -184,9 +186,9 @@ class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
       final freed = await ref.read(cacheServiceProvider).clear();
       await ref.read(nameResolverProvider).clear();
       await ref.read(sessionLogProvider).clear();
-      message = SettingsStrings.cacheCleared(formatBytes(freed));
+      message = l10n.settingsCacheCleared(formatBytes(freed));
     } on Object {
-      message = SettingsStrings.clearCacheFailed;
+      message = l10n.settingsClearCacheFailed;
     }
     if (!mounted) return;
     ref.invalidate(cacheSizeBytesProvider);
@@ -201,21 +203,21 @@ class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
     final cacheSize = ref.watch(cacheSizeBytesProvider);
     final muted = Theme.of(context).colorScheme.onSurfaceVariant;
     return SettingsGroup(
-      title: SettingsStrings.appHeader,
+      title: context.l10n.settingsAppHeader,
       children: [
         Builder(
           builder: (rowContext) => ListTile(
             leading: const SettingsIcon(Icons.bug_report_outlined),
-            title: const Text(SettingsStrings.exportLog),
-            subtitle: const Text(SettingsStrings.exportLogSubtitle),
+            title: Text(rowContext.l10n.settingsExportLog),
+            subtitle: Text(rowContext.l10n.settingsExportLogSubtitle),
             trailing: const SettingsChevron(icon: Icons.ios_share),
             onTap: () => unawaited(_sendReport(rowContext)),
           ),
         ),
         ListTile(
           leading: const SettingsIcon(Icons.cleaning_services_outlined),
-          title: const Text(SettingsStrings.clearCache),
-          subtitle: const Text(SettingsStrings.clearCacheSubtitle),
+          title: Text(context.l10n.settingsClearCache),
+          subtitle: Text(context.l10n.settingsClearCacheSubtitle),
           enabled: !_clearing,
           trailing: _clearing
               ? const SizedBox.square(
@@ -228,7 +230,7 @@ class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
                     style: TextStyle(color: muted),
                   ),
                   AsyncError() => Text(
-                    CommonStrings.dash,
+                    context.l10n.commonDash,
                     style: TextStyle(color: muted),
                   ),
                   _ => const Skeleton(width: 48, height: 14),
@@ -250,12 +252,12 @@ class SettingsAboutSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SettingsGroup(
-      title: SettingsStrings.aboutHeader,
+      title: context.l10n.settingsAboutHeader,
       children: [
         ListTile(
           leading: const SettingsIcon(Icons.shield_outlined),
-          title: const Text(SettingsStrings.aboutTitle),
-          subtitle: const Text(SettingsStrings.aboutRowSubtitle),
+          title: Text(context.l10n.settingsAboutTitle),
+          subtitle: Text(context.l10n.settingsAboutRowSubtitle),
           trailing: const SettingsChevron(),
           onTap: () => unawaited(context.push(SettingsRoutes.about)),
         ),

@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/l10n.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -89,7 +91,11 @@ Future<ProviderContainer> _pumpHost(WidgetTester tester, _Env env) async {
     ProviderScope(
       overrides: env.overrides,
       retry: (_, _) => null,
-      child: const MaterialApp(home: StoreResetReminderHost(child: SizedBox())),
+      child: const MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: StoreResetReminderHost(child: SizedBox()),
+      ),
     ),
   );
   await settle(tester);
@@ -250,6 +256,8 @@ void main() {
           overrides: env.overrides,
           retry: (_, _) => null,
           child: MaterialApp.router(
+            localizationsDelegates: appLocalizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             theme: buildDarkTheme(),
             routerConfig: router,
           ),

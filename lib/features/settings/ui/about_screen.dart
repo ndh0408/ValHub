@@ -5,12 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../legal/legal_documents.dart';
-import '../legal/legal_strings.dart';
 import '../providers/settings_providers.dart';
 import '../settings_routes.dart';
 import '../settings_strings.dart';
@@ -18,6 +16,8 @@ import 'sections/app_info_sections.dart';
 import 'widgets/app_icon_mark.dart';
 import 'widgets/legal_widgets.dart';
 import 'widgets/settings_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S72 "Giới thiệu & pháp lý" hub (docs/design/IA.md "Pháp lý"): the app
 /// icon, name, version and a one-line intro; PHÁP LÝ (privacy policy, terms,
@@ -41,13 +41,13 @@ class AboutScreen extends ConsumerWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
     final mailto = LegalInfo.contactMailto;
     return SubPageScaffold(
-      title: SettingsStrings.aboutTitle,
+      title: context.l10n.settingsAboutTitle,
       slivers: [
         SliverList.list(
           children: [
             _Identity(packageInfo: packageInfo),
             SettingsGroup(
-              title: LegalStrings.legalHeader,
+              title: context.l10n.legalLegalHeader,
               children: [
                 for (final doc in LegalDocuments.all)
                   ListTile(
@@ -60,8 +60,8 @@ class AboutScreen extends ConsumerWidget {
                   ),
                 ListTile(
                   leading: const SettingsIcon(Icons.library_books_outlined),
-                  title: const Text(LegalStrings.thirdPartyLicenses),
-                  subtitle: const Text(LegalStrings.thirdPartyLicensesBody),
+                  title: Text(context.l10n.legalThirdPartyLicenses),
+                  subtitle: Text(context.l10n.legalThirdPartyLicensesBody),
                   trailing: const SettingsChevron(),
                   onTap: () => showThirdPartyLicenses(
                     context,
@@ -71,12 +71,12 @@ class AboutScreen extends ConsumerWidget {
               ],
             ),
             SettingsGroup(
-              title: LegalStrings.contactHeader,
+              title: context.l10n.legalContactHeader,
               children: [
                 ListTile(
                   leading: const SettingsIcon(Icons.mail_outline),
-                  title: const Text(LegalStrings.contact),
-                  subtitle: const Text(LegalStrings.contactBody),
+                  title: Text(context.l10n.legalContact),
+                  subtitle: Text(context.l10n.legalContactBody),
                   trailing: mailto == null
                       ? null
                       : const SettingsChevron(icon: Icons.open_in_new),
@@ -86,8 +86,8 @@ class AboutScreen extends ConsumerWidget {
                 ),
                 ListTile(
                   leading: const SettingsIcon(Icons.forum_outlined),
-                  title: const Text(SettingsStrings.feedback),
-                  subtitle: const Text(SettingsStrings.feedbackSubtitle),
+                  title: Text(context.l10n.settingsFeedback),
+                  subtitle: Text(context.l10n.settingsFeedbackSubtitle),
                   trailing: const SettingsChevron(icon: Icons.open_in_new),
                   onTap: () => unawaited(
                     openSettingsLink(context, ref, SettingsLinks.feedback),
@@ -110,7 +110,7 @@ class AboutScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    CommonStrings.riotDisclaimer,
+                    context.l10n.commonRiotDisclaimer,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: muted,
@@ -150,14 +150,14 @@ class _Identity extends StatelessWidget {
           const SizedBox(height: 16),
           Semantics(
             header: true,
-            label: CommonStrings.appName,
+            label: context.l10n.commonAppName,
             excludeSemantics: true,
             child: Text.rich(
               TextSpan(
                 children: [
-                  const TextSpan(text: SettingsStrings.logoPrefix),
+                  TextSpan(text: context.l10n.settingsLogoPrefix),
                   TextSpan(
-                    text: SettingsStrings.logoSuffix,
+                    text: context.l10n.settingsLogoSuffix,
                     style: TextStyle(
                       color: legibleAccent(context, ValColors.red),
                     ),
@@ -169,7 +169,7 @@ class _Identity extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            CommonStrings.tagline,
+            context.l10n.commonTagline,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(color: muted),
           ),
@@ -184,14 +184,14 @@ class _Identity extends StatelessWidget {
               child: switch (packageInfo) {
                 AsyncData(:final value) => Text(
                   value.buildNumber.isEmpty
-                      ? SettingsStrings.version(value.version)
-                      : '${SettingsStrings.version(value.version)} · '
-                            '${SettingsStrings.buildNumber(value.buildNumber)}',
+                      ? context.l10n.settingsVersion(value.version)
+                      : '${context.l10n.settingsVersion(value.version)} · '
+                            '${context.l10n.settingsBuildNumber(value.buildNumber)}',
                   textAlign: TextAlign.center,
                   style: versionStyle,
                 ),
                 AsyncError() => Text(
-                  SettingsStrings.version(CommonStrings.dash),
+                  context.l10n.settingsVersion(context.l10n.commonDash),
                   style: versionStyle,
                 ),
                 _ => const Skeleton(width: 120, height: 12),
@@ -200,7 +200,7 @@ class _Identity extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            LegalStrings.aboutIntro,
+            context.l10n.legalAboutIntro,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: muted,

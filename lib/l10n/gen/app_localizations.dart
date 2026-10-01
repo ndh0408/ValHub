@@ -1294,6 +1294,12 @@ abstract class AppLocalizations {
   /// **'Chưa xếp hạng'**
   String get contentUnranked;
 
+  /// Generic metadata label resolved at render time: accountRegionUnknown
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa rõ máy chủ'**
+  String get accountRegionUnknown;
+
   /// AccountStrings.accountCount — Switcher sheet (S05)
   ///
   /// In vi, this message translates to:
@@ -7791,6 +7797,18 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Kiểm tra lại'**
   String get settingsGeoCheckAgain;
+
+  /// Generic metadata label resolved at render time: settingsPlatformMobile
+  ///
+  /// In vi, this message translates to:
+  /// **'Di động'**
+  String get settingsPlatformMobile;
+
+  /// Generic metadata label resolved at render time: settingsPlatformOther
+  ///
+  /// In vi, this message translates to:
+  /// **'Nền tảng khác'**
+  String get settingsPlatformOther;
 
   /// SettingsStrings.aboutCreditContent — About screen (S72)
   ///

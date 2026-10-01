@@ -6,7 +6,8 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/notifications/notification_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/sub_page.dart';
-import '../settings_strings.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Outcome of the notification priming flow (S04).
 enum NotificationPrimingResult {
@@ -35,6 +36,7 @@ Future<bool> showNotificationPrimingSheet(BuildContext context) async =>
 Future<NotificationPrimingResult> runNotificationPriming(
   BuildContext context,
 ) async {
+  final l10n = context.l10n;
   final service = ProviderScope.containerOf(
     context,
     listen: false,
@@ -43,7 +45,7 @@ Future<NotificationPrimingResult> runNotificationPriming(
   if (!context.mounted) return NotificationPrimingResult.dismissed;
   return await showValSheet<NotificationPrimingResult>(
         context,
-        title: SettingsStrings.primingTitle,
+        title: l10n.settingsPrimingTitle,
         builder: (_, _) => const NotificationPrimingSheet(),
       ) ??
       NotificationPrimingResult.dismissed;
@@ -80,24 +82,24 @@ class _NotificationPrimingSheetState
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final hairline = valColorsOf(context).hairline;
-    const points = [
+    final points = [
       (
         Icons.storefront_outlined,
         ValColors.red,
-        SettingsStrings.primingPointStore,
-        SettingsStrings.primingPointStoreDetail,
+        context.l10n.settingsPrimingPointStore,
+        context.l10n.settingsPrimingPointStoreDetail,
       ),
       (
         Icons.favorite_border,
         TierColors.premium,
-        SettingsStrings.primingPointWishlist,
-        SettingsStrings.primingPointWishlistDetail,
+        context.l10n.settingsPrimingPointWishlist,
+        context.l10n.settingsPrimingPointWishlistDetail,
       ),
       (
         Icons.nightlight_outlined,
         Color(0xFF9B7BFF),
-        SettingsStrings.primingPointNightMarket,
-        SettingsStrings.primingPointNightMarketDetail,
+        context.l10n.settingsPrimingPointNightMarket,
+        context.l10n.settingsPrimingPointNightMarketDetail,
       ),
     ];
     final scrollable = SingleChildScrollView(
@@ -111,7 +113,7 @@ class _NotificationPrimingSheetState
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
-              SettingsStrings.primingBody,
+              context.l10n.settingsPrimingBody,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
@@ -151,7 +153,7 @@ class _NotificationPrimingSheetState
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  SettingsStrings.primingFootnote,
+                  context.l10n.settingsPrimingFootnote,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
@@ -186,7 +188,7 @@ class _NotificationPrimingSheetState
                           color: Colors.white,
                         ),
                       )
-                    : const Text(SettingsStrings.primingEnable),
+                    : Text(context.l10n.settingsPrimingEnable),
               ),
               const SizedBox(height: 4),
               TextButton(
@@ -196,7 +198,7 @@ class _NotificationPrimingSheetState
                     : () =>
                           Navigator.of(context)
                               .pop(NotificationPrimingResult.dismissed),
-                child: const Text(SettingsStrings.primingLater),
+                child: Text(context.l10n.settingsPrimingLater),
               ),
             ],
           ),

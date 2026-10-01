@@ -1099,6 +1099,10 @@
     "description": "ContentStrings.unranked — Defaults / placeholders",
     "x-context": "lib/core/l10n/content_strings.dart"
   },
+  "accountRegionUnknown": "Chưa rõ máy chủ",
+  "@accountRegionUnknown": {
+    "description": "Generic metadata label resolved at render time: accountRegionUnknown"
+  },
   "accountAccountCount": "{count}/{max} tài khoản",
   "@accountAccountCount": {
     "description": "AccountStrings.accountCount — Switcher sheet (S05)",
@@ -7580,6 +7584,14 @@
   "settingsGeoCheckAgain": "Kiểm tra lại",
   "@settingsGeoCheckAgain": {
     "description": "Country and Riot connection settings: settingsGeoCheckAgain"
+  },
+  "settingsPlatformMobile": "Di động",
+  "@settingsPlatformMobile": {
+    "description": "Generic metadata label resolved at render time: settingsPlatformMobile"
+  },
+  "settingsPlatformOther": "Nền tảng khác",
+  "@settingsPlatformOther": {
+    "description": "Generic metadata label resolved at render time: settingsPlatformOther"
   },
   "settingsAboutCreditContent": "valorant-api.com",
   "@settingsAboutCreditContent": {

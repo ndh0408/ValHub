@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/rendering.dart' show RenderAbstractViewport;
 import 'package:material_ui/material_ui.dart';
 
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/sub_page.dart';
 import '../legal/legal_documents.dart';
-import '../legal/legal_strings.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Native reader of one [LegalDocument] (Terms, Privacy Policy, …) on the
 /// shared sub-page chrome: large title that hands over to the bar, the
@@ -102,7 +102,7 @@ class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
           duration: ValMotion.fast,
           child: FloatingActionButton.small(
             heroTag: null,
-            tooltip: LegalStrings.backToTop,
+            tooltip: context.l10n.legalBackToTop,
             onPressed: scrolled ? _toTop : null,
             child: const Icon(Icons.arrow_upward),
           ),
@@ -159,11 +159,11 @@ class _Header extends StatelessWidget {
         children: [
           _MetaChip(
             icon: Icons.sell_outlined,
-            label: LegalStrings.version(document.version),
+            label: context.l10n.legalVersion(document.version),
           ),
           _MetaChip(
             icon: Icons.event_outlined,
-            label: LegalStrings.effectiveFrom(document.effectiveDate),
+            label: context.l10n.legalEffectiveFrom(document.effectiveDate),
           ),
         ],
       ),
@@ -232,7 +232,7 @@ class _TableOfContents extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
               child: Text(
-                LegalStrings.tocTitle,
+                context.l10n.legalTocTitle,
                 style: ValText.label.copyWith(color: scheme.onSurfaceVariant),
               ),
             ),
@@ -427,7 +427,7 @@ class _Footer extends StatelessWidget {
           Divider(color: valColorsOf(context).hairline),
           const SizedBox(height: 12),
           Text(
-            '${CommonStrings.appName} · ${LegalInfo.copyrightNotice}',
+            '${context.l10n.commonAppName} · ${LegalInfo.copyrightNotice}',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/accounts/account_providers.dart';
-import '../../../core/l10n/account_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
@@ -14,7 +13,9 @@ import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
 import '../data/server_status.dart';
 import '../providers/server_status_provider.dart';
-import '../settings_strings.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
+import 'package:valvn/core/l10n/account_labels.dart';
 
 /// "Trạng thái máy chủ" (VanHub extra, X-1): maintenances and incidents that
 /// Riot publishes for a region, in Vietnamese when Riot provides it, with
@@ -62,9 +63,9 @@ class _ServerStatusScreenState extends ConsumerState<ServerStatusScreen> {
     final async = ref.watch(serverStatusProvider(region));
     final now = ref.watch(clockProvider).now();
     final report = async.value;
-    final regionName = AccountStrings.regionName(region);
+    final regionName = context.l10n.riotRegionName(region);
     return SubPageScaffold(
-      title: SettingsStrings.serverStatus,
+      title: context.l10n.settingsServerStatus,
       subtitle: report == null || report.region != region
           ? regionName
           : '$regionName · ${formatUpdatedAt(report.fetchedAt, now)}',
@@ -74,7 +75,7 @@ class _ServerStatusScreenState extends ConsumerState<ServerStatusScreen> {
           : SegmentedTabs<String>(
               tabs: [
                 for (final r in regions)
-                  SegmentedTab(value: r, label: AccountStrings.regionName(r)),
+                  SegmentedTab(value: r, label: context.l10n.riotRegionName(r)),
               ],
               selected: region,
               onChanged: (r) => setState(() => _picked = r),
@@ -128,7 +129,7 @@ class _ReportSliver extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    SettingsStrings.statusSourceNote,
+                    context.l10n.settingsStatusSourceNote,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                       height: 1.4,
@@ -173,7 +174,7 @@ class _Summary extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = valColorsOf(context);
     final notices = report.notices;
-    final regionName = AccountStrings.regionName(report.region);
+    final regionName = context.l10n.riotRegionName(report.region);
     final (
       IconData icon,
       Color color,
@@ -183,14 +184,14 @@ class _Summary extends StatelessWidget {
       [] => (
         Icons.check_circle_outline,
         colors.win,
-        SettingsStrings.statusAllGood,
-        SettingsStrings.statusAllGoodBody(regionName),
+        context.l10n.settingsStatusAllGood,
+        context.l10n.settingsStatusAllGoodBody(regionName),
       ),
       _ when notices.any((n) => n.isActiveMaintenance) => (
         Icons.construction_outlined,
         colors.warning,
-        SettingsStrings.statusMaintenanceNow,
-        SettingsStrings.statusMaintenanceNowBody,
+        context.l10n.settingsStatusMaintenanceNow,
+        context.l10n.settingsStatusMaintenanceNowBody,
       ),
       _
           when notices.every(
@@ -199,16 +200,16 @@ class _Summary extends StatelessWidget {
         (
           Icons.event_outlined,
           TierColors.select,
-          SettingsStrings.statusScheduled,
-          SettingsStrings.statusScheduledBody(notices.length),
+          context.l10n.settingsStatusScheduled,
+          context.l10n.settingsStatusScheduledBody(notices.length),
         ),
       _ => (
         Icons.warning_amber_rounded,
         notices.any((n) => n.severity == ServerSeverity.critical)
             ? theme.colorScheme.error
             : colors.warning,
-        SettingsStrings.statusIssues,
-        SettingsStrings.statusIssuesBody(notices.length),
+        context.l10n.settingsStatusIssues,
+        context.l10n.settingsStatusIssuesBody(notices.length),
       ),
     };
     return ValCard(
@@ -268,16 +269,16 @@ class _NoticeCardState extends State<_NoticeCard> {
   String? _chipLabel(ServerNotice n) {
     if (n.isMaintenance) {
       return switch (n.phase) {
-        MaintenancePhase.scheduled => SettingsStrings.phaseScheduled,
-        MaintenancePhase.inProgress => SettingsStrings.phaseInProgress,
-        MaintenancePhase.complete => SettingsStrings.phaseComplete,
+        MaintenancePhase.scheduled => context.l10n.settingsPhaseScheduled,
+        MaintenancePhase.inProgress => context.l10n.settingsPhaseInProgress,
+        MaintenancePhase.complete => context.l10n.settingsPhaseComplete,
         null => null,
       };
     }
     return switch (n.severity) {
-      ServerSeverity.info => SettingsStrings.severityInfo,
-      ServerSeverity.warning => SettingsStrings.severityWarning,
-      ServerSeverity.critical => SettingsStrings.severityCritical,
+      ServerSeverity.info => context.l10n.settingsSeverityInfo,
+      ServerSeverity.warning => context.l10n.settingsSeverityWarning,
+      ServerSeverity.critical => context.l10n.settingsSeverityCritical,
       null => null,
     };
   }
@@ -291,13 +292,13 @@ class _NoticeCardState extends State<_NoticeCard> {
     final color = _noticeColor(context, n);
     final chip = _chipLabel(n);
     final platforms = {
-      for (final p in n.platforms) SettingsStrings.platformName(p),
+      for (final p in n.platforms) context.l10n.statusPlatformName(p),
     }.join(' · ');
     final times = [
       if (n.createdAt case final at?)
-        SettingsStrings.statusStarted(formatStatusTime(at, now)),
+        context.l10n.settingsStatusStarted(formatStatusTime(at, now)),
       if (n.lastChange case final at? when at != n.createdAt)
-        SettingsStrings.statusUpdated(formatStatusTime(at, now)),
+        context.l10n.settingsStatusUpdated(formatStatusTime(at, now)),
     ];
     final updates = _expanded
         ? n.updates
@@ -320,8 +321,8 @@ class _NoticeCardState extends State<_NoticeCard> {
                 children: [
                   StatusPill(
                     label: n.isMaintenance
-                        ? SettingsStrings.statusKindMaintenance
-                        : SettingsStrings.statusKindIncident,
+                        ? context.l10n.settingsStatusKindMaintenance
+                        : context.l10n.settingsStatusKindIncident,
                     color: color,
                     icon: n.isMaintenance
                         ? Icons.construction_outlined
@@ -352,7 +353,7 @@ class _NoticeCardState extends State<_NoticeCard> {
                 Divider(height: 1, color: valColorsOf(context).hairline),
                 const SizedBox(height: 10),
                 Text(
-                  SettingsStrings.statusUpdatesHeader,
+                  context.l10n.settingsStatusUpdatesHeader,
                   style: ValText.label.copyWith(color: muted),
                 ),
                 for (final u in updates)
@@ -364,8 +365,8 @@ class _NoticeCardState extends State<_NoticeCard> {
                       onPressed: () => setState(() => _expanded = !_expanded),
                       child: Text(
                         _expanded
-                            ? SettingsStrings.statusFewerUpdates
-                            : SettingsStrings.statusMoreUpdates(hidden),
+                            ? context.l10n.settingsStatusFewerUpdates
+                            : context.l10n.settingsStatusMoreUpdates(hidden),
                       ),
                     ),
                   ),

@@ -1,22 +1,20 @@
 import 'dart:async';
 
-import '../../../../core/l10n/notification_strings.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/domain/economy/saved_storefront.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/notifications/notification_service.dart';
 import '../../../../core/settings/app_settings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 import '../../providers/settings_providers.dart';
-import '../../settings_strings.dart';
 import '../notification_priming_sheet.dart';
 import '../widgets/settings_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// "THÔNG BÁO" (S70, B8/W2/W4): store reset, background wishlist check,
 /// Night Market. Turning a switch on primes the OS permission first (S04);
@@ -107,47 +105,49 @@ class _SettingsNotificationsSectionState
             settings.nightMarketNotifications ||
             anyNotificationEnabled(settings));
     return SettingsGroup(
-      title: SettingsStrings.notificationsHeader,
+      title: context.l10n.settingsNotificationsHeader,
       children: [
         if (showWarning) const _PermissionWarning(),
         for (final (toggle, icon, title, subtitle) in [
           (
             NotificationToggle.storeReset,
             Icons.storefront_outlined,
-            SettingsStrings.notifStoreReset,
+            context.l10n.settingsNotifStoreReset,
             resetAt == null
-                ? NotificationStrings.resetTimingUnknown
-                : SettingsStrings.notifStoreResetSubtitle(formatTime(resetAt)),
+                ? context.l10n.notificationResetTimingUnknown
+                : context.l10n.settingsNotifStoreResetSubtitle(
+                    formatTime(resetAt),
+                  ),
           ),
           (
             NotificationToggle.nightMarket,
             Icons.nightlight_outlined,
-            SettingsStrings.notifNightMarket,
-            SettingsStrings.notifNightMarketSubtitle,
+            context.l10n.settingsNotifNightMarket,
+            context.l10n.settingsNotifNightMarketSubtitle,
           ),
           (
             NotificationToggle.battlePass,
             Icons.notifications_outlined,
-            NotificationStrings.channelBattlePassName,
-            NotificationStrings.localOnlyHint,
+            context.l10n.notificationChannelBattlePassName,
+            context.l10n.notificationLocalOnlyHint,
           ),
           (
             NotificationToggle.rank,
             Icons.notifications_outlined,
-            NotificationStrings.channelRankName,
-            NotificationStrings.localOnlyHint,
+            context.l10n.notificationChannelRankName,
+            context.l10n.notificationLocalOnlyHint,
           ),
           (
             NotificationToggle.community,
             Icons.notifications_outlined,
-            NotificationStrings.channelCommunityName,
-            NotificationStrings.localOnlyHint,
+            context.l10n.notificationChannelCommunityName,
+            context.l10n.notificationLocalOnlyHint,
           ),
           (
             NotificationToggle.lfg,
             Icons.notifications_outlined,
-            NotificationStrings.channelLfgName,
-            NotificationStrings.localOnlyHint,
+            context.l10n.notificationChannelLfgName,
+            context.l10n.notificationLocalOnlyHint,
           ),
         ])
           SettingsSwitchTile(
@@ -157,16 +157,16 @@ class _SettingsNotificationsSectionState
             value: toggle.valueIn(settings),
             onChanged: (v) => unawaited(_toggle(toggle, v)),
           ),
-        const Padding(
+        Padding(
           padding: EdgeInsets.all(16),
-          child: Text(NotificationStrings.backgroundTimingHint),
+          child: Text(context.l10n.notificationBackgroundTimingHint),
         ),
         for (final account in accounts)
           SettingsSwitchTile(
             icon: Icons.favorite_border,
-            title: SettingsStrings.notifWishlist,
+            title: context.l10n.settingsNotifWishlist,
             subtitle:
-                '${account.riotId} · ${SettingsStrings.notifWishlistSubtitle}',
+                '${account.riotId} · ${context.l10n.settingsNotifWishlistSubtitle}',
             value: settings.wishlistNotificationsFor(account.puuid),
             onChanged: (v) => unawaited(_toggleWishlist(account.puuid, v)),
           ),
@@ -198,7 +198,7 @@ class _PermissionWarning extends ConsumerWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  SettingsStrings.notifPermissionMissing,
+                  context.l10n.settingsNotifPermissionMissing,
                   style: theme.textTheme.bodyMedium,
                 ),
               ),
@@ -210,7 +210,7 @@ class _PermissionWarning extends ConsumerWidget {
               onPressed: () => unawaited(
                 ref.read(notificationServiceProvider).openSystemSettings(),
               ),
-              child: const Text(CommonStrings.openSettings),
+              child: Text(context.l10n.commonOpenSettings),
             ),
           ),
         ],

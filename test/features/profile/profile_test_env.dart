@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/l10n.dart';
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -311,7 +313,12 @@ Future<void> pumpProfile(
     ProviderScope(
       overrides: env.overrides,
       retry: (_, _) => null,
-      child: MaterialApp(theme: theme ?? buildDarkTheme(), home: child),
+      child: MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: theme ?? buildDarkTheme(),
+        home: child,
+      ),
     ),
   );
 }
@@ -333,7 +340,12 @@ Future<GoRouter> pumpProfileRouter(
     ProviderScope(
       overrides: env.overrides,
       retry: (_, _) => null,
-      child: MaterialApp.router(theme: buildDarkTheme(), routerConfig: router),
+      child: MaterialApp.router(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: buildDarkTheme(),
+        routerConfig: router,
+      ),
     ),
   );
   return router;

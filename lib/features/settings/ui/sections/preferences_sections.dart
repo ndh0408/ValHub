@@ -12,21 +12,24 @@ import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/ui/sub_page.dart';
 import '../../../../core/util/format.dart';
-import '../../settings_strings.dart';
 import '../widgets/settings_widgets.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+import 'package:valvn/core/l10n/account_labels.dart';
+
 /// "Tối" / "Sáng" / "Theo hệ thống".
-String themeModeLabel(ThemeMode mode) => switch (mode) {
-  ThemeMode.dark => SettingsStrings.themeDark,
-  ThemeMode.light => SettingsStrings.themeLight,
-  ThemeMode.system => SettingsStrings.themeSystem,
+String themeModeLabel(ThemeMode mode, AppLocalizations l10n) => switch (mode) {
+  ThemeMode.dark => l10n.settingsThemeDark,
+  ThemeMode.light => l10n.settingsThemeLight,
+  ThemeMode.system => l10n.settingsThemeSystem,
 };
 
 /// "Tiếng Việt" / "Tiếng Anh".
-String itemLanguageLabel(ItemLanguage language) => switch (language) {
-  ItemLanguage.vi => SettingsStrings.itemLanguageVi,
-  ItemLanguage.en => SettingsStrings.itemLanguageEn,
-};
+String itemLanguageLabel(ItemLanguage language, AppLocalizations l10n) =>
+    switch (language) {
+      ItemLanguage.vi => l10n.settingsItemLanguageVi,
+      ItemLanguage.en => l10n.settingsItemLanguageEn,
+    };
 
 /// "TÙY CHỌN" (S70, X1): live-game switches, the platform of the active
 /// account, the local-currency estimate next to VP prices and the user's
@@ -39,15 +42,18 @@ class SettingsOptionsSection extends ConsumerWidget {
     WidgetRef ref,
     Account account,
   ) async {
+    final l10n = context.l10n;
     final accounts = ref.read(accountsProvider.notifier);
     final chosen = await showSettingsChoiceSheet<GamePlatform>(
       context: context,
-      title: SettingsStrings.platformPickerTitle,
+      title: l10n.settingsPlatformPickerTitle,
       hint:
-          '${SettingsStrings.platformHint}\n'
-          '${SettingsStrings.platformAppliesTo(account.riotId)}',
+          '${l10n.settingsPlatformHint}\n'
+          '${l10n.settingsPlatformAppliesTo(account.riotId)}',
       selected: account.platform,
-      options: [for (final p in GamePlatform.values) (p, p.label)],
+      options: [
+        for (final p in GamePlatform.values) (p, l10n.gamePlatformName(p)),
+      ],
     );
     if (chosen == null || chosen == account.platform) return;
     await accounts.updateAccount(
@@ -67,12 +73,12 @@ class SettingsOptionsSection extends ConsumerWidget {
     final hasPrices = price != null;
     final override = ref.watch(vpPriceOverrideProvider);
     return SettingsGroup(
-      title: SettingsStrings.optionsHeader,
+      title: context.l10n.settingsOptionsHeader,
       children: [
         SettingsSwitchTile(
           icon: Icons.bolt_outlined,
-          title: SettingsStrings.optionAutoOpenLiveGame,
-          subtitle: SettingsStrings.optionAutoOpenLiveGameSubtitle,
+          title: context.l10n.settingsOptionAutoOpenLiveGame,
+          subtitle: context.l10n.settingsOptionAutoOpenLiveGameSubtitle,
           value: settings.autoOpenLiveGame,
           onChanged: (v) => unawaited(
             notifier.update((s) => s.copyWith(autoOpenLiveGame: v)),
@@ -80,7 +86,7 @@ class SettingsOptionsSection extends ConsumerWidget {
         ),
         SettingsSwitchTile(
           icon: Icons.military_tech_outlined,
-          title: SettingsStrings.optionShowPeakRank,
+          title: context.l10n.settingsOptionShowPeakRank,
           value: settings.showPeakRankInGame,
           onChanged: (v) => unawaited(
             notifier.update((s) => s.copyWith(showPeakRankInGame: v)),
@@ -88,16 +94,16 @@ class SettingsOptionsSection extends ConsumerWidget {
         ),
         SettingsSwitchTile(
           icon: Icons.scoreboard_outlined,
-          title: SettingsStrings.optionShowLiveScore,
+          title: context.l10n.settingsOptionShowLiveScore,
           value: settings.showLiveScore,
           onChanged: (v) =>
               unawaited(notifier.update((s) => s.copyWith(showLiveScore: v))),
         ),
         ListTile(
           leading: const SettingsIcon(Icons.sports_esports_outlined),
-          title: const Text(SettingsStrings.optionPlatform),
+          title: Text(context.l10n.settingsOptionPlatform),
           trailing: SettingsValue(
-            (account?.platform ?? GamePlatform.pc).label,
+            context.l10n.gamePlatformName(account?.platform ?? GamePlatform.pc),
             icon: Icons.expand_more,
           ),
           enabled: account != null,
@@ -107,10 +113,10 @@ class SettingsOptionsSection extends ConsumerWidget {
         ),
         SettingsSwitchTile(
           icon: Icons.payments_outlined,
-          title: SettingsStrings.optionShowPrice,
+          title: context.l10n.settingsOptionShowPrice,
           subtitle: price == null
-              ? SettingsStrings.optionShowPriceUnavailable
-              : SettingsStrings.optionShowPriceSubtitle(
+              ? context.l10n.settingsOptionShowPriceUnavailable
+              : context.l10n.settingsOptionShowPriceSubtitle(
                   formatVp(1775),
                   price.format(1775) ?? '',
                 ),
@@ -120,16 +126,16 @@ class SettingsOptionsSection extends ConsumerWidget {
                   notifier.update((s) => s.copyWith(showPriceEstimate: v)),
                 )
               : null,
-          infoTooltip: SettingsStrings.optionShowPriceInfo,
+          infoTooltip: context.l10n.settingsOptionShowPriceInfo,
           onInfo: () => unawaited(showPriceEstimateInfoSheet(context)),
         ),
         ListTile(
           leading: const SettingsIcon(Icons.edit_note_outlined),
-          title: const Text(SettingsStrings.optionOwnPrice),
+          title: Text(context.l10n.settingsOptionOwnPrice),
           subtitle: Text(
             override == null
-                ? SettingsStrings.optionOwnPriceEmpty
-                : SettingsStrings.optionOwnPriceValue(
+                ? context.l10n.settingsOptionOwnPriceEmpty
+                : context.l10n.settingsOptionOwnPriceValue(
                     formatVp(override.vp),
                     formatCurrency(override.price, override.currency),
                   ),
@@ -147,6 +153,7 @@ class SettingsAppearanceSection extends ConsumerWidget {
   const SettingsAppearanceSection({super.key});
 
   Future<void> _pickTheme(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
     final current = ref.read(appSettingsProvider).themeMode;
     final settings = ref.read(appSettingsProvider.notifier);
     const modes = [ThemeMode.dark, ThemeMode.light, ThemeMode.system];
@@ -154,15 +161,15 @@ class SettingsAppearanceSection extends ConsumerWidget {
     if (isCupertino(context)) {
       chosen = await showSettingsChoiceSheet<ThemeMode>(
         context: context,
-        title: SettingsStrings.themePickerTitle,
+        title: l10n.settingsThemePickerTitle,
         selected: current,
-        options: [for (final m in modes) (m, themeModeLabel(m))],
+        options: [for (final m in modes) (m, themeModeLabel(m, context.l10n))],
       );
     } else {
       // Material: a live preview of each theme above the list.
       chosen = await showValSheet<ThemeMode>(
         context,
-        title: SettingsStrings.themePickerTitle,
+        title: l10n.settingsThemePickerTitle,
         builder: (sheetContext, _) {
           void pick(ThemeMode m) => Navigator.of(sheetContext).pop(m);
           return SettingsChoiceList<ThemeMode>(
@@ -187,7 +194,11 @@ class SettingsAppearanceSection extends ConsumerWidget {
             ),
             options: [
               for (final m in modes)
-                (value: m, label: themeModeLabel(m), leading: null),
+                (
+                  value: m,
+                  label: themeModeLabel(m, sheetContext.l10n),
+                  leading: null,
+                ),
             ],
           );
         },
@@ -198,14 +209,18 @@ class SettingsAppearanceSection extends ConsumerWidget {
   }
 
   Future<void> _pickLanguage(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
     final current = ref.read(appSettingsProvider).itemLanguage;
     final settings = ref.read(appSettingsProvider.notifier);
     final chosen = await showSettingsChoiceSheet<ItemLanguage>(
       context: context,
-      title: SettingsStrings.itemLanguagePickerTitle,
-      hint: SettingsStrings.itemLanguageHint,
+      title: l10n.settingsItemLanguagePickerTitle,
+      hint: l10n.settingsItemLanguageHint,
       selected: current,
-      options: [for (final l in ItemLanguage.values) (l, itemLanguageLabel(l))],
+      options: [
+        for (final l in ItemLanguage.values)
+          (l, itemLanguageLabel(l, context.l10n)),
+      ],
     );
     if (chosen != null) await settings.setItemLanguage(chosen);
   }
@@ -217,7 +232,7 @@ class SettingsAppearanceSection extends ConsumerWidget {
       appSettingsProvider.select((s) => s.itemLanguage),
     );
     return SettingsGroup(
-      title: SettingsStrings.appearanceHeader,
+      title: context.l10n.settingsAppearanceHeader,
       children: [
         ListTile(
           leading: SettingsIcon(switch (theme) {
@@ -225,14 +240,14 @@ class SettingsAppearanceSection extends ConsumerWidget {
             ThemeMode.dark => Icons.dark_mode_outlined,
             ThemeMode.system => Icons.brightness_auto_outlined,
           }),
-          title: const Text(SettingsStrings.themeLabel),
-          trailing: SettingsValue(themeModeLabel(theme)),
+          title: Text(context.l10n.settingsThemeLabel),
+          trailing: SettingsValue(themeModeLabel(theme, context.l10n)),
           onTap: () => unawaited(_pickTheme(context, ref)),
         ),
         ListTile(
           leading: const SettingsIcon(Icons.translate_outlined),
-          title: const Text(SettingsStrings.itemLanguageLabel),
-          trailing: SettingsValue(itemLanguageLabel(language)),
+          title: Text(context.l10n.settingsItemLanguageLabel),
+          trailing: SettingsValue(itemLanguageLabel(language, context.l10n)),
           onTap: () => unawaited(_pickLanguage(context, ref)),
         ),
       ],
@@ -319,7 +334,7 @@ class ThemePreviewSwatch extends StatelessWidget {
     return Semantics(
       button: true,
       selected: selected,
-      label: themeModeLabel(mode),
+      label: themeModeLabel(mode, context.l10n),
       excludeSemantics: true,
       child: GestureDetector(
         onTap: onTap,

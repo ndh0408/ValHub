@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/l10n.dart';
+
 import 'dart:ui' show DisplayFeature;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -82,7 +84,7 @@ Future<GoRouter> pumpHomeCard(
         theme: theme ?? buildDarkTheme(),
         locale: appLocale,
         supportedLocales: const [appLocale],
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        localizationsDelegates: appLocalizationsDelegates,
         routerConfig: router,
         builder: disableAnimations
             ? (context, child) => MediaQuery(
@@ -147,7 +149,7 @@ Future<GoRouter> pumpHomeScreen(
         theme: theme ?? buildDarkTheme(),
         locale: appLocale,
         supportedLocales: const [appLocale],
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        localizationsDelegates: appLocalizationsDelegates,
         routerConfig: router,
         builder: (context, child) {
           var data = MediaQuery.of(context);
@@ -205,7 +207,7 @@ Future<GoRouter> pumpHomeApp(
         theme: theme ?? buildDarkTheme(),
         locale: appLocale,
         supportedLocales: const [appLocale],
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        localizationsDelegates: appLocalizationsDelegates,
         routerConfig: router,
         builder: (context, child) {
           var data = MediaQuery.of(context);

@@ -7,6 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/accounts/account.dart';
 import '../../../../core/geo/region_picker.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/l10n/account_labels.dart';
 import '../../../../core/accounts/sign_out_dialog.dart';
 import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/accounts/account_status.dart';
@@ -16,11 +17,8 @@ import '../../../../core/accounts/account_widgets.dart';
 import '../../../../core/auth/auth_routes.dart';
 import '../../../../core/config/app_constants.dart';
 import '../../../../core/domain/competitive/rank.dart';
-import '../../../../core/l10n/account_strings.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/error_view.dart';
-import '../../settings_strings.dart';
 import '../widgets/settings_widgets.dart';
 
 /// "TÀI KHOẢN (n/10) · 2 ĐANG TRỰC TUYẾN" (S70, A4/A11): rows with the
@@ -31,21 +29,23 @@ class SettingsAccountsSection extends ConsumerWidget {
   const SettingsAccountsSection({super.key});
 
   Future<void> _open(BuildContext context, WidgetRef ref, Account a) async {
+    final l10n = context.l10n;
     if (a.needsLogin) {
       await context.push(AuthRoutes.loginPath(reauthPuuid: a.puuid));
       return;
     }
     if (a.puuid == ref.read(activePuuidProvider)) return;
     ref.read(activePuuidProvider.notifier).select(a.puuid);
-    showAppSnackBar(context, SettingsStrings.switchedTo(a.riotId));
+    showAppSnackBar(context, l10n.settingsSwitchedTo(a.riotId));
   }
 
   Future<void> _remove(BuildContext context, WidgetRef ref, Account a) async {
+    final l10n = context.l10n;
     final keep = await chooseSignOutRetention(
       context,
-      title: AccountStrings.removeAccount,
-      message: AccountStrings.removeAccountConfirm(a.riotId),
-      confirmLabel: CommonStrings.delete,
+      title: l10n.accountRemoveAccount,
+      message: l10n.accountRemoveAccountConfirm(a.riotId),
+      confirmLabel: l10n.commonDelete,
     );
     if (keep == null || !context.mounted) return;
     // Capture before the await: removing the last account redirects to
@@ -57,7 +57,7 @@ class SettingsAccountsSection extends ConsumerWidget {
     messenger
       ?..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(content: Text(SettingsStrings.removedAccount(a.riotId))),
+        SnackBar(content: Text(l10n.settingsRemovedAccount(a.riotId))),
       );
   }
 
@@ -69,28 +69,29 @@ class SettingsAccountsSection extends ConsumerWidget {
     final full = accounts.length >= max;
     final scheme = Theme.of(context).colorScheme;
     final online = ref.watch(onlineAccountCountProvider);
-    final header = AccountStrings.accountsHeader(accounts.length, max);
+    final header = context.l10n.accountAccountsHeader(accounts.length, max);
     return AccountActivityPoller(
       child: SettingsGroup(
         title: online > 0
-            ? '$header · ${AccountStrings.onlineCount(online).toUpperCase()}'
+            ? '$header · ${context.l10n.accountOnlineCount(online).toUpperCase()}'
             : header,
         children: [
           ListTile(
             leading: const Icon(Icons.delete_sweep_outlined),
-            title: const Text(AccountStrings.clearLocalData),
+            title: Text(context.l10n.accountClearLocalData),
             onTap: () async {
+              final l10n = context.l10n;
               final ok = await confirmSettingsAction(
                 context,
-                title: AccountStrings.clearLocalData,
-                message: AccountStrings.clearLocalDataConfirm,
-                confirmLabel: CommonStrings.delete,
+                title: l10n.accountClearLocalData,
+                message: l10n.accountClearLocalDataConfirm,
+                confirmLabel: l10n.commonDelete,
                 destructive: true,
               );
               if (!ok || !context.mounted) return;
               await ref.read(accountsProvider.notifier).clearLocalData();
               if (context.mounted) {
-                showAppSnackBar(context, AccountStrings.localDataCleared);
+                showAppSnackBar(context, l10n.accountLocalDataCleared);
               }
             },
           ),
@@ -101,7 +102,7 @@ class SettingsAccountsSection extends ConsumerWidget {
               subtitle: Text(
                 ref.watch(accountProvider(active))!.needsRegionSelection
                     ? context.l10n.settingsGeoNoRegion
-                    : AccountStrings.regionName(
+                    : context.l10n.riotRegionName(
                         ref.watch(accountProvider(active))!.region,
                       ),
               ),
@@ -111,19 +112,20 @@ class SettingsAccountsSection extends ConsumerWidget {
           if (active != null)
             ListTile(
               leading: const Icon(Icons.history_outlined),
-              title: const Text(AccountStrings.clearRrHistory),
+              title: Text(context.l10n.accountClearRrHistory),
               onTap: () async {
+                final l10n = context.l10n;
                 final ok = await confirmSettingsAction(
                   context,
-                  title: AccountStrings.clearRrHistory,
-                  message: AccountStrings.clearRrHistoryConfirm,
-                  confirmLabel: CommonStrings.delete,
+                  title: l10n.accountClearRrHistory,
+                  message: l10n.accountClearRrHistoryConfirm,
+                  confirmLabel: l10n.commonDelete,
                   destructive: true,
                 );
                 if (!ok || !context.mounted) return;
                 await ref.read(deleteRrHistoryProvider(active))();
                 if (context.mounted) {
-                  showAppSnackBar(context, AccountStrings.rrHistoryCleared);
+                  showAppSnackBar(context, l10n.accountRrHistoryCleared);
                 }
               },
             ),
@@ -133,7 +135,7 @@ class SettingsAccountsSection extends ConsumerWidget {
                 Icons.person_off_outlined,
                 color: scheme.onSurfaceVariant,
               ),
-              title: const Text(CommonStrings.errorNoAccount),
+              title: Text(context.l10n.commonErrorNoAccount),
             ),
           for (final a in accounts)
             _AccountRow(
@@ -157,16 +159,18 @@ class SettingsAccountsSection extends ConsumerWidget {
               ),
             ),
             title: Text(
-              AccountStrings.addAccount(accounts.length, max),
+              context.l10n.accountAddAccount(accounts.length, max),
               style: TextStyle(
                 color: full ? scheme.onSurfaceVariant : scheme.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            subtitle: full ? Text(AccountStrings.maxAccounts(max)) : null,
+            subtitle: full ? Text(context.l10n.accountMaxAccounts(max)) : null,
             onTap: full
-                ? () =>
-                      showAppSnackBar(context, AccountStrings.maxAccounts(max))
+                ? () => showAppSnackBar(
+                    context,
+                    context.l10n.accountMaxAccounts(max),
+                  )
                 : () => unawaited(context.push(AuthRoutes.login)),
           ),
           if (accounts.isNotEmpty) const SettingsSignOutAllRow(),
@@ -217,7 +221,7 @@ class _AccountRow extends ConsumerWidget {
         children: [
           if (account.needsLogin)
             IconButton(
-              tooltip: CommonStrings.signInAgain,
+              tooltip: context.l10n.commonSignInAgain,
               icon: const Icon(Icons.login),
               color: valColorsOf(context).warning,
               onPressed: onReauth,
@@ -228,15 +232,15 @@ class _AccountRow extends ConsumerWidget {
               child: Icon(
                 Icons.check,
                 color: scheme.primary,
-                semanticLabel: AccountStrings.active,
+                semanticLabel: context.l10n.accountActive,
               ),
             ),
           IconButton(
             icon: Icon(hasNote ? Icons.key : Icons.key_outlined),
             color: hasNote ? scheme.primary : scheme.onSurfaceVariant,
             tooltip: hasNote
-                ? AccountStrings.loginNote
-                : AccountStrings.loginNoteEmpty,
+                ? context.l10n.accountLoginNote
+                : context.l10n.accountLoginNoteEmpty,
             visualDensity: VisualDensity.compact,
             onPressed: onNote,
           ),
@@ -251,7 +255,7 @@ class _AccountRow extends ConsumerWidget {
               minimumSize: const Size.square(38),
               tapTargetSize: MaterialTapTargetSize.padded,
             ),
-            tooltip: AccountStrings.removeAccount,
+            tooltip: context.l10n.accountRemoveAccount,
             onPressed: onRemove,
           ),
         ],
@@ -280,20 +284,19 @@ class SettingsSignOutAllRow extends ConsumerWidget {
   const SettingsSignOutAllRow({super.key});
 
   Future<void> _signOutAll(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
     final keep = await chooseSignOutRetention(
       context,
-      title: AccountStrings.signOutAll,
-      message: AccountStrings.signOutAllConfirm,
-      confirmLabel: AccountStrings.signOutAll,
+      title: l10n.accountSignOutAll,
+      message: l10n.accountSignOutAllConfirm,
+      confirmLabel: l10n.accountSignOutAll,
     );
     if (keep == null || !context.mounted) return;
     final messenger = ScaffoldMessenger.maybeOf(context);
     await ref.read(accountsProvider.notifier).signOutAll(keepLocalData: keep);
     messenger
       ?..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(content: Text(SettingsStrings.signedOutAll)),
-      );
+      ..showSnackBar(SnackBar(content: Text(l10n.settingsSignedOutAll)));
   }
 
   @override
@@ -303,7 +306,7 @@ class SettingsSignOutAllRow extends ConsumerWidget {
       minTileHeight: 56,
       leading: SizedBox(width: 44, child: Icon(Icons.logout, color: error)),
       title: Text(
-        AccountStrings.signOutAll,
+        context.l10n.accountSignOutAll,
         style: TextStyle(color: error, fontWeight: FontWeight.w600),
       ),
       onTap: () => unawaited(_signOutAll(context, ref)),

@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../../core/l10n/common_strings.dart';
 import '../../legal/legal_documents.dart';
-import '../../legal/legal_strings.dart';
 import '../legal_document_screen.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Opens Flutter's licence page for the third-party open-source libraries
 /// bundled in the app (attribution required by their licences). VanHub
@@ -14,11 +14,11 @@ import '../legal_document_screen.dart';
 void showThirdPartyLicenses(BuildContext context, {String? version}) =>
     showLicensePage(
       context: context,
-      applicationName: CommonStrings.appName,
+      applicationName: context.l10n.commonAppName,
       applicationVersion: version,
       applicationLegalese:
-          '${LegalStrings.licensePageLegalese}\n\n'
-          '${CommonStrings.riotDisclaimer}',
+          '${context.l10n.legalLicensePageLegalese}\n\n'
+          '${context.l10n.commonRiotDisclaimer}',
     );
 
 /// Pushes [doc] as a pageless route on the nearest navigator. Used where the
@@ -67,19 +67,19 @@ class _LegalConsentTextState extends State<LegalConsentText> {
     return Text.rich(
       TextSpan(
         children: [
-          const TextSpan(text: LegalStrings.consentPrefix),
+          TextSpan(text: context.l10n.legalConsentPrefix),
           TextSpan(
-            text: LegalStrings.consentTerms,
+            text: context.l10n.legalConsentTerms,
             style: link,
             recognizer: _terms,
           ),
-          const TextSpan(text: LegalStrings.consentAnd),
+          TextSpan(text: context.l10n.legalConsentAnd),
           TextSpan(
-            text: LegalStrings.consentPrivacy,
+            text: context.l10n.legalConsentPrivacy,
             style: link,
             recognizer: _privacy,
           ),
-          const TextSpan(text: LegalStrings.consentSuffix),
+          TextSpan(text: context.l10n.legalConsentSuffix),
         ],
       ),
       style: widget.style,

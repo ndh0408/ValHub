@@ -7,12 +7,13 @@ import '../../../core/ui/tab_page_scaffold.dart';
 import '../../community/ui/data_rights/community_data_section.dart';
 import '../../community/ui/hidden_authors_sheet.dart';
 import '../providers/settings_providers.dart';
-import '../settings_strings.dart';
 import 'sections/accounts_section.dart';
 import 'sections/country_section.dart';
 import 'sections/app_info_sections.dart';
 import 'sections/notifications_section.dart';
 import 'sections/preferences_sections.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// "Cài đặt" (S70), hosted by the Hồ sơ tab and opened by the ⚙ button of
 /// the Trang chủ and Hồ sơ headers. Route `/settings`.
@@ -30,7 +31,7 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return TabPageScaffold(
-      title: SettingsStrings.title,
+      title: context.l10n.settingsTitle,
       onRefresh: () async {
         final region = ref.read(activeAccountProvider)?.region;
         ref

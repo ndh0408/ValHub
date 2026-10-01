@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/l10n.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -177,7 +179,12 @@ Widget testApp({
 }) => ProviderScope(
   overrides: overrides,
   retry: (_, _) => null,
-  child: MaterialApp(theme: theme ?? buildDarkTheme(), home: home),
+  child: MaterialApp(
+    localizationsDelegates: appLocalizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    theme: theme ?? buildDarkTheme(),
+    home: home,
+  ),
 );
 
 /// Router app: `/collection` + the wishlist routes, and stub `/store`
@@ -210,7 +217,12 @@ Widget routerTestApp({
   return ProviderScope(
     overrides: overrides,
     retry: (_, _) => null,
-    child: MaterialApp.router(theme: buildDarkTheme(), routerConfig: router),
+    child: MaterialApp.router(
+      localizationsDelegates: appLocalizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      theme: buildDarkTheme(),
+      routerConfig: router,
+    ),
   );
 }
 

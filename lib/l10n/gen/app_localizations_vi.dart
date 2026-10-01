@@ -661,6 +661,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get contentUnranked => 'Chưa xếp hạng';
 
   @override
+  String get accountRegionUnknown => 'Chưa rõ máy chủ';
+
+  @override
   String accountAccountCount(int count, int max) {
     return '$count/$max tài khoản';
   }
@@ -4440,6 +4443,12 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get settingsGeoCheckAgain => 'Kiểm tra lại';
+
+  @override
+  String get settingsPlatformMobile => 'Di động';
+
+  @override
+  String get settingsPlatformOther => 'Nền tảng khác';
 
   @override
   String get settingsAboutCreditContent => 'valorant-api.com';

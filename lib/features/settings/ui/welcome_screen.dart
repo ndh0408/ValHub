@@ -4,13 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/auth/auth_routes.dart';
-import '../../../core/l10n/auth_strings.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/val_widgets.dart';
-import '../settings_strings.dart';
 import 'widgets/legal_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S01 "Chào mừng" (shown when no account is signed in). Top-level route
 /// `/welcome`.
@@ -72,7 +71,7 @@ class WelcomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          SettingsStrings.welcomeKicker,
+                          context.l10n.settingsWelcomeKicker,
                           style: ValText.label.copyWith(
                             color: scheme.primary,
                             letterSpacing: 1.6,
@@ -82,7 +81,7 @@ class WelcomeScreen extends StatelessWidget {
                         const _Logo(),
                         const SizedBox(height: 10),
                         Text(
-                          CommonStrings.tagline,
+                          context.l10n.commonTagline,
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                             fontWeight: FontWeight.w500,
@@ -108,7 +107,7 @@ class WelcomeScreen extends StatelessWidget {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                SettingsStrings.welcomeFootnote,
+                                context.l10n.settingsWelcomeFootnote,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: scheme.onSurfaceVariant,
                                   height: 1.4,
@@ -126,7 +125,7 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          CommonStrings.riotDisclaimer,
+                          context.l10n.commonRiotDisclaimer,
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: scheme.onSurfaceVariant,
                             height: 1.4,
@@ -159,7 +158,7 @@ class _Logo extends StatelessWidget {
     ).copyWith(height: 1);
     return Semantics(
       header: true,
-      label: CommonStrings.appName,
+      label: context.l10n.commonAppName,
       excludeSemantics: true,
       child: Row(
         children: [
@@ -179,9 +178,9 @@ class _Logo extends StatelessWidget {
               child: Text.rich(
                 TextSpan(
                   children: [
-                    const TextSpan(text: SettingsStrings.logoPrefix),
+                    TextSpan(text: context.l10n.settingsLogoPrefix),
                     TextSpan(
-                      text: SettingsStrings.logoSuffix,
+                      text: context.l10n.settingsLogoSuffix,
                       style: TextStyle(color: accent),
                     ),
                   ],
@@ -203,24 +202,24 @@ class _FeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hairline = valColorsOf(context).hairline;
-    const items = [
+    final items = [
       (
         Icons.storefront_outlined,
         ValColors.red,
-        SettingsStrings.welcomeBulletStore,
-        SettingsStrings.welcomeBulletStoreDetail,
+        context.l10n.settingsWelcomeBulletStore,
+        context.l10n.settingsWelcomeBulletStoreDetail,
       ),
       (
         Icons.military_tech_outlined,
         ValColors.gold,
-        SettingsStrings.welcomeBulletProfile,
-        SettingsStrings.welcomeBulletProfileDetail,
+        context.l10n.settingsWelcomeBulletProfile,
+        context.l10n.settingsWelcomeBulletProfileDetail,
       ),
       (
         Icons.favorite_border,
         TierColors.premium,
-        SettingsStrings.welcomeBulletWishlist,
-        SettingsStrings.welcomeBulletWishlistDetail,
+        context.l10n.settingsWelcomeBulletWishlist,
+        context.l10n.settingsWelcomeBulletWishlistDetail,
       ),
     ];
     return ValCard(
@@ -326,7 +325,7 @@ class _SignInButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
         icon: const Icon(Icons.login),
-        label: const Text(AuthStrings.signInCta, textAlign: TextAlign.center),
+        label: Text(context.l10n.authSignInCta, textAlign: TextAlign.center),
         onPressed: () {
           Haptics.light();
           unawaited(context.push(AuthRoutes.login));
