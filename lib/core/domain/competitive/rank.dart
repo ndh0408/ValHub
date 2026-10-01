@@ -25,8 +25,8 @@ export 'rr_history.dart';
 
 /// P-11 MMR of any player (family key = PUUID), kept 3 minutes (SUMMARY
 /// §10). For signed-in accounts its `LatestCompetitiveUpdate` is added to
-/// the local RR history (other players' rows are stored only when their
-/// competitive updates are opened, so live-game rosters leave no files).
+/// the local RR history. Other players' competitive updates use bounded
+/// memory only, so opening a roster or player profile leaves no RR file.
 final mmrProvider = FutureProvider.autoDispose.family<PlayerMmr, String>((
   ref,
   puuid,

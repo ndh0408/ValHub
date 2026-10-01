@@ -176,8 +176,8 @@ class _Summary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rates = stats.qualifies();
-    final roundRates = stats.roundGames >= kPerfMinGames;
+    final rates = stats.hasWinRateSample;
+    final roundRates = stats.hasRoundSample;
     String number(double? value, bool allowed) =>
         allowed && value != null ? formatNumber(value) : CommonStrings.dash;
     return ValCard(
@@ -203,11 +203,11 @@ class _Summary extends StatelessWidget {
           ),
           StatTile(
             label: ProfileStrings.adr,
-            value: number(stats.adr, roundRates),
+            value: number(stats.adr, stats.hasDamageSample),
           ),
           StatTile(
             label: ProfileStrings.hs,
-            value: roundRates && stats.headshotRate != null
+            value: stats.hasHitSample && stats.headshotRate != null
                 ? formatPercent(stats.headshotRate!)
                 : CommonStrings.dash,
           ),

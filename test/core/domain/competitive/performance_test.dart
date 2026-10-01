@@ -515,6 +515,9 @@ void main() {
       ]);
       expect(a.adr, closeTo(4200 / 30, 1e-9));
       expect(a.roundGames, 3);
+      expect(a.damageGames, 2);
+      expect(a.hasDamageSample, isFalse);
+      expect(a.hasRoundSample, isTrue);
     });
 
     test('draws are results but not part of the win rate', () {

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:valvn/core/accounts/account.dart';
+import 'package:valvn/core/accounts/account_providers.dart';
 import 'package:valvn/core/domain/economy/store_history.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/features/skin_detail/skin_detail_strings.dart';
@@ -15,11 +17,16 @@ class RecordingHistory extends StoreHistoryStore {
   RecordingHistory(this.history) : super(MemoryJsonFileCache());
   StoreHistory history;
   String? erasedAccount;
+  int reads = 0;
   final events = StreamController<String>.broadcast();
   @override
   Stream<String> get changes => events.stream;
   @override
-  Future<StoreHistory> read(String puuid) async => history;
+  Future<StoreHistory> read(String puuid) async {
+    reads++;
+    return history;
+  }
+
   @override
   Future<void> delete(String puuid) async {
     erasedAccount = puuid;
@@ -49,7 +56,20 @@ void main() {
       addTearDown(store.events.close);
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [storeHistoryStoreProvider.overrideWithValue(store)],
+          overrides: [
+            storeHistoryStoreProvider.overrideWithValue(store),
+            accountProvider.overrideWith(
+              (ref, id) => id == 'me'
+                  ? const Account(
+                      puuid: 'me',
+                      gameName: 'Tôi',
+                      tagLine: '1',
+                      region: 'ap',
+                      shard: 'ap',
+                    )
+                  : null,
+            ),
+          ],
           child: MaterialApp(
             home: Scaffold(
               body: StoreHistoryLine(puuid: 'me', skin: skin),
@@ -73,4 +93,20 @@ void main() {
       await tester.pumpWidget(const SizedBox.shrink());
     },
   );
+
+  test('another player cannot read a retained store history file', () async {
+    final store = RecordingHistory(StoreHistory());
+    addTearDown(store.events.close);
+    final container = ProviderContainer.test(
+      overrides: [
+        storeHistoryStoreProvider.overrideWithValue(store),
+        accountProvider.overrideWith((ref, id) => null),
+      ],
+    );
+    final history = await container.read(
+      storeHistoryProvider('foreign').future,
+    );
+    expect(history.isEmpty, isTrue);
+    expect(store.reads, 0);
+  });
 }

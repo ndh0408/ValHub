@@ -99,7 +99,7 @@ class FetchedJson {
   /// originally received, so countdowns stay correct).
   final DateTime receivedAt;
 
-  /// The transient failure that made us fall back to the cache; `null` for
+  /// The offline/login/maintenance failure behind this copy; `null` for
   /// live data.
   final RiotException? cachedAfter;
 
@@ -107,8 +107,9 @@ class FetchedJson {
 }
 
 /// Fetches [fetch]; on success stores the payload under
-/// `acct/<puuid>/<name>` (wiped at sign-out). On a [TransientException]
-/// returns the last stored copy instead (X4), or rethrows when there is none.
+/// `acct/<puuid>/<name>` (wiped at sign-out). On a [TransientException],
+/// [NeedsLoginException] or [MaintenanceException], returns the last stored
+/// copy instead (X4), or rethrows when there is none.
 /// Every other error propagates unchanged.
 Future<FetchedJson> fetchWithOfflineCache(
   Ref ref, {
@@ -145,13 +146,13 @@ Future<FetchedJson> fetchWithOfflineCache(
   }
 }
 
-/// Delay before retrying after serving an offline copy: the server's
-/// `Retry-After` when given, clamped to 30 s … 10 min.
+/// Only network, login and maintenance errors may serve an offline copy.
 bool canUseOfflineCopy(RiotException error) =>
     error is TransientException ||
     error is NeedsLoginException ||
     error is MaintenanceException;
 
+/// Retry-After (30 s … 10 min); login and maintenance wait 10 minutes.
 Duration offlineRetryDelay(RiotException error) {
   final wanted = error is TransientException
       ? error.retryAfter ?? kOfflineRetryDelay

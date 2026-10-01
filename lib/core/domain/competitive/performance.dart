@@ -452,6 +452,8 @@ class PerfAggregate {
     this.score = 0,
     this.damage = 0,
     this.damageRounds = 0,
+    this.damageGames = 0,
+    this.hitGames = 0,
     this.headshots = 0,
     this.hits = 0,
     this.firstBloods = 0,
@@ -472,6 +474,7 @@ class PerfAggregate {
     var games = 0, wins = 0, losses = 0, draws = 0;
     var roundGames = 0, rounds = 0, kills = 0, deaths = 0, assists = 0;
     var score = 0, damage = 0, damageRounds = 0, headshots = 0, hits = 0;
+    var damageGames = 0, hitGames = 0;
     var fb = 0, fd = 0;
     var multiGames = 0, m2 = 0, m3 = 0, m4 = 0, m5 = 0;
     final atk = _SideSum();
@@ -497,9 +500,11 @@ class PerfAggregate {
       score += l.score;
       headshots += l.headshots;
       hits += l.hits;
+      if (l.hits > 0) hitGames++;
       fb += l.firstBloods;
       fd += l.firstDeaths;
       if (l.damage case final dmg?) {
+        damageGames++;
         damage += dmg;
         damageRounds += l.rounds;
       }
@@ -526,6 +531,8 @@ class PerfAggregate {
       score: score,
       damage: damage,
       damageRounds: damageRounds,
+      damageGames: damageGames,
+      hitGames: hitGames,
       headshots: headshots,
       hits: hits,
       firstBloods: fb,
@@ -557,6 +564,8 @@ class PerfAggregate {
 
   /// Rounds of the matches that have damage data (the ADR denominator).
   final int damageRounds;
+  final int damageGames;
+  final int hitGames;
   final int headshots;
   final int hits;
   final int firstBloods;
@@ -576,6 +585,12 @@ class PerfAggregate {
 
   /// Whether the sample is large enough to show rates.
   bool qualifies([int minGames = kPerfMinGames]) => games >= minGames;
+
+  /// Each rate requires enough matches proving its own denominator.
+  bool get hasWinRateSample => wins + losses >= kPerfMinGames;
+  bool get hasRoundSample => roundGames >= kPerfMinGames;
+  bool get hasDamageSample => damageGames >= kPerfMinGames;
+  bool get hasHitSample => hitGames >= kPerfMinGames;
 
   /// Wins / decided games (draws excluded); `null` without decided games.
   double? get winRate {

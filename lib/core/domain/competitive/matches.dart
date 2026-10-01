@@ -346,7 +346,7 @@ class MatchHistoryNotifier
 }
 
 /// Typed match details as the **active account** sees them (R10–R12, G11),
-/// cached on disk forever (completed matches) and for 10 minutes in memory.
+/// cached on disk in the bounded completed-match LRU and for 10 minutes in memory.
 /// Blank Riot IDs are filled via [NameResolver] (best effort: names stay
 /// blank if name-service fails). Also records the match outcome of every
 /// signed-in participant for Daily RR (SUMMARY §9.6) and their stat line in
@@ -389,7 +389,7 @@ final viewerMatchDetailsProvider = FutureProvider.autoDispose
     .family<MatchDetails, ViewerMatchQuery>((ref, query) async {
       final id = query.matchId;
       final viewer = query.viewer;
-      if (ref.watch(accountProvider(viewer)) == null) {
+      if (!ref.watch(accountProvider(viewer).select((a) => a != null))) {
         throw const NeedsLoginException(reason: 'no_account');
       }
       final repo = ref.watch(matchRepositoryProvider);

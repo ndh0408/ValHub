@@ -68,4 +68,30 @@ void main() {
     expect(view.byAgent.single.games, 3);
     expect(view.byMap.single.games, 3);
   });
+
+  test('unknown-side matches cannot qualify a one-match side sample', () {
+    final view = buildPerformanceView(
+      MatchLedger(
+        puuid: 'me',
+        lines: [
+          MatchStatLine(
+            matchId: 'known',
+            startedAt: now,
+            outcome: MatchOutcome.win,
+            rounds: 10,
+            attack: const SideLine(rounds: 10, won: 10),
+          ),
+          line('unknown-a', 1),
+          line('unknown-b', 2),
+        ],
+      ),
+      now: now,
+      toLocal: (d) => d,
+    );
+    expect(view.overall.qualifies(), isTrue);
+    expect(view.roundsWithSide, 10);
+    expect(view.roundsTotal, 30);
+    expect(view.attackQualifies, isFalse);
+    expect(view.defenseQualifies, isFalse);
+  });
 }

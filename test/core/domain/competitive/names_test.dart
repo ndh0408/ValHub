@@ -5,6 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/domain/competitive/names.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/storage/prefs.dart';
+import 'package:valvn/core/storage/json_file_cache.dart';
 import 'package:valvn/core/util/clock.dart';
 import 'package:valvn/core/util/json.dart';
 
@@ -165,6 +166,21 @@ void main() {
       expect(calls, isEmpty);
       await r.flush();
       expect((await resolver().resolveOne(me, friend))!.gameName, 'Bạn');
+    });
+
+    test('unavailable name file does not block network resolution', () async {
+      final r = NameResolver(
+        api: api,
+        prefs: prefs,
+        files: JsonFileCache(() async => throw StateError('no directory')),
+        clock: clock,
+        batchWindow: Duration.zero,
+      );
+      expect((await r.resolveOne(me, enemy1))!.gameName, 'P$enemy1');
+      expect(calls, [
+        [enemy1],
+      ]);
+      r.dispose();
     });
 
     test('bounded file cache leaves no names in preferences', () async {

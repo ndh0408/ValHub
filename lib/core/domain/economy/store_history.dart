@@ -577,6 +577,7 @@ final storeHistoryStoreProvider = Provider<StoreHistoryStore>((ref) {
 final storeHistoryProvider = FutureProvider.autoDispose
     .family<StoreHistory, String>((ref, puuid) {
       final id = puuid.trim().toLowerCase();
+      if (ref.watch(accountProvider(id)) == null) return StoreHistory();
       final store = ref.watch(storeHistoryStoreProvider);
       final sub = store.changes
           .where((changed) => changed == id)
@@ -594,8 +595,13 @@ Future<void> recordStoreHistoryFor(
   DateTime seenAt,
 ) async {
   try {
-    if (store.isFromCache || ref.read(accountProvider(puuid)) == null) return;
-    await ref.read(storeHistoryStoreProvider).record(puuid, store, seenAt);
+    final id = puuid.trim().toLowerCase();
+    if (!ref.mounted ||
+        store.isFromCache ||
+        ref.read(accountProvider(id)) == null) {
+      return;
+    }
+    await ref.read(storeHistoryStoreProvider).record(id, store, seenAt);
   } on Object {
     // History is a bonus: a failure never breaks the store screen.
   }

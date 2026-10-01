@@ -333,7 +333,13 @@ class NameResolver {
   Future<void> _loadFile() async {
     final generation = _generation;
     final legacy = asMap(_prefs?.getJson(prefsKey));
-    final stored = asMap((await _files?.read(fileKey))?.data) ?? legacy;
+    JsonMap? stored;
+    try {
+      stored = asMap((await _files?.read(fileKey))?.data);
+    } on Object {
+      // Optional storage must never prevent name-service from running.
+    }
+    stored ??= legacy;
     if (_prefs != null) await _prefs.remove(prefsKey);
     if (stored == null || _disposed || generation != _generation) return;
     for (final MapEntry(:key, :value) in stored.entries) {
