@@ -7,7 +7,7 @@
       "member": "appName",
       "key": "commonAppName",
       "kind": "string",
-      "value": "ValVN",
+      "value": "VanHub",
       "doc": null,
       "section": "",
       "aliasOf": null
@@ -546,7 +546,7 @@
       },
       "icu": "Gói có lợi nhất: {vp} = {price}",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "source": "static String priceBestPack(String vp, String price) => 'Gói có lợi nhất: $vp = $price';"
     },
     {
@@ -557,7 +557,7 @@
       "kind": "string",
       "value": "Sửa giá bạn đã nhập",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -568,7 +568,7 @@
       "kind": "string",
       "value": "Nhập giá gói VP của bạn",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -579,7 +579,7 @@
       "kind": "string",
       "value": "Số tiền “≈ …” cạnh giá VP là ước tính, quy đổi theo gói VP có lợi nhất. Bạn trả bằng VP trong game; số tiền thật tùy gói nạp, kênh thanh toán, thuế và khuyến mãi lúc bạn mua.",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -590,7 +590,7 @@
       "kind": "string",
       "value": "Giá quy đổi ước tính",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -601,7 +601,7 @@
       "kind": "string",
       "value": "Giá ước tính — chạm để xem cách tính",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -612,7 +612,7 @@
       "kind": "string",
       "value": "Đã ẩn giá quy đổi. Bật lại trong Cài đặt.",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -623,7 +623,7 @@
       "kind": "string",
       "value": "Ẩn giá quy đổi",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -634,7 +634,7 @@
       "kind": "string",
       "value": "Mở trang nguồn",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -643,7 +643,7 @@
       "member": "priceOverrideBody",
       "key": "commonPriceOverrideBody",
       "kind": "string",
-      "value": "Nhập số tiền bạn thực trả cho một gói VP (xem trong cửa hàng của game hoặc hóa đơn). ValVN dùng giá này để ước tính giá quy đổi cho mọi món đồ; giá chỉ lưu trên thiết bị này.",
+      "value": "Nhập số tiền bạn thực trả cho một gói VP (xem trong cửa hàng của game hoặc hóa đơn). VanHub dùng giá này để ước tính giá quy đổi cho mọi món đồ; giá chỉ lưu trên thiết bị này.",
       "doc": null,
       "section": "\"Giá gói VP của bạn\" editor",
       "aliasOf": null
@@ -792,7 +792,7 @@
       "kind": "string",
       "value": "Các gói VP",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -806,7 +806,7 @@
       },
       "icu": "Xem nguồn bảng giá",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "source": "static String priceSource(String url) => 'Xem nguồn bảng giá';"
     },
     {
@@ -820,7 +820,7 @@
       },
       "icu": "Theo bảng giá gói VP ở khu vực {country}",
       "doc": "\"Bảng giá chính thức ở khu vực VN\" (ISO country code).",
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "source": "static String priceSourceOfficial(String country) => 'Theo bảng giá gói VP ở khu vực $country';"
     },
     {
@@ -831,7 +831,7 @@
       "kind": "string",
       "value": "Theo giá gói VP do bạn nhập",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -842,7 +842,7 @@
       "kind": "string",
       "value": "Chưa có bảng giá đã xác minh cho khu vực của bạn. Nhập giá của một gói VP bạn từng mua để xem giá quy đổi ước tính.",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -856,7 +856,7 @@
       },
       "icu": "Cập nhật bảng giá: {date}",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "source": "static String priceUpdated(String date) => 'Cập nhật bảng giá: $date';"
     },
     {
@@ -898,7 +898,7 @@
       "member": "riotDisclaimer",
       "key": "commonRiotDisclaimer",
       "kind": "string",
-      "value": "ValVN không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games và mọi tài sản liên quan là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc.",
+      "value": "VanHub không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games và mọi tài sản liên quan là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc.",
       "doc": null,
       "section": "Legal (VF §8.13)",
       "aliasOf": null
@@ -2776,7 +2776,7 @@
       "member": "signInNote",
       "key": "authSignInNote",
       "kind": "string",
-      "value": "Bạn đăng nhập trên trang chính thức của Riot. ValVN chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập; dữ liệu đăng nhập và thông tin đã lưu chỉ nằm trên thiết bị của bạn.",
+      "value": "Bạn đăng nhập trên trang chính thức của Riot. VanHub chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập; dữ liệu đăng nhập và thông tin đã lưu chỉ nằm trên thiết bị của bạn.",
       "doc": null,
       "section": "",
       "aliasOf": null
@@ -2864,7 +2864,7 @@
       "member": "channelCommunityDescription",
       "key": "notificationChannelCommunityDescription",
       "kind": "string",
-      "value": "Báo hoạt động cộng đồng khi bạn mở ValVN",
+      "value": "Báo hoạt động cộng đồng khi bạn mở VanHub",
       "doc": null,
       "section": "",
       "aliasOf": null
@@ -2886,7 +2886,7 @@
       "member": "channelLfgDescription",
       "key": "notificationChannelLfgDescription",
       "kind": "string",
-      "value": "Báo người chơi tham gia tổ đội khi bạn mở ValVN",
+      "value": "Báo người chơi tham gia tổ đội khi bạn mở VanHub",
       "doc": null,
       "section": "",
       "aliasOf": null
@@ -3007,7 +3007,7 @@
       "member": "localOnlyHint",
       "key": "notificationLocalOnlyHint",
       "kind": "string",
-      "value": "Chỉ báo trên thiết bị này khi ValVN cập nhật dữ liệu",
+      "value": "Chỉ báo trên thiết bị này khi VanHub cập nhật dữ liệu",
       "doc": null,
       "section": "",
       "aliasOf": null
@@ -3044,7 +3044,7 @@
       "member": "passEndingBody",
       "key": "notificationPassEndingBody",
       "kind": "string",
-      "value": "Battle Pass còn khoảng một ngày. Mở ValVN để xem tiến độ mới nhất.",
+      "value": "Battle Pass còn khoảng một ngày. Mở VanHub để xem tiến độ mới nhất.",
       "doc": null,
       "section": "",
       "aliasOf": null
@@ -3884,7 +3884,7 @@
       },
       "icu": "Còn {days} ngày",
       "doc": "\"Còn 15 ngày\".",
-      "section": "XP pace (ValVN extra)",
+      "section": "XP pace (VanHub extra)",
       "source": "static String daysLeft(int days) => 'Còn $days ngày';"
     },
     {
@@ -3931,7 +3931,7 @@
       "kind": "string",
       "value": "Ước tính khoảng 4.000 XP mỗi trận, chưa tính nhiệm vụ.",
       "doc": null,
-      "section": "Estimate (ValVN extra)",
+      "section": "Estimate (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -4071,7 +4071,7 @@
       },
       "icu": "≈ {n} trận {queue}",
       "doc": "\"≈ 81 trận Đấu thường\".",
-      "section": "Estimate (ValVN extra)",
+      "section": "Estimate (VanHub extra)",
       "source": "static String matchesEstimate(String n, String queue) => '≈ $n trận $queue';"
     },
     {
@@ -4509,7 +4509,7 @@
       "kind": "string",
       "value": "Đấu thường",
       "doc": null,
-      "section": "Estimate (ValVN extra)",
+      "section": "Estimate (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -4545,7 +4545,7 @@
       },
       "icu": "Nhiệm vụ tuần còn +{xp} XP",
       "doc": "\"Nhiệm vụ tuần còn +76.800 XP\".",
-      "section": "XP pace (ValVN extra)",
+      "section": "XP pace (VanHub extra)",
       "source": "static String weeklyXpLeft(String xp) => 'Nhiệm vụ tuần còn +$xp XP';"
     },
     {
@@ -4574,7 +4574,7 @@
       },
       "icu": "{xp} XP / ngày",
       "doc": "\"21.469 XP / ngày\".",
-      "section": "XP pace (ValVN extra)",
+      "section": "XP pace (VanHub extra)",
       "source": "static String xpPerDay(String xp) => '$xp XP / ngày';"
     },
     {
@@ -4585,7 +4585,7 @@
       "kind": "string",
       "value": "Cần mỗi ngày để kịp hoàn thành",
       "doc": null,
-      "section": "XP pace (ValVN extra)",
+      "section": "XP pace (VanHub extra)",
       "aliasOf": null
     },
     {
@@ -4613,7 +4613,7 @@
       },
       "icu": "Còn cần {xp} XP",
       "doc": "\"Còn cần 321.034 XP\".",
-      "section": "Estimate (ValVN extra)",
+      "section": "Estimate (VanHub extra)",
       "source": "static String xpToFinish(String xp) => 'Còn cần $xp XP';"
     },
     {
@@ -6590,7 +6590,7 @@
       "member": "codeAuto",
       "key": "communityCodeAuto",
       "kind": "string",
-      "value": "Để trống: ValVN tự tạo mã từ tổ đội trong game khi bạn đăng tin.",
+      "value": "Để trống: VanHub tự tạo mã từ tổ đội trong game khi bạn đăng tin.",
       "doc": null,
       "section": "LFG v2",
       "aliasOf": null
@@ -6859,7 +6859,7 @@
       "member": "consentTitle",
       "key": "communityConsentTitle",
       "kind": "string",
-      "value": "Tham gia Cộng đồng ValVN",
+      "value": "Tham gia Cộng đồng VanHub",
       "doc": null,
       "section": "consent",
       "aliasOf": null
@@ -6870,7 +6870,7 @@
       "member": "consentVerify",
       "key": "communityConsentVerify",
       "kind": "string",
-      "value": "Khi cần xác minh Riot ID, ValVN gửi quyền truy cập Riot của bạn cho Cộng đồng ValVN. Cộng đồng dùng xong là bỏ ngay, không lưu.",
+      "value": "Khi cần xác minh Riot ID, VanHub gửi quyền truy cập Riot của bạn cho Cộng đồng VanHub. Cộng đồng dùng xong là bỏ ngay, không lưu.",
       "doc": null,
       "section": "consent",
       "aliasOf": null
@@ -7192,10 +7192,10 @@
       "params": {
         "riotId": "String"
       },
-      "icu": "Toàn bộ bài viết, bình luận, đánh giá skin, lượt thích, bình chọn, tin tìm đồng đội và ảnh của {riotId} trên Cộng đồng ValVN sẽ bị xóa vĩnh viễn và không thể khôi phục. Bạn quay lại chế độ xem ẩn danh và cần đồng ý lại nếu muốn tham gia lần nữa.\n\nTài khoản Riot và dữ liệu trong game không bị ảnh hưởng. Hãy tải dữ liệu về trước nếu bạn muốn giữ một bản sao.",
+      "icu": "Toàn bộ bài viết, bình luận, đánh giá skin, lượt thích, bình chọn, tin tìm đồng đội và ảnh của {riotId} trên Cộng đồng VanHub sẽ bị xóa vĩnh viễn và không thể khôi phục. Bạn quay lại chế độ xem ẩn danh và cần đồng ý lại nếu muốn tham gia lần nữa.\n\nTài khoản Riot và dữ liệu trong game không bị ảnh hưởng. Hãy tải dữ liệu về trước nếu bạn muốn giữ một bản sao.",
       "doc": null,
       "section": "data rights (Settings)",
-      "source": "static String deleteDataConfirmBody(String riotId) => 'Toàn bộ bài viết, bình luận, đánh giá skin, lượt thích, bình chọn, ' 'tin tìm đồng đội và ảnh của $riotId trên Cộng đồng ValVN sẽ bị xóa ' 'vĩnh viễn và không thể khôi phục. Bạn quay lại chế độ xem ẩn danh và ' 'cần đồng ý lại nếu muốn tham gia lần nữa.\\n\\n' 'Tài khoản Riot và dữ liệu trong game không bị ảnh hưởng. Hãy tải dữ ' 'liệu về trước nếu bạn muốn giữ một bản sao.';"
+      "source": "static String deleteDataConfirmBody(String riotId) => 'Toàn bộ bài viết, bình luận, đánh giá skin, lượt thích, bình chọn, ' 'tin tìm đồng đội và ảnh của $riotId trên Cộng đồng VanHub sẽ bị xóa ' 'vĩnh viễn và không thể khôi phục. Bạn quay lại chế độ xem ẩn danh và ' 'cần đồng ý lại nếu muốn tham gia lần nữa.\\n\\n' 'Tài khoản Riot và dữ liệu trong game không bị ảnh hưởng. Hãy tải dữ ' 'liệu về trước nếu bạn muốn giữ một bản sao.';"
     },
     {
       "file": "lib/features/community/community_strings.dart",
@@ -7426,7 +7426,7 @@
       "member": "errorForbidden",
       "key": "communityErrorForbidden",
       "kind": "string",
-      "value": "Bạn chưa thể thực hiện việc này. Hãy xem Tiêu chuẩn cộng đồng hoặc liên hệ ValVN.",
+      "value": "Bạn chưa thể thực hiện việc này. Hãy xem Tiêu chuẩn cộng đồng hoặc liên hệ VanHub.",
       "doc": null,
       "section": "errors",
       "aliasOf": null
@@ -7481,7 +7481,7 @@
       "member": "errorNetwork",
       "key": "communityErrorNetwork",
       "kind": "string",
-      "value": "Không kết nối được Cộng đồng ValVN. Kiểm tra mạng rồi thử lại.",
+      "value": "Không kết nối được Cộng đồng VanHub. Kiểm tra mạng rồi thử lại.",
       "doc": null,
       "section": "errors",
       "aliasOf": null
@@ -7575,7 +7575,7 @@
       "member": "errorServer",
       "key": "communityErrorServer",
       "kind": "string",
-      "value": "Cộng đồng ValVN đang gặp sự cố. Hãy thử lại sau ít phút.",
+      "value": "Cộng đồng VanHub đang gặp sự cố. Hãy thử lại sau ít phút.",
       "doc": null,
       "section": "errors",
       "aliasOf": null
@@ -7597,7 +7597,7 @@
       "member": "errorTimeout",
       "key": "communityErrorTimeout",
       "kind": "string",
-      "value": "Cộng đồng ValVN phản hồi quá lâu. Hãy thử lại.",
+      "value": "Cộng đồng VanHub phản hồi quá lâu. Hãy thử lại.",
       "doc": null,
       "section": "errors",
       "aliasOf": null
@@ -7666,7 +7666,7 @@
       "member": "exportSubject",
       "key": "communityExportSubject",
       "kind": "string",
-      "value": "Dữ liệu Cộng đồng ValVN",
+      "value": "Dữ liệu Cộng đồng VanHub",
       "doc": null,
       "section": "data rights (Settings)",
       "aliasOf": null
@@ -8865,7 +8865,7 @@
       "member": "privacyNote",
       "key": "communityPrivacyNote",
       "kind": "string",
-      "value": "ValVN xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.",
+      "value": "VanHub xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.",
       "doc": null,
       "section": "general states",
       "aliasOf": null
@@ -9811,10 +9811,10 @@
         "to": "String",
         "size": "String"
       },
-      "icu": "Để dịch từ {from} sang {to}, ValVN cần tải gói ngôn ngữ từ Google (khoảng {size}). Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và không gửi tới máy chủ nào.",
+      "icu": "Để dịch từ {from} sang {to}, VanHub cần tải gói ngôn ngữ từ Google (khoảng {size}). Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và không gửi tới máy chủ nào.",
       "doc": null,
       "section": "translation",
-      "source": "static String translateDownloadBody(String from, String to, String size) => 'Để dịch từ $from sang $to, ValVN cần tải gói ngôn ngữ từ Google (khoảng $size). ' 'Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và ' 'không gửi tới máy chủ nào.';"
+      "source": "static String translateDownloadBody(String from, String to, String size) => 'Để dịch từ $from sang $to, VanHub cần tải gói ngôn ngữ từ Google (khoảng $size). ' 'Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và ' 'không gửi tới máy chủ nào.';"
     },
     {
       "file": "lib/features/community/community_strings.dart",
@@ -9888,7 +9888,7 @@
       "member": "unavailableBody",
       "key": "communityUnavailableBody",
       "kind": "string",
-      "value": "Chưa kết nối được Cộng đồng ValVN. Hãy thử lại sau ít phút.",
+      "value": "Chưa kết nối được Cộng đồng VanHub. Hãy thử lại sau ít phút.",
       "doc": null,
       "section": "general states",
       "aliasOf": null
@@ -10015,10 +10015,10 @@
       "params": {
         "riotId": "String"
       },
-      "icu": "ValVN sẽ ngừng dùng Cộng đồng bằng {riotId}: kết nối Cộng đồng trên thiết bị này bị xóa và bạn quay lại chế độ xem ẩn danh.\n\nBài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng vẫn còn trên Cộng đồng và vẫn hiện Riot ID của bạn cho đến khi bạn xóa chúng từng cái, hoặc chọn \"Xóa dữ liệu Cộng đồng của tôi\". Bạn có thể tham gia lại bất cứ lúc nào.",
+      "icu": "VanHub sẽ ngừng dùng Cộng đồng bằng {riotId}: kết nối Cộng đồng trên thiết bị này bị xóa và bạn quay lại chế độ xem ẩn danh.\n\nBài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng vẫn còn trên Cộng đồng và vẫn hiện Riot ID của bạn cho đến khi bạn xóa chúng từng cái, hoặc chọn \"Xóa dữ liệu Cộng đồng của tôi\". Bạn có thể tham gia lại bất cứ lúc nào.",
       "doc": null,
       "section": "data rights (Settings)",
-      "source": "static String withdrawConfirmBody(String riotId) => 'ValVN sẽ ngừng dùng Cộng đồng bằng $riotId: kết nối Cộng đồng trên ' 'thiết bị này bị xóa và bạn quay lại chế độ xem ẩn danh.\\n\\n' 'Bài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng ' 'vẫn còn trên ' 'Cộng đồng và vẫn hiện Riot ID của bạn cho đến khi bạn xóa chúng từng ' 'cái, hoặc chọn \"Xóa dữ liệu Cộng đồng của tôi\". Bạn có thể tham gia ' 'lại bất cứ lúc nào.';"
+      "source": "static String withdrawConfirmBody(String riotId) => 'VanHub sẽ ngừng dùng Cộng đồng bằng $riotId: kết nối Cộng đồng trên ' 'thiết bị này bị xóa và bạn quay lại chế độ xem ẩn danh.\\n\\n' 'Bài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng ' 'vẫn còn trên ' 'Cộng đồng và vẫn hiện Riot ID của bạn cho đến khi bạn xóa chúng từng ' 'cái, hoặc chọn \"Xóa dữ liệu Cộng đồng của tôi\". Bạn có thể tham gia ' 'lại bất cứ lúc nào.';"
     },
     {
       "file": "lib/features/community/community_strings.dart",
@@ -10402,7 +10402,7 @@
       "member": "lobbyHint",
       "key": "liveGameLobbyHint",
       "kind": "string",
-      "value": "Khi tìm được trận, ValVN sẽ hiện đội hình và rank của mọi người.",
+      "value": "Khi tìm được trận, VanHub sẽ hiện đội hình và rank của mọi người.",
       "doc": null,
       "section": "Current game card (R7) / idle states",
       "aliasOf": null
@@ -10449,7 +10449,7 @@
       "member": "matchPendingHint",
       "key": "liveGameMatchPendingHint",
       "kind": "string",
-      "value": "ValVN sẽ tự thử lại. Bảng điểm thường có sau khoảng một phút.",
+      "value": "VanHub sẽ tự thử lại. Bảng điểm thường có sau khoảng một phút.",
       "doc": null,
       "section": "Ended (G11)",
       "aliasOf": null
@@ -12968,7 +12968,7 @@
       "member": "consentSuffix",
       "key": "legalConsentSuffix",
       "kind": "string",
-      "value": " của ValVN.",
+      "value": " của VanHub.",
       "doc": null,
       "section": "Consent line (welcome screen)",
       "aliasOf": null
@@ -13081,7 +13081,7 @@
       "member": "thirdPartyLicensesBody",
       "key": "legalThirdPartyLicensesBody",
       "kind": "string",
-      "value": "Giấy phép của các phần mềm mã nguồn mở mà ValVN sử dụng",
+      "value": "Giấy phép của các phần mềm mã nguồn mở mà VanHub sử dụng",
       "doc": null,
       "section": "About hub",
       "aliasOf": null
@@ -13343,7 +13343,7 @@
       "member": "exportLog",
       "key": "settingsExportLog",
       "kind": "string",
-      "value": "Gửi báo lỗi cho ValVN",
+      "value": "Gửi báo lỗi cho VanHub",
       "doc": "Row that builds the bug-report file and opens the share sheet.",
       "section": "NÂNG CAO (the version lives on the About screen only)",
       "aliasOf": null
@@ -13398,7 +13398,7 @@
       "member": "feedback",
       "key": "settingsFeedback",
       "kind": "string",
-      "value": "Góp ý cho ValVN",
+      "value": "Góp ý cho VanHub",
       "doc": null,
       "section": "HỖ TRỢ",
       "aliasOf": null
@@ -13409,7 +13409,7 @@
       "member": "feedbackSubtitle",
       "key": "settingsFeedbackSubtitle",
       "kind": "string",
-      "value": "Mở trang góp ý của ValVN",
+      "value": "Mở trang góp ý của VanHub",
       "doc": null,
       "section": "HỖ TRỢ",
       "aliasOf": null
@@ -13651,7 +13651,7 @@
       "member": "logoPrefix",
       "key": "settingsLogoPrefix",
       "kind": "string",
-      "value": "Val",
+      "value": "Van",
       "doc": null,
       "section": "Welcome (S01)",
       "aliasOf": null
@@ -13662,7 +13662,7 @@
       "member": "logoSuffix",
       "key": "settingsLogoSuffix",
       "kind": "string",
-      "value": "VN",
+      "value": "Hub",
       "doc": null,
       "section": "Welcome (S01)",
       "aliasOf": null
@@ -13917,7 +13917,7 @@
       "kind": "string",
       "value": "Đã xong",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -13928,7 +13928,7 @@
       "kind": "string",
       "value": "Đang diễn ra",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -13939,7 +13939,7 @@
       "kind": "string",
       "value": "Đã lên lịch",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -13978,7 +13978,7 @@
       },
       "icu": null,
       "doc": "Riot platform ids of the status page → Vietnamese labels.",
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "source": "static String platformName(String id) => switch (id.toLowerCase()) {'windows' || 'pc' => 'PC', 'macos' => 'Mac', 'ps4' => 'PlayStation 4', 'ps5' => 'PlayStation 5', 'playstation' => 'PlayStation', 'xbone' => 'Xbox One', 'xbox' || 'xboxseries' || 'xbox_series' => 'Xbox', 'android' => 'Android', 'ios' => 'iOS', 'mobile' => 'Di động', _ => 'Nền tảng khác'};"
     },
     {
@@ -14180,8 +14180,8 @@
       "member": "sessionLogTitle",
       "key": "settingsSessionLogTitle",
       "kind": "string",
-      "value": "Báo lỗi ValVN",
-      "doc": "Subject / title of the shared bug-report file (\"Gửi báo lỗi cho ValVN\").",
+      "value": "Báo lỗi VanHub",
+      "doc": "Subject / title of the shared bug-report file (\"Gửi báo lỗi cho VanHub\").",
       "section": "",
       "aliasOf": null
     },
@@ -14193,7 +14193,7 @@
       "kind": "string",
       "value": "Nghiêm trọng",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14204,7 +14204,7 @@
       "kind": "string",
       "value": "Thông tin",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14215,7 +14215,7 @@
       "kind": "string",
       "value": "Cảnh báo",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14237,7 +14237,7 @@
       "kind": "string",
       "value": "Máy chủ hoạt động bình thường",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14251,7 +14251,7 @@
       },
       "icu": "Không có sự cố hay bảo trì nào ở máy chủ {region}.",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "source": "static String statusAllGoodBody(String region) => 'Không có sự cố hay bảo trì nào ở máy chủ $region.';"
     },
     {
@@ -14262,7 +14262,7 @@
       "kind": "string",
       "value": "Thu gọn",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14273,7 +14273,7 @@
       "kind": "string",
       "value": "Riot đang xử lý sự cố",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14287,7 +14287,7 @@
       },
       "icu": "Máy chủ này có {n} thông báo sự cố.",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "source": "static String statusIssuesBody(int n) => 'Máy chủ này có $n thông báo sự cố.';"
     },
     {
@@ -14298,7 +14298,7 @@
       "kind": "string",
       "value": "Sự cố",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14309,7 +14309,7 @@
       "kind": "string",
       "value": "Bảo trì",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14320,7 +14320,7 @@
       "kind": "string",
       "value": "Máy chủ đang bảo trì",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14329,9 +14329,9 @@
       "member": "statusMaintenanceNowBody",
       "key": "settingsStatusMaintenanceNowBody",
       "kind": "string",
-      "value": "Bạn có thể chưa vào được game, và ValVN có thể tạm thời chưa tải được thông tin.",
+      "value": "Bạn có thể chưa vào được game, và VanHub có thể tạm thời chưa tải được thông tin.",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14345,7 +14345,7 @@
       },
       "icu": "Xem thêm {n} cập nhật",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "source": "static String statusMoreUpdates(int n) => 'Xem thêm $n cập nhật';"
     },
     {
@@ -14356,7 +14356,7 @@
       "kind": "string",
       "value": "Máy chủ",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14367,7 +14367,7 @@
       "kind": "string",
       "value": "Sắp có bảo trì",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14381,7 +14381,7 @@
       },
       "icu": "{n} lịch bảo trì đã được Riot thông báo.",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "source": "static String statusScheduledBody(int n) => '$n lịch bảo trì đã được Riot thông báo.';"
     },
     {
@@ -14392,7 +14392,7 @@
       "kind": "string",
       "value": "Nguồn: trang trạng thái chính thức của Riot Games. Giờ hiển thị theo múi giờ của thiết bị.",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14406,7 +14406,7 @@
       },
       "icu": "Bắt đầu {when}",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "source": "static String statusStarted(String when) => 'Bắt đầu $when';"
     },
     {
@@ -14420,7 +14420,7 @@
       },
       "icu": "Cập nhật {when}",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "source": "static String statusUpdated(String when) => 'Cập nhật $when';"
     },
     {
@@ -14431,7 +14431,7 @@
       "kind": "string",
       "value": "CẬP NHẬT TỪ RIOT",
       "doc": null,
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "aliasOf": null
     },
     {
@@ -14611,7 +14611,7 @@
       "member": "welcomeFootnote",
       "key": "settingsWelcomeFootnote",
       "kind": "string",
-      "value": "Bạn đăng nhập trên trang chính thức của Riot. ValVN chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập.",
+      "value": "Bạn đăng nhập trên trang chính thức của Riot. VanHub chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập.",
       "doc": null,
       "section": "Welcome (S01)",
       "aliasOf": null
@@ -15234,7 +15234,7 @@
       "member": "friendsPrivacyNote",
       "key": "socialFriendsPrivacyNote",
       "kind": "string",
-      "value": "Danh sách bạn bè và tin nhắn lấy trực tiếp từ Riot. ValVN không lưu chúng ở nơi nào khác.",
+      "value": "Danh sách bạn bè và tin nhắn lấy trực tiếp từ Riot. VanHub không lưu chúng ở nơi nào khác.",
       "doc": null,
       "section": "friends",
       "aliasOf": null
@@ -16213,7 +16213,7 @@
       "member": "remoteNote",
       "key": "socialRemoteNote",
       "kind": "string",
-      "value": "Mọi thay đổi chỉ được gửi tới Riot khi bạn bấm. ValVN không tự tìm trận hay khóa đặc vụ thay bạn.",
+      "value": "Mọi thay đổi chỉ được gửi tới Riot khi bạn bấm. VanHub không tự tìm trận hay khóa đặc vụ thay bạn.",
       "doc": null,
       "section": "party",
       "aliasOf": null
@@ -17082,7 +17082,7 @@
       "member": "shareCardBrand",
       "key": "storeShareCardBrand",
       "kind": "string",
-      "value": "ValVN",
+      "value": "VanHub",
       "doc": null,
       "section": "\"Chia sẻ ảnh\": branded picture of the daily shop / Night Market.",
       "aliasOf": null
@@ -18393,7 +18393,7 @@
       "member": "friendsConsentBody",
       "key": "homeFriendsConsentBody",
       "kind": "string",
-      "value": "Để biết bạn bè nào đang chơi, ValVN sẽ kết nối trò chuyện Riot của tài khoản đang dùng mỗi khi bạn mở Trang chủ. Bạn bè sẽ thấy bạn đang trực tuyến. Bạn có thể tắt trong Tùy chỉnh Trang chủ.",
+      "value": "Để biết bạn bè nào đang chơi, VanHub sẽ kết nối trò chuyện Riot của tài khoản đang dùng mỗi khi bạn mở Trang chủ. Bạn bè sẽ thấy bạn đang trực tuyến. Bạn có thể tắt trong Tùy chỉnh Trang chủ.",
       "doc": null,
       "section": "Friends card",
       "aliasOf": null
@@ -19173,7 +19173,7 @@
       "icu": null,
       "doc": null,
       "section": "",
-      "source": "static String? forReason(String? reason) => switch (reason) {'content_inappropriate' => 'Chưa đăng được vì có từ ngữ không phù hợp. Hãy sửa nội dung rồi thử lại.', 'content_scam' => 'Cộng đồng không cho phép quảng cáo mua bán tài khoản, cày thuê hay để lại số điện thoại. Hãy bỏ những nội dung này rồi thử lại.', 'content_too_complex' => 'Nội dung có quá nhiều ký tự rời rạc. Hãy viết gọn hơn rồi thử lại.', 'account_banned' => 'Tài khoản này đã bị khóa quyền dùng Cộng đồng. Nếu cho rằng có nhầm lẫn, hãy liên hệ ValVN trong Giới thiệu & pháp lý.', 'account_restricted' => 'Tài khoản này đang bị hạn chế đăng bài, bình luận, tìm đồng đội và bình chọn. Hãy thử lại sau hoặc liên hệ ValVN trong Giới thiệu & pháp lý.', _ => null};"
+      "source": "static String? forReason(String? reason) => switch (reason) {'content_inappropriate' => 'Chưa đăng được vì có từ ngữ không phù hợp. Hãy sửa nội dung rồi thử lại.', 'content_scam' => 'Cộng đồng không cho phép quảng cáo mua bán tài khoản, cày thuê hay để lại số điện thoại. Hãy bỏ những nội dung này rồi thử lại.', 'content_too_complex' => 'Nội dung có quá nhiều ký tự rời rạc. Hãy viết gọn hơn rồi thử lại.', 'account_banned' => 'Tài khoản này đã bị khóa quyền dùng Cộng đồng. Nếu cho rằng có nhầm lẫn, hãy liên hệ VanHub trong Giới thiệu & pháp lý.', 'account_restricted' => 'Tài khoản này đang bị hạn chế đăng bài, bình luận, tìm đồng đội và bình chọn. Hãy thử lại sau hoặc liên hệ VanHub trong Giới thiệu & pháp lý.', _ => null};"
     }
   ],
   "messages": [
@@ -30965,7 +30965,7 @@
       },
       "icu": "Xem nguồn bảng giá",
       "doc": null,
-      "section": "Local price estimate next to VP prices (ValVN extra)",
+      "section": "Local price estimate next to VP prices (VanHub extra)",
       "source": "static String priceSource(String url) => 'Xem nguồn bảng giá';",
       "reason": "unused argument requires a structural call-site change"
     },
@@ -31396,7 +31396,7 @@
       },
       "icu": null,
       "doc": "Riot platform ids of the status page → Vietnamese labels.",
-      "section": "Server status screen (ValVN extra, X-1)",
+      "section": "Server status screen (VanHub extra, X-1)",
       "source": "static String platformName(String id) => switch (id.toLowerCase()) {'windows' || 'pc' => 'PC', 'macos' => 'Mac', 'ps4' => 'PlayStation 4', 'ps5' => 'PlayStation 5', 'playstation' => 'PlayStation', 'xbone' => 'Xbox One', 'xbox' || 'xboxseries' || 'xbox_series' => 'Xbox', 'android' => 'Android', 'ios' => 'iOS', 'mobile' => 'Di động', _ => 'Nền tảng khác'};"
     },
     {
@@ -31720,7 +31720,7 @@
       "icu": null,
       "doc": null,
       "section": "",
-      "source": "static String? forReason(String? reason) => switch (reason) {'content_inappropriate' => 'Chưa đăng được vì có từ ngữ không phù hợp. Hãy sửa nội dung rồi thử lại.', 'content_scam' => 'Cộng đồng không cho phép quảng cáo mua bán tài khoản, cày thuê hay để lại số điện thoại. Hãy bỏ những nội dung này rồi thử lại.', 'content_too_complex' => 'Nội dung có quá nhiều ký tự rời rạc. Hãy viết gọn hơn rồi thử lại.', 'account_banned' => 'Tài khoản này đã bị khóa quyền dùng Cộng đồng. Nếu cho rằng có nhầm lẫn, hãy liên hệ ValVN trong Giới thiệu & pháp lý.', 'account_restricted' => 'Tài khoản này đang bị hạn chế đăng bài, bình luận, tìm đồng đội và bình chọn. Hãy thử lại sau hoặc liên hệ ValVN trong Giới thiệu & pháp lý.', _ => null};"
+      "source": "static String? forReason(String? reason) => switch (reason) {'content_inappropriate' => 'Chưa đăng được vì có từ ngữ không phù hợp. Hãy sửa nội dung rồi thử lại.', 'content_scam' => 'Cộng đồng không cho phép quảng cáo mua bán tài khoản, cày thuê hay để lại số điện thoại. Hãy bỏ những nội dung này rồi thử lại.', 'content_too_complex' => 'Nội dung có quá nhiều ký tự rời rạc. Hãy viết gọn hơn rồi thử lại.', 'account_banned' => 'Tài khoản này đã bị khóa quyền dùng Cộng đồng. Nếu cho rằng có nhầm lẫn, hãy liên hệ VanHub trong Giới thiệu & pháp lý.', 'account_restricted' => 'Tài khoản này đang bị hạn chế đăng bài, bình luận, tìm đồng đội và bình chọn. Hãy thử lại sau hoặc liên hệ VanHub trong Giới thiệu & pháp lý.', _ => null};"
     }
   ]
 }

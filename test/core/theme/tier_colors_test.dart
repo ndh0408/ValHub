@@ -31,7 +31,7 @@ void main() {
     expect(t.colorScheme.surfaceContainer, const Color(0xFF141416));
     expect(t.colorScheme.surfaceContainerHigh, const Color(0xFF1F1F23));
     expect(t.colorScheme.onSurface, const Color(0xFFF2F1EE));
-    expect(t.colorScheme.onSurfaceVariant, const Color(0xFF8E8E93));
+    expect(t.colorScheme.onSurfaceVariant, const Color(0xFFADB1BA));
     expect(t.navigationBarTheme.backgroundColor, const Color(0xFF1C1C1F));
     final extras = t.extension<ValThemeColors>()!;
     expect(extras.win, const Color(0xFF3DDC97));

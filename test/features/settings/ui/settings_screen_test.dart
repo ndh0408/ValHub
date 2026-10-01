@@ -17,6 +17,7 @@ import 'package:valvn/core/util/clock.dart';
 import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/providers/consent_providers.dart';
 import 'package:valvn/features/settings/legal/legal_documents.dart';
+import 'package:valvn/features/settings/legal/legal_strings.dart';
 import 'package:valvn/features/settings/settings_routes.dart';
 import 'package:valvn/features/settings/settings_strings.dart';
 import 'package:valvn/features/settings/ui/legal_document_screen.dart';
@@ -27,7 +28,7 @@ import '../settings_fakes.dart';
 /// A 360dp-wide (small phone), very tall surface so every section renders
 /// without scrolling; overflows fail the test.
 void _smallPhoneTallSurface(WidgetTester tester) {
-  tester.view.physicalSize = const Size(360, 3800);
+  tester.view.physicalSize = const Size(360, 4600);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
 }
@@ -645,7 +646,8 @@ void main() {
 
       await tester.tap(find.text(SettingsStrings.aboutTitle));
       await tester.pumpAndSettle();
-      expect(find.text(SettingsStrings.aboutCreditContent), findsOneWidget);
+      expect(find.text(LegalStrings.aboutIntro), findsOneWidget);
+      expect(find.text(SettingsStrings.aboutCreditContent), findsNothing);
     });
   });
 }

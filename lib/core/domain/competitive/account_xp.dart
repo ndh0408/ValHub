@@ -124,8 +124,8 @@ final accountXpProvider = FutureProvider.autoDispose.family<AccountXp, String>((
   }
   final viewer = watchViewer(ref, id);
   final api = ref.watch(pvpApiProvider);
-  cacheFor(ref, const Duration(minutes: 5));
   final xp = AccountXp.fromJson(await api.accountXp(viewer));
+  cacheFor(ref, const Duration(minutes: 5));
   if (!ref.mounted) return xp;
   final account = ref.read(accountProvider(id));
   if (account != null && xp.level > 0 && account.level != xp.level) {

@@ -30,7 +30,7 @@ abstract final class SocialStrings {
   static const reconnecting = 'Mất kết nối trò chuyện. Đang kết nối lại…';
   static const chatUnavailable = 'Trò chuyện đang ngoại tuyến.';
   static const friendsPrivacyNote =
-      'Danh sách bạn bè và tin nhắn lấy trực tiếp từ Riot. ValVN không lưu '
+      'Danh sách bạn bè và tin nhắn lấy trực tiếp từ Riot. VanHub không lưu '
       'chúng ở nơi nào khác.';
 
   // Status lines (SUMMARY §9.9, VF S60)
@@ -193,7 +193,7 @@ abstract final class SocialStrings {
   static const joinConfirmBody =
       'Bạn sẽ rời tổ đội hiện tại để vào tổ đội có mã này.';
   static const remoteNote =
-      'Mọi thay đổi chỉ được gửi tới Riot khi bạn bấm. ValVN không tự tìm '
+      'Mọi thay đổi chỉ được gửi tới Riot khi bạn bấm. VanHub không tự tìm '
       'trận hay khóa đặc vụ thay bạn.';
 
   static const invitesSection = 'Lời mời';

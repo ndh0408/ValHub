@@ -102,7 +102,10 @@ class LoadoutRepository {
     } on LoadoutEditException catch (e) {
       throw LoadoutSaveException(LoadoutSaveFailure.invalidChange, cause: e);
     }
-    if (const DeepCollectionEquality().equals(body, before.raw)) return before;
+    if (const DeepCollectionEquality().equals(body, before.raw)) {
+      await _refreshLobbyIdentity(puuid, change);
+      return before;
+    }
 
     final JsonMap putResponse;
     try {
@@ -127,15 +130,51 @@ class LoadoutRepository {
     if (after == null || !isPersisted(before.loadout, after.loadout, change)) {
       throw const LoadoutSaveException(LoadoutSaveFailure.notPersisted);
     }
+    await _refreshLobbyIdentity(puuid, change);
     return after;
   }
 
-  /// U8 check: a higher `Version` when both are known, else the change must
-  /// be visible in [after].
+  // The party retains its own identity snapshot. Refresh it only as part of
+  // the user's save, only in menus, and only for identity cosmetics.
+  // A failed refresh cannot undo an already confirmed loadout save.
+  Future<void> _refreshLobbyIdentity(String puuid, LoadoutChange change) async {
+    bool identityChange(LoadoutChange c) => switch (c) {
+      SetPlayerCard() ||
+      SetPlayerTitle() ||
+      SetLevelBorder() ||
+      SetHideAccountLevel() ||
+      SetIncognito() => true,
+      CompositeChange(:final changes) => changes.any(identityChange),
+      _ => false,
+    };
+    if (!identityChange(change)) return;
+    try {
+      final session = await _api.gameSession(puuid);
+      if (asNonEmptyString(session['loopState'])?.toUpperCase() != 'MENUS') {
+        return;
+      }
+      final player = await _api.partyPlayer(puuid);
+      final party = lowerUuid(player['CurrentPartyID']);
+      if (party == null ||
+          !RegExp(
+            r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+          ).hasMatch(party)) {
+        return;
+      }
+      await _api.partyRefreshPlayerIdentity(puuid, party);
+    } on Object {
+      // Offline, unsupported or unavailable lobby: the persisted selection
+      // remains valid and is loaded by the game on its next normal refresh.
+    }
+  }
+
+  /// U8 check: the requested change must be visible in [after], and the
+  /// `Version` must increase when both versions are known.
   static bool isPersisted(Loadout before, Loadout after, LoadoutChange change) {
     final v0 = before.version;
     final v1 = after.version;
+    if (!change.isReflectedIn(after)) return false;
     if (v0 != null && v1 != null) return v1 > v0;
-    return change.isReflectedIn(after);
+    return true;
   }
 }

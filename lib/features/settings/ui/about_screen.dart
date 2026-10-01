@@ -22,7 +22,7 @@ import 'widgets/settings_widgets.dart';
 /// S72 "Giới thiệu & pháp lý" hub (docs/design/IA.md "Pháp lý"): the app
 /// icon, name, version and a one-line intro; PHÁP LÝ (privacy policy, terms,
 /// community standards, Riot legal notice, third-party libraries); LIÊN HỆ
-/// (email, feedback); data-source credits; the copyright line and the Riot
+/// (email, feedback); the copyright line and the Riot
 /// disclaimer at the bottom. Route `/settings/about`.
 class AboutScreen extends ConsumerWidget {
   const AboutScreen({super.key});
@@ -95,34 +95,6 @@ class AboutScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            SettingsGroup(
-              title: LegalStrings.creditsHeader,
-              children: [
-                ListTile(
-                  leading: const SettingsIcon(Icons.data_object_outlined),
-                  title: const Text(SettingsStrings.aboutCreditContent),
-                  subtitle: const Text(SettingsStrings.aboutCreditContentBody),
-                  trailing: const SettingsChevron(icon: Icons.open_in_new),
-                  onTap: () => unawaited(
-                    openSettingsLink(context, ref, SettingsLinks.valorantApi),
-                  ),
-                ),
-                const ListTile(
-                  leading: SettingsIcon(Icons.videogame_asset_outlined),
-                  title: Text(SettingsStrings.aboutCreditRiot),
-                  subtitle: Text(SettingsStrings.aboutCreditRiotBody),
-                ),
-                ListTile(
-                  leading: const SettingsIcon(Icons.menu_book_outlined),
-                  title: const Text(SettingsStrings.aboutCreditDocs),
-                  subtitle: const Text(SettingsStrings.aboutCreditDocsBody),
-                  trailing: const SettingsChevron(icon: Icons.open_in_new),
-                  onTap: () => unawaited(
-                    openSettingsLink(context, ref, SettingsLinks.apiDocs),
-                  ),
-                ),
-              ],
-            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
               child: Column(
@@ -155,7 +127,7 @@ class AboutScreen extends ConsumerWidget {
   }
 }
 
-/// App icon, "ValVN" wordmark, tagline, version pill and a short intro.
+/// App icon, "VanHub" wordmark, tagline, version pill and a short intro.
 class _Identity extends StatelessWidget {
   const _Identity({required this.packageInfo});
 

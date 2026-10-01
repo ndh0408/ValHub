@@ -1,9 +1,9 @@
-# ValVN
+# VanHub
 
-<img src="assets/icon/icon.png" width="96" alt="Icon ValVN" align="right">
+<img src="assets/icon/icon.png" width="96" alt="Icon VanHub" align="right">
 
 Ứng dụng đồng hành **VALORANT** cho Android và iOS, viết bằng Flutter, dành cho người chơi ở mọi
-quốc gia. Tiếng Việt là ngôn ngữ gốc; ValVN đang được chuyển sang 18 ngôn ngữ của VALORANT. Tính
+quốc gia. Tiếng Việt là ngôn ngữ gốc; VanHub đang được chuyển sang 18 ngôn ngữ của VALORANT. Tính
 năng chính:
 
 - **Trang chủ**: cửa hàng hôm nay, rank, Battle Pass và trận đang diễn ra ngay khi mở app.
@@ -35,7 +35,7 @@ Kiến trúc: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Tiến độ: [`do
 
 ## Tuyên bố miễn trừ
 
-ValVN không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai
+VanHub không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai
 tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games và mọi tài sản liên quan
 là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc. Dữ liệu nội dung lấy từ
 [valorant-api.com](https://valorant-api.com).

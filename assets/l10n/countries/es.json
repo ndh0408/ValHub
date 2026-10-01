@@ -504,5 +504,49 @@
     "ZA": "Sudáfrica",
     "ZM": "Zambia",
     "ZW": "Zimbabue"
+  },
+  "aliases": {
+    "CD": [
+      "Congo (RDC)"
+    ],
+    "CG": [
+      "Congo (República)"
+    ],
+    "CI": [
+      "Costa de Marfil"
+    ],
+    "CZ": [
+      "República Checa"
+    ],
+    "FK": [
+      "Islas Malvinas (Islas Falkland)"
+    ],
+    "GB": [
+      "Reino Unido"
+    ],
+    "HK": [
+      "RAE de Hong Kong (China)"
+    ],
+    "IO": [
+      "Archipiélago de Chagos"
+    ],
+    "MO": [
+      "RAE de Macao (China)"
+    ],
+    "NZ": [
+      "Aotearoa (Nueva Zelanda)"
+    ],
+    "PS": [
+      "Territorios Palestinos"
+    ],
+    "SZ": [
+      "Suazilandia"
+    ],
+    "TL": [
+      "Timor Oriental"
+    ],
+    "US": [
+      "Estados Unidos"
+    ]
   }
 }

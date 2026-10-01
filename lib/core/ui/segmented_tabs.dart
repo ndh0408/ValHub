@@ -43,6 +43,7 @@ class SegmentedTabs<T> extends StatefulWidget {
     required this.onChanged,
     this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
     this.expand = false,
+    this.secondary = false,
   });
 
   final List<SegmentedTab<T>> tabs;
@@ -50,6 +51,7 @@ class SegmentedTabs<T> extends StatefulWidget {
   final ValueChanged<T> onChanged;
   final EdgeInsets padding;
   final bool expand;
+  final bool secondary;
 
   @override
   State<SegmentedTabs<T>> createState() => _SegmentedTabsState<T>();
@@ -62,6 +64,9 @@ class _SegmentedTabsState<T> extends State<SegmentedTabs<T>> {
   /// Every segment's rect inside the track (scroll mode), measured after
   /// layout; `null` until the first measurement.
   List<Rect>? _rects;
+
+  bool get _expand =>
+      widget.expand && MediaQuery.textScalerOf(context).scale(14) <= 20;
 
   int get _index {
     final i = widget.tabs.indexWhere((t) => t.value == widget.selected);
@@ -78,7 +83,7 @@ class _SegmentedTabsState<T> extends State<SegmentedTabs<T>> {
   @override
   void didUpdateWidget(SegmentedTabs<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.selected != widget.selected && !widget.expand) {
+    if (oldWidget.selected != widget.selected && !_expand) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _reveal());
     }
   }
@@ -123,16 +128,56 @@ class _SegmentedTabsState<T> extends State<SegmentedTabs<T>> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.secondary) {
+      final scheme = Theme.of(context).colorScheme;
+      return Padding(
+        padding: widget.padding,
+        child: Row(
+          children: [
+            for (final tab in widget.tabs)
+              Expanded(
+                child: Semantics(
+                  selected: tab.value == widget.selected,
+                  child: TextButton(
+                    onPressed: () => _tap(tab.value),
+                    style: TextButton.styleFrom(
+                      minimumSize: const Size(48, 48),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
+                      foregroundColor: scheme.onSurface,
+                      backgroundColor: tab.value == widget.selected
+                          ? scheme.primary.withValues(alpha: 0.12)
+                          : null,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      textStyle: Theme.of(context).textTheme.labelLarge
+                          ?.copyWith(
+                            fontWeight: tab.value == widget.selected
+                                ? FontWeight.w700
+                                : FontWeight.w500,
+                          ),
+                    ),
+                    child: Text(tab.label, textAlign: TextAlign.center),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    }
     _syncKeys();
     final n = widget.tabs.length;
     final index = _index;
-    if (!widget.expand) {
+    if (!_expand) {
       WidgetsBinding.instance.addPostFrameCallback(_measure);
     }
     final rects = _rects;
     // Before the first measurement (scroll mode) each segment paints its
     // own pill, so the very first frame is already correct.
-    final ownPill = !widget.expand && rects == null;
+    final ownPill = !_expand && rects == null;
 
     const gap = 8.0;
     final segments = <Widget>[
@@ -142,17 +187,17 @@ class _SegmentedTabsState<T> extends State<SegmentedTabs<T>> {
           tab: widget.tabs[i],
           selected: i == index,
           paintPill: ownPill,
-          compact: widget.expand,
+          compact: _expand,
           onTap: () => _tap(widget.tabs[i].value),
         ),
     ];
     // Layers: grey pills, the sliding red pill, then the labels on top.
     final row = Row(
-      mainAxisSize: widget.expand ? MainAxisSize.max : MainAxisSize.min,
+      mainAxisSize: _expand ? MainAxisSize.max : MainAxisSize.min,
       children: [
         for (var i = 0; i < n; i++) ...[
           if (i > 0) const SizedBox(width: gap),
-          widget.expand ? Expanded(child: segments[i]) : segments[i],
+          _expand ? Expanded(child: segments[i]) : segments[i],
         ],
       ],
     );
@@ -170,7 +215,7 @@ class _SegmentedTabsState<T> extends State<SegmentedTabs<T>> {
     ];
 
     final Widget track;
-    if (widget.expand) {
+    if (_expand) {
       track = LayoutBuilder(
         builder: (context, box) {
           final w = n == 0 ? 0.0 : (box.maxWidth - gap * (n - 1)) / n;
@@ -179,17 +224,17 @@ class _SegmentedTabsState<T> extends State<SegmentedTabs<T>> {
             key: _stackKey,
             children: [
               for (var i = 0; i < n; i++)
-                Positioned(
-                  left: i * (w + gap),
+                PositionedDirectional(
+                  start: i * (w + gap),
                   top: 0,
                   bottom: 0,
                   width: w,
                   child: const _Pill(),
                 ),
-              AnimatedPositioned(
+              AnimatedPositionedDirectional(
                 duration: ValMotion.medium,
                 curve: ValMotion.curve,
-                left: index * (w + gap),
+                start: index * (w + gap),
                 top: 0,
                 bottom: 0,
                 width: w,
@@ -212,7 +257,7 @@ class _SegmentedTabsState<T> extends State<SegmentedTabs<T>> {
       maxScaleFactor: 1.25,
       child: track,
     );
-    if (widget.expand) {
+    if (_expand) {
       return Padding(padding: widget.padding, child: clamped);
     }
     return SingleChildScrollView(
@@ -353,7 +398,7 @@ class _Segment extends StatelessWidget {
       content = FittedBox(fit: BoxFit.scaleDown, child: content);
     }
     final padded = ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 40),
+      constraints: const BoxConstraints(minHeight: 48),
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: compact ? 8 : 18,
@@ -368,6 +413,7 @@ class _Segment extends StatelessWidget {
       button: true,
       label: tab.label,
       excludeSemantics: true,
+      onTap: onTap,
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(

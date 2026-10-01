@@ -1,6 +1,6 @@
 {
   "@@locale": "vi",
-  "commonAppName": "ValVN",
+  "commonAppName": "VanHub",
   "@commonAppName": {
     "description": "CommonStrings.appName — ",
     "x-context": "lib/core/l10n/common_strings.dart"
@@ -267,7 +267,7 @@
   },
   "commonPriceBestPack": "Gói có lợi nhất: {vp} = {price}",
   "@commonPriceBestPack": {
-    "description": "CommonStrings.priceBestPack — Local price estimate next to VP prices (ValVN extra)",
+    "description": "CommonStrings.priceBestPack — Local price estimate next to VP prices (VanHub extra)",
     "placeholders": {
       "vp": {
         "type": "String"
@@ -280,45 +280,45 @@
   },
   "commonPriceEditOwn": "Sửa giá bạn đã nhập",
   "@commonPriceEditOwn": {
-    "description": "CommonStrings.priceEditOwn — Local price estimate next to VP prices (ValVN extra)",
+    "description": "CommonStrings.priceEditOwn — Local price estimate next to VP prices (VanHub extra)",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonPriceEnterOwn": "Nhập giá gói VP của bạn",
   "@commonPriceEnterOwn": {
-    "description": "CommonStrings.priceEnterOwn — Local price estimate next to VP prices (ValVN extra)",
+    "description": "CommonStrings.priceEnterOwn — Local price estimate next to VP prices (VanHub extra)",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonPriceEstimateBody": "Số tiền “≈ …” cạnh giá VP là ước tính, quy đổi theo gói VP có lợi nhất. Bạn trả bằng VP trong game; số tiền thật tùy gói nạp, kênh thanh toán, thuế và khuyến mãi lúc bạn mua.",
   "@commonPriceEstimateBody": {
-    "description": "CommonStrings.priceEstimateBody — Local price estimate next to VP prices (ValVN extra)",
+    "description": "CommonStrings.priceEstimateBody — Local price estimate next to VP prices (VanHub extra)",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonPriceEstimateTitle": "Giá quy đổi ước tính",
   "@commonPriceEstimateTitle": {
-    "description": "CommonStrings.priceEstimateTitle — Local price estimate next to VP prices (ValVN extra)",
+    "description": "CommonStrings.priceEstimateTitle — Local price estimate next to VP prices (VanHub extra)",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonPriceEstimateTooltip": "Giá ước tính — chạm để xem cách tính",
   "@commonPriceEstimateTooltip": {
-    "description": "CommonStrings.priceEstimateTooltip — Local price estimate next to VP prices (ValVN extra)",
+    "description": "CommonStrings.priceEstimateTooltip — Local price estimate next to VP prices (VanHub extra)",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonPriceHidden": "Đã ẩn giá quy đổi. Bật lại trong Cài đặt.",
   "@commonPriceHidden": {
-    "description": "CommonStrings.priceHidden — Local price estimate next to VP prices (ValVN extra)",
+    "description": "CommonStrings.priceHidden — Local price estimate next to VP prices (VanHub extra)",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonPriceHide": "Ẩn giá quy đổi",
   "@commonPriceHide": {
-    "description": "CommonStrings.priceHide — Local price estimate next to VP prices (ValVN extra)",
+    "description": "CommonStrings.priceHide — Local price estimate next to VP prices (VanHub extra)",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonPriceOpenSource": "Mở trang nguồn",
   "@commonPriceOpenSource": {
-    "description": "CommonStrings.priceOpenSource — Local price estimate next to VP prices (ValVN extra)",
+    "description": "CommonStrings.priceOpenSource — Local price estimate next to VP prices (VanHub extra)",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
-  "commonPriceOverrideBody": "Nhập số tiền bạn thực trả cho một gói VP (xem trong cửa hàng của game hoặc hóa đơn). ValVN dùng giá này để ước tính giá quy đổi cho mọi món đồ; giá chỉ lưu trên thiết bị này.",
+  "commonPriceOverrideBody": "Nhập số tiền bạn thực trả cho một gói VP (xem trong cửa hàng của game hoặc hóa đơn). VanHub dùng giá này để ước tính giá quy đổi cho mọi món đồ; giá chỉ lưu trên thiết bị này.",
   "@commonPriceOverrideBody": {
     "description": "CommonStrings.priceOverrideBody — \"Giá gói VP của bạn\" editor",
     "x-context": "lib/core/l10n/common_strings.dart"
@@ -393,7 +393,7 @@
   },
   "commonPricePacksTitle": "Các gói VP",
   "@commonPricePacksTitle": {
-    "description": "CommonStrings.pricePacksTitle — Local price estimate next to VP prices (ValVN extra)",
+    "description": "CommonStrings.pricePacksTitle — Local price estimate next to VP prices (VanHub extra)",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonPriceSourceOfficial": "Theo bảng giá gói VP ở khu vực {country}",
@@ -408,17 +408,17 @@
   },
   "commonPriceSourceUser": "Theo giá gói VP do bạn nhập",
   "@commonPriceSourceUser": {
-    "description": "CommonStrings.priceSourceUser — Local price estimate next to VP prices (ValVN extra)",
+    "description": "CommonStrings.priceSourceUser — Local price estimate next to VP prices (VanHub extra)",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonPriceUnavailable": "Chưa có bảng giá đã xác minh cho khu vực của bạn. Nhập giá của một gói VP bạn từng mua để xem giá quy đổi ước tính.",
   "@commonPriceUnavailable": {
-    "description": "CommonStrings.priceUnavailable — Local price estimate next to VP prices (ValVN extra)",
+    "description": "CommonStrings.priceUnavailable — Local price estimate next to VP prices (VanHub extra)",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonPriceUpdated": "Cập nhật bảng giá: {date}",
   "@commonPriceUpdated": {
-    "description": "CommonStrings.priceUpdated — Local price estimate next to VP prices (ValVN extra)",
+    "description": "CommonStrings.priceUpdated — Local price estimate next to VP prices (VanHub extra)",
     "placeholders": {
       "date": {
         "type": "String"
@@ -441,7 +441,7 @@
     "description": "CommonStrings.retry — Actions",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
-  "commonRiotDisclaimer": "ValVN không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games và mọi tài sản liên quan là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc.",
+  "commonRiotDisclaimer": "VanHub không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games và mọi tài sản liên quan là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc.",
   "@commonRiotDisclaimer": {
     "description": "CommonStrings.riotDisclaimer — Legal (VF §8.13)",
     "x-context": "lib/core/l10n/common_strings.dart"
@@ -1551,7 +1551,7 @@
     "description": "AuthStrings.signInCta — ",
     "x-context": "lib/core/l10n/auth_strings.dart"
   },
-  "authSignInNote": "Bạn đăng nhập trên trang chính thức của Riot. ValVN chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập; dữ liệu đăng nhập và thông tin đã lưu chỉ nằm trên thiết bị của bạn.",
+  "authSignInNote": "Bạn đăng nhập trên trang chính thức của Riot. VanHub chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập; dữ liệu đăng nhập và thông tin đã lưu chỉ nằm trên thiết bị của bạn.",
   "@authSignInNote": {
     "description": "AuthStrings.signInNote — ",
     "x-context": "lib/core/l10n/auth_strings.dart"
@@ -1591,7 +1591,7 @@
     "description": "NotificationStrings.channelBattlePassName — ",
     "x-context": "lib/core/l10n/notification_strings.dart"
   },
-  "notificationChannelCommunityDescription": "Báo hoạt động cộng đồng khi bạn mở ValVN",
+  "notificationChannelCommunityDescription": "Báo hoạt động cộng đồng khi bạn mở VanHub",
   "@notificationChannelCommunityDescription": {
     "description": "NotificationStrings.channelCommunityDescription — ",
     "x-context": "lib/core/l10n/notification_strings.dart"
@@ -1601,7 +1601,7 @@
     "description": "NotificationStrings.channelCommunityName — ",
     "x-context": "lib/core/l10n/notification_strings.dart"
   },
-  "notificationChannelLfgDescription": "Báo người chơi tham gia tổ đội khi bạn mở ValVN",
+  "notificationChannelLfgDescription": "Báo người chơi tham gia tổ đội khi bạn mở VanHub",
   "@notificationChannelLfgDescription": {
     "description": "NotificationStrings.channelLfgDescription — ",
     "x-context": "lib/core/l10n/notification_strings.dart"
@@ -1656,7 +1656,7 @@
     "description": "NotificationStrings.lfgJoinedTitle — ",
     "x-context": "lib/core/l10n/notification_strings.dart"
   },
-  "notificationLocalOnlyHint": "Chỉ báo trên thiết bị này khi ValVN cập nhật dữ liệu",
+  "notificationLocalOnlyHint": "Chỉ báo trên thiết bị này khi VanHub cập nhật dữ liệu",
   "@notificationLocalOnlyHint": {
     "description": "NotificationStrings.localOnlyHint — ",
     "x-context": "lib/core/l10n/notification_strings.dart"
@@ -1679,7 +1679,7 @@
     "description": "NotificationStrings.nightMarketOpenTitle — ",
     "x-context": "lib/core/l10n/notification_strings.dart"
   },
-  "notificationPassEndingBody": "Battle Pass còn khoảng một ngày. Mở ValVN để xem tiến độ mới nhất.",
+  "notificationPassEndingBody": "Battle Pass còn khoảng một ngày. Mở VanHub để xem tiến độ mới nhất.",
   "@notificationPassEndingBody": {
     "description": "NotificationStrings.passEndingBody — ",
     "x-context": "lib/core/l10n/notification_strings.dart"
@@ -2136,7 +2136,7 @@
   },
   "battlePassEstimateNote": "Ước tính khoảng 4.000 XP mỗi trận, chưa tính nhiệm vụ.",
   "@battlePassEstimateNote": {
-    "description": "BattlePassStrings.estimateNote — Estimate (ValVN extra)",
+    "description": "BattlePassStrings.estimateNote — Estimate (VanHub extra)",
     "x-context": "lib/features/battlepass/battlepass_strings.dart"
   },
   "battlePassEventEndsIn": "Kết thúc sau {time}",
@@ -2454,7 +2454,7 @@
   },
   "battlePassUnratedFallback": "Đấu thường",
   "@battlePassUnratedFallback": {
-    "description": "BattlePassStrings.unratedFallback — Estimate (ValVN extra)",
+    "description": "BattlePassStrings.unratedFallback — Estimate (VanHub extra)",
     "x-context": "lib/features/battlepass/battlepass_strings.dart"
   },
   "battlePassViewAllRewards": "Xem tất cả phần thưởng",
@@ -2502,7 +2502,7 @@
   },
   "battlePassXpPerDayCaption": "Cần mỗi ngày để kịp hoàn thành",
   "@battlePassXpPerDayCaption": {
-    "description": "BattlePassStrings.xpPerDayCaption — XP pace (ValVN extra)",
+    "description": "BattlePassStrings.xpPerDayCaption — XP pace (VanHub extra)",
     "x-context": "lib/features/battlepass/battlepass_strings.dart"
   },
   "battlePassXpReward": "+{xp} XP",
@@ -3561,7 +3561,7 @@
     "description": "CommunityStrings.clearFilter — scopes (v3)",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityCodeAuto": "Để trống: ValVN tự tạo mã từ tổ đội trong game khi bạn đăng tin.",
+  "communityCodeAuto": "Để trống: VanHub tự tạo mã từ tổ đội trong game khi bạn đăng tin.",
   "@communityCodeAuto": {
     "description": "CommunityStrings.codeAuto — LFG v2",
     "x-context": "lib/features/community/community_strings.dart"
@@ -3704,12 +3704,12 @@
     "description": "CommunityStrings.consentPublic — consent",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityConsentTitle": "Tham gia Cộng đồng ValVN",
+  "communityConsentTitle": "Tham gia Cộng đồng VanHub",
   "@communityConsentTitle": {
     "description": "CommunityStrings.consentTitle — consent",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityConsentVerify": "Khi cần xác minh Riot ID, ValVN gửi quyền truy cập Riot của bạn cho Cộng đồng ValVN. Cộng đồng dùng xong là bỏ ngay, không lưu.",
+  "communityConsentVerify": "Khi cần xác minh Riot ID, VanHub gửi quyền truy cập Riot của bạn cho Cộng đồng VanHub. Cộng đồng dùng xong là bỏ ngay, không lưu.",
   "@communityConsentVerify": {
     "description": "CommunityStrings.consentVerify — consent",
     "x-context": "lib/features/community/community_strings.dart"
@@ -4364,7 +4364,7 @@
     "description": "CommunityStrings.deleteDataConfirm — data rights (Settings)",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityDeleteDataConfirmBody": "Toàn bộ bài viết, bình luận, đánh giá skin, lượt thích, bình chọn, tin tìm đồng đội và ảnh của {riotId} trên Cộng đồng ValVN sẽ bị xóa vĩnh viễn và không thể khôi phục. Bạn quay lại chế độ xem ẩn danh và cần đồng ý lại nếu muốn tham gia lần nữa.\n\nTài khoản Riot và dữ liệu trong game không bị ảnh hưởng. Hãy tải dữ liệu về trước nếu bạn muốn giữ một bản sao.",
+  "communityDeleteDataConfirmBody": "Toàn bộ bài viết, bình luận, đánh giá skin, lượt thích, bình chọn, tin tìm đồng đội và ảnh của {riotId} trên Cộng đồng VanHub sẽ bị xóa vĩnh viễn và không thể khôi phục. Bạn quay lại chế độ xem ẩn danh và cần đồng ý lại nếu muốn tham gia lần nữa.\n\nTài khoản Riot và dữ liệu trong game không bị ảnh hưởng. Hãy tải dữ liệu về trước nếu bạn muốn giữ một bản sao.",
   "@communityDeleteDataConfirmBody": {
     "description": "CommunityStrings.deleteDataConfirmBody — data rights (Settings)",
     "placeholders": {
@@ -4484,7 +4484,7 @@
     "description": "CommunityStrings.exportPreparing — data rights (Settings)",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityExportSubject": "Dữ liệu Cộng đồng ValVN",
+  "communityExportSubject": "Dữ liệu Cộng đồng VanHub",
   "@communityExportSubject": {
     "description": "CommunityStrings.exportSubject — data rights (Settings)",
     "x-context": "lib/features/community/community_strings.dart"
@@ -5161,7 +5161,7 @@
     "description": "CommunityStrings.posted — feed",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityPrivacyNote": "ValVN xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.",
+  "communityPrivacyNote": "VanHub xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.",
   "@communityPrivacyNote": {
     "description": "CommunityStrings.privacyNote — general states",
     "x-context": "lib/features/community/community_strings.dart"
@@ -5678,7 +5678,7 @@
     "description": "CommunityStrings.translate — translation",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityTranslateDownloadBody": "Để dịch từ {from} sang {to}, ValVN cần tải gói ngôn ngữ từ Google (khoảng {size}). Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và không gửi tới máy chủ nào.",
+  "communityTranslateDownloadBody": "Để dịch từ {from} sang {to}, VanHub cần tải gói ngôn ngữ từ Google (khoảng {size}). Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và không gửi tới máy chủ nào.",
   "@communityTranslateDownloadBody": {
     "description": "CommunityStrings.translateDownloadBody — translation",
     "placeholders": {
@@ -5724,7 +5724,7 @@
     "description": "CommunityStrings.trendingTitle — previews",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityUnavailableBody": "Chưa kết nối được Cộng đồng ValVN. Hãy thử lại sau ít phút.",
+  "communityUnavailableBody": "Chưa kết nối được Cộng đồng VanHub. Hãy thử lại sau ít phút.",
   "@communityUnavailableBody": {
     "description": "CommunityStrings.unavailableBody — general states",
     "x-context": "lib/features/community/community_strings.dart"
@@ -5784,7 +5784,7 @@
     "description": "CommunityStrings.withdrawConfirm — data rights (Settings)",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityWithdrawConfirmBody": "ValVN sẽ ngừng dùng Cộng đồng bằng {riotId}: kết nối Cộng đồng trên thiết bị này bị xóa và bạn quay lại chế độ xem ẩn danh.\n\nBài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng vẫn còn trên Cộng đồng và vẫn hiện Riot ID của bạn cho đến khi bạn xóa chúng từng cái, hoặc chọn \"Xóa dữ liệu Cộng đồng của tôi\". Bạn có thể tham gia lại bất cứ lúc nào.",
+  "communityWithdrawConfirmBody": "VanHub sẽ ngừng dùng Cộng đồng bằng {riotId}: kết nối Cộng đồng trên thiết bị này bị xóa và bạn quay lại chế độ xem ẩn danh.\n\nBài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng vẫn còn trên Cộng đồng và vẫn hiện Riot ID của bạn cho đến khi bạn xóa chúng từng cái, hoặc chọn \"Xóa dữ liệu Cộng đồng của tôi\". Bạn có thể tham gia lại bất cứ lúc nào.",
   "@communityWithdrawConfirmBody": {
     "description": "CommunityStrings.withdrawConfirmBody — data rights (Settings)",
     "placeholders": {
@@ -5972,7 +5972,7 @@
     "description": "LiveGameStrings.loadoutFromMatch — Player loadout (S51)",
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
-  "liveGameLobbyHint": "Khi tìm được trận, ValVN sẽ hiện đội hình và rank của mọi người.",
+  "liveGameLobbyHint": "Khi tìm được trận, VanHub sẽ hiện đội hình và rank của mọi người.",
   "@liveGameLobbyHint": {
     "description": "LiveGameStrings.lobbyHint — Current game card (R7) / idle states",
     "x-context": "lib/features/live_game/live_game_strings.dart"
@@ -5997,7 +5997,7 @@
     "description": "LiveGameStrings.lockedTag — Rosters (G5, G6)",
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
-  "liveGameMatchPendingHint": "ValVN sẽ tự thử lại. Bảng điểm thường có sau khoảng một phút.",
+  "liveGameMatchPendingHint": "VanHub sẽ tự thử lại. Bảng điểm thường có sau khoảng một phút.",
   "@liveGameMatchPendingHint": {
     "description": "LiveGameStrings.matchPendingHint — Ended (G11)",
     "x-context": "lib/features/live_game/live_game_strings.dart"
@@ -7319,7 +7319,7 @@
     "description": "LegalStrings.consentPrivacy — Consent line (welcome screen)",
     "x-context": "lib/features/settings/legal/legal_strings.dart"
   },
-  "legalConsentSuffix": " của ValVN.",
+  "legalConsentSuffix": " của VanHub.",
   "@legalConsentSuffix": {
     "description": "LegalStrings.consentSuffix — Consent line (welcome screen)",
     "x-context": "lib/features/settings/legal/legal_strings.dart"
@@ -7374,7 +7374,7 @@
     "description": "LegalStrings.thirdPartyLicenses — About hub",
     "x-context": "lib/features/settings/legal/legal_strings.dart"
   },
-  "legalThirdPartyLicensesBody": "Giấy phép của các phần mềm mã nguồn mở mà ValVN sử dụng",
+  "legalThirdPartyLicensesBody": "Giấy phép của các phần mềm mã nguồn mở mà VanHub sử dụng",
   "@legalThirdPartyLicensesBody": {
     "description": "LegalStrings.thirdPartyLicensesBody — About hub",
     "x-context": "lib/features/settings/legal/legal_strings.dart"
@@ -7446,7 +7446,7 @@
   "@settingsGeoNoRegion": {
     "description": "Country and Riot connection settings: settingsGeoNoRegion"
   },
-  "settingsGeoManualWarning": "Lựa chọn này chỉ đổi máy chủ mà ValVN kết nối. Nó không chuyển khu vực tài khoản Riot của bạn. ValVN sẽ kiểm tra kết nối trước khi lưu.",
+  "settingsGeoManualWarning": "Lựa chọn này chỉ đổi máy chủ mà VanHub kết nối. Nó không chuyển khu vực tài khoản Riot của bạn. VanHub sẽ kiểm tra kết nối trước khi lưu.",
   "@settingsGeoManualWarning": {
     "description": "Country and Riot connection settings: settingsGeoManualWarning"
   },
@@ -7501,6 +7501,31 @@
   "settingsGeoNoCountries": "Không có quốc gia khớp bộ lọc.",
   "@settingsGeoNoCountries": {
     "description": "Country picker/preference view text; country never chooses a Riot network host."
+  },
+  "settingsGeoActiveCountries": "Có hoạt động",
+  "@settingsGeoActiveCountries": {
+    "description": "Shared country picker, authored after extraction.",
+    "x-context": "lib/core/geo/country_picker.dart"
+  },
+  "settingsGeoAllCountries": "Tất cả quốc gia",
+  "@settingsGeoAllCountries": {
+    "description": "Shared country picker, authored after extraction.",
+    "x-context": "lib/core/geo/country_picker.dart"
+  },
+  "settingsGeoActivityUnavailable": "Chưa tải được hoạt động các nước. Bạn vẫn có thể chọn trong Tất cả quốc gia.",
+  "@settingsGeoActivityUnavailable": {
+    "description": "Shared country picker, authored after extraction.",
+    "x-context": "lib/core/geo/country_picker.dart"
+  },
+  "settingsGeoResultCount": "{count, plural, other{{count} quốc gia}}",
+  "@settingsGeoResultCount": {
+    "description": "Shared country picker, authored after extraction.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    },
+    "x-context": "lib/core/geo/country_picker.dart"
   },
   "settingsAboutCreditContent": "valorant-api.com",
   "@settingsAboutCreditContent": {
@@ -7612,7 +7637,7 @@
     "description": "SettingsStrings.clearLogConfirm — They do not restore the retired log viewer or any route to it.",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
-  "settingsExportLog": "Gửi báo lỗi cho ValVN",
+  "settingsExportLog": "Gửi báo lỗi cho VanHub",
   "@settingsExportLog": {
     "description": "Row that builds the bug-report file and opens the share sheet.",
     "x-context": "lib/features/settings/settings_strings.dart"
@@ -7637,12 +7662,12 @@
     "description": "SettingsStrings.exportLogSubtitle — NÂNG CAO (the version lives on the About screen only)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
-  "settingsFeedback": "Góp ý cho ValVN",
+  "settingsFeedback": "Góp ý cho VanHub",
   "@settingsFeedback": {
     "description": "SettingsStrings.feedback — HỖ TRỢ",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
-  "settingsFeedbackSubtitle": "Mở trang góp ý của ValVN",
+  "settingsFeedbackSubtitle": "Mở trang góp ý của VanHub",
   "@settingsFeedbackSubtitle": {
     "description": "SettingsStrings.feedbackSubtitle — HỖ TRỢ",
     "x-context": "lib/features/settings/settings_strings.dart"
@@ -7768,12 +7793,12 @@
     "description": "Failure of the share sheet of the bug report.",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
-  "settingsLogoPrefix": "Val",
+  "settingsLogoPrefix": "Van",
   "@settingsLogoPrefix": {
     "description": "SettingsStrings.logoPrefix — Welcome (S01)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
-  "settingsLogoSuffix": "VN",
+  "settingsLogoSuffix": "Hub",
   "@settingsLogoSuffix": {
     "description": "SettingsStrings.logoSuffix — Welcome (S01)",
     "x-context": "lib/features/settings/settings_strings.dart"
@@ -7906,17 +7931,17 @@
   },
   "settingsPhaseComplete": "Đã xong",
   "@settingsPhaseComplete": {
-    "description": "SettingsStrings.phaseComplete — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.phaseComplete — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsPhaseInProgress": "Đang diễn ra",
   "@settingsPhaseInProgress": {
-    "description": "SettingsStrings.phaseInProgress — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.phaseInProgress — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsPhaseScheduled": "Đã lên lịch",
   "@settingsPhaseScheduled": {
-    "description": "SettingsStrings.phaseScheduled — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.phaseScheduled — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsPlatformAppliesTo": "Áp dụng cho {account}",
@@ -8029,24 +8054,24 @@
     "description": "SettingsStrings.serverStatusSubtitle — HỖ TRỢ",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
-  "settingsSessionLogTitle": "Báo lỗi ValVN",
+  "settingsSessionLogTitle": "Báo lỗi VanHub",
   "@settingsSessionLogTitle": {
-    "description": "Subject / title of the shared bug-report file (\"Gửi báo lỗi cho ValVN\").",
+    "description": "Subject / title of the shared bug-report file (\"Gửi báo lỗi cho VanHub\").",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsSeverityCritical": "Nghiêm trọng",
   "@settingsSeverityCritical": {
-    "description": "SettingsStrings.severityCritical — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.severityCritical — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsSeverityInfo": "Thông tin",
   "@settingsSeverityInfo": {
-    "description": "SettingsStrings.severityInfo — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.severityInfo — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsSeverityWarning": "Cảnh báo",
   "@settingsSeverityWarning": {
-    "description": "SettingsStrings.severityWarning — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.severityWarning — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsSignedOutAll": "Đã đăng xuất tất cả tài khoản",
@@ -8056,12 +8081,12 @@
   },
   "settingsStatusAllGood": "Máy chủ hoạt động bình thường",
   "@settingsStatusAllGood": {
-    "description": "SettingsStrings.statusAllGood — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusAllGood — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsStatusAllGoodBody": "Không có sự cố hay bảo trì nào ở máy chủ {region}.",
   "@settingsStatusAllGoodBody": {
-    "description": "SettingsStrings.statusAllGoodBody — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusAllGoodBody — Server status screen (VanHub extra, X-1)",
     "placeholders": {
       "region": {
         "type": "String"
@@ -8071,17 +8096,17 @@
   },
   "settingsStatusFewerUpdates": "Thu gọn",
   "@settingsStatusFewerUpdates": {
-    "description": "SettingsStrings.statusFewerUpdates — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusFewerUpdates — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsStatusIssues": "Riot đang xử lý sự cố",
   "@settingsStatusIssues": {
-    "description": "SettingsStrings.statusIssues — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusIssues — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsStatusIssuesBody": "Máy chủ này có {n} thông báo sự cố.",
   "@settingsStatusIssuesBody": {
-    "description": "SettingsStrings.statusIssuesBody — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusIssuesBody — Server status screen (VanHub extra, X-1)",
     "placeholders": {
       "n": {
         "type": "int"
@@ -8091,27 +8116,27 @@
   },
   "settingsStatusKindIncident": "Sự cố",
   "@settingsStatusKindIncident": {
-    "description": "SettingsStrings.statusKindIncident — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusKindIncident — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsStatusKindMaintenance": "Bảo trì",
   "@settingsStatusKindMaintenance": {
-    "description": "SettingsStrings.statusKindMaintenance — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusKindMaintenance — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsStatusMaintenanceNow": "Máy chủ đang bảo trì",
   "@settingsStatusMaintenanceNow": {
-    "description": "SettingsStrings.statusMaintenanceNow — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusMaintenanceNow — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
-  "settingsStatusMaintenanceNowBody": "Bạn có thể chưa vào được game, và ValVN có thể tạm thời chưa tải được thông tin.",
+  "settingsStatusMaintenanceNowBody": "Bạn có thể chưa vào được game, và VanHub có thể tạm thời chưa tải được thông tin.",
   "@settingsStatusMaintenanceNowBody": {
-    "description": "SettingsStrings.statusMaintenanceNowBody — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusMaintenanceNowBody — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsStatusMoreUpdates": "Xem thêm {n} cập nhật",
   "@settingsStatusMoreUpdates": {
-    "description": "SettingsStrings.statusMoreUpdates — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusMoreUpdates — Server status screen (VanHub extra, X-1)",
     "placeholders": {
       "n": {
         "type": "int"
@@ -8121,17 +8146,17 @@
   },
   "settingsStatusRegionPicker": "Máy chủ",
   "@settingsStatusRegionPicker": {
-    "description": "SettingsStrings.statusRegionPicker — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusRegionPicker — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsStatusScheduled": "Sắp có bảo trì",
   "@settingsStatusScheduled": {
-    "description": "SettingsStrings.statusScheduled — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusScheduled — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsStatusScheduledBody": "{n} lịch bảo trì đã được Riot thông báo.",
   "@settingsStatusScheduledBody": {
-    "description": "SettingsStrings.statusScheduledBody — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusScheduledBody — Server status screen (VanHub extra, X-1)",
     "placeholders": {
       "n": {
         "type": "int"
@@ -8141,12 +8166,12 @@
   },
   "settingsStatusSourceNote": "Nguồn: trang trạng thái chính thức của Riot Games. Giờ hiển thị theo múi giờ của thiết bị.",
   "@settingsStatusSourceNote": {
-    "description": "SettingsStrings.statusSourceNote — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusSourceNote — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsStatusStarted": "Bắt đầu {when}",
   "@settingsStatusStarted": {
-    "description": "SettingsStrings.statusStarted — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusStarted — Server status screen (VanHub extra, X-1)",
     "placeholders": {
       "when": {
         "type": "String"
@@ -8156,7 +8181,7 @@
   },
   "settingsStatusUpdated": "Cập nhật {when}",
   "@settingsStatusUpdated": {
-    "description": "SettingsStrings.statusUpdated — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusUpdated — Server status screen (VanHub extra, X-1)",
     "placeholders": {
       "when": {
         "type": "String"
@@ -8166,7 +8191,7 @@
   },
   "settingsStatusUpdatesHeader": "CẬP NHẬT TỪ RIOT",
   "@settingsStatusUpdatesHeader": {
-    "description": "SettingsStrings.statusUpdatesHeader — Server status screen (ValVN extra, X-1)",
+    "description": "SettingsStrings.statusUpdatesHeader — Server status screen (VanHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsSupportHeader": "HỖ TRỢ",
@@ -8254,7 +8279,7 @@
     "description": "SettingsStrings.welcomeBulletWishlistDetail — Welcome hero (S01)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
-  "settingsWelcomeFootnote": "Bạn đăng nhập trên trang chính thức của Riot. ValVN chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập.",
+  "settingsWelcomeFootnote": "Bạn đăng nhập trên trang chính thức của Riot. VanHub chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập.",
   "@settingsWelcomeFootnote": {
     "description": "SettingsStrings.welcomeFootnote — Welcome (S01)",
     "x-context": "lib/features/settings/settings_strings.dart"
@@ -8536,7 +8561,7 @@
     "description": "SocialStrings.filterUnread — friends",
     "x-context": "lib/features/social/social_strings.dart"
   },
-  "socialFriendsPrivacyNote": "Danh sách bạn bè và tin nhắn lấy trực tiếp từ Riot. ValVN không lưu chúng ở nơi nào khác.",
+  "socialFriendsPrivacyNote": "Danh sách bạn bè và tin nhắn lấy trực tiếp từ Riot. VanHub không lưu chúng ở nơi nào khác.",
   "@socialFriendsPrivacyNote": {
     "description": "SocialStrings.friendsPrivacyNote — friends",
     "x-context": "lib/features/social/social_strings.dart"
@@ -9048,7 +9073,7 @@
     "description": "SocialStrings.reconnecting — friends",
     "x-context": "lib/features/social/social_strings.dart"
   },
-  "socialRemoteNote": "Mọi thay đổi chỉ được gửi tới Riot khi bạn bấm. ValVN không tự tìm trận hay khóa đặc vụ thay bạn.",
+  "socialRemoteNote": "Mọi thay đổi chỉ được gửi tới Riot khi bạn bấm. VanHub không tự tìm trận hay khóa đặc vụ thay bạn.",
   "@socialRemoteNote": {
     "description": "SocialStrings.remoteNote — party",
     "x-context": "lib/features/social/social_strings.dart"
@@ -9525,7 +9550,7 @@
     "description": "StoreStrings.shareButton — \"Chia sẻ ảnh\": branded picture of the daily shop / Night Market.",
     "x-context": "lib/features/store/store_strings.dart"
   },
-  "storeShareCardBrand": "ValVN",
+  "storeShareCardBrand": "VanHub",
   "@storeShareCardBrand": {
     "description": "StoreStrings.shareCardBrand — \"Chia sẻ ảnh\": branded picture of the daily shop / Night Market.",
     "x-context": "lib/features/store/store_strings.dart"
@@ -10167,7 +10192,7 @@
     "description": "HomeStrings.friendsConsentAllow — Friends card",
     "x-context": "lib/features/home/home_strings.dart"
   },
-  "homeFriendsConsentBody": "Để biết bạn bè nào đang chơi, ValVN sẽ kết nối trò chuyện Riot của tài khoản đang dùng mỗi khi bạn mở Trang chủ. Bạn bè sẽ thấy bạn đang trực tuyến. Bạn có thể tắt trong Tùy chỉnh Trang chủ.",
+  "homeFriendsConsentBody": "Để biết bạn bè nào đang chơi, VanHub sẽ kết nối trò chuyện Riot của tài khoản đang dùng mỗi khi bạn mở Trang chủ. Bạn bè sẽ thấy bạn đang trực tuyến. Bạn có thể tắt trong Tùy chỉnh Trang chủ.",
   "@homeFriendsConsentBody": {
     "description": "HomeStrings.friendsConsentBody — Friends card",
     "x-context": "lib/features/home/home_strings.dart"
@@ -10628,7 +10653,7 @@
     "description": "CommunityStrings.errorConsent — consent",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityErrorForbidden": "Bạn chưa thể thực hiện việc này. Hãy xem Tiêu chuẩn cộng đồng hoặc liên hệ ValVN.",
+  "communityErrorForbidden": "Bạn chưa thể thực hiện việc này. Hãy xem Tiêu chuẩn cộng đồng hoặc liên hệ VanHub.",
   "@communityErrorForbidden": {
     "description": "CommunityStrings.errorForbidden — errors",
     "x-context": "lib/features/community/community_strings.dart"
@@ -10653,7 +10678,7 @@
     "description": "CommunityStrings.errorInvalid — errors",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityErrorNetwork": "Không kết nối được Cộng đồng ValVN. Kiểm tra mạng rồi thử lại.",
+  "communityErrorNetwork": "Không kết nối được Cộng đồng VanHub. Kiểm tra mạng rồi thử lại.",
   "@communityErrorNetwork": {
     "description": "CommunityStrings.errorNetwork — errors",
     "x-context": "lib/features/community/community_strings.dart"
@@ -10703,7 +10728,7 @@
     },
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityErrorServer": "Cộng đồng ValVN đang gặp sự cố. Hãy thử lại sau ít phút.",
+  "communityErrorServer": "Cộng đồng VanHub đang gặp sự cố. Hãy thử lại sau ít phút.",
   "@communityErrorServer": {
     "description": "CommunityStrings.errorServer — errors",
     "x-context": "lib/features/community/community_strings.dart"
@@ -10713,7 +10738,7 @@
     "description": "CommunityStrings.errorStorageFull — errors",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityErrorTimeout": "Cộng đồng ValVN phản hồi quá lâu. Hãy thử lại.",
+  "communityErrorTimeout": "Cộng đồng VanHub phản hồi quá lâu. Hãy thử lại.",
   "@communityErrorTimeout": {
     "description": "CommunityStrings.errorTimeout — errors",
     "x-context": "lib/features/community/community_strings.dart"

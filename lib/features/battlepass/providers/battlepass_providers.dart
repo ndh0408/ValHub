@@ -29,7 +29,7 @@ String contractsCacheKey(String puuid) =>
 String _own(Ref ref, String puuid) {
   final id = puuid.trim().toLowerCase();
   // Refetch after a re-login.
-  ref.watch(accountProvider(id).select((a) => a?.needsLogin));
+  ref.watch(accountProvider(id).select((a) => (a?.needsLogin, a?.region)));
   return id;
 }
 
@@ -41,9 +41,9 @@ final playerContractsProvider = FutureProvider.autoDispose
       final api = ref.watch(pvpApiProvider);
       final cache = ref.watch(jsonFileCacheProvider);
       final receivedAt = ref.read(clockProvider).now();
-      cacheFor(ref, kBattlePassTtl);
       try {
         final json = await api.contracts(id);
+        cacheFor(ref, kBattlePassTtl);
         unawaited(
           cache
               .write(contractsCacheKey(id), json, savedAt: receivedAt)
@@ -59,6 +59,7 @@ final playerContractsProvider = FutureProvider.autoDispose
           cached = null;
         }
         if (cached == null) rethrow;
+        cacheFor(ref, kBattlePassTtl);
         return PlayerContracts.fromJson(
           cached.data,
           receivedAt: cached.savedAt,
@@ -73,15 +74,16 @@ final premiumContractsProvider = FutureProvider.autoDispose
       final id = _own(ref, puuid);
       final api = ref.watch(pvpApiProvider);
       final receivedAt = ref.read(clockProvider).now();
-      cacheFor(ref, kBattlePassTtl);
       try {
         final json = await api.entitlements(id, ItemTypeIds.premiumContract);
+        cacheFor(ref, kBattlePassTtl);
         return Entitlements.fromJson(
           json,
           receivedAt: receivedAt,
           itemTypeId: ItemTypeIds.premiumContract,
         ).itemsOfType(ItemTypeIds.premiumContract);
       } on NotFoundException {
+        cacheFor(ref, kBattlePassTtl);
         return const <String>{};
       }
     });
@@ -92,11 +94,12 @@ final dailyTicketProvider = FutureProvider.autoDispose
       final id = _own(ref, puuid);
       final api = ref.watch(pvpApiProvider);
       final receivedAt = ref.read(clockProvider).now();
-      cacheFor(ref, kBattlePassTtl);
       try {
         final json = await api.dailyTicket(id);
+        cacheFor(ref, kBattlePassTtl);
         return DailyTicket.fromJson(json, receivedAt: receivedAt);
       } on NotFoundException {
+        cacheFor(ref, kBattlePassTtl);
         return null;
       }
     });

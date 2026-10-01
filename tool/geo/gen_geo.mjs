@@ -15,7 +15,13 @@ async function get(path) {
     const [, locale, type] = path.match(/main\/([^/]+)\/(territories|languages)\.json/);
     const data = JSON.parse(await readFile(resolve(root, `assets/l10n/${type === 'territories' ? 'countries' : 'languages'}/${locale}.json`), 'utf8'));
     if (data.cldr !== version) throw new Error('Offline CLDR release mismatch');
-    return {main:{[locale]:{localeDisplayNames:{[type]:data.names}}}};
+    const names = { ...data.names };
+    if (type === 'territories') {
+      for (const [code, aliases] of Object.entries(data.aliases ?? {})) {
+        aliases.forEach((alias, i) => { names[`${code}-alt-cached-${i}`] = alias; });
+      }
+    }
+    return {main:{[locale]:{localeDisplayNames:{[type]:names}}}};
   }
   const r = await fetch(`${base}/${path}`, { signal: AbortSignal.timeout(15000) });
   if (!r.ok) throw new Error(`CLDR ${path}: ${r.status}`);
@@ -92,7 +98,13 @@ for (const locale of locales) {
   }));
   const collator = new Intl.Collator(locale);
   const order = [...codes].sort((a, b) => collator.compare(names[a], names[b]) || a.localeCompare(b));
-  await save(`assets/l10n/countries/${locale}.json`, { cldr: version, locale, order, names });
+  const aliases = Object.fromEntries(codes.flatMap(code => {
+    const alternatives = [...new Set(Object.entries(territories)
+      .filter(([key]) => key === code || key.startsWith(`${code}-alt-`))
+      .map(([, value]) => value).filter(value => value !== names[code]))];
+    return alternatives.length ? [[code, alternatives]] : [];
+  }));
+  await save(`assets/l10n/countries/${locale}.json`, { cldr: version, locale, order, names, aliases });
   const langs = (await get(`cldr-localenames-full/main/${locale}/languages.json`)).main[locale].localeDisplayNames.languages;
   await save(`assets/l10n/languages/${locale}.json`, { cldr: version, locale, names: langs });
 }

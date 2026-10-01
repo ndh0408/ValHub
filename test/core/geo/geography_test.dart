@@ -2,11 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:valvn/core/geo/country_search.dart';
 import 'package:valvn/core/accounts/account.dart';
 import 'package:valvn/core/geo/countries.dart';
 import 'package:valvn/core/geo/regions.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   test(
     'all country assets cover 249 ISO countries and the marked XK extension',
     () {
@@ -122,5 +125,21 @@ void main() {
     final auto = updated.copyWith(regionMode: RegionMode.auto);
     expect(auto.region, 'eu');
     expect(auto.shard, 'eu');
+  });
+  test('bundled CLDR long names are searchable aliases at runtime', () async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    final countries = await container.read(countriesProvider.future);
+    final names = await container.read(countryNamesProvider.future);
+    expect(names.aliases['US'], contains('United States'));
+    expect(
+      searchCountryCodes(
+        names.order,
+        countries: countries,
+        names: names,
+        query: 'united states',
+      ),
+      ['US'],
+    );
   });
 }

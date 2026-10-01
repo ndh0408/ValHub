@@ -2,31 +2,31 @@
 
 # Chính sách quyền riêng tư
 
-**ValVN** · Phiên bản 1.1 · Hiệu lực từ: 29/09/2026
+**VanHub** · Phiên bản 1.1 · Hiệu lực từ: 29/09/2026
 
-Chính sách này giải thích cách ValVN thu thập, sử dụng, lưu trữ và bảo vệ dữ liệu cá nhân của bạn, cũng như các quyền của bạn đối với dữ liệu đó. Chính sách được xây dựng theo pháp luật Việt Nam về bảo vệ dữ liệu cá nhân (Nghị định 13/2023/NĐ-CP), đồng thời tính đến các quy định bạn có thể được hưởng ở nơi bạn sống, như GDPR, UK GDPR, CCPA/CPRA hay LGPD (xem mục "Quyền của bạn theo luật nơi bạn sống"). ValVN dành cho người chơi VALORANT ở mọi quốc gia.
+Chính sách này giải thích cách VanHub thu thập, sử dụng, lưu trữ và bảo vệ dữ liệu cá nhân của bạn, cũng như các quyền của bạn đối với dữ liệu đó. Chính sách được xây dựng theo pháp luật Việt Nam về bảo vệ dữ liệu cá nhân (Nghị định 13/2023/NĐ-CP), đồng thời tính đến các quy định bạn có thể được hưởng ở nơi bạn sống, như GDPR, UK GDPR, CCPA/CPRA hay LGPD (xem mục "Quyền của bạn theo luật nơi bạn sống"). VanHub dành cho người chơi VALORANT ở mọi quốc gia.
 
-> Tóm tắt: Phần lớn dữ liệu của bạn chỉ nằm trên thiết bị. Dữ liệu đăng nhập Riot của bạn được lưu trong vùng lưu trữ bảo mật của hệ điều hành và không gửi cho chúng tôi, trừ một trường hợp duy nhất: khi bạn lần đầu mở Cộng đồng và xác nhận đồng ý trong hộp thoại hiện ra một lần, mã truy cập Riot (access token) được gửi tới máy chủ ValVN để xác minh Riot ID, rồi bị hủy ngay. Máy chủ không lưu PUUID (mã định danh người chơi của bạn). ValVN không có quảng cáo, không dùng công cụ phân tích hay theo dõi và không bán dữ liệu của bạn.
+> Tóm tắt: Phần lớn dữ liệu của bạn chỉ nằm trên thiết bị. Dữ liệu đăng nhập Riot của bạn được lưu trong vùng lưu trữ bảo mật của hệ điều hành và không gửi cho chúng tôi, trừ một trường hợp duy nhất: khi bạn lần đầu mở Cộng đồng và xác nhận đồng ý trong hộp thoại hiện ra một lần, mã truy cập Riot (access token) được gửi tới máy chủ VanHub để xác minh Riot ID, rồi bị hủy ngay. Máy chủ không lưu PUUID (mã định danh người chơi của bạn). VanHub không có quảng cáo, không dùng công cụ phân tích hay theo dõi và không bán dữ liệu của bạn.
 
 ## 1. Bên kiểm soát và xử lý dữ liệu
 
-Nguyễn Đức Huy ("chúng tôi") là bên quyết định mục đích và phương tiện xử lý dữ liệu cá nhân trong ValVN (bên kiểm soát và xử lý dữ liệu cá nhân). Thông tin liên hệ có ở mục cuối của Chính sách này.
+Nguyễn Đức Huy ("chúng tôi") là bên quyết định mục đích và phương tiện xử lý dữ liệu cá nhân trong VanHub (bên kiểm soát và xử lý dữ liệu cá nhân). Thông tin liên hệ có ở mục cuối của Chính sách này.
 
 ## 2. Phạm vi áp dụng
 
-Chính sách áp dụng cho ứng dụng ValVN trên iOS và Android ở mọi quốc gia, bao gồm các tính năng Cộng đồng. Chính sách không áp dụng cho dịch vụ của Riot Games, valorant-api.com, Apple, Google hay các bên thứ ba khác. Mỗi bên xử lý dữ liệu theo chính sách riêng của họ.
+Chính sách áp dụng cho ứng dụng VanHub trên iOS và Android ở mọi quốc gia, bao gồm các tính năng Cộng đồng. Chính sách không áp dụng cho dịch vụ của Riot Games, valorant-api.com, Apple, Google hay các bên thứ ba khác. Mỗi bên xử lý dữ liệu theo chính sách riêng của họ.
 
 ## 3. Dữ liệu được xử lý trên thiết bị của bạn
 
 Các dữ liệu dưới đây được tạo ra hoặc tải về khi bạn dùng ứng dụng, và chỉ được lưu trên thiết bị của bạn. Chúng tôi không nhận được các dữ liệu này.
 
-- **Dữ liệu đăng nhập Riot:** dữ liệu do Riot cấp cho ứng dụng sau khi bạn đăng nhập trên trang chính thức của Riot, gồm mã truy cập (access token), mã quyền sở hữu (entitlement token) và cookie đăng nhập (tệp giúp Riot nhớ rằng bạn đã đăng nhập). Chúng được lưu trong Keychain (iOS) hoặc vùng lưu trữ mã hóa do Keystore bảo vệ (Android). ValVN không bao giờ thấy mật khẩu bạn nhập vào trang của Riot.
+- **Dữ liệu đăng nhập Riot:** dữ liệu do Riot cấp cho ứng dụng sau khi bạn đăng nhập trên trang chính thức của Riot, gồm mã truy cập (access token), mã quyền sở hữu (entitlement token) và cookie đăng nhập (tệp giúp Riot nhớ rằng bạn đã đăng nhập). Chúng được lưu trong Keychain (iOS) hoặc vùng lưu trữ mã hóa do Keystore bảo vệ (Android). VanHub không bao giờ thấy mật khẩu bạn nhập vào trang của Riot.
 - **Thông tin đăng nhập đã lưu (tùy chọn):** nếu bạn tự chọn lưu tên đăng nhập và mật khẩu Riot để đăng nhập lại nhanh hơn, thông tin này chỉ nằm trong vùng lưu trữ bảo mật trên thiết bị. Nó không bao giờ bị ghi vào báo lỗi hay gửi đi đâu, trừ việc được điền vào trang đăng nhập chính thức của Riot khi bạn yêu cầu.
 - **Danh sách tài khoản:** Riot ID (tên#tag), mã định danh người chơi (PUUID), khu vực, nền tảng, thẻ người chơi, cấp độ và rank của các tài khoản bạn thêm vào. Ứng dụng dùng chúng để hiển thị danh sách và chuyển đổi giữa các tài khoản.
 - **Dữ liệu trò chơi:** cửa hàng, ví, bộ sưu tập, trang bị, Battle Pass, hợp đồng, lịch sử đấu, rank, trận hiện tại, danh sách bạn bè, trạng thái trực tuyến và tin nhắn trò chuyện. Ứng dụng đọc trực tiếp từ máy chủ của Riot bằng đăng nhập Riot của bạn và có thể lưu bản sao tạm để bạn xem khi không có mạng.
 - **Wishlist và cài đặt:** wishlist, tùy chọn giao diện, cài đặt thông báo và nền tảng.
 - **Dữ liệu tạm:** tên và hình ảnh vật phẩm, đặc vụ, bản đồ lấy từ valorant-api.com, cùng các ảnh đã tải, được lưu tạm để ứng dụng chạy nhanh hơn.
-- **Báo lỗi:** bản ghi kỹ thuật trên thiết bị về những gì ứng dụng đã làm (tên các yêu cầu gửi đi, kết quả và thời gian), dùng để tìm lỗi. Bản ghi được lọc để không chứa mật khẩu, dữ liệu đăng nhập Riot hay ID tài khoản, và chỉ rời khỏi thiết bị khi bạn tự chọn "Gửi báo lỗi cho ValVN" trong Cài đặt > Nâng cao.
+- **Báo lỗi:** bản ghi kỹ thuật trên thiết bị về những gì ứng dụng đã làm (tên các yêu cầu gửi đi, kết quả và thời gian), dùng để tìm lỗi. Bản ghi được lọc để không chứa mật khẩu, dữ liệu đăng nhập Riot hay ID tài khoản, và chỉ rời khỏi thiết bị khi bạn tự chọn "Gửi báo lỗi cho VanHub" trong Cài đặt > Nâng cao.
 
 ## 4. Dữ liệu được xử lý trên máy chủ Cộng đồng
 
@@ -48,7 +48,7 @@ Máy chủ Cộng đồng là máy chủ do nhà phát hành tự vận hành. D
 
 Dữ liệu đăng nhập Riot của bạn (mã truy cập, mã quyền sở hữu và cookie) không bao giờ được gửi cho chúng tôi, trừ một ngoại lệ duy nhất phục vụ tính năng Cộng đồng:
 
-- Ứng dụng chỉ gửi mã truy cập Riot (access token) khi bạn lần đầu mở tính năng Cộng đồng và xác nhận đồng ý trong hộp thoại hiện ra một lần, hoặc khi bạn kết nối lại sau khi lần đăng nhập Cộng đồng của bạn hết hạn. Nếu bạn không đồng ý, Cộng đồng không hoạt động và không có mã nào được gửi đi. Mã được gửi tới máy chủ ValVN qua kết nối mã hóa (HTTPS).
+- Ứng dụng chỉ gửi mã truy cập Riot (access token) khi bạn lần đầu mở tính năng Cộng đồng và xác nhận đồng ý trong hộp thoại hiện ra một lần, hoặc khi bạn kết nối lại sau khi lần đăng nhập Cộng đồng của bạn hết hạn. Nếu bạn không đồng ý, Cộng đồng không hoạt động và không có mã nào được gửi đi. Mã được gửi tới máy chủ VanHub qua kết nối mã hóa (HTTPS).
 - Máy chủ dùng mã này đúng một lần để hỏi máy chủ của Riot Games về thông tin định danh của bạn (PUUID và Riot ID), rồi hủy mã ngay lập tức. Mã không được lưu, không được ghi vào nhật ký của máy chủ và không được dùng cho bất kỳ mục đích nào khác.
 - Máy chủ cấp cho Ứng dụng một mã đăng nhập Cộng đồng riêng, có hiệu lực 30 ngày. Mã này được lưu trong vùng lưu trữ bảo mật trên thiết bị và bị xóa khi bạn đăng xuất tài khoản.
 - Máy chủ Cộng đồng không bao giờ thay mặt bạn thực hiện thao tác nào trên Tài khoản Riot.
@@ -59,7 +59,7 @@ Dữ liệu đăng nhập Riot của bạn (mã truy cập, mã quyền sở h�
 - Gửi thông báo ngay trên thiết bị về cửa hàng, wishlist và Chợ Đêm nếu bạn bật.
 - Vận hành Cộng đồng: xác minh người đăng là chủ Riot ID, hiển thị bài đăng, bình luận, bài tìm đồng đội và bảng xếp hạng skin.
 - Bảo đảm an toàn: chống spam, lạm dụng và gian lận; kiểm duyệt nội dung bị báo cáo; giới hạn số lần gửi yêu cầu trong một khoảng thời gian.
-- Tìm và sửa lỗi khi bạn chủ động gửi báo lỗi cho ValVN.
+- Tìm và sửa lỗi khi bạn chủ động gửi báo lỗi cho VanHub.
 - Tuân thủ nghĩa vụ theo quy định của pháp luật.
 
 Chúng tôi không sử dụng dữ liệu của bạn cho quảng cáo, không lập hồ sơ hành vi và không bán, cho thuê hay trao đổi dữ liệu cá nhân.
@@ -77,14 +77,14 @@ Chúng tôi chỉ chia sẻ dữ liệu trong các trường hợp sau:
 
 - **Riot Games:** Ứng dụng kết nối trực tiếp tới máy chủ của Riot Games bằng đăng nhập Riot của bạn để đọc dữ liệu tài khoản và thực hiện thao tác bạn yêu cầu.
 - **valorant-api.com:** Ứng dụng tải dữ liệu công khai về vật phẩm; không gửi thông tin tài khoản của bạn.
-- **Tệp công khai:** Ứng dụng có thể tải trạng thái máy chủ công khai của Riot và tệp thiết lập chung của ValVN; các yêu cầu này không kèm dữ liệu cá nhân.
+- **Tệp công khai:** Ứng dụng có thể tải trạng thái máy chủ công khai của Riot và tệp thiết lập chung của VanHub; các yêu cầu này không kèm dữ liệu cá nhân.
 - **Cloudflare, Inc.:** cung cấp mạng chuyển tiếp kết nối tới máy chủ Cộng đồng. Cloudflare không lưu dữ liệu Cộng đồng của chúng tôi nhưng có thể xử lý dữ liệu kỹ thuật như địa chỉ IP theo chính sách riêng của họ.
-- **Người dùng khác:** hồ sơ Cộng đồng, bài đăng, hình ảnh, bình luận và bài tìm đồng đội của bạn hiển thị với người dùng ValVN khác. Hình ảnh đã đăng có thể mở được qua một liên kết công khai.
+- **Người dùng khác:** hồ sơ Cộng đồng, bài đăng, hình ảnh, bình luận và bài tìm đồng đội của bạn hiển thị với người dùng VanHub khác. Hình ảnh đã đăng có thể mở được qua một liên kết công khai.
 - **Cơ quan nhà nước có thẩm quyền:** khi có yêu cầu hợp pháp theo quy định của pháp luật áp dụng cho nhà phát hành.
 
 ## 9. Chuyển dữ liệu qua biên giới
 
-Máy chủ Cộng đồng do nhà phát hành tự vận hành. Kết nối tới máy chủ này đi qua mạng toàn cầu của Cloudflare, Inc., nên dữ liệu có thể đi qua nhiều quốc gia. Dữ liệu Cộng đồng bạn đăng hiển thị với người dùng ValVN ở mọi nơi. Khi bạn dùng Ứng dụng, thiết bị của bạn cũng kết nối trực tiếp tới máy chủ của Riot Games. Chúng tôi áp dụng các biện pháp bảo vệ phù hợp và thực hiện nghĩa vụ liên quan đến việc chuyển dữ liệu cá nhân qua biên giới theo pháp luật Việt Nam và, khi bạn ở nơi có quy định tương ứng, theo pháp luật nơi bạn sống.
+Máy chủ Cộng đồng do nhà phát hành tự vận hành. Kết nối tới máy chủ này đi qua mạng toàn cầu của Cloudflare, Inc., nên dữ liệu có thể đi qua nhiều quốc gia. Dữ liệu Cộng đồng bạn đăng hiển thị với người dùng VanHub ở mọi nơi. Khi bạn dùng Ứng dụng, thiết bị của bạn cũng kết nối trực tiếp tới máy chủ của Riot Games. Chúng tôi áp dụng các biện pháp bảo vệ phù hợp và thực hiện nghĩa vụ liên quan đến việc chuyển dữ liệu cá nhân qua biên giới theo pháp luật Việt Nam và, khi bạn ở nơi có quy định tương ứng, theo pháp luật nơi bạn sống.
 
 ## 10. Thời gian lưu trữ
 
@@ -115,15 +115,15 @@ Máy chủ Cộng đồng do nhà phát hành tự vận hành. Kết nối tớ
 
 ## 12. Thông báo và tác vụ nền
 
-ValVN chỉ dùng thông báo cục bộ, tức là thông báo do chính thiết bị của bạn tạo ra. Chúng tôi không vận hành máy chủ gửi thông báo đẩy và không thu thập mã thiết bị. Ứng dụng đăng ký với hệ điều hành một tác vụ chạy nền định kỳ, chạy ngay trên thiết bị, để giữ đăng nhập Riot của bạn còn hiệu lực và, nếu bạn bật, đọc cửa hàng trực tiếp từ Riot để báo skin trong wishlist hoặc Chợ Đêm. Bạn có thể tắt thông báo trong Cài đặt của Ứng dụng hoặc của hệ điều hành.
+VanHub chỉ dùng thông báo cục bộ, tức là thông báo do chính thiết bị của bạn tạo ra. Chúng tôi không vận hành máy chủ gửi thông báo đẩy và không thu thập mã thiết bị. Ứng dụng đăng ký với hệ điều hành một tác vụ chạy nền định kỳ, chạy ngay trên thiết bị, để giữ đăng nhập Riot của bạn còn hiệu lực và, nếu bạn bật, đọc cửa hàng trực tiếp từ Riot để báo skin trong wishlist hoặc Chợ Đêm. Bạn có thể tắt thông báo trong Cài đặt của Ứng dụng hoặc của hệ điều hành.
 
 ## 13. Dịch nội dung trên thiết bị
 
-Khi bạn chọn dịch nội dung Cộng đồng, ValVN dùng công cụ dịch ML Kit của Google chạy trên thiết bị. Nếu chưa có gói ngôn ngữ cần thiết, ValVN hỏi bạn trước khi tải gói từ Google (khoảng 30 MB mỗi gói). Việc tải cần kết nối mạng và Google có thể nhận thông tin kỹ thuật của kết nối, như địa chỉ IP, theo chính sách của Google. Nội dung bài viết được dịch trên thiết bị, không gửi tới Google để dịch. Bạn có thể không dùng tính năng này; ValVN không dùng chatbot hay dịch vụ tạo nội dung bằng AI.
+Khi bạn chọn dịch nội dung Cộng đồng, VanHub dùng công cụ dịch ML Kit của Google chạy trên thiết bị. Nếu chưa có gói ngôn ngữ cần thiết, VanHub hỏi bạn trước khi tải gói từ Google (khoảng 30 MB mỗi gói). Việc tải cần kết nối mạng và Google có thể nhận thông tin kỹ thuật của kết nối, như địa chỉ IP, theo chính sách của Google. Nội dung bài viết được dịch trên thiết bị, không gửi tới Google để dịch. Bạn có thể không dùng tính năng này; VanHub không dùng chatbot hay dịch vụ tạo nội dung bằng AI.
 
 ## 14. Phân tích, quảng cáo và theo dõi
 
-ValVN không tích hợp công cụ phân tích, công cụ tự động báo cáo sự cố, quảng cáo hay công cụ theo dõi của bên thứ ba. ValVN không dùng mã định danh quảng cáo và không theo dõi bạn giữa các ứng dụng hay trang web. Nếu điều này thay đổi trong tương lai, chúng tôi sẽ cập nhật Chính sách và xin sự đồng ý của bạn khi pháp luật yêu cầu.
+VanHub không tích hợp công cụ phân tích, công cụ tự động báo cáo sự cố, quảng cáo hay công cụ theo dõi của bên thứ ba. VanHub không dùng mã định danh quảng cáo và không theo dõi bạn giữa các ứng dụng hay trang web. Nếu điều này thay đổi trong tương lai, chúng tôi sẽ cập nhật Chính sách và xin sự đồng ý của bạn khi pháp luật yêu cầu.
 
 ## 15. Bảo mật dữ liệu
 
@@ -170,7 +170,7 @@ Tùy nơi bạn sống, pháp luật địa phương có thể cho bạn thêm q
 Một số ví dụ về luật có thể áp dụng cho bạn:
 
 - **GDPR / UK GDPR:** nếu bạn ở Liên minh châu Âu, Khu vực kinh tế châu Âu hoặc Vương quốc Anh: bạn có các quyền truy cập, chỉnh sửa, xóa, hạn chế, di chuyển dữ liệu, phản đối và rút lại sự đồng ý, cùng quyền khiếu nại tới cơ quan giám sát dữ liệu tại quốc gia bạn sống. Cơ sở xử lý dữ liệu được nêu ở mục "Cơ sở pháp lý".
-- **CCPA / CPRA:** nếu bạn là cư dân California: bạn có quyền biết, xóa, sửa dữ liệu và từ chối việc "bán" hay "chia sẻ" dữ liệu. ValVN không bán và không chia sẻ dữ liệu cá nhân cho quảng cáo theo ngữ cảnh khác.
+- **CCPA / CPRA:** nếu bạn là cư dân California: bạn có quyền biết, xóa, sửa dữ liệu và từ chối việc "bán" hay "chia sẻ" dữ liệu. VanHub không bán và không chia sẻ dữ liệu cá nhân cho quảng cáo theo ngữ cảnh khác.
 - **LGPD:** nếu bạn ở Brazil: bạn có các quyền truy cập, chỉnh sửa, ẩn danh, xóa, di chuyển dữ liệu và thông tin về việc chia sẻ dữ liệu.
 - **PIPL và luật tương tự:** nếu bạn ở Trung Quốc đại lục hoặc nơi có luật tương tự: bạn có quyền biết, quyết định, hạn chế, từ chối, truy cập, sao chép, chỉnh sửa, xóa dữ liệu và yêu cầu giải thích về việc xử lý.
 - **Nghị định 13/2023/NĐ-CP:** nếu bạn ở Việt Nam: các quyền nêu ở mục "Quyền của bạn" ở trên.

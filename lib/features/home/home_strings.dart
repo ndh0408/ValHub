@@ -110,7 +110,7 @@ abstract final class HomeStrings {
   static String friendsPlaying(int n) => '$n bạn đang chơi';
   static const friendsConsentTitle = 'Xem bạn bè nào đang chơi?';
   static const friendsConsentBody =
-      'Để biết bạn bè nào đang chơi, ValVN sẽ kết nối trò chuyện Riot của tài '
+      'Để biết bạn bè nào đang chơi, VanHub sẽ kết nối trò chuyện Riot của tài '
       'khoản đang dùng mỗi khi bạn mở Trang chủ. Bạn bè sẽ thấy bạn đang '
       'trực tuyến. Bạn có thể tắt trong Tùy chỉnh Trang chủ.';
   static const friendsConsentAllow = 'Bật';

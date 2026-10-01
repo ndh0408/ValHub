@@ -119,8 +119,11 @@ describe('stray files', () => {
     const { token } = await e.login('alice');
     const key = await upload(token);
     fs.writeFileSync(`${publicFile(key)}.123.tmp`, 'partial');
+    // Attach while the fake-clock login session is still valid. Moving to
+    // wall time first can expire it as the calendar advances.
+    const attached = await e.req('POST', '/v1/posts', { token, body: { kind: 'text', body: 'x', media: [key] } });
+    expect(attached.status).toBe(200);
     e.clock.t = Date.now() + 2 * STRAY_GRACE_MS;
-    await e.req('POST', '/v1/posts', { token, body: { kind: 'text', body: 'x', media: [key] } });
     const r = await run();
     expect(r.strayFilesDeleted).toBe(0);
     expect(fs.existsSync(publicFile(key))).toBe(true);

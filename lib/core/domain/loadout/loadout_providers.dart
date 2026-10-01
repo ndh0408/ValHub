@@ -13,6 +13,7 @@ import '../../storage/prefs.dart';
 import '../../util/clock.dart';
 import '../economy/owned_items.dart';
 import '../economy/economy_fetch.dart' show canUseOfflineCopy;
+import '../competitive/viewer.dart' show cacheFor;
 import 'loadout_changes.dart';
 import 'loadout_models.dart';
 import 'loadout_presets.dart';
@@ -66,12 +67,8 @@ class LoadoutController extends AsyncNotifier<LoadoutSnapshot> {
 
   @override
   Future<LoadoutSnapshot> build() async {
-    ref.watch(accountProvider(puuid).select((a) => a?.needsLogin));
+    ref.watch(accountProvider(puuid).select((a) => (a?.needsLogin, a?.region)));
     final repo = ref.watch(loadoutRepositoryProvider);
-    final link = ref.keepAlive();
-    final timer = Timer(kLoadoutTtl, link.close);
-    ref.onDispose(timer.cancel);
-
     final LoadoutSnapshot snapshot;
     try {
       snapshot = await repo.fetch(puuid);
@@ -79,8 +76,10 @@ class LoadoutController extends AsyncNotifier<LoadoutSnapshot> {
       if (!canUseOfflineCopy(error)) rethrow;
       final cached = await _readOffline();
       if (cached == null) rethrow;
+      cacheFor(ref, kLoadoutTtl);
       return cached;
     }
+    cacheFor(ref, kLoadoutTtl);
     unawaited(_writeOffline(snapshot));
     _cacheCard(snapshot);
     return snapshot;

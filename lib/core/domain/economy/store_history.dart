@@ -1,6 +1,6 @@
 /// What the user's OWN storefronts contained on the days this device saw
 /// them (PR-03). Riot exposes no past stores, so every unrecorded day is lost
-/// forever: history only starts when ValVN first records it, and everything
+/// forever: history only starts when VanHub first records it, and everything
 /// derived from it must say so ("ghi nhận từ dd/MM").
 ///
 /// Only the two personalised places are kept: the daily shop and the Night

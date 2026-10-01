@@ -67,8 +67,8 @@ void main() {
       status: 200,
       elapsed: const Duration(milliseconds: 312),
     );
-    final text = log.exportText(header: 'ValVN');
-    expect(text, startsWith('ValVN\n'));
+    final text = log.exportText(header: 'VanHub');
+    expect(text, startsWith('VanHub\n'));
     expect(
       text,
       contains(

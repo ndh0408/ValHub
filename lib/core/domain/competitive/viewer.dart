@@ -23,7 +23,7 @@ String watchViewer(Ref ref, String subject) {
   if (viewer == null) {
     throw const NeedsLoginException(reason: 'no_account');
   }
-  ref.watch(accountProvider(viewer).select((a) => a?.needsLogin));
+  ref.watch(accountProvider(viewer).select((a) => (a?.needsLogin, a?.region)));
   return viewer;
 }
 

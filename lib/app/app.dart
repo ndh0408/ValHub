@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../core/accounts/account_providers.dart';
+import '../core/accounts/account_data_warmup.dart';
 import '../core/accounts/account_link_guard.dart';
 import '../core/auth/auth_routes.dart';
 import '../core/l10n/account_strings.dart';
@@ -154,7 +155,7 @@ class _ValVnAppState extends ConsumerState<ValVnApp>
       // ignore: deprecated_member_use
       builder: (context, child) => MaterialUiCompatibilityBridge(
         child: ProgressNotificationHost(
-          child: child ?? const SizedBox.shrink(),
+          child: AccountDataWarmupHost(child: child ?? const SizedBox.shrink()),
         ),
       ),
       routerConfig: ref.watch(routerProvider),

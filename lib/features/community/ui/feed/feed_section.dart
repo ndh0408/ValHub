@@ -101,6 +101,28 @@ class FeedSliver extends ConsumerWidget {
               icon: Icons.forum_outlined,
               title: CommunityStrings.feedEmptyScopeTitle,
               message: CommunityStrings.feedEmptyScopeBody,
+              action:
+                  (state.applied?.scope ?? scope?.scope) ==
+                      CommunityScope.global
+                  ? null
+                  : OutlinedButton.icon(
+                      key: const ValueKey('feed-empty-global'),
+                      icon: const Icon(Icons.public_rounded),
+                      label: const Text(CommunityStrings.scopeGlobal),
+                      onPressed: () {
+                        final filters = ref.read(
+                          communityScopeProvider(ScopedSection.feed),
+                        );
+                        ref
+                            .read(
+                              communityScopeProvider(ScopedSection.feed)
+                                  .notifier,
+                            )
+                            .set(
+                              filters.copyWith(scope: CommunityScope.global),
+                            );
+                      },
+                    ),
             ),
           ],
         ),

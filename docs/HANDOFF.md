@@ -1,5 +1,7 @@
 # ValVN — Bàn giao cho Codex (30/09/2026)
 
+**Cập nhật 01/10/2026:** Chủ dự án đã yêu cầu Codex tự hoàn thiện, thử emulator có cửa sổ, commit/push GitHub và gộp vào nhánh mặc định để mọi người thấy code mới nhất. Các giới hạn emulator/push/gộp tại §1.9 bên dưới là bàn giao lịch sử và được yêu cầu mới này thay thế. Tiến độ hiện tại: [COMPLETION_STATUS.md](COMPLETION_STATUS.md); kiểm chứng từng yêu cầu: [QA_2026-10-01.md](QA_2026-10-01.md). Gộp code không đồng nghĩa các mục còn mở đã được nghiệm thu.
+
 Claude đã dừng vì hết hạn mức. Codex tiếp tục các gói việc bên dưới; Claude chỉ **review, gộp, sửa sai sót** sau đó.
 Đọc trước: `CLAUDE.md`, `docs/GLOBAL_AUDIT.md`, các báo cáo trong `docs/audit/` (mỗi phát hiện có ID + file:line + cách sửa), `docs/design/{IA,HOME,I18N,COUNTRIES,DEVICES,DESIGN}.md`, `docs/community-api.md`.
 

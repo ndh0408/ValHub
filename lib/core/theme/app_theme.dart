@@ -3,7 +3,7 @@ import 'package:cupertino_ui/cupertino_ui.dart'
 import 'package:material_ui/material_ui.dart';
 
 /// Valorant-style palette (FS §17), aligned with the Figma tokens
-/// (`docs/design/DESIGN.md`, collection "ValVN Tokens").
+/// (`docs/design/DESIGN.md`, collection "VanHub Tokens").
 abstract final class ValColors {
   /// Valorant red (primary accent) — token `red`.
   static const red = Color(0xFFFF4655);
@@ -41,7 +41,7 @@ abstract final class ValColors {
   static const teal = green;
 
   /// Secondary text — token `muted` (iOS system grey).
-  static const muted = Color(0xFF8E8E93);
+  static const muted = Color(0xFFADB1BA);
 
   /// Warnings (agent select pill, estimates, "Đăng nhập lại").
   static const amber = Color(0xFFF5B942);
@@ -383,10 +383,29 @@ ThemeData _build({
         fontWeight: FontWeight.w700,
       ),
       titleSmall: text.titleSmall?.copyWith(fontWeight: FontWeight.w600),
-      bodyLarge: text.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
-      labelLarge: text.labelLarge?.copyWith(fontWeight: FontWeight.w600),
-      labelMedium: text.labelMedium?.copyWith(fontWeight: FontWeight.w500),
-      labelSmall: text.labelSmall?.copyWith(fontWeight: FontWeight.w500),
+      bodyLarge: text.bodyLarge?.copyWith(
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0,
+        height: 1.4,
+      ),
+      bodyMedium: text.bodyMedium?.copyWith(letterSpacing: 0, height: 1.4),
+      bodySmall: text.bodySmall?.copyWith(
+        fontSize: 13,
+        letterSpacing: 0,
+        height: 1.4,
+      ),
+      labelLarge: text.labelLarge?.copyWith(
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0,
+      ),
+      labelMedium: text.labelMedium?.copyWith(
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0,
+      ),
+      labelSmall: text.labelSmall?.copyWith(
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0,
+      ),
     ),
     appBarTheme: AppBarTheme(
       backgroundColor: scaffold,

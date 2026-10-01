@@ -1,7 +1,7 @@
 /// Skin prices (SUMMARY §8.2 B9, §9.3; CA §13; VF §9 R3).
 ///
 /// Chain, first hit wins:
-/// 1. ValVN price table: bundled `assets/data/prices.json`, overridden by the
+/// 1. VanHub price table: bundled `assets/data/prices.json`, overridden by the
 ///    `prices` block of the cached remote config (X-4) — exact;
 /// 2. full prices seen in live storefronts (persisted in prefs) — exact;
 /// 3. Riot `store/v1/offers` (P-5), only behind remote flag
@@ -35,7 +35,7 @@ import 'reward_sources.dart';
 
 /// Where a [PriceQuote] comes from.
 enum PriceSource {
-  /// ValVN price table (bundled / remote). Exact.
+  /// VanHub price table (bundled / remote). Exact.
   table,
 
   /// Seen in a live storefront (daily, Night Market full price, bundle
@@ -136,7 +136,7 @@ class PriceQuote {
 
 // ------------------------------------------------------------- price table
 
-/// ValVN price table (`assets/data/prices.json`, X-4 remote override).
+/// VanHub price table (`assets/data/prices.json`, X-4 remote override).
 ///
 /// Document shape:
 /// ```json

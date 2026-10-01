@@ -3,7 +3,7 @@ abstract final class AuthStrings {
   static const loginTitle = 'Đăng nhập Riot';
   static const signInCta = 'Đăng nhập bằng tài khoản Riot';
   static const signInNote =
-      'Bạn đăng nhập trên trang chính thức của Riot. ValVN chỉ lưu mật khẩu khi '
+      'Bạn đăng nhập trên trang chính thức của Riot. VanHub chỉ lưu mật khẩu khi '
       'bạn tự chọn lưu thông tin đăng nhập; dữ liệu đăng nhập và thông tin đã '
       'lưu chỉ nằm trên thiết bị của bạn.';
   static const rememberMeHint =

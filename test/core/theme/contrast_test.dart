@@ -11,6 +11,17 @@ double _contrast(Color a, Color b) {
 }
 
 void main() {
+  test('secondary dark text stays readable on all shared card surfaces', () {
+    final scheme = buildDarkTheme().colorScheme;
+    for (final bg in [
+      scheme.surface,
+      scheme.surfaceContainer,
+      scheme.surfaceContainerHigh,
+    ]) {
+      expect(_contrast(scheme.onSurfaceVariant, bg), greaterThanOrEqualTo(4.5));
+    }
+  });
+
   test('filled badge text is readable on teal / amber / red', () {
     for (final bg in [ValColors.teal, ValColors.amber]) {
       expect(

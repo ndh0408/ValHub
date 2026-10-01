@@ -16,7 +16,7 @@ abstract final class LegalStrings {
   static const legalHeader = 'PHÁP LÝ';
   static const thirdPartyLicenses = 'Phần mềm bên thứ ba';
   static const thirdPartyLicensesBody =
-      'Giấy phép của các phần mềm mã nguồn mở mà ValVN sử dụng';
+      'Giấy phép của các phần mềm mã nguồn mở mà VanHub sử dụng';
   static const contactHeader = 'LIÊN HỆ';
   static const contact = 'Liên hệ';
   static const contactBody = LegalInfo.contactEmail;
@@ -30,5 +30,5 @@ abstract final class LegalStrings {
   static const consentTerms = 'Điều khoản sử dụng';
   static const consentAnd = ' và ';
   static const consentPrivacy = 'Chính sách quyền riêng tư';
-  static const consentSuffix = ' của ValVN.';
+  static const consentSuffix = ' của VanHub.';
 }

@@ -38,7 +38,7 @@ abstract final class LiveGameStrings {
       'Mở VALORANT và tìm trận — chi tiết trận sẽ tự hiện ở đây khi bạn vào '
       'màn hình chọn đặc vụ.';
   static const lobbyHint =
-      'Khi tìm được trận, ValVN sẽ hiện đội hình và rank của mọi người.';
+      'Khi tìm được trận, VanHub sẽ hiện đội hình và rank của mọi người.';
   static const queueHint =
       'Giữ ứng dụng mở — chi tiết trận sẽ hiện ngay khi tìm được trận.';
 
@@ -116,7 +116,7 @@ abstract final class LiveGameStrings {
       acs == null ? 'Bạn: $kda' : 'Bạn: $kda · ACS $acs';
   static const viewMatchDetails = 'Xem chi tiết trận';
   static const matchPendingHint =
-      'ValVN sẽ tự thử lại. Bảng điểm thường có sau khoảng một phút.';
+      'VanHub sẽ tự thử lại. Bảng điểm thường có sau khoảng một phút.';
   static const kda = 'K/D/A';
   static const acs = 'ACS';
 

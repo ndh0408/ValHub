@@ -104,11 +104,11 @@ class AppSettings {
       wishlistNotificationsByAccount[puuid.toLowerCase()] ??
       wishlistNotifications;
 
-  /// "Khi Chợ Đêm mở" (ValVN extra).
+  /// "Khi Chợ Đêm mở" (VanHub extra).
   final bool nightMarketNotifications;
 
   /// "Hiện giá quy đổi ước tính": the local-currency estimate next to VP
-  /// prices (ValVN extra).
+  /// prices (VanHub extra).
   final bool battlePassNotifications;
   final bool rankNotifications;
   final bool communityNotifications;

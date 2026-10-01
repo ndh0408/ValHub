@@ -11,12 +11,12 @@ abstract final class CommunityStrings {
   // ------------------------------------------------------- general states
   static const unavailableTitle = 'Chưa kết nối được Cộng đồng';
   static const unavailableBody =
-      'Chưa kết nối được Cộng đồng ValVN. Hãy thử lại sau ít phút.';
+      'Chưa kết nối được Cộng đồng VanHub. Hãy thử lại sau ít phút.';
   static const noAccountTitle = 'Đăng nhập để tham gia';
   static const noAccountBody =
       'Thêm tài khoản Riot để đăng bài, tìm đồng đội và bình chọn skin.';
   static const privacyNote =
-      'ValVN xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng '
+      'VanHub xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng '
       'không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.';
   static const you = 'Bạn';
   static const unknownPlayer = 'Người chơi';
@@ -32,10 +32,10 @@ abstract final class CommunityStrings {
   // --------------------------------------------------------------- errors
   static const errorGeneric = 'Có gì đó trục trặc. Hãy thử lại.';
   static const errorNetwork =
-      'Không kết nối được Cộng đồng ValVN. Kiểm tra mạng rồi thử lại.';
-  static const errorTimeout = 'Cộng đồng ValVN phản hồi quá lâu. Hãy thử lại.';
+      'Không kết nối được Cộng đồng VanHub. Kiểm tra mạng rồi thử lại.';
+  static const errorTimeout = 'Cộng đồng VanHub phản hồi quá lâu. Hãy thử lại.';
   static const errorServer =
-      'Cộng đồng ValVN đang gặp sự cố. Hãy thử lại sau ít phút.';
+      'Cộng đồng VanHub đang gặp sự cố. Hãy thử lại sau ít phút.';
   static const errorUnauthorized = 'Kết nối Cộng đồng đã hết hạn. Hãy thử lại.';
   static const errorRiotRejected =
       'Riot chưa xác minh được tài khoản của bạn. Hãy đăng nhập lại tài khoản '
@@ -49,7 +49,7 @@ abstract final class CommunityStrings {
       'Kho ảnh của Cộng đồng đã đầy. Bạn vẫn đăng bài được, nhưng chưa thể kèm '
       'ảnh. Hãy thử lại sau.';
   static const errorForbidden =
-      'Bạn chưa thể thực hiện việc này. Hãy xem Tiêu chuẩn cộng đồng hoặc liên hệ ValVN.';
+      'Bạn chưa thể thực hiện việc này. Hãy xem Tiêu chuẩn cộng đồng hoặc liên hệ VanHub.';
   static const errorNotFound = 'Nội dung này không còn tồn tại.';
   static const errorInvalid =
       'Nội dung chưa được chấp nhận. Hãy kiểm tra lại rồi thử lại.';
@@ -324,7 +324,7 @@ abstract final class CommunityStrings {
   static String slotsTooMany(int max) =>
       'Tổ đội có tối đa 5 người: chỉ còn $max chỗ.';
   static const codeAuto =
-      'Để trống: ValVN tự tạo mã từ tổ đội trong game khi bạn đăng tin.';
+      'Để trống: VanHub tự tạo mã từ tổ đội trong game khi bạn đăng tin.';
   static const codeAutoFailed =
       'Không tạo được mã tổ đội. Hãy mở VALORANT hoặc nhập mã thủ công.';
   static const matchMyRank = 'Phù hợp rank của bạn';
@@ -510,7 +510,7 @@ abstract final class CommunityStrings {
   static const translateUnavailable = 'Thiết bị này chưa hỗ trợ dịch trên máy.';
   static const translateDownloadTitle = 'Tải gói dịch trên máy?';
   static String translateDownloadBody(String from, String to, String size) =>
-      'Để dịch từ $from sang $to, ValVN cần tải gói ngôn ngữ từ Google (khoảng $size). '
+      'Để dịch từ $from sang $to, VanHub cần tải gói ngôn ngữ từ Google (khoảng $size). '
       'Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và '
       'không gửi tới máy chủ nào.';
   static String modelSize(int mb) => '$mb MB';
@@ -533,7 +533,7 @@ abstract final class CommunityStrings {
   static const exportSubtitle =
       'Bản sao mọi thứ bạn đã đăng trong Cộng đồng: bài viết, bình luận, đánh '
       'giá, lượt thích, bình chọn và tin tìm đồng đội.';
-  static const exportSubject = 'Dữ liệu Cộng đồng ValVN';
+  static const exportSubject = 'Dữ liệu Cộng đồng VanHub';
   static const exportPreparing = 'Đang chuẩn bị…';
 
   static const deleteDataTitle = 'Xóa dữ liệu Cộng đồng của tôi';
@@ -542,7 +542,7 @@ abstract final class CommunityStrings {
   static const deleteDataConfirmTitle = 'Xóa dữ liệu Cộng đồng?';
   static String deleteDataConfirmBody(String riotId) =>
       'Toàn bộ bài viết, bình luận, đánh giá skin, lượt thích, bình chọn, '
-      'tin tìm đồng đội và ảnh của $riotId trên Cộng đồng ValVN sẽ bị xóa '
+      'tin tìm đồng đội và ảnh của $riotId trên Cộng đồng VanHub sẽ bị xóa '
       'vĩnh viễn và không thể khôi phục. Bạn quay lại chế độ xem ẩn danh và '
       'cần đồng ý lại nếu muốn tham gia lần nữa.\n\n'
       'Tài khoản Riot và dữ liệu trong game không bị ảnh hưởng. Hãy tải dữ '
@@ -555,7 +555,7 @@ abstract final class CommunityStrings {
       'Ngừng dùng Cộng đồng bằng tài khoản này. Bài đã đăng vẫn được giữ.';
   static const withdrawConfirmTitle = 'Rút lại đồng ý?';
   static String withdrawConfirmBody(String riotId) =>
-      'ValVN sẽ ngừng dùng Cộng đồng bằng $riotId: kết nối Cộng đồng trên '
+      'VanHub sẽ ngừng dùng Cộng đồng bằng $riotId: kết nối Cộng đồng trên '
       'thiết bị này bị xóa và bạn quay lại chế độ xem ẩn danh.\n\n'
       'Bài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng '
       'vẫn còn trên '
@@ -567,11 +567,11 @@ abstract final class CommunityStrings {
       'Đã rút lại đồng ý. Bạn đang xem Cộng đồng ẩn danh.';
 
   // -------------------------------------------------------------- consent
-  static const consentTitle = 'Tham gia Cộng đồng ValVN';
+  static const consentTitle = 'Tham gia Cộng đồng VanHub';
   static String consentAccount(String riotId) => 'Tài khoản: $riotId';
   static const consentVerify =
-      'Khi cần xác minh Riot ID, ValVN gửi quyền truy cập Riot của bạn cho '
-      'Cộng đồng ValVN. Cộng đồng dùng xong là bỏ ngay, không lưu.';
+      'Khi cần xác minh Riot ID, VanHub gửi quyền truy cập Riot của bạn cho '
+      'Cộng đồng VanHub. Cộng đồng dùng xong là bỏ ngay, không lưu.';
   static const consentPublic =
       'Người khác sẽ thấy Riot ID, thẻ người chơi, rank và quốc gia của bạn.';
   static const consentLocal =

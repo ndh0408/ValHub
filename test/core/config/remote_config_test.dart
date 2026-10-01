@@ -336,7 +336,7 @@ void main() {
   });
 
   group('pinned community hosts', () {
-    test('only the ValVN server receives the token', () {
+    test('only the VanHub server receives the token', () {
       expect(AppConstants.isCommunityHost('val.gianguyen.cloud'), isTrue);
       expect(AppConstants.isCommunityHost(' VAL.GianGuyen.cloud '), isTrue);
       expect(AppConstants.isCommunityHost('evil.example'), isFalse);

@@ -1,5 +1,5 @@
 name: valvn
-description: "ValVN - Ứng dụng đồng hành Valorant tiếng Việt"
+description: "VanHub - VALORANT companion app"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -98,7 +98,7 @@ flutter:
       fonts:
         - asset: assets/fonts/Anton-Regular.ttf
 
-# App icon (original ValVN artwork, see tool/generate_icon.py).
+# App icon (original VanHub artwork, see tool/generate_icon.py).
 # Regenerate: `python3 tool/generate_icon.py && dart run flutter_launcher_icons`.
 flutter_launcher_icons:
   image_path: assets/icon/icon.png

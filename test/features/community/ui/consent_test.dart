@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/accounts/account_providers.dart';
+import 'package:valvn/core/geo/countries.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/storage/secure_store.dart';
 import 'package:valvn/features/community/community_previews.dart';
@@ -104,8 +105,23 @@ Future<void> _later(WidgetTester tester) async {
 
 void main() {
   late CommunityTestEnv env;
+  late Map<String, CountryInfo> countries;
+  late CountryNames countryNames;
+  setUpAll(() async {
+    final assets = ProviderContainer();
+    try {
+      countries = await assets.read(countriesProvider.future);
+      countryNames = await assets.read(countryNamesProvider.future);
+    } finally {
+      assets.dispose();
+    }
+  });
   setUp(() async {
     env = await CommunityTestEnv.create(consent: false);
+    env.extraOverrides = [
+      countriesProvider.overrideWith((ref) async => countries),
+      countryNamesProvider.overrideWith((ref) async => countryNames),
+    ];
     _servePublic(env);
   });
 
@@ -301,16 +317,7 @@ void main() {
 
     testWidgets('"Cộng đồng các nước" is anonymous', (tester) async {
       await _openTab(tester, env);
-      await tester.scrollUntilVisible(
-        find.byKey(const ValueKey('scope-countries-feed')),
-        100,
-        scrollable: find.descendant(
-          of: find.byKey(const ValueKey('scope-actions-feed')),
-          matching: find.byType(Scrollable),
-        ),
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('scope-countries-feed')));
+      await chooseCommunityScope(tester, 'countries');
       await settle(tester);
       expect(find.text('Nhật Bản'), findsOneWidget);
       _expectAnonymous(env);

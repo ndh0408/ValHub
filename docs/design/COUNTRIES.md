@@ -1,6 +1,6 @@
 # ValVN — Quốc gia, khu vực & kết nối (kế hoạch chốt, 30/09/2026)
 
-Trạng thái: **thiết kế, chưa có code**. Tài liệu này đi cùng `docs/design/IA.md` (5 tab; Battle Pass và Cài đặt nằm dưới Hồ sơ) và `docs/community-api.md` ("Community scopes v3"). Khi mâu thuẫn với `docs/research/SUMMARY.md` về host/shard, SUMMARY thắng, trừ mục 3.1 F5 (SUMMARY §4 đã cũ, xem mục 18).
+Trạng thái của tài liệu gốc: **thiết kế**. Đã triển khai từng phần; xem [tiến độ](../COMPLETION_STATUS.md) và [bộ chọn dùng chung](../COUNTRY_PICKER_2026-10-01.md) để biết code/test hiện tại. Các checklist chưa đóng vẫn là yêu cầu cần hoàn thiện. Tài liệu này đi cùng `docs/design/IA.md` (5 tab; Battle Pass và Cài đặt nằm dưới Hồ sơ) và `docs/community-api.md` ("Community scopes v3"). Khi mâu thuẫn với `docs/research/SUMMARY.md` về host/shard, SUMMARY thắng, trừ mục 3.1 F5 (SUMMARY §4 đã cũ, xem mục 18).
 
 Phạm vi quyết định của chủ dự án: hỗ trợ đủ **18 ngôn ngữ VALORANT** (ar-AE, de-DE, en-US, es-ES, es-MX, fr-FR, id-ID, it-IT, ja-JP, ko-KR, pl-PL, pt-BR, ru-RU, th-TH, tr-TR, vi-VN, zh-CN, zh-TW), mặc định theo ngôn ngữ thiết bị và người dùng chọn được; người chơi ở mọi quốc gia; bộ chọn quốc gia hiển thị shard Riot phục vụ và trạng thái hỗ trợ, có bộ lọc "chỉ nơi được hỗ trợ"; người dùng chọn cách kết nối (tự động theo tài khoản hoặc thủ công); chạy tốt trên mọi thiết bị (điện thoại, máy tính bảng/iPad, màn hình gập, ngang, trình đọc màn hình, chữ lớn, giảm chuyển động, người mù màu).
 

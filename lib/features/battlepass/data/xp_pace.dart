@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'battlepass_models.dart';
 
 /// How fast the player must earn XP to finish a pass before it ends
-/// (ValVN extra, like ValBuddy's "XP/day").
+/// (VanHub extra, like ValBuddy's "XP/day").
 @immutable
 class XpPace {
   const XpPace({required this.daysLeft, required this.xpPerDay});

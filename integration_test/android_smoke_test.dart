@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/accounts/account_providers.dart';
 import 'package:valvn/core/geo/country_picker.dart';
@@ -12,10 +13,27 @@ import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/storage/secure_store.dart';
 import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/features/settings/ui/sections/country_section.dart';
+import 'package:valvn/features/settings/settings_routes.dart';
+import 'package:valvn/features/settings/settings_strings.dart';
+import 'package:valvn/features/settings/legal/legal_strings.dart';
+import 'package:valvn/features/settings/legal/legal_info.dart';
 
 // Run only on an isolated emulator. Uses real Android preferences, Keystore,
 // notification scheduling and bundled CLDR assets. No Riot login or tokens;
 // a passing smoke test is not evidence of live Riot/Community E2E behavior.
+Future<void> waitForNativeCondition(
+  WidgetTester tester,
+  bool Function() completed,
+) async {
+  final deadline = DateTime.now().add(const Duration(seconds: 5));
+  while (!completed() && DateTime.now().isBefore(deadline)) {
+    // pumpAndSettle waits for frames, not asynchronous platform disk writes.
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    await tester.pump();
+  }
+  expect(completed(), isTrue, reason: 'Native condition did not finish');
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -71,12 +89,21 @@ void main() {
       final search = find.byType(TextField);
       await tester.tap(search);
       await tester.pumpAndSettle();
-      await tester.enterText(search, 'japan');
+      // Feed the real controller: tester.enterText uses TestTextInput while
+      // this binding leaves the native IME registered. Mixing the two can
+      // overwrite the query with a late native editing update.
+      tester.widget<TextField>(search).controller!.text = 'japan';
       await tester.pumpAndSettle();
       final japan = find.byKey(const ValueKey('JP'));
+      await waitForNativeCondition(tester, () => japan.evaluate().isNotEmpty);
       await tester.ensureVisible(japan);
+      await tester.pumpAndSettle();
       await tester.tap(japan);
       await tester.pumpAndSettle();
+      await waitForNativeCondition(
+        tester,
+        () => container.read(selectedCountryProvider) == 'JP',
+      );
       expect(find.byType(CountryPicker), findsNothing);
       expect(container.read(selectedCountryProvider), 'JP');
       final reloaded = await Prefs.create();
@@ -84,9 +111,93 @@ void main() {
       expect(find.text('Nhật Bản'), findsOneWidget);
       await tester.tap(find.byType(ListTile).last);
       await tester.pumpAndSettle();
+      await waitForNativeCondition(
+        tester,
+        () => container.read(selectedCountryProvider) == 'VN',
+      );
       expect(container.read(selectedCountryProvider), 'VN');
       await prefs.reload();
       expect(prefs.getString(CountryPreference.key), isNull);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
+
+  testWidgets(
+    'Community picker uses bundled names, all countries and separate preference',
+    (tester) async {
+      await initAppLocale();
+      final prefs = await Prefs.create();
+      final previous = prefs.getString(CountryPreference.key);
+      await prefs.setString(CountryPreference.key, 'JP');
+      addTearDown(() async {
+        if (previous == null) {
+          await prefs.remove(CountryPreference.key);
+        } else {
+          await prefs.setString(CountryPreference.key, previous);
+        }
+      });
+      final container = ProviderContainer(
+        overrides: [prefsProvider.overrideWithValue(prefs)],
+      );
+      addTearDown(container.dispose);
+      String? picked;
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            locale: appLocale,
+            supportedLocales: const [appLocale],
+            localizationsDelegates: appLocalizationsDelegates,
+            theme: buildDarkTheme(),
+            home: Builder(
+              builder: (context) => Scaffold(
+                body: SafeArea(
+                  child: TextButton(
+                    onPressed: () async =>
+                        picked = await showCountrySelection<String>(
+                          context,
+                          builder: (_, fullHeight) => CountryPicker.community(
+                            // Synthetic activity only; this test never calls Community/Riot.
+                            activity: const AsyncData([
+                              CountryActivity(code: 'US', posts: 2, authors: 1),
+                            ]),
+                            onRetryActivity: null,
+                            myCountry: 'VN',
+                            fullHeight: fullHeight,
+                          ),
+                        ),
+                    child: const Text('open'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('country-VN')), findsOneWidget);
+      expect(find.byKey(const ValueKey('country-JP')), findsNothing);
+      final search = find.byType(TextField);
+      await tester.tap(search);
+      tester.widget<TextField>(search).controller!.text = 'hoa ky';
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('country-US')), findsOneWidget);
+      tester.widget<TextField>(search).controller!.clear();
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('country-all')));
+      await tester.pumpAndSettle();
+      tester.widget<TextField>(search).controller!.text = 'germany';
+      await tester.pumpAndSettle();
+      final germany = find.byKey(const ValueKey('country-DE'));
+      await tester.ensureVisible(germany);
+      await tester.pumpAndSettle();
+      await tester.tap(germany);
+      await tester.pumpAndSettle();
+      expect(picked, 'DE');
+      expect(prefs.getString(CountryPreference.key), 'JP');
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
     },
@@ -138,7 +249,7 @@ void main() {
       payload: '/store',
     );
     for (final id in ids.take(60)) {
-      await schedule(id, 'ValVN native QA');
+      await schedule(id, 'VanHub native QA');
     }
     expect(await service.pendingIds(), ids.take(60).toSet());
     await schedule(ids.last, 'Must not exceed budget');
@@ -150,5 +261,41 @@ void main() {
       await service.cancel(id);
     }
     expect(await service.pendingIds(), isEmpty);
+  });
+  testWidgets('About presents VanHub without the source attribution card', (
+    tester,
+  ) async {
+    await initAppLocale();
+    final prefs = await Prefs.create();
+    final router = GoRouter(
+      initialLocation: SettingsRoutes.about,
+      routes: settingsBranchRoutes,
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [prefsProvider.overrideWithValue(prefs)],
+        child: MaterialApp.router(
+          locale: appLocale,
+          supportedLocales: const [appLocale],
+          localizationsDelegates: appLocalizationsDelegates,
+          theme: buildDarkTheme(),
+          routerConfig: router,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.fling(
+      find.byType(CustomScrollView),
+      const Offset(0, -2400),
+      2000,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text(LegalInfo.copyrightNotice), findsOneWidget);
+    expect(find.text(SettingsStrings.aboutCreditContent), findsNothing);
+    expect(find.text(SettingsStrings.aboutCreditRiot), findsNothing);
+    expect(find.text(SettingsStrings.aboutCreditDocs), findsNothing);
+    expect(find.text(LegalStrings.creditsHeader), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 }

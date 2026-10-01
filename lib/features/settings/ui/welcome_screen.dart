@@ -145,7 +145,7 @@ class WelcomeScreen extends StatelessWidget {
   }
 }
 
-/// "ValVN" in Anton with a red accent bar and a red "VN".
+/// "VanHub" in Anton with a red accent bar and a red "VN".
 class _Logo extends StatelessWidget {
   const _Logo();
 

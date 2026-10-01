@@ -60,10 +60,12 @@ class CountryNames {
     required this.names,
     required this.english,
     required this.order,
+    this.aliases = const {},
   });
   final Map<String, String> names;
   final Map<String, String> english;
   final List<String> order;
+  final Map<String, List<String>> aliases;
   String name(String code) => names[code] ?? english[code] ?? code;
 }
 
@@ -96,5 +98,12 @@ final countryNamesProvider = FutureProvider<CountryNames>((ref) async {
     names: names(data),
     english: names(en),
     order: asList(data['order']).whereType<String>().toList(growable: false),
+    aliases: {
+      for (final code in {...names(data).keys, ...names(en).keys})
+        code: {
+          ...asList(asMap(data['aliases'])?[code]).whereType<String>(),
+          ...asList(asMap(en['aliases'])?[code]).whereType<String>(),
+        }.toList(growable: false),
+    },
   );
 });

@@ -1,4 +1,4 @@
-ValVN — Proprietary Software License / Giấy phép phần mềm độc quyền
+VanHub — Proprietary Software License / Giấy phép phần mềm độc quyền
 
 Copyright (c) 2026 Nguyễn Đức Huy. All rights reserved.
 Bản quyền (c) 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền.
@@ -30,7 +30,7 @@ Without the prior written permission of the Owner you may not:
 Access to this repository, where granted, is for the sole purpose authorized
 by the Owner and does not transfer any ownership or license rights.
 
-End users may use the published ValVN application only under the in-app
+End users may use the published VanHub application only under the in-app
 End-User License ("Giấy phép phần mềm") and Terms of Service ("Điều khoản sử
 dụng"); see docs/legal/.
 
@@ -39,7 +39,7 @@ Flutter and Dart packages) are licensed under their own respective licenses,
 which remain in full force for those components only. Their notices are shown
 in the application under "Giấy phép thư viện bên thứ ba".
 
-ValVN isn't endorsed by Riot Games and doesn't reflect the views or opinions
+VanHub isn't endorsed by Riot Games and doesn't reflect the views or opinions
 of Riot Games or anyone officially involved in producing or managing Riot
 Games properties. Riot Games, VALORANT and all associated properties are
 trademarks or registered trademarks of Riot Games, Inc.
@@ -81,7 +81,7 @@ Nếu chưa có sự cho phép trước bằng văn bản của Chủ sở hữu
 Quyền truy cập kho mã này (nếu được cấp) chỉ nhằm mục đích được Chủ sở hữu
 cho phép và không chuyển giao bất kỳ quyền sở hữu hay quyền sử dụng nào.
 
-Người dùng cuối chỉ được sử dụng ứng dụng ValVN đã phát hành theo "Giấy phép
+Người dùng cuối chỉ được sử dụng ứng dụng VanHub đã phát hành theo "Giấy phép
 phần mềm" và "Điều khoản sử dụng" trong ứng dụng; xem thư mục docs/legal/.
 
 Các thành phần của bên thứ ba có trong hoặc được Phần mềm sử dụng (ví dụ
@@ -89,7 +89,7 @@ Flutter và các gói Dart) được cấp phép theo giấy phép riêng của 
 phần; các giấy phép đó chỉ áp dụng cho chính thành phần tương ứng. Thông báo
 của chúng được hiển thị trong ứng dụng tại mục "Giấy phép thư viện bên thứ ba".
 
-ValVN không được Riot Games xác nhận và không phản ánh quan điểm của Riot
+VanHub không được Riot Games xác nhận và không phản ánh quan điểm của Riot
 Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot
 Games. Riot Games, VALORANT và mọi tài sản liên quan là thương hiệu hoặc thương
 hiệu đã đăng ký của Riot Games, Inc.

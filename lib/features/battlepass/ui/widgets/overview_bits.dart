@@ -64,7 +64,7 @@ class ViewRewardsRow extends StatelessWidget {
   }
 }
 
-/// ValVN extra: "Còn cần 321.034 XP", "≈ 81 trận Đấu thường", and — when
+/// VanHub extra: "Còn cần 321.034 XP", "≈ 81 trận Đấu thường", and — when
 /// the act end is known — the XP needed per day and the days left, plus
 /// the XP still available from weekly missions.
 class XpEstimateCard extends StatelessWidget {

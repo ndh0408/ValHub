@@ -760,7 +760,9 @@ const kWalletTtl = Duration(minutes: 5);
 /// ```
 final storefrontProvider = FutureProvider.autoDispose
     .family<Storefront, String>((ref, puuid) async {
-      ref.watch(accountProvider(puuid).select((a) => a?.needsLogin));
+      ref.watch(
+        accountProvider(puuid).select((a) => (a?.needsLogin, a?.region)),
+      );
       final api = ref.watch(pvpApiProvider);
       final fetched = await fetchWithOfflineCache(
         ref,
@@ -803,7 +805,7 @@ final walletProvider = FutureProvider.autoDispose.family<Wallet, String>((
   ref,
   puuid,
 ) async {
-  ref.watch(accountProvider(puuid).select((a) => a?.needsLogin));
+  ref.watch(accountProvider(puuid).select((a) => (a?.needsLogin, a?.region)));
   final api = ref.watch(pvpApiProvider);
   final fetched = await fetchWithOfflineCache(
     ref,

@@ -6,7 +6,7 @@ import '../../../core/content/content_db.dart';
 import 'player_contracts.dart';
 
 /// Average XP of one Unrated / Competitive match used by the "≈ n trận"
-/// estimate (VF §6.3, a ValVN extra). Missions are not counted, so the real
+/// estimate (VF §6.3, a VanHub extra). Missions are not counted, so the real
 /// number of matches is usually lower.
 const kEstimatedXpPerMatch = 4000;
 

@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:valvn/core/geo/countries.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/features/community/community_routes.dart';
 import 'package:valvn/features/community/community_strings.dart';
@@ -24,14 +26,9 @@ Map<String, String> _lastQuery(CommunityTestEnv env, String route) =>
     env.server.calls(route).last.query;
 
 Future<void> _tapChip(WidgetTester tester, Finder chip, String list) async {
-  await tester.scrollUntilVisible(
-    chip,
-    120,
-    scrollable: find.descendant(
-      of: find.byKey(ValueKey(list)),
-      matching: find.byType(Scrollable),
-    ),
-  );
+  await tester.tap(find.byKey(const ValueKey('scope-selector-feed')));
+  await settle(tester);
+  await tester.ensureVisible(chip);
   await tester.pump();
   await tester.tap(chip);
 }
@@ -48,8 +45,24 @@ void _serveCommunities(CommunityTestEnv env) {
 
 void main() {
   late CommunityTestEnv env;
+  late Map<String, CountryInfo> countries;
+  late CountryNames countryNames;
+  setUpAll(() async {
+    // Real bundled CLDR assets, loaded outside the widget fake clock.
+    final container = ProviderContainer();
+    try {
+      countries = await container.read(countriesProvider.future);
+      countryNames = await container.read(countryNamesProvider.future);
+    } finally {
+      container.dispose();
+    }
+  });
   setUp(() async {
     env = await CommunityTestEnv.create();
+    env.extraOverrides = [
+      countriesProvider.overrideWith((ref) async => countries),
+      countryNamesProvider.overrideWith((ref) async => countryNames),
+    ];
     env.server
       ..json('POST /v1/auth/riot', sessionJson(country: 'VN'))
       ..json('GET /v1/posts', page([postJson('p1')]))
@@ -65,8 +78,9 @@ void main() {
       final q = _lastQuery(env, 'GET /v1/posts');
       expect((q['scope'], q['country']), ('country', 'VN'));
       expect(find.text('🇻🇳 Việt Nam'), findsOneWidget);
-      expect(find.text(CommunityStrings.scopeRegion), findsOneWidget);
-      expect(find.text(CommunityStrings.scopeGlobal), findsOneWidget);
+      expect(find.text(CommunityStrings.scopeRegion), findsNothing);
+      expect(find.text(CommunityStrings.scopeGlobal), findsNothing);
+      expect(find.byKey(const ValueKey('scope-selector-feed')), findsOneWidget);
       await unmount(tester);
     });
 
@@ -79,7 +93,7 @@ void main() {
       expect((q['scope'], q['region']), ('region', 'ap'));
       // No "nước bạn" to offer: the shard segment is the one shown.
       expect(find.text(CommunityStrings.scopeCountry), findsNothing);
-      expect(find.text(CommunityStrings.scopeRegion), findsOneWidget);
+      expect(find.text(CommunityStrings.regionLabel('ap')), findsOneWidget);
       await unmount(tester);
     });
 
@@ -88,12 +102,12 @@ void main() {
     ) async {
       await _open(tester, env);
 
-      await tester.tap(find.text(CommunityStrings.scopeRegion));
+      await chooseCommunityScope(tester, 'region-ap');
       await settle(tester);
       var q = _lastQuery(env, 'GET /v1/posts');
       expect((q['scope'], q['region']), ('region', 'ap'));
 
-      await tester.tap(find.text(CommunityStrings.scopeGlobal));
+      await chooseCommunityScope(tester, 'global');
       await settle(tester);
       q = _lastQuery(env, 'GET /v1/posts');
       expect(q['scope'], 'global');
@@ -112,12 +126,10 @@ void main() {
 
     testWidgets('a shard menu picks any region', (tester) async {
       await _open(tester, env);
-      await tester.tap(find.text(CommunityStrings.scopeRegion));
+      await chooseCommunityScope(tester, 'region-ap');
       await settle(tester);
 
-      await tester.tap(find.text(CommunityStrings.regionLabel('ap')).last);
-      await settle(tester);
-      await tester.tap(find.text(CommunityStrings.regionLabel('kr')).last);
+      await chooseCommunityScope(tester, 'region-kr');
       await settle(tester);
 
       final q = _lastQuery(env, 'GET /v1/posts');
@@ -127,7 +139,7 @@ void main() {
 
     testWidgets('international: multi-language filter', (tester) async {
       await _open(tester, env);
-      await tester.tap(find.text(CommunityStrings.scopeGlobal));
+      await chooseCommunityScope(tester, 'global');
       await settle(tester);
 
       await tester.tap(find.byKey(const ValueKey('scope-languages-feed')));
@@ -167,7 +179,7 @@ void main() {
 
       expect(find.text(CommunityStrings.countriesTitle), findsWidgets);
       expect(find.text('🇺🇸'), findsOneWidget);
-      expect(find.text('Hoa Kỳ'), findsOneWidget);
+      expect(find.text('Mỹ'), findsOneWidget);
       expect(find.textContaining('50 bài · 20 người'), findsOneWidget);
       expect(find.textContaining('3 tin tìm đồng đội'), findsOneWidget);
       // Own country first and marked.
@@ -176,7 +188,7 @@ void main() {
       await tester.enterText(find.byType(TextField).last, 'nhat ban');
       await settle(tester);
       expect(find.text('Nhật Bản'), findsOneWidget);
-      expect(find.text('Hoa Kỳ'), findsNothing);
+      expect(find.text('Mỹ'), findsNothing);
 
       await tester.tap(find.text('Nhật Bản'));
       await settle(tester, frames: 30);
@@ -187,7 +199,7 @@ void main() {
       expect(env.prefs.getString(PrefKeys.ui('community.feed.country')), 'JP');
 
       // "Về nước bạn" resets to the viewer's country.
-      await tester.tap(find.text(CommunityStrings.backToMyCountry));
+      await chooseCommunityScope(tester, 'home');
       await settle(tester);
       expect(_lastQuery(env, 'GET /v1/posts')['country'], 'VN');
       await unmount(tester);
@@ -238,7 +250,7 @@ void main() {
       await _open(tester, env);
       expect(find.text('bài nước bạn'), findsOneWidget);
 
-      await tester.tap(find.text(CommunityStrings.scopeGlobal));
+      await chooseCommunityScope(tester, 'global');
       await settle(tester);
 
       expect(find.text('bài quốc tế'), findsOneWidget);
@@ -250,6 +262,10 @@ void main() {
       env.server.json('GET /v1/posts', page([]));
       await _open(tester, env);
       expect(find.text(CommunityStrings.feedEmptyScopeTitle), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('feed-empty-global')));
+      await settle(tester);
+      expect(_lastQuery(env, 'GET /v1/posts')['scope'], 'global');
+      expect(find.byKey(const ValueKey('feed-empty-global')), findsNothing);
       await unmount(tester);
     });
   });
@@ -262,12 +278,12 @@ void main() {
         var q = _lastQuery(env, 'GET /v1/skins/top');
         expect((q['scope'], q['country']), ('country', 'VN'));
 
-        await tester.tap(find.text(CommunityStrings.scopeRegion));
+        await chooseCommunityScope(tester, 'region-ap', section: 'skins');
         await settle(tester);
         q = _lastQuery(env, 'GET /v1/skins/top');
         expect((q['scope'], q['region']), ('region', 'ap'));
 
-        await tester.tap(find.text(CommunityStrings.scopeWorldwide));
+        await chooseCommunityScope(tester, 'global', section: 'skins');
         await settle(tester);
         expect(_lastQuery(env, 'GET /v1/skins/top')['scope'], 'global');
         expect(
@@ -344,11 +360,11 @@ void main() {
           env,
           routes: [...communityBranchRoutes, ...communityTopLevelRoutes],
           initialLocation: CommunityRoutes.root,
-          size: const Size(360, 2000),
+          size: const Size(360, 800),
           textScale: 2,
         );
         await settle(tester);
-        await tester.tap(find.text(CommunityStrings.scopeGlobal));
+        await chooseCommunityScope(tester, 'global');
         await settle(tester);
         expect(tester.takeException(), isNull);
         await unmount(tester);

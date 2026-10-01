@@ -19,7 +19,7 @@ import 'sections/preferences_sections.dart';
 ///
 /// Sections: TÀI KHOẢN (ending with "Đăng xuất tất cả tài khoản"), TÙY CHỌN,
 /// THÔNG BÁO, GIAO DIỆN, HỖ TRỢ (server status, feedback), NÂNG CAO ("Gửi
-/// báo lỗi cho ValVN" and "Xóa dữ liệu tạm", the only technical actions; no
+/// báo lỗi cho VanHub" and "Xóa dữ liệu tạm", the only technical actions; no
 /// log lines are ever shown), and finally THÔNG TIN with the single "Giới
 /// thiệu & pháp lý" row (docs/design/IA.md, docs/design/VOICE.md §6).
 /// Pull-to-refresh re-measures the temporary data, re-reads the notification

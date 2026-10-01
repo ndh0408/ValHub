@@ -471,7 +471,7 @@ class HomeSkinTile extends ConsumerWidget {
   }
 }
 
-/// "Chợ Đêm · còn 4 ngày …" and, until the user opened it in ValVN, "n ưu
+/// "Chợ Đêm · còn 4 ngày …" and, until the user opened it in VanHub, "n ưu
 /// đãi đang chờ bạn lật" (the best deal stays hidden to keep the surprise);
 /// afterwards the best deal.
 class _NightMarketRow extends ConsumerWidget {

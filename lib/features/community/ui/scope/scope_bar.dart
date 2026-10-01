@@ -4,20 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account_providers.dart';
+import '../../../../core/geo/countries.dart';
 import '../../../../core/ui/filter_bar.dart';
-import '../../../../core/ui/segmented_tabs.dart';
 import '../../community_strings.dart';
 import '../../data/community_models.dart';
 import '../../providers/scope_providers.dart';
-import '../widgets/community_widgets.dart';
 import 'countries_sheet.dart';
 import 'language_filter_sheet.dart';
 
 /// Label of the "country" segment: flag + name of the chosen country, else
 /// "Nước bạn".
-String countrySegmentLabel(String? country) => country == null
+String countrySegmentLabel(String? country, {String? localizedName}) =>
+    country == null
     ? CommunityStrings.scopeCountry
-    : '${flagEmoji(country)} ${CommunityStrings.countryName(country)}';
+    : '${flagEmoji(country)} ${localizedName ?? CommunityStrings.countryName(country)}';
 
 /// Summary of the language filter ("Mọi ngôn ngữ", "Tiếng Việt", "3 ngôn
 /// ngữ").
@@ -27,10 +27,8 @@ String languageFilterLabel(Set<String> languages) => switch (languages.length) {
   final n => CommunityStrings.languagesSelected(n),
 };
 
-/// Scope switcher of a section: "Nước bạn · Khu vực · Quốc tế" pills plus
-/// the country picker ("Cộng đồng các nước"), a shard menu (region scope)
-/// and the language filter (international scope). The choice is remembered
-/// per section.
+/// One scope selector on the page; country and region choices live in a
+/// scrollable sheet. The applied scope and per-section preferences are retained.
 class ScopeBar extends ConsumerWidget {
   const ScopeBar({
     super.key,
@@ -57,9 +55,7 @@ class ScopeBar extends ConsumerWidget {
     final notifier = ref.read(communityScopeProvider(section).notifier);
     final chosen = ref.watch(communityScopeProvider(section));
     final myCountry = ref.watch(myCountryProvider(puuid)).value;
-    final myRegion = communityRegion(
-      ref.watch(accountProvider(puuid).select((a) => a?.region)),
-    );
+    final myRegion = communityAccountRegion(ref.watch(accountProvider(puuid)));
     final appliedNow = applied;
     final country =
         chosen.country ??
@@ -104,89 +100,168 @@ class ScopeBar extends ConsumerWidget {
         context,
         initial: chosen.languages,
       );
-      if (picked != null) notifier.set(chosen.copyWith(languages: picked));
+      if (picked != null) {
+        notifier.set(
+          chosen.copyWith(scope: CommunityScope.global, languages: picked),
+        );
+      }
     }
 
-    return Column(
-      children: [
-        SegmentedTabs<CommunityScope>(
-          expand: true,
-          tabs: [
-            // Without a known country there is no "nước bạn" to show.
-            if (country != null)
-              SegmentedTab(
-                value: CommunityScope.country,
-                label: countrySegmentLabel(country),
-              ),
-            const SegmentedTab(
-              value: CommunityScope.region,
-              label: CommunityStrings.scopeRegion,
-            ),
-            SegmentedTab(value: CommunityScope.global, label: globalLabel),
-          ],
-          selected: selected,
-          onChanged: (s) => notifier.set(chosen.copyWith(scope: s)),
-        ),
-        SizedBox(
-          height: 50,
+    final names = ref.watch(countryNamesProvider).value;
+    final displayedCountry = selected == CommunityScope.country
+        ? (appliedNow?.country ?? country)
+        : country;
+    final label = switch (selected) {
+      CommunityScope.country => countrySegmentLabel(
+        displayedCountry,
+        localizedName: displayedCountry == null
+            ? null
+            : names?.name(displayedCountry),
+      ),
+      CommunityScope.region => CommunityStrings.regionLabel(region),
+      CommunityScope.global => globalLabel,
+    };
+
+    Future<void> pickScope() async {
+      final choice = await showModalBottomSheet<String>(
+        context: context,
+        useRootNavigator: true,
+        isScrollControlled: true,
+        useSafeArea: true,
+        showDragHandle: true,
+        builder: (sheetContext) => SizedBox(
+          height: (MediaQuery.sizeOf(sheetContext).height * 0.8).clamp(0, 600),
           child: ListView(
-            key: ValueKey('scope-actions-${section.name}'),
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.fromLTRB(16, 6, 16, 4),
+            padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 24),
             children: [
-              // The chip that belongs to the chosen scope comes first, the
-              // country picker last.
-              if (chosen.scope == CommunityScope.country &&
-                  myCountry != null &&
-                  chosen.country != null &&
-                  chosen.country != myCountry) ...[
-                ValFilterChip(
-                  key: ValueKey('scope-home-${section.name}'),
-                  icon: Icons.home_rounded,
-                  label: CommunityStrings.backToMyCountry,
-                  selected: false,
-                  onSelected: (_) =>
-                      notifier.set(chosen.copyWith(country: () => null)),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  CommunityStrings.title,
+                  style: Theme.of(sheetContext).textTheme.titleLarge,
                 ),
-                const SizedBox(width: 8),
-              ],
-              if (chosen.scope == CommunityScope.region) ...[
-                CommunityMenuChip<String>(
-                  key: ValueKey('scope-region-${section.name}'),
-                  icon: Icons.dns_rounded,
-                  label: CommunityStrings.regionLabel(region),
-                  tooltip: CommunityStrings.region,
-                  items: [
-                    for (final r in kCommunityRegions)
-                      (r, CommunityStrings.regionLabel(r)),
-                  ],
-                  onSelected: (r) => notifier.set(
-                    chosen.copyWith(region: () => r == myRegion ? null : r),
-                  ),
-                ),
-                const SizedBox(width: 8),
-              ],
-              if (chosen.scope == CommunityScope.global) ...[
-                ValFilterChip(
-                  key: ValueKey('scope-languages-${section.name}'),
-                  icon: Icons.translate_rounded,
-                  label: languageFilterLabel(chosen.languages),
-                  selected: chosen.languages.isNotEmpty,
-                  onSelected: (_) => unawaited(pickLanguages()),
-                ),
-                const SizedBox(width: 8),
-              ],
-              ValFilterChip(
-                key: ValueKey('scope-countries-${section.name}'),
-                icon: Icons.public_rounded,
-                label: CommunityStrings.countriesTitle,
-                selected: false,
-                onSelected: (_) => unawaited(pickCountry()),
               ),
+              if (myCountry != null)
+                ListTile(
+                  key: ValueKey('scope-home-${section.name}'),
+                  leading: Text(flagEmoji(myCountry)),
+                  title: Text(
+                    names?.name(myCountry) ??
+                        CommunityStrings.countryName(myCountry),
+                  ),
+                  subtitle: Text(
+                    displayedCountry != myCountry &&
+                            selected == CommunityScope.country
+                        ? CommunityStrings.backToMyCountry
+                        : CommunityStrings.yourCountry,
+                  ),
+                  trailing:
+                      selected == CommunityScope.country &&
+                          displayedCountry == myCountry
+                      ? const Icon(Icons.check_rounded)
+                      : null,
+                  onTap: () => Navigator.pop(sheetContext, 'home'),
+                ),
+              ListTile(
+                key: ValueKey('scope-global-${section.name}'),
+                leading: const Icon(Icons.public_rounded),
+                title: Text(globalLabel),
+                trailing: selected == CommunityScope.global
+                    ? const Icon(Icons.check_rounded)
+                    : null,
+                onTap: () => Navigator.pop(sheetContext, 'global'),
+              ),
+              ListTile(
+                key: ValueKey('scope-countries-${section.name}'),
+                leading: const Icon(Icons.travel_explore_rounded),
+                title: const Text(CommunityStrings.countriesTitle),
+                trailing: const Icon(Icons.chevron_right_rounded),
+                onTap: () => Navigator.pop(sheetContext, 'countries'),
+              ),
+              const Divider(),
+              const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(CommunityStrings.scopeRegion),
+              ),
+              for (final r in kCommunityRegions)
+                ListTile(
+                  key: ValueKey('scope-region-$r-${section.name}'),
+                  leading: const Icon(Icons.dns_rounded),
+                  title: Text(CommunityStrings.regionLabel(r)),
+                  trailing: selected == CommunityScope.region && region == r
+                      ? const Icon(Icons.check_rounded)
+                      : null,
+                  onTap: () => Navigator.pop(sheetContext, r),
+                ),
             ],
           ),
         ),
-      ],
+      );
+      if (!context.mounted || choice == null) return;
+      if (choice == 'countries') {
+        await pickCountry();
+      } else if (choice == 'home') {
+        notifier.set(
+          chosen.copyWith(scope: CommunityScope.country, country: () => null),
+        );
+      } else if (choice == 'global') {
+        notifier.set(chosen.copyWith(scope: CommunityScope.global));
+      } else if (kCommunityRegions.contains(choice)) {
+        notifier.set(
+          chosen.copyWith(
+            scope: CommunityScope.region,
+            region: () => choice == myRegion ? null : choice,
+          ),
+        );
+      }
+    }
+
+    return SizedBox(
+      width: double.infinity,
+      child: Padding(
+        key: ValueKey('scope-actions-${section.name}'),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
+        child: Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          children: [
+            Semantics(
+              key: ValueKey('scope-selected-${selected.name}'),
+              child: OutlinedButton(
+                key: ValueKey('scope-selector-${section.name}'),
+                onPressed: () => unawaited(pickScope()),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(48, 48),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  foregroundColor: Theme.of(context).colorScheme.onSurface,
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(child: Text(label)),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.expand_more_rounded, size: 20),
+                  ],
+                ),
+              ),
+            ),
+            if (selected == CommunityScope.global)
+              ValFilterChip(
+                key: ValueKey('scope-languages-${section.name}'),
+                icon: Icons.translate_rounded,
+                label: languageFilterLabel(chosen.languages),
+                selected: chosen.languages.isNotEmpty,
+                onSelected: (_) => unawaited(pickLanguages()),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

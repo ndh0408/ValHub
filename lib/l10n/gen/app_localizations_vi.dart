@@ -10,7 +10,7 @@ class AppLocalizationsVi extends AppLocalizations {
   AppLocalizationsVi([String locale = 'vi']) : super(locale);
 
   @override
-  String get commonAppName => 'ValVN';
+  String get commonAppName => 'VanHub';
 
   @override
   String get commonBack => 'Quay lại';
@@ -199,7 +199,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get commonPriceOverrideBody =>
-      'Nhập số tiền bạn thực trả cho một gói VP (xem trong cửa hàng của game hoặc hóa đơn). ValVN dùng giá này để ước tính giá quy đổi cho mọi món đồ; giá chỉ lưu trên thiết bị này.';
+      'Nhập số tiền bạn thực trả cho một gói VP (xem trong cửa hàng của game hoặc hóa đơn). VanHub dùng giá này để ước tính giá quy đổi cho mọi món đồ; giá chỉ lưu trên thiết bị này.';
 
   @override
   String get commonPriceOverrideCurrency => 'Mã tiền tệ';
@@ -271,7 +271,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get commonRiotDisclaimer =>
-      'ValVN không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games và mọi tài sản liên quan là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc.';
+      'VanHub không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games và mọi tài sản liên quan là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc.';
 
   @override
   String get commonSave => 'Lưu';
@@ -934,7 +934,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get authSignInNote =>
-      'Bạn đăng nhập trên trang chính thức của Riot. ValVN chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập; dữ liệu đăng nhập và thông tin đã lưu chỉ nằm trên thiết bị của bạn.';
+      'Bạn đăng nhập trên trang chính thức của Riot. VanHub chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập; dữ liệu đăng nhập và thông tin đã lưu chỉ nằm trên thiết bị của bạn.';
 
   @override
   String get authSocialLoginHint =>
@@ -964,14 +964,14 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get notificationChannelCommunityDescription =>
-      'Báo hoạt động cộng đồng khi bạn mở ValVN';
+      'Báo hoạt động cộng đồng khi bạn mở VanHub';
 
   @override
   String get notificationChannelCommunityName => 'Cộng đồng';
 
   @override
   String get notificationChannelLfgDescription =>
-      'Báo người chơi tham gia tổ đội khi bạn mở ValVN';
+      'Báo người chơi tham gia tổ đội khi bạn mở VanHub';
 
   @override
   String get notificationChannelLfgName => 'Tổ đội';
@@ -1008,7 +1008,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get notificationLocalOnlyHint =>
-      'Chỉ báo trên thiết bị này khi ValVN cập nhật dữ liệu';
+      'Chỉ báo trên thiết bị này khi VanHub cập nhật dữ liệu';
 
   @override
   String notificationNightMarketOpenBody(String cards, String account) {
@@ -1020,7 +1020,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get notificationPassEndingBody =>
-      'Battle Pass còn khoảng một ngày. Mở ValVN để xem tiến độ mới nhất.';
+      'Battle Pass còn khoảng một ngày. Mở VanHub để xem tiến độ mới nhất.';
 
   @override
   String get notificationPassEndingTitle => 'Battle Pass sắp kết thúc';
@@ -2086,7 +2086,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityCodeAuto =>
-      'Để trống: ValVN tự tạo mã từ tổ đội trong game khi bạn đăng tin.';
+      'Để trống: VanHub tự tạo mã từ tổ đội trong game khi bạn đăng tin.';
 
   @override
   String get communityCodeAutoFailed =>
@@ -2169,11 +2169,11 @@ class AppLocalizationsVi extends AppLocalizations {
       'Người khác sẽ thấy Riot ID, thẻ người chơi, rank và quốc gia của bạn.';
 
   @override
-  String get communityConsentTitle => 'Tham gia Cộng đồng ValVN';
+  String get communityConsentTitle => 'Tham gia Cộng đồng VanHub';
 
   @override
   String get communityConsentVerify =>
-      'Khi cần xác minh Riot ID, ValVN gửi quyền truy cập Riot của bạn cho Cộng đồng ValVN. Cộng đồng dùng xong là bỏ ngay, không lưu.';
+      'Khi cần xác minh Riot ID, VanHub gửi quyền truy cập Riot của bạn cho Cộng đồng VanHub. Cộng đồng dùng xong là bỏ ngay, không lưu.';
 
   @override
   String get communityConsentWithdrawn =>
@@ -2567,7 +2567,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String communityDeleteDataConfirmBody(String riotId) {
-    return 'Toàn bộ bài viết, bình luận, đánh giá skin, lượt thích, bình chọn, tin tìm đồng đội và ảnh của $riotId trên Cộng đồng ValVN sẽ bị xóa vĩnh viễn và không thể khôi phục. Bạn quay lại chế độ xem ẩn danh và cần đồng ý lại nếu muốn tham gia lần nữa.\n\nTài khoản Riot và dữ liệu trong game không bị ảnh hưởng. Hãy tải dữ liệu về trước nếu bạn muốn giữ một bản sao.';
+    return 'Toàn bộ bài viết, bình luận, đánh giá skin, lượt thích, bình chọn, tin tìm đồng đội và ảnh của $riotId trên Cộng đồng VanHub sẽ bị xóa vĩnh viễn và không thể khôi phục. Bạn quay lại chế độ xem ẩn danh và cần đồng ý lại nếu muốn tham gia lần nữa.\n\nTài khoản Riot và dữ liệu trong game không bị ảnh hưởng. Hãy tải dữ liệu về trước nếu bạn muốn giữ một bản sao.';
   }
 
   @override
@@ -2639,7 +2639,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityExportPreparing => 'Đang chuẩn bị…';
 
   @override
-  String get communityExportSubject => 'Dữ liệu Cộng đồng ValVN';
+  String get communityExportSubject => 'Dữ liệu Cộng đồng VanHub';
 
   @override
   String get communityExportSubtitle =>
@@ -3038,7 +3038,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityPrivacyNote =>
-      'ValVN xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.';
+      'VanHub xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.';
 
   @override
   String get communityPublish => 'Đăng';
@@ -3334,7 +3334,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String communityTranslateDownloadBody(String from, String to, String size) {
-    return 'Để dịch từ $from sang $to, ValVN cần tải gói ngôn ngữ từ Google (khoảng $size). Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và không gửi tới máy chủ nào.';
+    return 'Để dịch từ $from sang $to, VanHub cần tải gói ngôn ngữ từ Google (khoảng $size). Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và không gửi tới máy chủ nào.';
   }
 
   @override
@@ -3358,7 +3358,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityUnavailableBody =>
-      'Chưa kết nối được Cộng đồng ValVN. Hãy thử lại sau ít phút.';
+      'Chưa kết nối được Cộng đồng VanHub. Hãy thử lại sau ít phút.';
 
   @override
   String get communityUnavailableTitle => 'Chưa kết nối được Cộng đồng';
@@ -3394,7 +3394,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String communityWithdrawConfirmBody(String riotId) {
-    return 'ValVN sẽ ngừng dùng Cộng đồng bằng $riotId: kết nối Cộng đồng trên thiết bị này bị xóa và bạn quay lại chế độ xem ẩn danh.\n\nBài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng vẫn còn trên Cộng đồng và vẫn hiện Riot ID của bạn cho đến khi bạn xóa chúng từng cái, hoặc chọn \"Xóa dữ liệu Cộng đồng của tôi\". Bạn có thể tham gia lại bất cứ lúc nào.';
+    return 'VanHub sẽ ngừng dùng Cộng đồng bằng $riotId: kết nối Cộng đồng trên thiết bị này bị xóa và bạn quay lại chế độ xem ẩn danh.\n\nBài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng vẫn còn trên Cộng đồng và vẫn hiện Riot ID của bạn cho đến khi bạn xóa chúng từng cái, hoặc chọn \"Xóa dữ liệu Cộng đồng của tôi\". Bạn có thể tham gia lại bất cứ lúc nào.';
   }
 
   @override
@@ -3503,7 +3503,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get liveGameLobbyHint =>
-      'Khi tìm được trận, ValVN sẽ hiện đội hình và rank của mọi người.';
+      'Khi tìm được trận, VanHub sẽ hiện đội hình và rank của mọi người.';
 
   @override
   String get liveGameLockFailed =>
@@ -3519,7 +3519,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get liveGameMatchPendingHint =>
-      'ValVN sẽ tự thử lại. Bảng điểm thường có sau khoảng một phút.';
+      'VanHub sẽ tự thử lại. Bảng điểm thường có sau khoảng một phút.';
 
   @override
   String get liveGameNoAgentYet => 'Chưa chọn đặc vụ';
@@ -4256,7 +4256,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get legalConsentPrivacy => 'Chính sách quyền riêng tư';
 
   @override
-  String get legalConsentSuffix => ' của ValVN.';
+  String get legalConsentSuffix => ' của VanHub.';
 
   @override
   String get legalConsentTerms => 'Điều khoản sử dụng';
@@ -4290,7 +4290,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get legalThirdPartyLicensesBody =>
-      'Giấy phép của các phần mềm mã nguồn mở mà ValVN sử dụng';
+      'Giấy phép của các phần mềm mã nguồn mở mà VanHub sử dụng';
 
   @override
   String get legalTocTitle => 'MỤC LỤC';
@@ -4341,7 +4341,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get settingsGeoManualWarning =>
-      'Lựa chọn này chỉ đổi máy chủ mà ValVN kết nối. Nó không chuyển khu vực tài khoản Riot của bạn. ValVN sẽ kiểm tra kết nối trước khi lưu.';
+      'Lựa chọn này chỉ đổi máy chủ mà VanHub kết nối. Nó không chuyển khu vực tài khoản Riot của bạn. VanHub sẽ kiểm tra kết nối trước khi lưu.';
 
   @override
   String get settingsGeoConnectionSaved => 'Đã lưu cách kết nối';
@@ -4386,6 +4386,26 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get settingsGeoNoCountries => 'Không có quốc gia khớp bộ lọc.';
+
+  @override
+  String get settingsGeoActiveCountries => 'Có hoạt động';
+
+  @override
+  String get settingsGeoAllCountries => 'Tất cả quốc gia';
+
+  @override
+  String get settingsGeoActivityUnavailable =>
+      'Chưa tải được hoạt động các nước. Bạn vẫn có thể chọn trong Tất cả quốc gia.';
+
+  @override
+  String settingsGeoResultCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count quốc gia',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get settingsAboutCreditContent => 'valorant-api.com';
@@ -4458,7 +4478,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsClearLogConfirm => 'Xóa báo lỗi đã ghi trên thiết bị này?';
 
   @override
-  String get settingsExportLog => 'Gửi báo lỗi cho ValVN';
+  String get settingsExportLog => 'Gửi báo lỗi cho VanHub';
 
   @override
   String get settingsExportLogEmpty =>
@@ -4476,10 +4496,10 @@ class AppLocalizationsVi extends AppLocalizations {
       'Báo lỗi không chứa mật khẩu hay dữ liệu đăng nhập Riot của bạn.';
 
   @override
-  String get settingsFeedback => 'Góp ý cho ValVN';
+  String get settingsFeedback => 'Góp ý cho VanHub';
 
   @override
-  String get settingsFeedbackSubtitle => 'Mở trang góp ý của ValVN';
+  String get settingsFeedbackSubtitle => 'Mở trang góp ý của VanHub';
 
   @override
   String get settingsItemLanguageEn => 'Tiếng Anh';
@@ -4550,10 +4570,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsLogShareFailed => 'Chưa gửi được báo lỗi. Hãy thử lại.';
 
   @override
-  String get settingsLogoPrefix => 'Val';
+  String get settingsLogoPrefix => 'Van';
 
   @override
-  String get settingsLogoSuffix => 'VN';
+  String get settingsLogoSuffix => 'Hub';
 
   @override
   String get settingsNotifNightMarket => 'Khi Chợ Đêm mở';
@@ -4711,7 +4731,7 @@ class AppLocalizationsVi extends AppLocalizations {
       'Bảo trì và sự cố VALORANT theo máy chủ';
 
   @override
-  String get settingsSessionLogTitle => 'Báo lỗi ValVN';
+  String get settingsSessionLogTitle => 'Báo lỗi VanHub';
 
   @override
   String get settingsSeverityCritical => 'Nghiêm trọng';
@@ -4755,7 +4775,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get settingsStatusMaintenanceNowBody =>
-      'Bạn có thể chưa vào được game, và ValVN có thể tạm thời chưa tải được thông tin.';
+      'Bạn có thể chưa vào được game, và VanHub có thể tạm thời chưa tải được thông tin.';
 
   @override
   String settingsStatusMoreUpdates(int n) {
@@ -4845,7 +4865,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get settingsWelcomeFootnote =>
-      'Bạn đăng nhập trên trang chính thức của Riot. ValVN chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập.';
+      'Bạn đăng nhập trên trang chính thức của Riot. VanHub chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập.';
 
   @override
   String get settingsWelcomeKicker => 'TRỢ THỦ VALORANT';
@@ -5004,7 +5024,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get socialFriendsPrivacyNote =>
-      'Danh sách bạn bè và tin nhắn lấy trực tiếp từ Riot. ValVN không lưu chúng ở nơi nào khác.';
+      'Danh sách bạn bè và tin nhắn lấy trực tiếp từ Riot. VanHub không lưu chúng ở nơi nào khác.';
 
   @override
   String socialFriendsSummary(int total, int online) {
@@ -5301,7 +5321,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get socialRemoteNote =>
-      'Mọi thay đổi chỉ được gửi tới Riot khi bạn bấm. ValVN không tự tìm trận hay khóa đặc vụ thay bạn.';
+      'Mọi thay đổi chỉ được gửi tới Riot khi bạn bấm. VanHub không tự tìm trận hay khóa đặc vụ thay bạn.';
 
   @override
   String socialRemoveConfirmBody(String name) {
@@ -5570,7 +5590,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get storeShareButton => 'Chia sẻ';
 
   @override
-  String get storeShareCardBrand => 'ValVN';
+  String get storeShareCardBrand => 'VanHub';
 
   @override
   String get storeShareCardDaily => 'Cửa hàng hôm nay';
@@ -5947,7 +5967,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeFriendsConsentBody =>
-      'Để biết bạn bè nào đang chơi, ValVN sẽ kết nối trò chuyện Riot của tài khoản đang dùng mỗi khi bạn mở Trang chủ. Bạn bè sẽ thấy bạn đang trực tuyến. Bạn có thể tắt trong Tùy chỉnh Trang chủ.';
+      'Để biết bạn bè nào đang chơi, VanHub sẽ kết nối trò chuyện Riot của tài khoản đang dùng mỗi khi bạn mở Trang chủ. Bạn bè sẽ thấy bạn đang trực tuyến. Bạn có thể tắt trong Tùy chỉnh Trang chủ.';
 
   @override
   String get homeFriendsConsentDecline => 'Không, ẩn thẻ';
@@ -6181,7 +6201,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityErrorForbidden =>
-      'Bạn chưa thể thực hiện việc này. Hãy xem Tiêu chuẩn cộng đồng hoặc liên hệ ValVN.';
+      'Bạn chưa thể thực hiện việc này. Hãy xem Tiêu chuẩn cộng đồng hoặc liên hệ VanHub.';
 
   @override
   String get communityErrorGeneric => 'Có gì đó trục trặc. Hãy thử lại.';
@@ -6199,7 +6219,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityErrorNetwork =>
-      'Không kết nối được Cộng đồng ValVN. Kiểm tra mạng rồi thử lại.';
+      'Không kết nối được Cộng đồng VanHub. Kiểm tra mạng rồi thử lại.';
 
   @override
   String get communityErrorNotFound => 'Nội dung này không còn tồn tại.';
@@ -6232,7 +6252,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityErrorServer =>
-      'Cộng đồng ValVN đang gặp sự cố. Hãy thử lại sau ít phút.';
+      'Cộng đồng VanHub đang gặp sự cố. Hãy thử lại sau ít phút.';
 
   @override
   String get communityErrorStorageFull =>
@@ -6240,7 +6260,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityErrorTimeout =>
-      'Cộng đồng ValVN phản hồi quá lâu. Hãy thử lại.';
+      'Cộng đồng VanHub phản hồi quá lâu. Hãy thử lại.';
 
   @override
   String get communityErrorTitle => 'Chưa hoàn tất';

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:valvn/core/ui/segmented_tabs.dart';
 import 'package:valvn/features/community/community_routes.dart';
 import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/data/community_models.dart';
@@ -23,12 +22,14 @@ Future<void> _open(
   await settle(tester);
 }
 
-/// The scope segment that is highlighted.
-CommunityScope _selected(WidgetTester tester) => tester
-    .widget<SegmentedTabs<CommunityScope>>(
-      find.byType(SegmentedTabs<CommunityScope>),
-    )
-    .selected;
+/// The scope displayed by the selector reflects the server's response.
+CommunityScope _selected(WidgetTester tester) =>
+    CommunityScope.values.singleWhere(
+      (scope) => find
+          .byKey(ValueKey('scope-selected-${scope.name}'))
+          .evaluate()
+          .isNotEmpty,
+    );
 
 Map<String, Object?> _applied(
   String scope, {
@@ -94,7 +95,7 @@ void main() {
       await _open(tester, env);
       expect(_selected(tester), CommunityScope.country);
 
-      await tester.tap(find.text(CommunityStrings.scopeRegion));
+      await chooseCommunityScope(tester, 'region-ap');
       await settle(tester);
 
       expect(_selected(tester), CommunityScope.region);
@@ -121,7 +122,7 @@ void main() {
       // The next list is still loading when the user has already switched.
       final gate = Completer<void>();
       env.server.hold('GET /v1/posts', gate);
-      await tester.tap(find.text(CommunityStrings.scopeGlobal));
+      await chooseCommunityScope(tester, 'global');
       await settle(tester);
       expect(_selected(tester), CommunityScope.global);
 

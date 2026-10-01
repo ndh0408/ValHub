@@ -7,7 +7,6 @@ import '../../../core/accounts/account.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../community_strings.dart';
 import '../providers/community_providers.dart';
@@ -129,12 +128,8 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
     final page = TabPageScaffold(
       title: CommunityStrings.title,
       showMaintenanceBanner: false,
-      header: SegmentedTabs<CommunitySection>(
-        expand: true,
-        tabs: [
-          for (final s in CommunitySection.values)
-            SegmentedTab(value: s, label: s.label),
-        ],
+      headerHeight: MediaQuery.textScalerOf(context).scale(14) > 20 ? 100 : 56,
+      header: _SectionTabs(
         selected: _section,
         onChanged: (s) {
           setState(() => _section = s);
@@ -163,7 +158,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
             puuid: account.puuid,
           ),
         },
-        const SliverToBoxAdapter(child: _PrivacyNote()),
+        if (!joined) const SliverToBoxAdapter(child: _PrivacyNote()),
         const SliverToBoxAdapter(child: SizedBox(height: 96)),
       ],
     );
@@ -278,6 +273,66 @@ class _LfgJoinGate extends StatelessWidget {
         onPressed: () =>
             unawaited(ensureCommunityConsent(context, account, askAgain: true)),
         child: const Text(CommunityStrings.consentGateAction),
+      ),
+    );
+  }
+}
+
+/// Content navigation stays distinct from the scope filter below it.
+class _SectionTabs extends StatelessWidget {
+  const _SectionTabs({required this.selected, required this.onChanged});
+  final CommunitySection selected;
+  final ValueChanged<CommunitySection> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final section in CommunitySection.values)
+            Expanded(
+              child: Semantics(
+                selected: selected == section,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: selected == section
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.outlineVariant,
+                        width: selected == section ? 2 : 1,
+                      ),
+                    ),
+                  ),
+                  child: TextButton(
+                    onPressed: () => onChanged(section),
+                    style: TextButton.styleFrom(
+                      foregroundColor: selected == section
+                          ? theme.colorScheme.onSurface
+                          : theme.colorScheme.onSurfaceVariant,
+                      shape: const RoundedRectangleBorder(),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 8,
+                      ),
+                    ),
+                    child: Text(
+                      section.label,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: selected == section
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

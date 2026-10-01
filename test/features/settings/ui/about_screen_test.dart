@@ -56,34 +56,36 @@ void main() {
     );
   }
 
-  testWidgets('shows identity, version, intro, documents, credits, contact', (
-    tester,
-  ) async {
-    await pumpAbout(tester);
-    await tester.pumpAndSettle();
+  testWidgets(
+    'shows VanHub identity, version, documents and contact without a source card',
+    (tester) async {
+      await pumpAbout(tester);
+      await tester.pumpAndSettle();
 
-    expect(find.text(CommonStrings.appName), findsOneWidget);
-    expect(find.text(CommonStrings.tagline), findsOneWidget);
-    expect(
-      find.text(
-        '${SettingsStrings.version('1.2.3')} · '
-        '${SettingsStrings.buildNumber('42')}',
-      ),
-      findsOneWidget,
-    );
-    expect(find.text(LegalStrings.aboutIntro), findsOneWidget);
-    for (final doc in LegalDocuments.all) {
-      expect(find.text(doc.title), findsOneWidget);
-      expect(find.text(doc.summary), findsOneWidget);
-    }
-    expect(find.text(SettingsStrings.aboutCreditContent), findsOneWidget);
-    expect(find.text(SettingsStrings.aboutCreditRiot), findsOneWidget);
-    expect(find.text(SettingsStrings.aboutCreditDocs), findsOneWidget);
-    expect(find.text(LegalStrings.thirdPartyLicenses), findsOneWidget);
-    expect(find.text(LegalStrings.contact), findsOneWidget);
-    expect(find.text(LegalInfo.copyrightNotice), findsOneWidget);
-    expect(find.text(CommonStrings.riotDisclaimer), findsOneWidget);
-  });
+      expect(find.text(CommonStrings.appName), findsOneWidget);
+      expect(find.text(CommonStrings.tagline), findsOneWidget);
+      expect(
+        find.text(
+          '${SettingsStrings.version('1.2.3')} · '
+          '${SettingsStrings.buildNumber('42')}',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(LegalStrings.aboutIntro), findsOneWidget);
+      for (final doc in LegalDocuments.all) {
+        expect(find.text(doc.title), findsOneWidget);
+        expect(find.text(doc.summary), findsOneWidget);
+      }
+      expect(find.text(SettingsStrings.aboutCreditContent), findsNothing);
+      expect(find.text(SettingsStrings.aboutCreditRiot), findsNothing);
+      expect(find.text(SettingsStrings.aboutCreditDocs), findsNothing);
+      expect(find.text(LegalStrings.creditsHeader), findsNothing);
+      expect(find.text(LegalStrings.thirdPartyLicenses), findsOneWidget);
+      expect(find.text(LegalStrings.contact), findsOneWidget);
+      expect(find.text(LegalInfo.copyrightNotice), findsOneWidget);
+      expect(find.text(CommonStrings.riotDisclaimer), findsOneWidget);
+    },
+  );
 
   testWidgets('each document row opens its document at /settings/about/<id>', (
     tester,
@@ -115,13 +117,15 @@ void main() {
     expect(find.byType(LicensePage), findsOneWidget);
   });
 
-  testWidgets('credit links open externally', (tester) async {
+  testWidgets('feedback opens the VanHub issue page externally', (
+    tester,
+  ) async {
     await pumpAbout(tester);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text(SettingsStrings.aboutCreditContent));
+    await tester.tap(find.text(SettingsStrings.feedback));
     await tester.pumpAndSettle();
-    expect(env.openedUrls, [SettingsLinks.valorantApi]);
+    expect(env.openedUrls, [SettingsLinks.feedback]);
   });
 
   testWidgets('no overflow at 360dp with text scale 2.0 (light theme)', (

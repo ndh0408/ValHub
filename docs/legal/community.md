@@ -2,9 +2,9 @@
 
 # Tiêu chuẩn cộng đồng
 
-**ValVN** · Phiên bản 1.0 · Hiệu lực từ: 29/09/2026
+**VanHub** · Phiên bản 1.0 · Hiệu lực từ: 29/09/2026
 
-Cộng đồng ValVN là nơi người chơi VALORANT khoe cửa hàng, bàn chuyện skin, tìm đồng đội và giúp nhau leo rank. Để nơi này luôn vui và an toàn, hãy cùng nhau giữ những quy tắc dưới đây. Tiêu chuẩn này là một phần của Điều khoản sử dụng.
+Cộng đồng VanHub là nơi người chơi VALORANT khoe cửa hàng, bàn chuyện skin, tìm đồng đội và giúp nhau leo rank. Để nơi này luôn vui và an toàn, hãy cùng nhau giữ những quy tắc dưới đây. Tiêu chuẩn này là một phần của Điều khoản sử dụng.
 
 ## 1. Tôn trọng mọi người
 
@@ -30,7 +30,7 @@ Cộng đồng ValVN là nơi người chơi VALORANT khoe cửa hàng, bàn chu
 ## 4. Bảo vệ thông tin cá nhân
 
 - Không đăng thông tin cá nhân của người khác (tên thật, số điện thoại, địa chỉ, ảnh riêng tư…) khi chưa có sự đồng ý của họ.
-- Không bao giờ chia sẻ mật khẩu, mã xác thực hay email đăng nhập Riot của bạn. ValVN và đội ngũ kiểm duyệt không bao giờ hỏi những thông tin này.
+- Không bao giờ chia sẻ mật khẩu, mã xác thực hay email đăng nhập Riot của bạn. VanHub và đội ngũ kiểm duyệt không bao giờ hỏi những thông tin này.
 - Cẩn thận khi chụp màn hình: hãy che thông tin bạn không muốn công khai.
 
 ## 5. Tìm đồng đội
@@ -64,7 +64,7 @@ Tùy mức độ và tần suất, chúng tôi có thể áp dụng một hoặc
 - Khóa vĩnh viễn quyền sử dụng Cộng đồng.
 - Cung cấp thông tin cho cơ quan có thẩm quyền đối với hành vi vi phạm pháp luật.
 
-Các biện pháp này chỉ áp dụng trong ValVN và không ảnh hưởng tới Tài khoản Riot của bạn. Tuy nhiên, hành vi vi phạm trong trò chơi vẫn có thể bị Riot Games xử lý theo chính sách của họ.
+Các biện pháp này chỉ áp dụng trong VanHub và không ảnh hưởng tới Tài khoản Riot của bạn. Tuy nhiên, hành vi vi phạm trong trò chơi vẫn có thể bị Riot Games xử lý theo chính sách của họ.
 
 ## 9. Khiếu nại quyết định kiểm duyệt
 

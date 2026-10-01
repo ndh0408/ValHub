@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/features/community/community_strings.dart';
+import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/features/community/data/community_api.dart';
 import 'package:valvn/features/community/data/community_models.dart';
 import 'package:valvn/features/community/providers/community_providers.dart';
 import 'package:valvn/features/community/providers/scope_providers.dart';
-import 'package:valvn/features/community/ui/scope/countries_sheet.dart';
 import 'package:valvn/features/community/ui/scope/scope_bar.dart';
 
 import '../community_test_env.dart';
@@ -24,6 +24,9 @@ void main() {
       expect(countryCode(' us '), 'US');
       expect(countryCode('vnm'), isNull);
       expect(countryCode(42), isNull);
+      expect(countryCode('XK'), isNull);
+      expect(countryCode('ZZ'), isNull);
+      expect(countryCode('DE'), 'DE');
     });
 
     test('every table entry is a valid alpha-2 code with a name', () {
@@ -70,6 +73,8 @@ void main() {
       })!;
       expect((c.country, c.posts, c.authors, c.lfg), ('VN', 12, 3, 0));
       expect(CountryCommunity.fromJson({'country': 'xyz'}), isNull);
+      expect(CountryCommunity.fromJson({'country': 'XK'}), isNull);
+      expect(CountryCommunity.fromJson({'country': 'ZZ'}), isNull);
       expect(CountryCommunity.fromJson('<html>'), isNull);
     });
   });
@@ -92,6 +97,12 @@ void main() {
         {'scope': 'global', 'language': 'ja,vi'},
       );
       expect(ScopeFilter.global.query, {'scope': 'global'});
+      for (final invalid in ['XK', 'ZZ', 'vnm']) {
+        expect(
+          ScopeFilter(scope: CommunityScope.country, country: invalid).query,
+          {'scope': 'country'},
+        );
+      }
     });
 
     test('equality ignores language order', () {
@@ -146,35 +157,6 @@ void main() {
     });
   });
 
-  group('countries picker list', () {
-    const active = [
-      CountryCommunity(country: 'US', posts: 50, authors: 20),
-      CountryCommunity(country: 'JP', posts: 30, authors: 9, lfg: 2),
-      CountryCommunity(country: 'VN', posts: 5, authors: 4),
-    ];
-
-    test('own country first, even without activity', () {
-      final rows = filterCountries([active[0], active[1]], myCountry: 'VN');
-      expect(rows.map((c) => c.country), ['VN', 'US', 'JP']);
-      expect(rows.first.posts, 0);
-      final pinned = filterCountries(active, myCountry: 'VN');
-      expect(pinned.map((c) => c.country), ['VN', 'US', 'JP']);
-    });
-
-    test('accent-folding search over name and code', () {
-      expect(filterCountries(active, query: 'nhat ban').map((c) => c.country), [
-        'JP',
-      ]);
-      expect(filterCountries(active, query: 'VIỆT').map((c) => c.country), [
-        'VN',
-      ]);
-      expect(filterCountries(active, query: 'us').map((c) => c.country), [
-        'US',
-      ]);
-      expect(filterCountries(active, query: 'zzz'), isEmpty);
-    });
-  });
-
   group('API', () {
     late CommunityTestEnv env;
     late ProviderContainer container;
@@ -185,6 +167,35 @@ void main() {
       container = env.container();
       api = container.read(communityApiProvider);
     });
+
+    test(
+      'scope memory removes XK and invalid countries before requests',
+      () async {
+        final provider = communityScopeProvider(ScopedSection.feed);
+        final notifier = container.read(provider.notifier);
+        notifier.set(
+          const ScopeFilter(scope: CommunityScope.country, country: 'JP'),
+        );
+        expect(container.read(provider).country, 'JP');
+        notifier.set(
+          const ScopeFilter(scope: CommunityScope.country, country: 'XK'),
+        );
+        expect(container.read(provider).country, isNull);
+        await Future<void>.delayed(Duration.zero);
+        expect(
+          env.prefs.getString(
+            PrefKeys.ui(ScopeMemoryKeys.country(ScopedSection.feed)),
+          ),
+          isNull,
+        );
+        await env.prefs.setString(
+          PrefKeys.ui(ScopeMemoryKeys.country(ScopedSection.feed)),
+          'ZZ',
+        );
+        container.invalidate(provider);
+        expect(container.read(provider).country, isNull);
+      },
+    );
 
     test('scope params on posts, top skins, reviews and summary', () async {
       env.server

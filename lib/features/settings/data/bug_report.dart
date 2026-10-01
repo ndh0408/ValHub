@@ -9,7 +9,7 @@ import '../../../core/l10n/common_strings.dart';
 import '../../../core/logging/session_log.dart';
 import '../settings_strings.dart';
 
-/// The file of "Gửi báo lỗi cho ValVN": a name and its UTF-8 text. The text is
+/// The file of "Gửi báo lỗi cho VanHub": a name and its UTF-8 text. The text is
 /// the scrubbed session log (`SessionLog`): request templates, results and
 /// times, never passwords, login data, account IDs or Riot IDs. It is only
 /// ever handed to the share sheet; the app shows no log lines on screen.

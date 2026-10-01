@@ -504,5 +504,49 @@
     "ZA": "Südafrika",
     "ZM": "Sambia",
     "ZW": "Simbabwe"
+  },
+  "aliases": {
+    "CD": [
+      "Kongo (Demokratische Republik)"
+    ],
+    "CG": [
+      "Kongo (Republik)"
+    ],
+    "CI": [
+      "Elfenbeinküste"
+    ],
+    "CZ": [
+      "Tschechische Republik"
+    ],
+    "FK": [
+      "Falklandinseln (Malwinen)"
+    ],
+    "GB": [
+      "Vereinigtes Königreich"
+    ],
+    "HK": [
+      "Sonderverwaltungsregion Hongkong"
+    ],
+    "IO": [
+      "Chagos-Archipel"
+    ],
+    "MO": [
+      "Sonderverwaltungsregion Macau"
+    ],
+    "NZ": [
+      "Aotearoa (Neuseeland)"
+    ],
+    "PS": [
+      "Palästinensische Autonomiegebiete"
+    ],
+    "SZ": [
+      "Swasiland"
+    ],
+    "TL": [
+      "Osttimor"
+    ],
+    "US": [
+      "Vereinigte Staaten"
+    ]
   }
 }

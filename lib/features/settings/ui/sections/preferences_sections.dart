@@ -30,7 +30,7 @@ String itemLanguageLabel(ItemLanguage language) => switch (language) {
 
 /// "TÙY CHỌN" (S70, X1): live-game switches, the platform of the active
 /// account, the local-currency estimate next to VP prices and the user's
-/// own pack price (ValVN extras).
+/// own pack price (VanHub extras).
 class SettingsOptionsSection extends ConsumerWidget {
   const SettingsOptionsSection({super.key});
 
@@ -142,7 +142,7 @@ class SettingsOptionsSection extends ConsumerWidget {
   }
 }
 
-/// "GIAO DIỆN" (S70, ValVN extra): theme and item-name language.
+/// "GIAO DIỆN" (S70, VanHub extra): theme and item-name language.
 class SettingsAppearanceSection extends ConsumerWidget {
   const SettingsAppearanceSection({super.key});
 

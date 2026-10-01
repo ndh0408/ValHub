@@ -97,7 +97,7 @@ abstract class AppLocalizations {
   /// CommonStrings.appName —
   ///
   /// In vi, this message translates to:
-  /// **'ValVN'**
+  /// **'VanHub'**
   String get commonAppName;
 
   /// CommonStrings.back — Actions
@@ -364,55 +364,55 @@ abstract class AppLocalizations {
   /// **'Không tìm thấy màn hình này.'**
   String get commonPageNotFound;
 
-  /// CommonStrings.priceBestPack — Local price estimate next to VP prices (ValVN extra)
+  /// CommonStrings.priceBestPack — Local price estimate next to VP prices (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Gói có lợi nhất: {vp} = {price}'**
   String commonPriceBestPack(String vp, String price);
 
-  /// CommonStrings.priceEditOwn — Local price estimate next to VP prices (ValVN extra)
+  /// CommonStrings.priceEditOwn — Local price estimate next to VP prices (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Sửa giá bạn đã nhập'**
   String get commonPriceEditOwn;
 
-  /// CommonStrings.priceEnterOwn — Local price estimate next to VP prices (ValVN extra)
+  /// CommonStrings.priceEnterOwn — Local price estimate next to VP prices (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Nhập giá gói VP của bạn'**
   String get commonPriceEnterOwn;
 
-  /// CommonStrings.priceEstimateBody — Local price estimate next to VP prices (ValVN extra)
+  /// CommonStrings.priceEstimateBody — Local price estimate next to VP prices (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Số tiền “≈ …” cạnh giá VP là ước tính, quy đổi theo gói VP có lợi nhất. Bạn trả bằng VP trong game; số tiền thật tùy gói nạp, kênh thanh toán, thuế và khuyến mãi lúc bạn mua.'**
   String get commonPriceEstimateBody;
 
-  /// CommonStrings.priceEstimateTitle — Local price estimate next to VP prices (ValVN extra)
+  /// CommonStrings.priceEstimateTitle — Local price estimate next to VP prices (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Giá quy đổi ước tính'**
   String get commonPriceEstimateTitle;
 
-  /// CommonStrings.priceEstimateTooltip — Local price estimate next to VP prices (ValVN extra)
+  /// CommonStrings.priceEstimateTooltip — Local price estimate next to VP prices (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Giá ước tính — chạm để xem cách tính'**
   String get commonPriceEstimateTooltip;
 
-  /// CommonStrings.priceHidden — Local price estimate next to VP prices (ValVN extra)
+  /// CommonStrings.priceHidden — Local price estimate next to VP prices (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Đã ẩn giá quy đổi. Bật lại trong Cài đặt.'**
   String get commonPriceHidden;
 
-  /// CommonStrings.priceHide — Local price estimate next to VP prices (ValVN extra)
+  /// CommonStrings.priceHide — Local price estimate next to VP prices (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Ẩn giá quy đổi'**
   String get commonPriceHide;
 
-  /// CommonStrings.priceOpenSource — Local price estimate next to VP prices (ValVN extra)
+  /// CommonStrings.priceOpenSource — Local price estimate next to VP prices (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Mở trang nguồn'**
@@ -421,7 +421,7 @@ abstract class AppLocalizations {
   /// CommonStrings.priceOverrideBody — "Giá gói VP của bạn" editor
   ///
   /// In vi, this message translates to:
-  /// **'Nhập số tiền bạn thực trả cho một gói VP (xem trong cửa hàng của game hoặc hóa đơn). ValVN dùng giá này để ước tính giá quy đổi cho mọi món đồ; giá chỉ lưu trên thiết bị này.'**
+  /// **'Nhập số tiền bạn thực trả cho một gói VP (xem trong cửa hàng của game hoặc hóa đơn). VanHub dùng giá này để ước tính giá quy đổi cho mọi món đồ; giá chỉ lưu trên thiết bị này.'**
   String get commonPriceOverrideBody;
 
   /// CommonStrings.priceOverrideCurrency — "Giá gói VP của bạn" editor
@@ -496,7 +496,7 @@ abstract class AppLocalizations {
   /// **'Số VP của gói'**
   String get commonPriceOverrideVp;
 
-  /// CommonStrings.pricePacksTitle — Local price estimate next to VP prices (ValVN extra)
+  /// CommonStrings.pricePacksTitle — Local price estimate next to VP prices (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Các gói VP'**
@@ -508,19 +508,19 @@ abstract class AppLocalizations {
   /// **'Theo bảng giá gói VP ở khu vực {country}'**
   String commonPriceSourceOfficial(String country);
 
-  /// CommonStrings.priceSourceUser — Local price estimate next to VP prices (ValVN extra)
+  /// CommonStrings.priceSourceUser — Local price estimate next to VP prices (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Theo giá gói VP do bạn nhập'**
   String get commonPriceSourceUser;
 
-  /// CommonStrings.priceUnavailable — Local price estimate next to VP prices (ValVN extra)
+  /// CommonStrings.priceUnavailable — Local price estimate next to VP prices (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Chưa có bảng giá đã xác minh cho khu vực của bạn. Nhập giá của một gói VP bạn từng mua để xem giá quy đổi ước tính.'**
   String get commonPriceUnavailable;
 
-  /// CommonStrings.priceUpdated — Local price estimate next to VP prices (ValVN extra)
+  /// CommonStrings.priceUpdated — Local price estimate next to VP prices (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Cập nhật bảng giá: {date}'**
@@ -547,7 +547,7 @@ abstract class AppLocalizations {
   /// CommonStrings.riotDisclaimer — Legal (VF §8.13)
   ///
   /// In vi, this message translates to:
-  /// **'ValVN không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games và mọi tài sản liên quan là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc.'**
+  /// **'VanHub không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games và mọi tài sản liên quan là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc.'**
   String get commonRiotDisclaimer;
 
   /// CommonStrings.save — Actions
@@ -1771,7 +1771,7 @@ abstract class AppLocalizations {
   /// AuthStrings.signInNote —
   ///
   /// In vi, this message translates to:
-  /// **'Bạn đăng nhập trên trang chính thức của Riot. ValVN chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập; dữ liệu đăng nhập và thông tin đã lưu chỉ nằm trên thiết bị của bạn.'**
+  /// **'Bạn đăng nhập trên trang chính thức của Riot. VanHub chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập; dữ liệu đăng nhập và thông tin đã lưu chỉ nằm trên thiết bị của bạn.'**
   String get authSignInNote;
 
   /// AuthStrings.socialLoginHint —
@@ -1819,7 +1819,7 @@ abstract class AppLocalizations {
   /// NotificationStrings.channelCommunityDescription —
   ///
   /// In vi, this message translates to:
-  /// **'Báo hoạt động cộng đồng khi bạn mở ValVN'**
+  /// **'Báo hoạt động cộng đồng khi bạn mở VanHub'**
   String get notificationChannelCommunityDescription;
 
   /// NotificationStrings.channelCommunityName —
@@ -1831,7 +1831,7 @@ abstract class AppLocalizations {
   /// NotificationStrings.channelLfgDescription —
   ///
   /// In vi, this message translates to:
-  /// **'Báo người chơi tham gia tổ đội khi bạn mở ValVN'**
+  /// **'Báo người chơi tham gia tổ đội khi bạn mở VanHub'**
   String get notificationChannelLfgDescription;
 
   /// NotificationStrings.channelLfgName —
@@ -1897,7 +1897,7 @@ abstract class AppLocalizations {
   /// NotificationStrings.localOnlyHint —
   ///
   /// In vi, this message translates to:
-  /// **'Chỉ báo trên thiết bị này khi ValVN cập nhật dữ liệu'**
+  /// **'Chỉ báo trên thiết bị này khi VanHub cập nhật dữ liệu'**
   String get notificationLocalOnlyHint;
 
   /// NotificationStrings.nightMarketOpenBody —
@@ -1915,7 +1915,7 @@ abstract class AppLocalizations {
   /// NotificationStrings.passEndingBody —
   ///
   /// In vi, this message translates to:
-  /// **'Battle Pass còn khoảng một ngày. Mở ValVN để xem tiến độ mới nhất.'**
+  /// **'Battle Pass còn khoảng một ngày. Mở VanHub để xem tiến độ mới nhất.'**
   String get notificationPassEndingBody;
 
   /// NotificationStrings.passEndingTitle —
@@ -2338,7 +2338,7 @@ abstract class AppLocalizations {
   /// **'Phần mở rộng'**
   String get battlePassEpilogue;
 
-  /// BattlePassStrings.estimateNote — Estimate (ValVN extra)
+  /// BattlePassStrings.estimateNote — Estimate (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Ước tính khoảng 4.000 XP mỗi trận, chưa tính nhiệm vụ.'**
@@ -2620,7 +2620,7 @@ abstract class AppLocalizations {
   /// **'{unlocked}/{total} đã mở khóa'**
   String battlePassUnlockedCount(String unlocked, String total);
 
-  /// BattlePassStrings.unratedFallback — Estimate (ValVN extra)
+  /// BattlePassStrings.unratedFallback — Estimate (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Đấu thường'**
@@ -2656,7 +2656,7 @@ abstract class AppLocalizations {
   /// **'{xp} XP / ngày'**
   String battlePassXpPerDay(String xp);
 
-  /// BattlePassStrings.xpPerDayCaption — XP pace (ValVN extra)
+  /// BattlePassStrings.xpPerDayCaption — XP pace (VanHub extra)
   ///
   /// In vi, this message translates to:
   /// **'Cần mỗi ngày để kịp hoàn thành'**
@@ -3673,7 +3673,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.codeAuto — LFG v2
   ///
   /// In vi, this message translates to:
-  /// **'Để trống: ValVN tự tạo mã từ tổ đội trong game khi bạn đăng tin.'**
+  /// **'Để trống: VanHub tự tạo mã từ tổ đội trong game khi bạn đăng tin.'**
   String get communityCodeAuto;
 
   /// CommunityStrings.codeAutoFailed — LFG v2
@@ -3811,13 +3811,13 @@ abstract class AppLocalizations {
   /// CommunityStrings.consentTitle — consent
   ///
   /// In vi, this message translates to:
-  /// **'Tham gia Cộng đồng ValVN'**
+  /// **'Tham gia Cộng đồng VanHub'**
   String get communityConsentTitle;
 
   /// CommunityStrings.consentVerify — consent
   ///
   /// In vi, this message translates to:
-  /// **'Khi cần xác minh Riot ID, ValVN gửi quyền truy cập Riot của bạn cho Cộng đồng ValVN. Cộng đồng dùng xong là bỏ ngay, không lưu.'**
+  /// **'Khi cần xác minh Riot ID, VanHub gửi quyền truy cập Riot của bạn cho Cộng đồng VanHub. Cộng đồng dùng xong là bỏ ngay, không lưu.'**
   String get communityConsentVerify;
 
   /// CommunityStrings.consentWithdrawn — data rights (Settings)
@@ -4597,7 +4597,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.deleteDataConfirmBody — data rights (Settings)
   ///
   /// In vi, this message translates to:
-  /// **'Toàn bộ bài viết, bình luận, đánh giá skin, lượt thích, bình chọn, tin tìm đồng đội và ảnh của {riotId} trên Cộng đồng ValVN sẽ bị xóa vĩnh viễn và không thể khôi phục. Bạn quay lại chế độ xem ẩn danh và cần đồng ý lại nếu muốn tham gia lần nữa.\n\nTài khoản Riot và dữ liệu trong game không bị ảnh hưởng. Hãy tải dữ liệu về trước nếu bạn muốn giữ một bản sao.'**
+  /// **'Toàn bộ bài viết, bình luận, đánh giá skin, lượt thích, bình chọn, tin tìm đồng đội và ảnh của {riotId} trên Cộng đồng VanHub sẽ bị xóa vĩnh viễn và không thể khôi phục. Bạn quay lại chế độ xem ẩn danh và cần đồng ý lại nếu muốn tham gia lần nữa.\n\nTài khoản Riot và dữ liệu trong game không bị ảnh hưởng. Hãy tải dữ liệu về trước nếu bạn muốn giữ một bản sao.'**
   String communityDeleteDataConfirmBody(String riotId);
 
   /// CommunityStrings.deleteDataConfirmTitle — data rights (Settings)
@@ -4729,7 +4729,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.exportSubject — data rights (Settings)
   ///
   /// In vi, this message translates to:
-  /// **'Dữ liệu Cộng đồng ValVN'**
+  /// **'Dữ liệu Cộng đồng VanHub'**
   String get communityExportSubject;
 
   /// CommunityStrings.exportSubtitle — data rights (Settings)
@@ -5413,7 +5413,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.privacyNote — general states
   ///
   /// In vi, this message translates to:
-  /// **'ValVN xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.'**
+  /// **'VanHub xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.'**
   String get communityPrivacyNote;
 
   /// CommunityStrings.publish — feed
@@ -5935,7 +5935,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.translateDownloadBody — translation
   ///
   /// In vi, this message translates to:
-  /// **'Để dịch từ {from} sang {to}, ValVN cần tải gói ngôn ngữ từ Google (khoảng {size}). Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và không gửi tới máy chủ nào.'**
+  /// **'Để dịch từ {from} sang {to}, VanHub cần tải gói ngôn ngữ từ Google (khoảng {size}). Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và không gửi tới máy chủ nào.'**
   String communityTranslateDownloadBody(String from, String to, String size);
 
   /// CommunityStrings.translateDownloadTitle — translation
@@ -5977,7 +5977,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.unavailableBody — general states
   ///
   /// In vi, this message translates to:
-  /// **'Chưa kết nối được Cộng đồng ValVN. Hãy thử lại sau ít phút.'**
+  /// **'Chưa kết nối được Cộng đồng VanHub. Hãy thử lại sau ít phút.'**
   String get communityUnavailableBody;
 
   /// CommunityStrings.unavailableTitle — general states
@@ -6043,7 +6043,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.withdrawConfirmBody — data rights (Settings)
   ///
   /// In vi, this message translates to:
-  /// **'ValVN sẽ ngừng dùng Cộng đồng bằng {riotId}: kết nối Cộng đồng trên thiết bị này bị xóa và bạn quay lại chế độ xem ẩn danh.\n\nBài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng vẫn còn trên Cộng đồng và vẫn hiện Riot ID của bạn cho đến khi bạn xóa chúng từng cái, hoặc chọn \"Xóa dữ liệu Cộng đồng của tôi\". Bạn có thể tham gia lại bất cứ lúc nào.'**
+  /// **'VanHub sẽ ngừng dùng Cộng đồng bằng {riotId}: kết nối Cộng đồng trên thiết bị này bị xóa và bạn quay lại chế độ xem ẩn danh.\n\nBài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng vẫn còn trên Cộng đồng và vẫn hiện Riot ID của bạn cho đến khi bạn xóa chúng từng cái, hoặc chọn \"Xóa dữ liệu Cộng đồng của tôi\". Bạn có thể tham gia lại bất cứ lúc nào.'**
   String communityWithdrawConfirmBody(String riotId);
 
   /// CommunityStrings.withdrawConfirmTitle — data rights (Settings)
@@ -6241,7 +6241,7 @@ abstract class AppLocalizations {
   /// LiveGameStrings.lobbyHint — Current game card (R7) / idle states
   ///
   /// In vi, this message translates to:
-  /// **'Khi tìm được trận, ValVN sẽ hiện đội hình và rank của mọi người.'**
+  /// **'Khi tìm được trận, VanHub sẽ hiện đội hình và rank của mọi người.'**
   String get liveGameLobbyHint;
 
   /// LiveGameStrings.lockFailed — Agent select (G4)
@@ -6265,7 +6265,7 @@ abstract class AppLocalizations {
   /// LiveGameStrings.matchPendingHint — Ended (G11)
   ///
   /// In vi, this message translates to:
-  /// **'ValVN sẽ tự thử lại. Bảng điểm thường có sau khoảng một phút.'**
+  /// **'VanHub sẽ tự thử lại. Bảng điểm thường có sau khoảng một phút.'**
   String get liveGameMatchPendingHint;
 
   /// LiveGameStrings.noAgentYet — Rosters (G5, G6)
@@ -7477,7 +7477,7 @@ abstract class AppLocalizations {
   /// LegalStrings.consentSuffix — Consent line (welcome screen)
   ///
   /// In vi, this message translates to:
-  /// **' của ValVN.'**
+  /// **' của VanHub.'**
   String get legalConsentSuffix;
 
   /// LegalStrings.consentTerms — Consent line (welcome screen)
@@ -7537,7 +7537,7 @@ abstract class AppLocalizations {
   /// LegalStrings.thirdPartyLicensesBody — About hub
   ///
   /// In vi, this message translates to:
-  /// **'Giấy phép của các phần mềm mã nguồn mở mà ValVN sử dụng'**
+  /// **'Giấy phép của các phần mềm mã nguồn mở mà VanHub sử dụng'**
   String get legalThirdPartyLicensesBody;
 
   /// LegalStrings.tocTitle — Document screen
@@ -7633,7 +7633,7 @@ abstract class AppLocalizations {
   /// Country and Riot connection settings: settingsGeoManualWarning
   ///
   /// In vi, this message translates to:
-  /// **'Lựa chọn này chỉ đổi máy chủ mà ValVN kết nối. Nó không chuyển khu vực tài khoản Riot của bạn. ValVN sẽ kiểm tra kết nối trước khi lưu.'**
+  /// **'Lựa chọn này chỉ đổi máy chủ mà VanHub kết nối. Nó không chuyển khu vực tài khoản Riot của bạn. VanHub sẽ kiểm tra kết nối trước khi lưu.'**
   String get settingsGeoManualWarning;
 
   /// Country and Riot connection settings: settingsGeoConnectionSaved
@@ -7713,6 +7713,30 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Không có quốc gia khớp bộ lọc.'**
   String get settingsGeoNoCountries;
+
+  /// Shared country picker, authored after extraction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Có hoạt động'**
+  String get settingsGeoActiveCountries;
+
+  /// Shared country picker, authored after extraction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả quốc gia'**
+  String get settingsGeoAllCountries;
+
+  /// Shared country picker, authored after extraction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa tải được hoạt động các nước. Bạn vẫn có thể chọn trong Tất cả quốc gia.'**
+  String get settingsGeoActivityUnavailable;
+
+  /// Shared country picker, authored after extraction.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count, plural, other{{count} quốc gia}}'**
+  String settingsGeoResultCount(int count);
 
   /// SettingsStrings.aboutCreditContent — About screen (S72)
   ///
@@ -7837,7 +7861,7 @@ abstract class AppLocalizations {
   /// Row that builds the bug-report file and opens the share sheet.
   ///
   /// In vi, this message translates to:
-  /// **'Gửi báo lỗi cho ValVN'**
+  /// **'Gửi báo lỗi cho VanHub'**
   String get settingsExportLog;
 
   /// Snackbar when nothing has been recorded yet.
@@ -7867,13 +7891,13 @@ abstract class AppLocalizations {
   /// SettingsStrings.feedback — HỖ TRỢ
   ///
   /// In vi, this message translates to:
-  /// **'Góp ý cho ValVN'**
+  /// **'Góp ý cho VanHub'**
   String get settingsFeedback;
 
   /// SettingsStrings.feedbackSubtitle — HỖ TRỢ
   ///
   /// In vi, this message translates to:
-  /// **'Mở trang góp ý của ValVN'**
+  /// **'Mở trang góp ý của VanHub'**
   String get settingsFeedbackSubtitle;
 
   /// SettingsStrings.itemLanguageEn — GIAO DIỆN
@@ -7999,13 +8023,13 @@ abstract class AppLocalizations {
   /// SettingsStrings.logoPrefix — Welcome (S01)
   ///
   /// In vi, this message translates to:
-  /// **'Val'**
+  /// **'Van'**
   String get settingsLogoPrefix;
 
   /// SettingsStrings.logoSuffix — Welcome (S01)
   ///
   /// In vi, this message translates to:
-  /// **'VN'**
+  /// **'Hub'**
   String get settingsLogoSuffix;
 
   /// SettingsStrings.notifNightMarket — THÔNG BÁO
@@ -8134,19 +8158,19 @@ abstract class AppLocalizations {
   /// **'TÙY CHỌN'**
   String get settingsOptionsHeader;
 
-  /// SettingsStrings.phaseComplete — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.phaseComplete — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Đã xong'**
   String get settingsPhaseComplete;
 
-  /// SettingsStrings.phaseInProgress — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.phaseInProgress — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Đang diễn ra'**
   String get settingsPhaseInProgress;
 
-  /// SettingsStrings.phaseScheduled — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.phaseScheduled — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Đã lên lịch'**
@@ -8266,25 +8290,25 @@ abstract class AppLocalizations {
   /// **'Bảo trì và sự cố VALORANT theo máy chủ'**
   String get settingsServerStatusSubtitle;
 
-  /// Subject / title of the shared bug-report file ("Gửi báo lỗi cho ValVN").
+  /// Subject / title of the shared bug-report file ("Gửi báo lỗi cho VanHub").
   ///
   /// In vi, this message translates to:
-  /// **'Báo lỗi ValVN'**
+  /// **'Báo lỗi VanHub'**
   String get settingsSessionLogTitle;
 
-  /// SettingsStrings.severityCritical — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.severityCritical — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Nghiêm trọng'**
   String get settingsSeverityCritical;
 
-  /// SettingsStrings.severityInfo — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.severityInfo — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Thông tin'**
   String get settingsSeverityInfo;
 
-  /// SettingsStrings.severityWarning — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.severityWarning — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Cảnh báo'**
@@ -8296,103 +8320,103 @@ abstract class AppLocalizations {
   /// **'Đã đăng xuất tất cả tài khoản'**
   String get settingsSignedOutAll;
 
-  /// SettingsStrings.statusAllGood — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusAllGood — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Máy chủ hoạt động bình thường'**
   String get settingsStatusAllGood;
 
-  /// SettingsStrings.statusAllGoodBody — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusAllGoodBody — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Không có sự cố hay bảo trì nào ở máy chủ {region}.'**
   String settingsStatusAllGoodBody(String region);
 
-  /// SettingsStrings.statusFewerUpdates — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusFewerUpdates — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Thu gọn'**
   String get settingsStatusFewerUpdates;
 
-  /// SettingsStrings.statusIssues — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusIssues — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Riot đang xử lý sự cố'**
   String get settingsStatusIssues;
 
-  /// SettingsStrings.statusIssuesBody — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusIssuesBody — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Máy chủ này có {n} thông báo sự cố.'**
   String settingsStatusIssuesBody(int n);
 
-  /// SettingsStrings.statusKindIncident — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusKindIncident — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Sự cố'**
   String get settingsStatusKindIncident;
 
-  /// SettingsStrings.statusKindMaintenance — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusKindMaintenance — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Bảo trì'**
   String get settingsStatusKindMaintenance;
 
-  /// SettingsStrings.statusMaintenanceNow — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusMaintenanceNow — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Máy chủ đang bảo trì'**
   String get settingsStatusMaintenanceNow;
 
-  /// SettingsStrings.statusMaintenanceNowBody — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusMaintenanceNowBody — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
-  /// **'Bạn có thể chưa vào được game, và ValVN có thể tạm thời chưa tải được thông tin.'**
+  /// **'Bạn có thể chưa vào được game, và VanHub có thể tạm thời chưa tải được thông tin.'**
   String get settingsStatusMaintenanceNowBody;
 
-  /// SettingsStrings.statusMoreUpdates — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusMoreUpdates — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Xem thêm {n} cập nhật'**
   String settingsStatusMoreUpdates(int n);
 
-  /// SettingsStrings.statusRegionPicker — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusRegionPicker — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Máy chủ'**
   String get settingsStatusRegionPicker;
 
-  /// SettingsStrings.statusScheduled — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusScheduled — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Sắp có bảo trì'**
   String get settingsStatusScheduled;
 
-  /// SettingsStrings.statusScheduledBody — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusScheduledBody — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'{n} lịch bảo trì đã được Riot thông báo.'**
   String settingsStatusScheduledBody(int n);
 
-  /// SettingsStrings.statusSourceNote — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusSourceNote — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Nguồn: trang trạng thái chính thức của Riot Games. Giờ hiển thị theo múi giờ của thiết bị.'**
   String get settingsStatusSourceNote;
 
-  /// SettingsStrings.statusStarted — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusStarted — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Bắt đầu {when}'**
   String settingsStatusStarted(String when);
 
-  /// SettingsStrings.statusUpdated — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusUpdated — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'Cập nhật {when}'**
   String settingsStatusUpdated(String when);
 
-  /// SettingsStrings.statusUpdatesHeader — Server status screen (ValVN extra, X-1)
+  /// SettingsStrings.statusUpdatesHeader — Server status screen (VanHub extra, X-1)
   ///
   /// In vi, this message translates to:
   /// **'CẬP NHẬT TỪ RIOT'**
@@ -8491,7 +8515,7 @@ abstract class AppLocalizations {
   /// SettingsStrings.welcomeFootnote — Welcome (S01)
   ///
   /// In vi, this message translates to:
-  /// **'Bạn đăng nhập trên trang chính thức của Riot. ValVN chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập.'**
+  /// **'Bạn đăng nhập trên trang chính thức của Riot. VanHub chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập.'**
   String get settingsWelcomeFootnote;
 
   /// SettingsStrings.welcomeKicker — Welcome hero (S01)
@@ -8779,7 +8803,7 @@ abstract class AppLocalizations {
   /// SocialStrings.friendsPrivacyNote — friends
   ///
   /// In vi, this message translates to:
-  /// **'Danh sách bạn bè và tin nhắn lấy trực tiếp từ Riot. ValVN không lưu chúng ở nơi nào khác.'**
+  /// **'Danh sách bạn bè và tin nhắn lấy trực tiếp từ Riot. VanHub không lưu chúng ở nơi nào khác.'**
   String get socialFriendsPrivacyNote;
 
   /// "24 bạn · 5 đang trực tuyến" (under the large title).
@@ -9253,7 +9277,7 @@ abstract class AppLocalizations {
   /// SocialStrings.remoteNote — party
   ///
   /// In vi, this message translates to:
-  /// **'Mọi thay đổi chỉ được gửi tới Riot khi bạn bấm. ValVN không tự tìm trận hay khóa đặc vụ thay bạn.'**
+  /// **'Mọi thay đổi chỉ được gửi tới Riot khi bạn bấm. VanHub không tự tìm trận hay khóa đặc vụ thay bạn.'**
   String get socialRemoteNote;
 
   /// SocialStrings.removeConfirmBody — party
@@ -9685,7 +9709,7 @@ abstract class AppLocalizations {
   /// StoreStrings.shareCardBrand — "Chia sẻ ảnh": branded picture of the daily shop / Night Market.
   ///
   /// In vi, this message translates to:
-  /// **'ValVN'**
+  /// **'VanHub'**
   String get storeShareCardBrand;
 
   /// StoreStrings.shareCardDaily — "Chia sẻ ảnh": branded picture of the daily shop / Night Market.
@@ -10321,7 +10345,7 @@ abstract class AppLocalizations {
   /// HomeStrings.friendsConsentBody — Friends card
   ///
   /// In vi, this message translates to:
-  /// **'Để biết bạn bè nào đang chơi, ValVN sẽ kết nối trò chuyện Riot của tài khoản đang dùng mỗi khi bạn mở Trang chủ. Bạn bè sẽ thấy bạn đang trực tuyến. Bạn có thể tắt trong Tùy chỉnh Trang chủ.'**
+  /// **'Để biết bạn bè nào đang chơi, VanHub sẽ kết nối trò chuyện Riot của tài khoản đang dùng mỗi khi bạn mở Trang chủ. Bạn bè sẽ thấy bạn đang trực tuyến. Bạn có thể tắt trong Tùy chỉnh Trang chủ.'**
   String get homeFriendsConsentBody;
 
   /// HomeStrings.friendsConsentDecline — Friends card
@@ -10657,7 +10681,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.errorForbidden — errors
   ///
   /// In vi, this message translates to:
-  /// **'Bạn chưa thể thực hiện việc này. Hãy xem Tiêu chuẩn cộng đồng hoặc liên hệ ValVN.'**
+  /// **'Bạn chưa thể thực hiện việc này. Hãy xem Tiêu chuẩn cộng đồng hoặc liên hệ VanHub.'**
   String get communityErrorForbidden;
 
   /// CommunityStrings.errorGeneric — errors
@@ -10687,7 +10711,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.errorNetwork — errors
   ///
   /// In vi, this message translates to:
-  /// **'Không kết nối được Cộng đồng ValVN. Kiểm tra mạng rồi thử lại.'**
+  /// **'Không kết nối được Cộng đồng VanHub. Kiểm tra mạng rồi thử lại.'**
   String get communityErrorNetwork;
 
   /// CommunityStrings.errorNotFound — errors
@@ -10735,7 +10759,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.errorServer — errors
   ///
   /// In vi, this message translates to:
-  /// **'Cộng đồng ValVN đang gặp sự cố. Hãy thử lại sau ít phút.'**
+  /// **'Cộng đồng VanHub đang gặp sự cố. Hãy thử lại sau ít phút.'**
   String get communityErrorServer;
 
   /// CommunityStrings.errorStorageFull — errors
@@ -10747,7 +10771,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.errorTimeout — errors
   ///
   /// In vi, this message translates to:
-  /// **'Cộng đồng ValVN phản hồi quá lâu. Hãy thử lại.'**
+  /// **'Cộng đồng VanHub phản hồi quá lâu. Hãy thử lại.'**
   String get communityErrorTimeout;
 
   /// CommunityStrings.errorTitle — errors

@@ -13,7 +13,7 @@ final retainedHistoryFilesProvider = Provider<JsonFileCache>(
   (ref) => JsonFileCache.appSupport('history'),
 );
 
-/// The data ValVN keeps on the device **beyond** the signed-in session, and how
+/// The data VanHub keeps on the device **beyond** the signed-in session, and how
 /// to erase it (decision D3, AR-002):
 ///
 /// | Data | Where | Erased |

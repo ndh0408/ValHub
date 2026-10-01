@@ -20,7 +20,6 @@ import '../../../../core/l10n/account_strings.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/error_view.dart';
-import '../../../../core/ui/val_widgets.dart';
 import '../../settings_strings.dart';
 import '../widgets/settings_widgets.dart';
 
@@ -217,20 +216,11 @@ class _AccountRow extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (account.needsLogin)
-            Tooltip(
-              message: CommonStrings.signInAgain,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(6),
-                onTap: onReauth,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: ValBadge(
-                    CommonStrings.signInAgain,
-                    color: valColorsOf(context).warning,
-                    soft: true,
-                  ),
-                ),
-              ),
+            IconButton(
+              tooltip: CommonStrings.signInAgain,
+              icon: const Icon(Icons.login),
+              color: valColorsOf(context).warning,
+              onPressed: onReauth,
             )
           else if (active)
             Padding(
@@ -271,8 +261,8 @@ class _AccountRow extends ConsumerWidget {
       selected: active,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(
+          border: BorderDirectional(
+            start: BorderSide(
               color: active ? scheme.primary : Colors.transparent,
               width: 4,
             ),

@@ -82,6 +82,23 @@ void main() {
     );
   });
 
+  test('refresh player identity uses own party, authenticated GLZ POST', () async {
+    const party = '00000000-0000-0000-0000-000000000099';
+    adapter.reply(200, {'ID': party});
+    expect(await api.partyRefreshPlayerIdentity(_puuid, party), {'ID': party});
+    final request = adapter.requests.single;
+    expect(request.method, 'POST');
+    expect(
+      request.uri.toString(),
+      'https://glz-ap-1.ap.a.pvp.net/parties/v1/parties/$party/members/$_puuid/refreshPlayerIdentity',
+    );
+    expect(request.data, isNull);
+    expect(request.headers['Authorization'], 'Bearer T1');
+    expect(request.headers['X-Riot-Entitlements-JWT'], 'ent');
+    expect(request.headers['X-Riot-ClientVersion'], isNotEmpty);
+    expect(request.headers['X-Riot-ClientPlatform'], isNotEmpty);
+  });
+
   test(
     'manual region validation reads only the candidate host and own subject',
     () async {

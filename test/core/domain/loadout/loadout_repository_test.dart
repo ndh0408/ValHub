@@ -192,4 +192,122 @@ void main() {
     );
     verifyNever(() => api.putPlayerLoadout(any(), any()));
   });
+  test('identity no-op still refreshes a stale lobby without PUT', () async {
+    gets = [loadoutJson()];
+    when(() => api.gameSession(any()))
+        .thenAnswer((_) async => {'loopState': 'MENUS'});
+    when(() => api.partyPlayer(any()))
+        .thenAnswer((_) async => {'CurrentPartyID': Lx.buddyInstanceA});
+    when(() => api.partyRefreshPlayerIdentity(any(), any()))
+        .thenAnswer((_) async => {});
+    await repo.save(Lx.puuid, const SetPlayerCard(Fx.cardNgoiSang));
+    verifyNever(() => api.putPlayerLoadout(any(), any()));
+    verify(() => api.partyRefreshPlayerIdentity(Lx.puuid, Lx.buddyInstanceA))
+        .called(1);
+  });
+
+  test('weapon equip does not request lobby identity refresh', () async {
+    final before = loadoutJson();
+    gets = [
+      before,
+      {...equipReaver.appliedTo(before), 'Version': 26},
+    ];
+    await repo.save(Lx.puuid, equipReaver);
+    verifyNever(() => api.gameSession(any()));
+    verifyNever(() => api.partyPlayer(any()));
+    verifyNever(() => api.partyRefreshPlayerIdentity(any(), any()));
+  });
+
+  test(
+    'missing party does not turn confirmed identity save into failure',
+    () async {
+      const change = SetPlayerCard(Lx.cardDefault);
+      final before = loadoutJson();
+      gets = [
+        before,
+        {...change.appliedTo(before), 'Version': 26},
+      ];
+      when(() => api.gameSession(any()))
+          .thenAnswer((_) async => {'loopState': 'MENUS'});
+      when(() => api.partyPlayer(any()))
+          .thenAnswer((_) async => {'CurrentPartyID': 'not-a-party'});
+      expect(
+        (await repo.save(Lx.puuid, change)).loadout.identity.playerCardId,
+        Lx.cardDefault,
+      );
+      verifyNever(() => api.partyRefreshPlayerIdentity(any(), any()));
+    },
+  );
+
+  test('higher version without the requested skin is not success', () async {
+    gets = [loadoutJson(), loadoutJson(version: 26)];
+    await expectLater(
+      repo.save(Lx.puuid, equipReaver),
+      throwsA(
+        isA<LoadoutSaveException>().having(
+          (e) => e.failure,
+          'failure',
+          LoadoutSaveFailure.notPersisted,
+        ),
+      ),
+    );
+  });
+
+  test('card save refreshes own lobby identity after confirmation', () async {
+    const change = SetPlayerCard(Lx.cardDefault);
+    final before = loadoutJson();
+    gets = [
+      before,
+      {...change.appliedTo(before), 'Version': 26},
+    ];
+    when(() => api.gameSession(any()))
+        .thenAnswer((_) async => {'loopState': 'MENUS'});
+    when(() => api.partyPlayer(any()))
+        .thenAnswer((_) async => {'CurrentPartyID': Lx.buddyInstanceA});
+    when(() => api.partyRefreshPlayerIdentity(any(), any()))
+        .thenAnswer((_) async => {});
+    await repo.save(Lx.puuid, change);
+    verifyInOrder([
+      () => api.putPlayerLoadout(Lx.puuid, any()),
+      () => api.gameSession(Lx.puuid),
+      () => api.partyPlayer(Lx.puuid),
+      () => api.partyRefreshPlayerIdentity(Lx.puuid, Lx.buddyInstanceA),
+    ]);
+  });
+
+  test(
+    'an in-match identity save never refreshes or alters the party',
+    () async {
+      const change = SetPlayerCard(Lx.cardDefault);
+      final before = loadoutJson();
+      gets = [
+        before,
+        {...change.appliedTo(before), 'Version': 26},
+      ];
+      when(() => api.gameSession(any()))
+          .thenAnswer((_) async => {'loopState': 'INGAME'});
+      await repo.save(Lx.puuid, change);
+      verifyNever(() => api.partyPlayer(any()));
+      verifyNever(() => api.partyRefreshPlayerIdentity(any(), any()));
+    },
+  );
+
+  test('lobby refresh failure preserves a confirmed card save', () async {
+    const change = SetPlayerCard(Lx.cardDefault);
+    final before = loadoutJson();
+    gets = [
+      before,
+      {...change.appliedTo(before), 'Version': 26},
+    ];
+    when(() => api.gameSession(any()))
+        .thenAnswer((_) async => {'loopState': 'MENUS'});
+    when(() => api.partyPlayer(any()))
+        .thenAnswer((_) async => {'CurrentPartyID': Lx.buddyInstanceA});
+    when(() => api.partyRefreshPlayerIdentity(any(), any()))
+        .thenThrow(const TransientException(status: 503));
+    expect(
+      (await repo.save(Lx.puuid, change)).loadout.identity.playerCardId,
+      Lx.cardDefault,
+    );
+  });
 }

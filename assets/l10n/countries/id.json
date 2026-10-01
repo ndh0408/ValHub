@@ -504,5 +504,52 @@
     "ZA": "Afrika Selatan",
     "ZM": "Zambia",
     "ZW": "Zimbabwe"
+  },
+  "aliases": {
+    "CD": [
+      "Kongo (RDK)"
+    ],
+    "CG": [
+      "Kongo (Republik)"
+    ],
+    "CI": [
+      "Pantai Gading"
+    ],
+    "CZ": [
+      "Republik Ceko"
+    ],
+    "FK": [
+      "Kepulauan Falkland (Malvinas)"
+    ],
+    "GB": [
+      "Inggris Raya"
+    ],
+    "HK": [
+      "Hong Kong DAK Tiongkok"
+    ],
+    "IO": [
+      "Kepulauan Chagos"
+    ],
+    "MO": [
+      "Makau DAK Tiongkok"
+    ],
+    "NZ": [
+      "Aotearoa (Selandia Baru)"
+    ],
+    "PS": [
+      "Wilayah Palestina"
+    ],
+    "SZ": [
+      "Eswatini"
+    ],
+    "TL": [
+      "Timor Timur"
+    ],
+    "TR": [
+      "Turkiye"
+    ],
+    "US": [
+      "Amerika Serikat"
+    ]
   }
 }

@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/theme/app_theme.dart';
 
-/// The ValVN launcher icon drawn in code (navy tile, red "V", bone star,
+/// The VanHub launcher icon drawn in code (navy tile, red "V", bone star,
 /// red underline — `assets/icon/icon.png`), so the About hub shows the real
 /// app icon without bundling the PNG.
 class AppIconMark extends StatelessWidget {

@@ -16,7 +16,7 @@ import '../data/server_status.dart';
 import '../providers/server_status_provider.dart';
 import '../settings_strings.dart';
 
-/// "Trạng thái máy chủ" (ValVN extra, X-1): maintenances and incidents that
+/// "Trạng thái máy chủ" (VanHub extra, X-1): maintenances and incidents that
 /// Riot publishes for a region, in Vietnamese when Riot provides it, with
 /// every update and its local time (device time zone, 24 h). Regions: those
 /// of the signed-in accounts (active one first). Route `/settings/status`.

@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../content/content_repository.dart';
 import '../domain/competitive/rank_calc.dart';
-import '../domain/competitive/rank_models.dart';
+import '../domain/competitive/rank.dart' show mmrProvider;
 import '../domain/competitive/viewer.dart';
 import '../l10n/account_strings.dart';
 import '../network/riot_exception.dart';
@@ -238,8 +238,8 @@ final onlineAccountCountProvider = Provider.autoDispose<int>((ref) {
 
 /// Refreshes the cached current rank (`rankTier` / `rankSeasonId`) of a
 /// listed account with one P-11 call, so every account shows its rank
-/// without opening its Profile. Light on purpose (no RR history, no
-/// keep-alive); failures keep the cached rank.
+/// without opening its Profile. Shares the profile's MMR request/cache;
+/// failures keep the cached rank.
 final accountRankRefreshProvider = FutureProvider.autoDispose
     .family<void, String>((ref, puuid) async {
       final id = puuid.toLowerCase();
@@ -247,13 +247,15 @@ final accountRankRefreshProvider = FutureProvider.autoDispose
         accountProvider(id).select((a) => a?.needsLogin),
       );
       if (needsLogin != false) return;
-      final db = ref.watch(contentProvider).value;
-      if (db == null) return; // current act unknown until content loads
+      final dbFuture = ref.watch(contentProvider.future);
+      final mmrFuture = ref.watch(mmrProvider(id).future);
+      // Content and MMR load together; handle an early MMR failure while
+      // waiting for content too.
+      mmrFuture.ignore();
       final console = watchIsConsole(ref, id);
       try {
-        final mmr = PlayerMmr.fromJson(
-          await ref.read(pvpApiProvider).mmr(id, subject: id),
-        );
+        final db = await dbFuture;
+        final mmr = await mmrFuture;
         if (!ref.mounted) return;
         final current = currentRankOf(
           db,

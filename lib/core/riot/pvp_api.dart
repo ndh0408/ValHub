@@ -357,6 +357,17 @@ class PvpApi {
   Future<JsonMap> partyPlayer(String puuid) =>
       _map(puuid, 'GET', (h) => '${h.glz}/parties/v1/players/$puuid');
 
+  /// Refresh the user's lobby identity after an explicit cosmetic save.
+  Future<JsonMap> partyRefreshPlayerIdentity(
+    String puuid,
+    String partyId,
+  ) => _map(
+    puuid,
+    'POST',
+    (h) =>
+        '${h.glz}/parties/v1/parties/$partyId/members/$puuid/refreshPlayerIdentity',
+  );
+
   /// G-13 `GET /parties/v1/parties/{partyId}`.
   Future<JsonMap> party(String puuid, String partyId) =>
       _map(puuid, 'GET', (h) => '${h.glz}/parties/v1/parties/$partyId');

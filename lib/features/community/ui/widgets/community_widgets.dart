@@ -8,6 +8,7 @@ import 'package:material_ui/material_ui.dart' hide ErrorDescription;
 
 import '../../../../core/auth/auth_routes.dart';
 import '../../../../core/content/content_repository.dart';
+import '../../../../core/geo/countries.dart';
 import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/filter_bar.dart';
@@ -380,6 +381,10 @@ class AuthorRow extends ConsumerWidget {
     final now = ref.watch(clockProvider).now();
     final at = createdAt;
     final tier = author.rankTier;
+    final countryName = author.country == null
+        ? null
+        : ref.watch(countryNamesProvider).value?.name(author.country!) ??
+              author.country;
     final line = subtitle ?? (at == null ? null : formatRelative(at, now));
     return Row(
       children: [
@@ -425,13 +430,11 @@ class AuthorRow extends ConsumerWidget {
                   if (author.country != null) ...[
                     const SizedBox(width: 6),
                     Tooltip(
-                      message: CommunityStrings.countryName(author.country!),
+                      message: countryName!,
                       child: Text(
                         flagEmoji(author.country),
                         style: const TextStyle(fontSize: 14),
-                        semanticsLabel: CommunityStrings.countryName(
-                          author.country!,
-                        ),
+                        semanticsLabel: countryName,
                       ),
                     ),
                   ],
@@ -731,7 +734,7 @@ class CommunityEmptyState extends StatelessWidget {
     required this.title,
     required this.message,
     this.action,
-    this.padding = const EdgeInsets.fromLTRB(32, 40, 32, 32),
+    this.padding = const EdgeInsets.fromLTRB(24, 24, 24, 24),
   });
 
   final IconData icon;
@@ -749,29 +752,16 @@ class CommunityEmptyState extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 104,
-            height: 104,
-            alignment: Alignment.center,
+            width: 56,
+            height: 56,
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  ValColors.red.withValues(alpha: 0.28),
-                  ValColors.red.withValues(alpha: 0),
-                ],
-              ),
+              borderRadius: BorderRadius.circular(16),
+              color: theme.colorScheme.surfaceContainer,
             ),
-            child: Container(
-              width: 68,
-              height: 68,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: theme.colorScheme.surfaceContainer,
-                border: Border.all(
-                  color: ValColors.red.withValues(alpha: 0.35),
-                ),
-              ),
-              child: Icon(icon, size: 32, color: ValColors.red),
+            child: Icon(
+              icon,
+              size: 28,
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

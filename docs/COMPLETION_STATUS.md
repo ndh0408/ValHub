@@ -1,10 +1,28 @@
-# Hoàn thiện ValVN — nhật ký triển khai Codex
+# Hoàn thiện VanHub — nhật ký triển khai Codex
 
 Yêu cầu của chủ dự án: hoàn thiện toàn bộ yêu cầu để Claude kiểm tra sau khi hết giới hạn. Nhánh tích hợp: `ndh0408/codex-complete`; worktree `C:/Users/Admin/orca/workspaces/ValVN/codex-complete`. Đây là tiến độ đang triển khai, **chưa phải nghiệm thu toàn bộ**.
 
-Giữ nhánh chính và các báo cáo bàn giao cũ để đối chiếu. Không push/deploy/publish. Không thêm chatbot/LLM hay dịch vụ AI vào ứng dụng; số liệu sản phẩm phải có nguồn thật. Báo cáo `docs/CODEX_REVIEW.md` và `docs/handoffs/` ghi trạng thái trước các sửa đổi tích hợp, không dùng chúng làm tiến độ hiện tại.
+Giữ nhánh chính và các báo cáo bàn giao cũ để đối chiếu. Theo yêu cầu mới của chủ dự án, gộp và push nhánh mặc định GitHub để mọi người đọc code mới nhất; chưa deploy/publish store. Không thêm chatbot/LLM hay dịch vụ AI vào ứng dụng; số liệu sản phẩm phải có nguồn thật. Báo cáo `docs/CODEX_REVIEW.md` và `docs/handoffs/` ghi trạng thái trước các sửa đổi tích hợp, không dùng chúng làm tiến độ hiện tại.
 
-Chủ dự án đã yêu cầu thử emulator và xác nhận mục đích là kiểm tra đầy đủ các yêu cầu. Đối chiếu đủ 37 mục, phạm vi test native và giới hạn xem [QA_2026-10-01.md](QA_2026-10-01.md). Các checkpoint đã commit: server `b559cf1`, client/tool `57978cd`; đợt QA tiếp theo sửa lỗi deep link khi đang đăng nhập bằng imperative push.
+Đợt mới nhất: [VanHub và kiểm thử toàn tính năng](VANHUB_REVIEW_2026-10-01.md), **4.143 Flutter tests đạt**, analyzer 0 issues, 867 backend / 35 tool tests đạt. Đợt picker trước đó: [bộ chọn quốc gia dùng chung](COUNTRY_PICKER_2026-10-01.md), **4.118 Flutter tests / 4 Android native tests đạt**; emulator mở có cửa sổ. Chủ dự án đã yêu cầu thử emulator và xác nhận mục đích là kiểm tra đầy đủ các yêu cầu. Đối chiếu đủ 37 mục, phạm vi test native và giới hạn xem [QA_2026-10-01.md](QA_2026-10-01.md). Các checkpoint đã commit: server `b559cf1`, client/tool `57978cd`; đợt QA tiếp theo sửa lỗi deep link khi đang đăng nhập bằng imperative push.
+
+## Yêu cầu trực tiếp của chủ dự án
+
+Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm thu toàn app. Chủ dự án nhắc lại ngày 01/10 rằng chưa đầy đủ; không kết thúc công việc ở bản đổi tên hoặc một nhóm bug.
+
+| Yêu cầu | Trạng thái hiện tại | Việc phải làm tiếp |
+|---|---|---|
+| Đọc việc Claude giao và làm hết yêu cầu | Đã tích hợp bốn WP, giữ report và đối chiếu đủ 37 mục | Đóng các mục I18N/COUNTRIES/DEVICES/Community còn mở phía dưới; chưa nghiệm thu tổng thể |
+| Mở emulator cho chủ dự án xem | Cửa sổ Pixel emulator 5580 đang mở, giữ 3 tài khoản cũ | APK cuối đã cài đè, Bảng tin/sheet đã xem; tiếp tục rà các luồng còn lại, QA riêng 5582 |
+| Commit, push và gộp để người khác thấy code mới nhất | Bốn WP và checkpoint đã gộp ở nhánh tích hợp | Kiểm tra cuối, push integration rồi fast-forward/push nhánh mặc định; tiếp tục commit các phase còn thiếu |
+| Ẩn bảng nguồn dữ liệu | Đã bỏ card Giới thiệu và có test | Đã kiểm tra About bản cài trong lượt read-only; giữ pháp lý/giấy phép cần thiết |
+| Cộng đồng rõ ràng, bộ lọc không bị cắt | Đã chuyển tab gọn và một scope selector; sheet cuộn giữ query/applied scope, test 360dp/chữ 200% | Bảng tin/sheet đã rà bản cài, sửa thanh tab che sheet; tiếp tục các màn còn lại |
+| Tài khoản chữ dễ đọc, đủ tên/vùng/rank | Đã chia dòng, wrap Riot ID/vùng và đưa nút phụ xuống dưới | Ba tài khoản thật đã đủ metadata trong lượt read-only; còn kiểm tra chủ động chuyển/reauth |
+| Trang bị cập nhật game | Đã xác nhận giá trị sau lưu và thêm refresh identity ở sảnh | Đối chiếu trực tiếp VALORANT PC đang mở; chưa có bằng chứng live |
+| Đổi tên VanHub | Tên hiển thị native/UI/pháp lý đã đổi, giữ ID và dữ liệu cập nhật | Quốc tế hóa UI đầy đủ còn thiếu |
+| Kiểm tra mọi chức năng | Full Flutter/backend/tool + plugin/public-route QA đã chạy | Rà real-account/offline/reauth, Social/LFG đa thiết bị, iOS và Doze; không suy ra từ unit tests |
+| Tải và lưu dữ liệu ngay sau login | Warmup card/level/rank và store/wallet/missions/collection dùng cùng cache; bounded login, reauth, region, logout và retry có test | Đã xác nhận ba tài khoản đủ metadata trên bản cài; chưa tự đăng nhập/đăng xuất tài khoản thật |
+| Hook failed lặp lại | Đã xác định WSL bash thiếu shell và sửa lookup bằng Git Bash/sh trong runtime phiên; hook kiểm tra trả 0 | Shim chỉ thuộc phiên runtime, không phải sửa app hay vô hiệu security hook |
 
 ## Checklist nghiệm thu
 
@@ -18,7 +36,7 @@ Chủ dự án đã yêu cầu thử emulator và xác nhận mục đích là k
 - [ ] I18N W5: UI language picker, device default/upgrade pin, contentLocale/ui_locales/status, isolate thông báo.
 - [ ] I18N W6: đủ 18 bản dịch UI, plural/select, glossary và fallback/status gates.
 - [ ] I18N W7: RTL toàn ứng dụng, font CJK, pseudo locale và stale-string tests.
-- [ ] COUNTRIES P0–P3 toàn bộ: 250 mã, tên 18 locale, auto/manual/fail closed, chọn quốc gia và giá VP đã nối; còn onboarding, mismatch/refresh định kỳ, provenance/trạng thái đầy đủ và Community picker chung.
+- [ ] COUNTRIES P0–P3 toàn bộ: 250 mã, tên 18 locale, auto/manual/fail closed, chọn quốc gia và giá VP đã nối; còn onboarding, mismatch/refresh định kỳ, provenance/trạng thái đầy đủ; Community picker chung đã nối và kiểm chứng.
 - [ ] DEVICES/A11y toàn bộ: breakpoints/rail/hinge/safe area, header theo text scale, nút đỏ đậm/chữ trắng và reduced video motion đã sửa; còn list/detail và semantic/RTL toàn màn hình.
 - [ ] Notifications toàn bộ: Rank/Battle Pass dùng dữ liệu thật, kênh LFG cục bộ và category switches đã nối; lịch tối đa 60, migration 7→5 ngày; còn nguồn badge/activity Community và nghiệm thu native.
 - [ ] External links/sharing toàn bộ: custom scheme/cold/warm start/defer login/account switching đã nối; HTTPS App/Universal Links và domain association còn thiếu.
@@ -32,7 +50,9 @@ Chủ dự án đã yêu cầu thử emulator và xác nhận mục đích là k
 - [ ] Release/CI/store metadata/signing/domain/off-site/alert destination thật do chủ dự án cấu hình.
 - [ ] Báo cáo nghiệm thu cuối từng ID, commit, test và giới hạn sau khi toàn bộ yêu cầu thực sự đạt.
 
-## Bằng chứng checkpoint 01/10/2026
+## Bằng chứng checkpoint QA ban đầu 01/10/2026
+
+Các số dưới đây thuộc checkpoint `6c2261f`; kết quả đợt tiếp theo xem báo cáo bộ chọn dùng chung phía trên.
 
 | Kiểm tra | Kết quả |
 |---|---|

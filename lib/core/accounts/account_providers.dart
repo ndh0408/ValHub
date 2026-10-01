@@ -34,7 +34,7 @@ final accountRepositoryProvider = Provider<AccountRepository>(
   ),
 );
 
-/// Erases the local data ValVN keeps beyond the session (RR history, presets,
+/// Erases the local data VanHub keeps beyond the session (RR history, presets,
 /// names, matches; see [LocalDataEraser]).
 final localDataEraserProvider = Provider<LocalDataEraser>(
   (ref) => LocalDataEraser(

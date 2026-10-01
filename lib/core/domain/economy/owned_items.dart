@@ -464,7 +464,9 @@ const kEntitlementsTtl = Duration(minutes: 10);
 /// show owned items as locked). Offline copy on transient failures (X4).
 final entitlementsProvider = FutureProvider.autoDispose
     .family<Entitlements, String>((ref, puuid) async {
-      ref.watch(accountProvider(puuid).select((a) => a?.needsLogin));
+      ref.watch(
+        accountProvider(puuid).select((a) => (a?.needsLogin, a?.region)),
+      );
       final api = ref.watch(pvpApiProvider);
       final fetched = await fetchWithOfflineCache(
         ref,

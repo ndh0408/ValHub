@@ -91,7 +91,7 @@ abstract final class StoreStrings {
   static const shareFailed = 'Không tạo được ảnh. Hãy thử lại.';
   static const shareCardDaily = 'Cửa hàng hôm nay';
   static const shareCardNightMarket = 'Chợ Đêm';
-  static const shareCardBrand = 'ValVN';
+  static const shareCardBrand = 'VanHub';
   static const shareCardMark = 'V';
   static const shareCardWatermark = 'VALVN';
   static const shareCardTagline = 'Trợ thủ VALORANT của bạn';

@@ -32,7 +32,7 @@ class HomeSkinOffer {
 }
 
 /// The Night Market row: how many cards wait, until when, the best deal and
-/// whether the user has opened the Night Market in ValVN yet.
+/// whether the user has opened the Night Market in VanHub yet.
 @immutable
 class HomeNightMarket {
   const HomeNightMarket({

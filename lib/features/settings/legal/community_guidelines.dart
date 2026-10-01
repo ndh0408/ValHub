@@ -3,7 +3,7 @@ import 'legal_info.dart';
 
 const _email = LegalInfo.contactEmail;
 
-/// Tiêu chuẩn cộng đồng ValVN (posts, comments, images, LFG, votes).
+/// Tiêu chuẩn cộng đồng VanHub (posts, comments, images, LFG, votes).
 const communityGuidelines = LegalDocument(
   id: 'community',
   title: 'Tiêu chuẩn cộng đồng',
@@ -11,7 +11,7 @@ const communityGuidelines = LegalDocument(
   version: '1.0',
   preamble: [
     LegalParagraph(
-      'Cộng đồng ValVN là nơi người chơi VALORANT khoe cửa hàng, bàn chuyện '
+      'Cộng đồng VanHub là nơi người chơi VALORANT khoe cửa hàng, bàn chuyện '
       'skin, tìm đồng đội và giúp nhau leo rank. Để nơi này luôn vui và an '
       'toàn, hãy cùng nhau giữ những quy tắc dưới đây. Tiêu chuẩn này là một '
       'phần của Điều khoản sử dụng.',
@@ -84,7 +84,7 @@ const communityGuidelines = LegalDocument(
         ),
         LegalItem(
           'Không bao giờ chia sẻ mật khẩu, mã xác thực hay email đăng nhập Riot '
-          'của bạn. ValVN và đội ngũ kiểm duyệt không bao giờ hỏi những thông '
+          'của bạn. VanHub và đội ngũ kiểm duyệt không bao giờ hỏi những thông '
           'tin này.',
         ),
         LegalItem(
@@ -170,7 +170,7 @@ const communityGuidelines = LegalDocument(
         ),
       ]),
       LegalParagraph(
-        'Các biện pháp này chỉ áp dụng trong ValVN và không ảnh hưởng tới Tài '
+        'Các biện pháp này chỉ áp dụng trong VanHub và không ảnh hưởng tới Tài '
         'khoản Riot của bạn. Tuy nhiên, hành vi vi phạm trong trò chơi vẫn có '
         'thể bị Riot Games xử lý theo chính sách của họ.',
       ),

@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
-/// The only UI locale ValVN ships.
+/// The only UI locale VanHub ships.
 const appLocale = Locale('vi');
 
 /// Locale id used for `intl` formatting.

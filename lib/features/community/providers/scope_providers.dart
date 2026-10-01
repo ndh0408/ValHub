@@ -59,6 +59,7 @@ class CommunityScopeNotifier extends Notifier<ScopeFilter> {
   }
 
   void set(ScopeFilter filter) {
+    filter = filter.copyWith(country: () => countryCode(filter.country));
     state = filter;
     final m = ref.read(uiMemoryProvider)
       ..write(ScopeMemoryKeys.scope(section), filter.scope.name)

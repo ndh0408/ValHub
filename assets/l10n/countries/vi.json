@@ -504,5 +504,46 @@
     "ZA": "Nam Phi",
     "ZM": "Zambia",
     "ZW": "Zimbabwe"
+  },
+  "aliases": {
+    "CD": [
+      "Cộng hòa Dân chủ Congo"
+    ],
+    "CG": [
+      "Cộng hòa Congo"
+    ],
+    "CI": [
+      "Bờ Biển Ngà"
+    ],
+    "CZ": [
+      "Cộng hòa Séc"
+    ],
+    "FK": [
+      "Quần đảo Falkland (Islas Malvinas)"
+    ],
+    "HK": [
+      "Đặc khu Hành chính Hồng Kông, Trung Quốc"
+    ],
+    "IO": [
+      "Quần đảo Chagos"
+    ],
+    "MO": [
+      "Đặc khu Hành chính Macao, Trung Quốc"
+    ],
+    "NZ": [
+      "Aotearoa New Zealand"
+    ],
+    "PS": [
+      "Lãnh thổ Palestine"
+    ],
+    "SZ": [
+      "Swaziland"
+    ],
+    "TL": [
+      "Đông Timor"
+    ],
+    "US": [
+      "Hoa Kỳ"
+    ]
   }
 }

@@ -504,5 +504,49 @@
     "ZA": "Güney Afrika",
     "ZM": "Zambiya",
     "ZW": "Zimbabve"
+  },
+  "aliases": {
+    "CD": [
+      "Kongo Demokratik Cumhuriyeti"
+    ],
+    "CG": [
+      "Kongo Cumhuriyeti"
+    ],
+    "CI": [
+      "Fildişi Sahili"
+    ],
+    "CZ": [
+      "Çek Cumhuriyeti"
+    ],
+    "FK": [
+      "Falkland Adaları (Malvinas Adaları)"
+    ],
+    "GB": [
+      "Birleşik Krallık"
+    ],
+    "HK": [
+      "Çin Hong Kong ÖİB"
+    ],
+    "IO": [
+      "Chagos Takımadaları"
+    ],
+    "MO": [
+      "Çin Makao ÖİB"
+    ],
+    "NZ": [
+      "Aotearoa Yeni Zelanda"
+    ],
+    "PS": [
+      "Filistin Bölgeleri"
+    ],
+    "SZ": [
+      "Svaziland"
+    ],
+    "TL": [
+      "Doğu Timor"
+    ],
+    "US": [
+      "Amerika Birleşik Devletleri"
+    ]
   }
 }

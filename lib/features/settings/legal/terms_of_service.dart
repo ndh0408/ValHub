@@ -4,21 +4,21 @@ import 'legal_info.dart';
 const _publisher = LegalInfo.publisherName;
 const _email = LegalInfo.contactEmail;
 
-/// Điều khoản sử dụng ValVN.
+/// Điều khoản sử dụng VanHub.
 const termsOfService = LegalDocument(
   id: 'terms',
   title: 'Điều khoản sử dụng',
-  summary: 'Quy định khi bạn tải, cài đặt và sử dụng ValVN',
+  summary: 'Quy định khi bạn tải, cài đặt và sử dụng VanHub',
   version: '1.0',
   preamble: [
     LegalParagraph(
-      'Chào mừng bạn đến với ValVN. Điều khoản sử dụng này ("Điều khoản") là '
+      'Chào mừng bạn đến với VanHub. Điều khoản sử dụng này ("Điều khoản") là '
       'thỏa thuận ràng buộc giữa bạn và $_publisher ("chúng tôi") về việc tải, '
-      'cài đặt và sử dụng ứng dụng ValVN trên iOS và Android, bao gồm cả các '
+      'cài đặt và sử dụng ứng dụng VanHub trên iOS và Android, bao gồm cả các '
       'tính năng Cộng đồng (gọi chung là "Ứng dụng").',
     ),
     LegalCallout(
-      'Tóm tắt: ValVN là ứng dụng đồng hành không chính thức, không thuộc Riot '
+      'Tóm tắt: VanHub là ứng dụng đồng hành không chính thức, không thuộc Riot '
       'Games. Bạn đăng nhập bằng tài khoản Riot của chính mình trên trang chính '
       'thức của Riot. Bạn tự chịu trách nhiệm về tài khoản và mọi thao tác bạn '
       'thực hiện, cư xử văn minh trong Cộng đồng và không dùng ứng dụng để gian '
@@ -31,7 +31,7 @@ const termsOfService = LegalDocument(
       LegalParagraph(
         'Bằng việc tải, cài đặt, đăng nhập hoặc tiếp tục sử dụng Ứng dụng, bạn '
         'xác nhận đã đọc, hiểu và đồng ý với Điều khoản này, Chính sách quyền '
-        'riêng tư và Tiêu chuẩn cộng đồng của ValVN. Các văn bản này là một '
+        'riêng tư và Tiêu chuẩn cộng đồng của VanHub. Các văn bản này là một '
         'phần không tách rời của Điều khoản.',
       ),
       LegalParagraph(
@@ -42,7 +42,7 @@ const termsOfService = LegalDocument(
     LegalSection('Giải thích từ ngữ', [
       LegalList([
         LegalItem(
-          'ứng dụng ValVN, các bản cập nhật, nội dung và dịch vụ đi kèm do '
+          'ứng dụng VanHub, các bản cập nhật, nội dung và dịch vụ đi kèm do '
           'chúng tôi cung cấp.',
           lead: '"Ứng dụng":',
         ),
@@ -51,9 +51,9 @@ const termsOfService = LegalDocument(
           lead: '"Tài khoản Riot":',
         ),
         LegalItem(
-          'các tính năng xã hội của ValVN như bảng tin, bài đăng, hình ảnh, '
+          'các tính năng xã hội của VanHub như bảng tin, bài đăng, hình ảnh, '
           'bình luận, lượt thích, bình chọn skin và tìm đồng đội, vận hành '
-          'trên máy chủ Cộng đồng của ValVN.',
+          'trên máy chủ Cộng đồng của VanHub.',
           lead: '"Cộng đồng":',
         ),
         LegalItem(
@@ -90,7 +90,7 @@ const termsOfService = LegalDocument(
     LegalSection('Tài khoản Riot và thông tin đăng nhập', [
       LegalParagraph(
         'Bạn đăng nhập trong một cửa sổ web hiển thị trang đăng nhập chính thức '
-        'của Riot Games. ValVN không nhận, không đọc và không lưu mật khẩu mà '
+        'của Riot Games. VanHub không nhận, không đọc và không lưu mật khẩu mà '
         'bạn nhập vào trang đó. Sau khi đăng nhập, dữ liệu đăng nhập do Riot '
         'cấp (mã truy cập và cookie, tức là tệp giúp Riot nhớ bạn đã đăng '
         'nhập) chỉ được lưu trong vùng lưu trữ bảo mật của hệ điều hành trên '
@@ -133,7 +133,7 @@ const termsOfService = LegalDocument(
         'thương mại.',
       ),
       LegalParagraph(
-        'ValVN là phần mềm độc quyền, không phải phần mềm mã nguồn mở. Chúng '
+        'VanHub là phần mềm độc quyền, không phải phần mềm mã nguồn mở. Chúng '
         'tôi cấp phép sử dụng chứ không bán Ứng dụng cho bạn; mọi quyền không '
         'được cấp rõ ràng trong Điều khoản này đều được bảo lưu.',
       ),
@@ -200,7 +200,7 @@ const termsOfService = LegalDocument(
       LegalSubheading('Xác minh Riot ID'),
       LegalParagraph(
         'Để dùng Cộng đồng, Ứng dụng xác minh Riot ID của bạn với Riot Games '
-        'thông qua máy chủ Cộng đồng của ValVN, như mô tả trong Chính sách '
+        'thông qua máy chủ Cộng đồng của VanHub, như mô tả trong Chính sách '
         'quyền riêng tư. Tên hiển thị của bạn trong Cộng đồng là Riot ID đã '
         'được xác minh, kèm thẻ người chơi, rank và khu vực.',
       ),
@@ -262,7 +262,7 @@ const termsOfService = LegalDocument(
     LegalSection('Quyền sở hữu trí tuệ', [
       LegalParagraph(
         'Ứng dụng, bao gồm mã nguồn, thiết kế giao diện, biểu tượng, tên và '
-        'logo ValVN, văn bản và các tài liệu đi kèm, thuộc quyền sở hữu của '
+        'logo VanHub, văn bản và các tài liệu đi kèm, thuộc quyền sở hữu của '
         '$_publisher và được bảo hộ theo pháp luật về sở hữu trí tuệ.',
       ),
       LegalParagraph(
@@ -307,12 +307,12 @@ const termsOfService = LegalDocument(
     ]),
     LegalSection('Không phải sản phẩm chính thức của Riot Games', [
       LegalParagraph(
-        'ValVN là ứng dụng độc lập, không được Riot Games xác nhận, tài trợ, '
+        'VanHub là ứng dụng độc lập, không được Riot Games xác nhận, tài trợ, '
         'giám sát hay liên kết dưới bất kỳ hình thức nào, và không phản ánh '
         'quan điểm của Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý '
         'các sản phẩm của Riot Games. Riot Games không chịu trách nhiệm hỗ trợ '
         'cho Ứng dụng; vui lòng liên hệ chúng tôi thay vì Riot Games khi có vấn '
-        'đề với ValVN.',
+        'đề với VanHub.',
       ),
     ]),
     LegalSection('Miễn trừ bảo đảm', [

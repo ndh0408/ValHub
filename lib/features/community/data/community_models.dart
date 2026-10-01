@@ -2,11 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/l10n/locale.dart';
+import '../../../core/geo/countries.dart' show normalizeCountry;
 import '../../../core/accounts/account.dart';
 
 import '../../../core/util/json.dart';
 
-/// Typed models of the ValVN community API (docs/community-api.md). Every
+/// Typed models of the VanHub community API (docs/community-api.md). Every
 /// parser is defensive: missing / odd fields become `null`, defaults or are
 /// skipped; nothing throws.
 
@@ -26,7 +27,9 @@ String communityAccountRegion(Account? account) =>
 /// ISO 3166-1 alpha-2 country code (upper case) or `null`.
 String? countryCode(Object? value) {
   final s = asNonEmptyString(value)?.toUpperCase();
-  return s != null && RegExp(r'^[A-Z]{2}$').hasMatch(s) ? s : null;
+  return s != null && s.length == 2 && s != 'XK' && normalizeCountry(s) == s
+      ? s
+      : null;
 }
 
 /// Flag emoji of an alpha-2 country code ("VN" → 🇻🇳), empty when unknown.
@@ -171,7 +174,7 @@ class ScopeFilter {
   /// Query parameters (`scope`, `country`, `region`, `language`).
   Map<String, Object?> get query => {
     'scope': scope.name,
-    if (scope == CommunityScope.country) 'country': country,
+    if (scope == CommunityScope.country) 'country': ?countryCode(country),
     if (scope == CommunityScope.region) 'region': region,
     if (scope == CommunityScope.global && languages.isNotEmpty)
       'language': ([...languages]..sort()).join(','),

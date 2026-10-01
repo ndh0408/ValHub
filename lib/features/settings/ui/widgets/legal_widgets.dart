@@ -9,7 +9,7 @@ import '../../legal/legal_strings.dart';
 import '../legal_document_screen.dart';
 
 /// Opens Flutter's licence page for the third-party open-source libraries
-/// bundled in the app (attribution required by their licences). ValVN
+/// bundled in the app (attribution required by their licences). VanHub
 /// itself is proprietary — see [LegalDocuments.license].
 void showThirdPartyLicenses(BuildContext context, {String? version}) =>
     showLicensePage(
@@ -30,7 +30,7 @@ Future<void> pushLegalDocument(BuildContext context, LegalDocument doc) =>
     );
 
 /// "Bằng việc tiếp tục, bạn đồng ý với Điều khoản sử dụng và Chính sách
-/// quyền riêng tư của ValVN." with both names tappable.
+/// quyền riêng tư của VanHub." with both names tappable.
 class LegalConsentText extends StatefulWidget {
   const LegalConsentText({super.key, this.style, this.textAlign});
 

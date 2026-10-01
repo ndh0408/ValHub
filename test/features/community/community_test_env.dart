@@ -20,6 +20,7 @@ import 'package:valvn/core/auth/session_manager.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/content/content_repository.dart';
 import 'package:valvn/core/l10n/locale.dart';
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/core/riot/pvp_api.dart';
 import 'package:valvn/core/riot/riot_hosts.dart';
@@ -460,6 +461,7 @@ class CommunityTestEnv {
 
   /// Export files handed to the (fake) native share sheet.
   final sharedExports = <CommunityExportFile>[];
+  List<Override> extraOverrides = [];
 
   List<Override> get overrides => [
     prefsProvider.overrideWithValue(prefs),
@@ -495,6 +497,7 @@ class CommunityTestEnv {
     communityExportSharerProvider.overrideWithValue((file, {origin}) async {
       sharedExports.add(file);
     }),
+    ...extraOverrides,
   ];
 
   ProviderContainer container() =>
@@ -519,7 +522,7 @@ Future<void> pumpCommunity(
         theme: buildDarkTheme(),
         locale: appLocale,
         supportedLocales: const [appLocale],
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        localizationsDelegates: appLocalizationsDelegates,
         home: child,
       ),
     ),
@@ -549,7 +552,7 @@ Future<GoRouter> pumpCommunityRouter(
         theme: theme ?? buildDarkTheme(),
         locale: appLocale,
         supportedLocales: const [appLocale],
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        localizationsDelegates: appLocalizationsDelegates,
         routerConfig: router,
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context)
@@ -573,4 +576,22 @@ Future<void> settle(WidgetTester tester, {int frames = 10}) async {
 Future<void> unmount(WidgetTester tester) async {
   await tester.pumpWidget(const SizedBox.shrink());
   await tester.pump(const Duration(seconds: 1));
+}
+
+/// Choose a scope through the same compact selector used by readers.
+Future<void> chooseCommunityScope(
+  WidgetTester tester,
+  String choice, {
+  String section = 'feed',
+}) async {
+  final selector = find.byKey(ValueKey('scope-selector-$section'));
+  await tester.ensureVisible(selector);
+  await tester.pump();
+  await tester.tap(selector);
+  await settle(tester);
+  final row = find.byKey(ValueKey('scope-$choice-$section'));
+  await tester.ensureVisible(row);
+  await tester.pump();
+  await tester.tap(row);
+  await settle(tester);
 }

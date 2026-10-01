@@ -146,6 +146,7 @@ class AccountChip extends ConsumerWidget {
 Future<void> showAccountSwitcherSheet(BuildContext context) =>
     showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) =>
@@ -375,8 +376,8 @@ class _ActiveHighlight extends StatelessWidget {
       color: active ? accent.withValues(alpha: 0.08) : Colors.transparent,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(
+          border: BorderDirectional(
+            start: BorderSide(
               color: active ? accent : Colors.transparent,
               width: 4,
             ),
@@ -429,7 +430,6 @@ class AccountTile extends ConsumerWidget {
     final tier = account.rankTier;
     final meta = [
       if (account.level != null) AccountStrings.levelShort(account.level!),
-      AccountStrings.regionName(account.region),
     ].join(' · ');
     final small = theme.textTheme.bodySmall;
     final Widget subtitle;
@@ -451,80 +451,101 @@ class AccountTile extends ConsumerWidget {
                 fontWeight: activity.isOnline ? FontWeight.w700 : null,
               ),
             ),
-            TextSpan(text: ' · $meta'),
+            if (meta.isNotEmpty) TextSpan(text: ' · $meta'),
           ],
         ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
         style: small?.copyWith(color: muted),
       );
     }
-    return ListTile(
-      onTap: onTap,
-      selected: selected,
-      isThreeLine: tier != null,
-      leading: _StatusDot(
-        activity: activity,
-        child: AccountAvatar(account: account, size: 44, circle: circleAvatar),
-      ),
-      title: Text(
-        account.riotId,
-        overflow: TextOverflow.ellipsis,
-        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
-      ),
-      subtitle: tier == null
-          ? subtitle
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                subtitle,
-                const SizedBox(height: 4),
-                RankBadge(
-                  tier: tier,
-                  seasonId: account.rankSeasonId,
-                  size: 20,
-                  style: small?.copyWith(
-                    color: theme.colorScheme.onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
+    final end =
+        trailing ??
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 132),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (selected)
+                Icon(
+                  Icons.check_circle,
+                  color: theme.colorScheme.primary,
+                  semanticLabel: AccountStrings.active,
                 ),
-              ],
-            ),
-      // Bounded and shrinking: at large text sizes the badge scales down
-      // instead of overflowing the tile.
-      trailing:
-          trailing ??
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 132),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (selected)
-                  Icon(
-                    Icons.check_circle,
-                    color: theme.colorScheme.primary,
-                    semanticLabel: AccountStrings.active,
-                  ),
-                if (account.needsLogin) ...[
-                  if (selected) const SizedBox(width: 8),
-                  Flexible(
-                    child: Tooltip(
-                      message: CommonStrings.signInAgain,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: ValBadge(
-                          CommonStrings.signInAgain,
-                          color: valColorsOf(context).warning,
-                          soft: true,
-                        ),
+              if (account.needsLogin) ...[
+                if (selected) const SizedBox(width: 8),
+                Flexible(
+                  child: Tooltip(
+                    message: CommonStrings.signInAgain,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: ValBadge(
+                        CommonStrings.signInAgain,
+                        color: valColorsOf(context).warning,
+                        soft: true,
                       ),
                     ),
                   ),
-                ],
+                ),
               ],
-            ),
+            ],
           ),
+        );
+    return Semantics(
+      selected: selected,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 12, 14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _StatusDot(
+                activity: activity,
+                child: AccountAvatar(
+                  account: account,
+                  size: 44,
+                  circle: circleAvatar,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      account.riotId,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    subtitle,
+                    Text(
+                      AccountStrings.regionName(account.region),
+                      style: small?.copyWith(color: muted),
+                    ),
+                    if (tier != null) ...[
+                      const SizedBox(height: 6),
+                      RankBadge(
+                        tier: tier,
+                        seasonId: account.rankSeasonId,
+                        size: 20,
+                        style: small?.copyWith(
+                          color: theme.colorScheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                    if (trailing != null) ...[const SizedBox(height: 8), end],
+                  ],
+                ),
+              ),
+              if (trailing == null) ...[const SizedBox(width: 8), end],
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
