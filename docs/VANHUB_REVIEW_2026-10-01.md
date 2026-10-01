@@ -93,3 +93,13 @@ Lượt read-only trên emulator tài khoản đã đi qua Home, Store, Communit
 APK cuối sau chỉnh căn lề/màu viền: SHA-256 `FD9F07B344C44017B903661FBBE133808B20DAA364CD9E2CB43A91F81872554D`, 119.2 MB, build release thành công, apksigner xác minh đạt, chứng thư Android Debug. Đã cài đè thành công trên 5580, xem ảnh Bảng tin và mở/đóng sheet scope mà không đổi lựa chọn/tài khoản. Metadata/account smoke trước đó và visual scope trên APK cuối có artifact riêng; không coi chúng là giao dịch thật hoặc nghiệm thu mọi màn.
 
 Sửa thêm qua kiểm tra trực quan: scope/country/language/account sheets dùng root Navigator, country page ở cửa sổ thấp cũng mở trên root, để thanh tab không che lựa chọn. 156 kiểm thử Accounts/Geo/Scope/Consent đạt sau sửa; analyze 0 issues. APK cuối chạy đủ 10 public-flow cases trên 5582. Trên 5580 đã xác nhận sheet có lựa chọn và không chứa thanh tab trong cây accessibility, đóng lại mà không đổi scope/tài khoản. Cửa sổ emulator tiếp tục mở ở Bảng tin.
+
+## Phản hồi hook JSON sau commit
+
+Sau sửa shell, chủ dự án vẫn thấy `hook returned invalid post-tool-use JSON output`. Không diễn giải phép thử shell exit 0 thành nghiệm thu protocol hook. Kiểm tra schema đúng bản `codex-cli 0.159.0` từ [source OpenAI](https://github.com/openai/codex/blob/rust-v0.159.0/codex-rs/hooks/schema/generated/post-tool-use.command.output.schema.json) xác nhận `additionalProperties: false`, không chấp nhận `metrics`/`rewakeSummary`. Hook security-guidance Claude thực tế trả `metrics` cùng `hookSpecificOutput`; JSON cú pháp đúng nhưng sai schema Codex.
+
+Đã thêm `codex_hook_shell.py` cùng shim bash/sh trong thư mục `CODEX_HOME/tmp/arg0` của **phiên hiện tại**. Chỉ nhận diện hai script hook Claude đã biết, chạy script gốc; bỏ telemetry không hỗ trợ, chuyển summary thành systemMessage, giữ nguyên additionalContext/decision/reason/continue, stderr và exit code. Không sửa plugin, command đã trust, trust hash hay tắt hook. Các shell khác và đầu ra malformed/plain/empty/chuẩn đi nguyên trạng.
+
+Kiểm tra ba fixture schema, giữ nguyên quyết định/cảnh báo, passthrough và hook security thật với fixture pattern-warning đạt. Lệnh bash/sh thường giữ đúng stdout và exit 7. Adapter không thuộc source app và không đưa lên Git. Đây là sửa tại phiên, chưa có bằng chứng sửa bền qua restart hoặc cập nhật plugin; không khẳng định mọi hook ngoài hai script đã được kiểm chứng.
+
+Code tích hợp `681d213` đã push và gộp fast-forward lên nhánh mặc định, hai remote heads đã đối chiếu. Yêu cầu toàn cầu còn mở vẫn nằm trong COMPLETION_STATUS, không đóng bằng việc commit/push.

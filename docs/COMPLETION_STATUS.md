@@ -14,7 +14,7 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 |---|---|---|
 | Đọc việc Claude giao và làm hết yêu cầu | Đã tích hợp bốn WP, giữ report và đối chiếu đủ 37 mục | Đóng các mục I18N/COUNTRIES/DEVICES/Community còn mở phía dưới; chưa nghiệm thu tổng thể |
 | Mở emulator cho chủ dự án xem | Cửa sổ Pixel emulator 5580 đang mở, giữ 3 tài khoản cũ | APK cuối đã cài đè, Bảng tin/sheet đã xem; tiếp tục rà các luồng còn lại, QA riêng 5582 |
-| Commit, push và gộp để người khác thấy code mới nhất | Bốn WP và checkpoint đã gộp ở nhánh tích hợp | Kiểm tra cuối, push integration rồi fast-forward/push nhánh mặc định; tiếp tục commit các phase còn thiếu |
+| Commit, push và gộp để người khác thấy code mới nhất | Code và QA mới đã commit `681d213`, push integration và fast-forward/push nhánh mặc định | Tiếp tục commit các phase còn thiếu; không coi merge là nghiệm thu toàn dự án |
 | Ẩn bảng nguồn dữ liệu | Đã bỏ card Giới thiệu và có test | Đã kiểm tra About bản cài trong lượt read-only; giữ pháp lý/giấy phép cần thiết |
 | Cộng đồng rõ ràng, bộ lọc không bị cắt | Đã chuyển tab gọn và một scope selector; sheet cuộn giữ query/applied scope, test 360dp/chữ 200% | Bảng tin/sheet đã rà bản cài, sửa thanh tab che sheet; tiếp tục các màn còn lại |
 | Tài khoản chữ dễ đọc, đủ tên/vùng/rank | Đã chia dòng, wrap Riot ID/vùng và đưa nút phụ xuống dưới | Ba tài khoản thật đã đủ metadata trong lượt read-only; còn kiểm tra chủ động chuyển/reauth |
@@ -22,7 +22,7 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 | Đổi tên VanHub | Tên hiển thị native/UI/pháp lý đã đổi, giữ ID và dữ liệu cập nhật | Quốc tế hóa UI đầy đủ còn thiếu |
 | Kiểm tra mọi chức năng | Full Flutter/backend/tool + plugin/public-route QA đã chạy | Rà real-account/offline/reauth, Social/LFG đa thiết bị, iOS và Doze; không suy ra từ unit tests |
 | Tải và lưu dữ liệu ngay sau login | Warmup card/level/rank và store/wallet/missions/collection dùng cùng cache; bounded login, reauth, region, logout và retry có test | Đã xác nhận ba tài khoản đủ metadata trên bản cài; chưa tự đăng nhập/đăng xuất tài khoản thật |
-| Hook failed lặp lại | Đã xác định WSL bash thiếu shell và sửa lookup bằng Git Bash/sh trong runtime phiên; hook kiểm tra trả 0 | Shim chỉ thuộc phiên runtime, không phải sửa app hay vô hiệu security hook |
+| Hook failed lặp lại | Đã sửa lookup Git Bash; sau phản hồi mới thêm adapter cho JSON telemetry Claude mà Codex 0.159.0 từ chối, giữ cảnh báo/quyết định/exit | Adapter chỉ thuộc phiên runtime; chưa xác nhận sau restart, không phải lỗi app hay tắt security hook |
 
 ## Checklist nghiệm thu
 
