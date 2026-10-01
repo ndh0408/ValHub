@@ -4408,6 +4408,40 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String settingsGeoManualConfirm(String manual, String detected) {
+    return 'Bạn chọn $manual, nhưng Riot xác định tài khoản ở $detected. Tiếp tục kiểm tra kết nối này?';
+  }
+
+  @override
+  String get settingsGeoUnverified =>
+      'Chưa xác minh được kết nối do máy chủ hoặc mạng đang gặp lỗi. Lưu lựa chọn này và thử lại sau?';
+
+  @override
+  String get settingsGeoContinue => 'Tiếp tục';
+
+  @override
+  String settingsGeoMismatch(String region) {
+    return 'Kết nối thủ công khác với khu vực Riot: $region. Bạn muốn dùng khu vực tự động?';
+  }
+
+  @override
+  String get settingsGeoUseAuto => 'Dùng tự động';
+
+  @override
+  String get settingsGeoKeepManual => 'Giữ thủ công';
+
+  @override
+  String get settingsGeoReviewConnection => 'Xem kết nối';
+
+  @override
+  String settingsGeoCheckedAt(String time) {
+    return 'Kiểm tra gần nhất: $time';
+  }
+
+  @override
+  String get settingsGeoCheckAgain => 'Kiểm tra lại';
+
+  @override
   String get settingsAboutCreditContent => 'valorant-api.com';
 
   @override

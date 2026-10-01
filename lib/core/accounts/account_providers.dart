@@ -94,6 +94,9 @@ class AccountsNotifier extends Notifier<List<Account>> {
         .establishFromLogin(tokens: tokens, cookies: cookies);
     final info = established.userInfo;
     final region = established.session.region;
+    final detected =
+        established.detectedRegion ??
+        (region.isNotEmpty ? region : existing?.autoRegion);
     final account =
         (existing ??
                 Account(
@@ -107,8 +110,9 @@ class AccountsNotifier extends Notifier<List<Account>> {
             .copyWith(
               gameName: info.gameName ?? existing?.gameName ?? '',
               tagLine: info.tagLine ?? existing?.tagLine ?? '',
-              detectedRegion: region,
-              region: region,
+              detectedRegion: detected ?? '',
+              detectedAt: established.detectedAt,
+              region: detected ?? '',
               shard: shardForRegion(region),
               country: normalizeCountry(info.country),
               needsLogin: false,

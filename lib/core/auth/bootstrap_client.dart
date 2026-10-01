@@ -38,8 +38,13 @@ class RiotUserInfo {
 }
 
 /// Picks `affinities.live` from a riot-geo response.
-String? regionFromGeo(Object? json) =>
-    asNonEmptyString(pick(json, ['affinities', 'live']))?.toLowerCase();
+String? regionFromGeo(Object? json) {
+  final id = asNonEmptyString(pick(json, ['affinities', 'live']))
+      ?.trim()
+      .toLowerCase();
+  // Preserve syntactically valid new Riot IDs; host routing remains fail closed.
+  return id != null && RegExp(r'^[a-z]{2,8}$').hasMatch(id) ? id : null;
+}
 
 /// Bootstrap calls after login and after every re-auth (SUMMARY §3.3 a–c).
 /// Throws [RiotException] subtypes only.

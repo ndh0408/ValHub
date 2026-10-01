@@ -4,7 +4,7 @@ Yêu cầu của chủ dự án: hoàn thiện toàn bộ yêu cầu để Claud
 
 Giữ nhánh chính và các báo cáo bàn giao cũ để đối chiếu. Theo yêu cầu mới của chủ dự án, gộp và push nhánh mặc định GitHub để mọi người đọc code mới nhất; chưa deploy/publish store. Không thêm chatbot/LLM hay dịch vụ AI vào ứng dụng; số liệu sản phẩm phải có nguồn thật. Báo cáo `docs/CODEX_REVIEW.md` và `docs/handoffs/` ghi trạng thái trước các sửa đổi tích hợp, không dùng chúng làm tiến độ hiện tại.
 
-Đợt mới nhất: [VanHub và kiểm thử toàn tính năng](VANHUB_REVIEW_2026-10-01.md), **4.143 Flutter tests đạt**, analyzer 0 issues, 867 backend / 35 tool tests đạt. Đợt picker trước đó: [bộ chọn quốc gia dùng chung](COUNTRY_PICKER_2026-10-01.md), **4.118 Flutter tests / 4 Android native tests đạt**; emulator mở có cửa sổ. Chủ dự án đã yêu cầu thử emulator và xác nhận mục đích là kiểm tra đầy đủ các yêu cầu. Đối chiếu đủ 37 mục, phạm vi test native và giới hạn xem [QA_2026-10-01.md](QA_2026-10-01.md). Các checkpoint đã commit: server `b559cf1`, client/tool `57978cd`; đợt QA tiếp theo sửa lỗi deep link khi đang đăng nhập bằng imperative push.
+Đợt mới nhất: [đăng nhập và kết nối Riot](COUNTRY_CONNECTION_2026-10-01.md), **4.176 Flutter tests đạt**, analyzer 0 issues, 10 public-flow cases trên APK cuối đạt; đã cài đè trên emulator có cửa sổ và mở sheet kết nối read-only. Checkpoint trước: [VanHub và kiểm thử toàn tính năng](VANHUB_REVIEW_2026-10-01.md), 4.143 Flutter tests, 867 backend / 35 tool tests đạt. Đợt picker trước đó: [bộ chọn quốc gia dùng chung](COUNTRY_PICKER_2026-10-01.md), 4.118 Flutter / 4 Android native tests đạt. Đối chiếu đủ 37 mục bàn giao và phạm vi QA xem [QA_2026-10-01.md](QA_2026-10-01.md); các báo cáo cũ là checkpoint, không thay nghiệm thu tổng thể.
 
 ## Yêu cầu trực tiếp của chủ dự án
 
@@ -36,7 +36,7 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 - [ ] I18N W5: UI language picker, device default/upgrade pin, contentLocale/ui_locales/status, isolate thông báo.
 - [ ] I18N W6: đủ 18 bản dịch UI, plural/select, glossary và fallback/status gates.
 - [ ] I18N W7: RTL toàn ứng dụng, font CJK, pseudo locale và stale-string tests.
-- [ ] COUNTRIES P0–P3 toàn bộ: 250 mã, tên 18 locale, auto/manual/fail closed, chọn quốc gia và giá VP đã nối; còn onboarding, mismatch/refresh định kỳ, provenance/trạng thái đầy đủ; Community picker chung đã nối và kiểm chứng.
+- [ ] COUNTRIES P0–P3 toàn bộ: 250 mã, tên 18 locale, auto/manual/fail closed, chọn quốc gia/giá VP/picker chung đã nối. [Đợt kết nối](COUNTRY_CONNECTION_2026-10-01.md) thêm refresh 7 ngày, mismatch/ack, login geo outage, GET XP validation/retry và root sheet; còn onboarding, provenance/trạng thái đầy đủ, remote geo và nối quốc tế hóa.
 - [ ] DEVICES/A11y toàn bộ: breakpoints/rail/hinge/safe area, header theo text scale, nút đỏ đậm/chữ trắng và reduced video motion đã sửa; còn list/detail và semantic/RTL toàn màn hình.
 - [ ] Notifications toàn bộ: Rank/Battle Pass dùng dữ liệu thật, kênh LFG cục bộ và category switches đã nối; lịch tối đa 60, migration 7→5 ngày; còn nguồn badge/activity Community và nghiệm thu native.
 - [ ] External links/sharing toàn bộ: custom scheme/cold/warm start/defer login/account switching đã nối; HTTPS App/Universal Links và domain association còn thiếu.

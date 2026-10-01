@@ -7527,6 +7527,60 @@
     },
     "x-context": "lib/core/geo/country_picker.dart"
   },
+  "settingsGeoManualConfirm": "Bạn chọn {manual}, nhưng Riot xác định tài khoản ở {detected}. Tiếp tục kiểm tra kết nối này?",
+  "@settingsGeoManualConfirm": {
+    "description": "Country and Riot connection settings: settingsGeoManualConfirm",
+    "placeholders": {
+      "manual": {
+        "type": "String"
+      },
+      "detected": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsGeoUnverified": "Chưa xác minh được kết nối do máy chủ hoặc mạng đang gặp lỗi. Lưu lựa chọn này và thử lại sau?",
+  "@settingsGeoUnverified": {
+    "description": "Country and Riot connection settings: settingsGeoUnverified"
+  },
+  "settingsGeoContinue": "Tiếp tục",
+  "@settingsGeoContinue": {
+    "description": "Country and Riot connection settings: settingsGeoContinue"
+  },
+  "settingsGeoMismatch": "Kết nối thủ công khác với khu vực Riot: {region}. Bạn muốn dùng khu vực tự động?",
+  "@settingsGeoMismatch": {
+    "description": "Country and Riot connection settings: settingsGeoMismatch",
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsGeoUseAuto": "Dùng tự động",
+  "@settingsGeoUseAuto": {
+    "description": "Country and Riot connection settings: settingsGeoUseAuto"
+  },
+  "settingsGeoKeepManual": "Giữ thủ công",
+  "@settingsGeoKeepManual": {
+    "description": "Country and Riot connection settings: settingsGeoKeepManual"
+  },
+  "settingsGeoReviewConnection": "Xem kết nối",
+  "@settingsGeoReviewConnection": {
+    "description": "Country and Riot connection settings: settingsGeoReviewConnection"
+  },
+  "settingsGeoCheckedAt": "Kiểm tra gần nhất: {time}",
+  "@settingsGeoCheckedAt": {
+    "description": "Country and Riot connection settings: settingsGeoCheckedAt",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsGeoCheckAgain": "Kiểm tra lại",
+  "@settingsGeoCheckAgain": {
+    "description": "Country and Riot connection settings: settingsGeoCheckAgain"
+  },
   "settingsAboutCreditContent": "valorant-api.com",
   "@settingsAboutCreditContent": {
     "description": "SettingsStrings.aboutCreditContent — About screen (S72)",

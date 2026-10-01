@@ -14,6 +14,8 @@ import '../network/riot_exception.dart';
 import '../util/json.dart';
 import 'riot_hosts.dart';
 
+enum RegionValidation { verified, rejected, unverified }
+
 /// One method per Riot game-client endpoint in SUMMARY §6.2 (P-*), §6.3 (S-*),
 /// §6.4 (G-*), plus the public status JSON (X-1) and the chat bootstrap calls
 /// (A-7, A-8).
@@ -58,7 +60,7 @@ class PvpApi {
 
   /// One non-mutating own-account read before a user saves a manual region.
   /// Uses the shared limiter and candidate hosts without changing live routing.
-  Future<bool> validateRegion(
+  Future<RegionValidation> validateRegion(
     String puuid,
     String region, {
     CancelToken? cancelToken,
@@ -68,19 +70,62 @@ class PvpApi {
     var acquired = false;
     String? host;
     try {
-      final session = await _sessions.forRegionValidation(puuid, region);
-      final uri = Uri.parse(
-        '${session.hosts.pd}/mmr/v1/players/${session.puuid}',
-      );
-      host = uri.host;
-      await _limiter.acquire(host, cancelled: cancel.whenCancel);
-      acquired = true;
-      final response = await _dio.getUri<Object?>(
-        uri,
-        options: Options(headers: session.gameHeaders),
-        cancelToken: cancel,
-      );
-      return lowerUuid(asMap(response.data)?['Subject']) == session.puuid;
+      for (var attempt = 0; attempt < 2; attempt++) {
+        final session = await _sessions.forRegionValidation(puuid, region);
+        if (cancel.isCancelled) {
+          throw const TransientException(reason: 'cancelled');
+        }
+        final uri = Uri.parse(
+          '${session.hosts.pd}/account-xp/v1/players/${session.puuid}',
+        );
+        host = uri.host;
+        await _limiter.acquire(host, cancelled: cancel.whenCancel);
+        acquired = true;
+        try {
+          final response = await _dio.getUri<Object?>(
+            uri,
+            options: Options(
+              headers: session.gameHeaders,
+              followRedirects: false,
+              maxRedirects: 0,
+            ),
+            cancelToken: cancel,
+          );
+          if (looksLikeHtml(
+            response.data,
+            contentType: response.headers.value(Headers.contentTypeHeader),
+          )) {
+            return RegionValidation.unverified;
+          }
+          return lowerUuid(asMap(response.data)?['Subject']) == session.puuid
+              ? RegionValidation.verified
+              : RegionValidation.rejected;
+        } on Object catch (e) {
+          final error = classifyError(e);
+          if (error is NeedsLoginException && attempt == 0) {
+            _limiter.release(host);
+            acquired = false;
+            await _sessions.refreshForRegionValidation(
+              puuid,
+              failedAccessToken: session.accessToken,
+            );
+            continue;
+          }
+          if (error is NeedsLoginException ||
+              (error is TransientException &&
+                  !cancel.isCancelled &&
+                  error.reason != 'tls' &&
+                  error.reason != 'blocked_host')) {
+            return RegionValidation.unverified;
+          }
+          if (error is NotFoundException ||
+              (error is RiotApiException && error.status == 400)) {
+            return RegionValidation.rejected;
+          }
+          throw error;
+        }
+      }
+      return RegionValidation.unverified;
     } on Object catch (e) {
       throw classifyError(e);
     } finally {

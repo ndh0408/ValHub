@@ -56,7 +56,8 @@ void main() {
     });
     accounts = AccountRepository(prefs: prefs, secureStore: secure);
     await accounts.upsert(
-      const Account(
+      Account(
+        detectedAt: DateTime(2026, 9, 28, 12),
         puuid: _puuid,
         gameName: 'Tên',
         tagLine: 'VN1',
@@ -66,6 +67,8 @@ void main() {
     );
     reauth = MockReauth();
     bootstrap = MockBootstrap();
+    when(() => bootstrap.fetchRegion(any(), any()))
+        .thenAnswer((_) async => 'ap');
     clock = FixedClock(DateTime(2026, 9, 28, 12));
     when(() => bootstrap.fetchEntitlementsToken(any()))
         .thenAnswer((_) async => 'ENT');
@@ -330,6 +333,242 @@ void main() {
       expect(candidate.hosts.pd, 'https://pd.eu.a.pvp.net');
       expect(accounts.find(_puuid)!.region, '');
       expect(manager.peek(_puuid)!.region, '');
+    },
+  );
+
+  group('periodic region discovery', () {
+    setUp(() {
+      when(() => reauth.reauth(any(), postFirst: any(named: 'postFirst')))
+          .thenAnswer(
+            (_) async => ReauthOk(
+              _tokens(clock.now()),
+              const RiotCookieJar({'ssid': 'rotated'}),
+            ),
+          );
+    });
+
+    test(
+      'migrated account discovers once and stores the discovery time',
+      () async {
+        final json = accounts.find(_puuid)!.toJson()..remove('detectedAt');
+        await accounts.upsert(Account.fromJson(json)!);
+        when(() => bootstrap.fetchRegion(any(), any()))
+            .thenAnswer((_) async => 'eu');
+        final session = await manager.session(_puuid);
+        expect(session.region, 'eu');
+        expect(accounts.find(_puuid)!.detectedAt, clock.now().toUtc());
+        clock.advance(const Duration(hours: 2));
+        await manager.session(_puuid);
+        verify(() => bootstrap.fetchRegion(any(), any())).called(1);
+      },
+    );
+
+    test('seven day boundary refreshes geo only alongside re-auth', () async {
+      await manager.session(_puuid);
+      clock.advance(const Duration(days: 6, hours: 23, minutes: 30));
+      await manager.session(_puuid);
+      verifyNever(() => bootstrap.fetchRegion(any(), any()));
+      clock.advance(const Duration(minutes: 30));
+      // Cached token is still valid: no extra geo/auth traffic.
+      await manager.session(_puuid);
+      verifyNever(() => bootstrap.fetchRegion(any(), any()));
+      clock.advance(const Duration(minutes: 31));
+      when(() => bootstrap.fetchRegion(any(), any()))
+          .thenAnswer((_) async => 'eu');
+      await manager.session(_puuid);
+      verify(() => bootstrap.fetchRegion(any(), any())).called(1);
+      expect(accounts.find(_puuid)!.region, 'eu');
+    });
+
+    test(
+      'manual routing survives discovery; mismatch event is not repeated',
+      () async {
+        await accounts.patch(
+          _puuid,
+          (a) => a.copyWith(regionMode: RegionMode.manual, manualRegion: 'eu'),
+        );
+        clock.advance(const Duration(days: 7));
+        final events = <SessionEvent>[];
+        final sub = manager.events.listen(events.add);
+        addTearDown(sub.cancel);
+        when(() => bootstrap.fetchRegion(any(), any()))
+            .thenAnswer((_) async => 'kr');
+        final session = await manager.session(_puuid);
+        await Future<void>.delayed(Duration.zero);
+        expect(session.region, 'eu');
+        expect(accounts.find(_puuid)!.autoRegion, 'kr');
+        expect(accounts.find(_puuid)!.showRegionMismatch, true);
+        expect(events.whereType<SessionRegionMismatch>(), hasLength(1));
+        await manager.reportAuthFailureAfterReauth(
+          _puuid,
+          accessToken: session.accessToken,
+        );
+        await manager.reportAuthFailureAfterReauth(
+          _puuid,
+          accessToken: session.accessToken,
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(accounts.find(_puuid)!.needsLogin, false);
+        expect(events.whereType<SessionRegionMismatch>(), hasLength(1));
+      },
+    );
+
+    test(
+      'geo outage keeps the verified host and retries at the next re-auth',
+      () async {
+        clock.advance(const Duration(days: 7));
+        when(() => bootstrap.fetchRegion(any(), any()))
+            .thenThrow(const TransientException(reason: 'network'));
+        final first = await manager.session(_puuid);
+        expect(first.region, 'ap');
+        expect(
+          accounts.find(_puuid)!.detectedAt,
+          DateTime(2026, 9, 28, 12).toUtc(),
+        );
+        clock.advance(const Duration(hours: 2));
+        when(() => bootstrap.fetchRegion(any(), any()))
+            .thenAnswer((_) async => 'eu');
+        expect((await manager.session(_puuid)).region, 'eu');
+        expect(accounts.find(_puuid)!.detectedAt, clock.now().toUtc());
+      },
+    );
+
+    test(
+      'new unknown Riot region is preserved and future requests fail closed',
+      () async {
+        clock.advance(const Duration(days: 7));
+        when(() => bootstrap.fetchRegion(any(), any()))
+            .thenAnswer((_) async => 'zz');
+        final session = await manager.session(_puuid);
+        expect(session.region, 'zz');
+        expect(accounts.find(_puuid)!.needsRegionSelection, true);
+        expect(
+          () => session.hosts.pd,
+          throwsA(isA<UnsupportedRegionException>()),
+        );
+        await expectLater(
+          manager.session(_puuid),
+          throwsA(isA<UnsupportedRegionException>()),
+        );
+      },
+    );
+
+    test(
+      'logout during geo discovery cannot restore metadata or secrets',
+      () async {
+        clock.advance(const Duration(days: 7));
+        final gate = Completer<String>();
+        final started = Completer<void>();
+        when(() => bootstrap.fetchRegion(any(), any())).thenAnswer((_) {
+          started.complete();
+          return gate.future;
+        });
+        final pending = manager.session(_puuid);
+        await started.future;
+        await accounts.removeMetadata(_puuid);
+        final forgetting = manager.forget(_puuid);
+        final assertion = expectLater(
+          pending,
+          throwsA(isA<NeedsLoginException>()),
+        );
+        gate.complete('eu');
+        await assertion;
+        await forgetting;
+        expect(accounts.find(_puuid), isNull);
+        expect(secure.values.keys.where((k) => k.contains(_puuid)), isEmpty);
+      },
+    );
+  });
+
+  for (final reason in ['network', 'rate_limited', 'server', 'cloudflare']) {
+    test('login survives transient geo failure: $reason', () async {
+      when(() => bootstrap.fetchUserInfo(any())).thenAnswer(
+        (_) async =>
+            const RiotUserInfo(puuid: _puuid, gameName: 'Name', tagLine: 'TAG'),
+      );
+      when(() => bootstrap.fetchRegion(any(), any()))
+          .thenThrow(TransientException(reason: reason));
+      final result = await manager.establishFromLogin(
+        tokens: _tokens(clock.now()),
+        cookies: const RiotCookieJar({'ssid': 'fresh'}),
+      );
+      expect(result.session.region, '');
+      expect(result.detectedAt, isNull);
+      expect(result.detectedRegion, isNull);
+      expect(result.userInfo.gameName, 'Name');
+      expect(secure.values[SecureKeys.entitlementsToken(_puuid)], 'ENT');
+    });
+  }
+
+  test(
+    'candidate validation renews expired tokens without changing live routing',
+    () async {
+      when(() => reauth.reauth(any(), postFirst: any(named: 'postFirst')))
+          .thenAnswer(
+            (_) async => ReauthOk(
+              _tokens(clock.now()),
+              const RiotCookieJar({'ssid': 'rotated'}),
+            ),
+          );
+      await manager.session(_puuid);
+      clock.advance(const Duration(hours: 2));
+      final candidate = await manager.forRegionValidation(_puuid, 'eu');
+      expect(candidate.region, 'eu');
+      expect(manager.peek(_puuid)!.region, 'ap');
+      expect(accounts.find(_puuid)!.region, 'ap');
+      verify(() => reauth.reauth(any(), postFirst: any(named: 'postFirst')))
+          .called(2);
+    },
+  );
+
+  test('expired unselected account can validate candidate but ordinary requests remain blocked', () async {
+    when(() => reauth.reauth(any(), postFirst: any(named: 'postFirst')))
+        .thenAnswer(
+          (_) async => ReauthOk(
+            _tokens(clock.now()),
+            const RiotCookieJar({'ssid': 'rotated'}),
+          ),
+        );
+    await accounts.patch(_puuid, (a) => a.copyWith(region: ''));
+    final candidate = await manager.forRegionValidation(_puuid, 'eu');
+    expect(candidate.region, 'eu');
+    expect(manager.peek(_puuid)!.region, '');
+    expect(accounts.find(_puuid)!.region, '');
+    verifyNever(() => bootstrap.fetchRegion(any(), any()));
+    await expectLater(
+      manager.session(_puuid),
+      throwsA(isA<UnsupportedRegionException>()),
+    );
+  });
+
+  test(
+    'explicit region refresh is single flight, preserves manual routing',
+    () async {
+      when(() => reauth.reauth(any(), postFirst: any(named: 'postFirst')))
+          .thenAnswer(
+            (_) async => ReauthOk(
+              _tokens(clock.now()),
+              const RiotCookieJar({'ssid': 'rotated'}),
+            ),
+          );
+      await manager.session(_puuid);
+      await accounts.patch(
+        _puuid,
+        (a) => a.copyWith(regionMode: RegionMode.manual, manualRegion: 'eu'),
+      );
+      final gate = Completer<String>();
+      when(() => bootstrap.fetchRegion(any(), any()))
+          .thenAnswer((_) => gate.future);
+      final first = manager.refreshRegion(_puuid);
+      final second = manager.refreshRegion(_puuid);
+      gate.complete('kr');
+      await Future.wait([first, second]);
+      expect(accounts.find(_puuid)!.region, 'eu');
+      expect(accounts.find(_puuid)!.autoRegion, 'kr');
+      expect(manager.peek(_puuid)!.region, 'eu');
+      verify(() => bootstrap.fetchRegion(any(), any())).called(1);
+      verify(() => reauth.reauth(any(), postFirst: any(named: 'postFirst')))
+          .called(1);
     },
   );
 

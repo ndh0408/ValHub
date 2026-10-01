@@ -443,7 +443,7 @@ class _CountryRow extends StatelessWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    '$status${country.shardHint == null ? '' : ' · ${country.shardHint!.toUpperCase()}'}',
+                    '$status${country.regionHint == null ? '' : ' · ${country.regionHint!.toUpperCase()}'}',
                   ),
                 ),
               ],

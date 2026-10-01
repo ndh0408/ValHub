@@ -4,8 +4,10 @@ import 'package:material_ui/material_ui.dart';
 
 import '../accounts/account.dart';
 import '../accounts/account_providers.dart';
+import '../auth/auth_providers.dart';
 import '../l10n/account_strings.dart';
 import '../l10n/l10n.dart';
+import '../network/riot_exception.dart';
 import '../riot/pvp_api.dart';
 import '../ui/error_view.dart';
 import 'country_picker.dart';
@@ -14,6 +16,7 @@ import 'regions.dart';
 Future<void> showRegionPicker(BuildContext context, Account account) =>
     showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => RegionPicker(account: account),
@@ -42,10 +45,9 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
   Future<void> _save() async {
     final l10n = context.l10n;
     final id = widget.account.puuid;
+    final account = ref.read(accountProvider(id)) ?? widget.account;
     final candidate = _mode == RegionMode.auto
-        ? RegionTable.normalize(
-            widget.account.detectedRegion ?? widget.account.region,
-          )
+        ? RegionTable.normalize(account.autoRegion)
         : _region;
     if (candidate == null) {
       setState(() => _error = l10n.settingsGeoNoRegion);
@@ -58,13 +60,34 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
     final cancel = CancelToken();
     _cancel = cancel;
     try {
-      final valid = await ref
-          .read(pvpApiProvider)
-          .validateRegion(id, candidate, cancelToken: cancel);
+      if (_mode == RegionMode.manual &&
+          account.autoRegion != null &&
+          candidate != account.autoRegion) {
+        final confirmed = await _confirm(
+          l10n.settingsGeoManualConfirm(
+            AccountStrings.regionName(candidate),
+            AccountStrings.regionName(account.autoRegion!),
+          ),
+        );
+        if (!confirmed || !mounted) return;
+      }
+      RegionValidation valid;
+      try {
+        valid = await ref
+            .read(pvpApiProvider)
+            .validateRegion(id, candidate, cancelToken: cancel);
+      } on TransientException catch (e) {
+        if (cancel.isCancelled || e.reason == 'tls') rethrow;
+        valid = RegionValidation.unverified;
+      }
       if (!mounted) return;
-      if (!valid) {
+      if (valid == RegionValidation.rejected) {
         setState(() => _error = l10n.settingsGeoValidationFailed);
         return;
+      }
+      if (valid == RegionValidation.unverified) {
+        final confirmed = await _confirm(l10n.settingsGeoUnverified);
+        if (!confirmed || !mounted) return;
       }
       if (ref.read(accountProvider(id)) == null) return;
       await ref
@@ -74,6 +97,10 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
             (a) => a.copyWith(
               regionMode: _mode,
               manualRegion: _mode == RegionMode.manual ? candidate : null,
+              dismissedRegionMismatch:
+                  _mode == RegionMode.manual && account.autoRegion != null
+                  ? '$candidate/${account.autoRegion!}'
+                  : null,
             ),
           );
       if (!mounted) return;
@@ -91,12 +118,49 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
     }
   }
 
+  Future<bool> _confirm(String message) async =>
+      await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(context.l10n.settingsGeoConnection),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(context.l10n.settingsGeoCancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(context.l10n.settingsGeoContinue),
+            ),
+          ],
+        ),
+      ) ??
+      false;
+
+  Future<void> _refreshRegion() async {
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      await ref
+          .read(sessionManagerProvider)
+          .refreshRegion(widget.account.puuid);
+      if (mounted) ref.read(accountsProvider.notifier).reload();
+    } on Object catch (e) {
+      if (mounted) setState(() => _error = describeError(e).message);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final detected = RegionTable.normalize(
-      widget.account.detectedRegion ?? widget.account.region,
-    );
+    final account =
+        ref.watch(accountProvider(widget.account.puuid)) ?? widget.account;
+    final detected = RegionTable.normalize(account.autoRegion);
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsetsDirectional.fromSTEB(
@@ -131,6 +195,21 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
                   : (v) => setState(() => _mode = v.single),
             ),
             const SizedBox(height: 16),
+            if (account.detectedAt != null)
+              Text(
+                l10n.settingsGeoCheckedAt(
+                  context.fmt.dateTime(account.detectedAt!),
+                ),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: TextButton.icon(
+                onPressed: _busy ? null : _refreshRegion,
+                icon: const Icon(Icons.refresh),
+                label: Text(l10n.settingsGeoCheckAgain),
+              ),
+            ),
             if (_mode == RegionMode.auto)
               Text(
                 detected == null
@@ -141,7 +220,11 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
               Text(l10n.settingsGeoManualWarning),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
+                key: ValueKey(_region),
                 initialValue: _region,
+                isExpanded: true,
+                isDense: false,
+                itemHeight: null,
                 decoration: InputDecoration(
                   labelText: l10n.settingsGeoChooseRegion,
                 ),
@@ -149,7 +232,11 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
                   for (final r in RegionTable.visibleRegions)
                     DropdownMenuItem(
                       value: r,
-                      child: Text(AccountStrings.regionName(r)),
+                      child: Text(
+                        AccountStrings.regionName(r),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                 ],
                 onChanged: _busy ? null : (v) => setState(() => _region = v),
@@ -165,7 +252,14 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
                   : () async {
                       final country = await showCountryPicker(context);
                       if (mounted && country != null) {
-                        setState(() => _country = country.code);
+                        setState(() {
+                          _country = country.code;
+                          // A hint preselects only; saving still needs validation.
+                          if (_mode == RegionMode.manual &&
+                              country.regionHint != null) {
+                            _region = country.regionHint;
+                          }
+                        });
                       }
                     },
             ),

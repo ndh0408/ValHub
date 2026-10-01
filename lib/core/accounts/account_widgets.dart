@@ -7,8 +7,10 @@ import 'package:material_ui/material_ui.dart';
 import '../auth/auth_routes.dart';
 import '../config/app_constants.dart';
 import '../content/content_repository.dart';
+import '../geo/region_picker.dart';
 import '../l10n/account_strings.dart';
 import '../l10n/common_strings.dart';
+import '../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 import '../ui/adaptive.dart';
 import '../ui/error_view.dart';
@@ -538,6 +540,12 @@ class AccountTile extends ConsumerWidget {
                       ),
                     ],
                     if (trailing != null) ...[const SizedBox(height: 8), end],
+                    if (account.showRegionMismatch && !account.needsLogin)
+                      TextButton.icon(
+                        onPressed: () => showRegionPicker(context, account),
+                        icon: const Icon(Icons.sync_problem, size: 18),
+                        label: Text(context.l10n.settingsGeoReviewConnection),
+                      ),
                   ],
                 ),
               ),

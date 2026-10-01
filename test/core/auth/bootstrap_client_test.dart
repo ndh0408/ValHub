@@ -47,6 +47,37 @@ class _Adapter implements HttpClientAdapter {
 }
 
 void main() {
+  test(
+    'geo parser accepts new IDs but rejects URLs, spaces and oversized values',
+    () {
+      for (final id in [' AP ', 'eu', 'newid']) {
+        expect(
+          regionFromGeo({
+            'affinities': {'live': id},
+          }),
+          id.trim().toLowerCase(),
+        );
+      }
+      for (final id in [
+        '',
+        'a',
+        'ap.evil',
+        'https://evil.test',
+        'ap path',
+        '123',
+        'toolongid',
+        null,
+      ]) {
+        expect(
+          regionFromGeo({
+            'affinities': {'live': id},
+          }),
+          isNull,
+        );
+      }
+    },
+  );
+
   late DateTime now;
   late HostRateLimiter limiter;
   late _Adapter adapter;

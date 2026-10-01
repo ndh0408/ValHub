@@ -7738,6 +7738,60 @@ abstract class AppLocalizations {
   /// **'{count, plural, other{{count} quốc gia}}'**
   String settingsGeoResultCount(int count);
 
+  /// Country and Riot connection settings: settingsGeoManualConfirm
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn chọn {manual}, nhưng Riot xác định tài khoản ở {detected}. Tiếp tục kiểm tra kết nối này?'**
+  String settingsGeoManualConfirm(String manual, String detected);
+
+  /// Country and Riot connection settings: settingsGeoUnverified
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa xác minh được kết nối do máy chủ hoặc mạng đang gặp lỗi. Lưu lựa chọn này và thử lại sau?'**
+  String get settingsGeoUnverified;
+
+  /// Country and Riot connection settings: settingsGeoContinue
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếp tục'**
+  String get settingsGeoContinue;
+
+  /// Country and Riot connection settings: settingsGeoMismatch
+  ///
+  /// In vi, this message translates to:
+  /// **'Kết nối thủ công khác với khu vực Riot: {region}. Bạn muốn dùng khu vực tự động?'**
+  String settingsGeoMismatch(String region);
+
+  /// Country and Riot connection settings: settingsGeoUseAuto
+  ///
+  /// In vi, this message translates to:
+  /// **'Dùng tự động'**
+  String get settingsGeoUseAuto;
+
+  /// Country and Riot connection settings: settingsGeoKeepManual
+  ///
+  /// In vi, this message translates to:
+  /// **'Giữ thủ công'**
+  String get settingsGeoKeepManual;
+
+  /// Country and Riot connection settings: settingsGeoReviewConnection
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem kết nối'**
+  String get settingsGeoReviewConnection;
+
+  /// Country and Riot connection settings: settingsGeoCheckedAt
+  ///
+  /// In vi, this message translates to:
+  /// **'Kiểm tra gần nhất: {time}'**
+  String settingsGeoCheckedAt(String time);
+
+  /// Country and Riot connection settings: settingsGeoCheckAgain
+  ///
+  /// In vi, this message translates to:
+  /// **'Kiểm tra lại'**
+  String get settingsGeoCheckAgain;
+
   /// SettingsStrings.aboutCreditContent — About screen (S72)
   ///
   /// In vi, this message translates to:

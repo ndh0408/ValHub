@@ -106,11 +106,12 @@ void main() {
         (_) async => _session('T1').copyWith(hosts: RiotHosts.forRegion('eu')),
       );
       adapter.reply(200, {'Subject': _puuid.toUpperCase()});
-      expect(await api.validateRegion(_puuid, 'eu'), true);
+      expect(await api.validateRegion(_puuid, 'eu'), RegionValidation.verified);
       expect(adapter.requests.single.method, 'GET');
+      expect(adapter.requests.single.followRedirects, false);
       expect(
         adapter.requests.single.uri.toString(),
-        'https://pd.eu.a.pvp.net/mmr/v1/players/$_puuid',
+        'https://pd.eu.a.pvp.net/account-xp/v1/players/$_puuid',
       );
       verifyNever(() => sessions.session(any()));
       verifyNever(
@@ -120,9 +121,107 @@ void main() {
         ),
       );
       adapter.reply(200, {'Subject': 'another-account'});
-      expect(await api.validateRegion(_puuid, 'eu'), false);
+      expect(await api.validateRegion(_puuid, 'eu'), RegionValidation.rejected);
     },
   );
+
+  group('region validation errors', () {
+    setUp(() {
+      when(() => sessions.forRegionValidation(_puuid, 'eu')).thenAnswer(
+        (_) async => _session('T1').copyWith(hosts: RiotHosts.forRegion('eu')),
+      );
+      when(
+        () => sessions.refreshForRegionValidation(
+          _puuid,
+          failedAccessToken: 'T1',
+        ),
+      ).thenAnswer((_) async {});
+    });
+    test(
+      '401 renews once; second rejection is unverified, not logout',
+      () async {
+        adapter.reply(401, {'errorCode': 'BAD_CLAIMS'});
+        adapter.reply(401, {'errorCode': 'BAD_CLAIMS'});
+        expect(
+          await api.validateRegion(_puuid, 'eu'),
+          RegionValidation.unverified,
+        );
+        expect(adapter.requests, hasLength(2));
+        verify(
+          () => sessions.refreshForRegionValidation(
+            _puuid,
+            failedAccessToken: 'T1',
+          ),
+        ).called(1);
+        verifyNever(
+          () => sessions.reportAuthFailureAfterReauth(
+            any(),
+            accessToken: any(named: 'accessToken'),
+          ),
+        );
+      },
+    );
+    test('renewed token can confirm own account', () async {
+      adapter.reply(400, {'errorCode': 'BAD_CLAIMS'});
+      adapter.reply(200, {'Subject': _puuid});
+      expect(await api.validateRegion(_puuid, 'eu'), RegionValidation.verified);
+      verify(
+        () => sessions.refreshForRegionValidation(
+          _puuid,
+          failedAccessToken: 'T1',
+        ),
+      ).called(1);
+    });
+    for (final status in [400, 404]) {
+      test('JSON $status rejects wrong shard', () async {
+        adapter.reply(status, {'errorCode': 'RESOURCE_NOT_FOUND'});
+        expect(
+          await api.validateRegion(_puuid, 'eu'),
+          RegionValidation.rejected,
+        );
+        expect(adapter.requests, hasLength(1));
+      });
+    }
+    for (final status in [429, 500, 503]) {
+      test(
+        '$status permits explicit unverified choice without a retry',
+        () async {
+          adapter.reply(status, {});
+          expect(
+            await api.validateRegion(_puuid, 'eu'),
+            RegionValidation.unverified,
+          );
+          expect(adapter.requests, hasLength(1));
+        },
+      );
+    }
+    test('Cloudflare HTML is unverified', () async {
+      adapter.reply(403, '<html>blocked</html>');
+      expect(
+        await api.validateRegion(_puuid, 'eu'),
+        RegionValidation.unverified,
+      );
+    });
+    test(
+      'TLS failure and explicit cancellation never count as unverified',
+      () async {
+        when(() => sessions.forRegionValidation(_puuid, 'eu'))
+            .thenThrow(const TransientException(reason: 'tls'));
+        await expectLater(
+          api.validateRegion(_puuid, 'eu'),
+          throwsA(isA<TransientException>()),
+        );
+        final cancel = CancelToken()..cancel();
+        when(() => sessions.forRegionValidation(_puuid, 'eu'))
+            .thenAnswer((_) async => _session('T1'));
+        await expectLater(
+          api.validateRegion(_puuid, 'eu', cancelToken: cancel),
+          throwsA(isA<TransientException>()),
+        );
+        expect(adapter.requests, isEmpty);
+      },
+    );
+  });
 
   test('storefront: POST {} with every game header', () async {
     adapter.reply(200, {'SkinsPanelLayout': <String, dynamic>{}});

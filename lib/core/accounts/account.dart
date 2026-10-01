@@ -41,6 +41,8 @@ class Account {
     required this.shard,
     this.regionMode = RegionMode.auto,
     this.detectedRegion,
+    this.detectedAt,
+    this.dismissedRegionMismatch,
     this.manualRegion,
     this.country,
     this.platform = GamePlatform.pc,
@@ -73,6 +75,8 @@ class Account {
       shard: shardForRegion(region),
       regionMode: mode,
       detectedRegion: detected,
+      detectedAt: asDateTime(m['detectedAt']),
+      dismissedRegionMismatch: asNonEmptyString(m['dismissedRegionMismatch']),
       manualRegion: manual,
       country: country,
       platform: GamePlatform.parse(m['platform']),
@@ -96,9 +100,24 @@ class Account {
   final String shard;
   final RegionMode regionMode;
   final String? detectedRegion;
-  String? get autoRegion =>
-      detectedRegion ??
-      (regionMode == RegionMode.auto && region.isNotEmpty ? region : null);
+
+  /// Last successful riot-geo discovery; absent on migrated accounts.
+  final DateTime? detectedAt;
+
+  /// The exact manual/detected pair the user chose to keep.
+  final String? dismissedRegionMismatch;
+  String? get regionMismatchKey =>
+      regionMode == RegionMode.manual &&
+          autoRegion != null &&
+          autoRegion != region
+      ? '$region/${autoRegion!}'
+      : null;
+  bool get hasRegionMismatch => regionMismatchKey != null;
+  bool get showRegionMismatch =>
+      hasRegionMismatch && dismissedRegionMismatch != regionMismatchKey;
+  String? get autoRegion => detectedRegion != null && detectedRegion!.isNotEmpty
+      ? detectedRegion
+      : (regionMode == RegionMode.auto && region.isNotEmpty ? region : null);
   final String? manualRegion;
   final String? country;
   bool get needsRegionSelection => RegionTable.normalize(region) == null;
@@ -134,6 +153,8 @@ class Account {
     'regionMode': regionMode.name,
     'detectedRegion':
         detectedRegion ?? (regionMode == RegionMode.auto ? region : null),
+    'detectedAt': detectedAt?.toUtc().toIso8601String(),
+    'dismissedRegionMismatch': dismissedRegionMismatch,
     'manualRegion': manualRegion,
     'country': country,
     'platform': platform.name,
@@ -152,6 +173,8 @@ class Account {
     String? shard,
     RegionMode? regionMode,
     String? detectedRegion,
+    DateTime? detectedAt,
+    String? dismissedRegionMismatch,
     String? manualRegion,
     String? country,
     GamePlatform? platform,
@@ -177,6 +200,9 @@ class Account {
       shard: shardForRegion(effective),
       regionMode: mode,
       detectedRegion: detected,
+      detectedAt: detectedAt ?? this.detectedAt,
+      dismissedRegionMismatch:
+          dismissedRegionMismatch ?? this.dismissedRegionMismatch,
       manualRegion: manual,
       country: country ?? this.country,
       platform: platform ?? this.platform,
@@ -199,6 +225,8 @@ class Account {
       other.shard == shard &&
       other.regionMode == regionMode &&
       other.autoRegion == autoRegion &&
+      other.detectedAt == detectedAt &&
+      other.dismissedRegionMismatch == dismissedRegionMismatch &&
       other.manualRegion == manualRegion &&
       other.country == country &&
       other.platform == platform &&
@@ -217,6 +245,8 @@ class Account {
     shard,
     regionMode,
     autoRegion,
+    detectedAt,
+    dismissedRegionMismatch,
     manualRegion,
     country,
     platform,

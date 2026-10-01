@@ -38,6 +38,16 @@ final class SessionRestored extends SessionEvent {
   const SessionRestored(super.puuid);
 }
 
+/// Successful geo discovery, also refreshes account metadata in the UI.
+final class SessionRegionUpdated extends SessionEvent {
+  const SessionRegionUpdated(super.puuid);
+}
+
+/// A new manual/detected region pair requires the user's decision.
+final class SessionRegionMismatch extends SessionEvent {
+  const SessionRegionMismatch(super.puuid);
+}
+
 /// Combines the first re-auth attempt with its single retry:
 /// - retry ok → ok;
 /// - both needsLogin → needsLogin;
@@ -92,10 +102,14 @@ class LoginEstablished {
     required this.session,
     required this.userInfo,
     required this.hasSessionCookie,
+    this.detectedRegion,
+    this.detectedAt,
   });
 
   final RiotSession session;
   final RiotUserInfo userInfo;
+  final String? detectedRegion;
+  final DateTime? detectedAt;
 
   /// False when `ssid` was not captured: the session works for this hour but
   /// cannot be renewed silently (riot-auth §1.6).
@@ -157,6 +171,7 @@ class SessionManager {
 
   final Map<String, RiotSession> _cache = {};
   final Map<String, Future<RiotSession>> _inFlight = {};
+  final Map<String, Future<void>> _regionRefreshes = {};
 
   /// Tokens of a re-auth that succeeded while its bootstrap failed: the next
   /// attempt retries the bootstrap with them instead of rotating cookies again.
@@ -239,22 +254,75 @@ class SessionManager {
   /// The cached session without any network call (may be expired or null).
   RiotSession? peek(String puuid) => _cache[puuid.toLowerCase()];
 
+  /// Explicit user refresh through the fixed riot-geo auth endpoint. Does not
+  /// infer a region from country hints or probe candidate game servers.
+  Future<void> refreshRegion(String puuid) {
+    final id = puuid.toLowerCase();
+    final running = _regionRefreshes[id];
+    if (running != null) return running;
+    final future = _refreshRegion(
+      id,
+    ).whenComplete(() => _regionRefreshes.removeWhere((key, _) => key == id));
+    _regionRefreshes[id] = future;
+    return future;
+  }
+
+  Future<void> _refreshRegion(String id) async {
+    final account = _forgotten.contains(id) ? null : _accounts.find(id);
+    if (account == null || account.needsLogin) {
+      throw NeedsLoginException(puuid: id, reason: 'region_refresh');
+    }
+    var session =
+        _cache[id] ??
+        await _readTokenCache(id, account, hostsOverride: account.hosts);
+    if (session == null || session.isExpiringSoon(_clock.now())) {
+      session = await _obtain(id, forRegionValidation: true);
+    }
+    final region = await _bootstrap.fetchRegion(
+      session.accessToken,
+      session.idToken,
+    );
+    await _recordRegion(id, region);
+    final current = _forgotten.contains(id) ? null : _accounts.find(id);
+    if (current != null && identical(_cache[id], session)) {
+      _cache[id] = session.copyWith(hosts: current.hosts);
+    }
+  }
+
   /// Short-lived candidate for an explicit region validation. Does not change
-  /// metadata, cookies, cache routing or initiate silent re-authentication.
+  /// routing. Expired tokens may be renewed through the shared account lock.
   Future<RiotSession> forRegionValidation(String puuid, String region) async {
     final id = puuid.toLowerCase();
-    final account = _accounts.find(id);
+    final account = _forgotten.contains(id) ? null : _accounts.find(id);
     if (account == null || account.needsLogin) {
       throw NeedsLoginException(puuid: id, reason: 'region_validation');
     }
     final hosts = RiotHosts.forRegion(region);
     hosts.pd; // Reject unsupported region before reading or sending secrets.
-    final session =
+    var session =
         _cache[id] ?? await _readTokenCache(id, account, hostsOverride: hosts);
     if (session == null || session.isExpiringSoon(_clock.now())) {
-      throw NeedsLoginException(puuid: id, reason: 'region_validation_expired');
+      session = await _obtain(id, forRegionValidation: true);
     }
     return session.copyWith(hosts: hosts);
+  }
+
+  /// One renewal after a candidate read returned 401/BAD_CLAIMS. Candidate
+  /// hosts never become the effective connection until the user saves them.
+  Future<void> refreshForRegionValidation(
+    String puuid, {
+    required String failedAccessToken,
+  }) async {
+    final id = puuid.toLowerCase();
+    final account = _forgotten.contains(id) ? null : _accounts.find(id);
+    if (account == null || account.needsLogin) {
+      throw NeedsLoginException(puuid: id, reason: 'region_validation');
+    }
+    await _obtain(
+      id,
+      failedAccessToken: failedAccessToken,
+      forRegionValidation: true,
+    );
   }
 
   /// Drops the session and deletes the account's secrets (sign-out).
@@ -329,18 +397,16 @@ class SessionManager {
           cached.accessToken,
           cached.idToken,
         );
-        if (account.regionMode == RegionMode.manual) {
-          await _accounts.patch(id, (a) => a.copyWith(detectedRegion: region));
+        await _recordRegion(id, region);
+        final current = _accounts.find(id);
+        if (current == null || _forgotten.contains(id)) return;
+        if (current.hasRegionMismatch) {
           _log?.add('reauth.manualRegionMismatch');
           return;
         }
-        if (supportedRegions.contains(region) && region != account.region) {
-          await _accounts.patch(
-            id,
-            (a) => a.copyWith(region: region, shard: shardForRegion(region)),
-          );
+        if (current.region != account.region) {
           if (identical(_cache[id], cached)) {
-            _cache[id] = cached.copyWith(hosts: RiotHosts.forRegion(region));
+            _cache[id] = cached.copyWith(hosts: current.hosts);
           }
           _log?.add('reauth.regionChanged');
           return;
@@ -350,6 +416,8 @@ class SessionManager {
         return;
       }
     }
+    // An acknowledged manual mismatch still isn't evidence of dead cookies.
+    if (_accounts.find(id)?.hasRegionMismatch ?? false) return;
     _log?.add('reauth.rejected', detail: 'auth_failed_after_reauth');
     await _markNeedsLogin(id, 'auth_failed_after_reauth');
   }
@@ -385,7 +453,11 @@ class SessionManager {
   /// down after a failure: then a still-valid token (memory, or another
   /// isolate's on disk) is returned, else a [TransientException] with the time
   /// left.
-  Future<RiotSession> _obtain(String id, {String? failedAccessToken}) async {
+  Future<RiotSession> _obtain(
+    String id, {
+    String? failedAccessToken,
+    bool forRegionValidation = false,
+  }) async {
     final running = _inFlight[id];
     if (running != null) return running;
     final wait = _cooldown.remaining(id);
@@ -394,7 +466,11 @@ class SessionManager {
       if (usable != null) return usable;
       throw TransientException(retryAfter: wait, reason: 'reauth_cooldown');
     }
-    return _singleFlight(id, failedAccessToken: failedAccessToken);
+    return _singleFlight(
+      id,
+      failedAccessToken: failedAccessToken,
+      forRegionValidation: forRegionValidation,
+    );
   }
 
   /// A not-yet-expired session that is not [exceptToken] (the one the server
@@ -420,11 +496,22 @@ class SessionManager {
     return null;
   }
 
-  Future<RiotSession> _singleFlight(String id, {String? failedAccessToken}) {
+  Future<RiotSession> _singleFlight(
+    String id, {
+    String? failedAccessToken,
+    bool forRegionValidation = false,
+  }) {
     final existing = _inFlight[id];
     if (existing != null) return existing;
     final future = _lock
-        .run(id, () => _refresh(id, failedAccessToken: failedAccessToken))
+        .run(
+          id,
+          () => _refresh(
+            id,
+            failedAccessToken: failedAccessToken,
+            forRegionValidation: forRegionValidation,
+          ),
+        )
         // removeWhere returns void: returning the removed future itself
         // would make whenComplete wait on itself (deadlock).
         .whenComplete(() => _inFlight.removeWhere((key, _) => key == id));
@@ -437,7 +524,11 @@ class SessionManager {
   Future<bool> _stillExists(String id) async =>
       !_forgotten.contains(id) && await _accounts.findFresh(id) != null;
 
-  Future<RiotSession> _refresh(String id, {String? failedAccessToken}) async {
+  Future<RiotSession> _refresh(
+    String id, {
+    String? failedAccessToken,
+    bool forRegionValidation = false,
+  }) async {
     final account = _forgotten.contains(id) ? null : _accounts.find(id);
     if (account == null) {
       throw NeedsLoginException(puuid: id, reason: 'unknown_account');
@@ -445,7 +536,7 @@ class SessionManager {
     if (account.needsLogin) {
       throw NeedsLoginException(puuid: id, reason: 'marked');
     }
-    if (account.needsRegionSelection) {
+    if (account.needsRegionSelection && !forRegionValidation) {
       throw UnsupportedRegionException(puuid: id);
     }
 
@@ -461,7 +552,12 @@ class SessionManager {
 
     // At most two silent re-auths at a time, whatever the account count.
     return _gate.run(
-      () => _reauthAndBuild(id, account, failedAccessToken: failedAccessToken),
+      () => _reauthAndBuild(
+        id,
+        account,
+        failedAccessToken: failedAccessToken,
+        forRegionValidation: forRegionValidation,
+      ),
     );
   }
 
@@ -469,6 +565,7 @@ class SessionManager {
     String id,
     Account account, {
     String? failedAccessToken,
+    bool forRegionValidation = false,
   }) async {
     final started = _clock.now();
 
@@ -479,7 +576,11 @@ class SessionManager {
         kept.accessToken != failedAccessToken &&
         kept.expiresAt.subtract(AuthConstants.refreshMargin).isAfter(started)) {
       try {
-        final session = await _buildSession(account, kept);
+        final session = await _buildSession(
+          account,
+          kept,
+          knownRegion: forRegionValidation ? account.region : null,
+        );
         _cooldown.clear(id);
         _log?.add(
           'reauth.ok',
@@ -539,7 +640,11 @@ class SessionManager {
         }
         final RiotSession session;
         try {
-          session = await _buildSession(account, tokens);
+          session = await _buildSession(
+            account,
+            tokens,
+            knownRegion: forRegionValidation ? account.region : null,
+          );
         } on TransientException catch (e) {
           // The cookies rotated: keep the tokens for one bootstrap retry.
           _keptTokens[id] = tokens;
@@ -608,12 +713,24 @@ class SessionManager {
       tokens.accessToken,
     );
     var region = knownRegion ?? account.region;
-    if (!supportedRegions.contains(region)) {
-      region = await _bootstrap.fetchRegion(tokens.accessToken, tokens.idToken);
-      await _accounts.patch(
-        account.puuid,
-        (a) => a.copyWith(region: region, shard: shardForRegion(region)),
-      );
+    final detectedAt = account.detectedAt;
+    final due =
+        detectedAt == null ||
+        detectedAt.isAfter(_clock.now()) ||
+        _clock.now().difference(detectedAt) >= const Duration(days: 7);
+    if (knownRegion == null && (due || !supportedRegions.contains(region))) {
+      try {
+        final detected = await _bootstrap.fetchRegion(
+          tokens.accessToken,
+          tokens.idToken,
+        );
+        await _recordRegion(account.puuid, detected);
+        region = _accounts.find(account.puuid)?.region ?? region;
+      } on TransientException {
+        // A geo outage doesn't invalidate a known working connection.
+        // Leave detectedAt unchanged so the next re-auth can try again.
+        if (!supportedRegions.contains(region)) rethrow;
+      }
     }
     final session = RiotSession(
       puuid: account.puuid,
@@ -643,6 +760,23 @@ class SessionManager {
     return session;
   }
 
+  Future<void> _recordRegion(String id, String region) async {
+    if (!await _stillExists(id)) return;
+    final previous = _accounts.find(id);
+    await _accounts.patch(
+      id,
+      (a) => a.copyWith(detectedRegion: region, detectedAt: _clock.now()),
+    );
+    final current = _accounts.find(id);
+    if (current == null || _forgotten.contains(id)) return;
+    if (current.showRegionMismatch &&
+        current.regionMismatchKey != previous?.regionMismatchKey) {
+      _events.add(SessionRegionMismatch(id));
+    } else {
+      _events.add(SessionRegionUpdated(id));
+    }
+  }
+
   /// After a successful WebView login (SUMMARY §3.2 steps 6–7): stores the
   /// cookie jar, fetches entitlements, Riot ID and region. Does **not** add
   /// the account; the caller does (after checking the 10-account limit).
@@ -664,8 +798,7 @@ class SessionManager {
           tokens.accessToken,
           tokens.idToken,
         );
-      } on TransientException catch (e) {
-        if (e.reason != 'no_region') rethrow;
+      } on TransientException {
         // Identity and secrets remain usable; a region selection resolves routing.
       }
       final entitlements = await _bootstrap.fetchEntitlementsToken(
@@ -691,6 +824,8 @@ class SessionManager {
         session: session,
         userInfo: userInfo,
         hasSessionCookie: cookies.has('ssid'),
+        detectedRegion: region.isEmpty ? null : region,
+        detectedAt: region.isEmpty ? null : _clock.now(),
       );
     });
   }

@@ -15,6 +15,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/accounts/account_widgets.dart';
 import '../../../core/auth/auth_routes.dart';
+import '../../../core/geo/region_mismatch_banner.dart';
 import '../../../core/l10n/common_strings.dart';
 import '../../../core/riot/platform_status.dart';
 import '../../../core/theme/app_theme.dart';
@@ -235,6 +236,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final needsLogin = ref.watch(
       activeAccountProvider.select((a) => a?.needsLogin ?? false),
     );
+    final regionMismatch = ref.watch(
+      activeAccountProvider.select((a) => a?.showRegionMismatch ?? false),
+    );
     _onAccountChanged(puuid);
 
     // Coming back after a while: the community previews and the server
@@ -304,6 +308,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      if (regionMismatch && !needsLogin)
+                        RegionMismatchBanner(puuid: puuid),
                       if (needsLogin) ...[
                         _NeedsLoginBanner(puuid: puuid),
                         const SizedBox(height: kHomeCardGap),
