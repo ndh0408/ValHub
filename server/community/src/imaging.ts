@@ -1,15 +1,6 @@
-/**
- * Upload sanitising: strips every kind of metadata (EXIF / GPS, XMP, IPTC, comments, thumbnails,
- * text chunks, timestamps) from JPEG, PNG and WebP files, drops anything appended after the image
- * data, and refuses files that are not structurally valid images or are absurdly large in pixels.
- *
- * Pure TypeScript, no native dependency. Pixel data is passed through untouched (no re-encoding: no
- * generation loss, no libvips in the container). The only metadata kept is the EXIF *orientation*
- * (rewritten as a minimal 26-byte EXIF block) so phone photos are not shown sideways, plus colour
- * profiles (ICC) and the few chunks a decoder needs to render the picture correctly.
- *
- * Why not `sharp`: it would add ~30 MB of prebuilt libvips binaries per platform (glibc / musl / arm),
- * more memory per upload and a bigger attack surface, to do something a small parser does exactly.
+/** Structural parser for cheap checks and parser tests. Production uploads
+ * also pass through image-decoder.ts for full native pixel decoding,
+ * orientation correction and metadata-free re-encoding.
  */
 import type { ImageExt } from './media.js';
 import { sniffImage } from './media.js';

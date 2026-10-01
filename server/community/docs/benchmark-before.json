@@ -1,0 +1,52 @@
+{
+  "synthetic": true,
+  "node": "v24.19.0",
+  "platform": "win32/x64",
+  "users": 1000,
+  "rowsPerTable": 100000,
+  "iterations": 31,
+  "queries": {
+    "mediaSumGlobal": {
+      "medianMs": 2.9243999999998778,
+      "p95Ms": 3.9471000000003187
+    },
+    "mediaSumUser": {
+      "medianMs": 0.02250000000003638,
+      "p95Ms": 0.027399999999943248
+    },
+    "mediaRepoGlobal": {
+      "medianMs": 3.2193999999999505,
+      "p95Ms": 3.805500000000393
+    },
+    "mediaRepoUser": {
+      "medianMs": 0.03180000000065775,
+      "p95Ms": 0.05519999999978609
+    },
+    "topSkins": {
+      "medianMs": 176.85900000000038,
+      "p95Ms": 207.66170000000056
+    },
+    "ratingStats20": {
+      "medianMs": 31.91359999999986,
+      "p95Ms": 38.021999999999025
+    }
+  },
+  "plans": {
+    "mediaSumGlobal": [
+      {
+        "id": 3,
+        "parent": 0,
+        "notused": 182,
+        "detail": "SCAN media"
+      }
+    ],
+    "mediaSumUser": [
+      {
+        "id": 4,
+        "parent": 0,
+        "notused": 90,
+        "detail": "SEARCH media USING INDEX idx_media_user (user_id=?)"
+      }
+    ]
+  }
+}

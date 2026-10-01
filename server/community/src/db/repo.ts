@@ -317,6 +317,8 @@ export interface UserPatch {
  * implementation (better-sqlite3) is synchronous; swap freely in tests.
  */
 export interface Repo {
+  /** Synchronous DB-only transaction. Never return/await a Promise inside it. */
+  atomic<T>(operation: () => T): T;
   getRequestKey(id: string, now: number): StoredResponse | null;
   saveRequestKey(row: StoredResponse & { id: string; userId: string; expiresAt: number }): void;
   ping(): boolean;

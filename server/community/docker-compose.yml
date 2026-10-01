@@ -39,8 +39,8 @@ services:
     memswap_limit: 512m
     pids_limit: 128
     # Same probe as the Dockerfile HEALTHCHECK, visible and tunable here. `restart: unless-stopped` restarts
-    # a crashed process but Docker never restarts a container just because it is "unhealthy": watch
-    # `docker compose ps` (or add willfarrell/autoheal) — see README "Restart policy and health".
+    # a crashed process but Docker never restarts a container just because it is "unhealthy".
+    # The optional watchdog profile alerts on persistent faults without mounting the Docker socket.
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 30s
@@ -90,6 +90,47 @@ services:
     mem_limit: 256m
     memswap_limit: 256m
     pids_limit: 64
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # Enable with: docker compose --profile monitoring up -d
+  # Shares only the API network namespace, so the deep health request is genuinely loopback.
+  # The optional alert executable can be mounted at /hooks/alert using an operator override.
+  valvn-watchdog:
+    profiles: [monitoring]
+    image: valvn-community:latest
+    restart: unless-stopped
+    depends_on: [valvn-community]
+    network_mode: "service:valvn-community"
+    entrypoint: ["node", "dist/watchdog.js"]
+    environment:
+      WATCHDOG_URL: http://127.0.0.1:8080/healthz/deep
+      WATCHDOG_INTERVAL_SECONDS: ${WATCHDOG_INTERVAL_SECONDS:-60}
+      WATCHDOG_ALERT_HOOK: ${WATCHDOG_ALERT_HOOK:-}
+      WATCHDOG_BACKUP_DIR: /backup
+      BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-86400}
+    volumes:
+      - ${BACKUP_DIR:-./backups}:/backup:ro
+    read_only: true
+    tmpfs:
+      - /tmp:size=4m,mode=1777,noexec,nosuid
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 64m
+    memswap_limit: 64m
+    cpus: "0.1"
+    pids_limit: 32
+    init: true
+    healthcheck:
+      test: ["CMD", "node", "-e", "const fs=require('fs');const age=Date.now()-Number(fs.readFileSync('/tmp/valvn-watchdog-heartbeat','utf8'));process.exit(age<=(Number(process.env.WATCHDOG_INTERVAL_SECONDS||60)+30)*1000?0:1)"]
+      interval: 60s
+      timeout: 5s
+      retries: 2
+      start_period: 30s
     logging:
       driver: json-file
       options:

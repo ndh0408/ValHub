@@ -143,10 +143,22 @@ To remove one image that is already cached: Caching -> Configuration -> Purge Ca
 
 `restart: unless-stopped` restarts a container whose process exits (crash, out-of-memory kill, host reboot) but
 Docker **never restarts a container only because its health check fails**. The API's health check (`GET /healthz`
-every 30 s, 3 retries) shows `unhealthy` in `docker compose ps`; act on it with monitoring, or add
-[`willfarrell/autoheal`](https://github.com/willfarrell/docker-autoheal) (label `autoheal=true` on the service) if
-you want automatic restarts. A stuck event loop is unlikely (SQLite calls are synchronous and short; the sweeper
-never holds a request), but an out-of-memory kill at `mem_limit` is handled by the restart policy.
+every 30 s, 3 retries) shows `unhealthy` in `docker compose ps`.
+
+Enable the monitoring profile with `docker compose --profile monitoring up -d`. `valvn-watchdog` shares the API
+network namespace and reads `/healthz/deep` over actual loopback; it reads backup markers through a read-only
+mount. It alerts immediately for an unwritable disk, free space below 128 MiB, WAL above 128 MiB, backup older
+than its interval plus two hours, or a restore drill older than eight days. Three consecutive failed probes,
+samples with at least 200 ms lag, or windows of at least 20 requests with at least 5% server errors trigger
+their own alerts. Health probes are excluded from the request totals. Each sample emits bounded JSON containing
+fixed codes, and its health check detects a stalled watchdog process.
+
+Logs remain available without an alert destination. For delivery, mount a reviewed executable using a Compose
+override and set `WATCHDOG_ALERT_HOOK=/hooks/alert`. It receives `alert|recovered` followed by fixed codes;
+execution has a ten-second timeout, no shell, and no inherited app secrets. Alerts repeat hourly while a fault
+persists. No destination or credentials are fabricated. A faulty/hung API requires operator investigation and,
+if appropriate, `docker compose restart valvn-community`; the watchdog has no Docker socket or restart rights.
+Test one sample inside the shared network namespace with `node dist/watchdog.js --once`.
 
 ### Backup
 
@@ -634,9 +646,15 @@ between content commit and saving the key; callers must not assume exactly-once 
 
 The deep probe `/healthz/deep` accepts only a real loopback TCP peer with no forwarding headers: DB ping, data write
 probe, free bytes, WAL bytes and event-loop lag (unwritable or <64 MiB free → 503). Run it inside the API container.
-Minute security counters log only route patterns/status totals. A host disk alert/watchdog and dedicated tunnel network
-remain operator setup; the shared `edge` override is retained until its actual topology is reviewed. PRAGMA optimize
-runs in housekeeping; aggregate-table/materialized media counters need production query measurements before adding them.
+Minute security counters and access logs contain only route patterns/status totals, never IDs embedded in paths.
+The optional monitoring profile checks disk, WAL, lag, errors and backup/drill age. Alert delivery and dedicated
+tunnel network remain operator setup; the shared `edge` override is retained until its actual topology is reviewed.
+PRAGMA optimize runs in housekeeping. Migration 0011 maintains global/per-user media byte counters in SQLite
+triggers, including quarantine, resize, ownership changes and erasure cascades. Quota reads no longer scan media.
+Public aggregate eligibility uses a statement-local set of trusted users, keeping account-age/sanction rules intact.
+Run `npm run build && node dist/benchmark.js 100000` for an isolated synthetic benchmark (temporary DB only).
+Measurements and limits are in `docs/performance.md`; skin aggregate tables and index removal remain deferred until
+scoped production query measurements justify their write/migration cost.
 CI performs test/typecheck/audit/build/script checks and weekly image scanning, with no publish/deploy step.
 
 Keep one SQLite API replica. For PostgreSQL, introduce an awaited Repo contract at each call site, move `geoCondition`

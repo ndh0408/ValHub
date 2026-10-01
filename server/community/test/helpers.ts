@@ -10,7 +10,7 @@ import { countryFromAlpha3 } from '../src/geo/countries.js';
 import { SqliteRepo } from '../src/db/sqlite-repo.js';
 import { DiskMediaStore } from '../src/media.js';
 import type { RiotUserinfoFn } from '../src/riot.js';
-import { makeJpeg, makePng, makeWebp } from './fixtures.js';
+
 
 /** Names of every migration file, in order (tests must not hard-code the list: each work package adds some). */
 export function migrationNames(): string[] {
@@ -30,10 +30,10 @@ export const SKIN_C = '33333333-3333-4333-8333-333333333333';
 export const WEAPON_1 = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 export const WEAPON_2 = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 
-/** Small valid images without metadata (sanitising leaves them byte-identical). */
-export const PNG = makePng({ text: false, exif: false, time: false });
-export const JPEG = makeJpeg({ exif: false, xmp: false, iptc: false, comment: false });
-export const WEBP = makeWebp({ exif: false, xmp: false, extended: false });
+/** Actual decodable pixels; header-only fixtures belong to parser tests. */
+export const PNG = new Uint8Array(fs.readFileSync(new URL('./images/tiny.png', import.meta.url)));
+export const JPEG = new Uint8Array(fs.readFileSync(new URL('./images/tiny.jpg', import.meta.url)));
+export const WEBP = new Uint8Array(fs.readFileSync(new URL('./images/tiny.webp', import.meta.url)));
 
 export interface SetupOptions {
   /** Fixtures testing totals use established accounts; abuse tests keep new accounts by default. */

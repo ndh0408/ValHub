@@ -1,8 +1,30 @@
 import { createHash } from 'node:crypto';
-import type { Hono } from 'hono';
+import type { Context, Hono } from 'hono';
 import type { Ctx } from './context.js';
 import type { StoredResponse } from './db/repo.js';
 import { reasonError } from './errors.js';
+
+type CreateKey = { id: string; userId: string; fingerprint: string; expiresAt: number };
+const createKeys = new WeakMap<Context, CreateKey>();
+
+/** Content, attachments and retry result commit together, including when the
+ * process dies before the HTTP response is delivered. All async validation
+ * and file IO must happen before this synchronous DB transaction.
+ */
+export function commitCreate(c: Context, x: Ctx, create: () => unknown): Response {
+  return x.repo.atomic(() => {
+    const key = createKeys.get(c);
+    // Another process can finish while this request is awaiting validation.
+    const saved = key ? x.repo.getRequestKey(key.id, x.now()) : null;
+    if (saved) {
+      if (saved.fingerprint !== key!.fingerprint) throw reasonError('conflict', 'idempotency_conflict');
+      return c.body(saved.body, saved.status as 200 | 201, { 'content-type': 'application/json; charset=utf-8', 'idempotency-replayed': 'true' });
+    }
+    const body = JSON.stringify(create());
+    if (key) x.repo.saveRequestKey({ ...key, body, status: 200 });
+    return c.body(body, 200, { 'content-type': 'application/json; charset=utf-8' });
+  });
+}
 
 /** Optional on creates only. Retries authenticate again but replay a durable result for at most 24 hours. */
 export function registerIdempotency(app: Hono, x: Ctx): void {
@@ -45,11 +67,12 @@ export function registerIdempotency(app: Hono, x: Ctx): void {
     pending.set(id, { fingerprint, result: new Promise((resolve) => { finish = resolve; }) });
     let result: StoredResponse | null = null;
     try {
+      createKeys.set(c, { id, userId: user.id, fingerprint, expiresAt: x.now() + 86400_000 });
       await next();
       if (c.res.ok) {
-        result = { fingerprint, body: await c.res.clone().text(), status: c.res.status };
-        x.repo.saveRequestKey({ ...result, id, userId: user.id, expiresAt: x.now() + 86400_000 });
+        result = x.repo.getRequestKey(id, x.now());
+        if (!result) throw new Error('create route did not commit retry result atomically');
       }
-    } finally { pending.delete(id); finish(result); }
+    } finally { createKeys.delete(c); pending.delete(id); finish(result); }
   });
 }

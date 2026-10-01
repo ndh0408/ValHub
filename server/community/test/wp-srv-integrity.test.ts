@@ -70,6 +70,24 @@ describe('WP-SRV integrity', () => {
     expect((await probe('127.0.0.1', { 'cf-connecting-ip': '8.8.8.8' })).status).toBe(404);
     expect((await probe('127.0.0.1')).status).toBe(200);
   });
+
+  it('access logs contain route patterns and totals exclude health probes', async () => {
+    e = setup();
+    const entries: unknown[] = [];
+    const app = createApp({ ...e.mediaDeps(), config: { sessionSecret: 's'.repeat(40), pepper: 'p'.repeat(40), trustProxy: false, publicBaseUrl: '' },
+      riotUserinfo: async () => ({ ok: false }), logAccess: (entry) => entries.push(entry),
+      deepHealth: async () => ({ writable: true, freeBytes: 128 * 1024 * 1024, walBytes: 0 }) });
+    await app.request('/v1/posts/11111111-1111-4111-8111-111111111111?token=secret');
+    await app.request('/v1/media/u/private-user/private-file.png');
+    await app.request('/unmatched-user-secret');
+    await app.request('/healthz');
+    expect(entries).toHaveLength(3);
+    const encoded = JSON.stringify(entries);
+    for (const privateValue of ['11111111', 'token', 'secret', 'private-user', 'private-file']) expect(encoded).not.toContain(privateValue);
+    expect(entries[0]).toMatchObject({ method: 'GET', route: '/v1/posts/:id', status: 404 });
+    const deep = await app.fetch(new Request('http://localhost/healthz/deep'), { incoming: { socket: { remoteAddress: '127.0.0.1' } } });
+    expect(await deep.json()).toMatchObject({ http: { requests: 3, serverErrors: 0 } });
+  });
   it('stores new-account choices, only counts established accounts, excludes sanctioned voters', async () => {
     e = setup();
     const a = await e.login('alice');

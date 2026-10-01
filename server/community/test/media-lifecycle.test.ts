@@ -1,9 +1,10 @@
+import sharp from 'sharp';
 import fs from 'node:fs';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { deleteMedia, quarantineMedia } from '../src/media-service.js';
 import { expectError, JPEG, PNG, setup, WEBP, type Env } from './helpers.js';
-import { containsAnySecret, makeJpeg, makePng, makeWebp } from './fixtures.js';
+import { containsAnySecret, makeJpeg, makePng } from './fixtures.js';
 
 const HOUR = 3600_000;
 
@@ -23,12 +24,12 @@ const postWith = (token: string, media: string[], body = 'ảnh') =>
 
 describe('uploads are sanitised', () => {
   it.each([
-    ['image/jpeg', () => makeJpeg({ exif: { orientation: 6, gps: true } })],
+    ['image/jpeg', () => sharp(JPEG).withExif({ IFD0: { Make: 'SecretCamera' } }).withMetadata({ orientation: 6 }).jpeg().toBuffer()],
     ['image/png', () => makePng()],
-    ['image/webp', () => makeWebp({ exif: { orientation: 3 } })],
+    ['image/webp', () => sharp(WEBP).withExif({ IFD0: { Make: 'SecretCamera' } }).withMetadata({ orientation: 3 }).webp().toBuffer()],
   ])('%s: EXIF / GPS / text never reach the disk or the response', async (type, make) => {
     const { token } = await e.login('alice');
-    const input = make();
+    const input = await make();
     expect(containsAnySecret(input)).not.toBeNull();
     const res = await upload(token, input, type);
     expect(res.status).toBe(200);

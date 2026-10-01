@@ -6,7 +6,8 @@ import { deleteMedia, postMediaKeys, type MediaDeps } from './media-service.js';
 export const ACCOUNT_TABLE_POLICIES = {
   users: 'erase', posts: 'erase', comments: 'erase', post_likes: 'erase', skin_votes: 'erase',
   skin_reviews: 'erase', review_likes: 'erase', lfg_posts: 'erase', lfg_joins: 'erase', media: 'erase',
-  request_keys: 'erase', reports: 'anonymize', sanctions: 'security-retention',
+  // Derived quota bytes are reproduced by summing the exported media sizes; cascade removes the counter.
+  request_keys: 'erase', user_media_bytes: 'erase', reports: 'anonymize', sanctions: 'security-retention',
   moderation_audit: 'security-retention', revoked_accounts: 'token-expiry',
 } as const;
 

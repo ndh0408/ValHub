@@ -86,6 +86,14 @@ function and(where: string[]): string {
 export class SqliteRepo implements Repo {
   constructor(private readonly db: Db, private readonly now: () => number = Date.now) {}
 
+  atomic<T>(operation: () => T): T {
+    return this.db.transaction(() => {
+      const result = operation();
+      if (result instanceof Promise) throw new TypeError('async operation in DB transaction');
+      return result;
+    }).immediate();
+  }
+
   getRequestKey(id: string, now: number): StoredResponse | null {
     return (this.db.prepare('SELECT fingerprint, body, status FROM request_keys WHERE id = ? AND expires_at > ?').get(id, now) as StoredResponse | undefined) ?? null;
   }
@@ -313,8 +321,8 @@ export class SqliteRepo implements Repo {
 
   /** Only established accounts contribute to public totals; new accounts can still save their own choices. */
   private trustedUser(userId: string): string {
-    return `EXISTS (SELECT 1 FROM users trust WHERE trust.id = ${userId}
-      AND trust.created_at <= ${Math.floor(this.now() - DAY_MS)}
+    return `${userId} IN (SELECT trust.id FROM users trust WHERE
+      trust.created_at <= ${Math.floor(this.now() - DAY_MS)}
       AND NOT EXISTS (SELECT 1 FROM sanctions s WHERE s.user_id = trust.id AND s.lifted_at IS NULL AND (s.until IS NULL OR s.until > ${Math.floor(this.now())}))
       AND (EXISTS (SELECT 1 FROM posts a WHERE a.user_id = trust.id AND a.hidden = 0)
         OR EXISTS (SELECT 1 FROM comments a WHERE a.user_id = trust.id AND a.hidden = 0)
@@ -997,10 +1005,10 @@ export class SqliteRepo implements Repo {
   mediaBytes(userId?: string): number {
     const row = (
       userId === undefined
-        ? this.db.prepare('SELECT COALESCE(SUM(size), 0) AS n FROM media').get()
-        : this.db.prepare('SELECT COALESCE(SUM(size), 0) AS n FROM media WHERE user_id = ?').get(userId)
-    ) as { n: number };
-    return row.n;
+        ? this.db.prepare('SELECT bytes AS n FROM media_totals WHERE id = 1').get()
+        : this.db.prepare('SELECT bytes AS n FROM user_media_bytes WHERE user_id = ?').get(userId)
+    ) as { n: number } | undefined;
+    return row?.n ?? 0;
   }
 
   mediaOfUser(userId: string): MediaRow[] {

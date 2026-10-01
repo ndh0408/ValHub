@@ -39,7 +39,13 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
   // authenticated JSON must never be shared by a cache, and Cloudflare caches by file extension, so an
   // error for a media path (404!) would otherwise be cached at the edge and outlive a later upload.
   app.use('*', async (c, next) => {
+    const started = performance.now();
     await next();
+    if (!c.req.path.startsWith('/healthz')) x.stats.recordHttp(c.res.status);
+    if (!c.req.path.startsWith('/healthz')) deps.logAccess?.({
+      method: c.req.method, route: c.req.routePath || 'unmatched', status: c.res.status,
+      durationMs: Math.round(performance.now() - started),
+    });
     if (!c.res.headers.has('cache-control')) c.res.headers.set('cache-control', 'no-store');
     if (c.res.status >= 400) x.stats.inc(`${c.res.status}:${c.req.routePath ?? 'unmatched'}`);
   });
@@ -79,7 +85,7 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
     if (!['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(peer ?? '') || c.req.header('cf-connecting-ip') || c.req.header('x-forwarded-for') || !deps.deepHealth) throw notFound();
     const metrics = await deps.deepHealth();
     const ok = metrics.writable === true && typeof metrics.freeBytes === 'number' && metrics.freeBytes >= 64 * 1024 * 1024 && deps.repo.ping();
-    return x.json(c, { ...metrics, loopLagMs: x.loadLagMs(), ok }, ok ? 200 : (503 as 200));
+    return x.json(c, { ...metrics, loopLagMs: x.loadLagMs(), http: x.stats.httpTotals(), ok }, ok ? 200 : (503 as 200));
   });
 
   registerPublicGuard(app, x);

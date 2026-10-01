@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { setup, PNG, type Env } from './helpers.js';
 
 let e: Env;
@@ -16,6 +16,37 @@ describe('Idempotency-Key (CS-21)', () => {
     expect((await e.req('POST', '/v1/posts', options)).headers.get('idempotency-replayed')).toBe('true');
     await e.req('DELETE', `/v1/posts/${results[0]!.json.id}`, { token: a.token });
     expect(e.db.prepare('SELECT COUNT(*) AS n FROM request_keys').get()).toEqual({ n: 0 });
+  });
+
+  it('rolls back content and attachments when recording the retry result fails', async () => {
+    e = setup();
+    const a = await e.login('alice');
+    const up = await e.req('POST', '/v1/media', { token: a.token, headers: { 'content-type': 'image/png' }, raw: PNG });
+    const key = up.json.key;
+    const save = vi.spyOn(e.repo, 'saveRequestKey').mockImplementationOnce(() => { throw new Error('disk failed'); });
+    const options = { token: a.token, headers: { 'idempotency-key': 'atomic-1' }, body: { kind: 'text', body: 'hello', media: [key] } };
+    expect((await e.req('POST', '/v1/posts', options)).status).toBe(500);
+    expect(e.db.prepare('SELECT COUNT(*) AS n FROM posts').get()).toEqual({ n: 0 });
+    expect(e.repo.getMedia(key)?.post_id).toBeNull();
+    save.mockRestore();
+    expect((await e.req('POST', '/v1/posts', options)).status).toBe(200);
+    expect(e.db.prepare('SELECT COUNT(*) AS n FROM posts').get()).toEqual({ n: 1 });
+  });
+
+  it('commits a comment and its retry response atomically', async () => {
+    e = setup();
+    const a = await e.login('alice');
+    const post = await e.req('POST', '/v1/posts', { token: a.token, body: { kind: 'text', body: 'hello' } });
+    const options = { token: a.token, headers: { 'idempotency-key': 'comment-1' }, body: { body: 'reply' } };
+    const route = `/v1/posts/${post.json.id}/comments`;
+    const save = vi.spyOn(e.repo, 'saveRequestKey').mockImplementationOnce(() => { throw new Error('disk failed'); });
+    expect((await e.req('POST', route, options)).status).toBe(500);
+    expect(e.db.prepare('SELECT COUNT(*) AS n FROM comments').get()).toEqual({ n: 0 });
+    save.mockRestore();
+    const first = await e.req('POST', route, options);
+    expect(first.status).toBe(200);
+    expect((await e.req('POST', route, options)).json.id).toBe(first.json.id);
+    expect(e.db.prepare('SELECT COUNT(*) AS n FROM comments').get()).toEqual({ n: 1 });
   });
 
   it('isolates users and media retries; revoked sessions cannot replay successful requests', async () => {

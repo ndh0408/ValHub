@@ -52,20 +52,10 @@ const { app, ctx } = createAppWithCtx({
   riotUserinfo: guardRiotUserinfo(fetchRiotUserinfo),
   loadProbe: load.lagMs,
   logError: (m) => console.error(m),
+  logAccess: (entry) => console.log(JSON.stringify(entry)),
 });
 
-// Minimal access log: method, path (no query string, no headers), status, duration.
-const handler = async (req: Request, env: unknown) => {
-  const started = Date.now();
-  const res = await app.fetch(req, env);
-  const { pathname } = new URL(req.url);
-  if (pathname !== '/healthz') {
-    console.log(`${req.method} ${pathname} ${res.status} ${Date.now() - started}ms`);
-  }
-  return res;
-};
-
-const server = serve({ fetch: handler, port: config.port, hostname: '0.0.0.0' }, (info) => {
+const server = serve({ fetch: app.fetch, port: config.port, hostname: '0.0.0.0' }, (info) => {
   console.log(`valvn-community listening on :${info.port} (data: ${config.dataDir})`);
 });
 

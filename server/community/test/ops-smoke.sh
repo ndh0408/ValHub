@@ -8,6 +8,37 @@ trap 'rm -rf "$SMOKE_ROOT"' EXIT HUP INT TERM
 export DATA_DIR="$SMOKE_ROOT/data" BACKUP_DIR="$SMOKE_ROOT/backups" BACKUP_ONCE=1
 mkdir -p "$DATA_DIR" "$BACKUP_DIR/pre-restore"
 node --input-type=module <<'JS'
+import assert from 'node:assert/strict';
+import sharp from 'sharp';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { createServer } from 'node:http';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { decodeImage } from './dist/image-decoder.js';
+const input = await sharp({ create: { width: 2, height: 3, channels: 3, background: 'red' } })
+  .withMetadata({ orientation: 6 }).jpeg().toBuffer();
+const clean = await decodeImage(input);
+const metadata = await sharp(clean.bytes).metadata();
+assert.equal(metadata.width, 3);
+assert.equal(metadata.height, 2);
+assert.equal(metadata.exif, undefined);
+for (const name of ['last-success', 'last-drill']) await fs.writeFile(path.join(process.env.BACKUP_DIR, name), '');
+const server = createServer((_req, res) => { res.setHeader('content-type', 'application/json');
+  res.end(JSON.stringify({ writable: true, freeBytes: 512 * 1024 * 1024, walBytes: 0,
+    loopLagMs: 0, http: { requests: 10, serverErrors: 0 } })); });
+await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+try {
+  const { stdout } = await promisify(execFile)(process.execPath, ['dist/watchdog.js', '--once'], {
+    env: { ...process.env, WATCHDOG_URL: `http://127.0.0.1:${server.address().port}/healthz/deep`,
+      WATCHDOG_BACKUP_DIR: process.env.BACKUP_DIR, WATCHDOG_ALERT_HOOK: '' }, timeout: 10000 });
+  assert.equal(JSON.parse(stdout).watchdog, 'ok');
+} finally { await new Promise((resolve) => server.close(resolve)); }
+// Do not make the later backup/drill check pass using the monitoring fixture markers.
+for (const name of ['last-success', 'last-drill']) await fs.unlink(path.join(process.env.BACKUP_DIR, name));
+console.log('native decoder and watchdog smoke passed');
+JS
+node --input-type=module <<'JS'
 import fs from 'node:fs';
 import path from 'node:path';
 import { openDatabase } from './dist/db/database.js';

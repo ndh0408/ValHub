@@ -4,6 +4,18 @@
  */
 export class Counters {
   private readonly map = new Map<string, number>();
+  private requests = 0;
+  private serverErrors = 0;
+
+  /** Monotonic process totals for the local watchdog; draining log counters does not reset them. */
+  recordHttp(status: number): void {
+    this.requests++;
+    if (status >= 500) this.serverErrors++;
+  }
+
+  httpTotals(): { requests: number; serverErrors: number } {
+    return { requests: this.requests, serverErrors: this.serverErrors };
+  }
 
   inc(name: string, by = 1): void {
     // Bounded: an unexpected flood of distinct names cannot grow the map without limit.

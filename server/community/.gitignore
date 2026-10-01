@@ -5,4 +5,5 @@ backups/
 .env
 coverage/
 *.log
+.benchmark-*.json
 docker-compose.override.yml

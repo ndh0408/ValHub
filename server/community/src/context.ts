@@ -86,6 +86,8 @@ export interface AppDeps {
   deepHealth?: () => Promise<Record<string, number | boolean>>;
   /** Error sink; receives only error names/messages, never request data. */
   logError?: (msg: string) => void;
+  /** Fixed route patterns only; never the URL path, query, headers or content. */
+  logAccess?: (entry: { method: string; route: string; status: number; durationMs: number }) => void;
 }
 
 export type App = Hono;

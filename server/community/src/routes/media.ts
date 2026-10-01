@@ -1,8 +1,10 @@
+import { commitCreate } from '../idempotency.js';
 import type { Hono } from 'hono';
 import type { Ctx } from '../context.js';
 import { randomHex } from '../crypto.js';
 import { ApiError, invalid, notFound, reasonError } from '../errors.js';
-import { ImageError, sanitizeImage } from '../imaging.js';
+import { ImageError } from '../imaging.js';
+import { decodeImage } from '../image-decoder.js';
 import { CONTENT_TYPES, MAX_MEDIA_BYTES, MEDIA_KEY_RE, sniffImage, type ImageExt } from '../media.js';
 
 const ALLOWED: Record<string, ImageExt> = {
@@ -61,7 +63,7 @@ export function registerMedia(app: Hono, x: Ctx): void {
     // Strip EXIF / GPS and every other kind of metadata; refuse malformed or huge images.
     let clean;
     try {
-      clean = sanitizeImage(raw);
+      clean = await decodeImage(raw);
     } catch (e) {
       if (e instanceof ImageError) throw reasonError('invalid_input', 'media_invalid');
       throw e;
@@ -80,18 +82,23 @@ export function registerMedia(app: Hono, x: Ctx): void {
 
     const key = `u/${user.id}/${randomHex(16)}.${clean.ext}`;
     await x.deps.media.put(key, clean.bytes);
-    try { x.repo.insertMedia({
-      key,
-      user_id: user.id,
-      content_type: CONTENT_TYPES[clean.ext],
-      size: clean.bytes.length,
-      created_at: x.now(),
-    }, { user: userQuota, total: totalCap });
+    try {
+      const response = commitCreate(c, x, () => {
+        x.repo.insertMedia({
+          key,
+          user_id: user.id,
+          content_type: CONTENT_TYPES[clean.ext],
+          size: clean.bytes.length,
+          created_at: x.now(),
+        }, { user: userQuota, total: totalCap });
+        return { key, url: x.mediaUrl(x.baseUrl(c), key) };
+      });
+      if (!x.repo.getMedia(key)) await x.deps.media.delete(key);
+      return response;
     } catch (e) {
       await x.deps.media.delete(key).catch(() => {});
       throw e;
     }
-    return x.json(c, { key, url: x.mediaUrl(x.baseUrl(c), key) });
   });
 
   app.get('/v1/media/:key{.+}', async (c) => {

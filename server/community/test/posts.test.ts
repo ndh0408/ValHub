@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { BASE, expectError, JPEG, PNG, setup, SKIN_A, SKIN_B, WEBP, type Env } from './helpers.js';
 
@@ -39,7 +40,10 @@ describe('media', () => {
       expect(get.status).toBe(200);
       expect(get.headers.get('content-type')).toBe(type);
       expect(get.headers.get('cache-control')).toContain('max-age=31536000');
-      expect(Array.from(get.bytes)).toEqual(Array.from(bytes));
+      const decoded = await sharp(get.bytes).metadata();
+      expect(decoded.width).toBe(2);
+      expect(decoded.height).toBe(3);
+      expect(decoded.exif).toBeUndefined();
       const cached = await e.req('GET', `/v1/media/${res.json.key}`, {
         headers: { 'if-none-match': get.headers.get('etag')! },
       });

@@ -1,3 +1,4 @@
+import { commitCreate } from '../idempotency.js';
 import type { Context, Hono } from 'hono';
 import { author, iso, origin, ownHidden, REPORT_MIN_ACCOUNT_AGE_MS, type Ctx } from '../context.js';
 import { decodeCursor, page } from '../cursor.js';
@@ -190,20 +191,22 @@ export function registerPosts(app: Hono, x: Ctx): void {
     }
 
     const id = crypto.randomUUID();
-    x.repo.insertPost({
-      id,
-      user_id: user.id,
-      kind,
-      body: text,
-      media: JSON.stringify(media),
-      payload: payload === null ? null : JSON.stringify(payload),
-      hidden: 0,
-      created_at: x.now(),
-      country: user.country,
-      region: user.region,
-      language,
+    return commitCreate(c, x, () => {
+      x.repo.insertPost({
+        id,
+        user_id: user.id,
+        kind,
+        body: text,
+        media: JSON.stringify(media),
+        payload: payload === null ? null : JSON.stringify(payload),
+        hidden: 0,
+        created_at: x.now(),
+        country: user.country,
+        region: user.region,
+        language,
+      });
+      return serializePost(x.repo.getPost(id, user.id)!, x.baseUrl(c), user.id);
     });
-    return x.json(c, serializePost(x.repo.getPost(id, user.id)!, x.baseUrl(c), user.id));
   });
 
   app.delete('/v1/posts/:id', async (c) => {
@@ -251,18 +254,20 @@ export function registerPosts(app: Hono, x: Ctx): void {
     const text = cleanUserText(rawText, language, user.country);
     if (text === '') throw invalid('body không được để trống.', 'field_empty', { field: 'body' });
     const id = crypto.randomUUID();
-    x.repo.insertComment({
-      id,
-      post_id: p.id,
-      user_id: user.id,
-      body: text,
-      hidden: 0,
-      created_at: x.now(),
-      country: user.country,
-      region: user.region,
-      language,
+    return commitCreate(c, x, () => {
+      x.repo.insertComment({
+        id,
+        post_id: p.id,
+        user_id: user.id,
+        body: text,
+        hidden: 0,
+        created_at: x.now(),
+        country: user.country,
+        region: user.region,
+        language,
+      });
+      return serializeComment(x.repo.getComment(id)!);
     });
-    return x.json(c, serializeComment(x.repo.getComment(id)!));
   });
 
   app.delete('/v1/comments/:id', (c) => {
