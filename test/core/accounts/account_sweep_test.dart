@@ -274,6 +274,9 @@ class _BlindStore implements SecureStore {
   Future<String?> read(String key) => _inner.read(key);
 
   @override
+  Future<bool> containsKey(String key) => _inner.containsKey(key);
+
+  @override
   Future<void> write(String key, String value) => _inner.write(key, value);
 
   @override

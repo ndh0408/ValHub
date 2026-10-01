@@ -144,10 +144,11 @@ String loginNoteFillScript(LoginNote note) {
 final savedLoginNotesProvider = FutureProvider.autoDispose
     .family<List<(Account, LoginNote)>, String?>((ref, preferPuuid) async {
       // Metadata only. Read and decrypt just the selected note on tap.
-      final keys = await ref.watch(secureStoreProvider).readAllKeys();
+      final store = ref.watch(secureStoreProvider);
+      final accounts = ref.watch(accountsProvider);
       final result = <(Account, LoginNote)>[
-        for (final account in ref.watch(accountsProvider))
-          if (keys.contains(SecureKeys.loginNote(account.puuid)))
+        for (final account in accounts)
+          if (await store.containsKey(SecureKeys.loginNote(account.puuid)))
             (account, const LoginNote()),
       ];
       final prefer = preferPuuid?.toLowerCase();

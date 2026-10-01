@@ -1,10 +1,13 @@
 import 'dart:convert';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/accounts/account_providers.dart';
+import 'package:valvn/core/accounts/local_data.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/storage/secure_store.dart';
 import 'package:valvn/features/community/community_previews.dart';
@@ -210,7 +213,17 @@ void main() {
     test(
       'consent is wiped with the account and asked again after re-adding',
       () async {
-        final container = env.container();
+        // Sign-out now verifies retained-history erasure as well. Keep this
+        // consent test independent of the native application directory.
+        final container = ProviderContainer.test(
+          overrides: [
+            ...env.overrides,
+            retainedHistoryFilesProvider.overrideWithValue(
+              MemoryJsonFileCache(),
+            ),
+          ],
+          retry: (_, _) => null,
+        );
         final sub = container.listen(
           communityConsentProvider(mePuuid),
           (_, _) {},

@@ -43,6 +43,9 @@ abstract final class SecureKeys {
 /// Key/value store for secrets (cookies, tokens). Values are never logged.
 abstract interface class SecureStore {
   Future<String?> read(String key);
+
+  /// Presence only, without decrypting stored values (login-note picker).
+  Future<bool> containsKey(String key);
   Future<void> write(String key, String value);
   Future<void> delete(String key);
 
@@ -109,6 +112,16 @@ class FlutterSecureStore implements SecureStore {
   }
 
   @override
+  Future<bool> containsKey(String key) async {
+    try {
+      return await _storage.containsKey(key: key);
+    } on Object catch (e) {
+      _report('containsKey', e);
+      return false;
+    }
+  }
+
+  @override
   Future<void> write(String key, String value) async {
     try {
       await _storage.write(key: key, value: value);
@@ -158,6 +171,9 @@ class MemorySecureStore implements SecureStore {
 
   @override
   Future<String?> read(String key) async => values[key];
+
+  @override
+  Future<bool> containsKey(String key) async => values.containsKey(key);
 
   @override
   Future<void> write(String key, String value) async => values[key] = value;

@@ -103,6 +103,20 @@ void main() {
     expect(plugin.details!.android!.channelId, NotificationChannel.lfg.id);
   });
 
+  test('a Riot game name containing spaces is removed completely', () async {
+    final spaced = account.copyWith(gameName: 'Tên Có Khoảng Trắng');
+    await prefs.setJson(PrefKeys.accounts, [spaced.toJson()]);
+    await service.showNow(
+      id: 4,
+      title: spaced.riotId,
+      body: 'For ${spaced.riotId}',
+      channel: NotificationChannel.wishlist,
+      accountPuuid: spaced.puuid,
+    );
+    expect(plugin.title, isNot(contains(spaced.gameName)));
+    expect(plugin.body, isNot(contains('Tên')));
+  });
+
   test('removed-account notification never opens another account', () async {
     final taps = <String>[];
     final sub = service.taps.listen(taps.add);

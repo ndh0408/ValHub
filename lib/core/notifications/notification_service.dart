@@ -245,10 +245,25 @@ class NotificationService {
     }
   }
 
-  String _privateBody(String text, String? account) => text.replaceAll(
-    RegExp(r'[^\s#/]{2,}#[\p{L}\p{N}]{2,}', unicode: true),
-    NotificationStrings.privateAccount,
-  );
+  String _privateBody(String text, String? account) {
+    // Replace the complete account name first: Riot game names may contain
+    // spaces, which a tag-shaped fallback alone would only partially hide.
+    for (final json in asList(_prefs?.getJson(PrefKeys.accounts))) {
+      final saved = Account.fromJson(json);
+      if (saved != null &&
+          saved.puuid == account?.toLowerCase() &&
+          saved.gameName.isNotEmpty) {
+        text = text.replaceAll(
+          saved.riotId,
+          NotificationStrings.privateAccount,
+        );
+      }
+    }
+    return text.replaceAll(
+      RegExp(r'[^\s#/]{2,}#[\p{L}\p{N}]{2,}', unicode: true),
+      NotificationStrings.privateAccount,
+    );
+  }
 
   NotificationDetails _details(NotificationChannel channel, {String? tag}) =>
       NotificationDetails(
