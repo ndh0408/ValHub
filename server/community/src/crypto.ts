@@ -77,7 +77,8 @@ export function verifySession(secrets: string | readonly string[], token: string
     if (typeof claims !== 'object' || claims === null) return null;
     const c = claims as Record<string, unknown>;
     if (typeof c.sub !== 'string' || !/^[0-9a-f]{32}$/.test(c.sub)) return null;
-    if (typeof c.exp !== 'number' || typeof c.iat !== 'number') return null;
+    if (typeof c.exp !== 'number' || typeof c.iat !== 'number' || !Number.isSafeInteger(c.exp) || !Number.isSafeInteger(c.iat) || c.iat * 1000 > nowMs || c.exp <= c.iat) return null;
+    if (c.ep !== undefined && (typeof c.ep !== 'number' || !Number.isSafeInteger(c.ep) || c.ep < 0)) return null;
     if (c.exp * 1000 <= nowMs) return null;
     return {
       sub: c.sub,

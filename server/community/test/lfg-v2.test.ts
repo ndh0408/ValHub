@@ -34,7 +34,7 @@ describe('POST /v1/lfg v2 fields', () => {
       rankMax: null,
       roles: [],
       mic: false,
-      language: 'vi',
+      language: 'any',
       partySize: 2,
       agents: [],
       status: 'open',
@@ -141,7 +141,7 @@ describe('GET /v1/lfg filters', () => {
     expect(await names('?mic=true')).toEqual(['anyrange', 'gold']);
     expect(await names('?mic=false')).toEqual(['high', 'low', 'norange']);
     // language=X matches X and "any"; language=any disables the filter.
-    expect(await names('?language=en')).toEqual(['high', 'low']);
+    expect(await names('?language=en')).toEqual(['anyrange', 'high', 'low', 'norange']);
     expect(await names('?language=vi')).toEqual(['anyrange', 'gold', 'low', 'norange']);
     expect(await names('?language=any')).toHaveLength(5);
     expect(await names('?rank=10&mic=true&role=duelist')).toEqual(['gold']);
@@ -162,8 +162,8 @@ describe('GET /v1/lfg filters', () => {
     await e.req('PATCH', `/v1/lfg/${highId}`, { token: tokens.high, body: { status: 'in_game' } });
     expect(await names('')).toEqual(['anyrange', 'low', 'norange']);
     expect(await names('?status=open')).toEqual(['anyrange', 'low', 'norange']);
-    expect(await names('?status=full')).toEqual(['gold']);
-    expect(await names('?status=in_game')).toEqual(['high']);
+    expectError(await e.req('GET', '/v1/lfg?status=full', { token: tokens.gold }), 403, 'forbidden');
+    expectError(await e.req('GET', '/v1/lfg?status=in_game', { token: tokens.high }), 403, 'forbidden');
   });
 });
 
@@ -227,9 +227,9 @@ describe('POST /v1/lfg/{id}/join', () => {
     const [owner, a, b] = await Promise.all(['owner', 'a', 'b'].map((n) => e.login(n)));
     const id = (await e.req('POST', '/v1/lfg', { token: owner!.token, body: base() })).json.id;
     expectError(await e.req('POST', `/v1/lfg/${id}/join`, { token: owner!.token, body: {} }), 403, 'forbidden');
-    expect((await e.req('POST', `/v1/lfg/${id}/join`, { token: a!.token, body: {} })).json).toEqual({ joins: 1 });
-    expect((await e.req('POST', `/v1/lfg/${id}/join`, { token: a!.token })).json).toEqual({ joins: 1 });
-    expect((await e.req('POST', `/v1/lfg/${id}/join`, { token: b!.token, body: {} })).json).toEqual({ joins: 2 });
+    expect((await e.req('POST', `/v1/lfg/${id}/join`, { token: a!.token, body: {} })).json).toEqual({ joins: 1, partyCode: 'AB12CD' });
+    expect((await e.req('POST', `/v1/lfg/${id}/join`, { token: a!.token })).json).toEqual({ joins: 1, partyCode: 'AB12CD' });
+    expect((await e.req('POST', `/v1/lfg/${id}/join`, { token: b!.token, body: {} })).json).toEqual({ joins: 2, partyCode: 'AB12CD' });
     expect((await e.req('GET', '/v1/lfg/mine', { token: owner!.token })).json.joins).toBe(2);
     expect((await e.req('GET', '/v1/lfg', { token: a!.token })).json.items[0].joins).toBe(2);
 

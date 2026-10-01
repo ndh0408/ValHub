@@ -8,6 +8,7 @@ import { ipKey, isPrivateAddress } from './ip.js';
 import type { AuthorCols, Repo, SanctionRow, UserRow } from './db/repo.js';
 import { invalid, reasonError, unauthorized } from './errors.js';
 import type { MediaStore } from './media.js';
+import type { ErasureLedger } from './erasures.js';
 import { Counters } from './metrics.js';
 import { deleteMedia, quarantineMedia, type MediaDeps } from './media-service.js';
 import type { RiotUserinfoFn } from './riot.js';
@@ -70,7 +71,7 @@ export interface AppDeps {
   repo: Repo;
   media: MediaStore;
   config: Pick<Config, 'sessionSecret' | 'pepper' | 'publicBaseUrl' | 'trustProxy'> &
-    Partial<Pick<Config, 'sessionSecretPrev'>> &
+    Partial<Pick<Config, 'sessionSecretPrev' | 'lfgCodeInList'>> &
     Partial<Tuning>;
   /** Real VALORANT ids (skins / weapons / agents); omitted → ids are not checked. */
   content?: ContentCatalog;
@@ -80,6 +81,9 @@ export interface AppDeps {
   now?: () => number;
   /** Current event-loop lag in ms (see load.ts); omitted -> the server never sheds load (tests). */
   loadProbe?: () => number;
+  erasureLedger?: ErasureLedger;
+  /** Disk/write/WAL diagnostics; only called on the loopback-only deep probe. */
+  deepHealth?: () => Promise<Record<string, number | boolean>>;
   /** Error sink; receives only error names/messages, never request data. */
   logError?: (msg: string) => void;
 }
@@ -113,6 +117,7 @@ export const AUTH_FAILURES = { limit: 30, windowMs: 10 * 60_000 } as const;
 
 /** Shared helpers handed to every route module. */
 export class Ctx {
+  private readonly requestUsers = new WeakMap<Context, UserRow>();
   readonly now: () => number;
   readonly tuning: Tuning;
   /** Unauthenticated reads per client IP (in memory: no database write per request). */
@@ -147,7 +152,7 @@ export class Ctx {
 
   /** Dependencies of the media lifecycle helpers. */
   get mediaDeps(): MediaDeps {
-    return { repo: this.deps.repo, media: this.deps.media, now: this.now, logError: this.deps.logError };
+    return { repo: this.deps.repo, media: this.deps.media, now: this.now, logError: this.deps.logError, erasureLedger: this.deps.erasureLedger };
   }
 
   deleteMedia(keys: readonly string[]): Promise<void> {
@@ -173,7 +178,7 @@ export class Ctx {
     }
     if (!known) {
       const what = kind === 'skin' ? 'skin' : kind === 'weapon' ? 'vũ khí' : 'đặc vụ';
-      throw invalid(`${field} không phải ${what} của VALORANT.`);
+      throw reasonError('invalid_input', 'content_unknown', { field, kind });
     }
   }
 
@@ -183,10 +188,10 @@ export class Ctx {
    */
   canonSkin(uuid: string): SkinRef | null {
     try {
-      return this.deps.content?.resolveSkin?.(uuid) ?? null;
-    } catch {
-      return null;
-    }
+      const fresh = this.deps.content?.resolveSkin?.(uuid);
+      if (fresh) return fresh;
+    } catch { /* Fall back to aliases persisted by a previous successful canonicalization. */ }
+    return this.repo.skinAlias(uuid);
   }
 
   get repo(): Repo {
@@ -212,6 +217,8 @@ export class Ctx {
   user(c: Context, required: true): UserRow;
   user(c: Context, required: false): UserRow | null;
   user(c: Context, required: boolean): UserRow | null {
+    const prior = this.requestUsers.get(c);
+    if (prior) return prior;
     const header = c.req.header('authorization');
     if (!header) {
       if (required) throw unauthorized('Cần đăng nhập.');
@@ -246,6 +253,7 @@ export class Ctx {
         bucket.retryAfterSeconds,
       );
     }
+    this.requestUsers.set(c, user);
     return user;
   }
 

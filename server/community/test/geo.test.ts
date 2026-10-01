@@ -101,12 +101,12 @@ describe('Riot /userinfo country', () => {
       tagLine: '1',
       country: 'VN',
     });
-    expect(parseUserinfo('{"sub":"a","country":"USA"}')).toMatchObject({ country: 'US' });
+    expect(parseUserinfo('{"sub":"a","acct":{"game_name":"A","tag_line":"X"},"country":"USA"}')).toMatchObject({ country: 'US' });
   });
 
   it('is null when missing, unknown or malformed', () => {
     for (const c of ['', ',"country":"xyz"', ',"country":12', ',"country":null', ',"country":["vnm"]', ',"country":{"a":1}']) {
-      expect(parseUserinfo(`{"sub":"a"${c}}`), c).toMatchObject({ ok: true, country: null });
+      expect(parseUserinfo(`{"sub":"a","acct":{"game_name":"A","tag_line":"X"}${c}}`), c).toMatchObject({ ok: true, country: null });
     }
   });
 });

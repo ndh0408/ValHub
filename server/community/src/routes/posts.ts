@@ -32,16 +32,16 @@ export const REPORT_HIDE_THRESHOLD = 3;
 export function parsePayload(kind: PostKind, raw: unknown): Json | null {
   if (kind === 'text') {
     if (raw === undefined || raw === null) return null;
-    throw invalid('Bài viết loại text không có payload.');
+    throw invalid('Bài viết loại text không có payload.', 'payload_invalid');
   }
-  if (!isObject(raw)) throw invalid(`Bài viết loại ${kind} cần payload.`);
+  if (!isObject(raw)) throw invalid(`Bài viết loại ${kind} cần payload.`, 'payload_invalid');
   const date = parseDate(raw.date, 'payload.date');
   if (!Array.isArray(raw.offers) || raw.offers.length < 1 || raw.offers.length > MAX_OFFERS) {
-    throw invalid(`payload.offers phải có từ 1 đến ${MAX_OFFERS} mục.`);
+    throw invalid(`payload.offers phải có từ 1 đến ${MAX_OFFERS} mục.`, 'array_bad_size', { field: 'payload.offers', max: MAX_OFFERS });
   }
   const offers = raw.offers.map((o: unknown, i: number) => {
     const f = `payload.offers[${i}]`;
-    if (!isObject(o)) throw invalid(`${f} không hợp lệ.`);
+    if (!isObject(o)) throw invalid(`${f} không hợp lệ.`, 'payload_invalid');
     const skinUuid = parseUuid(o.skinUuid, `${f}.skinUuid`);
     if (kind === 'store') {
       return { skinUuid, cost: parseInt(o.cost, 0, MAX_COST, `${f}.cost`) };
@@ -49,7 +49,7 @@ export function parsePayload(kind: PostKind, raw: unknown): Json | null {
     const baseCost = parseInt(o.baseCost, 0, MAX_COST, `${f}.baseCost`);
     const discountCost = parseInt(o.discountCost, 0, MAX_COST, `${f}.discountCost`);
     const discountPercent = parseInt(o.discountPercent, 0, 100, `${f}.discountPercent`);
-    if (discountCost > baseCost) throw invalid(`${f}.discountCost không được lớn hơn baseCost.`);
+    if (discountCost > baseCost) throw invalid(`${f}.discountCost không được lớn hơn baseCost.`, 'discount_invalid');
     return { skinUuid, baseCost, discountCost, discountPercent };
   });
   return { date, offers };
@@ -152,17 +152,17 @@ export function registerPosts(app: Hono, x: Ctx): void {
     let media: string[] = [];
     if (body.media !== undefined && body.media !== null) {
       if (!Array.isArray(body.media) || body.media.length > MAX_MEDIA) {
-        throw invalid(`media phải là mảng tối đa ${MAX_MEDIA} key.`);
+        throw invalid(`media phải là mảng tối đa ${MAX_MEDIA} key.`, 'array_bad_size', { field: 'media', max: MAX_MEDIA });
       }
       media = body.media.map((k: unknown) => {
-        if (typeof k !== 'string' || !MEDIA_KEY_RE.test(k)) throw invalid('media chứa key không hợp lệ.');
+        if (typeof k !== 'string' || !MEDIA_KEY_RE.test(k)) throw invalid('media chứa key không hợp lệ.', 'media_unavailable');
         return k;
       });
-      if (new Set(media).size !== media.length) throw invalid('media có key trùng lặp.');
+      if (new Set(media).size !== media.length) throw invalid('media có key trùng lặp.', 'array_duplicates', { field: 'media' });
     }
     const payload = parsePayload(kind, body.payload);
     if (rawText === '' && media.length === 0 && payload === null) {
-      throw invalid('Bài viết không được để trống.');
+      throw invalid('Bài viết không được để trống.', 'post_empty');
     }
 
     // Rate limit BEFORE the expensive work (text filter, database checks, catalog lookups): an over-limit request
@@ -171,16 +171,16 @@ export function registerPosts(app: Hono, x: Ctx): void {
 
     const text = cleanUserText(rawText, language, user.country);
     if (text === '' && media.length === 0 && payload === null) {
-      throw invalid('Bài viết không được để trống.');
+      throw invalid('Bài viết không được để trống.', 'post_empty');
     }
 
     if (media.length > 0) {
       const found = new Map(x.repo.getMediaMany(media).map((m) => [m.key, m]));
       for (const k of media) {
         const m = found.get(k);
-        if (!m || m.status !== 'active') throw invalid('Ảnh không tồn tại, hãy tải lên lại.');
+        if (!m || m.status !== 'active') throw invalid('Ảnh không tồn tại, hãy tải lên lại.', 'media_unavailable');
         if (m.user_id !== user.id) throw forbidden('Bạn chỉ có thể dùng ảnh do chính mình tải lên.');
-        if (m.post_id !== null) throw invalid('Ảnh này đã được dùng ở một bài viết khác, hãy tải lên lại.');
+        if (m.post_id !== null) throw invalid('Ảnh này đã được dùng ở một bài viết khác, hãy tải lên lại.', 'media_unavailable');
       }
     }
     // Shared stores / Night Market: only real VALORANT skins.
@@ -249,7 +249,7 @@ export function registerPosts(app: Hono, x: Ctx): void {
     const rawText = parseString(body.body, 'body', { min: 1, max: 500 });
     x.rateLimit('comments', user.id); // before the text filter (CS-03)
     const text = cleanUserText(rawText, language, user.country);
-    if (text === '') throw invalid('body không được để trống.');
+    if (text === '') throw invalid('body không được để trống.', 'field_empty', { field: 'body' });
     const id = crypto.randomUUID();
     x.repo.insertComment({
       id,

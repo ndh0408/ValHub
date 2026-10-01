@@ -10,7 +10,7 @@ import path from 'node:path';
  * Fails open by design: with no successful fetch yet (start-up, outage) every id is accepted while the
  * catalog loads in the background (no request waits for the download); after the first success an outage
  * keeps using the stale cache and a stale set refreshes in the background; an unknown id triggers at most
- * one (awaited) re-fetch per `recheckGapMs` so a skin released today is not rejected. A snapshot of the last
+ * one background re-fetch per `recheckGapMs`; a new skin can be retried once it finishes. A snapshot of the last
  * good catalog is written to disk and read back at start-up, so a restart during a valorant-api outage does not
  * reopen the window in which any well-formed uuid is accepted.
  */
@@ -240,9 +240,7 @@ export class ValorantContentCatalog implements ContentCatalog {
     if (entry.ids.has(id)) return true;
     // Unknown: it may have been released since the last refresh.
     if (this.now() - entry.loadedAt >= this.recheckGapMs) {
-      await this.refresh(kind, true);
-      entry = this.sets.get(kind)!;
-      return entry.ids.has(id);
+      void this.refresh(kind);
     }
     return false;
   }
@@ -331,7 +329,7 @@ export class ValorantContentCatalog implements ContentCatalog {
     } catch {
       return false;
     }
-    if (typeof snap !== 'object' || snap === null || snap.v !== 1 || typeof snap.loadedAt !== 'object') return false;
+    if (typeof snap !== 'object' || snap === null || snap.v !== 1 || typeof snap.loadedAt !== 'object' || snap.loadedAt === null) return false;
     const ids = (v: unknown): Set<string> | null => {
       if (!Array.isArray(v)) return null;
       const out = new Set<string>();

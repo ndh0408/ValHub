@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { extractUuids, StaticCatalog, ValorantContentCatalog } from '../src/content.js';
 import { classifyUserinfoResponse, fetchRiotUserinfo, parseRetryAfterSeconds } from '../src/riot.js';
 import { expectError, setup, SKIN_A, SKIN_B, SKIN_C, WEAPON_1, WEAPON_2, type Env } from './helpers.js';
@@ -146,6 +148,36 @@ describe('content catalog', () => {
   const ok = (body: unknown) => new Response(JSON.stringify(body), { status: 200 });
   const byUrl = (url: string) => (url.includes('/weapons/skins') ? ok(skins) : url.includes('/agents') ? ok(agents) : ok(weapons));
 
+  it('restores known ids and canonical mappings during a restart outage, with refresh backoff', async () => {
+    e = setup();
+    const snapshotFile = path.join(e.dataDir, 'catalog.json');
+    const { c } = catalog(async (url) => url.endsWith('/weapons')
+      ? ok({ data: [{ uuid: U(10), skins: skins.data }] }) : byUrl(url), { snapshotFile });
+    await c.warm();
+    await c.saveSnapshot();
+    const restarted = catalog(async () => new Response('down', { status: 503 }), { snapshotFile });
+    expect(await restarted.c.restoreSnapshot()).toBe(true);
+    expect(restarted.c.resolveSkin(U(3))).toEqual({ skinUuid: U(1), weaponUuid: U(10) });
+    restarted.clock.t += 25 * 60 * 60_000;
+    expect(await restarted.c.isKnown('skin', U(99))).toBe(false);
+    await restarted.c.warm(['skin']);
+    for (let i = 0; i < 10; i++) expect(await restarted.c.isKnown('skin', U(99))).toBe(false);
+    expect(restarted.calls).toHaveLength(1);
+    expect(await restarted.c.isKnown('skin', U(3))).toBe(true);
+  });
+
+  it('ignores a corrupt snapshot and rejects oversized declared bodies before reading', async () => {
+    e = setup();
+    const snapshotFile = path.join(e.dataDir, 'catalog.json');
+    await fs.writeFile(snapshotFile, '{"v":1,"loadedAt":null}');
+    const read = vi.fn();
+    const { c } = catalog(async () => ({ ok: true, headers: new Headers({ 'content-length': String(31 * 1024 * 1024) }), body: { getReader: read } }) as unknown as Response, { snapshotFile });
+    expect(await c.restoreSnapshot()).toBe(false);
+    await c.warm(['skin']);
+    expect(read).not.toHaveBeenCalled();
+    expect(await c.isKnown('skin', U(99))).toBe(true);
+  });
+
   it('extracts skin, level and chroma uuids defensively', () => {
     expect([...extractUuids(skins)].sort()).toEqual([U(1), U(2), U(3), U(4), U(5)]);
     expect(extractUuids({ data: [{ uuid: 'NOT-A-UUID', levels: [null, 5, { uuid: 7 }] }, null, 'x'] }).size).toBe(0);
@@ -209,7 +241,9 @@ describe('content catalog', () => {
     expect(await c.isKnown('skin', U(50))).toBe(false); // within 10 min: no re-fetch
     expect(calls.filter((x) => x.includes('/weapons/skins'))).toHaveLength(1);
     clock.t += 11 * 60_000;
-    expect(await c.isKnown('skin', U(50))).toBe(true); // unknown id triggered one re-fetch
+    expect(await c.isKnown('skin', U(50))).toBe(false); // refresh is background-only
+    await c.warm(['skin']);
+    expect(await c.isKnown('skin', U(50))).toBe(true);
     expect(calls.filter((x) => x.includes('/weapons/skins'))).toHaveLength(2);
     for (let i = 0; i < 5; i++) expect(await c.isKnown('skin', U(60 + i))).toBe(false);
     expect(calls.filter((x) => x.includes('/weapons/skins'))).toHaveLength(2); // no hammering valorant-api

@@ -36,13 +36,15 @@ export const JPEG = makeJpeg({ exif: false, xmp: false, iptc: false, comment: fa
 export const WEBP = makeWebp({ exif: false, xmp: false, extended: false });
 
 export interface SetupOptions {
+  /** Fixtures testing totals use established accounts; abuse tests keep new accounts by default. */
+  established?: boolean;
   tuning?: Partial<Tuning>;
   content?: ContentCatalog;
   riot?: RiotUserinfoFn;
   /** Event-loop lag probe for load shedding (ms). */
   loadProbe?: () => number;
   /** Overrides of the non-tuning config (rotation secret, proxy trust, public base URL). */
-  config?: { sessionSecretPrev?: string; trustProxy?: boolean; publicBaseUrl?: string };
+  config?: { sessionSecretPrev?: string; trustProxy?: boolean; publicBaseUrl?: string; lfgCodeInList?: boolean };
 }
 
 export interface Res {
@@ -61,7 +63,7 @@ export interface ReqOpts {
 
 export function setup(opts: SetupOptions = {}) {
   const db: Db = openDatabase(':memory:');
-  const repo = new SqliteRepo(db);
+  const repo = new SqliteRepo(db, () => clock.t);
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'valvn-data-'));
   const mediaDir = path.join(dataDir, 'media');
   const quarantineDir = path.join(dataDir, 'quarantine');
@@ -122,6 +124,7 @@ export function setup(opts: SetupOptions = {}) {
       body: { accessToken: `good-${name}`, region: 'ap', ...extra },
     });
     expect(res.status).toBe(200);
+    if (opts.established) db.prepare('UPDATE users SET created_at = ? WHERE id = ?').run(clock.t - 2 * 86400_000, res.json.user.id);
     return { token: res.json.token as string, user: res.json.user, res };
   }
 

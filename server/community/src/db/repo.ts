@@ -237,7 +237,7 @@ export interface MediaRow {
 export interface ReportOutcome {
   /** Distinct reporters of the target. */
   count: number;
-  /** Distinct reporters whose reports count toward hiding (see README: account age + activity). */
+  /** Weighted report score, after eligibility and the daily auto-hide cap. */
   eligible: number;
   /** True when this report made the target hidden. */
   newlyHidden: boolean;
@@ -260,6 +260,7 @@ export interface AccountData {
   sanctions: SanctionRow[];
   /** Operator actions that concerned the account (action, target, time). */
   moderationLog: AuditRow[];
+  requestKeys: { id: string; body: string; status: number; expires_at: number }[];
 }
 
 export interface CanonicalizeResult {
@@ -316,6 +317,8 @@ export interface UserPatch {
  * implementation (better-sqlite3) is synchronous; swap freely in tests.
  */
 export interface Repo {
+  getRequestKey(id: string, now: number): StoredResponse | null;
+  saveRequestKey(row: StoredResponse & { id: string; userId: string; expiresAt: number }): void;
   ping(): boolean;
 
   upsertUser(u: UserUpsert, now: number): UserRow;
@@ -336,7 +339,7 @@ export interface Repo {
   /** The user's current (unexpired) post, whatever its status. */
   getActiveLfgForUser(userId: string, now: number): LfgView | null;
   /** Applies the patch and sets updated_at = now, expires_at = expiresAt. */
-  updateLfg(id: string, patch: LfgPatch, now: number, expiresAt: number): void;
+  updateLfg(id: string, patch: LfgPatch, now: number, expiresAt: number, userId?: string): boolean;
   deleteLfg(id: string): void;
   /** Idempotent per user; returns the post's join count. */
   joinLfg(id: string, userId: string, now: number): number;
@@ -366,6 +369,7 @@ export interface Repo {
   canonicalizeSkins(resolve: (uuid: string) => { skinUuid: string; weaponUuid: string } | null): CanonicalizeResult;
   /** Weapon a skin is pinned to (by its first vote or review), or null if unknown. */
   skinWeapon(skinUuid: string): string | null;
+  skinAlias(uuid: string): { skinUuid: string; weaponUuid: string } | null;
   userVotes(userId: string, skinUuids: string[]): Set<string>;
   topSkins(q: { weaponUuid?: string; since?: number; limit: number; geo?: GeoScope }): SkinCount[];
   /** Skins with >= minCount visible ratings, by Bayesian average (C, mean m of the same scope/period). */
@@ -460,7 +464,7 @@ export interface Repo {
   /** Deletes reports older than `olderThan` and reports whose target no longer exists. */
   sweepReports(olderThan: number): SweepCounts;
 
-  insertMedia(m: Pick<MediaRow, 'key' | 'user_id' | 'content_type' | 'size' | 'created_at'>): void;
+  insertMedia(m: Pick<MediaRow, 'key' | 'user_id' | 'content_type' | 'size' | 'created_at'>, limits?: { user: number; total: number }): void;
   getMediaMany(keys: string[]): MediaRow[];
   getMedia(key: string): MediaRow | null;
   /** Bytes stored for a user (active + quarantined files), or for everyone when `userId` is omitted. */
@@ -480,7 +484,7 @@ export interface Repo {
   accountData(userId: string): AccountData | null;
   /**
    * Hard-deletes an account and everything cascading from it; reports against its content are
-   * deleted, reports it filed are anonymised, its rate-limit rows are removed. Media rows go with
+   * deleted, reports it filed are anonymised; rate limits survive until expiry. Media rows go with
    * the user (delete the files first / after via the media service).
    */
   deleteAccountRows(userId: string): void;
@@ -519,3 +523,5 @@ export interface Repo {
   /** Row counts and media bytes, for the ops CLI. */
   stats(): Record<string, number>;
 }
+
+export interface StoredResponse { fingerprint: string; body: string; status: number }

@@ -15,6 +15,8 @@ services:
     container_name: valvn-community
     restart: unless-stopped
     stop_grace_period: 15s
+    cpus: "1.0"
+    init: true
     env_file: .env
     environment:
       PORT: "8080"
@@ -64,6 +66,8 @@ services:
     environment:
       BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
       BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-86400}
+      BACKUP_OFFSITE_CMD: ${BACKUP_OFFSITE_CMD:-}
+      BACKUP_AGE_RECIPIENT: ${BACKUP_AGE_RECIPIENT:-}
     volumes:
       - valvn-community-data:/data
       # Create it first: mkdir -p ./backups && chown 1000:1000 ./backups && chmod 700 ./backups
@@ -71,7 +75,15 @@ services:
       - ./ops/backup-loop.sh:/backup-loop.sh:ro
     read_only: true
     tmpfs:
-      - /tmp:size=512m,mode=1777,nosuid
+      - /tmp:size=32m,mode=1777,nosuid
+    cpus: "0.5"
+    init: true
+    healthcheck:
+      test: ["CMD", "node", "dist/backup.js", "health", "/backup"]
+      interval: 5m
+      timeout: 10s
+      retries: 2
+      start_period: 10m
     cap_drop: [ALL]
     security_opt:
       - no-new-privileges:true

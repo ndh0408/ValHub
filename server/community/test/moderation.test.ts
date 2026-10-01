@@ -13,8 +13,8 @@ import {
 import { WORDLISTS } from '../src/moderation/wordlists.js';
 import { expectError, setup, SKIN_A, WEAPON_1, type Env } from './helpers.js';
 
-const clean = (s: string) => moderate(s);
-const masked = (s: string) => moderate(s).text;
+const clean = (s: string) => moderate(s, { language: 'vi' });
+const masked = (s: string) => moderate(s, { language: 'vi' }).text;
 
 describe('normalisation', () => {
   it('strips Vietnamese diacritics including đ', () => {
@@ -163,7 +163,7 @@ describe('rejected categories', () => {
     ['harassment', 'đi chết đi'],
   ])('%s: %s', (category, input) => {
     expect(clean(input).rejected).toBe(category);
-    expect(() => cleanUserText(input)).toThrowError(MSG_INAPPROPRIATE);
+    expect(() => cleanUserText(input, 'vi')).toThrowError(MSG_INAPPROPRIATE);
   });
 
   it('a harassment phrase wins over the profanity inside it', () => {
@@ -184,7 +184,7 @@ describe('scams', () => {
     'thu mua acc Valorant',
   ])('rejects "%s"', (input) => {
     expect(clean(input).rejected).toBe('scam');
-    expect(() => cleanUserText(input)).toThrowError(MSG_SCAM);
+    expect(() => cleanUserText(input, 'vi')).toThrowError(MSG_SCAM);
   });
 
   it.each(['0912345678', '0912 345 678', '091.234.5678', '+84 912 345 678', '84912345678', 'Zalo: 0387-654-321'])(
@@ -221,12 +221,12 @@ describe('links', () => {
   });
 
   it('never masks inside kept https links', () => {
-    const r = moderate('guide https://example.com/dm/vcl đm');
-    expect(r.text).toBe('guide https://example.com/dm/vcl ***');
+    const r = moderate('guide https://playvalorant.com/dm/vcl đm');
+    expect(r.text).toBe('guide https://playvalorant.com/dm/vcl ***');
   });
 
   it('does not see phone numbers inside kept links', () => {
-    expect(moderate('https://example.com/video/0912345678').rejected).toBeNull();
+    expect(moderate('https://youtube.com/video/0912345678').rejected).toBeNull();
   });
 });
 
@@ -260,7 +260,7 @@ describe('applied to user content', () => {
   afterEach(() => e.close());
 
   it('masks post bodies, comments, review bodies and LFG notes', async () => {
-    const { token } = await e.login('alice');
+    const { token } = await e.login('alice', { language: 'vi' });
     const post = await e.req('POST', '/v1/posts', { token, body: { kind: 'text', body: 'đm lag vcl' } });
     expect(post.json.body).toBe('*** lag ***');
     const cm = await e.req('POST', `/v1/posts/${post.json.id}/comments`, { token, body: { body: 'ngu vl' } });
@@ -280,7 +280,7 @@ describe('applied to user content', () => {
   });
 
   it('rejects hate / sexual / scam content with invalid_input', async () => {
-    const { token } = await e.login('alice');
+    const { token } = await e.login('alice', { language: 'vi' });
     const r1 = await e.req('POST', '/v1/posts', { token, body: { kind: 'text', body: 'bọn bắc kỳ' } });
     expectError(r1, 400, 'invalid_input');
     expect(r1.json.error.message).toBe(MSG_INAPPROPRIATE);
@@ -309,7 +309,7 @@ describe('applied to user content', () => {
   });
 
   it('strips bad links; a post that becomes empty is rejected', async () => {
-    const { token } = await e.login('alice');
+    const { token } = await e.login('alice', { language: 'vi' });
     const ok = await e.req('POST', '/v1/posts', {
       token,
       body: { kind: 'text', body: 'free skin http://phish.example/x xem https://playvalorant.com' },

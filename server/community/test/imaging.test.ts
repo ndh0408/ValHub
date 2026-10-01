@@ -126,9 +126,9 @@ describe('JPEG', () => {
   it('rejects absurd dimensions', () => {
     expect(() => sanitizeImage(makeJpeg({ width: 20000, height: 20000 }))).toThrowError(ImageError);
     expect(() => sanitizeImage(makeJpeg({ width: 0, height: 5 }))).toThrowError(ImageError);
-    expect(sanitizeImage(makeJpeg({ width: 7000, height: 7000 })).width).toBe(7000); // 49 MP < limit
+    expect(sanitizeImage(makeJpeg({ width: 4000, height: 4000 })).width).toBe(4000); // 16 MP boundary
     expect(() => sanitizeImage(makeJpeg({ width: 8000, height: 8000 }))).toThrowError(ImageError); // 64 MP
-    expect(MAX_PIXELS).toBe(50_000_000);
+    expect(MAX_PIXELS).toBe(16_000_000);
   });
 });
 

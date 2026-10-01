@@ -3,7 +3,7 @@ import { expectError, setup, SKIN_A, SKIN_B, SKIN_C, WEAPON_1, WEAPON_2, type En
 
 let e: Env;
 beforeEach(() => {
-  e = setup();
+  e = setup({ established: true });
 });
 afterEach(() => e.close());
 

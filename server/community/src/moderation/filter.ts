@@ -15,7 +15,7 @@ import { listKeyForLanguage, WORDLISTS } from './wordlists.js';
  *
  * The filter runs per language: English always, plus the list of the text's language (the item's
  * `language`, else the author's), plus lists implied by a cheap script / charset heuristic, and the
- * Vietnamese list for plain-Latin text when the language is unknown (what the service always did).
+ * Vietnamese abbreviations only for declared Vietnamese or VN-country authors.
  * Text in a language without a list is never rejected for that reason: only listed words match.
  */
 
@@ -857,7 +857,7 @@ const COUNTRY_LATIN_LISTS: Readonly<Record<string, readonly ListKey[]>> = {
  * - the list of the declared language (`language`: the text's language, else the author's);
  * - lists implied by the script / charset of the text (Hangul → ko, Kana → ja, Han → zh, Thai → th,
  *   Arabic script → ar, Cyrillic → ru, Vietnamese letters → vi, ß → de, ñ ¿ ¡ → es, ą ę ł → pl, ğ ı ş → tr);
- * - for Latin-only text: the Vietnamese list when the language is unknown / vi / en (unaccented
+ * - for Latin-only text: the Vietnamese list for declared vi or VN-country authors (unaccented
  *   Vietnamese teencode: "dm", "vcl"), and the local-language list implied by the author's country.
  * Text in a language without a list gets English only and is never rejected for being in that language.
  */
@@ -900,7 +900,7 @@ export function listsFor(text: string, language?: string | null, country?: strin
     SCRIPT.otherNonLatin.test(folded)
   );
   if (latinOnly) {
-    if (!declared || declared === 'vi' || declared === 'en') set.add('vi');
+    if (declared === 'vi' || country?.toUpperCase() === 'VN') set.add('vi');
     for (const k of COUNTRY_LATIN_LISTS[(country ?? '').toUpperCase()] ?? []) set.add(k);
   }
   return [...set];
@@ -924,8 +924,10 @@ function hostOf(url: string): string | null {
 }
 
 const isShortener = (host: string) => SHORTENER_DOMAINS.some((d) => host === d || host.endsWith(`.${d}`));
+const LINK_DOMAINS = ['playvalorant.com', 'riotgames.com', 'valorant-api.com', 'tracker.gg', 'youtube.com', 'youtu.be', 'twitch.tv', 'val.gianguyen.cloud'];
+const isAllowedLink = (host: string) => LINK_DOMAINS.some((d) => host === d || host.endsWith(`.${d}`));
 
-/** Removes non-https and shortener links. Returns the new text and how many links were removed. */
+/** Removes non-https, shortener and non-allow-listed links. Returns the new text and how many links were removed. */
 export function stripLinks(text: string): { text: string; removed: number } {
   let removed = 0;
   let out = text.replace(URL_RE, (m) => {
@@ -934,7 +936,7 @@ export function stripLinks(text: string): { text: string; removed: number } {
     const lower = url.toLowerCase();
     if (lower.startsWith('https://')) {
       const host = hostOf(url);
-      if (host && !isShortener(host)) return m; // keep
+      if (host && isAllowedLink(host) && !isShortener(host)) return m;
     }
     removed++;
     return trail;
@@ -990,7 +992,9 @@ export function moderate(input: string, opts: ModerateOptions = {}): ModerationR
   if (input.length > MAX_INPUT_CHARS) {
     return { text: input, rejected: 'complex', masked: 0, linksRemoved: 0, lists: [] };
   }
+  // Keep joiners used by emoji and Indic/Arabic scripts, and newline. Drop bidi overrides and control floods.
   const nfc = input.normalize('NFC');
+  if (/\p{M}{9,}/u.test(nfc)) return { text: nfc, rejected: 'complex', masked: 0, linksRemoved: 0, lists: [] };
   const { text, removed } = stripLinks(nfc);
   const skip = linkRanges(text);
   const lists = listsFor(text, opts.language, opts.country);
@@ -1024,6 +1028,10 @@ export function moderate(input: string, opts: ModerateOptions = {}): ModerationR
   }
   let out = text;
   for (const [a, b] of [...merged].reverse()) out = `${out.slice(0, a)}***${out.slice(b)}`;
+  out = out.replace(/[\p{Cf}\p{Cc}]/gu, (c) => {
+    if (c === '\n' || c === '\u200c' || c === '\u200d' || (c === '\u200b' && SCRIPT.thai.test(out))) return c;
+    return c === '\t' ? ' ' : '';
+  }).replace(/\n{3,}/g, '\n\n');
   return { text: out, rejected: null, masked: merged.length, ...base };
 }
 

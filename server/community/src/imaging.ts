@@ -22,8 +22,9 @@ export class ImageError extends Error {
 }
 
 /** Larger images are refused (client-side decompression bombs: a 2 MB PNG can be 100k × 100k px). */
-export const MAX_PIXELS = 50_000_000;
-export const MAX_SIDE = 16_384;
+export const MAX_PIXELS = 16_000_000;
+export const MAX_SIDE = 8192;
+const MAX_SEGMENTS = 2048;
 
 export interface SanitizedImage {
   bytes: Uint8Array;
@@ -116,7 +117,9 @@ function sanitizeJpeg(b: Uint8Array): Omit<SanitizedImage, 'ext'> {
   let pos = 2;
   let ended = false;
 
+  let segments = 0;
   while (!ended) {
+    if (++segments > MAX_SEGMENTS) throw new ImageError('too many JPEG segments');
     if (pos >= b.length || b[pos] !== 0xff) throw new ImageError('bad JPEG marker');
     while (pos < b.length && b[pos] === 0xff) pos++; // fill bytes
     if (pos >= b.length) throw new ImageError('truncated JPEG');
@@ -226,7 +229,9 @@ function sanitizePng(b: Uint8Array): Omit<SanitizedImage, 'ext'> {
   let first = true;
   let sawIdat = false;
   let ended = false;
+  let segments = 0;
   while (pos < b.length && !ended) {
+    if (++segments > MAX_SEGMENTS) throw new ImageError('too many PNG chunks');
     if (pos + 12 > b.length) throw new ImageError('truncated PNG');
     const len = u32be(b, pos);
     if (len > 0x7fffffff || pos + 12 + len > b.length) throw new ImageError('bad PNG chunk length');
@@ -257,11 +262,14 @@ function sanitizeWebp(b: Uint8Array): Omit<SanitizedImage, 'ext'> {
   const chunks: { type: string; payload: Uint8Array }[] = [];
   let orientation = 1;
   let pos = 12;
+  let segments = 0;
   while (pos + 8 <= riffEnd) {
+    if (++segments > MAX_SEGMENTS) throw new ImageError('too many WebP chunks');
     const type = ascii(b, pos, 4);
     const size = u32le(b, pos + 4);
     if (pos + 8 + size > riffEnd) throw new ImageError('bad WebP chunk size');
     const payload = b.subarray(pos + 8, pos + 8 + size);
+    if (type === 'ANIM' || type === 'ANMF' || (type === 'VP8X' && ((payload[0] ?? 0) & 2) !== 0)) throw new ImageError('animated WebP is not supported');
     if (type === 'EXIF') {
       const tiff = ascii(payload, 0, 6) === 'Exif\0\0' ? payload.subarray(6) : payload;
       orientation = Math.max(orientation, readTiffOrientation(tiff));

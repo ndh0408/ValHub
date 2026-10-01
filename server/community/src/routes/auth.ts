@@ -17,7 +17,7 @@ import {
 /** Policy / consent version label such as "2026-09" or "1.2": short, printable, no spaces. */
 function parseConsentVersion(v: unknown): string {
   if (typeof v !== 'string' || !/^[A-Za-z0-9._-]{1,32}$/.test(v)) {
-    throw invalid('consentVersion phải gồm 1-32 ký tự chữ, số, . _ -');
+    throw invalid('consentVersion phải gồm 1-32 ký tự chữ, số, . _ -', 'consent_version_invalid');
   }
   return v;
 }
@@ -52,10 +52,10 @@ export function registerAuth(app: Hono, x: Ctx): void {
     const rankTier = parseOptional(body, 'rankTier', parseRankTier);
     // App language (v3). Absent (clients before v3) → keep the stored value; null is not allowed.
     const language = parseOptional(body, 'language', (v) => parseLanguage(v, 'language'));
-    if (language === null) throw invalid('language không được để trống.');
+    if (language === null) throw invalid('language không được để trống.', 'field_empty', { field: 'language' });
     // Policy version the user accepted (optional; only version and time are stored, see CS-34).
     const consentVersion = parseOptional(body, 'consentVersion', parseConsentVersion);
-    if (consentVersion === null) throw invalid('consentVersion không được để trống.');
+    if (consentVersion === null) throw invalid('consentVersion không được để trống.', 'field_empty', { field: 'consentVersion' });
 
     let identity: RiotIdentity;
     try {
@@ -136,7 +136,7 @@ export function registerAuth(app: Hono, x: Ctx): void {
     if (regionRaw === null) throw new ApiError('invalid_input', 'region không được để trống.');
     const region: Region | undefined = regionRaw;
     const languageRaw = parseOptional(body, 'language', (v) => parseLanguage(v, 'language'));
-    if (languageRaw === null) throw invalid('language không được để trống.');
+    if (languageRaw === null) throw invalid('language không được để trống.', 'field_empty', { field: 'language' });
     const updated = x.repo.updateUser(user.id, { cardId, rankTier, region, language: languageRaw }, x.now());
     if (!updated) throw new ApiError('unauthorized', 'Tài khoản không tồn tại.');
     return x.json(c, authorFromUser(updated));

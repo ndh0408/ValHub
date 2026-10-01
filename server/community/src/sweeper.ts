@@ -1,4 +1,5 @@
 import { deleteMedia, quarantineMedia, type MediaDeps } from './media-service.js';
+import type { ContentCatalog } from './content.js';
 
 /** Uploaded but never attached to a post: removed after a day. */
 export const ORPHAN_MEDIA_MS = 24 * 60 * 60_000;
@@ -28,7 +29,8 @@ export interface SweepResult {
  * - old rate-limit windows and LFG posts expired for more than 8 days.
  * Every step is independent and tolerant: one failure never blocks the others.
  */
-export async function sweep(d: MediaDeps & { prune?: () => void }): Promise<SweepResult> {
+const catalogVersions = new WeakMap<object, number>();
+export async function sweep(d: MediaDeps & { prune?: () => void; content?: ContentCatalog }): Promise<SweepResult> {
   const now = d.now();
   const out: SweepResult = {
     hiddenQuarantined: 0,
@@ -45,6 +47,14 @@ export async function sweep(d: MediaDeps & { prune?: () => void }): Promise<Swee
       d.logError?.(`sweep ${name} failed: ${(e as Error).name}: ${(e as Error).message}`);
     }
   };
+
+  await step('canonical-skins', () => {
+    const version = d.content?.skinMapVersion?.();
+    if (version !== undefined && version !== catalogVersions.get(d.repo) && d.content?.resolveSkin) {
+      d.repo.canonicalizeSkins((id) => d.content!.resolveSkin!(id));
+      catalogVersions.set(d.repo, version);
+    }
+  });
 
   await step('hidden-media', async () => {
     const rows = d.repo.mediaOfHiddenPosts();

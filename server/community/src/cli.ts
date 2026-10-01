@@ -19,6 +19,7 @@ import { SqliteRepo } from './db/sqlite-repo.js';
 import { DiskMediaStore, MEDIA_KEY_RE, type MediaStore } from './media.js';
 import { deleteMedia, postMediaKeys, quarantineMedia } from './media-service.js';
 import { sweep } from './sweeper.js';
+import { ErasureLedger } from './erasures.js';
 import { REPORT_TARGETS, isUuid, type ReportTarget } from './validate.js';
 
 export interface CliDeps {
@@ -29,6 +30,7 @@ export interface CliDeps {
   err: (line: string) => void;
   /** Base URL used for media links in exports (PUBLIC_BASE_URL). */
   baseUrl?: string;
+  erasureLedger?: ErasureLedger;
 }
 
 /** Reason codes of a sanction / takedown (stored and shown to the user as a code, never free text). */
@@ -135,6 +137,10 @@ export async function runCli(argv: string[], d: CliDeps): Promise<number> {
     d.repo.addAudit({ at: d.now(), action, ...o });
 
   switch (cmd) {
+    case 'replay-erasures':
+      if (!d.erasureLedger) throw new Error('Erasure ledger is not configured');
+      d.out(`erased restored accounts: ${await d.erasureLedger.replay(d)}`);
+      return 0;
     case undefined:
     case 'help':
     case '--help':
@@ -446,6 +452,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     out: (l) => console.log(l),
     err: (l) => console.error(l),
     baseUrl: (process.env.PUBLIC_BASE_URL ?? '').replace(/\/+$/, ''),
+    erasureLedger: new ErasureLedger(path.join(dataDir, 'erasures.jsonl')),
   });
   db.close();
   process.exit(code);

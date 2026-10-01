@@ -7,7 +7,7 @@ import { expectError, PNG, setup, SKIN_A, SKIN_B, WEAPON_1, type Env } from './h
 
 let e: Env;
 beforeEach(() => {
-  e = setup();
+  e = setup({ established: true });
 });
 afterEach(() => e.close());
 

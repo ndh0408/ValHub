@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { Ctx, type AppDeps } from './context.js';
-import { ApiError, errorBody, reasonError } from './errors.js';
+import { ApiError, errorBody, reasonError, notFound } from './errors.js';
 import { registerAccount } from './routes/account.js';
 import { registerAuth } from './routes/auth.js';
 import { registerCommunities } from './routes/communities.js';
@@ -11,6 +11,7 @@ import { registerPosts } from './routes/posts.js';
 import { registerPublicGuard } from './routes/public-guard.js';
 import { registerReviews } from './routes/reviews.js';
 import { registerSkins } from './routes/skins.js';
+import { registerIdempotency } from './idempotency.js';
 
 export type { AppDeps } from './context.js';
 
@@ -40,6 +41,7 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
   app.use('*', async (c, next) => {
     await next();
     if (!c.res.headers.has('cache-control')) c.res.headers.set('cache-control', 'no-store');
+    if (c.res.status >= 400) x.stats.inc(`${c.res.status}:${c.req.routePath ?? 'unmatched'}`);
   });
 
   // Load shedding: while the event loop is lagging (sustained, see load.ts) answer 503 at once instead of
@@ -72,7 +74,16 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
     return x.json(c, { ok }, ok ? 200 : (500 as 200));
   });
 
+  app.get('/healthz/deep', async (c) => {
+    const peer = (c.env as { incoming?: { socket?: { remoteAddress?: string } } } | undefined)?.incoming?.socket?.remoteAddress;
+    if (!['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(peer ?? '') || c.req.header('cf-connecting-ip') || c.req.header('x-forwarded-for') || !deps.deepHealth) throw notFound();
+    const metrics = await deps.deepHealth();
+    const ok = metrics.writable === true && typeof metrics.freeBytes === 'number' && metrics.freeBytes >= 64 * 1024 * 1024 && deps.repo.ping();
+    return x.json(c, { ...metrics, loopLagMs: x.loadLagMs(), ok }, ok ? 200 : (503 as 200));
+  });
+
   registerPublicGuard(app, x);
+  registerIdempotency(app, x);
   registerAuth(app, x);
   registerAccount(app, x);
   registerLfg(app, x);
@@ -96,7 +107,7 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
       err = e;
     } else {
       // Only the error name/message is logged — never headers, bodies or tokens.
-      logError(`[${c.req.method} ${c.req.routePath}] ${e.name}: ${e.message}`);
+      logError(`[${c.req.method} ${c.req.routePath}] ${e.name}`);
       err = reasonError('server_error', 'server_error');
     }
     const headers: Record<string, string> = {

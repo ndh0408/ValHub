@@ -22,5 +22,6 @@ export const EN_WORDLIST = defineWordlist('en', {
   scam: [
     'sell acc', 'selling acc', 'selling account', 'buy acc', 'boost rank', 'rank boost', 'elo boost',
     'elo boosting',
+    'acc for sale', 'account for sale', 'accounts for sale', 'selling accounts', 'buy account', 'buy accounts',
   ],
 });

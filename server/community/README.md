@@ -38,7 +38,7 @@ src/
   load.ts            event-loop lag monitor (load shedding)      metrics.ts   aggregate counters (no user data)
   reasons.ts         stable error reason codes + Vietnamese / English texts
   config.ts crypto.ts cursor.ts errors.ts riot.ts validate.ts
-migrations/          0001_init.sql ... 0007_sessions.sql — additive; never edit an applied migration
+migrations/          0001_init.sql ... 0010_idempotency.sql — additive; never edit an applied migration
 ops/backup-loop.sh   the valvn-backup service's loop        scripts/restore.sh   restore from a backup archive
 test/                vitest (in-memory SQLite + temp dirs, stubbed Riot /userinfo, fake clock)
 ```
@@ -53,7 +53,7 @@ never touch the network or the real clock.
 | `SESSION_SECRET` | yes, ≥ 32 chars | HS256 key for community session tokens (30 days). Replacing it logs everyone out unless you rotate with `SESSION_SECRET_PREV` (note 61). |
 | `SESSION_SECRET_PREV` | no, ≥ 32 chars | The previous secret during a rotation: tokens signed with it are still accepted (never used to sign). Remove it after 30 days. |
 | `PEPPER` | yes, ≥ 32 chars | user id = `hex(sha256(PEPPER + puuid))[0..32]`; also salts the hashed IPs. **Never change after launch.** |
-| `PUBLIC_BASE_URL` | no | Public origin used for media URLs, e.g. `https://val.gianguyen.cloud`. Empty → derived from the request (`X-Forwarded-Proto` / `X-Forwarded-Host`). |
+| `PUBLIC_BASE_URL` | yes in production | HTTPS public origin for media URLs, e.g. `https://val.gianguyen.cloud`; placeholder hosts, credentials, query and fragment are rejected. Development may derive it from the request. |
 | `TRUST_PROXY` | no (default **`false`**) | Believe `CF-Connecting-IP` (client address) and `X-Forwarded-Proto/Host`. `docker-compose.yml` sets it to `true` (`${TRUST_PROXY:-true}`) because that stack is reached through the Cloudflare Tunnel only; a server reachable without Cloudflare must leave it `false`. Even when true, the header is only believed if the TCP peer is a loopback / private address (note 64). |
 | `PORT` | no (8080) | |
 | `DATA_DIR` | no (`/data`) | SQLite file + `media/` + `quarantine/`. |
@@ -66,7 +66,10 @@ never touch the network or the real clock.
 | `USER_REQUEST_LIMIT_PER_MIN` | no (240) | Requests per signed-in user per minute, any method and route (`429 rate_limited`, `params.bucket = "requests"`); a coarse valve above the per-action limits (10 - 1,000,000). |
 | `LOAD_SHED_LAG_MS` | no (250) | Event-loop lag above which every request except `/healthz` is answered `503 server_busy` + `Retry-After: 2` (load shedding, see note 59); `0` = off. |
 | `MEDIA_EDGE_CACHE_SECONDS` | no (0) | How long Cloudflare's edge may keep an image (`Cloudflare-CDN-Cache-Control`). `0` = `no-store`: deleted / quarantined images stop being served at once. Devices always keep the 1-year `Cache-Control`. A value <= 60 trades a short deletion lag for fewer origin reads. |
-| `BACKUP_DIR`, `BACKUP_KEEP_DAYS`, `BACKUP_INTERVAL_SECONDS` | no | Backup service (compose): host directory (`./backups`), retention (14), period (86400). |
+| `BACKUP_DIR`, `BACKUP_KEEP_DAYS`, `BACKUP_INTERVAL_SECONDS` | no | Backup service: writable host directory (`./backups`, uid 1000), retention (1–14 days, default 14), period (≥60 seconds, default 86400). |
+| `BACKUP_OFFSITE_CMD`, `BACKUP_AGE_RECIPIENT` | no | Optional operator command and age public recipient. Hook receives `BACKUP_FILE`, pointing only to the encrypted `.tgz.age`; failure prevents the success stamp. |
+| `SESSION_SECRET_FILE`, `SESSION_SECRET_PREV_FILE`, `PEPPER_FILE` | no | Read a secret from a mounted file instead of the corresponding env value; setting both is rejected. Compose secret mounts must be provided by the operator. |
+| `LFG_CODE_IN_LIST` | no (true) | Compatibility flag: false hides another author's party code in lists; join returns it. Keep true until the updated app requests the code before joining. |
 
 The process exits immediately with a clear message if a secret is missing / too short or a number is out of range.
 
@@ -74,7 +77,7 @@ The process exits immediately with a clear message if a secret is missing / too 
 
 ```bash
 cd server/community
-npm install
+npm ci --ignore-scripts
 npm test            # vitest
 npm run typecheck   # tsc --noEmit
 cp .env.example .env   # fill secrets, set DATA_DIR=./data
@@ -147,15 +150,27 @@ never holds a request), but an out-of-memory kill at `mem_limit` is handled by t
 
 ### Backup
 
-The `valvn-backup` service (compose) takes a consistent snapshot of the SQLite database (online backup API,
-integrity-checked) plus the `media/` directory every 24 h into `BACKUP_DIR` as `valvn-community-YYYYmmdd-HHMM.tgz`
-(mode 0600), keeps 14 days, and after a restart waits out the interval instead of taking an extra copy. The
-quarantine directory is not backed up. One-off backup: `docker compose run --rm -e BACKUP_ONCE=1 valvn-backup`.
+The `valvn-backup` service takes an online SQLite snapshot and copies only active media referenced by that
+snapshot, plus `/data/erasures.jsonl`. It verifies database integrity, foreign keys and every media file size,
+then atomically renames a mode-0600 `.tgz` archive. Staging uses `BACKUP_DIR/.tmp` on disk. A racing media deletion
+fails that run instead of publishing an incomplete snapshot. Quarantine is excluded.
 
-- **Retention and privacy:** data users delete (their account, posts, images) survives in backups until the
-  archive that contains it ages out, at most `BACKUP_KEEP_DAYS` (14) days. Keep `BACKUP_DIR` mode 700 and off
-  shared / synced folders. If you need a deletion to be immediate everywhere, delete the archives that contain it.
-- Keep `.env` (especially `PEPPER`) backed up **separately**: without it user ids cannot be reproduced.
+Every run performs verification; once a week an extracted copy runs migrations and erasure replay, then is
+verified again. `last-success` and `last-drill` drive the backup container healthcheck (success within two
+intervals + one hour, drill within eight days). The loop retries after failures and runs retention even when
+backup fails: archives expire at 1–14 days, undo archives at 14 days, abandoned staging at 24 hours.
+One-off backup: `docker compose run --rm -e BACKUP_ONCE=1 valvn-backup`.
+
+Optional off-site transfer: set `BACKUP_AGE_RECIPIENT` to the destination's age public key and
+`BACKUP_OFFSITE_CMD` to a reviewed uploader available inside the backup container. The hook receives
+`BACKUP_FILE` as the encrypted `.tgz.age` path; the private decryption key stays off-host. Configure credentials
+and executable mounts in an operator override, and enforce ≤14-day remote retention. No remote destination is
+configured by this repository. To restore encrypted data, decrypt it to a protected `.tgz` first.
+
+Keep the backup directory mode 700 and `.env` (especially `PEPPER`) backed up separately. Deleted data can
+remain in old archives up to 14 days; restore replay removes erased accounts before serving. The current erasure
+ledger must survive independently of an old archive: copy it securely off-host after erasures. If the whole host
+and that current ledger are lost, a stale backup cannot know deletions received afterwards.
 
 ### Restore runbook
 
@@ -173,12 +188,11 @@ quarantined files (the quarantine directory is not in backups), starts the servi
 row counts. To undo, run the script on the archive in `pre-restore/`. Afterwards check `docker compose logs
 valvn-community` and open the app. Notes:
 
-- A restore also brings back what users deleted after that backup: **re-apply erasure requests received since**
-  (see the data-rights runbook; deleted accounts are listed in your mailbox, not in the database).
+- Restore keeps the current erasure ledger, merges the snapshot ledger and replays it **before restart**. Startup also replays it before listening. Corrupt ledger entries fail closed; recover the ledger before serving. Account recreation after a recorded deletion is preserved.
 - Restoring to a new host: install Docker, copy `.env` (same `PEPPER`), `docker compose build`, then run the script
   (it starts from an empty volume: `docker compose up -d` once first, or `docker volume create valvn-community-data`).
 - Manual restore without the script: stop the services, extract `snap.db` as `community.db` and `media/` into the
-  volume, delete `community.db-wal` / `-shm`, start.
+  volume, delete `community.db-wal` / `-shm`, preserve/merge the latest ledger, run `node dist/cli.js replay-erasures`, then start.
 
 ## Data-rights runbook (requests by email)
 
@@ -202,26 +216,15 @@ Erasure removes: posts (with their comments and likes), comments, reviews (with 
 joins, uploaded images (public and quarantined files) and the user row. **Reports the user
 filed** are kept but anonymised (`reporter_id` → `anon-…`, free text cleared) because they may have hidden
 content; reports **about** their content are deleted. Backups keep older copies for up to 14 days (see Backup).
-**Verify who is asking** before acting (reply to the email of the Riot account, or ask them to add a marker to
-their in-game note); the community server cannot check a Riot ID by itself. Without the CLI, the same in SQL
-(`docker compose exec valvn-community node -e` with `better-sqlite3`, `PRAGMA foreign_keys = ON`):
-
-```sql
--- id from: SELECT id FROM users WHERE game_name = 'Name' COLLATE NOCASE AND tag_line = 'TAG' COLLATE NOCASE;
-UPDATE skin_reviews SET like_count = MAX(0, like_count - 1) WHERE id IN (SELECT review_id FROM review_likes WHERE user_id = :id);
-DELETE FROM reports WHERE target_type = 'post'    AND target_id IN (SELECT id FROM posts WHERE user_id = :id);
-DELETE FROM reports WHERE target_type = 'comment' AND target_id IN (SELECT id FROM comments WHERE user_id = :id);
-DELETE FROM reports WHERE target_type = 'review'  AND target_id IN (SELECT id FROM skin_reviews WHERE user_id = :id);
-DELETE FROM reports WHERE target_type = 'lfg'     AND target_id IN (SELECT id FROM lfg_posts WHERE user_id = :id);
-UPDATE reports SET reporter_id = 'anon-' || lower(hex(randomblob(8))), reason = '' WHERE reporter_id = :id;
--- (rate_limits counters are kept on purpose: they hold only the id and a count and expire within a day)
--- image files: SELECT key FROM media WHERE user_id = :id;  then delete /data/media/<key> and /data/quarantine/<key>
-DELETE FROM users WHERE id = :id;   -- cascades to posts, comments, reviews, likes, votes, LFG, media rows
-```
+**Verify account ownership before acting.** Use the authenticated in-app API whenever possible.
+Use the API or CLI for erasure; direct SQL skips the durable ledger and media lifecycle.
+For email requests, prefer directing the verified account holder to the in-app export/delete actions. A Riot ID
+alone does not prove ownership. The server cannot access Riot account email; any manual identity verification
+must happen before the operator invokes the CLI. A one-time in-app verification code is future client work.
 
 ## Moderation runbook
 
-- Content hidden by 3 reports of established accounts (see note 53) disappears from lists; its images move to
+- Content hidden when eligible report weights reach 3 (see note 53) disappears from lists; its images move to
   `quarantine/` (404 on `/v1/media`) and are purged after 30 days.
 - `node dist/cli.js quarantine list` lists them; `quarantine restore <key>` puts one back; `quarantine purge <key>`
   deletes it now. **False reports:** `node dist/cli.js unhide post|comment|lfg|review <uuid>` un-hides the content,
@@ -288,8 +291,9 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
 7. **LFG:** `region` and `mode` filters on `GET /v1/lfg` are both optional (no filter = all).
    If `rankTier` is omitted on create it defaults to the author's profile rank (explicit `null` = none).
    `note` is trimmed; an empty note is stored as `null`. Deleting an expired / hidden own post is allowed.
-8. **Skin votes:** the `weaponUuid` of a skin is pinned by its first vote (later votes with a
-   different weapon count toward the same skin/weapon), so a bad client value cannot split counts.
+8. **Skin votes:** base, level and chroma UUIDs resolve to one base skin. The server derives its weapon from the
+   catalog; a persisted alias table merges historic collisions. Without a known mapping, the first weapon is pinned
+   until a catalog refresh canonicalizes it. Catalog mappings survive restart.
    `GET /v1/skins/top` default `limit` is 20. `ids` duplicates are collapsed; order is preserved.
    PUT and DELETE both count toward the 120/hour vote limit.
 9. **Posts:** `payload` is required for `store` / `nightmarket` and forbidden for `text`. Payload is
@@ -326,14 +330,16 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
 19. `myReview` in the summary is returned to its author even when hidden by reports (so they can see
     or delete it). Hidden reviews are excluded from lists, averages, counts and the distribution, and
     liking them returns 404. Liking or unliking your own review → 403.
-20. `period=week` counts votes cast and reviews created **or edited** (`updatedAt`) in the last 7 days;
+20. `period=week` counts votes cast and reviews first created (`createdAt`) in the last 7 days; edits do not bump the week;
     `ratingAvg` / `ratingCount` / `reviewCount` in `/v1/skins/top` follow the same period.
 21. `sort=rating`: `m` is the mean of all visible ratings in the period across **all** weapons (the
     `weapon` filter only restricts which skins are ranked); ties → more ratings, then skin uuid.
     `sort=reviews`: skins with at least one visible rating, ordered by `reviewCount` (non-empty body),
     then `ratingCount`. `sort=votes` lists skins that have votes, as before.
-22. A skin's `weaponUuid` is pinned by its first vote **or** review; the summary returns
-    `weaponUuid: null` for a skin nobody has voted on or reviewed.
+22. A known skin's `weaponUuid` comes from the catalog (even without activity); an unmapped skin falls back to
+    its first vote or review. Only established, unsanctioned accounts contribute to public votes and rating statistics:
+    age ≥24 hours plus a visible post/comment/review, vote or like. Choices from new accounts are saved immediately.
+    Rating ranking requires ≥10 ratings and uses Bayesian C=15.
 
 ### LFG v2
 
@@ -345,8 +351,8 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
 25. PATCH on an expired post → 404 (a heartbeat cannot revive it; the client posts a new one).
     `partySize` / `slots` / `status` cannot be `null`; `note: null` clears the note.
     `partySize + slots` is not constrained (a full party keeps its last `slots`).
-26. `POST /v1/lfg/{id}/join` works for any status, but not for expired/hidden posts (404) or the owner
-    (403). Joins are dropped when the owner replaces the post. Rows created before v2 report
+26. `POST /v1/lfg/{id}/join` requires an open party; full/in-game posts or the owner return 403, expired/hidden posts
+    return 404. It returns `{joins, partyCode}`. Joins are dropped when the owner replaces the post. Rows created before v2 report
     `partySize = 5 - slots` and `updatedAt = createdAt`.
 27. Extra rate limits: PATCH 120 / 10 min (a 20 s heartbeat fits easily), join 30 / 10 min.
     Reviews 30 / hour (create + edit); review likes share the 120 / hour likes limit with post likes.
@@ -409,7 +415,7 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
     excluded **only when the filter is used**. LFG's `language` matches the party language or `any`;
     `language=any` (or a list containing `any`) disables the filter.
 39. **LFG party language** now accepts the 17 codes plus `any` (old `vi | en | any` still fine). When omitted it
-    defaults to the author's language, and to `vi` when the author never sent one (what clients before v3 got).
+    defaults to the author's language, and to `any` when the author never sent one. Old stored party languages are retained.
 40. **Replaced LFG posts are kept (expired), not deleted**, so `/v1/communities` can count a week of LFG
     activity; their joins are deleted and they are purged 8 days after expiry. `GET /v1/lfg/mine`, lists and
     `join` only see unexpired posts, as before. `DELETE /v1/lfg/{id}` on such an expired own post now answers
@@ -428,8 +434,8 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
 43. `moderate(text, {language, country})` applies: English always; the list of the text's language (the item's
     `language`, else the author's; `zh-CN` / `zh-TW` share `zh`); lists implied by the script / charset
     (Hangul → ko, kana → ja, Han → zh, Thai → th, Arabic script → ar, Cyrillic → ru, Vietnamese letters → vi,
-    ß → de, ñ ¿ ¡ → es, ą ę ł → pl, ğ ı ş → tr); and for Latin-only text the Vietnamese list when the language
-    is unknown / `vi` / `en` (unaccented teencode — the original behaviour) plus the local-language list implied
+    ß → de, ñ ¿ ¡ → es, ą ę ł → pl, ğ ı ş → tr); the Vietnamese list applies only to declared `vi`, VN country or
+    detected Vietnamese script, preserving English gaming abbreviations such as DM/CC. Also use the local-language list implied
     by the author's country (VN → vi, MX → es, BR → pt, DE → de, TR → tr, ID → id, …). Text in a language
     without a list (Hindi, Greek, Hebrew, Swahili, …) only gets English matching and is **never** rejected for
     that.
@@ -455,10 +461,10 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
     Adobe marker); EXIF (incl. GPS), XMP, IPTC / Photoshop, comments, MPF, thumbnails and every unknown / extension
     marker are dropped, and so is anything after EOI. PNG: whitelist of `IHDR PLTE IDAT IEND tRNS gAMA cHRM sRGB
     iCCP sBIT bKGD` (text, `eXIf`, `tIME`, APNG chunks dropped; CRCs untouched), data after `IEND` dropped. WebP:
-    `VP8 VP8L VP8X ALPH ANIM ANMF ICCP` kept, `EXIF` / `XMP` dropped, RIFF size and VP8X flags rebuilt. **Only the EXIF
+    `VP8 VP8L VP8X ALPH ICCP` kept; animation flags / `ANIM` / `ANMF` rejected, `EXIF` / `XMP` dropped, RIFF size and VP8X flags rebuilt. **Only the EXIF
     orientation** is kept, rewritten as a 26-byte block, so phone photos are not shown sideways. Files that are not
-    structurally valid images (truncated, bad segment lengths, no scan / IDAT / IEND) or larger than 50 megapixels /
-    16,384 px a side are refused with 400 (client-side decompression bombs). `sharp` was evaluated and not used: it
+    structurally valid images (truncated, bad segment lengths, no scan / IDAT / IEND) or larger than 16 megapixels /
+    8,192 px a side are refused with 400 (client-side decompression bombs). `sharp` was evaluated and not used: it
     adds ~30 MB of prebuilt libvips per platform (glibc / musl / arm), more memory per upload and a larger attack
     surface to do what a small parser does exactly; the trade-off is that pixels are not re-encoded (no generation
     loss, but also no removal of data hidden *inside* the pixel stream). A fuzz test mutates valid files 1,500 times
@@ -497,8 +503,9 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
     flag), comments, reviews, post / review likes, votes (with the country / region stored at vote time), LFG posts and
     joins, reports it filed, media list. Nothing about other people's private data; no PUUID or IP exists to export.
 53. **Report-hiding rule.** A report is always accepted and stored (`204`), but only reports from **established accounts**
-    count toward the 3 that hide content: the reporter's account is at least **24 hours old** and has done at least
-    one thing on the service (a post, comment, review, vote or like). Eligibility is re-evaluated whenever a new
+    contribute weight toward the threshold of 3: age at least **24 hours** and activity (a visible post/comment/review,
+    vote or like), with no active sanction. Each contributes weight 1, or 2 after a report on content currently hidden
+    by a moderator. Each reporter can contribute to at most 3 automatic hides per UTC day. Eligibility is re-evaluated whenever a new
     report about the same target arrives (so reports from accounts that have matured since count then). The author's
     own reports never count (not even stored); duplicates are ignored; the answer is the same empty `204` in every
     case, so a reporter cannot tell whether their report counted, hid the content, or who else reported. Reports are
@@ -541,9 +548,9 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
     text ≈ 3 ms, worst case just under the caps (note 59) ≈ 20 ms; the rate limit runs before the filter.
 58. **Ops.** Container `mem_limit` (512 MB / backup 256 MB), `pids_limit`, `cap_drop: [ALL]`, read-only root, size-limited
     tmpfs; `valvn-backup` is part of `docker-compose.yml` (`ops/backup-loop.sh`: integrity-checked snapshots, atomic
-    archives, retention only after a successful backup, no extra backup after a restart, `BACKUP_ONCE=1`);
+    archives, independent retention, weekly restore drill, encrypted off-site hook, `BACKUP_ONCE=1`);
     `scripts/restore.sh` verifies, saves an undo archive, restores, waits for health. The whole stack (build, start,
-    backup, CLI erase, restore, health) was exercised end to end in Docker for this change.
+    backup, CLI erase, restore, health) was exercised in earlier work. WP-SRV validation is recorded in HANDOFF_REPORT.md; no production deploy was performed.
 
 ### Phase 1b hardening (WP-SRV, from the independent audit)
 
@@ -603,3 +610,43 @@ Behaviour chosen where `docs/community-api.md` is silent or ambiguous:
     suddenly gets `429`, `CF-Connecting-IP` is missing (bucketed by the tunnel's address). **Cloudflare rate rules** worth adding
     (Security -> WAF -> Rate limiting rules; they act before the origin): `/v1/auth/riot` 30 requests / 10 min per IP
     (block 10 min), `/v1/media` 300 / min per IP, `/v1/posts` 120 / min per IP (managed challenge).
+
+### WP-SRV operational details and remaining seams
+
+Migrations 0008–0010 add persisted skin aliases, account revocation tombstones (30-day token lifetime), and
+24-hour request keys. Canonicalization runs at startup and after catalog map refresh; collisions keep the earliest
+creation/origin, latest review body, hidden/moderator state and distinct likes/reports. `/data/catalog.json` restores
+the last catalog snapshot before serving; unknown UUID refresh is background-only with capped response size/backoff.
+
+Erasure appends and fsyncs `{id, at, epoch}` to `/data/erasures.jsonl` before deleting rows/files. It contains only the
+salted account id and deletion metadata; restrict its permissions and preserve it as a security/deletion log. Sanctions,
+moderation audit and short-lived rate/revocation counters survive account deletion to prevent evasion. LFG rows remain
+for up to eight days after expiry, orphan uploads 24 hours, quarantine 30 days, reports 365 days, request keys 24 hours.
+The legal/client documents outside this package still need the corresponding retention disclosures and localized UI.
+Cloudflare terminates TLS and can see the Riot token in transit; the origin never stores/logs it. Origin verification
+uses manual redirects, capped responses, at most 20 concurrent calls, outage cooldown and a bounded 60-second cache
+of rejected token hashes in memory.
+
+`Idempotency-Key` is optional for POST posts/comments/media. It hashes request bytes/content type and replays a
+successful response for 24 hours; a different payload returns 409. Concurrent retries share the result, each request
+revalidates authentication, and content deletion removes cached copies. This is retry protection, with a crash window
+between content commit and saving the key; callers must not assume exactly-once creation across crashes.
+
+The deep probe `/healthz/deep` accepts only a real loopback TCP peer with no forwarding headers: DB ping, data write
+probe, free bytes, WAL bytes and event-loop lag (unwritable or <64 MiB free → 503). Run it inside the API container.
+Minute security counters log only route patterns/status totals. A host disk alert/watchdog and dedicated tunnel network
+remain operator setup; the shared `edge` override is retained until its actual topology is reviewed. PRAGMA optimize
+runs in housekeeping; aggregate-table/materialized media counters need production query measurements before adding them.
+CI performs test/typecheck/audit/build/script checks and weekly image scanning, with no publish/deploy step.
+
+Keep one SQLite API replica. For PostgreSQL, introduce an awaited Repo contract at each call site, move `geoCondition`
+SQL into a database dialect, split Users/Content/Moderation/Media/RateLimit repositories, and run the same contract suite
+against both engines. Preserve transactional media quota/attachment and LFG ownership/expiry guards. ETL must retain
+ids, epochs, alias mappings, consent and deletion/security records. Dialect work includes named params, JSON functions,
+NOCASE, scalar MAX, randomblob and WITHOUT ROWID. No PostgreSQL migration is part of this change.
+
+For multiple replicas, the proposed AppDeps seams are async `RateLimitStore.consume(key, limit, window)`,
+`CacheStore.get/set/delete`, and `RevocationStore.getEpoch/bumpEpoch`; keep current SQLite/in-memory defaults first.
+An adapter must provide atomic counters with expiry, TTL entries, durable revocations and a leased sweep lock, and the
+idempotency store must coordinate across replicas. These seams are documented, not implemented; Redis is unnecessary
+for the current deployment and does not remove synchronous SQLite/filter CPU work.
