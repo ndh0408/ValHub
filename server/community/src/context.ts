@@ -188,10 +188,10 @@ export class Ctx {
    */
   canonSkin(uuid: string): SkinRef | null {
     try {
-      return this.deps.content?.resolveSkin?.(uuid) ?? null;
-    } catch {
-      return null;
-    }
+      const fresh = this.deps.content?.resolveSkin?.(uuid);
+      if (fresh) return fresh;
+    } catch { /* Fall back to aliases persisted by a previous successful canonicalization. */ }
+    return this.repo.skinAlias(uuid);
   }
 
   get repo(): Repo {

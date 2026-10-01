@@ -131,6 +131,7 @@ describe('WP-SRV integrity', () => {
   });
 
   it('preserves English gaming abbreviations; sanitizes bidi and combining/newline floods', () => {
+    for (const text of ['acc for sale', 'accounts for sale', 'selling accounts']) expect(moderate(text, { language: 'en' }).rejected).toBe('scam');
     for (const language of ['en', 'fr', undefined]) expect(moderate('DM me, CC please', { language }).text).toBe('DM me, CC please');
     expect(moderate('dm cc', { language: 'vi' }).text).toBe('*** ***');
     expect(moderate('dm cc', { language: 'en', country: 'VN' }).text).toBe('*** ***');

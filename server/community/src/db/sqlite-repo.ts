@@ -480,6 +480,12 @@ export class SqliteRepo implements Repo {
     return out;
   }
 
+  skinAlias(uuid: string): { skinUuid: string; weaponUuid: string } | null {
+    return this.db.prepare(`SELECT skin_uuid AS skinUuid, weapon_uuid AS weaponUuid FROM skin_aliases
+      WHERE alias_uuid = @id OR skin_uuid = @id ORDER BY (alias_uuid = @id) DESC LIMIT 1`)
+      .get({ id: uuid.toLowerCase() }) as { skinUuid: string; weaponUuid: string } | undefined ?? null;
+  }
+
   skinWeapon(skinUuid: string): string | null {
     const row = this.db
       .prepare(

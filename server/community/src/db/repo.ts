@@ -369,6 +369,7 @@ export interface Repo {
   canonicalizeSkins(resolve: (uuid: string) => { skinUuid: string; weaponUuid: string } | null): CanonicalizeResult;
   /** Weapon a skin is pinned to (by its first vote or review), or null if unknown. */
   skinWeapon(skinUuid: string): string | null;
+  skinAlias(uuid: string): { skinUuid: string; weaponUuid: string } | null;
   userVotes(userId: string, skinUuids: string[]): Set<string>;
   topSkins(q: { weaponUuid?: string; since?: number; limit: number; geo?: GeoScope }): SkinCount[];
   /** Skins with >= minCount visible ratings, by Bayesian average (C, mean m of the same scope/period). */

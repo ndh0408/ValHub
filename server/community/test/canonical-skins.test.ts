@@ -46,5 +46,11 @@ describe('canonical skins (CS-05)', () => {
     expect(e.repo.canonicalizeSkins(() => null)).toMatchObject({ votesMerged: 0, reviewsMerged: 0 });
     e.repo.voteSkin(a.user.id, SKIN_B, WEAPON_2, e.clock.t, { country: null, region: 'ap' });
     expect(e.repo.canonicalizeSkins(() => null).votesMerged).toBe(1);
+    // The original app has no catalog: persisted aliases must also protect new route writes,
+    // not just a one-time startup migration/sweep.
+    await e.req('PUT', `/v1/skins/${SKIN_B}/vote`, { token: a.token, body: { weaponUuid: WEAPON_2 } });
+    await e.req('PUT', `/v1/skins/${SKIN_B}/review`, { token: a.token, body: { weaponUuid: WEAPON_2, rating: 3 } });
+    expect(e.db.prepare('SELECT skin_uuid, weapon_uuid FROM skin_votes').all()).toEqual([{ skin_uuid: SKIN_A, weapon_uuid: WEAPON_1 }]);
+    expect(e.db.prepare('SELECT COUNT(*) AS n FROM skin_reviews').get()).toEqual({ n: 1 });
   });
 });
