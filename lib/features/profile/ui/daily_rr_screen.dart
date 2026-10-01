@@ -111,12 +111,9 @@ class DailyRrScreen extends ConsumerWidget {
       }
       return slivers;
     }
-    final trend = [for (final d in list.take(14)) d.netRr].reversed.toList();
     return slivers
       ..add(
-        SliverToBoxAdapter(
-          child: _WeekCard(days: list, trend: trend, now: now),
-        ),
+        SliverToBoxAdapter(child: _WeekCard(summary: weekSummary(list, now))),
       )
       ..add(const SliverToBoxAdapter(child: SizedBox(height: 4)))
       ..add(
@@ -164,11 +161,10 @@ class _DaysSkeleton extends StatelessWidget {
 /// "7 ngày qua": net RR, record and matches over the last seven local days,
 /// plus the RR trend of the listed days.
 class _WeekCard extends StatelessWidget {
-  const _WeekCard({required this.days, required this.trend, required this.now});
+  const _WeekCard({required this.summary});
 
-  final List<DailyRr> days;
-  final List<int> trend;
-  final DateTime now;
+  /// Computed by the pure [weekSummary] (unit-tested).
+  final WeekSummary summary;
 
   static const _window = 7;
 
@@ -176,18 +172,9 @@ class _WeekCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
-    final local = now.toLocal();
-    final from = DateTime(local.year, local.month, local.day - (_window - 1));
-    final week = [
-      for (final d in days)
-        if (!d.date.isBefore(from)) d,
-    ];
-    final net = week.fold<int>(0, (a, d) => a + d.netRr);
-    final wins = week.fold<int>(0, (a, d) => a + d.wins);
-    final losses = week.fold<int>(0, (a, d) => a + d.losses);
-    final draws = week.fold<int>(0, (a, d) => a + d.draws);
-    final matches = week.fold<int>(0, (a, d) => a + d.matches.length);
-    final trendNet = trend.fold<int>(0, (a, b) => a + b);
+    final net = summary.netRr;
+    final trend = summary.trend;
+    final trendNet = summary.trendNet;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: ValCard(
@@ -208,12 +195,17 @@ class _WeekCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        week.isEmpty
+                        summary.isEmpty
                             ? ProfileStrings.todayNone
                             : ProfileStrings.joined([
-                                ProfileStrings.winsLosses(wins, losses, draws),
-                                ProfileStrings.matchCount(matches),
-                                ProfileStrings.daysPlayed(week.length),
+                                ProfileStrings.winsLosses(
+                                  summary.wins,
+                                  summary.losses,
+                                  summary.draws,
+                                  summary.unknown,
+                                ),
+                                ProfileStrings.matchCount(summary.matches),
+                                ProfileStrings.daysPlayed(summary.daysPlayed),
                               ]),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: muted,
@@ -364,7 +356,12 @@ class _DayCard extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                   ProfileStrings.joined([
-                    ProfileStrings.winsLosses(day.wins, day.losses, day.draws),
+                    ProfileStrings.winsLosses(
+                      day.wins,
+                      day.losses,
+                      day.draws,
+                      day.unknown,
+                    ),
                     ProfileStrings.matchCount(day.matches.length),
                   ]),
                   maxLines: 2,

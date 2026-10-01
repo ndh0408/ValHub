@@ -12,6 +12,7 @@ import '../../storage/json_file_cache.dart';
 import '../../storage/prefs.dart';
 import '../../util/clock.dart';
 import '../economy/owned_items.dart';
+import '../economy/economy_fetch.dart' show canUseOfflineCopy;
 import 'loadout_changes.dart';
 import 'loadout_models.dart';
 import 'loadout_presets.dart';
@@ -74,7 +75,8 @@ class LoadoutController extends AsyncNotifier<LoadoutSnapshot> {
     final LoadoutSnapshot snapshot;
     try {
       snapshot = await repo.fetch(puuid);
-    } on TransientException {
+    } on RiotException catch (error) {
+      if (!canUseOfflineCopy(error)) rethrow;
       final cached = await _readOffline();
       if (cached == null) rethrow;
       return cached;
@@ -224,15 +226,14 @@ class LoadoutPresetsNotifier extends Notifier<List<LoadoutPreset>> {
   List<LoadoutPreset> build() =>
       ref.watch(loadoutPresetStoreProvider).read(puuid);
 
-  /// Name proposed in the "Tên bộ trang bị" dialog.
-  String get suggestedName {
-    final names = {for (final p in state) p.name};
-    var n = state.length + 1;
-    while (names.contains(LoadoutStrings.defaultPresetName(n))) {
-      n++;
-    }
-    return LoadoutStrings.defaultPresetName(n);
-  }
+  int get _nextNumber => nextDefaultPresetNumber(
+    state,
+    legacyName: LoadoutStrings.defaultPresetName,
+  );
+
+  /// Name proposed in the "Tên bộ trang bị" dialog. Its number is unique
+  /// among the account's presets whatever language their names are in.
+  String get suggestedName => LoadoutStrings.defaultPresetName(_nextNumber);
 
   bool get isFull => state.length >= kMaxLoadoutPresets;
 
@@ -240,11 +241,18 @@ class LoadoutPresetsNotifier extends Notifier<List<LoadoutPreset>> {
   /// is dropped beyond [kMaxLoadoutPresets].
   Future<LoadoutPreset> save(Loadout loadout, {String? name}) async {
     final now = ref.read(clockProvider).now();
+    final number = _nextNumber;
+    final proposed = LoadoutStrings.defaultPresetName(number);
+    final typed = normalizePresetName(name);
+    // The dialog is pre-filled with the proposal: keeping it means an
+    // automatic name (its number is remembered), changing it a custom one.
+    final automatic = typed == null || typed == proposed;
     final preset = LoadoutPreset.fromLoadout(
       loadout,
       id: 'p${now.microsecondsSinceEpoch}_${_idCounter++}',
-      name: normalizePresetName(name) ?? suggestedName,
+      name: typed ?? proposed,
       createdAt: now,
+      defaultNumber: automatic ? number : null,
     );
     await _set([preset, ...state].take(kMaxLoadoutPresets).toList());
     return preset;

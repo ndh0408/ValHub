@@ -99,6 +99,32 @@ void main() {
       );
     });
 
+    test(
+      'login and maintenance use the saved loadout, other errors propagate',
+      () async {
+        cache.entries['acct/${Lx.puuid}/loadout'] = CachedJson(
+          loadoutJson(version: 3),
+          DateTime(2026, 9, 28),
+        );
+        for (final error in <RiotException>[
+          const NeedsLoginException(),
+          const MaintenanceException(),
+        ]) {
+          when(() => api.playerLoadout(any())).thenThrow(error);
+          final c = makeContainer();
+          final saved = await readListened(c, loadoutProvider(Lx.puuid).future);
+          expect(saved.isFromCache, isTrue);
+          expect(saved.loadout.version, 3);
+        }
+        when(() => api.playerLoadout(any()))
+            .thenThrow(const NotFoundException());
+        await expectLater(
+          readListened(makeContainer(), loadoutProvider(Lx.puuid).future),
+          throwsA(isA<NotFoundException>()),
+        );
+      },
+    );
+
     test('apply: optimistic value, then the confirmed loadout', () async {
       final c = makeContainer();
       await readListened(c, loadoutProvider(Lx.puuid).future);
@@ -198,6 +224,30 @@ void main() {
       expect(stored.first.gun(Lx.vandal)!.buddyInstanceId, Lx.buddyInstanceA);
       expect(stored.first.expressions, loadout.expressions);
       expect(stored.first.createdAt, t0);
+    });
+
+    test('automatic names remember their number (GL-38)', () async {
+      final c = makeContainer();
+      final notifier = c.read(loadoutPresetsProvider(Lx.puuid).notifier);
+      final loadout = Loadout.fromJson(loadoutJson());
+      // Keeping the proposed name = automatic; typing another = custom.
+      final auto = await notifier.save(loadout, name: notifier.suggestedName);
+      expect(auto.defaultNumber, 1);
+      final custom = await notifier.save(loadout, name: 'Leo rank');
+      expect(custom.defaultNumber, isNull);
+      // A name that happens to look like a default one but was typed for
+      // another number is a custom name.
+      final typed = await notifier.save(loadout, name: 'Bộ trang bị 9');
+      expect(typed.defaultNumber, isNull);
+      expect(notifier.suggestedName, 'Bộ trang bị 4');
+      // Stored with the preset and unique after a rename.
+      final stored = LoadoutPresetStore(prefs).read(Lx.puuid);
+      expect(stored.map((p) => p.defaultNumber), [null, null, 1]);
+      await notifier.rename(auto.id, 'Đấu thường');
+      expect(
+        LoadoutPresetStore(prefs).read(Lx.puuid).last.defaultNumber,
+        isNull,
+      );
     });
 
     test('corrupt storage reads as empty', () async {

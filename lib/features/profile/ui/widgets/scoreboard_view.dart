@@ -10,6 +10,7 @@ import '../../../../core/ui/rank_badge.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
+import '../../data/scoreboard_order.dart';
 import '../../profile_strings.dart';
 import 'profile_widgets.dart';
 
@@ -41,92 +42,58 @@ class ScoreboardSliver extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final players = details.participants;
-    if (players.isEmpty) {
+    final sides = scoreboardOrder(details, perspective);
+    if (sides.isEmpty) {
       return const SliverToBoxAdapter(
         child: EmptyView(message: ProfileStrings.noPlayers),
       );
     }
-    if (details.modeKind == MatchModeKind.deathmatch) {
-      final ranked = [...players]
-        ..sort((a, b) {
-          final ka = details.statsFor(a.subject)?.kills ?? 0;
-          final kb = details.statsFor(b.subject)?.kills ?? 0;
-          final c = kb.compareTo(ka);
-          return c != 0
-              ? c
-              : (details.statsFor(b.subject)?.score ?? 0).compareTo(
-                  details.statsFor(a.subject)?.score ?? 0,
-                );
-        });
-      return SliverMainAxisGroup(
-        slivers: [
-          const SliverToBoxAdapter(
-            child: _TeamHeader(title: ProfileStrings.allPlayers),
-          ),
-          SliverToBoxAdapter(
-            child: _TeamCard(
-              deathmatch: true,
-              rows: [
-                for (var i = 0; i < ranked.length; i++)
-                  _PlayerRow(
-                    details: details,
-                    player: ranked[i],
-                    place: i + 1,
-                    hidden: hidden.contains(ranked[i].subject),
-                    highlighted: ranked[i].subject == perspective,
-                    onTap: () => onOpenPlayer(ranked[i].subject),
-                  ),
-              ],
-            ),
-          ),
-        ],
-      );
-    }
-
-    final me = details.player(perspective);
-    final myTeam = me == null || me.isObserver ? null : me.teamId;
-    final sides = [...details.sideIds]
-      ..sort((a, b) {
-        if (a == myTeam) return -1;
-        if (b == myTeam) return 1;
-        return 0;
-      });
     final slivers = <Widget>[];
     for (final side in sides) {
-      final teamPlayers = details.playersOfTeam(side);
-      if (teamPlayers.isEmpty) continue;
-      final team = details.team(side);
-      final title = myTeam == null
-          ? _teamName(side)
-          : side == myTeam
-          ? ProfileStrings.yourTeam
-          : ProfileStrings.enemyTeam;
-      final outcome = team == null
-          ? null
-          : team.won
-          ? MatchOutcome.win
-          : details.teams.any((t) => t.won)
-          ? MatchOutcome.loss
-          : null;
+      if (side.freeForAll) {
+        slivers
+          ..add(
+            const SliverToBoxAdapter(
+              child: _TeamHeader(title: ProfileStrings.allPlayers),
+            ),
+          )
+          ..add(
+            SliverToBoxAdapter(
+              child: _TeamCard(
+                deathmatch: true,
+                rows: [
+                  for (var i = 0; i < side.players.length; i++)
+                    _PlayerRow(
+                      details: details,
+                      player: side.players[i],
+                      place: i + 1,
+                      hidden: hidden.contains(side.players[i].subject),
+                      highlighted: side.players[i].subject == perspective,
+                      onTap: () => onOpenPlayer(side.players[i].subject),
+                    ),
+                ],
+              ),
+            ),
+          );
+        continue;
+      }
+      final title = switch (side.relation) {
+        SideRelation.yours => ProfileStrings.yourTeam,
+        SideRelation.enemy => ProfileStrings.enemyTeam,
+        SideRelation.neutral => _teamName(side.teamId ?? ''),
+      };
       slivers
         ..add(
           SliverToBoxAdapter(
             child: _TeamHeader(
               title: title,
-              score: team == null
-                  ? null
-                  : switch (details.modeKind) {
-                      MatchModeKind.teamDeathmatch ||
-                      MatchModeKind.escalation => team.numPoints,
-                      _ => team.roundsWon,
-                    },
-              outcome: outcome,
-              accent: side == myTeam
-                  ? _sideColor(context, win: true)
-                  : myTeam == null
-                  ? null
-                  : _sideColor(context, win: false),
+              score: side.score,
+              outcome: side.outcome,
+              accent: switch (side.relation) {
+                SideRelation.yours => _sideColor(context, win: true),
+                SideRelation.enemy => _sideColor(context, win: false),
+                SideRelation.neutral => null,
+              },
             ),
           ),
         )
@@ -134,7 +101,7 @@ class ScoreboardSliver extends StatelessWidget {
           SliverToBoxAdapter(
             child: _TeamCard(
               rows: [
-                for (final p in teamPlayers)
+                for (final p in side.players)
                   _PlayerRow(
                     details: details,
                     player: p,

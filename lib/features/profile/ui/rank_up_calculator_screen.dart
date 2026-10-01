@@ -417,16 +417,12 @@ class _ResultCards extends ConsumerWidget {
     final matches = estimate.matchesAtCurrentForm;
     final best = estimate.bestCaseWins;
     final hasForm = form.sampleSize > 0;
-    final p = form.winRate;
     final target = RankInfo.resolve(
       db,
       tier: estimate.targetTier,
       actUuid: current.actUuid,
     );
-    final span = (estimate.targetTier - estimate.currentTier) * 100;
-    final progress = span <= 0
-        ? 1.0
-        : ((span - estimate.rrNeeded) / span).clamp(0.0, 1.0);
+    final progress = estimate.progress;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -567,7 +563,7 @@ class _ResultCards extends ConsumerWidget {
                   right: row.matches == null
                       ? CompetitiveStrings.noValue
                       : ProfileStrings.aboutMatches(row.matches!),
-                  highlighted: p != null && (p - row.winRate).abs() < 0.025,
+                  highlighted: estimate.isNearestWinRate(row.winRate),
                 ),
             ],
           ),

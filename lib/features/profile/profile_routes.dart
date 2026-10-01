@@ -4,6 +4,7 @@ import 'ui/daily_rr_screen.dart';
 import 'ui/match_detail_screen.dart';
 import 'ui/player_profile_screen.dart';
 import 'ui/profile_screen.dart';
+import 'ui/performance_screen.dart';
 import 'ui/rank_up_calculator_screen.dart';
 
 /// Locations of the profile feature.
@@ -11,6 +12,7 @@ abstract final class ProfileRoutes {
   static const root = '/profile';
   static const rankUp = '/profile/rankup';
   static const dailyRr = '/profile/daily-rr';
+  static const performance = '/profile/performance';
 
   /// Query parameter: whose point of view a match is shown from.
   static const playerParam = 'player';
@@ -45,6 +47,10 @@ List<RouteBase> profileBranchRoutes({List<RouteBase> nested = const []}) => [
     path: ProfileRoutes.root,
     builder: (context, state) => const ProfileScreen(),
     routes: [
+      GoRoute(
+        path: 'performance',
+        builder: (context, state) => const PerformanceScreen(),
+      ),
       GoRoute(
         path: 'rankup',
         builder: (context, state) => const RankUpCalculatorScreen(),

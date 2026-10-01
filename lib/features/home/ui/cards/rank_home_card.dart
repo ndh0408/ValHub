@@ -15,7 +15,6 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
-import '../../../profile/data/recent_form.dart' show StreakKind;
 import '../../../profile/profile_routes.dart';
 import '../../../profile/ui/widgets/rank_card.dart' show formatRr;
 import '../../data/home_card.dart';
@@ -237,7 +236,12 @@ class _FormRow extends StatelessWidget {
           : net < 0
           ? colors.loss
           : colors.draw;
-      final record = HomeStrings.winsLosses(day.wins, day.losses, day.draws);
+      final record = HomeStrings.winsLosses(
+        day.wins,
+        day.losses,
+        day.draws,
+        day.unknown,
+      );
       final value = formatSignedRr(net);
       final label = snap.today != null
           ? HomeStrings.rrToday(value)

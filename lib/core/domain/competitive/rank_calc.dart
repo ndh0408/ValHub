@@ -33,26 +33,40 @@ const Set<String> _legacyTierTables = {
   'e4e9a692-288f-63ca-7835-16fbf6234fda', // Episode4
 };
 
-final RegExp _trailingNumber = RegExp(r'(\d+)\s*$');
+/// First tier of each division in the pre-Episode-5 tables: identical up to
+/// Diamond, then Immortal 1–3 are 21–23 and Radiant is 24 (CA §10.1).
+const Map<String, int> _legacyDivisionStart = {
+  'IRON': 3,
+  'BRONZE': 6,
+  'SILVER': 9,
+  'GOLD': 12,
+  'PLATINUM': 15,
+  'DIAMOND': 18,
+  'IMMORTAL': 21,
+  'RADIANT': 24,
+};
 
 /// Episode-5-equivalent tier of [tier] in [table], so ranks from different
 /// tables compare correctly (SUMMARY §9.5: "compare by table + tier, not by
 /// raw number across E4/E5"). E4 Immortal 1 (21) → 24, E4 Radiant (24) → 27,
 /// E5 Ascendant 3 (23) stays 23. Unranked / unused tiers → 0.
 ///
-/// Uses the tier's `division` and the trailing number of its name; falls
-/// back to the known legacy table ids, then to the raw tier (current table
-/// assumed, e.g. before content is downloaded).
+/// Uses the tier's `division` id and the tier **number**: the position
+/// inside the division is `tier − first tier of that division`. Never the
+/// localized name, whose numeral may be missing or non-ASCII in the other
+/// 17 languages (GL-24). Falls back to the known legacy table ids, then to
+/// the raw tier (current table assumed, e.g. before content is downloaded).
 int normalizeTier(int tier, CompetitiveTierTable? table) {
   if (tier <= 2) return 0;
   final t = table?.tier(tier);
   final start = _e5DivisionStart[t?.division];
   if (t != null && start != null) {
     if (start == 27) return 27;
-    final n = int.tryParse(
-      _trailingNumber.firstMatch(t.tierName)?.group(1) ?? '',
-    );
-    return start + ((n ?? 1) - 1).clamp(0, 2);
+    final legacy = table != null && _legacyTierTables.contains(table.uuid);
+    final divisionStart = legacy
+        ? _legacyDivisionStart[t.division] ?? start
+        : start;
+    return start + (tier - divisionStart).clamp(0, 2);
   }
   if (table != null && _legacyTierTables.contains(table.uuid) && tier >= 21) {
     return tier >= 24 ? 27 : tier + 3;
@@ -497,6 +511,7 @@ class DailyRr {
     required this.wins,
     required this.losses,
     required this.draws,
+    this.unknown = 0,
   });
 
   /// Local midnight of the day.
@@ -510,6 +525,7 @@ class DailyRr {
   final int wins;
   final int losses;
   final int draws;
+  final int unknown;
 
   CompetitiveUpdate get first => matches.first;
   CompetitiveUpdate get last => matches.last;
@@ -529,7 +545,7 @@ class DailyRr {
 /// (SUMMARY §9.6; days cut at local midnight). Newest day first, matches
 /// oldest first inside a day. Wins/losses come from [outcomes] (P-14
 /// `teams[].won`, keyed by match id) when known, otherwise from the RR sign
-/// (0 → draw / remake). [toLocal] converts UTC start times (default:
+/// (0 without a known outcome → unknown). [toLocal] converts UTC start times (default:
 /// device time zone).
 List<DailyRr> groupDailyRr(
   Iterable<CompetitiveUpdate> rows, {
@@ -555,20 +571,25 @@ List<DailyRr> groupDailyRr(
         var wins = 0;
         var losses = 0;
         var draws = 0;
+        var unknown = 0;
         var net = 0;
         for (final u in list) {
           net += u.rrEarned;
           final known = outcomes[u.matchId];
           final o = known == null || known == MatchOutcome.unknown
-              ? MatchOutcome.fromRr(u.rrEarned)
+              ? (u.rrEarned == 0
+                    ? MatchOutcome.unknown
+                    : MatchOutcome.fromRr(u.rrEarned))
               : known;
           switch (o) {
             case MatchOutcome.win:
               wins++;
             case MatchOutcome.loss:
               losses++;
-            case MatchOutcome.draw || MatchOutcome.unknown:
+            case MatchOutcome.draw:
               draws++;
+            case MatchOutcome.unknown:
+              unknown++;
           }
         }
         return DailyRr(
@@ -578,20 +599,116 @@ List<DailyRr> groupDailyRr(
           wins: wins,
           losses: losses,
           draws: draws,
+          unknown: unknown,
         );
       }(),
   ];
 }
 
 /// The Daily RR entry of the local day of [now] (`null` without ranked
-/// matches today). [days] as returned by [groupDailyRr].
-DailyRr? dailyRrOn(List<DailyRr> days, DateTime now) {
-  final local = now.toLocal();
+/// matches today). [days] as returned by [groupDailyRr]. [toLocal] converts
+/// [now] to the display zone (default: the device's).
+DailyRr? dailyRrOn(
+  List<DailyRr> days,
+  DateTime now, {
+  DateTime Function(DateTime)? toLocal,
+}) {
+  final local = (toLocal ?? (DateTime d) => d.toLocal())(now);
   final today = DateTime(local.year, local.month, local.day);
   for (final d in days) {
     if (d.date == today) return d;
   }
   return null;
+}
+
+/// "7 ngày qua" of the Daily RR screen (PR-15): what was played in the last
+/// [windowDays] local days, and the RR trend of the newest listed days.
+@immutable
+class WeekSummary {
+  const WeekSummary({
+    required this.netRr,
+    required this.wins,
+    required this.losses,
+    required this.draws,
+    required this.matches,
+    required this.daysPlayed,
+    required this.trend,
+    this.unknown = 0,
+  });
+
+  /// Σ RR earned in the window.
+  final int netRr;
+  final int wins;
+  final int losses;
+  final int draws;
+  final int unknown;
+  final int matches;
+
+  /// Days of the window with at least one ranked match.
+  final int daysPlayed;
+
+  /// Net RR of the newest [WeekSummary] trend days that have matches, oldest
+  /// first (days without ranked matches are not listed).
+  final List<int> trend;
+
+  bool get isEmpty => daysPlayed == 0;
+
+  /// Σ of [trend].
+  int get trendNet => trend.fold<int>(0, (a, b) => a + b);
+}
+
+/// Summary of [days] (newest first, as [groupDailyRr] returns them) for the
+/// [windowDays] local days ending on the day of [now]. Days are calendar days
+/// of the display zone ([toLocal]), so a daylight-saving day is still one
+/// day.
+WeekSummary weekSummary(
+  List<DailyRr> days,
+  DateTime now, {
+  int windowDays = 7,
+  int trendDays = 14,
+  DateTime Function(DateTime)? toLocal,
+}) {
+  final local = (toLocal ?? (DateTime d) => d.toLocal())(now);
+  final from = DateTime(local.year, local.month, local.day - (windowDays - 1));
+  final week = [
+    for (final d in days)
+      if (!d.date.isBefore(from)) d,
+  ];
+  return WeekSummary(
+    netRr: week.fold<int>(0, (a, d) => a + d.netRr),
+    wins: week.fold<int>(0, (a, d) => a + d.wins),
+    losses: week.fold<int>(0, (a, d) => a + d.losses),
+    draws: week.fold<int>(0, (a, d) => a + d.draws),
+    unknown: week.fold<int>(0, (a, d) => a + d.unknown),
+    matches: week.fold<int>(0, (a, d) => a + d.matches.length),
+    daysPlayed: week.length,
+    trend: List.unmodifiable(
+      [for (final d in days.take(trendDays)) d.netRr].reversed,
+    ),
+  );
+}
+
+/// Progress inside the current tier (PR-15): the one calculation behind the
+/// rank card's bar and Home's "Còn N RR lên rank".
+@immutable
+class RankProgress {
+  const RankProgress({required this.fraction, required this.rrToNext});
+
+  /// `rr / 100`, 0–1.
+  final double fraction;
+
+  /// RR missing to the next tier, 0–100.
+  final int rrToNext;
+}
+
+/// The RR progress of [rank]; `null` when unranked (placements included) or
+/// from Immortal 1 up, where RR is not a 0–100 ladder.
+RankProgress? rankProgress(RankInfo rank) {
+  if (rank.isUnranked || rank.normalizedTier >= kRankUpMaxTier) return null;
+  return RankProgress(
+    fraction: (rank.rr / kRrPerTier).clamp(0.0, 1.0),
+    rrToNext: (kRrPerTier - rank.rr).clamp(0, kRrPerTier),
+  );
 }
 
 // ------------------------------------------------------------ Rank-Up (§9.7)
@@ -718,6 +835,20 @@ class RankUpEstimate {
   final List<({double winRate, int? matches})> byWinRate;
 
   bool get alreadyReached => rrNeeded <= 0;
+
+  /// 0–1 progress from the current tier to the target
+  /// (`(span − rrNeeded) / span`, `span` = 100 RR per tier).
+  double get progress {
+    final span = (targetTier - currentTier) * kRrPerTier;
+    return span <= 0 ? 1.0 : ((span - rrNeeded) / span).clamp(0.0, 1.0);
+  }
+
+  /// Whether the [byWinRate] row of [winRate] matches the player's own
+  /// recent win rate (within 2.5 points): the row the table highlights.
+  bool isNearestWinRate(double winRate) {
+    final p = form.winRate;
+    return p != null && (p - winRate).abs() < 0.025;
+  }
 }
 
 /// Targets the calculator offers from [currentTier] (Episode-5 tier): every

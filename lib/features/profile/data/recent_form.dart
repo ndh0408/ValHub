@@ -1,13 +1,28 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../core/domain/competitive/competitive.dart';
+import 'match_filter.dart';
 
-/// Kind of the current result streak.
-enum StreakKind { win, loss }
+// `StreakKind` moved to the shared competitive domain (one streak rule for
+// Profile and Home, PR-19).
+export '../../../core/domain/competitive/streak.dart' show Streak, StreakKind;
 
-/// Cheap form stats derived from the already-loaded summaries of the most
-/// recent matches (newest first): record, win rate, current streak and
-/// per-match averages (K/D, ACS, HS%).
+/// How many of the newest listed matches the form card summarises.
+const kRecentFormMatches = 10;
+
+/// Form stats derived from the most recent matches (newest first).
+///
+/// Two scopes, never mixed (PR-02):
+/// - **Results** (record, win rate, streak, the W/L strip) count every
+///   decided match, whatever its mode;
+/// - **Per-round stats** (K/D, ACS, ADR, HS%, first bloods) count only
+///   round-based matches (competitive, unrated, Swiftplay…). Deathmatch,
+///   Team Deathmatch and Escalation have no comparable rounds (a Deathmatch
+///   "ACS" is the total score), so they are left out of those numbers.
+///   ACS is Σ score / Σ rounds, not a mean of per-match values.
+///
+/// [hasRoundStats] is false when no match qualifies: the UI then hides the
+/// stat tiles instead of showing a wrong number.
 @immutable
 class RecentForm {
   const RecentForm({
@@ -18,75 +33,49 @@ class RecentForm {
     required this.outcomes,
     this.streakKind,
     this.streak = 0,
+    this.roundGames = 0,
+    this.rounds = 0,
     this.kd,
     this.acs,
+    this.adr,
     this.headshotRate,
+    this.firstBloods = 0,
+    this.firstDeaths = 0,
   });
 
   /// Builds the form from [summaries], newest first. Matches with an unknown
   /// outcome (customs without teams, aborted) are left out.
-  factory RecentForm.from(Iterable<MatchPlayerSummary> summaries) {
-    var wins = 0, losses = 0, draws = 0;
-    var kills = 0, deaths = 0;
-    var acsSum = 0.0, acsCount = 0;
-    var head = 0, hits = 0;
-    final outcomes = <MatchOutcome>[];
-    for (final s in summaries) {
-      final o = s.result.outcome;
-      if (o == MatchOutcome.unknown) continue;
-      outcomes.add(o);
-      switch (o) {
-        case MatchOutcome.win:
-          wins++;
-        case MatchOutcome.loss:
-          losses++;
-        case MatchOutcome.draw:
-          draws++;
-        case MatchOutcome.unknown:
-          break;
-      }
-      final st = s.stats;
-      kills += st.kills;
-      deaths += st.deaths;
-      if (st.acs case final a?) {
-        acsSum += a;
-        acsCount++;
-      }
-      head += st.headshots;
-      hits += st.headshots + st.bodyshots + st.legshots;
-    }
+  factory RecentForm.from(Iterable<MatchPlayerSummary> summaries) =>
+      RecentForm.fromLines([
+        for (final s in summaries) ?MatchStatLine.fromSummary(s),
+      ]);
 
-    StreakKind? kind;
-    var streak = 0;
-    for (final o in outcomes) {
-      final k = switch (o) {
-        MatchOutcome.win => StreakKind.win,
-        MatchOutcome.loss => StreakKind.loss,
-        _ => null,
-      };
-      if (k == null) break;
-      if (kind == null) {
-        kind = k;
-        streak = 1;
-      } else if (k == kind) {
-        streak++;
-      } else {
-        break;
-      }
-    }
-
-    final games = outcomes.length;
+  /// Builds the form from stat [lines], newest first (the caller decides the
+  /// window: the newest 10 matches of a queue or of a map).
+  factory RecentForm.fromLines(Iterable<MatchStatLine> lines) {
+    final decided = [
+      for (final l in lines)
+        if (l.outcome != MatchOutcome.unknown) l,
+    ];
+    final agg = PerfAggregate.of(decided);
+    final outcomes = [for (final l in decided) l.outcome];
+    final streak = currentStreak(outcomes);
     return RecentForm(
-      games: games,
-      wins: wins,
-      losses: losses,
-      draws: draws,
+      games: decided.length,
+      wins: agg.wins,
+      losses: agg.losses,
+      draws: agg.draws,
       outcomes: List.unmodifiable(outcomes),
-      streakKind: kind,
-      streak: streak,
-      kd: games == 0 ? null : kills / (deaths == 0 ? 1 : deaths),
-      acs: acsCount == 0 ? null : acsSum / acsCount,
-      headshotRate: hits == 0 ? null : head / hits,
+      streakKind: streak?.kind,
+      streak: streak?.count ?? 0,
+      roundGames: agg.roundGames,
+      rounds: agg.rounds,
+      kd: agg.kd,
+      acs: agg.acs,
+      adr: agg.adr,
+      headshotRate: agg.headshotRate,
+      firstBloods: agg.firstBloods,
+      firstDeaths: agg.firstDeaths,
     );
   }
 
@@ -103,20 +92,79 @@ class RecentForm {
   final StreakKind? streakKind;
   final int streak;
 
-  /// Total kills / total deaths.
+  /// Round-based matches behind [kd], [acs], [adr], [headshotRate] and the
+  /// first-blood counts.
+  final int roundGames;
+  final int rounds;
+
+  /// Total kills / total deaths over the round-based matches.
   final double? kd;
 
-  /// Mean ACS of the matches that have one.
+  /// Σ score / Σ rounds over the round-based matches.
   final double? acs;
+
+  /// Σ enemy damage / Σ rounds of the matches that have damage data.
+  final double? adr;
 
   /// Headshots / all hits.
   final double? headshotRate;
+  final int firstBloods;
+  final int firstDeaths;
 
   bool get isEmpty => games == 0;
+
+  /// Whether any round-based match feeds the per-round stats.
+  bool get hasRoundStats => roundGames > 0;
+
+  /// Some of the window's matches (Deathmatch…) are not in the per-round
+  /// stats: say so next to them.
+  bool get roundStatsArePartial => hasRoundStats && roundGames < games;
 
   /// Wins / decided games (draws excluded); `null` without decided games.
   double? get winRate {
     final decided = wins + losses;
     return decided == 0 ? null : wins / decided;
   }
+}
+
+/// The matches a form card summarises, and how many listed matches could not
+/// be looked at yet.
+@immutable
+class FormWindow {
+  const FormWindow(this.lines, {this.unresolved = 0});
+
+  /// At most [kRecentFormMatches] lines, newest first.
+  final List<MatchStatLine> lines;
+
+  /// Listed matches (before the window filled) whose details are not known
+  /// yet, so their map could not be checked. Never fetched from here.
+  final int unresolved;
+}
+
+/// Picks the window of the form card (PR-15, PR-26): walks [entries] newest
+/// first, asks [resolve] for the stat line of each (`null` = not known yet;
+/// the callback must not start a request) and keeps the first [limit] whose
+/// map passes [filter].
+///
+/// With a map filter this is what stops the card from fetching dozens of
+/// match details: only lines already known (the ledger, or cards on screen)
+/// are used.
+FormWindow selectFormWindow(
+  Iterable<MatchHistoryEntry> entries, {
+  required MatchStatLine? Function(MatchHistoryEntry entry) resolve,
+  MatchFilter filter = const MatchFilter(),
+  int limit = kRecentFormMatches,
+}) {
+  final picked = <MatchStatLine>[];
+  var unresolved = 0;
+  for (final e in entries) {
+    if (picked.length >= limit) break;
+    final line = resolve(e);
+    if (line == null) {
+      unresolved++;
+      continue;
+    }
+    if (filter.acceptsMap(line.mapId)) picked.add(line);
+  }
+  return FormWindow(List.unmodifiable(picked), unresolved: unresolved);
 }

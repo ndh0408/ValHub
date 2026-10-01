@@ -30,6 +30,8 @@ import 'package:valvn/features/community/providers/community_providers.dart';
 import 'package:valvn/features/community/ui/community_screen.dart';
 import 'package:valvn/features/home/ui/home_screen.dart';
 import 'package:valvn/features/profile/profile_routes.dart';
+import 'package:valvn/features/profile/profile_strings.dart';
+import 'package:valvn/features/profile/ui/performance_screen.dart';
 import 'package:valvn/features/profile/ui/profile_screen.dart';
 import 'package:valvn/features/profile/ui/rank_up_calculator_screen.dart';
 import 'package:valvn/features/settings/ui/settings_screen.dart';
@@ -242,7 +244,16 @@ void main() {
 
     await _tapTab(tester, CommonStrings.tabProfile);
     final row = find.text(CommonStrings.tabBattlePass);
-    await tester.ensureVisible(row);
+    await tester.scrollUntilVisible(
+      row,
+      300,
+      scrollable: find
+          .descendant(
+            of: find.byType(ProfileScreen),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
     await tester.tap(row);
     await _settle(tester);
     expect(find.byType(BattlePassScreen), findsOneWidget);
@@ -257,6 +268,32 @@ void main() {
     expect(find.byType(BattlePassScreen), findsOneWidget);
     expect(_selectedTab(tester), AppTab.profile.index);
 
+    expect(tester.takeException(), isNull);
+    await unmount(tester);
+  });
+
+  testWidgets('Hiệu suất opens from Hồ sơ and Back returns to the tab', (
+    tester,
+  ) async {
+    await pumpApp(tester);
+    await _tapTab(tester, CommonStrings.tabProfile);
+    final row = find.text(ProfileStrings.performanceTitle);
+    await tester.scrollUntilVisible(
+      row,
+      300,
+      scrollable: find
+          .descendant(
+            of: find.byType(ProfileScreen),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.tap(row);
+    await _settle(tester);
+    expect(find.byType(PerformanceScreen), findsOneWidget);
+    expect(_selectedTab(tester), AppTab.profile.index);
+    await _back(tester);
+    expect(find.byType(ProfileScreen), findsOneWidget);
     expect(tester.takeException(), isNull);
     await unmount(tester);
   });

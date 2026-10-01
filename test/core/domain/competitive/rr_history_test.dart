@@ -33,6 +33,39 @@ void main() {
     if (tmp.existsSync()) await tmp.delete(recursive: true);
   });
 
+  test(
+    'legacy third-party files are erased while retained own accounts stay',
+    () async {
+      final store = RrHistoryStore(files);
+      await store.merge('me', [_row('a', 1)]);
+      await store.merge('kept-own', [_row('b', 2)]);
+      await store.merge('other-player', [_row('c', 3)]);
+      await store.pruneUnowned({'ME', 'kept-own'});
+      expect(await files.read(RrHistoryStore.key('other-player')), isNull);
+      expect((await store.read('me')).rows, hasLength(1));
+      expect((await store.read('kept-own')).rows, hasLength(1));
+      store.dispose();
+    },
+  );
+
+  test(
+    'other players stay in memory, bounded to 20 players and 200 rows',
+    () async {
+      final store = RrHistoryStore(files);
+      store.mergeVisitor('visitor', [
+        for (var i = 0; i < 250; i++) _row('m$i', 1),
+      ]);
+      expect(store.readVisitor('visitor').rows, hasLength(200));
+      expect(await files.read(RrHistoryStore.key('visitor')), isNull);
+      for (var i = 0; i < 20; i++) {
+        store.mergeVisitor('v$i', [_row('a', 2)]);
+      }
+      expect(store.readVisitor('visitor').rows, isEmpty);
+      expect(await tmp.list(recursive: true).toList(), isEmpty);
+      store.dispose();
+    },
+  );
+
   test('merge de-duplicates by match id and sorts newest first', () async {
     final store = RrHistoryStore(files);
     expect(await store.merge(me, [_row('a', 1), _row('b', 3)]), 2);

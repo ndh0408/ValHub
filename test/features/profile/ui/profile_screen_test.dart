@@ -225,7 +225,7 @@ void main() {
       pages++;
       final start = inv.namedArguments[#startIndex] as int;
       for (var i = start; i < start + 3; i++) {
-        env.matches[id(i)] = competitiveFixture('match_competitive');
+        env.matches[id(i)] = competitiveMatchWithId(id(i));
       }
       return {
         'Subject': me,
@@ -284,7 +284,7 @@ void main() {
     String id(int i) =>
         'c${i.toString().padLeft(7, '0')}-0000-4000-8000-000000000000';
     for (var i = 0; i < 25; i++) {
-      env.matches[id(i)] = competitiveFixture('match_competitive');
+      env.matches[id(i)] = competitiveMatchWithId(id(i));
     }
     JsonMap page(int start, int count) => {
       'Subject': me,

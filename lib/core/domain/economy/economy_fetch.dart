@@ -99,16 +99,17 @@ class FetchedJson {
   /// originally received, so countdowns stay correct).
   final DateTime receivedAt;
 
-  /// The transient failure that made us fall back to the cache; `null` for
+  /// The offline/login/maintenance failure behind this copy; `null` for
   /// live data.
-  final TransientException? cachedAfter;
+  final RiotException? cachedAfter;
 
   bool get isFromCache => cachedAfter != null;
 }
 
 /// Fetches [fetch]; on success stores the payload under
-/// `acct/<puuid>/<name>` (wiped at sign-out). On a [TransientException]
-/// returns the last stored copy instead (X4), or rethrows when there is none.
+/// `acct/<puuid>/<name>` (wiped at sign-out). On a [TransientException],
+/// [NeedsLoginException] or [MaintenanceException], returns the last stored
+/// copy instead (X4), or rethrows when there is none.
 /// Every other error propagates unchanged.
 Future<FetchedJson> fetchWithOfflineCache(
   Ref ref, {
@@ -128,7 +129,8 @@ Future<FetchedJson> fetchWithOfflineCache(
       // The offline copy is best effort.
     }
     return FetchedJson(data, receivedAt: receivedAt);
-  } on TransientException catch (error) {
+  } on RiotException catch (error) {
+    if (!canUseOfflineCopy(error)) rethrow;
     CachedJson? cached;
     try {
       cached = await cache.read(key);
@@ -144,10 +146,17 @@ Future<FetchedJson> fetchWithOfflineCache(
   }
 }
 
-/// Delay before retrying after serving an offline copy: the server's
-/// `Retry-After` when given, clamped to 30 s … 10 min.
-Duration offlineRetryDelay(TransientException error) {
-  final wanted = error.retryAfter ?? kOfflineRetryDelay;
+/// Only network, login and maintenance errors may serve an offline copy.
+bool canUseOfflineCopy(RiotException error) =>
+    error is TransientException ||
+    error is NeedsLoginException ||
+    error is MaintenanceException;
+
+/// Retry-After (30 s … 10 min); login and maintenance wait 10 minutes.
+Duration offlineRetryDelay(RiotException error) {
+  final wanted = error is TransientException
+      ? error.retryAfter ?? kOfflineRetryDelay
+      : const Duration(minutes: 10);
   const min = Duration(seconds: 30);
   const max = Duration(minutes: 10);
   if (wanted < min) return min;

@@ -22,6 +22,7 @@ import '../../../core/util/format.dart';
 import '../profile_routes.dart';
 import '../profile_strings.dart';
 import 'widgets/profile_widgets.dart';
+import '../data/hit_distribution.dart';
 import 'widgets/round_timeline_view.dart';
 import 'widgets/scoreboard_view.dart';
 
@@ -665,6 +666,13 @@ class _PlayerSummary extends ConsumerWidget {
                       : formatPercent(s.headshotRate!),
                 ),
                 StatTile(label: ProfileStrings.adr, value: fmt(s.adr)),
+                StatTile(label: ProfileStrings.kd, value: fmt(s.kd)),
+                StatTile(
+                  label: ProfileStrings.firstDeaths,
+                  value: roundBased
+                      ? formatNumber(s.firstDeaths)
+                      : CompetitiveStrings.noValue,
+                ),
                 StatTile(
                   label: ProfileStrings.kast,
                   value: s.kast == null
@@ -701,27 +709,37 @@ class _HitDistribution extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
-    final total = stats.headshots + stats.bodyshots + stats.legshots;
+    final shares = hitDistribution(
+      stats.headshots,
+      stats.bodyshots,
+      stats.legshots,
+    );
     final parts = [
       (
         label: ProfileStrings.hitHead,
         n: stats.headshots,
+        share: shares.head,
         color: theme.colorScheme.primary,
       ),
       (
         label: ProfileStrings.hitBody,
         n: stats.bodyshots,
+        share: shares.body,
         color: legibleAccent(context, ValColors.muted, min: 3),
       ),
       (
         label: ProfileStrings.hitLegs,
         n: stats.legshots,
+        share: shares.legs,
         color: valColorsOf(context).track,
       ),
     ];
     final legend = [
       for (final p in parts)
-        ProfileStrings.hitShare(p.label, formatPercent(p.n / total)),
+        ProfileStrings.hitShare(
+          p.label,
+          p.share == null ? CommonStrings.dash : formatPercent(p.share!),
+        ),
     ];
     return Semantics(
       label: ProfileStrings.joined([ProfileStrings.hitDistribution, ...legend]),

@@ -1,5 +1,37 @@
+import 'data/performance_view.dart';
+
 /// Vietnamese strings of the profile feature (VF §6.5, §8.8).
 abstract final class ProfileStrings {
+  static const performanceTitle = 'Hiệu suất';
+  static const performanceEmpty =
+      'Chưa có trận nào được ghi trên thiết bị này. Mở lịch sử trận để ghi lại những trận bạn đã chơi.';
+  static const performanceNoMatches =
+      'Không có trận trong khoảng thời gian đã chọn.';
+  static const performanceSample =
+      'Tỉ lệ chỉ hiện khi có ít nhất 3 trận. ACS, ADR, HS% và K/D chỉ tính các chế độ theo vòng.';
+  static const performanceGames = 'Số trận';
+  static const performanceAttack = 'Tấn công';
+  static const performanceDefense = 'Phòng thủ';
+  static const performanceTrendEmpty =
+      'Cần ít nhất hai giai đoạn có từ 3 trận để so sánh xu hướng.';
+  static const firstDeaths = 'Bị hạ đầu tiên';
+  static String performanceSince(String date) =>
+      'Lịch sử trên thiết bị, từ $date';
+  static String performanceSideCoverage(int known, int total) =>
+      'Xác định được bên tấn công hoặc phòng thủ ở $known/$total vòng.';
+  static String performanceRounds(int n) => '$n vòng đã ghi nhận';
+  static String performancePeriod(PerfPeriod p) => switch (p) {
+    PerfPeriod.all => 'Toàn bộ',
+    PerfPeriod.days30 => '30 ngày',
+    PerfPeriod.days7 => '7 ngày',
+  };
+  static String performanceSegment(PerfSegment s) => switch (s) {
+    PerfSegment.agents => 'Đặc vụ',
+    PerfSegment.maps => 'Bản đồ',
+    PerfSegment.queues => 'Chế độ',
+    PerfSegment.sides => 'Tấn công / Phòng thủ',
+    PerfSegment.trend => 'Xu hướng',
+  };
   static const title = 'Hồ sơ';
   static const rankUpTitle = 'Tính toán lên hạng';
   static const dailyRrTitle = 'RR theo ngày';
@@ -129,8 +161,8 @@ abstract final class ProfileStrings {
       'không còn trả về.';
 
   /// "4 thắng – 2 thua" (+ " – 1 hòa").
-  static String winsLosses(int w, int l, int d) =>
-      d > 0 ? '$w thắng – $l thua – $d hòa' : '$w thắng – $l thua';
+  static String winsLosses(int w, int l, int d, [int unknown = 0]) =>
+      '$w thắng – $l thua${d > 0 ? ' – $d hòa' : ''}${unknown > 0 ? ' – $unknown trận chưa rõ kết quả' : ''}';
 
   /// "Vàng 2 → Vàng 3".
   static String rankChange(String from, String to) => '$from → $to';
@@ -206,6 +238,23 @@ abstract final class ProfileStrings {
   /// Screen-reader summary of the W/L strip.
   static String formSemantics(int w, int l, int games) =>
       '$games trận gần nhất: $w thắng, $l thua';
+
+  /// Which matches the form card counts: "Mọi chế độ", "Xếp hạng",
+  /// "Xếp hạng · Ascent".
+  static String formScope({String? queue, String? map}) =>
+      joined([queue ?? 'Mọi chế độ', ?map]);
+
+  /// Under the form tiles when a Deathmatch-like match is in the window.
+  static String formRoundStatsNote(int roundGames, int games) =>
+      'K/D, ACS, ADR, HS% chỉ tính $roundGames/$games trận theo vòng đấu';
+
+  /// No round-based match in the window: the tiles are hidden.
+  static const formNoRoundStats =
+      'K/D, ACS, HS% chỉ tính cho các chế độ theo vòng đấu.';
+
+  /// Map filter: listed matches whose details are not loaded yet.
+  static String formPending(int n) =>
+      '$n trận trong danh sách chưa được tải để tính.';
 
   // Match history (redesign)
   static const clearMap = 'Bỏ lọc bản đồ';

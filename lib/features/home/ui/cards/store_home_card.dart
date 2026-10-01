@@ -112,10 +112,12 @@ class _StoreBody extends ConsumerWidget {
       if (summary.totalVp > 0)
         HomeStrings.storeTotal(formatVp(summary.totalVp)),
       if (summary.walletVp != null)
-        HomeStrings.storeWallet(
-          formatVp(summary.walletVp!),
-          summary.affordableCount,
-        ),
+        summary.affordableTogether > 0
+            ? HomeStrings.storeWalletCanBuy(
+                formatVp(summary.walletVp!),
+                summary.affordableTogether,
+              )
+            : HomeStrings.storeWallet(formatVp(summary.walletVp!)),
     ];
     return HomeCardFrame(
       card: HomeCardId.store,

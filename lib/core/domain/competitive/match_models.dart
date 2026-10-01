@@ -1080,6 +1080,26 @@ class MatchDetails {
     );
   }
 
+  /// A copy in which the players in [subjects] have no name (Incognito
+  /// players must show as anonymous everywhere, SUMMARY U16). Returns `this`
+  /// when nobody changes.
+  MatchDetails withoutNames(Set<String> subjects) {
+    if (subjects.isEmpty || !players.any((p) => subjects.contains(p.subject))) {
+      return this;
+    }
+    return MatchDetails(
+      info: info,
+      players: List.unmodifiable([
+        for (final p in players)
+          subjects.contains(p.subject) ? p.withName(null) : p,
+      ]),
+      teams: teams,
+      rounds: rounds,
+      kills: kills,
+      matchMvp: matchMvp,
+    );
+  }
+
   /// Rounds actually played: the rounds a surrender awards to the winner
   /// (`roundResultCode == Surrendered`, no kills) are left out.
   List<RoundResult> get playedRounds => [
@@ -1327,6 +1347,11 @@ class MatchDetails {
     }
     return out;
   }
+
+  /// The score of team [teamId] as the result screens show it: rounds won
+  /// (team points in Team Deathmatch / Escalation; after a surrender the
+  /// rounds actually won). `null` for an unknown team.
+  int? teamScore(String? teamId) => teamId == null ? null : _teamScores[teamId];
 
   /// Result for [puuid] (VF R12):
   /// - team modes: `teams[].won` (draw when neither won with equal scores

@@ -49,6 +49,8 @@ void main() {
     expect(find.text(ProfileStrings.kdaLabel), findsOneWidget);
     expect(find.text(ProfileStrings.adr), findsOneWidget);
     expect(find.text(ProfileStrings.firstBloods), findsOneWidget);
+    expect(find.text(ProfileStrings.firstDeaths), findsOneWidget);
+    expect(find.text(ProfileStrings.kd), findsOneWidget);
     expect(find.text('+24 RR'), findsOneWidget);
 
     // Scoreboard: your team first, names resolved via name-service.
@@ -84,6 +86,30 @@ void main() {
     expect(find.text(ProfileStrings.score(2, 1)), findsWidgets);
     // Ceremony of round 3 from valorant-api vi-VN.
     expect(find.text('NGƯỜI HẠ MÀN'), findsOneWidget);
+    // Both the strip (15 dp) and each round row (16 dp) carry result glyphs.
+    for (final size in [15.0, 16.0]) {
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is Icon && w.icon == Icons.check_rounded && w.size == size,
+        ),
+        findsNWidgets(2),
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is Icon && w.icon == Icons.close_rounded && w.size == size,
+        ),
+        findsOneWidget,
+      );
+    }
+    await tester.tap(find.byKey(const ValueKey('round-1')));
+    await settle(tester);
+    expect(find.byIcon(Icons.shield_outlined), findsWidgets);
+    expect(
+      find.byWidgetPredicate(
+        (w) => w is Icon && w.icon == Icons.gps_fixed_rounded && w.size == 12,
+      ),
+      findsWidgets,
+    );
     expect(tester.takeException(), isNull);
   });
 

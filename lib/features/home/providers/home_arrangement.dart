@@ -43,6 +43,9 @@ HomeCardPresence presenceOfAsync<T>(
 final homeCardPresenceProvider = Provider.autoDispose
     .family<HomeCardPresence, HomeCardKey>((ref, key) {
       final puuid = key.puuid;
+      final needsLogin = ref.watch(
+        accountProvider(puuid).select((a) => a?.needsLogin ?? false),
+      );
       final blocking = key.card.isCore
           ? ref.watch(homeStatusBlockingProvider)
           : false;
@@ -53,7 +56,7 @@ final homeCardPresenceProvider = Provider.autoDispose
               : HomeCardPresence.hidden,
         HomeCardId.store => presenceOfAsync(
           ref.watch(homeStoreSummaryProvider(puuid)),
-          core: true,
+          core: !needsLogin,
           statusBlocking: blocking,
         ),
         HomeCardId.rank => presenceOfAsync(
@@ -63,7 +66,7 @@ final homeCardPresenceProvider = Provider.autoDispose
         ),
         HomeCardId.battlePass => presenceOfAsync(
           ref.watch(homeBattlePassSnapshotProvider(puuid)),
-          core: true,
+          core: !needsLogin,
           statusBlocking: blocking,
         ),
         HomeCardId.friends => _friendsPresence(ref),
@@ -126,7 +129,10 @@ final homeArrangementProvider = Provider.autoDispose
 
       HomeCardPresence presenceOf(HomeCardId id) {
         final HomeCardPresence presence;
-        if ((id.needsRiotSession && needsLogin) || (id.isDeferred && !gate)) {
+        final canShowSaved =
+            id == HomeCardId.store || id == HomeCardId.battlePass;
+        if ((id.needsRiotSession && needsLogin && !canShowSaved) ||
+            (id.isDeferred && !gate)) {
           presence = HomeCardPresence.hidden;
         } else {
           presence = ref.watch(

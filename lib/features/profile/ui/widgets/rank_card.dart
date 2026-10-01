@@ -107,13 +107,7 @@ class _RankCardBody extends ConsumerWidget {
                           : current.isUnranked
                           ? null
                           : formatRr(current.rr),
-                      progress:
-                          !current.isUnranked &&
-                              current.normalizedTier < kRankUpMaxTier &&
-                              current.rr >= 0 &&
-                              current.rr <= 100
-                          ? current.rr / 100
-                          : null,
+                      progress: rankProgress(current)?.fraction,
                     ),
                   ),
                   VerticalDivider(

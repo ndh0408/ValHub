@@ -158,11 +158,26 @@ void main() {
       );
       await container(now).read(provider(() async => {'a': 1}).future);
       await expectLater(
-        container(
-          now,
-        ).read(provider(() async => throw const NeedsLoginException()).future),
-        throwsA(isA<NeedsLoginException>()),
+        container(now)
+            .read(provider(() async => throw const NotFoundException()).future),
+        throwsA(isA<NotFoundException>()),
       );
+    });
+
+    test('login and maintenance failures serve the saved copy', () async {
+      final now = DateTime(2026, 9, 28);
+      await container(now).read(provider(() async => {'a': 1}).future);
+      for (final error in <RiotException>[
+        const NeedsLoginException(),
+        const MaintenanceException(),
+      ]) {
+        final result = await container(now)
+            .read(provider(() async => throw error).future);
+        expect(result.data, {'a': 1});
+        expect(result.isFromCache, isTrue);
+        expect(result.cachedAfter, same(error));
+        expect(offlineRetryDelay(error), const Duration(minutes: 10));
+      }
     });
   });
 

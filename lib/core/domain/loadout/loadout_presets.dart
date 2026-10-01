@@ -124,18 +124,22 @@ class LoadoutPreset {
     this.cardId,
     this.titleId,
     this.levelBorderId,
+    this.defaultNumber,
   });
 
-  /// Snapshot of [loadout].
+  /// Snapshot of [loadout]. [defaultNumber] is the N of an automatic name
+  /// ("Bộ trang bị N"), `null` for a name the user typed.
   factory LoadoutPreset.fromLoadout(
     Loadout loadout, {
     required String id,
     required String name,
     required DateTime createdAt,
+    int? defaultNumber,
   }) => LoadoutPreset(
     id: id,
     name: name,
     createdAt: createdAt,
+    defaultNumber: defaultNumber,
     guns: List.unmodifiable(loadout.guns.map(PresetGun.fromGun)),
     expressions: List.unmodifiable(loadout.expressions),
     cardId: loadout.identity.playerCardId,
@@ -163,6 +167,10 @@ class LoadoutPreset {
       cardId: _id(m['card']),
       titleId: _id(m['title']),
       levelBorderId: _id(m['border']),
+      defaultNumber: switch (asInt(m['dn'])) {
+        final n? when n > 0 => n,
+        _ => null,
+      },
     );
   }
 
@@ -177,6 +185,12 @@ class LoadoutPreset {
   final String? titleId;
   final String? levelBorderId;
 
+  /// N of an automatic name ("Bộ trang bị 3"), `null` when the user typed
+  /// the name. The name itself is user data and keeps the language it was
+  /// created in; the number is what keeps automatic names unique in every
+  /// language (GL-24, GL-38).
+  final int? defaultNumber;
+
   PresetGun? gun(String weaponId) {
     final id = weaponId.trim().toLowerCase();
     for (final g in guns) {
@@ -185,6 +199,7 @@ class LoadoutPreset {
     return null;
   }
 
+  /// A copy with a new [name]: a name the user typed has no default number.
   LoadoutPreset copyWith({String? name}) => LoadoutPreset(
     id: id,
     name: name ?? this.name,
@@ -194,6 +209,7 @@ class LoadoutPreset {
     cardId: cardId,
     titleId: titleId,
     levelBorderId: levelBorderId,
+    defaultNumber: name == null ? defaultNumber : null,
   );
 
   JsonMap toJson() => {
@@ -205,6 +221,7 @@ class LoadoutPreset {
     'card': ?cardId,
     'title': ?titleId,
     'border': ?levelBorderId,
+    'dn': ?defaultNumber,
   };
 
   /// The single composite change that applies this preset.
@@ -319,6 +336,34 @@ class LoadoutPresetStore {
 
   Future<void> write(String puuid, List<LoadoutPreset> presets) =>
       _prefs.setJson(key(puuid), [for (final p in presets) p.toJson()]);
+}
+
+/// The N of the next automatic preset name: the smallest number from
+/// `presets.length + 1` up that no preset already uses.
+///
+/// Compared by NUMBER ([LoadoutPreset.defaultNumber]), never by the text of
+/// a name, so "Bộ trang bị 2" and "Preset 2" cannot both exist after a
+/// language switch. Presets saved before numbers were stored have none: for
+/// them only, [legacyName] (the current language's default text for a
+/// number) is compared with their name.
+int nextDefaultPresetNumber(
+  List<LoadoutPreset> presets, {
+  String Function(int n)? legacyName,
+}) {
+  final taken = {
+    for (final p in presets)
+      if (p.defaultNumber != null) p.defaultNumber!,
+  };
+  final legacyNames = {
+    for (final p in presets)
+      if (p.defaultNumber == null) p.name,
+  };
+  var n = presets.length + 1;
+  while (taken.contains(n) ||
+      (legacyName != null && legacyNames.contains(legacyName(n)))) {
+    n++;
+  }
+  return n;
 }
 
 /// Normalises a user-typed preset name (trimmed, single spaces, capped);

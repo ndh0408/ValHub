@@ -60,7 +60,7 @@ class HomeStoreSummary {
   const HomeStoreSummary({
     required this.daily,
     required this.totalVp,
-    required this.affordableCount,
+    required this.affordableTogether,
     required this.hits,
     required this.isFromCache,
     required this.receivedAt,
@@ -78,8 +78,10 @@ class HomeStoreSummary {
   /// `null` while the wallet is unknown.
   final int? walletVp;
 
-  /// Daily skins the wallet can pay right now (0 without a wallet).
-  final int affordableCount;
+  /// How many daily skins the wallet can pay **all at once** (0 without a
+  /// wallet): the cheapest first, so 2,440 VP against 1,275 + 1,275 + 1,775 +
+  /// 2,175 buys one, not four (PR-04).
+  final int affordableTogether;
 
   /// Wishlisted skins on sale right now, one per skin, ordered daily →
   /// Night Market → bundle.
@@ -134,7 +136,7 @@ HomeStoreSummary? buildHomeStoreSummary(
   final walletVp = wallet?.vp;
   final affordable = walletVp == null
       ? 0
-      : offers.where((o) => o.vpCost != null && o.vpCost! <= walletVp).length;
+      : store.daily.affordableTogether(walletVp);
 
   HomeNightMarket? market;
   if (nmLive) {
@@ -175,7 +177,7 @@ HomeStoreSummary? buildHomeStoreSummary(
     resetsAt: store.daily.expiresAt,
     totalVp: store.daily.totalVp,
     walletVp: walletVp,
-    affordableCount: affordable,
+    affordableTogether: affordable,
     hits: List.unmodifiable(hits),
     nightMarket: market,
     isFromCache: store.isFromCache,

@@ -223,9 +223,9 @@ void main() {
 
       final a = sub.read();
       expect(a.all, isNot(contains(HomeCardId.live)));
-      expect(a.all, isNot(contains(HomeCardId.store)));
+      expect(a.all, contains(HomeCardId.store));
       expect(a.all, isNot(contains(HomeCardId.rank)));
-      expect(a.all, isNot(contains(HomeCardId.battlePass)));
+      expect(a.all, contains(HomeCardId.battlePass));
       expect(a.all, isNot(contains(HomeCardId.friends)));
       // Community, other accounts and the status are not tied to the session.
       expect(a.all, contains(HomeCardId.community));

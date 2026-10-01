@@ -7,6 +7,7 @@ import '../../accounts/account_providers.dart';
 import '../../config/app_constants.dart';
 import '../../riot/pvp_api.dart';
 import '../../storage/prefs.dart';
+import '../../storage/json_file_cache.dart';
 import '../../util/clock.dart';
 import '../../util/json.dart';
 import 'competitive_strings.dart';
@@ -119,14 +120,15 @@ typedef _Outcome = ({RiotName? name, Object? error, StackTrace? stack});
 ///   network call carries at most 50 PUUIDs (U15) and calls run one after
 ///   another per viewer to stay under Cloudflare's burst limits.
 /// - Concurrent requests for the same PUUID share one call.
-/// - Results are cached in memory and in prefs (`f.competitive.names`,
-///   bounded to [maxEntries]); entries younger than [freshFor] are served
+/// - Results are cached in memory and `cache/names` for at most [retention],
+///   bounded to [maxEntries]; entries younger than [freshFor] are served
 ///   without a call, older ones are refreshed but still returned if the
 ///   refresh fails.
 class NameResolver {
   NameResolver({
     required this._api,
     this._prefs,
+    this._files,
     this._clock = const Clock(),
     this.batchWindow = const Duration(milliseconds: 20),
     this.freshFor = const Duration(days: 1),
@@ -138,6 +140,9 @@ class NameResolver {
 
   final PvpApi _api;
   final Prefs? _prefs;
+  final JsonFileCache? _files;
+  static const fileKey = 'names';
+  static const retention = Duration(days: 30);
   final Clock _clock;
   final Duration batchWindow;
   final Duration freshFor;
@@ -147,14 +152,18 @@ class NameResolver {
   final Map<String, Future<RiotName?>> _inFlight = {};
   Map<String, Map<String, Completer<RiotName?>>> _pending = {};
   Timer? _timer;
-  bool _loaded = false;
+  Future<void>? _loading;
+  Timer? _persistTimer;
+  Future<void> _writes = Future.value();
   bool _disposed = false;
+  int _generation = 0;
 
   static String _key(String puuid) => puuid.trim().toLowerCase();
 
   /// Cached name (fresh or stale) without any network call.
   RiotName? peek(String puuid) {
-    _load();
+    unawaited(_load());
+    _prune();
     return _cache[_key(puuid)]?.name;
   }
 
@@ -162,8 +171,8 @@ class NameResolver {
   /// XMPP roster, the signed-in account's own Riot ID).
   void remember(String puuid, RiotName name) {
     final id = _key(puuid);
-    if (id.isEmpty || name.isBlank) return;
-    _load();
+    if (_disposed || id.isEmpty || name.isBlank) return;
+    unawaited(_load());
     final previous = _cache[id]?.name;
     _cache[id] = _Entry(name, _clock.now());
     if (previous != name) _persist();
@@ -177,7 +186,9 @@ class NameResolver {
     Iterable<String> puuids, {
     bool refresh = false,
   }) async {
-    _load();
+    await _load();
+    if (_disposed) return const {};
+    _prune();
     final now = _clock.now();
     final out = <String, RiotName>{};
     final waits = <String, Future<_Outcome>>{};
@@ -221,6 +232,7 @@ class NameResolver {
     _disposed = true;
     _timer?.cancel();
     _timer = null;
+    _persistTimer?.cancel();
     // Callers still waiting get "unknown" rather than hanging forever.
     for (final byId in _pending.values) {
       for (final c in byId.values) {
@@ -261,6 +273,7 @@ class NameResolver {
     String viewer,
     Map<String, Completer<RiotName?>> byId,
   ) async {
+    final generation = _generation;
     final ids = byId.keys.toList();
     for (var i = 0; i < ids.length; i += batchSize) {
       final chunk = ids.sublist(
@@ -268,7 +281,19 @@ class NameResolver {
         i + batchSize > ids.length ? ids.length : i + batchSize,
       );
       try {
+        if (_disposed || generation != _generation) {
+          for (final id in chunk) {
+            if (!byId[id]!.isCompleted) byId[id]!.complete(null);
+          }
+          continue;
+        }
         final rows = await _api.names(viewer, chunk);
+        if (_disposed || generation != _generation) {
+          for (final id in chunk) {
+            if (!byId[id]!.isCompleted) byId[id]!.complete(null);
+          }
+          continue;
+        }
         final found = <String, RiotName>{};
         for (final row in rows) {
           final subject = lowerUuid(row['Subject']);
@@ -284,6 +309,12 @@ class NameResolver {
         }
         if (found.isNotEmpty) _persist();
       } on Object catch (e, s) {
+        if (_disposed || generation != _generation) {
+          for (final id in chunk) {
+            if (!byId[id]!.isCompleted) byId[id]!.complete(null);
+          }
+          continue;
+        }
         _forget(chunk);
         for (final id in chunk) {
           byId[id]?.completeError(e, s);
@@ -297,11 +328,20 @@ class NameResolver {
     _inFlight.removeWhere((id, _) => set.contains(id));
   }
 
-  void _load() {
-    if (_loaded) return;
-    _loaded = true;
-    final stored = asMap(_prefs?.getJson(prefsKey));
-    if (stored == null) return;
+  Future<void> _load() => _loading ??= _loadFile();
+
+  Future<void> _loadFile() async {
+    final generation = _generation;
+    final legacy = asMap(_prefs?.getJson(prefsKey));
+    JsonMap? stored;
+    try {
+      stored = asMap((await _files?.read(fileKey))?.data);
+    } on Object {
+      // Optional storage must never prevent name-service from running.
+    }
+    stored ??= legacy;
+    if (_prefs != null) await _prefs.remove(prefsKey);
+    if (stored == null || _disposed || generation != _generation) return;
     for (final MapEntry(:key, :value) in stored.entries) {
       final m = asMap(value);
       final name = RiotName.of(asString(m?['n']), asString(m?['t']));
@@ -313,11 +353,13 @@ class NameResolver {
         () => _Entry(name, DateTime.fromMillisecondsSinceEpoch(at)),
       );
     }
+    _prune();
+    _persist(); // expires old file entries as well as migrating preferences
   }
 
-  void _persist() {
-    final prefs = _prefs;
-    if (prefs == null || _disposed) return;
+  void _prune() {
+    final cutoff = _clock.now().subtract(retention);
+    _cache.removeWhere((_, e) => e.savedAt.isBefore(cutoff));
     if (_cache.length > maxEntries) {
       final oldest = _cache.entries.toList()
         ..sort((a, b) => a.value.savedAt.compareTo(b.value.savedAt));
@@ -325,15 +367,57 @@ class NameResolver {
         _cache.remove(e.key);
       }
     }
-    final json = {
-      for (final MapEntry(:key, :value) in _cache.entries)
-        key: {
-          'n': value.name.gameName,
-          't': value.name.tagLine,
-          'at': value.savedAt.millisecondsSinceEpoch,
-        },
-    };
-    unawaited(prefs.setJson(prefsKey, json).catchError((Object _) {}));
+  }
+
+  void _persist() {
+    _prune();
+    if (_disposed || _files == null) return;
+    _persistTimer?.cancel();
+    _persistTimer = Timer(
+      const Duration(milliseconds: 100),
+      () => unawaited(flush()),
+    );
+  }
+
+  /// Debounced persistence, with serial writes and a bounded lifetime.
+  Future<void> flush() {
+    _persistTimer?.cancel();
+    _persistTimer = null;
+    _writes = _writes
+        .then((_) async {
+          await _load();
+          _prune();
+          final json = {
+            for (final MapEntry(:key, :value) in _cache.entries)
+              key: {
+                'n': value.name.gameName,
+                't': value.name.tagLine,
+                'at': value.savedAt.millisecondsSinceEpoch,
+              },
+          };
+          await _files?.write(fileKey, json);
+        })
+        .catchError((Object _) {});
+    return _writes;
+  }
+
+  Future<void> clear() async {
+    _generation++;
+    _timer?.cancel();
+    _timer = null;
+    for (final byId in _pending.values) {
+      for (final completion in byId.values) {
+        if (!completion.isCompleted) completion.complete(null);
+      }
+    }
+    _pending.clear();
+    _inFlight.clear();
+    await _load();
+    _persistTimer?.cancel();
+    _cache.clear();
+    await _writes;
+    await _files?.delete(fileKey);
+    await _prefs?.remove(prefsKey);
   }
 }
 
@@ -342,9 +426,13 @@ final nameResolverProvider = Provider<NameResolver>((ref) {
   final resolver = NameResolver(
     api: ref.watch(pvpApiProvider),
     prefs: ref.watch(prefsProvider),
+    files: ref.watch(jsonFileCacheProvider),
     clock: ref.watch(clockProvider),
   );
   ref.onDispose(resolver.dispose);
+  ref.listen(accountsProvider, (_, accounts) {
+    if (accounts.isEmpty) unawaited(resolver.clear());
+  });
   return resolver;
 });
 

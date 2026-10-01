@@ -212,6 +212,33 @@ void main() {
   });
 
   group('competitive updates', () {
+    test(
+      'another player has bounded in-memory updates and no RR file',
+      () async {
+        stubUpdates((_, _) => _updatesPage(0, 20));
+        final c = await container();
+        await c.read(competitiveUpdatesProvider(friend).future);
+        final history = await c.read(rrHistoryProvider(friend).future);
+        expect(history.rows, hasLength(20));
+        expect((await store.read(friend)).rows, isEmpty);
+        expect(await c.read(rrHistorySyncProvider(friend).future), 0);
+      },
+    );
+    test(
+      'Settings delete helper only clears the selected own account',
+      () async {
+        final c = await container();
+        await store.merge(me, [
+          CompetitiveUpdate.fromJson(
+            asList(_updatesPage(0, 1)['Matches']).first,
+          )!,
+        ]);
+        await c.read(deleteRrHistoryProvider(friend))();
+        expect((await store.read(me)).rows, hasLength(1));
+        await c.read(deleteRrHistoryProvider(me))();
+        expect((await store.read(me)).rows, isEmpty);
+      },
+    );
     test('pagination merges every page into the history', () async {
       stubUpdates((start, _) => _updatesPage(start, start == 0 ? 20 : 5));
       final c = await container();
@@ -326,6 +353,36 @@ void main() {
   });
 
   group('matches', () {
+    test(
+      'account switches cannot reuse another viewer’s match error',
+      () async {
+        const other = Account(
+          puuid: friend,
+          gameName: 'Bạn',
+          tagLine: 'VN1',
+          region: 'ap',
+          shard: 'ap',
+        );
+        when(() => api.matchDetails(any(), any())).thenAnswer((inv) async {
+          if (inv.positionalArguments[0] == me) {
+            throw const NeedsLoginException();
+          }
+          return competitiveFixtureMap('match_competitive');
+        });
+        final c = await container(accounts: [myAccount, other]);
+        final sub = c.listen(matchDetailsProvider(compMatch), (_, _) {});
+        await expectLater(
+          c.read(matchDetailsProvider(compMatch).future),
+          throwsA(isA<NeedsLoginException>()),
+        );
+        c.read(activePuuidProvider.notifier).select(friend);
+        await pumpEventQueue();
+        final details = await c.read(matchDetailsProvider(compMatch).future);
+        expect(details.matchId, compMatch);
+        verify(() => api.matchDetails(friend, compMatch)).called(1);
+        sub.close();
+      },
+    );
     test('history with queue filter and paging by Total', () async {
       when(
         () => api.matchHistory(

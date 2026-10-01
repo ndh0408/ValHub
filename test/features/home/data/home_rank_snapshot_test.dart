@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/domain/competitive/competitive.dart';
 import 'package:valvn/core/util/json.dart';
 import 'package:valvn/features/home/data/home_rank.dart';
-import 'package:valvn/features/profile/data/recent_form.dart' show StreakKind;
 
 import '../../profile/profile_test_env.dart';
 
@@ -202,7 +201,10 @@ void main() {
       final s = _snapshot(_mmr(), history: h)!;
       expect(s.today, isNotNull);
       expect(s.today!.netRr, 26);
-      expect((s.today!.wins, s.today!.losses, s.today!.draws), (2, 1, 1));
+      expect(
+        (s.today!.wins, s.today!.losses, s.today!.draws, s.today!.unknown),
+        (2, 1, 0, 1),
+      );
       expect(s.lastDay, isNull);
     });
 

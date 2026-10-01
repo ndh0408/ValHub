@@ -62,6 +62,14 @@ Object? competitiveFixture(String name) =>
 
 JsonMap competitiveFixtureMap(String name) => asMap(competitiveFixture(name))!;
 
+/// The competitive fixture as another match: real payloads carry the id they
+/// were asked for, and the on-device ledger is keyed by it.
+JsonMap competitiveMatchWithId(String matchId) {
+  final json = competitiveFixtureMap('match_competitive');
+  (json['matchInfo'] as Map<String, dynamic>)['matchId'] = matchId;
+  return json;
+}
+
 final ContentDb _content = ContentDb.parse(loadContentFixtures());
 
 ContentDb testContent() => _content;
@@ -174,6 +182,7 @@ class ProfileTestEnv {
   final sessions = MockSessionManager();
   final files = MemoryJsonFileCache();
   late final history = RrHistoryStore(MemoryJsonFileCache());
+  late final ledger = MatchStatsStore(MemoryJsonFileCache());
   // Local wall-clock times so "today / yesterday" hold in every time zone.
   final clock = FixedClock(DateTime(2026, 9, 28, 19));
 
@@ -199,6 +208,7 @@ class ProfileTestEnv {
     sessionManagerProvider.overrideWithValue(sessions),
     jsonFileCacheProvider.overrideWithValue(files),
     rrHistoryStoreProvider.overrideWithValue(history),
+    matchStatsStoreProvider.overrideWithValue(ledger),
     pvpApiProvider.overrideWithValue(api),
     contentProvider.overrideWith((ref) async => testContent()),
     clockProvider.overrideWithValue(clock),

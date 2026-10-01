@@ -6,10 +6,12 @@ import 'package:valvn/core/accounts/account_widgets.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/util/format.dart';
 import 'package:valvn/core/ui/maintenance_banner.dart';
+import 'package:valvn/features/community/community_previews.dart';
 import 'package:valvn/features/home/data/home_card.dart';
 import 'package:valvn/features/home/data/home_live.dart';
 import 'package:valvn/features/home/home_strings.dart';
 import 'package:valvn/features/home/providers/home_card_providers.dart';
+import 'package:valvn/features/home/providers/home_refresh.dart';
 import 'package:valvn/features/home/ui/cards/battlepass_home_card.dart';
 import 'package:valvn/features/home/ui/cards/community_home_card.dart';
 import 'package:valvn/features/home/ui/cards/friends_home_card.dart';
@@ -232,14 +234,14 @@ void main() {
         );
         for (final id in [
           HomeCardId.live,
-          HomeCardId.store,
           HomeCardId.rank,
-          HomeCardId.battlePass,
           HomeCardId.friends,
         ]) {
           expect(_card(id), findsNothing, reason: id.name);
         }
         expect(_card(HomeCardId.community), findsOneWidget);
+        expect(_card(HomeCardId.store), findsOneWidget);
+        expect(_card(HomeCardId.battlePass), findsOneWidget);
         expect(_card(HomeCardId.otherAccounts), findsOneWidget);
 
         await tester.tap(find.text(CommonStrings.signInAgain));
@@ -528,6 +530,46 @@ void main() {
     await tester.tap(find.text(homeMe.gameName));
     await homeSettle(tester);
     expect(find.text(homeAlt1.riotId), findsWidgets);
+    await homeUnmount(tester);
+  });
+
+  testWidgets('LFG polling runs only while the community card is in view', (
+    tester,
+  ) async {
+    var reads = 0;
+    final env = await HomeTestEnv.create();
+    await pumpHomeScreen(
+      tester,
+      env,
+      overrides: [
+        ...vmFull(),
+        matchingLfgPreviewProvider.overrideWith((ref, id) async {
+          reads++;
+          return const [];
+        }),
+      ],
+    );
+    await homePastGate(tester);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(Scaffold).first),
+    );
+    final subscription = container.listen(
+      matchingLfgPreviewProvider(homeMe.puuid),
+      (_, _) {},
+    );
+    await tester.pump();
+    expect(reads, 1);
+    expect(_top(tester, HomeCardId.community), greaterThan(780));
+    await tester.pump(kHomeLfgRefresh);
+    await tester.pump();
+    expect(reads, 1);
+    await tester.ensureVisible(_card(HomeCardId.community));
+    await homeSettle(tester);
+    await tester.pump(kHomeLfgRefresh);
+    await tester.pump();
+    expect(reads, 2);
+    subscription.close();
+    homeExpectNoException(tester);
     await homeUnmount(tester);
   });
 

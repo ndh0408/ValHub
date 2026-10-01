@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/competitive/competitive.dart';
@@ -401,20 +402,24 @@ class _NoMapMatches extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var pending = false;
-    var visible = 0;
-    for (final e in state.items) {
-      final s = ref.watch(
-        matchSummaryProvider((matchId: e.matchId, puuid: puuid)),
-      );
-      final v = s.value;
-      if (v == null) {
-        if (!s.hasError) pending = true;
-      } else if (filter.acceptsMap(v.info.mapId)) {
-        visible++;
-      }
+    // Never watches match details: that made one request per listed match
+    // (PR-26). The on-device ledger of your own account knows the map of
+    // every match it saw; on other players' profiles the list itself just
+    // resolves the visible cards.
+    final own = ref.watch(accountProvider(puuid).select((a) => a != null));
+    final ledger = own ? ref.watch(matchLedgerProvider(puuid)).value : null;
+    if (ledger == null) return const SizedBox.shrink();
+    final counts = countMapFilter(
+      [for (final e in state.items) e.matchId],
+      filter: filter,
+      mapOf: (id) {
+        final line = ledger.byMatch(id);
+        return line == null ? null : (map: line.mapId);
+      },
+    );
+    if (counts.unknown > 0 || counts.visible > 0) {
+      return const SizedBox.shrink();
     }
-    if (pending || visible > 0) return const SizedBox.shrink();
     return const EmptyView(
       icon: Icons.map_outlined,
       message: ProfileStrings.noMatchesMap,

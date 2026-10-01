@@ -21,7 +21,7 @@ import '../data/home_card.dart';
 import '../data/home_layout.dart';
 import 'home_card_providers.dart';
 
-const kHomeLfgRefresh = Duration(seconds: 60);
+const kHomeLfgRefresh = Duration(minutes: 3);
 const kHomeStatusRefresh = Duration(minutes: 5);
 const kHomeAccountsRefresh = Duration(minutes: 2);
 const kHomeStartupDelay = Duration(milliseconds: 1500);

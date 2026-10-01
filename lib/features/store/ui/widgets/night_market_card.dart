@@ -13,6 +13,7 @@ import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
+import '../../../skin_detail/community_skin_score.dart';
 import '../../store_strings.dart';
 import 'store_ui_bits.dart';
 
@@ -116,6 +117,7 @@ class NightMarketCard extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
             ContentTierBadge(contentTierUuid: skin?.contentTierUuid, size: 14),
+            if (skin != null) CommunitySkinScore(skinUuid: skin.uuid),
             const SizedBox(height: 4),
             Text(
               name,

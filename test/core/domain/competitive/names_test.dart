@@ -1,12 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/domain/competitive/names.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/storage/prefs.dart';
+import 'package:valvn/core/storage/json_file_cache.dart';
 import 'package:valvn/core/util/clock.dart';
 import 'package:valvn/core/util/json.dart';
 
 import '../../../helpers/test_prefs.dart';
+import '../../../features/profile/profile_test_env.dart'
+    show MemoryJsonFileCache;
 import 'competitive_test_utils.dart';
 
 String _puuid(int i) =>
@@ -21,6 +26,7 @@ void main() {
   late MockPvpApi api;
   late Prefs prefs;
   late FixedClock clock;
+  late MemoryJsonFileCache files;
   final calls = <List<String>>[];
 
   setUpAll(() => registerFallbackValue(<String>[]));
@@ -28,6 +34,7 @@ void main() {
   setUp(() async {
     api = MockPvpApi();
     prefs = await createTestPrefs();
+    files = MemoryJsonFileCache();
     clock = FixedClock(DateTime(2026, 9, 28, 12));
     calls.clear();
     when(() => api.names(any(), any())).thenAnswer((inv) async {
@@ -41,6 +48,7 @@ void main() {
   NameResolver resolver() => NameResolver(
     api: api,
     prefs: prefs,
+    files: files,
     clock: clock,
     batchWindow: Duration.zero,
   );
@@ -106,16 +114,16 @@ void main() {
       verify(() => api.names(me, any())).called(3);
     });
 
-    test('memory cache, prefs cache, freshness', () async {
+    test('memory cache, file cache, freshness', () async {
       final r = resolver();
       await r.resolve(me, [enemy1, enemy2]);
       await r.resolve(me, [enemy1]);
       expect(calls, hasLength(1));
       expect(r.peek(enemy1.toUpperCase())!.gameName, 'P$enemy1');
-
+      await r.flush();
       final reloaded = resolver();
-      expect(reloaded.peek(enemy2)!.tagLine, 'VN');
       await reloaded.resolve(me, [enemy2]);
+      expect(reloaded.peek(enemy2)!.tagLine, 'VN');
       expect(calls, hasLength(1));
 
       clock.advance(const Duration(days: 2));
@@ -156,14 +164,30 @@ void main() {
       r.remember(friend, const RiotName(gameName: ' '));
       expect(await r.resolveOne(me, friend), const RiotName(gameName: 'Bạn'));
       expect(calls, isEmpty);
-      await pumpEventQueue();
-      expect(resolver().peek(friend)!.gameName, 'Bạn');
+      await r.flush();
+      expect((await resolver().resolveOne(me, friend))!.gameName, 'Bạn');
     });
 
-    test('bounded prefs cache', () async {
+    test('unavailable name file does not block network resolution', () async {
       final r = NameResolver(
         api: api,
         prefs: prefs,
+        files: JsonFileCache(() async => throw StateError('no directory')),
+        clock: clock,
+        batchWindow: Duration.zero,
+      );
+      expect((await r.resolveOne(me, enemy1))!.gameName, 'P$enemy1');
+      expect(calls, [
+        [enemy1],
+      ]);
+      r.dispose();
+    });
+
+    test('bounded file cache leaves no names in preferences', () async {
+      final r = NameResolver(
+        api: api,
+        prefs: prefs,
+        files: files,
         clock: clock,
         batchWindow: Duration.zero,
         maxEntries: 3,
@@ -172,9 +196,35 @@ void main() {
         clock.advance(const Duration(minutes: 1));
         r.remember(_puuid(i), RiotName(gameName: 'N$i'));
       }
-      await pumpEventQueue();
-      final stored = asMap(prefs.getJson(NameResolver.prefsKey))!;
+      await r.flush();
+      final stored = asMap(files.entries[NameResolver.fileKey]!.data)!;
       expect(stored.keys.toSet(), {_puuid(2), _puuid(3), _puuid(4)});
+      expect(prefs.getJson(NameResolver.prefsKey), isNull);
+      r.dispose();
+    });
+
+    test('migrates legacy names and drops names older than 30 days', () async {
+      await prefs.setJson(NameResolver.prefsKey, {
+        friend: {'n': 'Bạn', 'at': clock.now().millisecondsSinceEpoch},
+        enemy1: {
+          'n': 'Cũ',
+          'at': clock
+              .now()
+              .subtract(const Duration(days: 31))
+              .millisecondsSinceEpoch,
+        },
+      });
+      final r = resolver();
+      expect(await r.resolveOne(me, friend), const RiotName(gameName: 'Bạn'));
+      expect(r.peek(enemy1), isNull);
+      await r.flush();
+      expect(asMap(files.entries[NameResolver.fileKey]!.data)!.keys, [friend]);
+      expect(prefs.getJson(NameResolver.prefsKey), isNull);
+      clock.advance(const Duration(days: 31));
+      expect(r.peek(friend), isNull);
+      await r.clear();
+      expect(files.entries, isEmpty);
+      r.dispose();
     });
 
     test('dispose completes pending lookups with no name', () async {
@@ -190,5 +240,26 @@ void main() {
       expect(await r.resolve(me, [enemy2]), isEmpty);
       expect(calls, isEmpty);
     });
+
+    test(
+      'clearing names prevents an old request from repopulating the file',
+      () async {
+        final started = Completer<void>();
+        final response = Completer<List<JsonMap>>();
+        when(() => api.names(any(), any())).thenAnswer((_) {
+          started.complete();
+          return response.future;
+        });
+        final r = resolver();
+        final lookup = r.resolve(me, [enemy1]);
+        await started.future;
+        await r.clear();
+        response.complete(_rows([enemy1]));
+        expect(await lookup, isEmpty);
+        expect(r.peek(enemy1), isNull);
+        expect(files.entries, isEmpty);
+        r.dispose();
+      },
+    );
   });
 }

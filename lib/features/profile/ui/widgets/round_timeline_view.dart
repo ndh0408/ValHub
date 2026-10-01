@@ -134,7 +134,15 @@ class _RoundStrip extends StatelessWidget {
               borderRadius: BorderRadius.circular(6),
               border: Border(bottom: BorderSide(color: color, width: 2.5)),
             ),
-            child: Icon(roundEndIcon(r.endType), size: 15, color: color),
+            child: Icon(
+              r.won == null
+                  ? Icons.remove_rounded
+                  : r.won!
+                  ? Icons.check_rounded
+                  : Icons.close_rounded,
+              size: 15,
+              color: color,
+            ),
           ),
         ),
       );
@@ -274,6 +282,15 @@ class _RoundLineState extends ConsumerState<_RoundLine> {
         ),
         const SizedBox(width: 6),
         Icon(roundEndIcon(row.endType), size: 20, color: color),
+        Icon(
+          row.won == null
+              ? Icons.remove_rounded
+              : row.won!
+              ? Icons.check_rounded
+              : Icons.close_rounded,
+          size: 16,
+          color: color,
+        ),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
@@ -550,36 +567,45 @@ class _KillRow extends StatelessWidget {
     final nameStyle = theme.textTheme.bodySmall?.copyWith(
       fontWeight: FontWeight.w600,
     );
-    Widget side(Agent? agent, String name, Color color) => Expanded(
-      child: Row(
-        children: [
-          ClipOval(
-            child: SizedBox(
-              width: 24,
-              height: 24,
-              child: ColoredBox(
-                color: theme.colorScheme.surfaceContainerHigh,
-                child: NetImage(
-                  agent?.displayIconSmall ?? agent?.displayIcon,
+    Widget side(MatchPlayer? player, Agent? agent, String name, Color color) =>
+        Expanded(
+          child: Row(
+            children: [
+              if (myTeam != null && player?.teamId != null)
+                Icon(
+                  player!.teamId == myTeam
+                      ? Icons.shield_outlined
+                      : Icons.gps_fixed_rounded,
+                  size: 12,
+                  color: color,
+                ),
+              ClipOval(
+                child: SizedBox(
                   width: 24,
                   height: 24,
-                  showSkeleton: false,
+                  child: ColoredBox(
+                    color: theme.colorScheme.surfaceContainerHigh,
+                    child: NetImage(
+                      agent?.displayIconSmall ?? agent?.displayIcon,
+                      width: 24,
+                      height: 24,
+                      showSkeleton: false,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: nameStyle?.copyWith(color: color),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: nameStyle?.copyWith(color: color),
-            ),
-          ),
-        ],
-      ),
-    );
+        );
     return Semantics(
       label: ProfileStrings.killSemantics(killerName, victimName, how, time),
       excludeSemantics: true,
@@ -605,7 +631,7 @@ class _KillRow extends StatelessWidget {
                 ),
               ),
             ),
-            side(killerAgent, killerName, sideColor(killer)),
+            side(killer, killerAgent, killerName, sideColor(killer)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6),
               child: SizedBox(
@@ -619,7 +645,7 @@ class _KillRow extends StatelessWidget {
                       ),
               ),
             ),
-            side(victimAgent, victimName, sideColor(victim)),
+            side(victim, victimAgent, victimName, sideColor(victim)),
           ],
         ),
       ),

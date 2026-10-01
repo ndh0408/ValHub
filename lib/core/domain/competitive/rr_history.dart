@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../storage/json_file_cache.dart';
+import '../../storage/prefs.dart';
+import '../../accounts/account_providers.dart';
 import '../../util/json.dart';
 import 'match_models.dart' show MatchOutcome;
 import 'rank_models.dart';
@@ -39,8 +42,8 @@ class RrHistory {
 /// Persists [RrHistory] per PUUID as JSON files.
 ///
 /// Stored under `keep/<puuid>/rr_history` in its own `history` namespace, so
-/// neither "Xóa bộ nhớ đệm" nor signing out erases it (like the wishlist,
-/// VF W6); call [delete] / [clear] to erase it explicitly. Rows are
+/// "Xóa bộ nhớ đệm" leaves it intact. Account removal must call [delete]
+/// unless the user chose to keep local data (WP-CORE owns that flow). Rows are
 /// de-duplicated by `MatchID` and capped at [maxRows] (newest kept). Writes
 /// for one PUUID are serialised; storage failures degrade to in-memory data.
 class RrHistoryStore {
@@ -50,6 +53,7 @@ class RrHistoryStore {
   final int maxRows;
 
   final Map<String, RrHistory> _memory = {};
+  final Map<String, RrHistory> _visitors = {};
   final Map<String, Future<void>> _locks = {};
   final StreamController<String> _changes = StreamController.broadcast();
 
@@ -58,8 +62,53 @@ class RrHistoryStore {
   static String key(String puuid) =>
       'keep/${puuid.trim().toLowerCase()}/rr_history';
 
+  /// Remove legacy third-party files, retaining signed-in accounts and
+  /// accounts identified by their own kept preferences (wishlist/presets).
+  Future<void> pruneUnowned(Set<String> ownAccounts) async {
+    final retained = {for (final id in ownAccounts) id.trim().toLowerCase()};
+    final directory = (await _files.fileFor('keep/index')).parent;
+    if (!await directory.exists()) return;
+    await for (final entity in directory.list(followLinks: false)) {
+      if (entity is! Directory) continue;
+      final id = entity.path
+          .replaceAll('\\', '/')
+          .split('/')
+          .last
+          .toLowerCase();
+      if (!retained.contains(id)) await delete(id);
+    }
+  }
+
   /// Emits the PUUID whose history changed.
   Stream<String> get changes => _changes.stream;
+
+  /// Other players never create files. LRU: 20 players, 200 rows each.
+  RrHistory readVisitor(String puuid) {
+    final id = puuid.trim().toLowerCase();
+    final history = _visitors.remove(id) ?? RrHistory(puuid: id);
+    _visitors[id] = history;
+    while (_visitors.length > 20) {
+      _visitors.remove(_visitors.keys.first);
+    }
+    return history;
+  }
+
+  int mergeVisitor(String puuid, Iterable<CompetitiveUpdate> incoming) {
+    final current = readVisitor(puuid);
+    final rows = {for (final r in current.rows) r.matchId: r};
+    var added = 0;
+    for (final r in incoming) {
+      if (!rows.containsKey(r.matchId)) added++;
+      rows[r.matchId] = r;
+    }
+    final sorted = rows.values.toList()..sort(compareUpdatesNewestFirst);
+    _visitors[current.puuid] = RrHistory(
+      puuid: current.puuid,
+      rows: sorted.take(200).toList(),
+    );
+    _emit(current.puuid);
+    return added;
+  }
 
   /// Stored history of [puuid] (empty when nothing was stored).
   Future<RrHistory> read(String puuid) {
@@ -129,6 +178,9 @@ class RrHistoryStore {
         }
       }
       if (!changed) return;
+      while (next.length > maxRows) {
+        next.remove(next.keys.first);
+      }
       await _save(RrHistory(puuid: id, rows: current.rows, outcomes: next));
     });
   }
@@ -138,6 +190,7 @@ class RrHistoryStore {
     final id = puuid.trim().toLowerCase();
     return _locked(id, () async {
       _memory.remove(id);
+      _visitors.remove(id);
       try {
         await _files.delete(key(id));
       } on Object {
@@ -151,6 +204,7 @@ class RrHistoryStore {
   Future<void> clear() async {
     final ids = _memory.keys.toList();
     _memory.clear();
+    _visitors.clear();
     try {
       await _files.deletePrefix('keep');
     } on Object {
@@ -186,11 +240,12 @@ class RrHistoryStore {
     } on Object {
       history = RrHistory(puuid: id);
     }
-    return _memory[id] = history;
+    _remember(history);
+    return history;
   }
 
   Future<void> _save(RrHistory history) async {
-    _memory[history.puuid] = history;
+    _remember(history);
     try {
       await _files.write(key(history.puuid), encode(history));
     } on Object {
@@ -201,6 +256,14 @@ class RrHistoryStore {
 
   void _emit(String id) {
     if (!_changes.isClosed) _changes.add(id);
+  }
+
+  void _remember(RrHistory history) {
+    _memory.remove(history.puuid);
+    _memory[history.puuid] = history;
+    while (_memory.length > 20) {
+      _memory.remove(_memory.keys.first);
+    }
   }
 
   /// Serialised form: `{"v":1,"rows":[<P-12 rows>],"outcomes":{id:"win"}}`.
@@ -237,6 +300,13 @@ class RrHistoryStore {
 /// The app-wide [RrHistoryStore] (`<appSupport>/history`).
 final rrHistoryStoreProvider = Provider<RrHistoryStore>((ref) {
   final store = RrHistoryStore(JsonFileCache.appSupport('history'));
+  final retained = {
+    for (final a in ref.read(accountsProvider)) a.puuid,
+    for (final key in ref.read(prefsProvider).keys)
+      if (RegExp(r'^keep\.([^\.]+)\.').firstMatch(key) case final match?)
+        match.group(1)!,
+  };
+  unawaited(store.pruneUnowned(retained).catchError((Object _) {}));
   ref.onDispose(store.dispose);
   return store;
 });

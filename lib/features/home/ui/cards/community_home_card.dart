@@ -263,7 +263,7 @@ class _TrendingTile extends StatelessWidget {
     final votes = HomeStrings.trendingVotes(skin.vote.votes);
     return Semantics(
       button: true,
-      label: '$name, $votes${wished ? ', ${HomeStrings.storeWishlistIn}' : ''}',
+      label: HomeStrings.trendingSkinSemantics(name, votes, wished),
       excludeSemantics: true,
       child: Material(
         color: tint.withValues(alpha: 0.14),
