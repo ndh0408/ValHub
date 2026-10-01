@@ -75,7 +75,8 @@ export function errorBody(err: ApiError): Record<string, unknown> {
   return { error };
 }
 
-export const invalid = (message: string) => new ApiError('invalid_input', message);
+export const invalid = (message: string, reason: Reason = 'invalid_input', params: ReasonParams = {}) =>
+  new ApiError('invalid_input', message, undefined, { reason, params, messageEn: reasonMessages(reason, params).messageEn });
 export const notFound = (message = 'Không tìm thấy.') => new ApiError('not_found', message);
 export const forbidden = (message = 'Bạn không có quyền thực hiện thao tác này.') =>
   new ApiError('forbidden', message);

@@ -46,7 +46,7 @@ export function registerMedia(app: Hono, x: Ctx): void {
     const user = x.user(c, true);
     const ct = (c.req.header('content-type') ?? '').split(';')[0]!.trim().toLowerCase();
     const declared = ALLOWED[ct];
-    if (!declared) throw invalid('Chỉ hỗ trợ ảnh JPEG, PNG hoặc WebP.');
+    if (!declared) throw invalid('Chỉ hỗ trợ ảnh JPEG, PNG hoặc WebP tĩnh.', 'media_type_unsupported');
     const len = c.req.header('content-length');
     if (len !== undefined && Number(len) > MAX_MEDIA_BYTES) throw tooLarge();
     x.rateLimit('media', user.id);

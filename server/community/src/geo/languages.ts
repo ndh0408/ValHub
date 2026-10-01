@@ -48,7 +48,7 @@ export function canonicalLanguage(v: unknown): Language | null {
 /** Validating parser: 400 invalid_input when the value is not one of the 17 languages. */
 export function parseLanguage(v: unknown, field: string): Language {
   const lang = canonicalLanguage(v);
-  if (!lang) throw invalid(`${field} phải là một trong: ${LANGUAGES.join(', ')}.`);
+  if (!lang) throw invalid(`${field} phải là một trong: ${LANGUAGES.join(', ')}.`, 'field_not_in_list', { field, allowed: LANGUAGES.join(', ') });
   return lang;
 }
 
@@ -66,7 +66,7 @@ export function contentLanguage(body: Record<string, unknown>, authorLanguage: s
 export function parseLfgLanguage(v: unknown, field: string): Language | 'any' {
   if (typeof v === 'string' && v.trim().toLowerCase() === 'any') return 'any';
   const lang = canonicalLanguage(v);
-  if (!lang) throw invalid(`${field} phải là một trong: ${LANGUAGES.join(', ')}, any.`);
+  if (!lang) throw invalid(`${field} phải là một trong: ${LANGUAGES.join(', ')}, any.`, 'field_not_in_list', { field, allowed: LANGUAGES.join(', ') + ', any' });
   return lang;
 }
 
@@ -78,7 +78,7 @@ export function parseLanguageList(raw: string | undefined, allowAny = false): st
   if (raw === undefined || raw.trim() === '') return undefined;
   const parts = raw.split(',').map((p) => p.trim()).filter(Boolean);
   if (parts.length === 0) return undefined;
-  if (parts.length > LANGUAGES.length + 1) throw invalid('language có quá nhiều giá trị.');
+  if (parts.length > LANGUAGES.length + 1) throw invalid('language có quá nhiều giá trị.', 'array_bad_size', { field: 'language', max: LANGUAGES.length + 1 });
   const out = new Set<string>();
   for (const p of parts) out.add(allowAny ? parseLfgLanguage(p, 'language') : parseLanguage(p, 'language'));
   return [...out];

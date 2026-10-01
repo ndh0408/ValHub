@@ -1,4 +1,6 @@
 import path from 'node:path';
+import fs from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
 import { serve } from '@hono/node-server';
 import { createAppWithCtx } from './app.js';
 import { loadConfig } from './config.js';
@@ -36,6 +38,16 @@ const { app, ctx } = createAppWithCtx({
   media,
   config,
   erasureLedger,
+  deepHealth: async () => {
+    const disk = await fs.statfs(config.dataDir);
+    const probe = path.join(config.dataDir, `.health-${randomUUID()}`);
+    let writable = false;
+    try { await fs.writeFile(probe, '', { flag: 'wx', mode: 0o600 }); writable = true; }
+    catch { writable = false; }
+    finally { await fs.unlink(probe).catch(() => {}); }
+    const wal = await fs.stat(path.join(config.dataDir, 'community.db-wal')).catch(() => null);
+    return { writable, freeBytes: disk.bavail * disk.bsize, walBytes: wal?.size ?? 0 };
+  },
   content,
   riotUserinfo: guardRiotUserinfo(fetchRiotUserinfo),
   loadProbe: load.lagMs,

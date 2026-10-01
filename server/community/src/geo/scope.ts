@@ -16,7 +16,7 @@ export const GLOBAL: GeoScope = { scope: 'global' };
 
 export function parseCountryParam(v: string): string {
   const c = normalizeAlpha2(v);
-  if (!c) throw invalid('country phải là mã quốc gia ISO 3166-1 alpha-2 (ví dụ VN).');
+  if (!c) throw invalid('country phải là mã quốc gia ISO 3166-1 alpha-2 (ví dụ VN).', 'country_invalid');
   return c;
 }
 
@@ -40,7 +40,7 @@ export function resolveScope(
   let scope: ScopeName;
   if (q.scope) {
     if (!(SCOPES as readonly string[]).includes(q.scope)) {
-      throw invalid(`scope phải là một trong: ${SCOPES.join(', ')}.`);
+      throw invalid(`scope phải là một trong: ${SCOPES.join(', ')}.`, 'field_not_in_list', { field: 'scope', allowed: SCOPES.join(', ') });
     }
     scope = q.scope as ScopeName;
   } else {

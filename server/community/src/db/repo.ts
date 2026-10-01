@@ -237,7 +237,7 @@ export interface MediaRow {
 export interface ReportOutcome {
   /** Distinct reporters of the target. */
   count: number;
-  /** Distinct reporters whose reports count toward hiding (see README: account age + activity). */
+  /** Weighted report score, after eligibility and the daily auto-hide cap. */
   eligible: number;
   /** True when this report made the target hidden. */
   newlyHidden: boolean;
@@ -483,7 +483,7 @@ export interface Repo {
   accountData(userId: string): AccountData | null;
   /**
    * Hard-deletes an account and everything cascading from it; reports against its content are
-   * deleted, reports it filed are anonymised, its rate-limit rows are removed. Media rows go with
+   * deleted, reports it filed are anonymised; rate limits survive until expiry. Media rows go with
    * the user (delete the files first / after via the media service).
    */
   deleteAccountRows(userId: string): void;

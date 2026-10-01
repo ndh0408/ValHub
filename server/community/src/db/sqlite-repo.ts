@@ -423,7 +423,12 @@ export class SqliteRepo implements Repo {
         if (!ref) continue;
         if (ref.skinUuid !== uuid) {
           // Votes: rows that would collide with the user's canonical vote stay behind and are dropped.
-          this.db.prepare(`UPDATE skin_votes AS base SET created_at = MIN(base.created_at,
+          this.db.prepare(`UPDATE skin_votes AS base SET
+            country = CASE WHEN (SELECT created_at FROM skin_votes WHERE skin_uuid = @alias AND user_id = base.user_id) < base.created_at
+              THEN (SELECT country FROM skin_votes WHERE skin_uuid = @alias AND user_id = base.user_id) ELSE base.country END,
+            region = CASE WHEN (SELECT created_at FROM skin_votes WHERE skin_uuid = @alias AND user_id = base.user_id) < base.created_at
+              THEN (SELECT region FROM skin_votes WHERE skin_uuid = @alias AND user_id = base.user_id) ELSE base.region END,
+            created_at = MIN(base.created_at,
             (SELECT alias.created_at FROM skin_votes alias WHERE alias.skin_uuid = @alias AND alias.user_id = base.user_id))
             WHERE base.skin_uuid = @base AND EXISTS (SELECT 1 FROM skin_votes alias WHERE alias.skin_uuid = @alias AND alias.user_id = base.user_id)`)
             .run({ alias: uuid, base: ref.skinUuid });
@@ -448,9 +453,10 @@ export class SqliteRepo implements Repo {
               this.db.prepare(`INSERT OR IGNORE INTO reports (target_type, target_id, reporter_id, reason, created_at)
                 SELECT target_type, ?, reporter_id, reason, created_at FROM reports WHERE target_type = 'review' AND target_id = ?`).run(keep.id, drop.id);
               this.db.prepare("DELETE FROM reports WHERE target_type = 'review' AND target_id = ?").run(drop.id);
-              this.db.prepare(`UPDATE skin_reviews SET created_at = ?, hidden = ?, hidden_reason = ?,
+              const earliest = row.created_at < other.created_at ? row : other;
+              this.db.prepare(`UPDATE skin_reviews SET created_at = ?, country = ?, region = ?, hidden = ?, hidden_reason = ?,
                 like_count = (SELECT COUNT(*) FROM review_likes WHERE review_id = ?) WHERE id = ?`)
-                .run(Math.min(row.created_at, other.created_at), Math.max(row.hidden, other.hidden),
+                .run(earliest.created_at, earliest.country, earliest.region, Math.max(row.hidden, other.hidden),
                   row.hidden_reason === 'moderator' || other.hidden_reason === 'moderator' ? 'moderator' : row.hidden_reason ?? other.hidden_reason,
                   keep.id, keep.id);
               this.db.prepare('DELETE FROM skin_reviews WHERE id = ?').run(drop.id);

@@ -7,12 +7,69 @@ import { ErasureLedger } from '../src/erasures.js';
 import { guardRiotUserinfo, fetchRiotUserinfo } from '../src/riot.js';
 import { moderate } from '../src/moderation/filter.js';
 import { BAYES_C, MIN_RATINGS_FOR_RANK } from '../src/routes/skins.js';
+import type { PostRow } from '../src/db/repo.js';
+import { sweep } from '../src/sweeper.js';
+import { sanitizeImage, ImageError } from '../src/imaging.js';
+import { makeJpeg, makeWebp } from './fixtures.js';
+import { loadConfig } from '../src/config.js';
+import { createApp } from '../src/app.js';
 import { setup, SKIN_A, WEAPON_1, PNG, type Env } from './helpers.js';
 
 let e: Env;
 afterEach(() => { e?.close(); vi.unstubAllGlobals(); });
 
 describe('WP-SRV integrity', () => {
+  it('keeps media quotas and attachment ownership atomic; sweeps dangling rows', async () => {
+    e = setup({ tuning: { mediaUserQuotaBytes: PNG.length, mediaMaxTotalBytes: 10000 } });
+    const a = await e.login('alice');
+    const uploads = await Promise.all([1, 2].map(() => e.req('POST', '/v1/media', { token: a.token, raw: PNG, headers: { 'content-type': 'image/png' } })));
+    expect(uploads.map((r) => r.status).sort()).toEqual([200, 400]);
+    expect(e.repo.mediaBytes(a.user.id)).toBe(PNG.length);
+    expect((await e.media.list()).length).toBe(1);
+    const key = uploads.find((r) => r.status === 200)!.json.key;
+    const p = await e.req('POST', '/v1/posts', { token: a.token, body: { kind: 'text', body: '', media: [key] } });
+    const row = e.db.prepare('SELECT * FROM posts WHERE id = ?').get(p.json.id) as PostRow;
+    expect(() => e.repo.insertPost({ ...row, id: crypto.randomUUID() })).toThrow();
+    expect(e.db.prepare('SELECT COUNT(*) AS n FROM posts').get()).toEqual({ n: 1 });
+    e.db.prepare('DELETE FROM posts WHERE id = ?').run(p.json.id);
+    await sweep(e.mediaDeps());
+    expect(e.repo.getMedia(key)).toBeNull();
+    expect(await e.media.get(key)).toBeNull();
+  });
+
+  it('rejects animation, pixel bombs and marker allocation floods', () => {
+    const webp = makeWebp();
+    // Extended WebP animation flag (VP8X starts at offset 12; payload at 20).
+    webp[20] = (webp[20] ?? 0) | 2;
+    expect(() => sanitizeImage(webp)).toThrow(ImageError);
+    expect(() => sanitizeImage(makeJpeg({ width: 4001, height: 4000 }))).toThrow(ImageError);
+    const markers = new Uint8Array(5000);
+    for (let i = 0; i < markers.length; i += 2) { markers[i] = 255; markers[i + 1] = 1; }
+    const image = makeJpeg();
+    const flood = new Uint8Array(image.length + markers.length);
+    flood.set(image.subarray(0, 2)); flood.set(markers, 2); flood.set(image.subarray(2), 2 + markers.length);
+    expect(() => sanitizeImage(flood)).toThrow('too many JPEG segments');
+  });
+
+  it('requires a real production URL and supports secret files without exposing their content', async () => {
+    e = setup();
+    const file = path.join(e.dataDir, 'secret');
+    await fs.writeFile(file, 's'.repeat(40));
+    const base = { NODE_ENV: 'production', SESSION_SECRET_FILE: file, PEPPER: 'p'.repeat(40) };
+    expect(() => loadConfig(base)).toThrow('PUBLIC_BASE_URL');
+    expect(() => loadConfig({ ...base, PUBLIC_BASE_URL: 'https://community.example.com' })).toThrow();
+    expect(loadConfig({ ...base, PUBLIC_BASE_URL: 'https://val.gianguyen.cloud' }).sessionSecret).toBe('s'.repeat(40));
+    expect(() => loadConfig({ ...base, SESSION_SECRET: 't'.repeat(40), PUBLIC_BASE_URL: 'https://val.gianguyen.cloud' })).toThrow('must not both');
+  });
+
+  it('deep health denies remote and tunnel traffic, permits a real local probe', async () => {
+    e = setup();
+    const app = createApp({ ...e.mediaDeps(), config: { sessionSecret: 's'.repeat(40), pepper: 'p'.repeat(40), trustProxy: true, publicBaseUrl: '' }, riotUserinfo: async () => ({ ok: false }), deepHealth: async () => ({ writable: true, freeBytes: 128 * 1024 * 1024, walBytes: 0 }) });
+    const probe = (address: string, headers: Record<string, string> = {}) => app.fetch(new Request('http://localhost/healthz/deep', { headers }), { incoming: { socket: { remoteAddress: address } } });
+    expect((await probe('8.8.8.8')).status).toBe(404);
+    expect((await probe('127.0.0.1', { 'cf-connecting-ip': '8.8.8.8' })).status).toBe(404);
+    expect((await probe('127.0.0.1')).status).toBe(200);
+  });
   it('stores new-account choices, only counts established accounts, excludes sanctioned voters', async () => {
     e = setup();
     const a = await e.login('alice');

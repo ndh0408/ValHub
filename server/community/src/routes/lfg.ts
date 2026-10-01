@@ -92,13 +92,13 @@ export function registerLfg(app: Hono, x: Ctx): void {
     const mode = q.mode ? parseEnum(q.mode, LFG_MODES, 'mode') : undefined;
     let rank: number | undefined;
     if (q.rank !== undefined && q.rank !== '') {
-      if (!/^\d{1,2}$/.test(q.rank)) throw invalid('rank phải là số nguyên từ 0 đến 27.');
+      if (!/^\d{1,2}$/.test(q.rank)) throw invalid('rank phải là số nguyên từ 0 đến 27.', 'field_not_int', { field: 'rank', min: 0, max: 27 });
       rank = parseRankTier(Number(q.rank));
     }
     const role = q.role ? parseEnum(q.role, LFG_ROLES, 'role') : undefined;
     let mic: boolean | undefined;
     if (q.mic !== undefined && q.mic !== '') {
-      if (q.mic !== 'true' && q.mic !== 'false') throw invalid('mic phải là true hoặc false.');
+      if (q.mic !== 'true' && q.mic !== 'false') throw invalid('mic phải là true hoặc false.', 'field_not_bool', { field: 'mic' });
       mic = q.mic === 'true';
     }
     const languages = parseLanguageList(q.language, true);
@@ -122,7 +122,7 @@ export function registerLfg(app: Hono, x: Ctx): void {
     const region = parseRegion(body.region);
     const mode = parseEnum(body.mode, LFG_MODES, 'mode');
     if (typeof body.partyCode !== 'string' || !PARTY_CODE_RE.test(body.partyCode)) {
-      throw invalid('partyCode phải gồm đúng 6 chữ in hoa hoặc số.');
+      throw invalid('partyCode phải gồm đúng 6 chữ in hoa hoặc số.', 'party_code_invalid');
     }
     const partyCode = body.partyCode;
     const slots = parseInt(body.slots, 1, 4, 'slots');
@@ -130,7 +130,7 @@ export function registerLfg(app: Hono, x: Ctx): void {
     // v2 fields
     const rankMin = parseOptional(body, 'rankMin', (v) => parseInt(v, 0, 27, 'rankMin')) ?? null;
     const rankMax = parseOptional(body, 'rankMax', (v) => parseInt(v, 0, 27, 'rankMax')) ?? null;
-    if (rankMin && rankMax && rankMin > rankMax) throw invalid('rankMin không được lớn hơn rankMax.');
+    if (rankMin && rankMax && rankMin > rankMax) throw invalid('rankMin không được lớn hơn rankMax.', 'rank_range_invalid');
     const roles =
       parseOptional(body, 'roles', (v) =>
         parseUniqueArray(v, 'roles', 4, (r) => parseEnum(r, LFG_ROLES, 'roles')),
@@ -183,14 +183,14 @@ export function registerLfg(app: Hono, x: Ctx): void {
     const body = await x.readJson(c);
     const patch: LfgPatch = {};
     const partySize = parseOptional(body, 'partySize', (v) => parseInt(v, 1, 5, 'partySize'));
-    if (partySize === null) throw invalid('partySize không được để trống.');
+    if (partySize === null) throw invalid('partySize không được để trống.', 'field_empty', { field: 'partySize' });
     if (partySize !== undefined) patch.party_size = partySize;
     const slots = parseOptional(body, 'slots', (v) => parseInt(v, 1, 4, 'slots'));
-    if (slots === null) throw invalid('slots không được để trống.');
+    if (slots === null) throw invalid('slots không được để trống.', 'field_empty', { field: 'slots' });
     if (slots !== undefined) patch.slots = slots;
     const noteRaw = parseNoteRaw(body);
     const status = parseOptional(body, 'status', (v) => parseEnum(v, LFG_STATUSES, 'status'));
-    if (status === null) throw invalid('status không được để trống.');
+    if (status === null) throw invalid('status không được để trống.', 'field_empty', { field: 'status' });
     if (status !== undefined) patch.status = status;
 
     x.rateLimit('lfgPatch', user.id); // before the text filter (CS-03)

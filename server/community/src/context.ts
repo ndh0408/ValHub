@@ -82,6 +82,8 @@ export interface AppDeps {
   /** Current event-loop lag in ms (see load.ts); omitted -> the server never sheds load (tests). */
   loadProbe?: () => number;
   erasureLedger?: ErasureLedger;
+  /** Disk/write/WAL diagnostics; only called on the loopback-only deep probe. */
+  deepHealth?: () => Promise<Record<string, number | boolean>>;
   /** Error sink; receives only error names/messages, never request data. */
   logError?: (msg: string) => void;
 }

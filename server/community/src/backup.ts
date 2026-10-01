@@ -23,6 +23,7 @@ export async function extractBackup(archive: string, dest: string): Promise<void
 
 /** Check a staged restore, never the live database. Verify DB/FKs, row counts and every active image size. */
 export async function verifyBackup(dir: string, file = 'snap.db'): Promise<Record<string, number>> {
+  new ErasureLedger(path.join(dir, 'erasures.jsonl')).entries();
   const db = new Database(path.join(dir, file), { readonly: true, fileMustExist: true });
   try {
     if (db.pragma('integrity_check', { simple: true }) !== 'ok' || (db.pragma('foreign_key_check') as unknown[]).length !== 0) throw new Error('Backup database checks failed');

@@ -1,4 +1,5 @@
 import path from 'node:path';
+import fs from 'node:fs';
 
 export interface Config {
   lfgCodeInList: boolean;
@@ -48,8 +49,15 @@ const MIN_SECRET_LENGTH = 32;
 /** Reads config from the environment; throws (fail fast) on missing / weak secrets. */
 export function loadConfig(env: NodeJS.ProcessEnv): Config {
   const problems: string[] = [];
+  const value = (name: string): string => {
+    const file = env[`${name}_FILE`];
+    if (!file) return env[name] ?? '';
+    if (env[name]) problems.push(`${name} and ${name}_FILE must not both be set`);
+    try { return fs.readFileSync(file, 'utf8').trim(); }
+    catch { problems.push(`${name}_FILE cannot be read`); return ''; }
+  };
   const secret = (name: string): string => {
-    const v = env[name] ?? '';
+    const v = value(name);
     if (v.length < MIN_SECRET_LENGTH) {
       problems.push(`${name} must be set and at least ${MIN_SECRET_LENGTH} characters long`);
     }
@@ -57,7 +65,7 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
   };
   const sessionSecret = secret('SESSION_SECRET');
   const pepper = secret('PEPPER');
-  const sessionSecretPrev = (env.SESSION_SECRET_PREV ?? '').trim();
+  const sessionSecretPrev = value('SESSION_SECRET_PREV').trim();
   if (sessionSecretPrev !== '') {
     if (sessionSecretPrev.length < MIN_SECRET_LENGTH) {
       problems.push(`SESSION_SECRET_PREV must be empty or at least ${MIN_SECRET_LENGTH} characters long`);
@@ -75,7 +83,7 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
     try {
       const u = new URL(publicBaseUrl);
       if (u.protocol !== 'https:' && u.protocol !== 'http:') throw new Error('protocol');
-      if (u.username || u.password || u.search || u.hash || (env.NODE_ENV === 'production' && (u.protocol !== 'https:' || /(^|\.)example\.(com|net|org)$/.test(u.hostname)))) throw new Error('invalid production origin');
+      if (u.username || u.password || u.search || u.hash || (env.NODE_ENV === 'production' && (u.protocol !== 'https:' || /(^|\.)example\./.test(u.hostname)))) throw new Error('invalid production origin');
       publicBaseUrl = u.origin + u.pathname.replace(/\/+$/, '');
     } catch {
       problems.push('PUBLIC_BASE_URL must be an absolute http(s) URL');

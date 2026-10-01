@@ -19,7 +19,7 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
   `riot_unavailable` (503, Riot could not answer; `retryAfter` / `Retry-After` when
   known), `storage_full` (507, the server's image storage is full), `suspended` (403, the
   account is banned or restricted; see "Sanctions"), `server_busy` (503, the server is
-  shedding load: retry after `Retry-After` seconds), `server_error` (500).
+  shedding load: retry after `Retry-After` seconds), `conflict` (409, reused idempotency key with different payload), `server_error` (500).
   `message` is a Vietnamese, human-readable text kept for old clients; clients switch on
   `code`. Errors may also carry (all additive): `reason` — a stable snake_case code for the
   exact case (`content_inappropriate`, `field_too_long`, `rate_limited`, …) — `params` —
@@ -189,7 +189,7 @@ second `DELETE`. Signing in again with the same Riot account creates a new, empt
 | `rankMin`, `rankMax` | int 0..27 | Accepted current-rank range (competitive tiers; 0 = any). `rankMin ≤ rankMax`. |
 | `roles` | array of `duelist, initiator, controller, sentinel, flex` (≤ 4, unique) | Roles the party still needs. |
 | `mic` | bool | Voice chat required. |
-| `language` | `vi` \| `en` \| `any` (default `vi`) | Party language. |
+| `language` | supported app language \| `any` (default author language, else `any`) | Party language. |
 | `partySize` | int 1..5 | Current party size when posting (default `5 - slots`). |
 | `agents` | array of agent uuids (≤ 5) | Agents already picked by the party (optional, shown as icons). |
 
@@ -198,7 +198,7 @@ New endpoints:
 | Method | Path | Body | Response |
 |---|---|---|---|
 | PATCH | `/v1/lfg/{id}` | own post: `{"partySize"?, "slots"?, "note"?, "status"?: "open"\|"full"\|"in_game"}` | `LfgPost` (also extends `expiresAt` to now + 30 min on every PATCH = "still active" heartbeat) |
-| POST | `/v1/lfg/{id}/join` | `{}` — records that the caller tapped "Vào tổ đội" (after the Riot join succeeded) | `{"joins": n}` (one per user; not own post) |
+| POST | `/v1/lfg/{id}/join` | `{}` — obtain the party code before the user-initiated Riot join | `{"joins": n, "partyCode": "…"}` (one per user; open party only; not own post) |
 
 - `GET /v1/lfg` accepts `rank=<tier>` (only posts whose range contains it or has no
   range), `role=<role>`, `mic=true|false`, `language=`, `status=open` (default: open
@@ -217,7 +217,9 @@ change, sets `status: "full"` when the party reaches 5 (or the mode maximum), an
 party code (G-18) and opens the party when the user has not typed one. Joiner: the
 list shows only posts matching the viewer's rank by default ("Phù hợp với rank của
 bạn" toggle), marks mismatches, and "Vào tổ đội" joins by code (G-19) after one
-confirmation, then calls `POST /v1/lfg/{id}/join`.
+confirmation. New clients call `POST /v1/lfg/{id}/join` first to obtain `partyCode`;
+legacy clients can still use the list code while `LFG_CODE_IN_LIST=true` (default).
+When false, other authors' list codes are empty strings; the owner still receives their own code.
 
 ### Skin votes (xếp hạng skin được yêu thích)
 
@@ -235,7 +237,7 @@ last 7 days. `voted` is `false` when unauthenticated.
 
 Each user has at most **one review per skin**: a 1–5 star rating plus optional text,
 editable any time (`updatedAt` changes). Reviews can be liked ("Hữu ích") and
-reported (`targetType: "review"`; 3 reports hide it). Hidden reviews are excluded
+reported (`targetType: "review"`; eligible report weight ≥3 hides it). Hidden reviews are excluded
 from averages.
 
 | Method | Path | Body / query | Response |
@@ -256,7 +258,11 @@ from averages.
   item gains `"ratingAvg", "ratingCount", "reviewCount"`. `period=all` (default) is
   all-time; `period=week` counts only activity (votes / ratings) of the last 7 days.
   `sort=rating` ranks by a Bayesian average `(C·m + Σratings) / (C + n)` with
-  `m` = global mean rating and `C` = 5, and only includes skins with ≥ 3 ratings.
+  `m` = global mean rating and `C` = 15, and only includes skins with ≥ 10 ratings.
+  Public votes/rating counts/averages include only unsanctioned accounts aged ≥24 hours with
+  activity (a visible post/comment/review, vote or like). A new account's choice is saved
+  and its own `voted`/`myReview` is available immediately. Weekly activity uses the first
+  vote/review `createdAt`; editing a review does not bring it back into the weekly ranking.
 - `GET /v1/skins/votes?ids=` items gain `"ratingAvg", "ratingCount"` (for badges in
   lists and the skin detail sheet).
 - Rate limits: reviews (create/update) 30 / hour, review likes share the likes
@@ -289,7 +295,7 @@ from averages.
 - `Post`: `{"id", "author": Author, "kind", "body", "media": [{"key", "url"}],
   "payload", "likes", "liked", "comments", "createdAt"}`.
 - `Comment`: `{"id", "postId", "author": Author, "body", "createdAt"}`.
-- Moderation: 3 distinct **eligible** reports hide a post / comment / review / LFG post
+- Moderation: **eligible report weight ≥3** hides a post / comment / review / LFG post
   (see "Report eligibility"). Users can only delete their own content.
 - **Hidden content is explained to its author.** On the author's OWN items — `Post` (also in
   `GET /v1/me/posts`), `Review` (also `myReview` of the summary) and `LfgPost` (also
@@ -302,9 +308,13 @@ from averages.
   hour per user; votes 120 / hour.
 - Real game content only: `skinUuid` and `weaponUuid` of votes and reviews, `skinUuid` of
   shared store / Night Market offers and the `agents` of an LFG post are checked against
-  valorant-api.com (skin uuids include level and chroma uuids). An unknown id is
+  valorant-api.com. Base, level and chroma skin UUIDs resolve to one base skin UUID; responses
+  use that canonical UUID and the server derives its weapon. Historic duplicate choices
+  are merged, keeping first creation time and latest review body/hidden state/likes/reports.
+  The request still supplies a valid-shaped `weaponUuid` for legacy compatibility. An unknown id is
   `400 invalid_input`. The check never blocks users when the catalog is not available
-  (it accepts every well-formed uuid until the server has loaded it).
+  (it accepts every well-formed uuid until the server has loaded it). The last catalog and
+  alias map persist across restarts; refreshes run in the background with outage backoff.
 
 #### Report eligibility
 
@@ -312,9 +322,11 @@ from averages.
 that does not, a duplicate and a report about your own content — so a reporter cannot tell
 whether their report counted, whether the content is now hidden, or who else reported
 (reports are never exposed, except a user's own filed reports in their data export). The
-target must exist (`404` otherwise). A report is stored, but **counts toward the 3 that
-hide content only if the reporter's account is at least 24 hours old and has done at least
-one thing on the service** (a post, comment, review, vote or like). Eligibility is
+target must exist (`404` otherwise). A report is stored, but contributes weight only if
+its author is unsanctioned, ≥24 hours old and has activity (a visible post/comment/review,
+vote or like). Weight is 1, or 2 after a prior report on content currently moderator-hidden.
+Content hides at total weight ≥3; each reporter can contribute to at most 3 automatic
+hides per UTC day. Eligibility is
 re-evaluated whenever another report about the same target arrives. The author's own
 reports never count. Hidden content disappears from lists and answers `404` on direct
 reads (its author can still delete it); a hidden post's images are quarantined (below).
@@ -328,8 +340,9 @@ reads (its author can still delete it); a hidden post's images are quarantined (
   chunks, WebP EXIF / XMP — and anything appended after the image data. Only the EXIF
   *orientation* survives, so photos are not shown sideways. The stored file is therefore
   not byte-identical to the upload, and `key` / `url` refer to the sanitised file. A file
-  that is not a structurally valid image, or is larger than 50 megapixels or 16,384 px on a
-  side, is `400 invalid_input`.
+  that is not a structurally valid image, or is larger than 16 megapixels or 8,192 px on a
+  side, is `400 invalid_input`. Animated WebP is rejected, and parser segment/chunk counts
+  are bounded. Pixels are not re-encoded; compressed streams are retained after metadata stripping.
 - **Storage limits:** each user may store 50 MB of images (counted on the sanitised
   size; deleting posts frees it): beyond that `400 invalid_input` with the message
   `Bạn đã dùng hết dung lượng ảnh (50 MB). Hãy xóa bớt bài viết có ảnh rồi thử lại.`
@@ -480,3 +493,34 @@ proxy or CDN may keep them.
   to any server.
 - The community session token is stored in secure storage under
   `acct.<puuid>.community` and wiped with the account.
+
+### WP-SRV additive contracts
+
+`Idempotency-Key` (1–128 printable ASCII characters, no whitespace) is optional on POST
+`/v1/posts`, `/v1/posts/{id}/comments` and `/v1/media`. Keys are scoped to account and
+route. The same raw bytes/content type replay a successful result for 24 hours with
+`Idempotency-Replayed: true`; a different body gives `409 conflict`, reason
+`idempotency_conflict`. Concurrent retries share one result. Authentication/sanctions
+are checked again, failures are not cached, and deleting content/account removes the
+stored response. There remains a crash window between creation and key persistence;
+this does not guarantee exactly-once creation across process crashes. Export includes
+`recentCreates` with those cached responses.
+
+Deletion keeps a 30-day revocation tombstone so pre-deletion tokens remain invalid even
+if the same account is recreated immediately. `iat`/`exp` must be finite safe integer
+timestamps and `ep` a nonnegative integer. The current and previous signing secrets
+support a 30-day rotation window. Deletions are journaled before mutation and replayed
+before startup/restored serving. Preserve the latest journal independently of backups.
+
+Moderation evaluates NFC text before stripping bidi/control characters, retaining
+ZWJ/ZWNJ for emoji and writing systems and Thai word separators. It limits combining
+mark and newline floods. English gaming DM/CC stays unchanged unless Vietnamese is
+explicit, detected, or implied by VN country. Allowed HTTPS link hosts (including
+subdomains) are official Riot/VALORANT, valorant-api.com, tracker.gg, YouTube, Twitch
+and val.gianguyen.cloud; other links and existing phone patterns are stripped/rejected.
+Native dictionaries and additional country-specific local phone patterns still need review.
+
+Stable reason codes and English fallbacks live in `server/community/src/reasons.ts`.
+Clients should localize `reason` + numeric `params`, including length unit
+`unicode_code_points`, quota values, cooldowns and field names; Vietnamese `message`
+remains for old clients. The operator-only deep health route is not a public app API.

@@ -221,12 +221,12 @@ describe('links', () => {
   });
 
   it('never masks inside kept https links', () => {
-    const r = moderate('guide https://example.com/dm/vcl đm');
-    expect(r.text).toBe('guide https://example.com/dm/vcl ***');
+    const r = moderate('guide https://playvalorant.com/dm/vcl đm');
+    expect(r.text).toBe('guide https://playvalorant.com/dm/vcl ***');
   });
 
   it('does not see phone numbers inside kept links', () => {
-    expect(moderate('https://example.com/video/0912345678').rejected).toBeNull();
+    expect(moderate('https://youtube.com/video/0912345678').rejected).toBeNull();
   });
 });
 

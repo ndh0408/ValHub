@@ -11,6 +11,8 @@ case "$KEEP_DAYS:$INTERVAL" in *[!0-9:]*|:*) echo 'Invalid backup intervals' >&2
 mkdir -p "$BACKUP_DIR/.tmp"
 log() { echo "$(date -Iseconds) $*"; }
 retention() {
+  # Interrupted disk staging must not keep personal data indefinitely.
+  find "$BACKUP_DIR/.tmp" -mindepth 1 -maxdepth 1 -type d \( -name 'backup.*' -o -name 'drill.*' -o -name 'restore.*' -o -name 'check.*' \) -mmin +1439 -exec rm -rf -- {} +
   find "$BACKUP_DIR" -maxdepth 1 -type f -name 'valvn-community-*' -mmin +"$((KEEP_DAYS * 1440 - 1))" -delete
   if [ -d "$BACKUP_DIR/pre-restore" ]; then
     find "$BACKUP_DIR/pre-restore" -maxdepth 1 -type f -name 'valvn-community-*' -mmin +20159 -delete
