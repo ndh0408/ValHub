@@ -120,8 +120,8 @@ void main() {
       CommonStrings.errorTransientRetryIn(''),
     );
     expect(
-      l10n.commonErrorTransientRetryIn('Nguyá»…n VÄƒn A'),
-      CommonStrings.errorTransientRetryIn('Nguyá»…n VÄƒn A'),
+      l10n.commonErrorTransientRetryIn('Nguyễn Văn A'),
+      CommonStrings.errorTransientRetryIn('Nguyễn Văn A'),
     );
     expect(
       l10n.commonErrorTransientRetryIn('{value}\n!'),
@@ -192,8 +192,8 @@ void main() {
   test('commonOfflineCached', () {
     expect(l10n.commonOfflineCached(''), CommonStrings.offlineCached(''));
     expect(
-      l10n.commonOfflineCached('Nguyá»…n VÄƒn A'),
-      CommonStrings.offlineCached('Nguyá»…n VÄƒn A'),
+      l10n.commonOfflineCached('Nguyễn Văn A'),
+      CommonStrings.offlineCached('Nguyễn Văn A'),
     );
     expect(
       l10n.commonOfflineCached('{value}\n!'),
@@ -215,32 +215,32 @@ void main() {
       CommonStrings.priceBestPack('', ''),
     );
     expect(
-      l10n.commonPriceBestPack('', 'Nguyá»…n VÄƒn A'),
-      CommonStrings.priceBestPack('', 'Nguyá»…n VÄƒn A'),
+      l10n.commonPriceBestPack('', 'Nguyễn Văn A'),
+      CommonStrings.priceBestPack('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.commonPriceBestPack('', '{value}\n!'),
       CommonStrings.priceBestPack('', '{value}\n!'),
     );
     expect(
-      l10n.commonPriceBestPack('Nguyá»…n VÄƒn A', ''),
-      CommonStrings.priceBestPack('Nguyá»…n VÄƒn A', ''),
+      l10n.commonPriceBestPack('Nguyễn Văn A', ''),
+      CommonStrings.priceBestPack('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.commonPriceBestPack('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      CommonStrings.priceBestPack('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.commonPriceBestPack('Nguyễn Văn A', 'Nguyễn Văn A'),
+      CommonStrings.priceBestPack('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.commonPriceBestPack('Nguyá»…n VÄƒn A', '{value}\n!'),
-      CommonStrings.priceBestPack('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.commonPriceBestPack('Nguyễn Văn A', '{value}\n!'),
+      CommonStrings.priceBestPack('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.commonPriceBestPack('{value}\n!', ''),
       CommonStrings.priceBestPack('{value}\n!', ''),
     );
     expect(
-      l10n.commonPriceBestPack('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      CommonStrings.priceBestPack('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.commonPriceBestPack('{value}\n!', 'Nguyễn Văn A'),
+      CommonStrings.priceBestPack('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.commonPriceBestPack('{value}\n!', '{value}\n!'),
@@ -292,32 +292,32 @@ void main() {
       CommonStrings.priceOverrideExample('', ''),
     );
     expect(
-      l10n.commonPriceOverrideExample('', 'Nguyá»…n VÄƒn A'),
-      CommonStrings.priceOverrideExample('', 'Nguyá»…n VÄƒn A'),
+      l10n.commonPriceOverrideExample('', 'Nguyễn Văn A'),
+      CommonStrings.priceOverrideExample('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.commonPriceOverrideExample('', '{value}\n!'),
       CommonStrings.priceOverrideExample('', '{value}\n!'),
     );
     expect(
-      l10n.commonPriceOverrideExample('Nguyá»…n VÄƒn A', ''),
-      CommonStrings.priceOverrideExample('Nguyá»…n VÄƒn A', ''),
+      l10n.commonPriceOverrideExample('Nguyễn Văn A', ''),
+      CommonStrings.priceOverrideExample('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.commonPriceOverrideExample('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      CommonStrings.priceOverrideExample('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.commonPriceOverrideExample('Nguyễn Văn A', 'Nguyễn Văn A'),
+      CommonStrings.priceOverrideExample('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.commonPriceOverrideExample('Nguyá»…n VÄƒn A', '{value}\n!'),
-      CommonStrings.priceOverrideExample('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.commonPriceOverrideExample('Nguyễn Văn A', '{value}\n!'),
+      CommonStrings.priceOverrideExample('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.commonPriceOverrideExample('{value}\n!', ''),
       CommonStrings.priceOverrideExample('{value}\n!', ''),
     );
     expect(
-      l10n.commonPriceOverrideExample('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      CommonStrings.priceOverrideExample('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.commonPriceOverrideExample('{value}\n!', 'Nguyễn Văn A'),
+      CommonStrings.priceOverrideExample('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.commonPriceOverrideExample('{value}\n!', '{value}\n!'),
@@ -366,8 +366,8 @@ void main() {
       CommonStrings.priceSourceOfficial(''),
     );
     expect(
-      l10n.commonPriceSourceOfficial('Nguyá»…n VÄƒn A'),
-      CommonStrings.priceSourceOfficial('Nguyá»…n VÄƒn A'),
+      l10n.commonPriceSourceOfficial('Nguyễn Văn A'),
+      CommonStrings.priceSourceOfficial('Nguyễn Văn A'),
     );
     expect(
       l10n.commonPriceSourceOfficial('{value}\n!'),
@@ -383,8 +383,8 @@ void main() {
   test('commonPriceUpdated', () {
     expect(l10n.commonPriceUpdated(''), CommonStrings.priceUpdated(''));
     expect(
-      l10n.commonPriceUpdated('Nguyá»…n VÄƒn A'),
-      CommonStrings.priceUpdated('Nguyá»…n VÄƒn A'),
+      l10n.commonPriceUpdated('Nguyễn Văn A'),
+      CommonStrings.priceUpdated('Nguyễn Văn A'),
     );
     expect(
       l10n.commonPriceUpdated('{value}\n!'),
@@ -431,8 +431,8 @@ void main() {
   test('commonSortBy', () {
     expect(l10n.commonSortBy(''), CommonStrings.sortBy(''));
     expect(
-      l10n.commonSortBy('Nguyá»…n VÄƒn A'),
-      CommonStrings.sortBy('Nguyá»…n VÄƒn A'),
+      l10n.commonSortBy('Nguyễn Văn A'),
+      CommonStrings.sortBy('Nguyễn Văn A'),
     );
     expect(l10n.commonSortBy('{value}\n!'), CommonStrings.sortBy('{value}\n!'));
   });
@@ -493,8 +493,8 @@ void main() {
   test('commonUpdatedAt', () {
     expect(l10n.commonUpdatedAt(''), CommonStrings.updatedAt(''));
     expect(
-      l10n.commonUpdatedAt('Nguyá»…n VÄƒn A'),
-      CommonStrings.updatedAt('Nguyá»…n VÄƒn A'),
+      l10n.commonUpdatedAt('Nguyễn Văn A'),
+      CommonStrings.updatedAt('Nguyễn Văn A'),
     );
     expect(
       l10n.commonUpdatedAt('{value}\n!'),
@@ -504,32 +504,32 @@ void main() {
   test('commonWallTime', () {
     expect(l10n.commonWallTime('', ''), CommonStrings.wallTime('', ''));
     expect(
-      l10n.commonWallTime('', 'Nguyá»…n VÄƒn A'),
-      CommonStrings.wallTime('', 'Nguyá»…n VÄƒn A'),
+      l10n.commonWallTime('', 'Nguyễn Văn A'),
+      CommonStrings.wallTime('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.commonWallTime('', '{value}\n!'),
       CommonStrings.wallTime('', '{value}\n!'),
     );
     expect(
-      l10n.commonWallTime('Nguyá»…n VÄƒn A', ''),
-      CommonStrings.wallTime('Nguyá»…n VÄƒn A', ''),
+      l10n.commonWallTime('Nguyễn Văn A', ''),
+      CommonStrings.wallTime('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.commonWallTime('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      CommonStrings.wallTime('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.commonWallTime('Nguyễn Văn A', 'Nguyễn Văn A'),
+      CommonStrings.wallTime('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.commonWallTime('Nguyá»…n VÄƒn A', '{value}\n!'),
-      CommonStrings.wallTime('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.commonWallTime('Nguyễn Văn A', '{value}\n!'),
+      CommonStrings.wallTime('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.commonWallTime('{value}\n!', ''),
       CommonStrings.wallTime('{value}\n!', ''),
     );
     expect(
-      l10n.commonWallTime('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      CommonStrings.wallTime('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.commonWallTime('{value}\n!', 'Nguyễn Văn A'),
+      CommonStrings.wallTime('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.commonWallTime('{value}\n!', '{value}\n!'),
@@ -918,8 +918,8 @@ void main() {
   test('contentTierFull', () {
     expect(l10n.contentTierFull(''), ContentStrings.tierFull(''));
     expect(
-      l10n.contentTierFull('Nguyá»…n VÄƒn A'),
-      ContentStrings.tierFull('Nguyá»…n VÄƒn A'),
+      l10n.contentTierFull('Nguyễn Văn A'),
+      ContentStrings.tierFull('Nguyễn Văn A'),
     );
     expect(
       l10n.contentTierFull('{value}\n!'),
@@ -1250,8 +1250,8 @@ void main() {
       AccountStrings.removeAccountConfirm(''),
     );
     expect(
-      l10n.accountRemoveAccountConfirm('Nguyá»…n VÄƒn A'),
-      AccountStrings.removeAccountConfirm('Nguyá»…n VÄƒn A'),
+      l10n.accountRemoveAccountConfirm('Nguyễn Văn A'),
+      AccountStrings.removeAccountConfirm('Nguyễn Văn A'),
     );
     expect(
       l10n.accountRemoveAccountConfirm('{value}\n!'),
@@ -1291,8 +1291,8 @@ void main() {
   test('accountSwitchTo', () {
     expect(l10n.accountSwitchTo(''), AccountStrings.switchTo(''));
     expect(
-      l10n.accountSwitchTo('Nguyá»…n VÄƒn A'),
-      AccountStrings.switchTo('Nguyá»…n VÄƒn A'),
+      l10n.accountSwitchTo('Nguyễn Văn A'),
+      AccountStrings.switchTo('Nguyễn Văn A'),
     );
     expect(
       l10n.accountSwitchTo('{value}\n!'),
@@ -1584,32 +1584,32 @@ void main() {
       NotificationStrings.nightMarketOpenBody('', ''),
     );
     expect(
-      l10n.notificationNightMarketOpenBody('', 'Nguyá»…n VÄƒn A'),
-      NotificationStrings.nightMarketOpenBody('', 'Nguyá»…n VÄƒn A'),
+      l10n.notificationNightMarketOpenBody('', 'Nguyễn Văn A'),
+      NotificationStrings.nightMarketOpenBody('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.notificationNightMarketOpenBody('', '{value}\n!'),
       NotificationStrings.nightMarketOpenBody('', '{value}\n!'),
     );
     expect(
-      l10n.notificationNightMarketOpenBody('Nguyá»…n VÄƒn A', ''),
-      NotificationStrings.nightMarketOpenBody('Nguyá»…n VÄƒn A', ''),
+      l10n.notificationNightMarketOpenBody('Nguyễn Văn A', ''),
+      NotificationStrings.nightMarketOpenBody('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.notificationNightMarketOpenBody('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      NotificationStrings.nightMarketOpenBody('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.notificationNightMarketOpenBody('Nguyễn Văn A', 'Nguyễn Văn A'),
+      NotificationStrings.nightMarketOpenBody('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.notificationNightMarketOpenBody('Nguyá»…n VÄƒn A', '{value}\n!'),
-      NotificationStrings.nightMarketOpenBody('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.notificationNightMarketOpenBody('Nguyễn Văn A', '{value}\n!'),
+      NotificationStrings.nightMarketOpenBody('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.notificationNightMarketOpenBody('{value}\n!', ''),
       NotificationStrings.nightMarketOpenBody('{value}\n!', ''),
     );
     expect(
-      l10n.notificationNightMarketOpenBody('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      NotificationStrings.nightMarketOpenBody('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.notificationNightMarketOpenBody('{value}\n!', 'Nguyễn Văn A'),
+      NotificationStrings.nightMarketOpenBody('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.notificationNightMarketOpenBody('{value}\n!', '{value}\n!'),
@@ -1668,8 +1668,8 @@ void main() {
       NotificationStrings.rankChangedBody(''),
     );
     expect(
-      l10n.notificationRankChangedBody('Nguyá»…n VÄƒn A'),
-      NotificationStrings.rankChangedBody('Nguyá»…n VÄƒn A'),
+      l10n.notificationRankChangedBody('Nguyễn Văn A'),
+      NotificationStrings.rankChangedBody('Nguyễn Văn A'),
     );
     expect(
       l10n.notificationRankChangedBody('{value}\n!'),
@@ -1776,8 +1776,8 @@ void main() {
   test('economyAvailableNow', () {
     expect(l10n.economyAvailableNow(''), EconomyStrings.availableNow(''));
     expect(
-      l10n.economyAvailableNow('Nguyá»…n VÄƒn A'),
-      EconomyStrings.availableNow('Nguyá»…n VÄƒn A'),
+      l10n.economyAvailableNow('Nguyễn Văn A'),
+      EconomyStrings.availableNow('Nguyễn Văn A'),
     );
     expect(
       l10n.economyAvailableNow('{value}\n!'),
@@ -1793,8 +1793,8 @@ void main() {
   test('economyPlaceBundle', () {
     expect(l10n.economyPlaceBundle(''), EconomyStrings.placeBundle(''));
     expect(
-      l10n.economyPlaceBundle('Nguyá»…n VÄƒn A'),
-      EconomyStrings.placeBundle('Nguyá»…n VÄƒn A'),
+      l10n.economyPlaceBundle('Nguyễn Văn A'),
+      EconomyStrings.placeBundle('Nguyễn Văn A'),
     );
     expect(
       l10n.economyPlaceBundle('{value}\n!'),
@@ -1868,8 +1868,8 @@ void main() {
   test('battlePassActEndsIn', () {
     expect(l10n.battlePassActEndsIn(''), BattlePassStrings.actEndsIn(''));
     expect(
-      l10n.battlePassActEndsIn('Nguyá»…n VÄƒn A'),
-      BattlePassStrings.actEndsIn('Nguyá»…n VÄƒn A'),
+      l10n.battlePassActEndsIn('Nguyễn Văn A'),
+      BattlePassStrings.actEndsIn('Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassActEndsIn('{value}\n!'),
@@ -2669,8 +2669,8 @@ void main() {
       BattlePassStrings.dailyCaptionReset(''),
     );
     expect(
-      l10n.battlePassDailyCaptionReset('Nguyá»…n VÄƒn A'),
-      BattlePassStrings.dailyCaptionReset('Nguyá»…n VÄƒn A'),
+      l10n.battlePassDailyCaptionReset('Nguyễn Văn A'),
+      BattlePassStrings.dailyCaptionReset('Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassDailyCaptionReset('{value}\n!'),
@@ -2702,8 +2702,8 @@ void main() {
   test('battlePassEndsAtWall', () {
     expect(l10n.battlePassEndsAtWall(''), BattlePassStrings.endsAtWall(''));
     expect(
-      l10n.battlePassEndsAtWall('Nguyá»…n VÄƒn A'),
-      BattlePassStrings.endsAtWall('Nguyá»…n VÄƒn A'),
+      l10n.battlePassEndsAtWall('Nguyễn Văn A'),
+      BattlePassStrings.endsAtWall('Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassEndsAtWall('{value}\n!'),
@@ -2719,8 +2719,8 @@ void main() {
   test('battlePassEventEndsIn', () {
     expect(l10n.battlePassEventEndsIn(''), BattlePassStrings.eventEndsIn(''));
     expect(
-      l10n.battlePassEventEndsIn('Nguyá»…n VÄƒn A'),
-      BattlePassStrings.eventEndsIn('Nguyá»…n VÄƒn A'),
+      l10n.battlePassEventEndsIn('Nguyễn Văn A'),
+      BattlePassStrings.eventEndsIn('Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassEventEndsIn('{value}\n!'),
@@ -2748,32 +2748,32 @@ void main() {
   test('battlePassLevelOf', () {
     expect(l10n.battlePassLevelOf('', ''), BattlePassStrings.levelOf('', ''));
     expect(
-      l10n.battlePassLevelOf('', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.levelOf('', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassLevelOf('', 'Nguyễn Văn A'),
+      BattlePassStrings.levelOf('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassLevelOf('', '{value}\n!'),
       BattlePassStrings.levelOf('', '{value}\n!'),
     );
     expect(
-      l10n.battlePassLevelOf('Nguyá»…n VÄƒn A', ''),
-      BattlePassStrings.levelOf('Nguyá»…n VÄƒn A', ''),
+      l10n.battlePassLevelOf('Nguyễn Văn A', ''),
+      BattlePassStrings.levelOf('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.battlePassLevelOf('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.levelOf('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassLevelOf('Nguyễn Văn A', 'Nguyễn Văn A'),
+      BattlePassStrings.levelOf('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.battlePassLevelOf('Nguyá»…n VÄƒn A', '{value}\n!'),
-      BattlePassStrings.levelOf('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.battlePassLevelOf('Nguyễn Văn A', '{value}\n!'),
+      BattlePassStrings.levelOf('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.battlePassLevelOf('{value}\n!', ''),
       BattlePassStrings.levelOf('{value}\n!', ''),
     );
     expect(
-      l10n.battlePassLevelOf('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.levelOf('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassLevelOf('{value}\n!', 'Nguyễn Văn A'),
+      BattlePassStrings.levelOf('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassLevelOf('{value}\n!', '{value}\n!'),
@@ -2793,32 +2793,32 @@ void main() {
       BattlePassStrings.matchesEstimate('', ''),
     );
     expect(
-      l10n.battlePassMatchesEstimate('', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.matchesEstimate('', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassMatchesEstimate('', 'Nguyễn Văn A'),
+      BattlePassStrings.matchesEstimate('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassMatchesEstimate('', '{value}\n!'),
       BattlePassStrings.matchesEstimate('', '{value}\n!'),
     );
     expect(
-      l10n.battlePassMatchesEstimate('Nguyá»…n VÄƒn A', ''),
-      BattlePassStrings.matchesEstimate('Nguyá»…n VÄƒn A', ''),
+      l10n.battlePassMatchesEstimate('Nguyễn Văn A', ''),
+      BattlePassStrings.matchesEstimate('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.battlePassMatchesEstimate('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.matchesEstimate('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassMatchesEstimate('Nguyễn Văn A', 'Nguyễn Văn A'),
+      BattlePassStrings.matchesEstimate('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.battlePassMatchesEstimate('Nguyá»…n VÄƒn A', '{value}\n!'),
-      BattlePassStrings.matchesEstimate('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.battlePassMatchesEstimate('Nguyễn Văn A', '{value}\n!'),
+      BattlePassStrings.matchesEstimate('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.battlePassMatchesEstimate('{value}\n!', ''),
       BattlePassStrings.matchesEstimate('{value}\n!', ''),
     );
     expect(
-      l10n.battlePassMatchesEstimate('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.matchesEstimate('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassMatchesEstimate('{value}\n!', 'Nguyễn Văn A'),
+      BattlePassStrings.matchesEstimate('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassMatchesEstimate('{value}\n!', '{value}\n!'),
@@ -2834,32 +2834,32 @@ void main() {
       BattlePassStrings.missionProgress('', ''),
     );
     expect(
-      l10n.battlePassMissionProgress('', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.missionProgress('', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassMissionProgress('', 'Nguyễn Văn A'),
+      BattlePassStrings.missionProgress('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassMissionProgress('', '{value}\n!'),
       BattlePassStrings.missionProgress('', '{value}\n!'),
     );
     expect(
-      l10n.battlePassMissionProgress('Nguyá»…n VÄƒn A', ''),
-      BattlePassStrings.missionProgress('Nguyá»…n VÄƒn A', ''),
+      l10n.battlePassMissionProgress('Nguyễn Văn A', ''),
+      BattlePassStrings.missionProgress('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.battlePassMissionProgress('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.missionProgress('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassMissionProgress('Nguyễn Văn A', 'Nguyễn Văn A'),
+      BattlePassStrings.missionProgress('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.battlePassMissionProgress('Nguyá»…n VÄƒn A', '{value}\n!'),
-      BattlePassStrings.missionProgress('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.battlePassMissionProgress('Nguyễn Văn A', '{value}\n!'),
+      BattlePassStrings.missionProgress('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.battlePassMissionProgress('{value}\n!', ''),
       BattlePassStrings.missionProgress('{value}\n!', ''),
     );
     expect(
-      l10n.battlePassMissionProgress('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.missionProgress('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassMissionProgress('{value}\n!', 'Nguyễn Văn A'),
+      BattlePassStrings.missionProgress('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassMissionProgress('{value}\n!', '{value}\n!'),
@@ -2980,8 +2980,8 @@ void main() {
       BattlePassStrings.newMissionsAtWall(''),
     );
     expect(
-      l10n.battlePassNewMissionsAtWall('Nguyá»…n VÄƒn A'),
-      BattlePassStrings.newMissionsAtWall('Nguyá»…n VÄƒn A'),
+      l10n.battlePassNewMissionsAtWall('Nguyễn Văn A'),
+      BattlePassStrings.newMissionsAtWall('Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassNewMissionsAtWall('{value}\n!'),
@@ -2994,8 +2994,8 @@ void main() {
       BattlePassStrings.newMissionsIn(''),
     );
     expect(
-      l10n.battlePassNewMissionsIn('Nguyá»…n VÄƒn A'),
-      BattlePassStrings.newMissionsIn('Nguyá»…n VÄƒn A'),
+      l10n.battlePassNewMissionsIn('Nguyễn Văn A'),
+      BattlePassStrings.newMissionsIn('Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassNewMissionsIn('{value}\n!'),
@@ -3110,8 +3110,8 @@ void main() {
       BattlePassStrings.nextLevelCaption(''),
     );
     expect(
-      l10n.battlePassNextLevelCaption('Nguyá»…n VÄƒn A'),
-      BattlePassStrings.nextLevelCaption('Nguyá»…n VÄƒn A'),
+      l10n.battlePassNextLevelCaption('Nguyễn Văn A'),
+      BattlePassStrings.nextLevelCaption('Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassNextLevelCaption('{value}\n!'),
@@ -3160,8 +3160,8 @@ void main() {
   test('battlePassResetsAtWall', () {
     expect(l10n.battlePassResetsAtWall(''), BattlePassStrings.resetsAtWall(''));
     expect(
-      l10n.battlePassResetsAtWall('Nguyá»…n VÄƒn A'),
-      BattlePassStrings.resetsAtWall('Nguyá»…n VÄƒn A'),
+      l10n.battlePassResetsAtWall('Nguyễn Văn A'),
+      BattlePassStrings.resetsAtWall('Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassResetsAtWall('{value}\n!'),
@@ -3171,8 +3171,8 @@ void main() {
   test('battlePassResetsIn', () {
     expect(l10n.battlePassResetsIn(''), BattlePassStrings.resetsIn(''));
     expect(
-      l10n.battlePassResetsIn('Nguyá»…n VÄƒn A'),
-      BattlePassStrings.resetsIn('Nguyá»…n VÄƒn A'),
+      l10n.battlePassResetsIn('Nguyễn Văn A'),
+      BattlePassStrings.resetsIn('Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassResetsIn('{value}\n!'),
@@ -3230,32 +3230,32 @@ void main() {
       BattlePassStrings.unlockedCount('', ''),
     );
     expect(
-      l10n.battlePassUnlockedCount('', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.unlockedCount('', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassUnlockedCount('', 'Nguyễn Văn A'),
+      BattlePassStrings.unlockedCount('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassUnlockedCount('', '{value}\n!'),
       BattlePassStrings.unlockedCount('', '{value}\n!'),
     );
     expect(
-      l10n.battlePassUnlockedCount('Nguyá»…n VÄƒn A', ''),
-      BattlePassStrings.unlockedCount('Nguyá»…n VÄƒn A', ''),
+      l10n.battlePassUnlockedCount('Nguyễn Văn A', ''),
+      BattlePassStrings.unlockedCount('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.battlePassUnlockedCount('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.unlockedCount('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassUnlockedCount('Nguyễn Văn A', 'Nguyễn Văn A'),
+      BattlePassStrings.unlockedCount('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.battlePassUnlockedCount('Nguyá»…n VÄƒn A', '{value}\n!'),
-      BattlePassStrings.unlockedCount('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.battlePassUnlockedCount('Nguyễn Văn A', '{value}\n!'),
+      BattlePassStrings.unlockedCount('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.battlePassUnlockedCount('{value}\n!', ''),
       BattlePassStrings.unlockedCount('{value}\n!', ''),
     );
     expect(
-      l10n.battlePassUnlockedCount('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.unlockedCount('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassUnlockedCount('{value}\n!', 'Nguyễn Văn A'),
+      BattlePassStrings.unlockedCount('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassUnlockedCount('{value}\n!', '{value}\n!'),
@@ -3274,8 +3274,8 @@ void main() {
   test('battlePassWeeklyXpLeft', () {
     expect(l10n.battlePassWeeklyXpLeft(''), BattlePassStrings.weeklyXpLeft(''));
     expect(
-      l10n.battlePassWeeklyXpLeft('Nguyá»…n VÄƒn A'),
-      BattlePassStrings.weeklyXpLeft('Nguyá»…n VÄƒn A'),
+      l10n.battlePassWeeklyXpLeft('Nguyễn Văn A'),
+      BattlePassStrings.weeklyXpLeft('Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassWeeklyXpLeft('{value}\n!'),
@@ -3285,32 +3285,32 @@ void main() {
   test('battlePassXpOf', () {
     expect(l10n.battlePassXpOf('', ''), BattlePassStrings.xpOf('', ''));
     expect(
-      l10n.battlePassXpOf('', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.xpOf('', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassXpOf('', 'Nguyễn Văn A'),
+      BattlePassStrings.xpOf('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassXpOf('', '{value}\n!'),
       BattlePassStrings.xpOf('', '{value}\n!'),
     );
     expect(
-      l10n.battlePassXpOf('Nguyá»…n VÄƒn A', ''),
-      BattlePassStrings.xpOf('Nguyá»…n VÄƒn A', ''),
+      l10n.battlePassXpOf('Nguyễn Văn A', ''),
+      BattlePassStrings.xpOf('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.battlePassXpOf('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.xpOf('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassXpOf('Nguyễn Văn A', 'Nguyễn Văn A'),
+      BattlePassStrings.xpOf('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.battlePassXpOf('Nguyá»…n VÄƒn A', '{value}\n!'),
-      BattlePassStrings.xpOf('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.battlePassXpOf('Nguyễn Văn A', '{value}\n!'),
+      BattlePassStrings.xpOf('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.battlePassXpOf('{value}\n!', ''),
       BattlePassStrings.xpOf('{value}\n!', ''),
     );
     expect(
-      l10n.battlePassXpOf('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      BattlePassStrings.xpOf('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.battlePassXpOf('{value}\n!', 'Nguyễn Văn A'),
+      BattlePassStrings.xpOf('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassXpOf('{value}\n!', '{value}\n!'),
@@ -3320,8 +3320,8 @@ void main() {
   test('battlePassXpPerDay', () {
     expect(l10n.battlePassXpPerDay(''), BattlePassStrings.xpPerDay(''));
     expect(
-      l10n.battlePassXpPerDay('Nguyá»…n VÄƒn A'),
-      BattlePassStrings.xpPerDay('Nguyá»…n VÄƒn A'),
+      l10n.battlePassXpPerDay('Nguyễn Văn A'),
+      BattlePassStrings.xpPerDay('Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassXpPerDay('{value}\n!'),
@@ -3334,8 +3334,8 @@ void main() {
   test('battlePassXpReward', () {
     expect(l10n.battlePassXpReward(''), BattlePassStrings.xpReward(''));
     expect(
-      l10n.battlePassXpReward('Nguyá»…n VÄƒn A'),
-      BattlePassStrings.xpReward('Nguyá»…n VÄƒn A'),
+      l10n.battlePassXpReward('Nguyễn Văn A'),
+      BattlePassStrings.xpReward('Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassXpReward('{value}\n!'),
@@ -3345,8 +3345,8 @@ void main() {
   test('battlePassXpToFinish', () {
     expect(l10n.battlePassXpToFinish(''), BattlePassStrings.xpToFinish(''));
     expect(
-      l10n.battlePassXpToFinish('Nguyá»…n VÄƒn A'),
-      BattlePassStrings.xpToFinish('Nguyá»…n VÄƒn A'),
+      l10n.battlePassXpToFinish('Nguyễn Văn A'),
+      BattlePassStrings.xpToFinish('Nguyễn Văn A'),
     );
     expect(
       l10n.battlePassXpToFinish('{value}\n!'),
@@ -3365,8 +3365,8 @@ void main() {
       CollectionStrings.applyPresetTitle(''),
     );
     expect(
-      l10n.collectionApplyPresetTitle('Nguyá»…n VÄƒn A'),
-      CollectionStrings.applyPresetTitle('Nguyá»…n VÄƒn A'),
+      l10n.collectionApplyPresetTitle('Nguyễn Văn A'),
+      CollectionStrings.applyPresetTitle('Nguyễn Văn A'),
     );
     expect(
       l10n.collectionApplyPresetTitle('{value}\n!'),
@@ -3511,8 +3511,8 @@ void main() {
   test('collectionBuddyFor', () {
     expect(l10n.collectionBuddyFor(''), CollectionStrings.buddyFor(''));
     expect(
-      l10n.collectionBuddyFor('Nguyá»…n VÄƒn A'),
-      CollectionStrings.buddyFor('Nguyá»…n VÄƒn A'),
+      l10n.collectionBuddyFor('Nguyễn Văn A'),
+      CollectionStrings.buddyFor('Nguyễn Văn A'),
     );
     expect(
       l10n.collectionBuddyFor('{value}\n!'),
@@ -3537,8 +3537,8 @@ void main() {
   test('collectionCardsCount', () {
     expect(l10n.collectionCardsCount(''), CollectionStrings.cardsCount(''));
     expect(
-      l10n.collectionCardsCount('Nguyá»…n VÄƒn A'),
-      CollectionStrings.cardsCount('Nguyá»…n VÄƒn A'),
+      l10n.collectionCardsCount('Nguyễn Văn A'),
+      CollectionStrings.cardsCount('Nguyễn Văn A'),
     );
     expect(
       l10n.collectionCardsCount('{value}\n!'),
@@ -3693,8 +3693,8 @@ void main() {
       CollectionStrings.equippedCardLabel(''),
     );
     expect(
-      l10n.collectionEquippedCardLabel('Nguyá»…n VÄƒn A'),
-      CollectionStrings.equippedCardLabel('Nguyá»…n VÄƒn A'),
+      l10n.collectionEquippedCardLabel('Nguyễn Văn A'),
+      CollectionStrings.equippedCardLabel('Nguyễn Văn A'),
     );
     expect(
       l10n.collectionEquippedCardLabel('{value}\n!'),
@@ -3704,8 +3704,8 @@ void main() {
   test('collectionEquippedItem', () {
     expect(l10n.collectionEquippedItem(''), CollectionStrings.equippedItem(''));
     expect(
-      l10n.collectionEquippedItem('Nguyá»…n VÄƒn A'),
-      CollectionStrings.equippedItem('Nguyá»…n VÄƒn A'),
+      l10n.collectionEquippedItem('Nguyễn Văn A'),
+      CollectionStrings.equippedItem('Nguyễn Văn A'),
     );
     expect(
       l10n.collectionEquippedItem('{value}\n!'),
@@ -3715,8 +3715,8 @@ void main() {
   test('collectionEquippedLine', () {
     expect(l10n.collectionEquippedLine(''), CollectionStrings.equippedLine(''));
     expect(
-      l10n.collectionEquippedLine('Nguyá»…n VÄƒn A'),
-      CollectionStrings.equippedLine('Nguyá»…n VÄƒn A'),
+      l10n.collectionEquippedLine('Nguyễn Văn A'),
+      CollectionStrings.equippedLine('Nguyễn Văn A'),
     );
     expect(
       l10n.collectionEquippedLine('{value}\n!'),
@@ -3756,8 +3756,8 @@ void main() {
   test('collectionItemsCount', () {
     expect(l10n.collectionItemsCount(''), CollectionStrings.itemsCount(''));
     expect(
-      l10n.collectionItemsCount('Nguyá»…n VÄƒn A'),
-      CollectionStrings.itemsCount('Nguyá»…n VÄƒn A'),
+      l10n.collectionItemsCount('Nguyễn Văn A'),
+      CollectionStrings.itemsCount('Nguyễn Văn A'),
     );
     expect(
       l10n.collectionItemsCount('{value}\n!'),
@@ -3877,8 +3877,8 @@ void main() {
       CollectionStrings.levelLabel(0, ''),
     );
     expect(
-      l10n.collectionLevelLabel(0, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.levelLabel(0, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionLevelLabel(0, 'Nguyễn Văn A'),
+      CollectionStrings.levelLabel(0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionLevelLabel(0, '{value}\n!'),
@@ -3889,8 +3889,8 @@ void main() {
       CollectionStrings.levelLabel(1, ''),
     );
     expect(
-      l10n.collectionLevelLabel(1, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.levelLabel(1, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionLevelLabel(1, 'Nguyễn Văn A'),
+      CollectionStrings.levelLabel(1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionLevelLabel(1, '{value}\n!'),
@@ -3901,8 +3901,8 @@ void main() {
       CollectionStrings.levelLabel(2, ''),
     );
     expect(
-      l10n.collectionLevelLabel(2, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.levelLabel(2, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionLevelLabel(2, 'Nguyễn Văn A'),
+      CollectionStrings.levelLabel(2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionLevelLabel(2, '{value}\n!'),
@@ -3913,8 +3913,8 @@ void main() {
       CollectionStrings.levelLabel(5, ''),
     );
     expect(
-      l10n.collectionLevelLabel(5, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.levelLabel(5, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionLevelLabel(5, 'Nguyễn Văn A'),
+      CollectionStrings.levelLabel(5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionLevelLabel(5, '{value}\n!'),
@@ -3925,8 +3925,8 @@ void main() {
       CollectionStrings.levelLabel(99, ''),
     );
     expect(
-      l10n.collectionLevelLabel(99, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.levelLabel(99, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionLevelLabel(99, 'Nguyễn Văn A'),
+      CollectionStrings.levelLabel(99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionLevelLabel(99, '{value}\n!'),
@@ -4056,97 +4056,97 @@ void main() {
       CollectionStrings.moveBuddyBody('', '', ''),
     );
     expect(
-      l10n.collectionMoveBuddyBody('', '', 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.moveBuddyBody('', '', 'Nguyá»…n VÄƒn A'),
+      l10n.collectionMoveBuddyBody('', '', 'Nguyễn Văn A'),
+      CollectionStrings.moveBuddyBody('', '', 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionMoveBuddyBody('', '', '{value}\n!'),
       CollectionStrings.moveBuddyBody('', '', '{value}\n!'),
     );
     expect(
-      l10n.collectionMoveBuddyBody('', 'Nguyá»…n VÄƒn A', ''),
-      CollectionStrings.moveBuddyBody('', 'Nguyá»…n VÄƒn A', ''),
+      l10n.collectionMoveBuddyBody('', 'Nguyễn Văn A', ''),
+      CollectionStrings.moveBuddyBody('', 'Nguyễn Văn A', ''),
     );
     expect(
-      l10n.collectionMoveBuddyBody('', 'Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.moveBuddyBody('', 'Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.collectionMoveBuddyBody('', 'Nguyễn Văn A', 'Nguyễn Văn A'),
+      CollectionStrings.moveBuddyBody('', 'Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.collectionMoveBuddyBody('', 'Nguyá»…n VÄƒn A', '{value}\n!'),
-      CollectionStrings.moveBuddyBody('', 'Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.collectionMoveBuddyBody('', 'Nguyễn Văn A', '{value}\n!'),
+      CollectionStrings.moveBuddyBody('', 'Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.collectionMoveBuddyBody('', '{value}\n!', ''),
       CollectionStrings.moveBuddyBody('', '{value}\n!', ''),
     );
     expect(
-      l10n.collectionMoveBuddyBody('', '{value}\n!', 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.moveBuddyBody('', '{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.collectionMoveBuddyBody('', '{value}\n!', 'Nguyễn Văn A'),
+      CollectionStrings.moveBuddyBody('', '{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionMoveBuddyBody('', '{value}\n!', '{value}\n!'),
       CollectionStrings.moveBuddyBody('', '{value}\n!', '{value}\n!'),
     );
     expect(
-      l10n.collectionMoveBuddyBody('Nguyá»…n VÄƒn A', '', ''),
-      CollectionStrings.moveBuddyBody('Nguyá»…n VÄƒn A', '', ''),
+      l10n.collectionMoveBuddyBody('Nguyễn Văn A', '', ''),
+      CollectionStrings.moveBuddyBody('Nguyễn Văn A', '', ''),
     );
     expect(
-      l10n.collectionMoveBuddyBody('Nguyá»…n VÄƒn A', '', 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.moveBuddyBody('Nguyá»…n VÄƒn A', '', 'Nguyá»…n VÄƒn A'),
+      l10n.collectionMoveBuddyBody('Nguyễn Văn A', '', 'Nguyễn Văn A'),
+      CollectionStrings.moveBuddyBody('Nguyễn Văn A', '', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.collectionMoveBuddyBody('Nguyá»…n VÄƒn A', '', '{value}\n!'),
-      CollectionStrings.moveBuddyBody('Nguyá»…n VÄƒn A', '', '{value}\n!'),
+      l10n.collectionMoveBuddyBody('Nguyễn Văn A', '', '{value}\n!'),
+      CollectionStrings.moveBuddyBody('Nguyễn Văn A', '', '{value}\n!'),
     );
     expect(
-      l10n.collectionMoveBuddyBody('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A', ''),
-      CollectionStrings.moveBuddyBody('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A', ''),
-    );
-    expect(
-      l10n.collectionMoveBuddyBody(
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
-      ),
-      CollectionStrings.moveBuddyBody(
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
-      ),
+      l10n.collectionMoveBuddyBody('Nguyễn Văn A', 'Nguyễn Văn A', ''),
+      CollectionStrings.moveBuddyBody('Nguyễn Văn A', 'Nguyễn Văn A', ''),
     );
     expect(
       l10n.collectionMoveBuddyBody(
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
-        '{value}\n!',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
       ),
       CollectionStrings.moveBuddyBody(
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
-        '{value}\n!',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
       ),
-    );
-    expect(
-      l10n.collectionMoveBuddyBody('Nguyá»…n VÄƒn A', '{value}\n!', ''),
-      CollectionStrings.moveBuddyBody('Nguyá»…n VÄƒn A', '{value}\n!', ''),
     );
     expect(
       l10n.collectionMoveBuddyBody(
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
       ),
       CollectionStrings.moveBuddyBody(
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
       ),
     );
     expect(
-      l10n.collectionMoveBuddyBody('Nguyá»…n VÄƒn A', '{value}\n!', '{value}\n!'),
+      l10n.collectionMoveBuddyBody('Nguyễn Văn A', '{value}\n!', ''),
+      CollectionStrings.moveBuddyBody('Nguyễn Văn A', '{value}\n!', ''),
+    );
+    expect(
+      l10n.collectionMoveBuddyBody(
+        'Nguyễn Văn A',
+        '{value}\n!',
+        'Nguyễn Văn A',
+      ),
       CollectionStrings.moveBuddyBody(
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        '{value}\n!',
+        'Nguyễn Văn A',
+      ),
+    );
+    expect(
+      l10n.collectionMoveBuddyBody('Nguyễn Văn A', '{value}\n!', '{value}\n!'),
+      CollectionStrings.moveBuddyBody(
+        'Nguyễn Văn A',
         '{value}\n!',
         '{value}\n!',
       ),
@@ -4156,34 +4156,34 @@ void main() {
       CollectionStrings.moveBuddyBody('{value}\n!', '', ''),
     );
     expect(
-      l10n.collectionMoveBuddyBody('{value}\n!', '', 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.moveBuddyBody('{value}\n!', '', 'Nguyá»…n VÄƒn A'),
+      l10n.collectionMoveBuddyBody('{value}\n!', '', 'Nguyễn Văn A'),
+      CollectionStrings.moveBuddyBody('{value}\n!', '', 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionMoveBuddyBody('{value}\n!', '', '{value}\n!'),
       CollectionStrings.moveBuddyBody('{value}\n!', '', '{value}\n!'),
     );
     expect(
-      l10n.collectionMoveBuddyBody('{value}\n!', 'Nguyá»…n VÄƒn A', ''),
-      CollectionStrings.moveBuddyBody('{value}\n!', 'Nguyá»…n VÄƒn A', ''),
+      l10n.collectionMoveBuddyBody('{value}\n!', 'Nguyễn Văn A', ''),
+      CollectionStrings.moveBuddyBody('{value}\n!', 'Nguyễn Văn A', ''),
     );
     expect(
       l10n.collectionMoveBuddyBody(
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
       ),
       CollectionStrings.moveBuddyBody(
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
       ),
     );
     expect(
-      l10n.collectionMoveBuddyBody('{value}\n!', 'Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.collectionMoveBuddyBody('{value}\n!', 'Nguyễn Văn A', '{value}\n!'),
       CollectionStrings.moveBuddyBody(
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
         '{value}\n!',
       ),
     );
@@ -4192,11 +4192,11 @@ void main() {
       CollectionStrings.moveBuddyBody('{value}\n!', '{value}\n!', ''),
     );
     expect(
-      l10n.collectionMoveBuddyBody('{value}\n!', '{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.collectionMoveBuddyBody('{value}\n!', '{value}\n!', 'Nguyễn Văn A'),
       CollectionStrings.moveBuddyBody(
         '{value}\n!',
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
       ),
     );
     expect(
@@ -4262,8 +4262,8 @@ void main() {
       CollectionStrings.ownedSkinsStat(''),
     );
     expect(
-      l10n.collectionOwnedSkinsStat('Nguyá»…n VÄƒn A'),
-      CollectionStrings.ownedSkinsStat('Nguyá»…n VÄƒn A'),
+      l10n.collectionOwnedSkinsStat('Nguyễn Văn A'),
+      CollectionStrings.ownedSkinsStat('Nguyễn Văn A'),
     );
     expect(
       l10n.collectionOwnedSkinsStat('{value}\n!'),
@@ -4303,8 +4303,8 @@ void main() {
       CollectionStrings.presetApplied(''),
     );
     expect(
-      l10n.collectionPresetApplied('Nguyá»…n VÄƒn A'),
-      CollectionStrings.presetApplied('Nguyá»…n VÄƒn A'),
+      l10n.collectionPresetApplied('Nguyễn Văn A'),
+      CollectionStrings.presetApplied('Nguyễn Văn A'),
     );
     expect(
       l10n.collectionPresetApplied('{value}\n!'),
@@ -4324,8 +4324,8 @@ void main() {
       CollectionStrings.presetDeleted(''),
     );
     expect(
-      l10n.collectionPresetDeleted('Nguyá»…n VÄƒn A'),
-      CollectionStrings.presetDeleted('Nguyá»…n VÄƒn A'),
+      l10n.collectionPresetDeleted('Nguyễn Văn A'),
+      CollectionStrings.presetDeleted('Nguyễn Văn A'),
     );
     expect(
       l10n.collectionPresetDeleted('{value}\n!'),
@@ -4341,8 +4341,8 @@ void main() {
   test('collectionPresetSaved', () {
     expect(l10n.collectionPresetSaved(''), CollectionStrings.presetSaved(''));
     expect(
-      l10n.collectionPresetSaved('Nguyá»…n VÄƒn A'),
-      CollectionStrings.presetSaved('Nguyá»…n VÄƒn A'),
+      l10n.collectionPresetSaved('Nguyễn Văn A'),
+      CollectionStrings.presetSaved('Nguyễn Văn A'),
     );
     expect(
       l10n.collectionPresetSaved('{value}\n!'),
@@ -4355,8 +4355,8 @@ void main() {
       CollectionStrings.presetSavedAt(''),
     );
     expect(
-      l10n.collectionPresetSavedAt('Nguyá»…n VÄƒn A'),
-      CollectionStrings.presetSavedAt('Nguyá»…n VÄƒn A'),
+      l10n.collectionPresetSavedAt('Nguyễn Văn A'),
+      CollectionStrings.presetSavedAt('Nguyễn Văn A'),
     );
     expect(
       l10n.collectionPresetSavedAt('{value}\n!'),
@@ -4511,8 +4511,8 @@ void main() {
       CollectionStrings.summaryFiltered(0, ''),
     );
     expect(
-      l10n.collectionSummaryFiltered(0, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.summaryFiltered(0, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionSummaryFiltered(0, 'Nguyễn Văn A'),
+      CollectionStrings.summaryFiltered(0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionSummaryFiltered(0, '{value}\n!'),
@@ -4523,8 +4523,8 @@ void main() {
       CollectionStrings.summaryFiltered(1, ''),
     );
     expect(
-      l10n.collectionSummaryFiltered(1, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.summaryFiltered(1, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionSummaryFiltered(1, 'Nguyễn Văn A'),
+      CollectionStrings.summaryFiltered(1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionSummaryFiltered(1, '{value}\n!'),
@@ -4535,8 +4535,8 @@ void main() {
       CollectionStrings.summaryFiltered(2, ''),
     );
     expect(
-      l10n.collectionSummaryFiltered(2, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.summaryFiltered(2, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionSummaryFiltered(2, 'Nguyễn Văn A'),
+      CollectionStrings.summaryFiltered(2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionSummaryFiltered(2, '{value}\n!'),
@@ -4547,8 +4547,8 @@ void main() {
       CollectionStrings.summaryFiltered(5, ''),
     );
     expect(
-      l10n.collectionSummaryFiltered(5, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.summaryFiltered(5, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionSummaryFiltered(5, 'Nguyễn Văn A'),
+      CollectionStrings.summaryFiltered(5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionSummaryFiltered(5, '{value}\n!'),
@@ -4559,8 +4559,8 @@ void main() {
       CollectionStrings.summaryFiltered(99, ''),
     );
     expect(
-      l10n.collectionSummaryFiltered(99, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.summaryFiltered(99, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionSummaryFiltered(99, 'Nguyễn Văn A'),
+      CollectionStrings.summaryFiltered(99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionSummaryFiltered(99, '{value}\n!'),
@@ -4682,8 +4682,8 @@ void main() {
       CollectionStrings.summarySkins(0, ''),
     );
     expect(
-      l10n.collectionSummarySkins(0, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.summarySkins(0, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionSummarySkins(0, 'Nguyễn Văn A'),
+      CollectionStrings.summarySkins(0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionSummarySkins(0, '{value}\n!'),
@@ -4694,8 +4694,8 @@ void main() {
       CollectionStrings.summarySkins(1, ''),
     );
     expect(
-      l10n.collectionSummarySkins(1, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.summarySkins(1, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionSummarySkins(1, 'Nguyễn Văn A'),
+      CollectionStrings.summarySkins(1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionSummarySkins(1, '{value}\n!'),
@@ -4706,8 +4706,8 @@ void main() {
       CollectionStrings.summarySkins(2, ''),
     );
     expect(
-      l10n.collectionSummarySkins(2, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.summarySkins(2, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionSummarySkins(2, 'Nguyễn Văn A'),
+      CollectionStrings.summarySkins(2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionSummarySkins(2, '{value}\n!'),
@@ -4718,8 +4718,8 @@ void main() {
       CollectionStrings.summarySkins(5, ''),
     );
     expect(
-      l10n.collectionSummarySkins(5, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.summarySkins(5, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionSummarySkins(5, 'Nguyễn Văn A'),
+      CollectionStrings.summarySkins(5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionSummarySkins(5, '{value}\n!'),
@@ -4730,8 +4730,8 @@ void main() {
       CollectionStrings.summarySkins(99, ''),
     );
     expect(
-      l10n.collectionSummarySkins(99, 'Nguyá»…n VÄƒn A'),
-      CollectionStrings.summarySkins(99, 'Nguyá»…n VÄƒn A'),
+      l10n.collectionSummarySkins(99, 'Nguyễn Văn A'),
+      CollectionStrings.summarySkins(99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.collectionSummarySkins(99, '{value}\n!'),
@@ -4753,8 +4753,8 @@ void main() {
   test('collectionTitlesCount', () {
     expect(l10n.collectionTitlesCount(''), CollectionStrings.titlesCount(''));
     expect(
-      l10n.collectionTitlesCount('Nguyá»…n VÄƒn A'),
-      CollectionStrings.titlesCount('Nguyá»…n VÄƒn A'),
+      l10n.collectionTitlesCount('Nguyễn Văn A'),
+      CollectionStrings.titlesCount('Nguyễn Văn A'),
     );
     expect(
       l10n.collectionTitlesCount('{value}\n!'),
@@ -4992,32 +4992,32 @@ void main() {
   test('communityCharCount', () {
     expect(l10n.communityCharCount('', ''), CommunityStrings.charCount('', ''));
     expect(
-      l10n.communityCharCount('', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.charCount('', 'Nguyá»…n VÄƒn A'),
+      l10n.communityCharCount('', 'Nguyễn Văn A'),
+      CommunityStrings.charCount('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityCharCount('', '{value}\n!'),
       CommunityStrings.charCount('', '{value}\n!'),
     );
     expect(
-      l10n.communityCharCount('Nguyá»…n VÄƒn A', ''),
-      CommunityStrings.charCount('Nguyá»…n VÄƒn A', ''),
+      l10n.communityCharCount('Nguyễn Văn A', ''),
+      CommunityStrings.charCount('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.communityCharCount('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.charCount('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.communityCharCount('Nguyễn Văn A', 'Nguyễn Văn A'),
+      CommunityStrings.charCount('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.communityCharCount('Nguyá»…n VÄƒn A', '{value}\n!'),
-      CommunityStrings.charCount('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.communityCharCount('Nguyễn Văn A', '{value}\n!'),
+      CommunityStrings.charCount('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.communityCharCount('{value}\n!', ''),
       CommunityStrings.charCount('{value}\n!', ''),
     );
     expect(
-      l10n.communityCharCount('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.charCount('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.communityCharCount('{value}\n!', 'Nguyễn Văn A'),
+      CommunityStrings.charCount('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityCharCount('{value}\n!', '{value}\n!'),
@@ -5051,8 +5051,8 @@ void main() {
   test('communityComments', () {
     expect(l10n.communityComments(''), CommunityStrings.comments(''));
     expect(
-      l10n.communityComments('Nguyá»…n VÄƒn A'),
-      CommunityStrings.comments('Nguyá»…n VÄƒn A'),
+      l10n.communityComments('Nguyễn Văn A'),
+      CommunityStrings.comments('Nguyễn Văn A'),
     );
     expect(
       l10n.communityComments('{value}\n!'),
@@ -5065,8 +5065,8 @@ void main() {
       CommunityStrings.commentsHeader(''),
     );
     expect(
-      l10n.communityCommentsHeader('Nguyá»…n VÄƒn A'),
-      CommunityStrings.commentsHeader('Nguyá»…n VÄƒn A'),
+      l10n.communityCommentsHeader('Nguyễn Văn A'),
+      CommunityStrings.commentsHeader('Nguyễn Văn A'),
     );
     expect(
       l10n.communityCommentsHeader('{value}\n!'),
@@ -5082,32 +5082,32 @@ void main() {
       CommunityStrings.communityActivity('', ''),
     );
     expect(
-      l10n.communityCommunityActivity('', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.communityActivity('', 'Nguyá»…n VÄƒn A'),
+      l10n.communityCommunityActivity('', 'Nguyễn Văn A'),
+      CommunityStrings.communityActivity('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityCommunityActivity('', '{value}\n!'),
       CommunityStrings.communityActivity('', '{value}\n!'),
     );
     expect(
-      l10n.communityCommunityActivity('Nguyá»…n VÄƒn A', ''),
-      CommunityStrings.communityActivity('Nguyá»…n VÄƒn A', ''),
+      l10n.communityCommunityActivity('Nguyễn Văn A', ''),
+      CommunityStrings.communityActivity('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.communityCommunityActivity('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.communityActivity('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.communityCommunityActivity('Nguyễn Văn A', 'Nguyễn Văn A'),
+      CommunityStrings.communityActivity('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.communityCommunityActivity('Nguyá»…n VÄƒn A', '{value}\n!'),
-      CommunityStrings.communityActivity('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.communityCommunityActivity('Nguyễn Văn A', '{value}\n!'),
+      CommunityStrings.communityActivity('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.communityCommunityActivity('{value}\n!', ''),
       CommunityStrings.communityActivity('{value}\n!', ''),
     );
     expect(
-      l10n.communityCommunityActivity('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.communityActivity('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.communityCommunityActivity('{value}\n!', 'Nguyễn Văn A'),
+      CommunityStrings.communityActivity('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityCommunityActivity('{value}\n!', '{value}\n!'),
@@ -5117,8 +5117,8 @@ void main() {
   test('communityCommunityLfg', () {
     expect(l10n.communityCommunityLfg(''), CommunityStrings.communityLfg(''));
     expect(
-      l10n.communityCommunityLfg('Nguyá»…n VÄƒn A'),
-      CommunityStrings.communityLfg('Nguyá»…n VÄƒn A'),
+      l10n.communityCommunityLfg('Nguyễn Văn A'),
+      CommunityStrings.communityLfg('Nguyễn Văn A'),
     );
     expect(
       l10n.communityCommunityLfg('{value}\n!'),
@@ -5140,8 +5140,8 @@ void main() {
       CommunityStrings.consentAccount(''),
     );
     expect(
-      l10n.communityConsentAccount('Nguyá»…n VÄƒn A'),
-      CommunityStrings.consentAccount('Nguyá»…n VÄƒn A'),
+      l10n.communityConsentAccount('Nguyễn Văn A'),
+      CommunityStrings.consentAccount('Nguyễn Văn A'),
     );
     expect(
       l10n.communityConsentAccount('{value}\n!'),
@@ -5544,8 +5544,8 @@ void main() {
   test('communityDataFooter', () {
     expect(l10n.communityDataFooter(''), CommunityStrings.dataFooter(''));
     expect(
-      l10n.communityDataFooter('Nguyá»…n VÄƒn A'),
-      CommunityStrings.dataFooter('Nguyá»…n VÄƒn A'),
+      l10n.communityDataFooter('Nguyễn Văn A'),
+      CommunityStrings.dataFooter('Nguyễn Văn A'),
     );
     expect(
       l10n.communityDataFooter('{value}\n!'),
@@ -5582,8 +5582,8 @@ void main() {
       CommunityStrings.deleteDataConfirmBody(''),
     );
     expect(
-      l10n.communityDeleteDataConfirmBody('Nguyá»…n VÄƒn A'),
-      CommunityStrings.deleteDataConfirmBody('Nguyá»…n VÄƒn A'),
+      l10n.communityDeleteDataConfirmBody('Nguyễn Văn A'),
+      CommunityStrings.deleteDataConfirmBody('Nguyễn Văn A'),
     );
     expect(
       l10n.communityDeleteDataConfirmBody('{value}\n!'),
@@ -5689,8 +5689,8 @@ void main() {
       CommunityStrings.errorRateLimitedIn(''),
     );
     expect(
-      l10n.communityErrorRateLimitedIn('Nguyá»…n VÄƒn A'),
-      CommunityStrings.errorRateLimitedIn('Nguyá»…n VÄƒn A'),
+      l10n.communityErrorRateLimitedIn('Nguyễn Văn A'),
+      CommunityStrings.errorRateLimitedIn('Nguyễn Văn A'),
     );
     expect(
       l10n.communityErrorRateLimitedIn('{value}\n!'),
@@ -5712,8 +5712,8 @@ void main() {
       CommunityStrings.errorRiotUnavailableIn(''),
     );
     expect(
-      l10n.communityErrorRiotUnavailableIn('Nguyá»…n VÄƒn A'),
-      CommunityStrings.errorRiotUnavailableIn('Nguyá»…n VÄƒn A'),
+      l10n.communityErrorRiotUnavailableIn('Nguyễn Văn A'),
+      CommunityStrings.errorRiotUnavailableIn('Nguyễn Văn A'),
     );
     expect(
       l10n.communityErrorRiotUnavailableIn('{value}\n!'),
@@ -5741,8 +5741,8 @@ void main() {
   test('communityExpiresIn', () {
     expect(l10n.communityExpiresIn(''), CommunityStrings.expiresIn(''));
     expect(
-      l10n.communityExpiresIn('Nguyá»…n VÄƒn A'),
-      CommunityStrings.expiresIn('Nguyá»…n VÄƒn A'),
+      l10n.communityExpiresIn('Nguyễn Văn A'),
+      CommunityStrings.expiresIn('Nguyễn Văn A'),
     );
     expect(
       l10n.communityExpiresIn('{value}\n!'),
@@ -5809,8 +5809,8 @@ void main() {
   test('communityHelpfulCount', () {
     expect(l10n.communityHelpfulCount(''), CommunityStrings.helpfulCount(''));
     expect(
-      l10n.communityHelpfulCount('Nguyá»…n VÄƒn A'),
-      CommunityStrings.helpfulCount('Nguyá»…n VÄƒn A'),
+      l10n.communityHelpfulCount('Nguyễn Văn A'),
+      CommunityStrings.helpfulCount('Nguyễn Văn A'),
     );
     expect(
       l10n.communityHelpfulCount('{value}\n!'),
@@ -5871,8 +5871,8 @@ void main() {
       CommunityStrings.joinConfirmBody(''),
     );
     expect(
-      l10n.communityJoinConfirmBody('Nguyá»…n VÄƒn A'),
-      CommunityStrings.joinConfirmBody('Nguyá»…n VÄƒn A'),
+      l10n.communityJoinConfirmBody('Nguyễn Văn A'),
+      CommunityStrings.joinConfirmBody('Nguyễn Văn A'),
     );
     expect(
       l10n.communityJoinConfirmBody('{value}\n!'),
@@ -5906,8 +5906,8 @@ void main() {
   test('communityJoinsCount', () {
     expect(l10n.communityJoinsCount(''), CommunityStrings.joinsCount(''));
     expect(
-      l10n.communityJoinsCount('Nguyá»…n VÄƒn A'),
-      CommunityStrings.joinsCount('Nguyá»…n VÄƒn A'),
+      l10n.communityJoinsCount('Nguyễn Văn A'),
+      CommunityStrings.joinsCount('Nguyễn Văn A'),
     );
     expect(
       l10n.communityJoinsCount('{value}\n!'),
@@ -6038,8 +6038,8 @@ void main() {
       CommunityStrings.lfgOtherShardNote(''),
     );
     expect(
-      l10n.communityLfgOtherShardNote('Nguyá»…n VÄƒn A'),
-      CommunityStrings.lfgOtherShardNote('Nguyá»…n VÄƒn A'),
+      l10n.communityLfgOtherShardNote('Nguyễn Văn A'),
+      CommunityStrings.lfgOtherShardNote('Nguyễn Văn A'),
     );
     expect(
       l10n.communityLfgOtherShardNote('{value}\n!'),
@@ -6064,8 +6064,8 @@ void main() {
       CommunityStrings.lfgSheetSubtitle(''),
     );
     expect(
-      l10n.communityLfgSheetSubtitle('Nguyá»…n VÄƒn A'),
-      CommunityStrings.lfgSheetSubtitle('Nguyá»…n VÄƒn A'),
+      l10n.communityLfgSheetSubtitle('Nguyễn Văn A'),
+      CommunityStrings.lfgSheetSubtitle('Nguyễn Văn A'),
     );
     expect(
       l10n.communityLfgSheetSubtitle('{value}\n!'),
@@ -6078,8 +6078,8 @@ void main() {
   test('communityLikes', () {
     expect(l10n.communityLikes(''), CommunityStrings.likes(''));
     expect(
-      l10n.communityLikes('Nguyá»…n VÄƒn A'),
-      CommunityStrings.likes('Nguyá»…n VÄƒn A'),
+      l10n.communityLikes('Nguyễn Văn A'),
+      CommunityStrings.likes('Nguyễn Văn A'),
     );
     expect(
       l10n.communityLikes('{value}\n!'),
@@ -6105,8 +6105,8 @@ void main() {
   test('communityMemberJoined', () {
     expect(l10n.communityMemberJoined(''), CommunityStrings.memberJoined(''));
     expect(
-      l10n.communityMemberJoined('Nguyá»…n VÄƒn A'),
-      CommunityStrings.memberJoined('Nguyá»…n VÄƒn A'),
+      l10n.communityMemberJoined('Nguyễn Văn A'),
+      CommunityStrings.memberJoined('Nguyễn Văn A'),
     );
     expect(
       l10n.communityMemberJoined('{value}\n!'),
@@ -6147,8 +6147,8 @@ void main() {
   test('communityNightMarketOf', () {
     expect(l10n.communityNightMarketOf(''), CommunityStrings.nightMarketOf(''));
     expect(
-      l10n.communityNightMarketOf('Nguyá»…n VÄƒn A'),
-      CommunityStrings.nightMarketOf('Nguyá»…n VÄƒn A'),
+      l10n.communityNightMarketOf('Nguyễn Văn A'),
+      CommunityStrings.nightMarketOf('Nguyễn Văn A'),
     );
     expect(
       l10n.communityNightMarketOf('{value}\n!'),
@@ -6173,8 +6173,8 @@ void main() {
       CommunityStrings.noPartyWithReason(''),
     );
     expect(
-      l10n.communityNoPartyWithReason('Nguyá»…n VÄƒn A'),
-      CommunityStrings.noPartyWithReason('Nguyá»…n VÄƒn A'),
+      l10n.communityNoPartyWithReason('Nguyễn Văn A'),
+      CommunityStrings.noPartyWithReason('Nguyễn Văn A'),
     );
     expect(
       l10n.communityNoPartyWithReason('{value}\n!'),
@@ -6196,32 +6196,32 @@ void main() {
       CommunityStrings.offerSemantics('', ''),
     );
     expect(
-      l10n.communityOfferSemantics('', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.offerSemantics('', 'Nguyá»…n VÄƒn A'),
+      l10n.communityOfferSemantics('', 'Nguyễn Văn A'),
+      CommunityStrings.offerSemantics('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityOfferSemantics('', '{value}\n!'),
       CommunityStrings.offerSemantics('', '{value}\n!'),
     );
     expect(
-      l10n.communityOfferSemantics('Nguyá»…n VÄƒn A', ''),
-      CommunityStrings.offerSemantics('Nguyá»…n VÄƒn A', ''),
+      l10n.communityOfferSemantics('Nguyễn Văn A', ''),
+      CommunityStrings.offerSemantics('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.communityOfferSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.offerSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.communityOfferSemantics('Nguyễn Văn A', 'Nguyễn Văn A'),
+      CommunityStrings.offerSemantics('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.communityOfferSemantics('Nguyá»…n VÄƒn A', '{value}\n!'),
-      CommunityStrings.offerSemantics('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.communityOfferSemantics('Nguyễn Văn A', '{value}\n!'),
+      CommunityStrings.offerSemantics('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.communityOfferSemantics('{value}\n!', ''),
       CommunityStrings.offerSemantics('{value}\n!', ''),
     );
     expect(
-      l10n.communityOfferSemantics('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.offerSemantics('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.communityOfferSemantics('{value}\n!', 'Nguyễn Văn A'),
+      CommunityStrings.offerSemantics('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityOfferSemantics('{value}\n!', '{value}\n!'),
@@ -6231,8 +6231,8 @@ void main() {
   test('communityOffersTotal', () {
     expect(l10n.communityOffersTotal(''), CommunityStrings.offersTotal(''));
     expect(
-      l10n.communityOffersTotal('Nguyá»…n VÄƒn A'),
-      CommunityStrings.offersTotal('Nguyá»…n VÄƒn A'),
+      l10n.communityOffersTotal('Nguyễn Văn A'),
+      CommunityStrings.offersTotal('Nguyễn Văn A'),
     );
     expect(
       l10n.communityOffersTotal('{value}\n!'),
@@ -6248,32 +6248,32 @@ void main() {
   test('communityPageOf', () {
     expect(l10n.communityPageOf('', ''), CommunityStrings.pageOf('', ''));
     expect(
-      l10n.communityPageOf('', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.pageOf('', 'Nguyá»…n VÄƒn A'),
+      l10n.communityPageOf('', 'Nguyễn Văn A'),
+      CommunityStrings.pageOf('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityPageOf('', '{value}\n!'),
       CommunityStrings.pageOf('', '{value}\n!'),
     );
     expect(
-      l10n.communityPageOf('Nguyá»…n VÄƒn A', ''),
-      CommunityStrings.pageOf('Nguyá»…n VÄƒn A', ''),
+      l10n.communityPageOf('Nguyễn Văn A', ''),
+      CommunityStrings.pageOf('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.communityPageOf('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.pageOf('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.communityPageOf('Nguyễn Văn A', 'Nguyễn Văn A'),
+      CommunityStrings.pageOf('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.communityPageOf('Nguyá»…n VÄƒn A', '{value}\n!'),
-      CommunityStrings.pageOf('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.communityPageOf('Nguyễn Văn A', '{value}\n!'),
+      CommunityStrings.pageOf('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.communityPageOf('{value}\n!', ''),
       CommunityStrings.pageOf('{value}\n!', ''),
     );
     expect(
-      l10n.communityPageOf('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.pageOf('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.communityPageOf('{value}\n!', 'Nguyễn Văn A'),
+      CommunityStrings.pageOf('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityPageOf('{value}\n!', '{value}\n!'),
@@ -6292,8 +6292,8 @@ void main() {
       CommunityStrings.partyCodeValue(''),
     );
     expect(
-      l10n.communityPartyCodeValue('Nguyá»…n VÄƒn A'),
-      CommunityStrings.partyCodeValue('Nguyá»…n VÄƒn A'),
+      l10n.communityPartyCodeValue('Nguyễn Văn A'),
+      CommunityStrings.partyCodeValue('Nguyễn Văn A'),
     );
     expect(
       l10n.communityPartyCodeValue('{value}\n!'),
@@ -6388,32 +6388,32 @@ void main() {
       CommunityStrings.rankBetween('', ''),
     );
     expect(
-      l10n.communityRankBetween('', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.rankBetween('', 'Nguyá»…n VÄƒn A'),
+      l10n.communityRankBetween('', 'Nguyễn Văn A'),
+      CommunityStrings.rankBetween('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityRankBetween('', '{value}\n!'),
       CommunityStrings.rankBetween('', '{value}\n!'),
     );
     expect(
-      l10n.communityRankBetween('Nguyá»…n VÄƒn A', ''),
-      CommunityStrings.rankBetween('Nguyá»…n VÄƒn A', ''),
+      l10n.communityRankBetween('Nguyễn Văn A', ''),
+      CommunityStrings.rankBetween('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.communityRankBetween('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.rankBetween('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.communityRankBetween('Nguyễn Văn A', 'Nguyễn Văn A'),
+      CommunityStrings.rankBetween('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.communityRankBetween('Nguyá»…n VÄƒn A', '{value}\n!'),
-      CommunityStrings.rankBetween('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.communityRankBetween('Nguyễn Văn A', '{value}\n!'),
+      CommunityStrings.rankBetween('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.communityRankBetween('{value}\n!', ''),
       CommunityStrings.rankBetween('{value}\n!', ''),
     );
     expect(
-      l10n.communityRankBetween('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.rankBetween('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.communityRankBetween('{value}\n!', 'Nguyễn Văn A'),
+      CommunityStrings.rankBetween('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityRankBetween('{value}\n!', '{value}\n!'),
@@ -6426,8 +6426,8 @@ void main() {
   test('communityRankNumber', () {
     expect(l10n.communityRankNumber(''), CommunityStrings.rankNumber(''));
     expect(
-      l10n.communityRankNumber('Nguyá»…n VÄƒn A'),
-      CommunityStrings.rankNumber('Nguyá»…n VÄƒn A'),
+      l10n.communityRankNumber('Nguyễn Văn A'),
+      CommunityStrings.rankNumber('Nguyễn Văn A'),
     );
     expect(
       l10n.communityRankNumber('{value}\n!'),
@@ -6446,32 +6446,32 @@ void main() {
       CommunityStrings.rankSemantics('', ''),
     );
     expect(
-      l10n.communityRankSemantics('', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.rankSemantics('', 'Nguyá»…n VÄƒn A'),
+      l10n.communityRankSemantics('', 'Nguyễn Văn A'),
+      CommunityStrings.rankSemantics('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityRankSemantics('', '{value}\n!'),
       CommunityStrings.rankSemantics('', '{value}\n!'),
     );
     expect(
-      l10n.communityRankSemantics('Nguyá»…n VÄƒn A', ''),
-      CommunityStrings.rankSemantics('Nguyá»…n VÄƒn A', ''),
+      l10n.communityRankSemantics('Nguyễn Văn A', ''),
+      CommunityStrings.rankSemantics('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.communityRankSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.rankSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.communityRankSemantics('Nguyễn Văn A', 'Nguyễn Văn A'),
+      CommunityStrings.rankSemantics('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.communityRankSemantics('Nguyá»…n VÄƒn A', '{value}\n!'),
-      CommunityStrings.rankSemantics('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.communityRankSemantics('Nguyễn Văn A', '{value}\n!'),
+      CommunityStrings.rankSemantics('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.communityRankSemantics('{value}\n!', ''),
       CommunityStrings.rankSemantics('{value}\n!', ''),
     );
     expect(
-      l10n.communityRankSemantics('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.rankSemantics('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.communityRankSemantics('{value}\n!', 'Nguyễn Văn A'),
+      CommunityStrings.rankSemantics('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityRankSemantics('{value}\n!', '{value}\n!'),
@@ -6487,8 +6487,8 @@ void main() {
   test('communityRatingCount', () {
     expect(l10n.communityRatingCount(''), CommunityStrings.ratingCount(''));
     expect(
-      l10n.communityRatingCount('Nguyá»…n VÄƒn A'),
-      CommunityStrings.ratingCount('Nguyá»…n VÄƒn A'),
+      l10n.communityRatingCount('Nguyễn Văn A'),
+      CommunityStrings.ratingCount('Nguyễn Văn A'),
     );
     expect(
       l10n.communityRatingCount('{value}\n!'),
@@ -6501,32 +6501,32 @@ void main() {
       CommunityStrings.ratingSummary('', ''),
     );
     expect(
-      l10n.communityRatingSummary('', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.ratingSummary('', 'Nguyá»…n VÄƒn A'),
+      l10n.communityRatingSummary('', 'Nguyễn Văn A'),
+      CommunityStrings.ratingSummary('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityRatingSummary('', '{value}\n!'),
       CommunityStrings.ratingSummary('', '{value}\n!'),
     );
     expect(
-      l10n.communityRatingSummary('Nguyá»…n VÄƒn A', ''),
-      CommunityStrings.ratingSummary('Nguyá»…n VÄƒn A', ''),
+      l10n.communityRatingSummary('Nguyễn Văn A', ''),
+      CommunityStrings.ratingSummary('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.communityRatingSummary('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.ratingSummary('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.communityRatingSummary('Nguyễn Văn A', 'Nguyễn Văn A'),
+      CommunityStrings.ratingSummary('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.communityRatingSummary('Nguyá»…n VÄƒn A', '{value}\n!'),
-      CommunityStrings.ratingSummary('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.communityRatingSummary('Nguyễn Văn A', '{value}\n!'),
+      CommunityStrings.ratingSummary('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.communityRatingSummary('{value}\n!', ''),
       CommunityStrings.ratingSummary('{value}\n!', ''),
     );
     expect(
-      l10n.communityRatingSummary('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.ratingSummary('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.communityRatingSummary('{value}\n!', 'Nguyễn Văn A'),
+      CommunityStrings.ratingSummary('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityRatingSummary('{value}\n!', '{value}\n!'),
@@ -6644,8 +6644,8 @@ void main() {
   test('communityReviewsHeader', () {
     expect(l10n.communityReviewsHeader(''), CommunityStrings.reviewsHeader(''));
     expect(
-      l10n.communityReviewsHeader('Nguyá»…n VÄƒn A'),
-      CommunityStrings.reviewsHeader('Nguyá»…n VÄƒn A'),
+      l10n.communityReviewsHeader('Nguyễn Văn A'),
+      CommunityStrings.reviewsHeader('Nguyễn Văn A'),
     );
     expect(
       l10n.communityReviewsHeader('{value}\n!'),
@@ -6658,32 +6658,32 @@ void main() {
   test('communityRiotId', () {
     expect(l10n.communityRiotId('', ''), CommunityStrings.riotId('', ''));
     expect(
-      l10n.communityRiotId('', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.riotId('', 'Nguyá»…n VÄƒn A'),
+      l10n.communityRiotId('', 'Nguyễn Văn A'),
+      CommunityStrings.riotId('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityRiotId('', '{value}\n!'),
       CommunityStrings.riotId('', '{value}\n!'),
     );
     expect(
-      l10n.communityRiotId('Nguyá»…n VÄƒn A', ''),
-      CommunityStrings.riotId('Nguyá»…n VÄƒn A', ''),
+      l10n.communityRiotId('Nguyễn Văn A', ''),
+      CommunityStrings.riotId('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.communityRiotId('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.riotId('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.communityRiotId('Nguyễn Văn A', 'Nguyễn Văn A'),
+      CommunityStrings.riotId('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.communityRiotId('Nguyá»…n VÄƒn A', '{value}\n!'),
-      CommunityStrings.riotId('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.communityRiotId('Nguyễn Văn A', '{value}\n!'),
+      CommunityStrings.riotId('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.communityRiotId('{value}\n!', ''),
       CommunityStrings.riotId('{value}\n!', ''),
     );
     expect(
-      l10n.communityRiotId('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.riotId('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.communityRiotId('{value}\n!', 'Nguyễn Văn A'),
+      CommunityStrings.riotId('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityRiotId('{value}\n!', '{value}\n!'),
@@ -6807,8 +6807,8 @@ void main() {
       CommunityStrings.starsSemantics(''),
     );
     expect(
-      l10n.communityStarsSemantics('Nguyá»…n VÄƒn A'),
-      CommunityStrings.starsSemantics('Nguyá»…n VÄƒn A'),
+      l10n.communityStarsSemantics('Nguyễn Văn A'),
+      CommunityStrings.starsSemantics('Nguyễn Văn A'),
     );
     expect(
       l10n.communityStarsSemantics('{value}\n!'),
@@ -6827,8 +6827,8 @@ void main() {
   test('communityStoreOf', () {
     expect(l10n.communityStoreOf(''), CommunityStrings.storeOf(''));
     expect(
-      l10n.communityStoreOf('Nguyá»…n VÄƒn A'),
-      CommunityStrings.storeOf('Nguyá»…n VÄƒn A'),
+      l10n.communityStoreOf('Nguyễn Văn A'),
+      CommunityStrings.storeOf('Nguyễn Văn A'),
     );
     expect(
       l10n.communityStoreOf('{value}\n!'),
@@ -6838,8 +6838,8 @@ void main() {
   test('communityTagSuffix', () {
     expect(l10n.communityTagSuffix(''), CommunityStrings.tagSuffix(''));
     expect(
-      l10n.communityTagSuffix('Nguyá»…n VÄƒn A'),
-      CommunityStrings.tagSuffix('Nguyá»…n VÄƒn A'),
+      l10n.communityTagSuffix('Nguyễn Văn A'),
+      CommunityStrings.tagSuffix('Nguyễn Văn A'),
     );
     expect(
       l10n.communityTagSuffix('{value}\n!'),
@@ -6868,113 +6868,113 @@ void main() {
       CommunityStrings.translateDownloadBody('', '', ''),
     );
     expect(
-      l10n.communityTranslateDownloadBody('', '', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.translateDownloadBody('', '', 'Nguyá»…n VÄƒn A'),
+      l10n.communityTranslateDownloadBody('', '', 'Nguyễn Văn A'),
+      CommunityStrings.translateDownloadBody('', '', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityTranslateDownloadBody('', '', '{value}\n!'),
       CommunityStrings.translateDownloadBody('', '', '{value}\n!'),
     );
     expect(
-      l10n.communityTranslateDownloadBody('', 'Nguyá»…n VÄƒn A', ''),
-      CommunityStrings.translateDownloadBody('', 'Nguyá»…n VÄƒn A', ''),
+      l10n.communityTranslateDownloadBody('', 'Nguyễn Văn A', ''),
+      CommunityStrings.translateDownloadBody('', 'Nguyễn Văn A', ''),
     );
     expect(
-      l10n.communityTranslateDownloadBody('', 'Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.communityTranslateDownloadBody('', 'Nguyễn Văn A', 'Nguyễn Văn A'),
       CommunityStrings.translateDownloadBody(
         '',
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
       ),
     );
     expect(
-      l10n.communityTranslateDownloadBody('', 'Nguyá»…n VÄƒn A', '{value}\n!'),
-      CommunityStrings.translateDownloadBody('', 'Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.communityTranslateDownloadBody('', 'Nguyễn Văn A', '{value}\n!'),
+      CommunityStrings.translateDownloadBody('', 'Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.communityTranslateDownloadBody('', '{value}\n!', ''),
       CommunityStrings.translateDownloadBody('', '{value}\n!', ''),
     );
     expect(
-      l10n.communityTranslateDownloadBody('', '{value}\n!', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.translateDownloadBody('', '{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.communityTranslateDownloadBody('', '{value}\n!', 'Nguyễn Văn A'),
+      CommunityStrings.translateDownloadBody('', '{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityTranslateDownloadBody('', '{value}\n!', '{value}\n!'),
       CommunityStrings.translateDownloadBody('', '{value}\n!', '{value}\n!'),
     );
     expect(
-      l10n.communityTranslateDownloadBody('Nguyá»…n VÄƒn A', '', ''),
-      CommunityStrings.translateDownloadBody('Nguyá»…n VÄƒn A', '', ''),
+      l10n.communityTranslateDownloadBody('Nguyễn Văn A', '', ''),
+      CommunityStrings.translateDownloadBody('Nguyễn Văn A', '', ''),
     );
     expect(
-      l10n.communityTranslateDownloadBody('Nguyá»…n VÄƒn A', '', 'Nguyá»…n VÄƒn A'),
+      l10n.communityTranslateDownloadBody('Nguyễn Văn A', '', 'Nguyễn Văn A'),
       CommunityStrings.translateDownloadBody(
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
         '',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
       ),
     );
     expect(
-      l10n.communityTranslateDownloadBody('Nguyá»…n VÄƒn A', '', '{value}\n!'),
-      CommunityStrings.translateDownloadBody('Nguyá»…n VÄƒn A', '', '{value}\n!'),
+      l10n.communityTranslateDownloadBody('Nguyễn Văn A', '', '{value}\n!'),
+      CommunityStrings.translateDownloadBody('Nguyễn Văn A', '', '{value}\n!'),
     );
     expect(
-      l10n.communityTranslateDownloadBody('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A', ''),
+      l10n.communityTranslateDownloadBody('Nguyễn Văn A', 'Nguyễn Văn A', ''),
       CommunityStrings.translateDownloadBody(
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
         '',
       ),
     );
     expect(
       l10n.communityTranslateDownloadBody(
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
       ),
       CommunityStrings.translateDownloadBody(
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
       ),
     );
     expect(
       l10n.communityTranslateDownloadBody(
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
         '{value}\n!',
       ),
       CommunityStrings.translateDownloadBody(
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
         '{value}\n!',
       ),
     );
     expect(
-      l10n.communityTranslateDownloadBody('Nguyá»…n VÄƒn A', '{value}\n!', ''),
-      CommunityStrings.translateDownloadBody('Nguyá»…n VÄƒn A', '{value}\n!', ''),
-    );
-    expect(
-      l10n.communityTranslateDownloadBody(
-        'Nguyá»…n VÄƒn A',
-        '{value}\n!',
-        'Nguyá»…n VÄƒn A',
-      ),
-      CommunityStrings.translateDownloadBody(
-        'Nguyá»…n VÄƒn A',
-        '{value}\n!',
-        'Nguyá»…n VÄƒn A',
-      ),
+      l10n.communityTranslateDownloadBody('Nguyễn Văn A', '{value}\n!', ''),
+      CommunityStrings.translateDownloadBody('Nguyễn Văn A', '{value}\n!', ''),
     );
     expect(
       l10n.communityTranslateDownloadBody(
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        '{value}\n!',
+        'Nguyễn Văn A',
+      ),
+      CommunityStrings.translateDownloadBody(
+        'Nguyễn Văn A',
+        '{value}\n!',
+        'Nguyễn Văn A',
+      ),
+    );
+    expect(
+      l10n.communityTranslateDownloadBody(
+        'Nguyễn Văn A',
         '{value}\n!',
         '{value}\n!',
       ),
       CommunityStrings.translateDownloadBody(
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
         '{value}\n!',
         '{value}\n!',
       ),
@@ -6984,38 +6984,38 @@ void main() {
       CommunityStrings.translateDownloadBody('{value}\n!', '', ''),
     );
     expect(
-      l10n.communityTranslateDownloadBody('{value}\n!', '', 'Nguyá»…n VÄƒn A'),
-      CommunityStrings.translateDownloadBody('{value}\n!', '', 'Nguyá»…n VÄƒn A'),
+      l10n.communityTranslateDownloadBody('{value}\n!', '', 'Nguyễn Văn A'),
+      CommunityStrings.translateDownloadBody('{value}\n!', '', 'Nguyễn Văn A'),
     );
     expect(
       l10n.communityTranslateDownloadBody('{value}\n!', '', '{value}\n!'),
       CommunityStrings.translateDownloadBody('{value}\n!', '', '{value}\n!'),
     );
     expect(
-      l10n.communityTranslateDownloadBody('{value}\n!', 'Nguyá»…n VÄƒn A', ''),
-      CommunityStrings.translateDownloadBody('{value}\n!', 'Nguyá»…n VÄƒn A', ''),
+      l10n.communityTranslateDownloadBody('{value}\n!', 'Nguyễn Văn A', ''),
+      CommunityStrings.translateDownloadBody('{value}\n!', 'Nguyễn Văn A', ''),
     );
     expect(
       l10n.communityTranslateDownloadBody(
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
       ),
       CommunityStrings.translateDownloadBody(
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
       ),
     );
     expect(
       l10n.communityTranslateDownloadBody(
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
         '{value}\n!',
       ),
       CommunityStrings.translateDownloadBody(
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
         '{value}\n!',
       ),
     );
@@ -7027,12 +7027,12 @@ void main() {
       l10n.communityTranslateDownloadBody(
         '{value}\n!',
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
       ),
       CommunityStrings.translateDownloadBody(
         '{value}\n!',
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
       ),
     );
     expect(
@@ -7105,8 +7105,8 @@ void main() {
   test('communityVotes', () {
     expect(l10n.communityVotes(''), CommunityStrings.votes(''));
     expect(
-      l10n.communityVotes('Nguyá»…n VÄƒn A'),
-      CommunityStrings.votes('Nguyá»…n VÄƒn A'),
+      l10n.communityVotes('Nguyễn Văn A'),
+      CommunityStrings.votes('Nguyễn Văn A'),
     );
     expect(
       l10n.communityVotes('{value}\n!'),
@@ -7122,8 +7122,8 @@ void main() {
       CommunityStrings.withdrawConfirmBody(''),
     );
     expect(
-      l10n.communityWithdrawConfirmBody('Nguyá»…n VÄƒn A'),
-      CommunityStrings.withdrawConfirmBody('Nguyá»…n VÄƒn A'),
+      l10n.communityWithdrawConfirmBody('Nguyễn Văn A'),
+      CommunityStrings.withdrawConfirmBody('Nguyễn Văn A'),
     );
     expect(
       l10n.communityWithdrawConfirmBody('{value}\n!'),
@@ -7244,8 +7244,8 @@ void main() {
   test('liveGameInQueueFor', () {
     expect(l10n.liveGameInQueueFor(''), LiveGameStrings.inQueueFor(''));
     expect(
-      l10n.liveGameInQueueFor('Nguyá»…n VÄƒn A'),
-      LiveGameStrings.inQueueFor('Nguyá»…n VÄƒn A'),
+      l10n.liveGameInQueueFor('Nguyễn Văn A'),
+      LiveGameStrings.inQueueFor('Nguyễn Văn A'),
     );
     expect(
       l10n.liveGameInQueueFor('{value}\n!'),
@@ -7283,8 +7283,8 @@ void main() {
   test('liveGameLockedAgent', () {
     expect(l10n.liveGameLockedAgent(''), LiveGameStrings.lockedAgent(''));
     expect(
-      l10n.liveGameLockedAgent('Nguyá»…n VÄƒn A'),
-      LiveGameStrings.lockedAgent('Nguyá»…n VÄƒn A'),
+      l10n.liveGameLockedAgent('Nguyễn Văn A'),
+      LiveGameStrings.lockedAgent('Nguyễn Văn A'),
     );
     expect(
       l10n.liveGameLockedAgent('{value}\n!'),
@@ -7318,8 +7318,8 @@ void main() {
   test('liveGameOpenLoadoutOf', () {
     expect(l10n.liveGameOpenLoadoutOf(''), LiveGameStrings.openLoadoutOf(''));
     expect(
-      l10n.liveGameOpenLoadoutOf('Nguyá»…n VÄƒn A'),
-      LiveGameStrings.openLoadoutOf('Nguyá»…n VÄƒn A'),
+      l10n.liveGameOpenLoadoutOf('Nguyễn Văn A'),
+      LiveGameStrings.openLoadoutOf('Nguyễn Văn A'),
     );
     expect(
       l10n.liveGameOpenLoadoutOf('{value}\n!'),
@@ -7335,8 +7335,8 @@ void main() {
   test('liveGamePeak', () {
     expect(l10n.liveGamePeak(''), LiveGameStrings.peak(''));
     expect(
-      l10n.liveGamePeak('Nguyá»…n VÄƒn A'),
-      LiveGameStrings.peak('Nguyá»…n VÄƒn A'),
+      l10n.liveGamePeak('Nguyễn Văn A'),
+      LiveGameStrings.peak('Nguyễn Văn A'),
     );
     expect(l10n.liveGamePeak('{value}\n!'), LiveGameStrings.peak('{value}\n!'));
   });
@@ -7349,8 +7349,8 @@ void main() {
       LiveGameStrings.playerLoadoutOf(''),
     );
     expect(
-      l10n.liveGamePlayerLoadoutOf('Nguyá»…n VÄƒn A'),
-      LiveGameStrings.playerLoadoutOf('Nguyá»…n VÄƒn A'),
+      l10n.liveGamePlayerLoadoutOf('Nguyễn Văn A'),
+      LiveGameStrings.playerLoadoutOf('Nguyễn Văn A'),
     );
     expect(
       l10n.liveGamePlayerLoadoutOf('{value}\n!'),
@@ -7469,8 +7469,8 @@ void main() {
   test('liveGameTimeLeft', () {
     expect(l10n.liveGameTimeLeft(''), LiveGameStrings.timeLeft(''));
     expect(
-      l10n.liveGameTimeLeft('Nguyá»…n VÄƒn A'),
-      LiveGameStrings.timeLeft('Nguyá»…n VÄƒn A'),
+      l10n.liveGameTimeLeft('Nguyễn Văn A'),
+      LiveGameStrings.timeLeft('Nguyễn Văn A'),
     );
     expect(
       l10n.liveGameTimeLeft('{value}\n!'),
@@ -7489,8 +7489,8 @@ void main() {
   test('liveGameYouHover', () {
     expect(l10n.liveGameYouHover(''), LiveGameStrings.youHover(''));
     expect(
-      l10n.liveGameYouHover('Nguyá»…n VÄƒn A'),
-      LiveGameStrings.youHover('Nguyá»…n VÄƒn A'),
+      l10n.liveGameYouHover('Nguyễn Văn A'),
+      LiveGameStrings.youHover('Nguyễn Văn A'),
     );
     expect(
       l10n.liveGameYouHover('{value}\n!'),
@@ -7500,8 +7500,8 @@ void main() {
   test('liveGameYouLocked', () {
     expect(l10n.liveGameYouLocked(''), LiveGameStrings.youLocked(''));
     expect(
-      l10n.liveGameYouLocked('Nguyá»…n VÄƒn A'),
-      LiveGameStrings.youLocked('Nguyá»…n VÄƒn A'),
+      l10n.liveGameYouLocked('Nguyễn Văn A'),
+      LiveGameStrings.youLocked('Nguyễn Văn A'),
     );
     expect(
       l10n.liveGameYouLocked('{value}\n!'),
@@ -7527,8 +7527,8 @@ void main() {
   test('profileActRecord', () {
     expect(l10n.profileActRecord(0, 0, ''), ProfileStrings.actRecord(0, 0, ''));
     expect(
-      l10n.profileActRecord(0, 0, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(0, 0, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(0, 0, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(0, 0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(0, 0, '{value}\n!'),
@@ -7536,8 +7536,8 @@ void main() {
     );
     expect(l10n.profileActRecord(0, 1, ''), ProfileStrings.actRecord(0, 1, ''));
     expect(
-      l10n.profileActRecord(0, 1, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(0, 1, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(0, 1, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(0, 1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(0, 1, '{value}\n!'),
@@ -7545,8 +7545,8 @@ void main() {
     );
     expect(l10n.profileActRecord(0, 2, ''), ProfileStrings.actRecord(0, 2, ''));
     expect(
-      l10n.profileActRecord(0, 2, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(0, 2, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(0, 2, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(0, 2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(0, 2, '{value}\n!'),
@@ -7554,8 +7554,8 @@ void main() {
     );
     expect(l10n.profileActRecord(0, 5, ''), ProfileStrings.actRecord(0, 5, ''));
     expect(
-      l10n.profileActRecord(0, 5, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(0, 5, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(0, 5, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(0, 5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(0, 5, '{value}\n!'),
@@ -7566,8 +7566,8 @@ void main() {
       ProfileStrings.actRecord(0, 99, ''),
     );
     expect(
-      l10n.profileActRecord(0, 99, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(0, 99, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(0, 99, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(0, 99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(0, 99, '{value}\n!'),
@@ -7575,8 +7575,8 @@ void main() {
     );
     expect(l10n.profileActRecord(1, 0, ''), ProfileStrings.actRecord(1, 0, ''));
     expect(
-      l10n.profileActRecord(1, 0, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(1, 0, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(1, 0, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(1, 0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(1, 0, '{value}\n!'),
@@ -7584,8 +7584,8 @@ void main() {
     );
     expect(l10n.profileActRecord(1, 1, ''), ProfileStrings.actRecord(1, 1, ''));
     expect(
-      l10n.profileActRecord(1, 1, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(1, 1, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(1, 1, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(1, 1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(1, 1, '{value}\n!'),
@@ -7593,8 +7593,8 @@ void main() {
     );
     expect(l10n.profileActRecord(1, 2, ''), ProfileStrings.actRecord(1, 2, ''));
     expect(
-      l10n.profileActRecord(1, 2, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(1, 2, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(1, 2, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(1, 2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(1, 2, '{value}\n!'),
@@ -7602,8 +7602,8 @@ void main() {
     );
     expect(l10n.profileActRecord(1, 5, ''), ProfileStrings.actRecord(1, 5, ''));
     expect(
-      l10n.profileActRecord(1, 5, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(1, 5, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(1, 5, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(1, 5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(1, 5, '{value}\n!'),
@@ -7614,8 +7614,8 @@ void main() {
       ProfileStrings.actRecord(1, 99, ''),
     );
     expect(
-      l10n.profileActRecord(1, 99, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(1, 99, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(1, 99, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(1, 99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(1, 99, '{value}\n!'),
@@ -7623,8 +7623,8 @@ void main() {
     );
     expect(l10n.profileActRecord(2, 0, ''), ProfileStrings.actRecord(2, 0, ''));
     expect(
-      l10n.profileActRecord(2, 0, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(2, 0, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(2, 0, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(2, 0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(2, 0, '{value}\n!'),
@@ -7632,8 +7632,8 @@ void main() {
     );
     expect(l10n.profileActRecord(2, 1, ''), ProfileStrings.actRecord(2, 1, ''));
     expect(
-      l10n.profileActRecord(2, 1, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(2, 1, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(2, 1, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(2, 1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(2, 1, '{value}\n!'),
@@ -7641,8 +7641,8 @@ void main() {
     );
     expect(l10n.profileActRecord(2, 2, ''), ProfileStrings.actRecord(2, 2, ''));
     expect(
-      l10n.profileActRecord(2, 2, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(2, 2, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(2, 2, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(2, 2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(2, 2, '{value}\n!'),
@@ -7650,8 +7650,8 @@ void main() {
     );
     expect(l10n.profileActRecord(2, 5, ''), ProfileStrings.actRecord(2, 5, ''));
     expect(
-      l10n.profileActRecord(2, 5, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(2, 5, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(2, 5, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(2, 5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(2, 5, '{value}\n!'),
@@ -7662,8 +7662,8 @@ void main() {
       ProfileStrings.actRecord(2, 99, ''),
     );
     expect(
-      l10n.profileActRecord(2, 99, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(2, 99, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(2, 99, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(2, 99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(2, 99, '{value}\n!'),
@@ -7671,8 +7671,8 @@ void main() {
     );
     expect(l10n.profileActRecord(5, 0, ''), ProfileStrings.actRecord(5, 0, ''));
     expect(
-      l10n.profileActRecord(5, 0, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(5, 0, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(5, 0, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(5, 0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(5, 0, '{value}\n!'),
@@ -7680,8 +7680,8 @@ void main() {
     );
     expect(l10n.profileActRecord(5, 1, ''), ProfileStrings.actRecord(5, 1, ''));
     expect(
-      l10n.profileActRecord(5, 1, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(5, 1, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(5, 1, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(5, 1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(5, 1, '{value}\n!'),
@@ -7689,8 +7689,8 @@ void main() {
     );
     expect(l10n.profileActRecord(5, 2, ''), ProfileStrings.actRecord(5, 2, ''));
     expect(
-      l10n.profileActRecord(5, 2, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(5, 2, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(5, 2, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(5, 2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(5, 2, '{value}\n!'),
@@ -7698,8 +7698,8 @@ void main() {
     );
     expect(l10n.profileActRecord(5, 5, ''), ProfileStrings.actRecord(5, 5, ''));
     expect(
-      l10n.profileActRecord(5, 5, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(5, 5, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(5, 5, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(5, 5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(5, 5, '{value}\n!'),
@@ -7710,8 +7710,8 @@ void main() {
       ProfileStrings.actRecord(5, 99, ''),
     );
     expect(
-      l10n.profileActRecord(5, 99, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(5, 99, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(5, 99, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(5, 99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(5, 99, '{value}\n!'),
@@ -7722,8 +7722,8 @@ void main() {
       ProfileStrings.actRecord(99, 0, ''),
     );
     expect(
-      l10n.profileActRecord(99, 0, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(99, 0, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(99, 0, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(99, 0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(99, 0, '{value}\n!'),
@@ -7734,8 +7734,8 @@ void main() {
       ProfileStrings.actRecord(99, 1, ''),
     );
     expect(
-      l10n.profileActRecord(99, 1, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(99, 1, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(99, 1, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(99, 1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(99, 1, '{value}\n!'),
@@ -7746,8 +7746,8 @@ void main() {
       ProfileStrings.actRecord(99, 2, ''),
     );
     expect(
-      l10n.profileActRecord(99, 2, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(99, 2, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(99, 2, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(99, 2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(99, 2, '{value}\n!'),
@@ -7758,8 +7758,8 @@ void main() {
       ProfileStrings.actRecord(99, 5, ''),
     );
     expect(
-      l10n.profileActRecord(99, 5, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(99, 5, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(99, 5, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(99, 5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(99, 5, '{value}\n!'),
@@ -7770,8 +7770,8 @@ void main() {
       ProfileStrings.actRecord(99, 99, ''),
     );
     expect(
-      l10n.profileActRecord(99, 99, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.actRecord(99, 99, 'Nguyá»…n VÄƒn A'),
+      l10n.profileActRecord(99, 99, 'Nguyễn Văn A'),
+      ProfileStrings.actRecord(99, 99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileActRecord(99, 99, '{value}\n!'),
@@ -7796,32 +7796,32 @@ void main() {
       ProfileStrings.atCurrentFormWith('', ''),
     );
     expect(
-      l10n.profileAtCurrentFormWith('', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.atCurrentFormWith('', 'Nguyá»…n VÄƒn A'),
+      l10n.profileAtCurrentFormWith('', 'Nguyễn Văn A'),
+      ProfileStrings.atCurrentFormWith('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileAtCurrentFormWith('', '{value}\n!'),
       ProfileStrings.atCurrentFormWith('', '{value}\n!'),
     );
     expect(
-      l10n.profileAtCurrentFormWith('Nguyá»…n VÄƒn A', ''),
-      ProfileStrings.atCurrentFormWith('Nguyá»…n VÄƒn A', ''),
+      l10n.profileAtCurrentFormWith('Nguyễn Văn A', ''),
+      ProfileStrings.atCurrentFormWith('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.profileAtCurrentFormWith('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.atCurrentFormWith('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.profileAtCurrentFormWith('Nguyễn Văn A', 'Nguyễn Văn A'),
+      ProfileStrings.atCurrentFormWith('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.profileAtCurrentFormWith('Nguyá»…n VÄƒn A', '{value}\n!'),
-      ProfileStrings.atCurrentFormWith('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.profileAtCurrentFormWith('Nguyễn Văn A', '{value}\n!'),
+      ProfileStrings.atCurrentFormWith('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.profileAtCurrentFormWith('{value}\n!', ''),
       ProfileStrings.atCurrentFormWith('{value}\n!', ''),
     );
     expect(
-      l10n.profileAtCurrentFormWith('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.atCurrentFormWith('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.profileAtCurrentFormWith('{value}\n!', 'Nguyễn Văn A'),
+      ProfileStrings.atCurrentFormWith('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileAtCurrentFormWith('{value}\n!', '{value}\n!'),
@@ -7877,8 +7877,8 @@ void main() {
   test('profileDayBoundary', () {
     expect(l10n.profileDayBoundary(''), ProfileStrings.dayBoundary(''));
     expect(
-      l10n.profileDayBoundary('Nguyá»…n VÄƒn A'),
-      ProfileStrings.dayBoundary('Nguyá»…n VÄƒn A'),
+      l10n.profileDayBoundary('Nguyễn Văn A'),
+      ProfileStrings.dayBoundary('Nguyễn Văn A'),
     );
     expect(
       l10n.profileDayBoundary('{value}\n!'),
@@ -7898,8 +7898,8 @@ void main() {
   test('profileDurationOf', () {
     expect(l10n.profileDurationOf(''), ProfileStrings.durationOf(''));
     expect(
-      l10n.profileDurationOf('Nguyá»…n VÄƒn A'),
-      ProfileStrings.durationOf('Nguyá»…n VÄƒn A'),
+      l10n.profileDurationOf('Nguyễn Văn A'),
+      ProfileStrings.durationOf('Nguyễn Văn A'),
     );
     expect(
       l10n.profileDurationOf('{value}\n!'),
@@ -8550,8 +8550,8 @@ void main() {
   test('profileGainPerWin', () {
     expect(l10n.profileGainPerWin(''), ProfileStrings.gainPerWin(''));
     expect(
-      l10n.profileGainPerWin('Nguyá»…n VÄƒn A'),
-      ProfileStrings.gainPerWin('Nguyá»…n VÄƒn A'),
+      l10n.profileGainPerWin('Nguyễn Văn A'),
+      ProfileStrings.gainPerWin('Nguyễn Văn A'),
     );
     expect(
       l10n.profileGainPerWin('{value}\n!'),
@@ -8576,32 +8576,32 @@ void main() {
   test('profileHitShare', () {
     expect(l10n.profileHitShare('', ''), ProfileStrings.hitShare('', ''));
     expect(
-      l10n.profileHitShare('', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.hitShare('', 'Nguyá»…n VÄƒn A'),
+      l10n.profileHitShare('', 'Nguyễn Văn A'),
+      ProfileStrings.hitShare('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileHitShare('', '{value}\n!'),
       ProfileStrings.hitShare('', '{value}\n!'),
     );
     expect(
-      l10n.profileHitShare('Nguyá»…n VÄƒn A', ''),
-      ProfileStrings.hitShare('Nguyá»…n VÄƒn A', ''),
+      l10n.profileHitShare('Nguyễn Văn A', ''),
+      ProfileStrings.hitShare('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.profileHitShare('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.hitShare('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.profileHitShare('Nguyễn Văn A', 'Nguyễn Văn A'),
+      ProfileStrings.hitShare('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.profileHitShare('Nguyá»…n VÄƒn A', '{value}\n!'),
-      ProfileStrings.hitShare('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.profileHitShare('Nguyễn Văn A', '{value}\n!'),
+      ProfileStrings.hitShare('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.profileHitShare('{value}\n!', ''),
       ProfileStrings.hitShare('{value}\n!', ''),
     );
     expect(
-      l10n.profileHitShare('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.hitShare('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.profileHitShare('{value}\n!', 'Nguyễn Văn A'),
+      ProfileStrings.hitShare('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileHitShare('{value}\n!', '{value}\n!'),
@@ -8770,8 +8770,8 @@ void main() {
   test('profileLeaderboard', () {
     expect(l10n.profileLeaderboard(''), ProfileStrings.leaderboard(''));
     expect(
-      l10n.profileLeaderboard('Nguyá»…n VÄƒn A'),
-      ProfileStrings.leaderboard('Nguyá»…n VÄƒn A'),
+      l10n.profileLeaderboard('Nguyễn Văn A'),
+      ProfileStrings.leaderboard('Nguyễn Văn A'),
     );
     expect(
       l10n.profileLeaderboard('{value}\n!'),
@@ -8791,8 +8791,8 @@ void main() {
   test('profileLossPerLoss', () {
     expect(l10n.profileLossPerLoss(''), ProfileStrings.lossPerLoss(''));
     expect(
-      l10n.profileLossPerLoss('Nguyá»…n VÄƒn A'),
-      ProfileStrings.lossPerLoss('Nguyá»…n VÄƒn A'),
+      l10n.profileLossPerLoss('Nguyễn Văn A'),
+      ProfileStrings.lossPerLoss('Nguyễn Văn A'),
     );
     expect(
       l10n.profileLossPerLoss('{value}\n!'),
@@ -8809,8 +8809,8 @@ void main() {
   test('profileMapFilter', () {
     expect(l10n.profileMapFilter(''), ProfileStrings.mapFilter(''));
     expect(
-      l10n.profileMapFilter('Nguyá»…n VÄƒn A'),
-      ProfileStrings.mapFilter('Nguyá»…n VÄƒn A'),
+      l10n.profileMapFilter('Nguyễn Văn A'),
+      ProfileStrings.mapFilter('Nguyễn Văn A'),
     );
     expect(
       l10n.profileMapFilter('{value}\n!'),
@@ -8872,8 +8872,8 @@ void main() {
   test('profilePeakRankOf', () {
     expect(l10n.profilePeakRankOf(''), ProfileStrings.peakRankOf(''));
     expect(
-      l10n.profilePeakRankOf('Nguyá»…n VÄƒn A'),
-      ProfileStrings.peakRankOf('Nguyá»…n VÄƒn A'),
+      l10n.profilePeakRankOf('Nguyễn Văn A'),
+      ProfileStrings.peakRankOf('Nguyễn Văn A'),
     );
     expect(
       l10n.profilePeakRankOf('{value}\n!'),
@@ -9031,8 +9031,8 @@ void main() {
       ProfileStrings.performanceSince(''),
     );
     expect(
-      l10n.profilePerformanceSince('Nguyá»…n VÄƒn A'),
-      ProfileStrings.performanceSince('Nguyá»…n VÄƒn A'),
+      l10n.profilePerformanceSince('Nguyễn Văn A'),
+      ProfileStrings.performanceSince('Nguyễn Văn A'),
     );
     expect(
       l10n.profilePerformanceSince('{value}\n!'),
@@ -9061,8 +9061,8 @@ void main() {
   test('profilePlantedAt', () {
     expect(l10n.profilePlantedAt(''), ProfileStrings.plantedAt(''));
     expect(
-      l10n.profilePlantedAt('Nguyá»…n VÄƒn A'),
-      ProfileStrings.plantedAt('Nguyá»…n VÄƒn A'),
+      l10n.profilePlantedAt('Nguyễn Văn A'),
+      ProfileStrings.plantedAt('Nguyễn Văn A'),
     );
     expect(
       l10n.profilePlantedAt('{value}\n!'),
@@ -9078,8 +9078,8 @@ void main() {
   test('profileProgressTo', () {
     expect(l10n.profileProgressTo(''), ProfileStrings.progressTo(''));
     expect(
-      l10n.profileProgressTo('Nguyá»…n VÄƒn A'),
-      ProfileStrings.progressTo('Nguyá»…n VÄƒn A'),
+      l10n.profileProgressTo('Nguyễn Văn A'),
+      ProfileStrings.progressTo('Nguyễn Văn A'),
     );
     expect(
       l10n.profileProgressTo('{value}\n!'),
@@ -9092,32 +9092,32 @@ void main() {
   test('profileRankChange', () {
     expect(l10n.profileRankChange('', ''), ProfileStrings.rankChange('', ''));
     expect(
-      l10n.profileRankChange('', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.rankChange('', 'Nguyá»…n VÄƒn A'),
+      l10n.profileRankChange('', 'Nguyễn Văn A'),
+      ProfileStrings.rankChange('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileRankChange('', '{value}\n!'),
       ProfileStrings.rankChange('', '{value}\n!'),
     );
     expect(
-      l10n.profileRankChange('Nguyá»…n VÄƒn A', ''),
-      ProfileStrings.rankChange('Nguyá»…n VÄƒn A', ''),
+      l10n.profileRankChange('Nguyễn Văn A', ''),
+      ProfileStrings.rankChange('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.profileRankChange('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.rankChange('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.profileRankChange('Nguyễn Văn A', 'Nguyễn Văn A'),
+      ProfileStrings.rankChange('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.profileRankChange('Nguyá»…n VÄƒn A', '{value}\n!'),
-      ProfileStrings.rankChange('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.profileRankChange('Nguyễn Văn A', '{value}\n!'),
+      ProfileStrings.rankChange('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.profileRankChange('{value}\n!', ''),
       ProfileStrings.rankChange('{value}\n!', ''),
     );
     expect(
-      l10n.profileRankChange('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.rankChange('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.profileRankChange('{value}\n!', 'Nguyễn Văn A'),
+      ProfileStrings.rankChange('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileRankChange('{value}\n!', '{value}\n!'),
@@ -9130,8 +9130,8 @@ void main() {
   test('profileRankUpHint', () {
     expect(l10n.profileRankUpHint(0, ''), ProfileStrings.rankUpHint(0, ''));
     expect(
-      l10n.profileRankUpHint(0, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.rankUpHint(0, 'Nguyá»…n VÄƒn A'),
+      l10n.profileRankUpHint(0, 'Nguyễn Văn A'),
+      ProfileStrings.rankUpHint(0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileRankUpHint(0, '{value}\n!'),
@@ -9139,8 +9139,8 @@ void main() {
     );
     expect(l10n.profileRankUpHint(1, ''), ProfileStrings.rankUpHint(1, ''));
     expect(
-      l10n.profileRankUpHint(1, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.rankUpHint(1, 'Nguyá»…n VÄƒn A'),
+      l10n.profileRankUpHint(1, 'Nguyễn Văn A'),
+      ProfileStrings.rankUpHint(1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileRankUpHint(1, '{value}\n!'),
@@ -9148,8 +9148,8 @@ void main() {
     );
     expect(l10n.profileRankUpHint(2, ''), ProfileStrings.rankUpHint(2, ''));
     expect(
-      l10n.profileRankUpHint(2, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.rankUpHint(2, 'Nguyá»…n VÄƒn A'),
+      l10n.profileRankUpHint(2, 'Nguyễn Văn A'),
+      ProfileStrings.rankUpHint(2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileRankUpHint(2, '{value}\n!'),
@@ -9157,8 +9157,8 @@ void main() {
     );
     expect(l10n.profileRankUpHint(5, ''), ProfileStrings.rankUpHint(5, ''));
     expect(
-      l10n.profileRankUpHint(5, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.rankUpHint(5, 'Nguyá»…n VÄƒn A'),
+      l10n.profileRankUpHint(5, 'Nguyễn Văn A'),
+      ProfileStrings.rankUpHint(5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileRankUpHint(5, '{value}\n!'),
@@ -9166,8 +9166,8 @@ void main() {
     );
     expect(l10n.profileRankUpHint(99, ''), ProfileStrings.rankUpHint(99, ''));
     expect(
-      l10n.profileRankUpHint(99, 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.rankUpHint(99, 'Nguyá»…n VÄƒn A'),
+      l10n.profileRankUpHint(99, 'Nguyễn Văn A'),
+      ProfileStrings.rankUpHint(99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileRankUpHint(99, '{value}\n!'),
@@ -9192,32 +9192,32 @@ void main() {
   test('profileRankWithRr', () {
     expect(l10n.profileRankWithRr('', ''), ProfileStrings.rankWithRr('', ''));
     expect(
-      l10n.profileRankWithRr('', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.rankWithRr('', 'Nguyá»…n VÄƒn A'),
+      l10n.profileRankWithRr('', 'Nguyễn Văn A'),
+      ProfileStrings.rankWithRr('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileRankWithRr('', '{value}\n!'),
       ProfileStrings.rankWithRr('', '{value}\n!'),
     );
     expect(
-      l10n.profileRankWithRr('Nguyá»…n VÄƒn A', ''),
-      ProfileStrings.rankWithRr('Nguyá»…n VÄƒn A', ''),
+      l10n.profileRankWithRr('Nguyễn Văn A', ''),
+      ProfileStrings.rankWithRr('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.profileRankWithRr('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.rankWithRr('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.profileRankWithRr('Nguyễn Văn A', 'Nguyễn Văn A'),
+      ProfileStrings.rankWithRr('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.profileRankWithRr('Nguyá»…n VÄƒn A', '{value}\n!'),
-      ProfileStrings.rankWithRr('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.profileRankWithRr('Nguyễn Văn A', '{value}\n!'),
+      ProfileStrings.rankWithRr('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.profileRankWithRr('{value}\n!', ''),
       ProfileStrings.rankWithRr('{value}\n!', ''),
     );
     expect(
-      l10n.profileRankWithRr('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.rankWithRr('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.profileRankWithRr('{value}\n!', 'Nguyễn Văn A'),
+      ProfileStrings.rankWithRr('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileRankWithRr('{value}\n!', '{value}\n!'),
@@ -9797,8 +9797,8 @@ void main() {
   test('profileRrLeft', () {
     expect(l10n.profileRrLeft(''), ProfileStrings.rrLeft(''));
     expect(
-      l10n.profileRrLeft('Nguyá»…n VÄƒn A'),
-      ProfileStrings.rrLeft('Nguyá»…n VÄƒn A'),
+      l10n.profileRrLeft('Nguyễn Văn A'),
+      ProfileStrings.rrLeft('Nguyễn Văn A'),
     );
     expect(
       l10n.profileRrLeft('{value}\n!'),
@@ -9818,8 +9818,8 @@ void main() {
   test('profileRrValue', () {
     expect(l10n.profileRrValue(''), ProfileStrings.rrValue(''));
     expect(
-      l10n.profileRrValue('Nguyá»…n VÄƒn A'),
-      ProfileStrings.rrValue('Nguyá»…n VÄƒn A'),
+      l10n.profileRrValue('Nguyễn Văn A'),
+      ProfileStrings.rrValue('Nguyễn Văn A'),
     );
     expect(
       l10n.profileRrValue('{value}\n!'),
@@ -9874,8 +9874,8 @@ void main() {
   test('profileTagSuffix', () {
     expect(l10n.profileTagSuffix(''), ProfileStrings.tagSuffix(''));
     expect(
-      l10n.profileTagSuffix('Nguyá»…n VÄƒn A'),
-      ProfileStrings.tagSuffix('Nguyá»…n VÄƒn A'),
+      l10n.profileTagSuffix('Nguyễn Văn A'),
+      ProfileStrings.tagSuffix('Nguyễn Văn A'),
     );
     expect(
       l10n.profileTagSuffix('{value}\n!'),
@@ -9900,8 +9900,8 @@ void main() {
   test('profileToday', () {
     expect(l10n.profileToday(''), ProfileStrings.today(''));
     expect(
-      l10n.profileToday('Nguyá»…n VÄƒn A'),
-      ProfileStrings.today('Nguyá»…n VÄƒn A'),
+      l10n.profileToday('Nguyễn Văn A'),
+      ProfileStrings.today('Nguyễn Văn A'),
     );
     expect(l10n.profileToday('{value}\n!'), ProfileStrings.today('{value}\n!'));
   });
@@ -9945,32 +9945,32 @@ void main() {
   test('profileXpProgress', () {
     expect(l10n.profileXpProgress('', ''), ProfileStrings.xpProgress('', ''));
     expect(
-      l10n.profileXpProgress('', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.xpProgress('', 'Nguyá»…n VÄƒn A'),
+      l10n.profileXpProgress('', 'Nguyễn Văn A'),
+      ProfileStrings.xpProgress('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileXpProgress('', '{value}\n!'),
       ProfileStrings.xpProgress('', '{value}\n!'),
     );
     expect(
-      l10n.profileXpProgress('Nguyá»…n VÄƒn A', ''),
-      ProfileStrings.xpProgress('Nguyá»…n VÄƒn A', ''),
+      l10n.profileXpProgress('Nguyễn Văn A', ''),
+      ProfileStrings.xpProgress('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.profileXpProgress('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.xpProgress('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.profileXpProgress('Nguyễn Văn A', 'Nguyễn Văn A'),
+      ProfileStrings.xpProgress('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.profileXpProgress('Nguyá»…n VÄƒn A', '{value}\n!'),
-      ProfileStrings.xpProgress('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.profileXpProgress('Nguyễn Văn A', '{value}\n!'),
+      ProfileStrings.xpProgress('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.profileXpProgress('{value}\n!', ''),
       ProfileStrings.xpProgress('{value}\n!', ''),
     );
     expect(
-      l10n.profileXpProgress('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      ProfileStrings.xpProgress('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.profileXpProgress('{value}\n!', 'Nguyễn Văn A'),
+      ProfileStrings.xpProgress('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.profileXpProgress('{value}\n!', '{value}\n!'),
@@ -10025,8 +10025,8 @@ void main() {
   test('legalEffectiveFrom', () {
     expect(l10n.legalEffectiveFrom(''), LegalStrings.effectiveFrom(''));
     expect(
-      l10n.legalEffectiveFrom('Nguyá»…n VÄƒn A'),
-      LegalStrings.effectiveFrom('Nguyá»…n VÄƒn A'),
+      l10n.legalEffectiveFrom('Nguyễn Văn A'),
+      LegalStrings.effectiveFrom('Nguyễn Văn A'),
     );
     expect(
       l10n.legalEffectiveFrom('{value}\n!'),
@@ -10054,8 +10054,8 @@ void main() {
   test('legalVersion', () {
     expect(l10n.legalVersion(''), LegalStrings.version(''));
     expect(
-      l10n.legalVersion('Nguyá»…n VÄƒn A'),
-      LegalStrings.version('Nguyá»…n VÄƒn A'),
+      l10n.legalVersion('Nguyễn Văn A'),
+      LegalStrings.version('Nguyễn Văn A'),
     );
     expect(l10n.legalVersion('{value}\n!'), LegalStrings.version('{value}\n!'));
   });
@@ -10110,8 +10110,8 @@ void main() {
   test('settingsBuildNumber', () {
     expect(l10n.settingsBuildNumber(''), SettingsStrings.buildNumber(''));
     expect(
-      l10n.settingsBuildNumber('Nguyá»…n VÄƒn A'),
-      SettingsStrings.buildNumber('Nguyá»…n VÄƒn A'),
+      l10n.settingsBuildNumber('Nguyễn Văn A'),
+      SettingsStrings.buildNumber('Nguyễn Văn A'),
     );
     expect(
       l10n.settingsBuildNumber('{value}\n!'),
@@ -10121,8 +10121,8 @@ void main() {
   test('settingsCacheCleared', () {
     expect(l10n.settingsCacheCleared(''), SettingsStrings.cacheCleared(''));
     expect(
-      l10n.settingsCacheCleared('Nguyá»…n VÄƒn A'),
-      SettingsStrings.cacheCleared('Nguyá»…n VÄƒn A'),
+      l10n.settingsCacheCleared('Nguyễn Văn A'),
+      SettingsStrings.cacheCleared('Nguyễn Văn A'),
     );
     expect(
       l10n.settingsCacheCleared('{value}\n!'),
@@ -10310,32 +10310,32 @@ void main() {
       SettingsStrings.logFileHeader('', ''),
     );
     expect(
-      l10n.settingsLogFileHeader('', 'Nguyá»…n VÄƒn A'),
-      SettingsStrings.logFileHeader('', 'Nguyá»…n VÄƒn A'),
+      l10n.settingsLogFileHeader('', 'Nguyễn Văn A'),
+      SettingsStrings.logFileHeader('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.settingsLogFileHeader('', '{value}\n!'),
       SettingsStrings.logFileHeader('', '{value}\n!'),
     );
     expect(
-      l10n.settingsLogFileHeader('Nguyá»…n VÄƒn A', ''),
-      SettingsStrings.logFileHeader('Nguyá»…n VÄƒn A', ''),
+      l10n.settingsLogFileHeader('Nguyễn Văn A', ''),
+      SettingsStrings.logFileHeader('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.settingsLogFileHeader('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      SettingsStrings.logFileHeader('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.settingsLogFileHeader('Nguyễn Văn A', 'Nguyễn Văn A'),
+      SettingsStrings.logFileHeader('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.settingsLogFileHeader('Nguyá»…n VÄƒn A', '{value}\n!'),
-      SettingsStrings.logFileHeader('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.settingsLogFileHeader('Nguyễn Văn A', '{value}\n!'),
+      SettingsStrings.logFileHeader('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.settingsLogFileHeader('{value}\n!', ''),
       SettingsStrings.logFileHeader('{value}\n!', ''),
     );
     expect(
-      l10n.settingsLogFileHeader('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      SettingsStrings.logFileHeader('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.settingsLogFileHeader('{value}\n!', 'Nguyễn Văn A'),
+      SettingsStrings.logFileHeader('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.settingsLogFileHeader('{value}\n!', '{value}\n!'),
@@ -10399,8 +10399,8 @@ void main() {
       SettingsStrings.notifStoreResetSubtitle(''),
     );
     expect(
-      l10n.settingsNotifStoreResetSubtitle('Nguyá»…n VÄƒn A'),
-      SettingsStrings.notifStoreResetSubtitle('Nguyá»…n VÄƒn A'),
+      l10n.settingsNotifStoreResetSubtitle('Nguyễn Văn A'),
+      SettingsStrings.notifStoreResetSubtitle('Nguyễn Văn A'),
     );
     expect(
       l10n.settingsNotifStoreResetSubtitle('{value}\n!'),
@@ -10449,32 +10449,32 @@ void main() {
       SettingsStrings.optionOwnPriceValue('', ''),
     );
     expect(
-      l10n.settingsOptionOwnPriceValue('', 'Nguyá»…n VÄƒn A'),
-      SettingsStrings.optionOwnPriceValue('', 'Nguyá»…n VÄƒn A'),
+      l10n.settingsOptionOwnPriceValue('', 'Nguyễn Văn A'),
+      SettingsStrings.optionOwnPriceValue('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.settingsOptionOwnPriceValue('', '{value}\n!'),
       SettingsStrings.optionOwnPriceValue('', '{value}\n!'),
     );
     expect(
-      l10n.settingsOptionOwnPriceValue('Nguyá»…n VÄƒn A', ''),
-      SettingsStrings.optionOwnPriceValue('Nguyá»…n VÄƒn A', ''),
+      l10n.settingsOptionOwnPriceValue('Nguyễn Văn A', ''),
+      SettingsStrings.optionOwnPriceValue('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.settingsOptionOwnPriceValue('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      SettingsStrings.optionOwnPriceValue('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.settingsOptionOwnPriceValue('Nguyễn Văn A', 'Nguyễn Văn A'),
+      SettingsStrings.optionOwnPriceValue('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.settingsOptionOwnPriceValue('Nguyá»…n VÄƒn A', '{value}\n!'),
-      SettingsStrings.optionOwnPriceValue('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.settingsOptionOwnPriceValue('Nguyễn Văn A', '{value}\n!'),
+      SettingsStrings.optionOwnPriceValue('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.settingsOptionOwnPriceValue('{value}\n!', ''),
       SettingsStrings.optionOwnPriceValue('{value}\n!', ''),
     );
     expect(
-      l10n.settingsOptionOwnPriceValue('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      SettingsStrings.optionOwnPriceValue('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.settingsOptionOwnPriceValue('{value}\n!', 'Nguyễn Văn A'),
+      SettingsStrings.optionOwnPriceValue('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.settingsOptionOwnPriceValue('{value}\n!', '{value}\n!'),
@@ -10508,32 +10508,32 @@ void main() {
       SettingsStrings.optionShowPriceSubtitle('', ''),
     );
     expect(
-      l10n.settingsOptionShowPriceSubtitle('', 'Nguyá»…n VÄƒn A'),
-      SettingsStrings.optionShowPriceSubtitle('', 'Nguyá»…n VÄƒn A'),
+      l10n.settingsOptionShowPriceSubtitle('', 'Nguyễn Văn A'),
+      SettingsStrings.optionShowPriceSubtitle('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.settingsOptionShowPriceSubtitle('', '{value}\n!'),
       SettingsStrings.optionShowPriceSubtitle('', '{value}\n!'),
     );
     expect(
-      l10n.settingsOptionShowPriceSubtitle('Nguyá»…n VÄƒn A', ''),
-      SettingsStrings.optionShowPriceSubtitle('Nguyá»…n VÄƒn A', ''),
+      l10n.settingsOptionShowPriceSubtitle('Nguyễn Văn A', ''),
+      SettingsStrings.optionShowPriceSubtitle('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.settingsOptionShowPriceSubtitle('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      SettingsStrings.optionShowPriceSubtitle('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.settingsOptionShowPriceSubtitle('Nguyễn Văn A', 'Nguyễn Văn A'),
+      SettingsStrings.optionShowPriceSubtitle('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.settingsOptionShowPriceSubtitle('Nguyá»…n VÄƒn A', '{value}\n!'),
-      SettingsStrings.optionShowPriceSubtitle('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.settingsOptionShowPriceSubtitle('Nguyễn Văn A', '{value}\n!'),
+      SettingsStrings.optionShowPriceSubtitle('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.settingsOptionShowPriceSubtitle('{value}\n!', ''),
       SettingsStrings.optionShowPriceSubtitle('{value}\n!', ''),
     );
     expect(
-      l10n.settingsOptionShowPriceSubtitle('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      SettingsStrings.optionShowPriceSubtitle('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.settingsOptionShowPriceSubtitle('{value}\n!', 'Nguyễn Văn A'),
+      SettingsStrings.optionShowPriceSubtitle('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.settingsOptionShowPriceSubtitle('{value}\n!', '{value}\n!'),
@@ -10564,8 +10564,8 @@ void main() {
       SettingsStrings.platformAppliesTo(''),
     );
     expect(
-      l10n.settingsPlatformAppliesTo('Nguyá»…n VÄƒn A'),
-      SettingsStrings.platformAppliesTo('Nguyá»…n VÄƒn A'),
+      l10n.settingsPlatformAppliesTo('Nguyễn Văn A'),
+      SettingsStrings.platformAppliesTo('Nguyễn Văn A'),
     );
     expect(
       l10n.settingsPlatformAppliesTo('{value}\n!'),
@@ -10632,8 +10632,8 @@ void main() {
   test('settingsRemovedAccount', () {
     expect(l10n.settingsRemovedAccount(''), SettingsStrings.removedAccount(''));
     expect(
-      l10n.settingsRemovedAccount('Nguyá»…n VÄƒn A'),
-      SettingsStrings.removedAccount('Nguyá»…n VÄƒn A'),
+      l10n.settingsRemovedAccount('Nguyễn Văn A'),
+      SettingsStrings.removedAccount('Nguyễn Văn A'),
     );
     expect(
       l10n.settingsRemovedAccount('{value}\n!'),
@@ -10701,8 +10701,8 @@ void main() {
       SettingsStrings.statusAllGoodBody(''),
     );
     expect(
-      l10n.settingsStatusAllGoodBody('Nguyá»…n VÄƒn A'),
-      SettingsStrings.statusAllGoodBody('Nguyá»…n VÄƒn A'),
+      l10n.settingsStatusAllGoodBody('Nguyễn Văn A'),
+      SettingsStrings.statusAllGoodBody('Nguyễn Văn A'),
     );
     expect(
       l10n.settingsStatusAllGoodBody('{value}\n!'),
@@ -10814,8 +10814,8 @@ void main() {
   test('settingsStatusStarted', () {
     expect(l10n.settingsStatusStarted(''), SettingsStrings.statusStarted(''));
     expect(
-      l10n.settingsStatusStarted('Nguyá»…n VÄƒn A'),
-      SettingsStrings.statusStarted('Nguyá»…n VÄƒn A'),
+      l10n.settingsStatusStarted('Nguyễn Văn A'),
+      SettingsStrings.statusStarted('Nguyễn Văn A'),
     );
     expect(
       l10n.settingsStatusStarted('{value}\n!'),
@@ -10825,8 +10825,8 @@ void main() {
   test('settingsStatusUpdated', () {
     expect(l10n.settingsStatusUpdated(''), SettingsStrings.statusUpdated(''));
     expect(
-      l10n.settingsStatusUpdated('Nguyá»…n VÄƒn A'),
-      SettingsStrings.statusUpdated('Nguyá»…n VÄƒn A'),
+      l10n.settingsStatusUpdated('Nguyễn Văn A'),
+      SettingsStrings.statusUpdated('Nguyễn Văn A'),
     );
     expect(
       l10n.settingsStatusUpdated('{value}\n!'),
@@ -10845,8 +10845,8 @@ void main() {
   test('settingsSwitchedTo', () {
     expect(l10n.settingsSwitchedTo(''), SettingsStrings.switchedTo(''));
     expect(
-      l10n.settingsSwitchedTo('Nguyá»…n VÄƒn A'),
-      SettingsStrings.switchedTo('Nguyá»…n VÄƒn A'),
+      l10n.settingsSwitchedTo('Nguyễn Văn A'),
+      SettingsStrings.switchedTo('Nguyễn Văn A'),
     );
     expect(
       l10n.settingsSwitchedTo('{value}\n!'),
@@ -10874,8 +10874,8 @@ void main() {
   test('settingsVersion', () {
     expect(l10n.settingsVersion(''), SettingsStrings.version(''));
     expect(
-      l10n.settingsVersion('Nguyá»…n VÄƒn A'),
-      SettingsStrings.version('Nguyá»…n VÄƒn A'),
+      l10n.settingsVersion('Nguyễn Văn A'),
+      SettingsStrings.version('Nguyễn Văn A'),
     );
     expect(
       l10n.settingsVersion('{value}\n!'),
@@ -10930,8 +10930,8 @@ void main() {
       SkinDetailStrings.availableInStoreOf(''),
     );
     expect(
-      l10n.skinDetailAvailableInStoreOf('Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.availableInStoreOf('Nguyá»…n VÄƒn A'),
+      l10n.skinDetailAvailableInStoreOf('Nguyễn Văn A'),
+      SkinDetailStrings.availableInStoreOf('Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailAvailableInStoreOf('{value}\n!'),
@@ -10944,8 +10944,8 @@ void main() {
       SkinDetailStrings.history(0, 0, ''),
     );
     expect(
-      l10n.skinDetailHistory(0, 0, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(0, 0, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(0, 0, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(0, 0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(0, 0, '{value}\n!'),
@@ -10956,8 +10956,8 @@ void main() {
       SkinDetailStrings.history(0, 1, ''),
     );
     expect(
-      l10n.skinDetailHistory(0, 1, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(0, 1, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(0, 1, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(0, 1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(0, 1, '{value}\n!'),
@@ -10968,8 +10968,8 @@ void main() {
       SkinDetailStrings.history(0, 2, ''),
     );
     expect(
-      l10n.skinDetailHistory(0, 2, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(0, 2, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(0, 2, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(0, 2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(0, 2, '{value}\n!'),
@@ -10980,8 +10980,8 @@ void main() {
       SkinDetailStrings.history(0, 5, ''),
     );
     expect(
-      l10n.skinDetailHistory(0, 5, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(0, 5, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(0, 5, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(0, 5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(0, 5, '{value}\n!'),
@@ -10992,8 +10992,8 @@ void main() {
       SkinDetailStrings.history(0, 99, ''),
     );
     expect(
-      l10n.skinDetailHistory(0, 99, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(0, 99, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(0, 99, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(0, 99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(0, 99, '{value}\n!'),
@@ -11004,8 +11004,8 @@ void main() {
       SkinDetailStrings.history(1, 0, ''),
     );
     expect(
-      l10n.skinDetailHistory(1, 0, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(1, 0, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(1, 0, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(1, 0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(1, 0, '{value}\n!'),
@@ -11016,8 +11016,8 @@ void main() {
       SkinDetailStrings.history(1, 1, ''),
     );
     expect(
-      l10n.skinDetailHistory(1, 1, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(1, 1, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(1, 1, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(1, 1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(1, 1, '{value}\n!'),
@@ -11028,8 +11028,8 @@ void main() {
       SkinDetailStrings.history(1, 2, ''),
     );
     expect(
-      l10n.skinDetailHistory(1, 2, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(1, 2, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(1, 2, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(1, 2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(1, 2, '{value}\n!'),
@@ -11040,8 +11040,8 @@ void main() {
       SkinDetailStrings.history(1, 5, ''),
     );
     expect(
-      l10n.skinDetailHistory(1, 5, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(1, 5, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(1, 5, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(1, 5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(1, 5, '{value}\n!'),
@@ -11052,8 +11052,8 @@ void main() {
       SkinDetailStrings.history(1, 99, ''),
     );
     expect(
-      l10n.skinDetailHistory(1, 99, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(1, 99, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(1, 99, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(1, 99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(1, 99, '{value}\n!'),
@@ -11064,8 +11064,8 @@ void main() {
       SkinDetailStrings.history(2, 0, ''),
     );
     expect(
-      l10n.skinDetailHistory(2, 0, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(2, 0, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(2, 0, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(2, 0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(2, 0, '{value}\n!'),
@@ -11076,8 +11076,8 @@ void main() {
       SkinDetailStrings.history(2, 1, ''),
     );
     expect(
-      l10n.skinDetailHistory(2, 1, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(2, 1, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(2, 1, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(2, 1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(2, 1, '{value}\n!'),
@@ -11088,8 +11088,8 @@ void main() {
       SkinDetailStrings.history(2, 2, ''),
     );
     expect(
-      l10n.skinDetailHistory(2, 2, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(2, 2, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(2, 2, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(2, 2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(2, 2, '{value}\n!'),
@@ -11100,8 +11100,8 @@ void main() {
       SkinDetailStrings.history(2, 5, ''),
     );
     expect(
-      l10n.skinDetailHistory(2, 5, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(2, 5, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(2, 5, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(2, 5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(2, 5, '{value}\n!'),
@@ -11112,8 +11112,8 @@ void main() {
       SkinDetailStrings.history(2, 99, ''),
     );
     expect(
-      l10n.skinDetailHistory(2, 99, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(2, 99, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(2, 99, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(2, 99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(2, 99, '{value}\n!'),
@@ -11124,8 +11124,8 @@ void main() {
       SkinDetailStrings.history(5, 0, ''),
     );
     expect(
-      l10n.skinDetailHistory(5, 0, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(5, 0, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(5, 0, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(5, 0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(5, 0, '{value}\n!'),
@@ -11136,8 +11136,8 @@ void main() {
       SkinDetailStrings.history(5, 1, ''),
     );
     expect(
-      l10n.skinDetailHistory(5, 1, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(5, 1, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(5, 1, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(5, 1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(5, 1, '{value}\n!'),
@@ -11148,8 +11148,8 @@ void main() {
       SkinDetailStrings.history(5, 2, ''),
     );
     expect(
-      l10n.skinDetailHistory(5, 2, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(5, 2, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(5, 2, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(5, 2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(5, 2, '{value}\n!'),
@@ -11160,8 +11160,8 @@ void main() {
       SkinDetailStrings.history(5, 5, ''),
     );
     expect(
-      l10n.skinDetailHistory(5, 5, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(5, 5, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(5, 5, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(5, 5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(5, 5, '{value}\n!'),
@@ -11172,8 +11172,8 @@ void main() {
       SkinDetailStrings.history(5, 99, ''),
     );
     expect(
-      l10n.skinDetailHistory(5, 99, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(5, 99, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(5, 99, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(5, 99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(5, 99, '{value}\n!'),
@@ -11184,8 +11184,8 @@ void main() {
       SkinDetailStrings.history(99, 0, ''),
     );
     expect(
-      l10n.skinDetailHistory(99, 0, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(99, 0, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(99, 0, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(99, 0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(99, 0, '{value}\n!'),
@@ -11196,8 +11196,8 @@ void main() {
       SkinDetailStrings.history(99, 1, ''),
     );
     expect(
-      l10n.skinDetailHistory(99, 1, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(99, 1, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(99, 1, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(99, 1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(99, 1, '{value}\n!'),
@@ -11208,8 +11208,8 @@ void main() {
       SkinDetailStrings.history(99, 2, ''),
     );
     expect(
-      l10n.skinDetailHistory(99, 2, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(99, 2, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(99, 2, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(99, 2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(99, 2, '{value}\n!'),
@@ -11220,8 +11220,8 @@ void main() {
       SkinDetailStrings.history(99, 5, ''),
     );
     expect(
-      l10n.skinDetailHistory(99, 5, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(99, 5, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(99, 5, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(99, 5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(99, 5, '{value}\n!'),
@@ -11232,8 +11232,8 @@ void main() {
       SkinDetailStrings.history(99, 99, ''),
     );
     expect(
-      l10n.skinDetailHistory(99, 99, 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.history(99, 99, 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailHistory(99, 99, 'Nguyễn Văn A'),
+      SkinDetailStrings.history(99, 99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailHistory(99, 99, '{value}\n!'),
@@ -11258,32 +11258,32 @@ void main() {
       SkinDetailStrings.levelCaption('', ''),
     );
     expect(
-      l10n.skinDetailLevelCaption('', 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.levelCaption('', 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailLevelCaption('', 'Nguyễn Văn A'),
+      SkinDetailStrings.levelCaption('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailLevelCaption('', '{value}\n!'),
       SkinDetailStrings.levelCaption('', '{value}\n!'),
     );
     expect(
-      l10n.skinDetailLevelCaption('Nguyá»…n VÄƒn A', ''),
-      SkinDetailStrings.levelCaption('Nguyá»…n VÄƒn A', ''),
+      l10n.skinDetailLevelCaption('Nguyễn Văn A', ''),
+      SkinDetailStrings.levelCaption('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.skinDetailLevelCaption('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.levelCaption('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailLevelCaption('Nguyễn Văn A', 'Nguyễn Văn A'),
+      SkinDetailStrings.levelCaption('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.skinDetailLevelCaption('Nguyá»…n VÄƒn A', '{value}\n!'),
-      SkinDetailStrings.levelCaption('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.skinDetailLevelCaption('Nguyễn Văn A', '{value}\n!'),
+      SkinDetailStrings.levelCaption('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.skinDetailLevelCaption('{value}\n!', ''),
       SkinDetailStrings.levelCaption('{value}\n!', ''),
     );
     expect(
-      l10n.skinDetailLevelCaption('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      SkinDetailStrings.levelCaption('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.skinDetailLevelCaption('{value}\n!', 'Nguyễn Văn A'),
+      SkinDetailStrings.levelCaption('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.skinDetailLevelCaption('{value}\n!', '{value}\n!'),
@@ -11341,8 +11341,8 @@ void main() {
   test('socialActionFailed', () {
     expect(l10n.socialActionFailed(''), SocialStrings.actionFailed(''));
     expect(
-      l10n.socialActionFailed('Nguyá»…n VÄƒn A'),
-      SocialStrings.actionFailed('Nguyá»…n VÄƒn A'),
+      l10n.socialActionFailed('Nguyễn Văn A'),
+      SocialStrings.actionFailed('Nguyễn Văn A'),
     );
     expect(
       l10n.socialActionFailed('{value}\n!'),
@@ -11358,8 +11358,8 @@ void main() {
   test('socialCancelQueue', () {
     expect(l10n.socialCancelQueue(''), SocialStrings.cancelQueue(''));
     expect(
-      l10n.socialCancelQueue('Nguyá»…n VÄƒn A'),
-      SocialStrings.cancelQueue('Nguyá»…n VÄƒn A'),
+      l10n.socialCancelQueue('Nguyễn Văn A'),
+      SocialStrings.cancelQueue('Nguyễn Văn A'),
     );
     expect(
       l10n.socialCancelQueue('{value}\n!'),
@@ -11372,32 +11372,32 @@ void main() {
   test('socialCantQueue', () {
     expect(l10n.socialCantQueue('', ''), SocialStrings.cantQueue('', ''));
     expect(
-      l10n.socialCantQueue('', 'Nguyá»…n VÄƒn A'),
-      SocialStrings.cantQueue('', 'Nguyá»…n VÄƒn A'),
+      l10n.socialCantQueue('', 'Nguyễn Văn A'),
+      SocialStrings.cantQueue('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.socialCantQueue('', '{value}\n!'),
       SocialStrings.cantQueue('', '{value}\n!'),
     );
     expect(
-      l10n.socialCantQueue('Nguyá»…n VÄƒn A', ''),
-      SocialStrings.cantQueue('Nguyá»…n VÄƒn A', ''),
+      l10n.socialCantQueue('Nguyễn Văn A', ''),
+      SocialStrings.cantQueue('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.socialCantQueue('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      SocialStrings.cantQueue('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.socialCantQueue('Nguyễn Văn A', 'Nguyễn Văn A'),
+      SocialStrings.cantQueue('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.socialCantQueue('Nguyá»…n VÄƒn A', '{value}\n!'),
-      SocialStrings.cantQueue('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.socialCantQueue('Nguyễn Văn A', '{value}\n!'),
+      SocialStrings.cantQueue('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.socialCantQueue('{value}\n!', ''),
       SocialStrings.cantQueue('{value}\n!', ''),
     );
     expect(
-      l10n.socialCantQueue('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      SocialStrings.cantQueue('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.socialCantQueue('{value}\n!', 'Nguyễn Văn A'),
+      SocialStrings.cantQueue('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.socialCantQueue('{value}\n!', '{value}\n!'),
@@ -11551,8 +11551,8 @@ void main() {
   test('socialInviteFrom', () {
     expect(l10n.socialInviteFrom(''), SocialStrings.inviteFrom(''));
     expect(
-      l10n.socialInviteFrom('Nguyá»…n VÄƒn A'),
-      SocialStrings.inviteFrom('Nguyá»…n VÄƒn A'),
+      l10n.socialInviteFrom('Nguyễn Văn A'),
+      SocialStrings.inviteFrom('Nguyễn Văn A'),
     );
     expect(
       l10n.socialInviteFrom('{value}\n!'),
@@ -11562,8 +11562,8 @@ void main() {
   test('socialInviteLabel', () {
     expect(l10n.socialInviteLabel(''), SocialStrings.inviteLabel(''));
     expect(
-      l10n.socialInviteLabel('Nguyá»…n VÄƒn A'),
-      SocialStrings.inviteLabel('Nguyá»…n VÄƒn A'),
+      l10n.socialInviteLabel('Nguyễn Văn A'),
+      SocialStrings.inviteLabel('Nguyễn Văn A'),
     );
     expect(
       l10n.socialInviteLabel('{value}\n!'),
@@ -11576,8 +11576,8 @@ void main() {
   test('socialInviteSent', () {
     expect(l10n.socialInviteSent(''), SocialStrings.inviteSent(''));
     expect(
-      l10n.socialInviteSent('Nguyá»…n VÄƒn A'),
-      SocialStrings.inviteSent('Nguyá»…n VÄƒn A'),
+      l10n.socialInviteSent('Nguyễn Văn A'),
+      SocialStrings.inviteSent('Nguyễn Văn A'),
     );
     expect(
       l10n.socialInviteSent('{value}\n!'),
@@ -11587,8 +11587,8 @@ void main() {
   test('socialInvitedLabel', () {
     expect(l10n.socialInvitedLabel(''), SocialStrings.invitedLabel(''));
     expect(
-      l10n.socialInvitedLabel('Nguyá»…n VÄƒn A'),
-      SocialStrings.invitedLabel('Nguyá»…n VÄƒn A'),
+      l10n.socialInvitedLabel('Nguyễn Văn A'),
+      SocialStrings.invitedLabel('Nguyễn Văn A'),
     );
     expect(
       l10n.socialInvitedLabel('{value}\n!'),
@@ -11619,8 +11619,8 @@ void main() {
   test('socialLastOnline', () {
     expect(l10n.socialLastOnline(''), SocialStrings.lastOnline(''));
     expect(
-      l10n.socialLastOnline('Nguyá»…n VÄƒn A'),
-      SocialStrings.lastOnline('Nguyá»…n VÄƒn A'),
+      l10n.socialLastOnline('Nguyễn Văn A'),
+      SocialStrings.lastOnline('Nguyễn Văn A'),
     );
     expect(
       l10n.socialLastOnline('{value}\n!'),
@@ -11633,8 +11633,8 @@ void main() {
   test('socialLeaderboardTop', () {
     expect(l10n.socialLeaderboardTop(''), SocialStrings.leaderboardTop(''));
     expect(
-      l10n.socialLeaderboardTop('Nguyá»…n VÄƒn A'),
-      SocialStrings.leaderboardTop('Nguyá»…n VÄƒn A'),
+      l10n.socialLeaderboardTop('Nguyễn Văn A'),
+      SocialStrings.leaderboardTop('Nguyễn Văn A'),
     );
     expect(
       l10n.socialLeaderboardTop('{value}\n!'),
@@ -11800,8 +11800,8 @@ void main() {
   test('socialPartyCodeValue', () {
     expect(l10n.socialPartyCodeValue(''), SocialStrings.partyCodeValue(''));
     expect(
-      l10n.socialPartyCodeValue('Nguyá»…n VÄƒn A'),
-      SocialStrings.partyCodeValue('Nguyá»…n VÄƒn A'),
+      l10n.socialPartyCodeValue('Nguyễn Văn A'),
+      SocialStrings.partyCodeValue('Nguyễn Văn A'),
     );
     expect(
       l10n.socialPartyCodeValue('{value}\n!'),
@@ -11867,8 +11867,8 @@ void main() {
   test('socialPlayingOther', () {
     expect(l10n.socialPlayingOther(''), SocialStrings.playingOther(''));
     expect(
-      l10n.socialPlayingOther('Nguyá»…n VÄƒn A'),
-      SocialStrings.playingOther('Nguyá»…n VÄƒn A'),
+      l10n.socialPlayingOther('Nguyễn Văn A'),
+      SocialStrings.playingOther('Nguyễn Văn A'),
     );
     expect(
       l10n.socialPlayingOther('{value}\n!'),
@@ -11959,8 +11959,8 @@ void main() {
   test('socialReasonRestricted', () {
     expect(l10n.socialReasonRestricted(''), SocialStrings.reasonRestricted(''));
     expect(
-      l10n.socialReasonRestricted('Nguyá»…n VÄƒn A'),
-      SocialStrings.reasonRestricted('Nguyá»…n VÄƒn A'),
+      l10n.socialReasonRestricted('Nguyễn Văn A'),
+      SocialStrings.reasonRestricted('Nguyễn Văn A'),
     );
     expect(
       l10n.socialReasonRestricted('{value}\n!'),
@@ -11979,8 +11979,8 @@ void main() {
       SocialStrings.removeConfirmBody(''),
     );
     expect(
-      l10n.socialRemoveConfirmBody('Nguyá»…n VÄƒn A'),
-      SocialStrings.removeConfirmBody('Nguyá»…n VÄƒn A'),
+      l10n.socialRemoveConfirmBody('Nguyễn Văn A'),
+      SocialStrings.removeConfirmBody('Nguyễn Văn A'),
     );
     expect(
       l10n.socialRemoveConfirmBody('{value}\n!'),
@@ -11996,8 +11996,8 @@ void main() {
   test('socialRequestFrom', () {
     expect(l10n.socialRequestFrom(''), SocialStrings.requestFrom(''));
     expect(
-      l10n.socialRequestFrom('Nguyá»…n VÄƒn A'),
-      SocialStrings.requestFrom('Nguyá»…n VÄƒn A'),
+      l10n.socialRequestFrom('Nguyễn Văn A'),
+      SocialStrings.requestFrom('Nguyễn Văn A'),
     );
     expect(
       l10n.socialRequestFrom('{value}\n!'),
@@ -12019,8 +12019,8 @@ void main() {
   test('socialSearching', () {
     expect(l10n.socialSearching(''), SocialStrings.searching(''));
     expect(
-      l10n.socialSearching('Nguyá»…n VÄƒn A'),
-      SocialStrings.searching('Nguyá»…n VÄƒn A'),
+      l10n.socialSearching('Nguyễn Văn A'),
+      SocialStrings.searching('Nguyễn Văn A'),
     );
     expect(
       l10n.socialSearching('{value}\n!'),
@@ -12042,8 +12042,8 @@ void main() {
   test('socialShareCodeText', () {
     expect(l10n.socialShareCodeText(''), SocialStrings.shareCodeText(''));
     expect(
-      l10n.socialShareCodeText('Nguyá»…n VÄƒn A'),
-      SocialStrings.shareCodeText('Nguyá»…n VÄƒn A'),
+      l10n.socialShareCodeText('Nguyễn Văn A'),
+      SocialStrings.shareCodeText('Nguyễn Văn A'),
     );
     expect(
       l10n.socialShareCodeText('{value}\n!'),
@@ -12096,8 +12096,8 @@ void main() {
   test('storeAccessoryFrom', () {
     expect(l10n.storeAccessoryFrom(''), StoreStrings.accessoryFrom(''));
     expect(
-      l10n.storeAccessoryFrom('Nguyá»…n VÄƒn A'),
-      StoreStrings.accessoryFrom('Nguyá»…n VÄƒn A'),
+      l10n.storeAccessoryFrom('Nguyễn Văn A'),
+      StoreStrings.accessoryFrom('Nguyễn Văn A'),
     );
     expect(
       l10n.storeAccessoryFrom('{value}\n!'),
@@ -12110,8 +12110,8 @@ void main() {
       StoreStrings.accessoryRefreshIn(''),
     );
     expect(
-      l10n.storeAccessoryRefreshIn('Nguyá»…n VÄƒn A'),
-      StoreStrings.accessoryRefreshIn('Nguyá»…n VÄƒn A'),
+      l10n.storeAccessoryRefreshIn('Nguyễn Văn A'),
+      StoreStrings.accessoryRefreshIn('Nguyễn Văn A'),
     );
     expect(
       l10n.storeAccessoryRefreshIn('{value}\n!'),
@@ -12121,8 +12121,8 @@ void main() {
   test('storeAccessoryResetAt', () {
     expect(l10n.storeAccessoryResetAt(''), StoreStrings.accessoryResetAt(''));
     expect(
-      l10n.storeAccessoryResetAt('Nguyá»…n VÄƒn A'),
-      StoreStrings.accessoryResetAt('Nguyá»…n VÄƒn A'),
+      l10n.storeAccessoryResetAt('Nguyễn Văn A'),
+      StoreStrings.accessoryResetAt('Nguyễn Văn A'),
     );
     expect(
       l10n.storeAccessoryResetAt('{value}\n!'),
@@ -12147,8 +12147,8 @@ void main() {
   test('storeBundleEndsAt', () {
     expect(l10n.storeBundleEndsAt(''), StoreStrings.bundleEndsAt(''));
     expect(
-      l10n.storeBundleEndsAt('Nguyá»…n VÄƒn A'),
-      StoreStrings.bundleEndsAt('Nguyá»…n VÄƒn A'),
+      l10n.storeBundleEndsAt('Nguyễn Văn A'),
+      StoreStrings.bundleEndsAt('Nguyễn Văn A'),
     );
     expect(
       l10n.storeBundleEndsAt('{value}\n!'),
@@ -12158,8 +12158,8 @@ void main() {
   test('storeBundleEndsIn', () {
     expect(l10n.storeBundleEndsIn(''), StoreStrings.bundleEndsIn(''));
     expect(
-      l10n.storeBundleEndsIn('Nguyá»…n VÄƒn A'),
-      StoreStrings.bundleEndsIn('Nguyá»…n VÄƒn A'),
+      l10n.storeBundleEndsIn('Nguyễn Văn A'),
+      StoreStrings.bundleEndsIn('Nguyễn Văn A'),
     );
     expect(
       l10n.storeBundleEndsIn('{value}\n!'),
@@ -12311,8 +12311,8 @@ void main() {
   test('storeDailyResetAt', () {
     expect(l10n.storeDailyResetAt(''), StoreStrings.dailyResetAt(''));
     expect(
-      l10n.storeDailyResetAt('Nguyá»…n VÄƒn A'),
-      StoreStrings.dailyResetAt('Nguyá»…n VÄƒn A'),
+      l10n.storeDailyResetAt('Nguyễn Văn A'),
+      StoreStrings.dailyResetAt('Nguyễn Văn A'),
     );
     expect(
       l10n.storeDailyResetAt('{value}\n!'),
@@ -12331,8 +12331,8 @@ void main() {
   test('storeNightMarketEndsAt', () {
     expect(l10n.storeNightMarketEndsAt(''), StoreStrings.nightMarketEndsAt(''));
     expect(
-      l10n.storeNightMarketEndsAt('Nguyá»…n VÄƒn A'),
-      StoreStrings.nightMarketEndsAt('Nguyá»…n VÄƒn A'),
+      l10n.storeNightMarketEndsAt('Nguyễn Văn A'),
+      StoreStrings.nightMarketEndsAt('Nguyễn Văn A'),
     );
     expect(
       l10n.storeNightMarketEndsAt('{value}\n!'),
@@ -12342,8 +12342,8 @@ void main() {
   test('storeNightMarketEndsIn', () {
     expect(l10n.storeNightMarketEndsIn(''), StoreStrings.nightMarketEndsIn(''));
     expect(
-      l10n.storeNightMarketEndsIn('Nguyá»…n VÄƒn A'),
-      StoreStrings.nightMarketEndsIn('Nguyá»…n VÄƒn A'),
+      l10n.storeNightMarketEndsIn('Nguyễn Văn A'),
+      StoreStrings.nightMarketEndsIn('Nguyễn Văn A'),
     );
     expect(
       l10n.storeNightMarketEndsIn('{value}\n!'),
@@ -12359,8 +12359,8 @@ void main() {
       StoreStrings.nightMarketTotalSavings(''),
     );
     expect(
-      l10n.storeNightMarketTotalSavings('Nguyá»…n VÄƒn A'),
-      StoreStrings.nightMarketTotalSavings('Nguyá»…n VÄƒn A'),
+      l10n.storeNightMarketTotalSavings('Nguyễn Văn A'),
+      StoreStrings.nightMarketTotalSavings('Nguyễn Văn A'),
     );
     expect(
       l10n.storeNightMarketTotalSavings('{value}\n!'),
@@ -12376,32 +12376,32 @@ void main() {
       StoreStrings.offerSemantics('', ''),
     );
     expect(
-      l10n.storeOfferSemantics('', 'Nguyá»…n VÄƒn A'),
-      StoreStrings.offerSemantics('', 'Nguyá»…n VÄƒn A'),
+      l10n.storeOfferSemantics('', 'Nguyễn Văn A'),
+      StoreStrings.offerSemantics('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.storeOfferSemantics('', '{value}\n!'),
       StoreStrings.offerSemantics('', '{value}\n!'),
     );
     expect(
-      l10n.storeOfferSemantics('Nguyá»…n VÄƒn A', ''),
-      StoreStrings.offerSemantics('Nguyá»…n VÄƒn A', ''),
+      l10n.storeOfferSemantics('Nguyễn Văn A', ''),
+      StoreStrings.offerSemantics('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.storeOfferSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      StoreStrings.offerSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.storeOfferSemantics('Nguyễn Văn A', 'Nguyễn Văn A'),
+      StoreStrings.offerSemantics('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.storeOfferSemantics('Nguyá»…n VÄƒn A', '{value}\n!'),
-      StoreStrings.offerSemantics('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.storeOfferSemantics('Nguyễn Văn A', '{value}\n!'),
+      StoreStrings.offerSemantics('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.storeOfferSemantics('{value}\n!', ''),
       StoreStrings.offerSemantics('{value}\n!', ''),
     );
     expect(
-      l10n.storeOfferSemantics('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      StoreStrings.offerSemantics('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.storeOfferSemantics('{value}\n!', 'Nguyễn Văn A'),
+      StoreStrings.offerSemantics('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.storeOfferSemantics('{value}\n!', '{value}\n!'),
@@ -12454,8 +12454,8 @@ void main() {
       StoreStrings.resetNotificationBody(0, ''),
     );
     expect(
-      l10n.storeResetNotificationBody(0, 'Nguyá»…n VÄƒn A'),
-      StoreStrings.resetNotificationBody(0, 'Nguyá»…n VÄƒn A'),
+      l10n.storeResetNotificationBody(0, 'Nguyễn Văn A'),
+      StoreStrings.resetNotificationBody(0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.storeResetNotificationBody(0, '{value}\n!'),
@@ -12466,8 +12466,8 @@ void main() {
       StoreStrings.resetNotificationBody(1, ''),
     );
     expect(
-      l10n.storeResetNotificationBody(1, 'Nguyá»…n VÄƒn A'),
-      StoreStrings.resetNotificationBody(1, 'Nguyá»…n VÄƒn A'),
+      l10n.storeResetNotificationBody(1, 'Nguyễn Văn A'),
+      StoreStrings.resetNotificationBody(1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.storeResetNotificationBody(1, '{value}\n!'),
@@ -12478,8 +12478,8 @@ void main() {
       StoreStrings.resetNotificationBody(2, ''),
     );
     expect(
-      l10n.storeResetNotificationBody(2, 'Nguyá»…n VÄƒn A'),
-      StoreStrings.resetNotificationBody(2, 'Nguyá»…n VÄƒn A'),
+      l10n.storeResetNotificationBody(2, 'Nguyễn Văn A'),
+      StoreStrings.resetNotificationBody(2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.storeResetNotificationBody(2, '{value}\n!'),
@@ -12490,8 +12490,8 @@ void main() {
       StoreStrings.resetNotificationBody(5, ''),
     );
     expect(
-      l10n.storeResetNotificationBody(5, 'Nguyá»…n VÄƒn A'),
-      StoreStrings.resetNotificationBody(5, 'Nguyá»…n VÄƒn A'),
+      l10n.storeResetNotificationBody(5, 'Nguyễn Văn A'),
+      StoreStrings.resetNotificationBody(5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.storeResetNotificationBody(5, '{value}\n!'),
@@ -12502,8 +12502,8 @@ void main() {
       StoreStrings.resetNotificationBody(99, ''),
     );
     expect(
-      l10n.storeResetNotificationBody(99, 'Nguyá»…n VÄƒn A'),
-      StoreStrings.resetNotificationBody(99, 'Nguyá»…n VÄƒn A'),
+      l10n.storeResetNotificationBody(99, 'Nguyễn Văn A'),
+      StoreStrings.resetNotificationBody(99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.storeResetNotificationBody(99, '{value}\n!'),
@@ -12519,8 +12519,8 @@ void main() {
   test('storeResetsIn', () {
     expect(l10n.storeResetsIn(''), StoreStrings.resetsIn(''));
     expect(
-      l10n.storeResetsIn('Nguyá»…n VÄƒn A'),
-      StoreStrings.resetsIn('Nguyá»…n VÄƒn A'),
+      l10n.storeResetsIn('Nguyễn Văn A'),
+      StoreStrings.resetsIn('Nguyễn Văn A'),
     );
     expect(
       l10n.storeResetsIn('{value}\n!'),
@@ -12560,8 +12560,8 @@ void main() {
   test('storeShareCardSaved', () {
     expect(l10n.storeShareCardSaved(''), StoreStrings.shareCardSaved(''));
     expect(
-      l10n.storeShareCardSaved('Nguyá»…n VÄƒn A'),
-      StoreStrings.shareCardSaved('Nguyá»…n VÄƒn A'),
+      l10n.storeShareCardSaved('Nguyễn Văn A'),
+      StoreStrings.shareCardSaved('Nguyễn Văn A'),
     );
     expect(
       l10n.storeShareCardSaved('{value}\n!'),
@@ -12574,8 +12574,8 @@ void main() {
   test('storeShareCardTotal', () {
     expect(l10n.storeShareCardTotal(''), StoreStrings.shareCardTotal(''));
     expect(
-      l10n.storeShareCardTotal('Nguyá»…n VÄƒn A'),
-      StoreStrings.shareCardTotal('Nguyá»…n VÄƒn A'),
+      l10n.storeShareCardTotal('Nguyễn Văn A'),
+      StoreStrings.shareCardTotal('Nguyễn Văn A'),
     );
     expect(
       l10n.storeShareCardTotal('{value}\n!'),
@@ -12585,8 +12585,8 @@ void main() {
   test('storeShareCardUntil', () {
     expect(l10n.storeShareCardUntil(''), StoreStrings.shareCardUntil(''));
     expect(
-      l10n.storeShareCardUntil('Nguyá»…n VÄƒn A'),
-      StoreStrings.shareCardUntil('Nguyá»…n VÄƒn A'),
+      l10n.storeShareCardUntil('Nguyễn Văn A'),
+      StoreStrings.shareCardUntil('Nguyễn Văn A'),
     );
     expect(
       l10n.storeShareCardUntil('{value}\n!'),
@@ -12605,8 +12605,8 @@ void main() {
   test('storeShareFileDaily', () {
     expect(l10n.storeShareFileDaily(''), StoreStrings.shareFileDaily(''));
     expect(
-      l10n.storeShareFileDaily('Nguyá»…n VÄƒn A'),
-      StoreStrings.shareFileDaily('Nguyá»…n VÄƒn A'),
+      l10n.storeShareFileDaily('Nguyễn Văn A'),
+      StoreStrings.shareFileDaily('Nguyễn Văn A'),
     );
     expect(
       l10n.storeShareFileDaily('{value}\n!'),
@@ -12619,8 +12619,8 @@ void main() {
       StoreStrings.shareFileNightMarket(''),
     );
     expect(
-      l10n.storeShareFileNightMarket('Nguyá»…n VÄƒn A'),
-      StoreStrings.shareFileNightMarket('Nguyá»…n VÄƒn A'),
+      l10n.storeShareFileNightMarket('Nguyễn Văn A'),
+      StoreStrings.shareFileNightMarket('Nguyễn Văn A'),
     );
     expect(
       l10n.storeShareFileNightMarket('{value}\n!'),
@@ -12669,120 +12669,120 @@ void main() {
       StoreStrings.walletSemantics('', '', ''),
     );
     expect(
-      l10n.storeWalletSemantics('', '', 'Nguyá»…n VÄƒn A'),
-      StoreStrings.walletSemantics('', '', 'Nguyá»…n VÄƒn A'),
+      l10n.storeWalletSemantics('', '', 'Nguyễn Văn A'),
+      StoreStrings.walletSemantics('', '', 'Nguyễn Văn A'),
     );
     expect(
       l10n.storeWalletSemantics('', '', '{value}\n!'),
       StoreStrings.walletSemantics('', '', '{value}\n!'),
     );
     expect(
-      l10n.storeWalletSemantics('', 'Nguyá»…n VÄƒn A', ''),
-      StoreStrings.walletSemantics('', 'Nguyá»…n VÄƒn A', ''),
+      l10n.storeWalletSemantics('', 'Nguyễn Văn A', ''),
+      StoreStrings.walletSemantics('', 'Nguyễn Văn A', ''),
     );
     expect(
-      l10n.storeWalletSemantics('', 'Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      StoreStrings.walletSemantics('', 'Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.storeWalletSemantics('', 'Nguyễn Văn A', 'Nguyễn Văn A'),
+      StoreStrings.walletSemantics('', 'Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.storeWalletSemantics('', 'Nguyá»…n VÄƒn A', '{value}\n!'),
-      StoreStrings.walletSemantics('', 'Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.storeWalletSemantics('', 'Nguyễn Văn A', '{value}\n!'),
+      StoreStrings.walletSemantics('', 'Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.storeWalletSemantics('', '{value}\n!', ''),
       StoreStrings.walletSemantics('', '{value}\n!', ''),
     );
     expect(
-      l10n.storeWalletSemantics('', '{value}\n!', 'Nguyá»…n VÄƒn A'),
-      StoreStrings.walletSemantics('', '{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.storeWalletSemantics('', '{value}\n!', 'Nguyễn Văn A'),
+      StoreStrings.walletSemantics('', '{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.storeWalletSemantics('', '{value}\n!', '{value}\n!'),
       StoreStrings.walletSemantics('', '{value}\n!', '{value}\n!'),
     );
     expect(
-      l10n.storeWalletSemantics('Nguyá»…n VÄƒn A', '', ''),
-      StoreStrings.walletSemantics('Nguyá»…n VÄƒn A', '', ''),
+      l10n.storeWalletSemantics('Nguyễn Văn A', '', ''),
+      StoreStrings.walletSemantics('Nguyễn Văn A', '', ''),
     );
     expect(
-      l10n.storeWalletSemantics('Nguyá»…n VÄƒn A', '', 'Nguyá»…n VÄƒn A'),
-      StoreStrings.walletSemantics('Nguyá»…n VÄƒn A', '', 'Nguyá»…n VÄƒn A'),
+      l10n.storeWalletSemantics('Nguyễn Văn A', '', 'Nguyễn Văn A'),
+      StoreStrings.walletSemantics('Nguyễn Văn A', '', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.storeWalletSemantics('Nguyá»…n VÄƒn A', '', '{value}\n!'),
-      StoreStrings.walletSemantics('Nguyá»…n VÄƒn A', '', '{value}\n!'),
+      l10n.storeWalletSemantics('Nguyễn Văn A', '', '{value}\n!'),
+      StoreStrings.walletSemantics('Nguyễn Văn A', '', '{value}\n!'),
     );
     expect(
-      l10n.storeWalletSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A', ''),
-      StoreStrings.walletSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A', ''),
+      l10n.storeWalletSemantics('Nguyễn Văn A', 'Nguyễn Văn A', ''),
+      StoreStrings.walletSemantics('Nguyễn Văn A', 'Nguyễn Văn A', ''),
     );
     expect(
-      l10n.storeWalletSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.storeWalletSemantics('Nguyễn Văn A', 'Nguyễn Văn A', 'Nguyễn Văn A'),
       StoreStrings.walletSemantics(
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
       ),
     );
     expect(
-      l10n.storeWalletSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.storeWalletSemantics('Nguyễn Văn A', 'Nguyễn Văn A', '{value}\n!'),
       StoreStrings.walletSemantics(
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
         '{value}\n!',
       ),
     );
     expect(
-      l10n.storeWalletSemantics('Nguyá»…n VÄƒn A', '{value}\n!', ''),
-      StoreStrings.walletSemantics('Nguyá»…n VÄƒn A', '{value}\n!', ''),
+      l10n.storeWalletSemantics('Nguyễn Văn A', '{value}\n!', ''),
+      StoreStrings.walletSemantics('Nguyễn Văn A', '{value}\n!', ''),
     );
     expect(
-      l10n.storeWalletSemantics('Nguyá»…n VÄƒn A', '{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.storeWalletSemantics('Nguyễn Văn A', '{value}\n!', 'Nguyễn Văn A'),
       StoreStrings.walletSemantics(
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
       ),
     );
     expect(
-      l10n.storeWalletSemantics('Nguyá»…n VÄƒn A', '{value}\n!', '{value}\n!'),
-      StoreStrings.walletSemantics('Nguyá»…n VÄƒn A', '{value}\n!', '{value}\n!'),
+      l10n.storeWalletSemantics('Nguyễn Văn A', '{value}\n!', '{value}\n!'),
+      StoreStrings.walletSemantics('Nguyễn Văn A', '{value}\n!', '{value}\n!'),
     );
     expect(
       l10n.storeWalletSemantics('{value}\n!', '', ''),
       StoreStrings.walletSemantics('{value}\n!', '', ''),
     );
     expect(
-      l10n.storeWalletSemantics('{value}\n!', '', 'Nguyá»…n VÄƒn A'),
-      StoreStrings.walletSemantics('{value}\n!', '', 'Nguyá»…n VÄƒn A'),
+      l10n.storeWalletSemantics('{value}\n!', '', 'Nguyễn Văn A'),
+      StoreStrings.walletSemantics('{value}\n!', '', 'Nguyễn Văn A'),
     );
     expect(
       l10n.storeWalletSemantics('{value}\n!', '', '{value}\n!'),
       StoreStrings.walletSemantics('{value}\n!', '', '{value}\n!'),
     );
     expect(
-      l10n.storeWalletSemantics('{value}\n!', 'Nguyá»…n VÄƒn A', ''),
-      StoreStrings.walletSemantics('{value}\n!', 'Nguyá»…n VÄƒn A', ''),
+      l10n.storeWalletSemantics('{value}\n!', 'Nguyễn Văn A', ''),
+      StoreStrings.walletSemantics('{value}\n!', 'Nguyễn Văn A', ''),
     );
     expect(
-      l10n.storeWalletSemantics('{value}\n!', 'Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.storeWalletSemantics('{value}\n!', 'Nguyễn Văn A', 'Nguyễn Văn A'),
       StoreStrings.walletSemantics(
         '{value}\n!',
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
       ),
     );
     expect(
-      l10n.storeWalletSemantics('{value}\n!', 'Nguyá»…n VÄƒn A', '{value}\n!'),
-      StoreStrings.walletSemantics('{value}\n!', 'Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.storeWalletSemantics('{value}\n!', 'Nguyễn Văn A', '{value}\n!'),
+      StoreStrings.walletSemantics('{value}\n!', 'Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.storeWalletSemantics('{value}\n!', '{value}\n!', ''),
       StoreStrings.walletSemantics('{value}\n!', '{value}\n!', ''),
     );
     expect(
-      l10n.storeWalletSemantics('{value}\n!', '{value}\n!', 'Nguyá»…n VÄƒn A'),
-      StoreStrings.walletSemantics('{value}\n!', '{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.storeWalletSemantics('{value}\n!', '{value}\n!', 'Nguyễn Văn A'),
+      StoreStrings.walletSemantics('{value}\n!', '{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.storeWalletSemantics('{value}\n!', '{value}\n!', '{value}\n!'),
@@ -12811,8 +12811,8 @@ void main() {
   test('wishlistCatalogCount', () {
     expect(l10n.wishlistCatalogCount(''), WishlistStrings.catalogCount(''));
     expect(
-      l10n.wishlistCatalogCount('Nguyá»…n VÄƒn A'),
-      WishlistStrings.catalogCount('Nguyá»…n VÄƒn A'),
+      l10n.wishlistCatalogCount('Nguyễn Văn A'),
+      WishlistStrings.catalogCount('Nguyễn Văn A'),
     );
     expect(
       l10n.wishlistCatalogCount('{value}\n!'),
@@ -12831,8 +12831,8 @@ void main() {
       WishlistStrings.catalogInWishlist(''),
     );
     expect(
-      l10n.wishlistCatalogInWishlist('Nguyá»…n VÄƒn A'),
-      WishlistStrings.catalogInWishlist('Nguyá»…n VÄƒn A'),
+      l10n.wishlistCatalogInWishlist('Nguyễn Văn A'),
+      WishlistStrings.catalogInWishlist('Nguyễn Văn A'),
     );
     expect(
       l10n.wishlistCatalogInWishlist('{value}\n!'),
@@ -12863,8 +12863,8 @@ void main() {
   test('wishlistEndsIn', () {
     expect(l10n.wishlistEndsIn(''), WishlistStrings.endsIn(''));
     expect(
-      l10n.wishlistEndsIn('Nguyá»…n VÄƒn A'),
-      WishlistStrings.endsIn('Nguyá»…n VÄƒn A'),
+      l10n.wishlistEndsIn('Nguyễn Văn A'),
+      WishlistStrings.endsIn('Nguyễn Văn A'),
     );
     expect(
       l10n.wishlistEndsIn('{value}\n!'),
@@ -12880,32 +12880,32 @@ void main() {
   test('wishlistFiltered', () {
     expect(l10n.wishlistFiltered('', ''), WishlistStrings.filtered('', ''));
     expect(
-      l10n.wishlistFiltered('', 'Nguyá»…n VÄƒn A'),
-      WishlistStrings.filtered('', 'Nguyá»…n VÄƒn A'),
+      l10n.wishlistFiltered('', 'Nguyễn Văn A'),
+      WishlistStrings.filtered('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.wishlistFiltered('', '{value}\n!'),
       WishlistStrings.filtered('', '{value}\n!'),
     );
     expect(
-      l10n.wishlistFiltered('Nguyá»…n VÄƒn A', ''),
-      WishlistStrings.filtered('Nguyá»…n VÄƒn A', ''),
+      l10n.wishlistFiltered('Nguyễn Văn A', ''),
+      WishlistStrings.filtered('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.wishlistFiltered('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      WishlistStrings.filtered('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.wishlistFiltered('Nguyễn Văn A', 'Nguyễn Văn A'),
+      WishlistStrings.filtered('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.wishlistFiltered('Nguyá»…n VÄƒn A', '{value}\n!'),
-      WishlistStrings.filtered('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.wishlistFiltered('Nguyễn Văn A', '{value}\n!'),
+      WishlistStrings.filtered('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.wishlistFiltered('{value}\n!', ''),
       WishlistStrings.filtered('{value}\n!', ''),
     );
     expect(
-      l10n.wishlistFiltered('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      WishlistStrings.filtered('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.wishlistFiltered('{value}\n!', 'Nguyễn Văn A'),
+      WishlistStrings.filtered('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.wishlistFiltered('{value}\n!', '{value}\n!'),
@@ -12979,8 +12979,8 @@ void main() {
   test('wishlistOfAccount', () {
     expect(l10n.wishlistOfAccount(''), WishlistStrings.ofAccount(''));
     expect(
-      l10n.wishlistOfAccount('Nguyá»…n VÄƒn A'),
-      WishlistStrings.ofAccount('Nguyá»…n VÄƒn A'),
+      l10n.wishlistOfAccount('Nguyễn Văn A'),
+      WishlistStrings.ofAccount('Nguyễn Văn A'),
     );
     expect(
       l10n.wishlistOfAccount('{value}\n!'),
@@ -13012,8 +13012,8 @@ void main() {
   test('wishlistRemoved', () {
     expect(l10n.wishlistRemoved(''), WishlistStrings.removed(''));
     expect(
-      l10n.wishlistRemoved('Nguyá»…n VÄƒn A'),
-      WishlistStrings.removed('Nguyá»…n VÄƒn A'),
+      l10n.wishlistRemoved('Nguyễn Văn A'),
+      WishlistStrings.removed('Nguyễn Văn A'),
     );
     expect(
       l10n.wishlistRemoved('{value}\n!'),
@@ -13026,8 +13026,8 @@ void main() {
   test('wishlistSkinCount', () {
     expect(l10n.wishlistSkinCount(''), WishlistStrings.skinCount(''));
     expect(
-      l10n.wishlistSkinCount('Nguyá»…n VÄƒn A'),
-      WishlistStrings.skinCount('Nguyá»…n VÄƒn A'),
+      l10n.wishlistSkinCount('Nguyễn Văn A'),
+      WishlistStrings.skinCount('Nguyễn Văn A'),
     );
     expect(
       l10n.wishlistSkinCount('{value}\n!'),
@@ -13040,8 +13040,8 @@ void main() {
   test('wishlistSortLabel', () {
     expect(l10n.wishlistSortLabel(''), WishlistStrings.sortLabel(''));
     expect(
-      l10n.wishlistSortLabel('Nguyá»…n VÄƒn A'),
-      WishlistStrings.sortLabel('Nguyá»…n VÄƒn A'),
+      l10n.wishlistSortLabel('Nguyễn Văn A'),
+      WishlistStrings.sortLabel('Nguyễn Văn A'),
     );
     expect(
       l10n.wishlistSortLabel('{value}\n!'),
@@ -13108,8 +13108,8 @@ void main() {
   test('homeCardHidden', () {
     expect(l10n.homeCardHidden(''), HomeStrings.cardHidden(''));
     expect(
-      l10n.homeCardHidden('Nguyá»…n VÄƒn A'),
-      HomeStrings.cardHidden('Nguyá»…n VÄƒn A'),
+      l10n.homeCardHidden('Nguyễn Văn A'),
+      HomeStrings.cardHidden('Nguyễn Văn A'),
     );
     expect(
       l10n.homeCardHidden('{value}\n!'),
@@ -13158,8 +13158,8 @@ void main() {
   test('homeFocused', () {
     expect(l10n.homeFocused(''), HomeStrings.focused(''));
     expect(
-      l10n.homeFocused('Nguyá»…n VÄƒn A'),
-      HomeStrings.focused('Nguyá»…n VÄƒn A'),
+      l10n.homeFocused('Nguyễn Văn A'),
+      HomeStrings.focused('Nguyễn Văn A'),
     );
     expect(l10n.homeFocused('{value}\n!'), HomeStrings.focused('{value}\n!'));
   });
@@ -13169,32 +13169,32 @@ void main() {
       HomeStrings.friendSemantics('', ''),
     );
     expect(
-      l10n.homeFriendSemantics('', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.friendSemantics('', 'Nguyá»…n VÄƒn A'),
+      l10n.homeFriendSemantics('', 'Nguyễn Văn A'),
+      HomeStrings.friendSemantics('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeFriendSemantics('', '{value}\n!'),
       HomeStrings.friendSemantics('', '{value}\n!'),
     );
     expect(
-      l10n.homeFriendSemantics('Nguyá»…n VÄƒn A', ''),
-      HomeStrings.friendSemantics('Nguyá»…n VÄƒn A', ''),
+      l10n.homeFriendSemantics('Nguyễn Văn A', ''),
+      HomeStrings.friendSemantics('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.homeFriendSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.friendSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.homeFriendSemantics('Nguyễn Văn A', 'Nguyễn Văn A'),
+      HomeStrings.friendSemantics('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.homeFriendSemantics('Nguyá»…n VÄƒn A', '{value}\n!'),
-      HomeStrings.friendSemantics('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.homeFriendSemantics('Nguyễn Văn A', '{value}\n!'),
+      HomeStrings.friendSemantics('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.homeFriendSemantics('{value}\n!', ''),
       HomeStrings.friendSemantics('{value}\n!', ''),
     );
     expect(
-      l10n.homeFriendSemantics('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.friendSemantics('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.homeFriendSemantics('{value}\n!', 'Nguyễn Văn A'),
+      HomeStrings.friendSemantics('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeFriendSemantics('{value}\n!', '{value}\n!'),
@@ -13236,8 +13236,8 @@ void main() {
   test('homeLeaderboard', () {
     expect(l10n.homeLeaderboard(''), HomeStrings.leaderboard(''));
     expect(
-      l10n.homeLeaderboard('Nguyá»…n VÄƒn A'),
-      HomeStrings.leaderboard('Nguyá»…n VÄƒn A'),
+      l10n.homeLeaderboard('Nguyễn Văn A'),
+      HomeStrings.leaderboard('Nguyễn Văn A'),
     );
     expect(
       l10n.homeLeaderboard('{value}\n!'),
@@ -13247,8 +13247,8 @@ void main() {
   test('homeLfgExpiresIn', () {
     expect(l10n.homeLfgExpiresIn(''), HomeStrings.lfgExpiresIn(''));
     expect(
-      l10n.homeLfgExpiresIn('Nguyá»…n VÄƒn A'),
-      HomeStrings.lfgExpiresIn('Nguyá»…n VÄƒn A'),
+      l10n.homeLfgExpiresIn('Nguyễn Văn A'),
+      HomeStrings.lfgExpiresIn('Nguyễn Văn A'),
     );
     expect(
       l10n.homeLfgExpiresIn('{value}\n!'),
@@ -13268,32 +13268,32 @@ void main() {
       HomeStrings.lfgRowSemantics('', ''),
     );
     expect(
-      l10n.homeLfgRowSemantics('', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.lfgRowSemantics('', 'Nguyá»…n VÄƒn A'),
+      l10n.homeLfgRowSemantics('', 'Nguyễn Văn A'),
+      HomeStrings.lfgRowSemantics('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeLfgRowSemantics('', '{value}\n!'),
       HomeStrings.lfgRowSemantics('', '{value}\n!'),
     );
     expect(
-      l10n.homeLfgRowSemantics('Nguyá»…n VÄƒn A', ''),
-      HomeStrings.lfgRowSemantics('Nguyá»…n VÄƒn A', ''),
+      l10n.homeLfgRowSemantics('Nguyễn Văn A', ''),
+      HomeStrings.lfgRowSemantics('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.homeLfgRowSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.lfgRowSemantics('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.homeLfgRowSemantics('Nguyễn Văn A', 'Nguyễn Văn A'),
+      HomeStrings.lfgRowSemantics('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.homeLfgRowSemantics('Nguyá»…n VÄƒn A', '{value}\n!'),
-      HomeStrings.lfgRowSemantics('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.homeLfgRowSemantics('Nguyễn Văn A', '{value}\n!'),
+      HomeStrings.lfgRowSemantics('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.homeLfgRowSemantics('{value}\n!', ''),
       HomeStrings.lfgRowSemantics('{value}\n!', ''),
     );
     expect(
-      l10n.homeLfgRowSemantics('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.lfgRowSemantics('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.homeLfgRowSemantics('{value}\n!', 'Nguyễn Văn A'),
+      HomeStrings.lfgRowSemantics('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeLfgRowSemantics('{value}\n!', '{value}\n!'),
@@ -13312,8 +13312,8 @@ void main() {
   test('homeLiveQueueSemantics', () {
     expect(l10n.homeLiveQueueSemantics(''), HomeStrings.liveQueueSemantics(''));
     expect(
-      l10n.homeLiveQueueSemantics('Nguyá»…n VÄƒn A'),
-      HomeStrings.liveQueueSemantics('Nguyá»…n VÄƒn A'),
+      l10n.homeLiveQueueSemantics('Nguyễn Văn A'),
+      HomeStrings.liveQueueSemantics('Nguyễn Văn A'),
     );
     expect(
       l10n.homeLiveQueueSemantics('{value}\n!'),
@@ -13432,8 +13432,8 @@ void main() {
   test('homeMatchesToRankUp', () {
     expect(l10n.homeMatchesToRankUp(0, ''), HomeStrings.matchesToRankUp(0, ''));
     expect(
-      l10n.homeMatchesToRankUp(0, 'Nguyá»…n VÄƒn A'),
-      HomeStrings.matchesToRankUp(0, 'Nguyá»…n VÄƒn A'),
+      l10n.homeMatchesToRankUp(0, 'Nguyễn Văn A'),
+      HomeStrings.matchesToRankUp(0, 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeMatchesToRankUp(0, '{value}\n!'),
@@ -13441,8 +13441,8 @@ void main() {
     );
     expect(l10n.homeMatchesToRankUp(1, ''), HomeStrings.matchesToRankUp(1, ''));
     expect(
-      l10n.homeMatchesToRankUp(1, 'Nguyá»…n VÄƒn A'),
-      HomeStrings.matchesToRankUp(1, 'Nguyá»…n VÄƒn A'),
+      l10n.homeMatchesToRankUp(1, 'Nguyễn Văn A'),
+      HomeStrings.matchesToRankUp(1, 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeMatchesToRankUp(1, '{value}\n!'),
@@ -13450,8 +13450,8 @@ void main() {
     );
     expect(l10n.homeMatchesToRankUp(2, ''), HomeStrings.matchesToRankUp(2, ''));
     expect(
-      l10n.homeMatchesToRankUp(2, 'Nguyá»…n VÄƒn A'),
-      HomeStrings.matchesToRankUp(2, 'Nguyá»…n VÄƒn A'),
+      l10n.homeMatchesToRankUp(2, 'Nguyễn Văn A'),
+      HomeStrings.matchesToRankUp(2, 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeMatchesToRankUp(2, '{value}\n!'),
@@ -13459,8 +13459,8 @@ void main() {
     );
     expect(l10n.homeMatchesToRankUp(5, ''), HomeStrings.matchesToRankUp(5, ''));
     expect(
-      l10n.homeMatchesToRankUp(5, 'Nguyá»…n VÄƒn A'),
-      HomeStrings.matchesToRankUp(5, 'Nguyá»…n VÄƒn A'),
+      l10n.homeMatchesToRankUp(5, 'Nguyễn Văn A'),
+      HomeStrings.matchesToRankUp(5, 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeMatchesToRankUp(5, '{value}\n!'),
@@ -13471,8 +13471,8 @@ void main() {
       HomeStrings.matchesToRankUp(99, ''),
     );
     expect(
-      l10n.homeMatchesToRankUp(99, 'Nguyá»…n VÄƒn A'),
-      HomeStrings.matchesToRankUp(99, 'Nguyá»…n VÄƒn A'),
+      l10n.homeMatchesToRankUp(99, 'Nguyễn Văn A'),
+      HomeStrings.matchesToRankUp(99, 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeMatchesToRankUp(99, '{value}\n!'),
@@ -13482,8 +13482,8 @@ void main() {
   test('homeMoreActions', () {
     expect(l10n.homeMoreActions(''), HomeStrings.moreActions(''));
     expect(
-      l10n.homeMoreActions('Nguyá»…n VÄƒn A'),
-      HomeStrings.moreActions('Nguyá»…n VÄƒn A'),
+      l10n.homeMoreActions('Nguyễn Văn A'),
+      HomeStrings.moreActions('Nguyễn Văn A'),
     );
     expect(
       l10n.homeMoreActions('{value}\n!'),
@@ -13493,8 +13493,8 @@ void main() {
   test('homeNeedsLoginBody', () {
     expect(l10n.homeNeedsLoginBody(''), HomeStrings.needsLoginBody(''));
     expect(
-      l10n.homeNeedsLoginBody('Nguyá»…n VÄƒn A'),
-      HomeStrings.needsLoginBody('Nguyá»…n VÄƒn A'),
+      l10n.homeNeedsLoginBody('Nguyễn Văn A'),
+      HomeStrings.needsLoginBody('Nguyễn Văn A'),
     );
     expect(
       l10n.homeNeedsLoginBody('{value}\n!'),
@@ -13507,108 +13507,108 @@ void main() {
       HomeStrings.nightMarketBest('', '', ''),
     );
     expect(
-      l10n.homeNightMarketBest('', '', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.nightMarketBest('', '', 'Nguyá»…n VÄƒn A'),
+      l10n.homeNightMarketBest('', '', 'Nguyễn Văn A'),
+      HomeStrings.nightMarketBest('', '', 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeNightMarketBest('', '', '{value}\n!'),
       HomeStrings.nightMarketBest('', '', '{value}\n!'),
     );
     expect(
-      l10n.homeNightMarketBest('', 'Nguyá»…n VÄƒn A', ''),
-      HomeStrings.nightMarketBest('', 'Nguyá»…n VÄƒn A', ''),
+      l10n.homeNightMarketBest('', 'Nguyễn Văn A', ''),
+      HomeStrings.nightMarketBest('', 'Nguyễn Văn A', ''),
     );
     expect(
-      l10n.homeNightMarketBest('', 'Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.nightMarketBest('', 'Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.homeNightMarketBest('', 'Nguyễn Văn A', 'Nguyễn Văn A'),
+      HomeStrings.nightMarketBest('', 'Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.homeNightMarketBest('', 'Nguyá»…n VÄƒn A', '{value}\n!'),
-      HomeStrings.nightMarketBest('', 'Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.homeNightMarketBest('', 'Nguyễn Văn A', '{value}\n!'),
+      HomeStrings.nightMarketBest('', 'Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.homeNightMarketBest('', '{value}\n!', ''),
       HomeStrings.nightMarketBest('', '{value}\n!', ''),
     );
     expect(
-      l10n.homeNightMarketBest('', '{value}\n!', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.nightMarketBest('', '{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.homeNightMarketBest('', '{value}\n!', 'Nguyễn Văn A'),
+      HomeStrings.nightMarketBest('', '{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeNightMarketBest('', '{value}\n!', '{value}\n!'),
       HomeStrings.nightMarketBest('', '{value}\n!', '{value}\n!'),
     );
     expect(
-      l10n.homeNightMarketBest('Nguyá»…n VÄƒn A', '', ''),
-      HomeStrings.nightMarketBest('Nguyá»…n VÄƒn A', '', ''),
+      l10n.homeNightMarketBest('Nguyễn Văn A', '', ''),
+      HomeStrings.nightMarketBest('Nguyễn Văn A', '', ''),
     );
     expect(
-      l10n.homeNightMarketBest('Nguyá»…n VÄƒn A', '', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.nightMarketBest('Nguyá»…n VÄƒn A', '', 'Nguyá»…n VÄƒn A'),
+      l10n.homeNightMarketBest('Nguyễn Văn A', '', 'Nguyễn Văn A'),
+      HomeStrings.nightMarketBest('Nguyễn Văn A', '', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.homeNightMarketBest('Nguyá»…n VÄƒn A', '', '{value}\n!'),
-      HomeStrings.nightMarketBest('Nguyá»…n VÄƒn A', '', '{value}\n!'),
+      l10n.homeNightMarketBest('Nguyễn Văn A', '', '{value}\n!'),
+      HomeStrings.nightMarketBest('Nguyễn Văn A', '', '{value}\n!'),
     );
     expect(
-      l10n.homeNightMarketBest('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A', ''),
-      HomeStrings.nightMarketBest('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A', ''),
+      l10n.homeNightMarketBest('Nguyễn Văn A', 'Nguyễn Văn A', ''),
+      HomeStrings.nightMarketBest('Nguyễn Văn A', 'Nguyễn Văn A', ''),
     );
     expect(
-      l10n.homeNightMarketBest('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.homeNightMarketBest('Nguyễn Văn A', 'Nguyễn Văn A', 'Nguyễn Văn A'),
       HomeStrings.nightMarketBest(
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
-        'Nguyá»…n VÄƒn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
+        'Nguyễn Văn A',
       ),
     );
     expect(
-      l10n.homeNightMarketBest('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A', '{value}\n!'),
-      HomeStrings.nightMarketBest('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.homeNightMarketBest('Nguyễn Văn A', 'Nguyễn Văn A', '{value}\n!'),
+      HomeStrings.nightMarketBest('Nguyễn Văn A', 'Nguyễn Văn A', '{value}\n!'),
     );
     expect(
-      l10n.homeNightMarketBest('Nguyá»…n VÄƒn A', '{value}\n!', ''),
-      HomeStrings.nightMarketBest('Nguyá»…n VÄƒn A', '{value}\n!', ''),
+      l10n.homeNightMarketBest('Nguyễn Văn A', '{value}\n!', ''),
+      HomeStrings.nightMarketBest('Nguyễn Văn A', '{value}\n!', ''),
     );
     expect(
-      l10n.homeNightMarketBest('Nguyá»…n VÄƒn A', '{value}\n!', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.nightMarketBest('Nguyá»…n VÄƒn A', '{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.homeNightMarketBest('Nguyễn Văn A', '{value}\n!', 'Nguyễn Văn A'),
+      HomeStrings.nightMarketBest('Nguyễn Văn A', '{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.homeNightMarketBest('Nguyá»…n VÄƒn A', '{value}\n!', '{value}\n!'),
-      HomeStrings.nightMarketBest('Nguyá»…n VÄƒn A', '{value}\n!', '{value}\n!'),
+      l10n.homeNightMarketBest('Nguyễn Văn A', '{value}\n!', '{value}\n!'),
+      HomeStrings.nightMarketBest('Nguyễn Văn A', '{value}\n!', '{value}\n!'),
     );
     expect(
       l10n.homeNightMarketBest('{value}\n!', '', ''),
       HomeStrings.nightMarketBest('{value}\n!', '', ''),
     );
     expect(
-      l10n.homeNightMarketBest('{value}\n!', '', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.nightMarketBest('{value}\n!', '', 'Nguyá»…n VÄƒn A'),
+      l10n.homeNightMarketBest('{value}\n!', '', 'Nguyễn Văn A'),
+      HomeStrings.nightMarketBest('{value}\n!', '', 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeNightMarketBest('{value}\n!', '', '{value}\n!'),
       HomeStrings.nightMarketBest('{value}\n!', '', '{value}\n!'),
     );
     expect(
-      l10n.homeNightMarketBest('{value}\n!', 'Nguyá»…n VÄƒn A', ''),
-      HomeStrings.nightMarketBest('{value}\n!', 'Nguyá»…n VÄƒn A', ''),
+      l10n.homeNightMarketBest('{value}\n!', 'Nguyễn Văn A', ''),
+      HomeStrings.nightMarketBest('{value}\n!', 'Nguyễn Văn A', ''),
     );
     expect(
-      l10n.homeNightMarketBest('{value}\n!', 'Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.nightMarketBest('{value}\n!', 'Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.homeNightMarketBest('{value}\n!', 'Nguyễn Văn A', 'Nguyễn Văn A'),
+      HomeStrings.nightMarketBest('{value}\n!', 'Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.homeNightMarketBest('{value}\n!', 'Nguyá»…n VÄƒn A', '{value}\n!'),
-      HomeStrings.nightMarketBest('{value}\n!', 'Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.homeNightMarketBest('{value}\n!', 'Nguyễn Văn A', '{value}\n!'),
+      HomeStrings.nightMarketBest('{value}\n!', 'Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.homeNightMarketBest('{value}\n!', '{value}\n!', ''),
       HomeStrings.nightMarketBest('{value}\n!', '{value}\n!', ''),
     );
     expect(
-      l10n.homeNightMarketBest('{value}\n!', '{value}\n!', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.nightMarketBest('{value}\n!', '{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.homeNightMarketBest('{value}\n!', '{value}\n!', 'Nguyễn Văn A'),
+      HomeStrings.nightMarketBest('{value}\n!', '{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeNightMarketBest('{value}\n!', '{value}\n!', '{value}\n!'),
@@ -13618,8 +13618,8 @@ void main() {
   test('homeNightMarketEndsIn', () {
     expect(l10n.homeNightMarketEndsIn(''), HomeStrings.nightMarketEndsIn(''));
     expect(
-      l10n.homeNightMarketEndsIn('Nguyá»…n VÄƒn A'),
-      HomeStrings.nightMarketEndsIn('Nguyá»…n VÄƒn A'),
+      l10n.homeNightMarketEndsIn('Nguyễn Văn A'),
+      HomeStrings.nightMarketEndsIn('Nguyễn Văn A'),
     );
     expect(
       l10n.homeNightMarketEndsIn('{value}\n!'),
@@ -13668,8 +13668,8 @@ void main() {
   test('homePreviousAct', () {
     expect(l10n.homePreviousAct(''), HomeStrings.previousAct(''));
     expect(
-      l10n.homePreviousAct('Nguyá»…n VÄƒn A'),
-      HomeStrings.previousAct('Nguyá»…n VÄƒn A'),
+      l10n.homePreviousAct('Nguyễn Văn A'),
+      HomeStrings.previousAct('Nguyễn Văn A'),
     );
     expect(
       l10n.homePreviousAct('{value}\n!'),
@@ -13695,32 +13695,32 @@ void main() {
   test('homeRrOnDay', () {
     expect(l10n.homeRrOnDay('', ''), HomeStrings.rrOnDay('', ''));
     expect(
-      l10n.homeRrOnDay('', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.rrOnDay('', 'Nguyá»…n VÄƒn A'),
+      l10n.homeRrOnDay('', 'Nguyễn Văn A'),
+      HomeStrings.rrOnDay('', 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeRrOnDay('', '{value}\n!'),
       HomeStrings.rrOnDay('', '{value}\n!'),
     );
     expect(
-      l10n.homeRrOnDay('Nguyá»…n VÄƒn A', ''),
-      HomeStrings.rrOnDay('Nguyá»…n VÄƒn A', ''),
+      l10n.homeRrOnDay('Nguyễn Văn A', ''),
+      HomeStrings.rrOnDay('Nguyễn Văn A', ''),
     );
     expect(
-      l10n.homeRrOnDay('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.rrOnDay('Nguyá»…n VÄƒn A', 'Nguyá»…n VÄƒn A'),
+      l10n.homeRrOnDay('Nguyễn Văn A', 'Nguyễn Văn A'),
+      HomeStrings.rrOnDay('Nguyễn Văn A', 'Nguyễn Văn A'),
     );
     expect(
-      l10n.homeRrOnDay('Nguyá»…n VÄƒn A', '{value}\n!'),
-      HomeStrings.rrOnDay('Nguyá»…n VÄƒn A', '{value}\n!'),
+      l10n.homeRrOnDay('Nguyễn Văn A', '{value}\n!'),
+      HomeStrings.rrOnDay('Nguyễn Văn A', '{value}\n!'),
     );
     expect(
       l10n.homeRrOnDay('{value}\n!', ''),
       HomeStrings.rrOnDay('{value}\n!', ''),
     );
     expect(
-      l10n.homeRrOnDay('{value}\n!', 'Nguyá»…n VÄƒn A'),
-      HomeStrings.rrOnDay('{value}\n!', 'Nguyá»…n VÄƒn A'),
+      l10n.homeRrOnDay('{value}\n!', 'Nguyễn Văn A'),
+      HomeStrings.rrOnDay('{value}\n!', 'Nguyễn Văn A'),
     );
     expect(
       l10n.homeRrOnDay('{value}\n!', '{value}\n!'),
@@ -13730,8 +13730,8 @@ void main() {
   test('homeRrToday', () {
     expect(l10n.homeRrToday(''), HomeStrings.rrToday(''));
     expect(
-      l10n.homeRrToday('Nguyá»…n VÄƒn A'),
-      HomeStrings.rrToday('Nguyá»…n VÄƒn A'),
+      l10n.homeRrToday('Nguyễn Văn A'),
+      HomeStrings.rrToday('Nguyễn Văn A'),
     );
     expect(l10n.homeRrToday('{value}\n!'), HomeStrings.rrToday('{value}\n!'));
   });
@@ -13741,8 +13741,8 @@ void main() {
   test('homeStatusIncident', () {
     expect(l10n.homeStatusIncident(''), HomeStrings.statusIncident(''));
     expect(
-      l10n.homeStatusIncident('Nguyá»…n VÄƒn A'),
-      HomeStrings.statusIncident('Nguyá»…n VÄƒn A'),
+      l10n.homeStatusIncident('Nguyễn Văn A'),
+      HomeStrings.statusIncident('Nguyễn Văn A'),
     );
     expect(
       l10n.homeStatusIncident('{value}\n!'),
@@ -13755,8 +13755,8 @@ void main() {
       HomeStrings.statusMaintenanceNow(''),
     );
     expect(
-      l10n.homeStatusMaintenanceNow('Nguyá»…n VÄƒn A'),
-      HomeStrings.statusMaintenanceNow('Nguyá»…n VÄƒn A'),
+      l10n.homeStatusMaintenanceNow('Nguyễn Văn A'),
+      HomeStrings.statusMaintenanceNow('Nguyễn Văn A'),
     );
     expect(
       l10n.homeStatusMaintenanceNow('{value}\n!'),
@@ -13769,8 +13769,8 @@ void main() {
       HomeStrings.statusMaintenanceScheduled(''),
     );
     expect(
-      l10n.homeStatusMaintenanceScheduled('Nguyá»…n VÄƒn A'),
-      HomeStrings.statusMaintenanceScheduled('Nguyá»…n VÄƒn A'),
+      l10n.homeStatusMaintenanceScheduled('Nguyễn Văn A'),
+      HomeStrings.statusMaintenanceScheduled('Nguyễn Văn A'),
     );
     expect(
       l10n.homeStatusMaintenanceScheduled('{value}\n!'),
@@ -13790,8 +13790,8 @@ void main() {
   test('homeStoreResetsIn', () {
     expect(l10n.homeStoreResetsIn(''), HomeStrings.storeResetsIn(''));
     expect(
-      l10n.homeStoreResetsIn('Nguyá»…n VÄƒn A'),
-      HomeStrings.storeResetsIn('Nguyá»…n VÄƒn A'),
+      l10n.homeStoreResetsIn('Nguyễn Văn A'),
+      HomeStrings.storeResetsIn('Nguyễn Văn A'),
     );
     expect(
       l10n.homeStoreResetsIn('{value}\n!'),
@@ -13801,8 +13801,8 @@ void main() {
   test('homeStoreTotal', () {
     expect(l10n.homeStoreTotal(''), HomeStrings.storeTotal(''));
     expect(
-      l10n.homeStoreTotal('Nguyá»…n VÄƒn A'),
-      HomeStrings.storeTotal('Nguyá»…n VÄƒn A'),
+      l10n.homeStoreTotal('Nguyễn Văn A'),
+      HomeStrings.storeTotal('Nguyễn Văn A'),
     );
     expect(
       l10n.homeStoreTotal('{value}\n!'),
@@ -13812,8 +13812,8 @@ void main() {
   test('homeStoreWallet', () {
     expect(l10n.homeStoreWallet(''), HomeStrings.storeWallet(''));
     expect(
-      l10n.homeStoreWallet('Nguyá»…n VÄƒn A'),
-      HomeStrings.storeWallet('Nguyá»…n VÄƒn A'),
+      l10n.homeStoreWallet('Nguyễn Văn A'),
+      HomeStrings.storeWallet('Nguyễn Văn A'),
     );
     expect(
       l10n.homeStoreWallet('{value}\n!'),
@@ -13842,24 +13842,24 @@ void main() {
       HomeStrings.storeWalletCanBuy('', 99),
     );
     expect(
-      l10n.homeStoreWalletCanBuy('Nguyá»…n VÄƒn A', 0),
-      HomeStrings.storeWalletCanBuy('Nguyá»…n VÄƒn A', 0),
+      l10n.homeStoreWalletCanBuy('Nguyễn Văn A', 0),
+      HomeStrings.storeWalletCanBuy('Nguyễn Văn A', 0),
     );
     expect(
-      l10n.homeStoreWalletCanBuy('Nguyá»…n VÄƒn A', 1),
-      HomeStrings.storeWalletCanBuy('Nguyá»…n VÄƒn A', 1),
+      l10n.homeStoreWalletCanBuy('Nguyễn Văn A', 1),
+      HomeStrings.storeWalletCanBuy('Nguyễn Văn A', 1),
     );
     expect(
-      l10n.homeStoreWalletCanBuy('Nguyá»…n VÄƒn A', 2),
-      HomeStrings.storeWalletCanBuy('Nguyá»…n VÄƒn A', 2),
+      l10n.homeStoreWalletCanBuy('Nguyễn Văn A', 2),
+      HomeStrings.storeWalletCanBuy('Nguyễn Văn A', 2),
     );
     expect(
-      l10n.homeStoreWalletCanBuy('Nguyá»…n VÄƒn A', 5),
-      HomeStrings.storeWalletCanBuy('Nguyá»…n VÄƒn A', 5),
+      l10n.homeStoreWalletCanBuy('Nguyễn Văn A', 5),
+      HomeStrings.storeWalletCanBuy('Nguyễn Văn A', 5),
     );
     expect(
-      l10n.homeStoreWalletCanBuy('Nguyá»…n VÄƒn A', 99),
-      HomeStrings.storeWalletCanBuy('Nguyá»…n VÄƒn A', 99),
+      l10n.homeStoreWalletCanBuy('Nguyễn Văn A', 99),
+      HomeStrings.storeWalletCanBuy('Nguyễn Văn A', 99),
     );
     expect(
       l10n.homeStoreWalletCanBuy('{value}\n!', 0),

@@ -195,12 +195,12 @@ String formatDartSource(Project project, String source) {
   file.parent.createSync(recursive: true);
   try {
     file.writeAsStringSync(source);
-    final result = Process.runSync(Platform.resolvedExecutable, [
-      'format',
-      '--output=show',
-      '--summary=none',
-      file.path,
-    ]);
+    final result = Process.runSync(
+      Platform.resolvedExecutable,
+      ['format', '--output=show', '--summary=none', file.path],
+      stdoutEncoding: utf8,
+      stderrEncoding: utf8,
+    );
     final output = result.stdout as String;
     if (result.exitCode != 0 || !output.startsWith('// Generated')) {
       throw ProjectException('Dart formatter failed: ${result.stderr}');

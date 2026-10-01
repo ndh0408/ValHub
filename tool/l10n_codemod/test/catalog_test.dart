@@ -2,6 +2,7 @@ import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:l10n_codemod/src/catalog.dart';
 import 'package:l10n_codemod/src/extract.dart';
+import 'package:l10n_codemod/src/project.dart';
 import 'package:test/test.dart';
 
 Entry member(String name, String kind, Object value) => {
@@ -15,6 +16,15 @@ Entry member(String name, String kind, Object value) => {
 };
 
 void main() {
+  test('formatter subprocess preserves Unicode on Windows', () {
+    const value = 'Nguyễn Văn A · 日本語 · العربية · 🇻🇳';
+    final formatted = formatDartSource(
+      Project.discover(),
+      "// Generated Unicode fixture\nconst name = '$value';\n",
+    );
+    expect(formatted, contains(value));
+    expect(formatted, isNot(contains('Nguyá')));
+  });
   test('expands collections into deterministic individual keys', () {
     final catalog = Catalog.fromMembers(
       [
