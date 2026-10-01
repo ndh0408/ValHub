@@ -1,5 +1,9 @@
 # Tiến độ ValVN (điểm dừng để làm tiếp)
 
+Trạng thái tích hợp 01/10/2026: xem [COMPLETION_STATUS.md](COMPLETION_STATUS.md) và [QA_2026-10-01.md](QA_2026-10-01.md). Bốn WP đã gộp trên `ndh0408/codex-complete`; toàn bộ yêu cầu global **chưa hoàn tất**. Phần dưới là snapshot lịch sử 29/09, không phải bằng chứng nghiệm thu bản mới.
+
+## Snapshot 29/09/2026
+
 Cập nhật: 2026-09-29. Nhánh: `claude/jolly-hawking-23o2j8`.
 
 Trạng thái: **đủ 8 nhóm tính năng giao diện, đã tích hợp và đã sửa hết lỗi của đợt review**

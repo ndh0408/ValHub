@@ -45,7 +45,7 @@ class _ValVnAppState extends ConsumerState<ValVnApp>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _router = ref.read(routerProvider);
-    _router.routeInformationProvider.addListener(_resumePendingLink);
+    _router.routerDelegate.addListener(_resumePendingLink);
     final notifications = ref.read(notificationServiceProvider);
     _taps = notifications.taps.listen(_openDeepLink);
     _lifecycle = AppLifecycleListener(onResume: _onResume);
@@ -84,7 +84,9 @@ class _ValVnAppState extends ConsumerState<ValVnApp>
     final decision = accountLinkDecision(
       accountPuuid: link.accountPuuid,
       signedIn: ref.read(accountsProvider).map((a) => a.puuid),
-      currentPath: _router.routeInformationProvider.value.uri.path,
+      // The route information provider keeps the underlying branch URI for
+      // imperative pushes. The delegate's state is the visible top page.
+      currentPath: _router.state.uri.path,
     );
     switch (decision) {
       case AccountLinkDecision.deferLogin:
@@ -105,8 +107,7 @@ class _ValVnAppState extends ConsumerState<ValVnApp>
 
   void _resumePendingLink() {
     final link = _pendingLink;
-    if (link == null ||
-        _router.routeInformationProvider.value.uri.path == AuthRoutes.login) {
+    if (link == null || _router.state.uri.path == AuthRoutes.login) {
       return;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -126,7 +127,7 @@ class _ValVnAppState extends ConsumerState<ValVnApp>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _router.routeInformationProvider.removeListener(_resumePendingLink);
+    _router.routerDelegate.removeListener(_resumePendingLink);
     unawaited(_taps?.cancel());
     _lifecycle?.dispose();
     super.dispose();

@@ -1,0 +1,73 @@
+{
+  "status": "passed",
+  "failure": null,
+  "cases": [
+    {
+      "case": "release-cold-welcome",
+      "result": "passed"
+    },
+    {
+      "case": "release-privacy-1.1",
+      "result": "passed"
+    },
+    {
+      "case": "release-terms",
+      "result": "passed"
+    },
+    {
+      "case": "release-riot-webview",
+      "result": "passed"
+    },
+    {
+      "case": "release-warm-link-deferred-during-login",
+      "result": "passed"
+    },
+    {
+      "case": "release-login-cancel-and-resume-pending-link",
+      "result": "passed"
+    },
+    {
+      "case": "release-cold-link-without-account",
+      "result": "passed"
+    },
+    {
+      "case": "release-reject-auth-scheme-destination",
+      "result": "passed"
+    },
+    {
+      "case": "release-landscape-font200-cta-reachable",
+      "result": "passed"
+    },
+    {
+      "case": "release-landscape-font200-login-opens",
+      "result": "passed"
+    }
+  ],
+  "scope": "public routes; no live authenticated E2E",
+  "apk": {
+    "sha256": "48BB358E314B44C45E3CCA94ABE88889D9E0058A9833FD4CD39F055600CD9379",
+    "build": "release",
+    "signing": "Android Debug",
+    "appId": "vn.valvn.app"
+  },
+  "device": {
+    "serial": "emulator-5580",
+    "android": "15",
+    "api": 35,
+    "abi": "x86_64",
+    "physicalSize": "1080x2400",
+    "density": 420,
+    "isolatedQaUserdata": true
+  },
+  "nativeIntegration": {
+    "testsPassed": 3,
+    "scope": [
+      "country search/keyboard/persistence/automatic reset",
+      "Keystore isolation/delete",
+      "60 native schedules/replacement/cancel"
+    ],
+    "mockPlatformChannels": false
+  },
+  "date": "2026-10-01",
+  "liveRiotAccountTested": false
+}
