@@ -216,8 +216,8 @@ Erasure removes: posts (with their comments and likes), comments, reviews (with 
 joins, uploaded images (public and quarantined files) and the user row. **Reports the user
 filed** are kept but anonymised (`reporter_id` → `anon-…`, free text cleared) because they may have hidden
 content; reports **about** their content are deleted. Backups keep older copies for up to 14 days (see Backup).
-**Verify who is asking** before acting (reply to the email of the Riot account, or ask them to add a marker to
-their in-game note); the community server cannot check a Riot ID by itself. Use the API or CLI for erasure; direct SQL skips the durable ledger and media lifecycle.
+**Verify account ownership before acting.** Use the authenticated in-app API whenever possible.
+Use the API or CLI for erasure; direct SQL skips the durable ledger and media lifecycle.
 For email requests, prefer directing the verified account holder to the in-app export/delete actions. A Riot ID
 alone does not prove ownership. The server cannot access Riot account email; any manual identity verification
 must happen before the operator invokes the CLI. A one-time in-app verification code is future client work.
