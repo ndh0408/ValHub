@@ -86,7 +86,7 @@ abstract final class BattlePassStrings {
       'Cột mốc tiếp theo: $charges/$needed';
   static const checkpointRewards = 'Mỗi cột mốc: +XP, +KC';
   static const checkpointHint =
-      'Thắng vòng để nạp cột mốc (Sinh Tử không tính).';
+      'Thắng vòng để tiến tới cột mốc (Sinh Tử không tính).';
 
   /// "Làm mới sau 11:54:37".
   static String resetsIn(String time) => 'Làm mới sau $time';
@@ -103,14 +103,14 @@ abstract final class BattlePassStrings {
   /// "Thưởng gấp đôi đang chờ: 2".
   static String bonusPending(int n) => 'Thưởng gấp đôi đang chờ: $n';
   static const dailyNotReady =
-      'Cột mốc hôm nay chưa được tạo. Hãy vào game hoặc làm mới tại đây.';
+      'Cột mốc hôm nay chưa sẵn sàng. Hãy vào game hoặc làm mới tại đây.';
   static const dailyExpired =
       'Cột mốc của ngày trước đã hết hạn. Hãy vào game hoặc làm mới tại đây.';
   static const dailyPlayToStart =
       'Cột mốc hôm nay chưa sẵn sàng. Hãy vào game để bắt đầu ngày mới.';
   static const renewButton = 'Làm mới cột mốc';
   static const renewDone = 'Đã làm mới cột mốc hằng ngày.';
-  static const renewFailed = 'Không thể làm mới cột mốc. Vui lòng thử lại sau.';
+  static const renewFailed = 'Không thể làm mới cột mốc. Hãy thử lại sau.';
 
   // Weekly missions (P3)
   static const weeklyMissions = 'Nhiệm vụ hằng tuần';
@@ -121,7 +121,7 @@ abstract final class BattlePassStrings {
 
   /// "+38.400 XP".
   static String xpReward(String xp) => '+$xp XP';
-  static const unknownMission = 'Nhiệm vụ mới (đang cập nhật dữ liệu)';
+  static const unknownMission = 'Nhiệm vụ mới (chưa có mô tả)';
   static const missionDone = 'Đã hoàn thành';
 
   /// "2/3 hoàn thành".
@@ -151,7 +151,7 @@ abstract final class BattlePassStrings {
   static const nextReward = 'Tiếp theo';
   static const rewardLevelLabel = 'Cấp';
   static const rewardTypeLabel = 'Loại';
-  static const rewardTrackLabel = 'Đường thưởng';
+  static const rewardTrackLabel = 'Loại phần thưởng';
   static const rewardStatusLabel = 'Trạng thái';
   static const rewardUnlocked = 'Đã mở khóa';
   static const rewardLocked = 'Chưa mở khóa';

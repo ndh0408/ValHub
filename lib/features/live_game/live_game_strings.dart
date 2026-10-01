@@ -36,7 +36,7 @@ abstract final class LiveGameStrings {
   static const notInGameTitle = 'Bạn không ở trong trận nào';
   static const notInGameHint =
       'Mở VALORANT và tìm trận — chi tiết trận sẽ tự hiện ở đây khi bạn vào '
-      'phần chọn đặc vụ.';
+      'màn hình chọn đặc vụ.';
   static const lobbyHint =
       'Khi tìm được trận, ValVN sẽ hiện đội hình và rank của mọi người.';
   static const queueHint =
@@ -60,11 +60,14 @@ abstract final class LiveGameStrings {
   static String lockedAgent(String agent) => 'Đã khóa $agent';
   static String youLocked(String agent) => 'Bạn đã khóa $agent';
   static String youHover(String agent) => 'Bạn đang chọn $agent';
-  static const lockFailed = 'Không thể khóa đặc vụ này.';
-  static const selectFailed = 'Không thể chọn đặc vụ này.';
+  static const lockFailed =
+      'Chưa khóa được đặc vụ này. Hãy làm mới rồi thử lại.';
+  static const selectFailed =
+      'Chưa chọn được đặc vụ này. Hãy làm mới rồi thử lại.';
   static const agentNotOwned = 'Bạn chưa sở hữu đặc vụ này.';
   static const agentTaken = 'Đồng đội đã khóa đặc vụ này.';
-  static const noAgents = 'Chưa tải được danh sách đặc vụ.';
+  static const noAgents =
+      'Chưa tải được danh sách đặc vụ. Hãy làm mới để thử lại.';
   static const enemyHiddenInAgentSelect =
       'Đội địch sẽ hiện khi trận đấu bắt đầu.';
 
@@ -95,13 +98,13 @@ abstract final class LiveGameStrings {
   static const quitMatch = 'Rời trận';
   static const quitConfirmTitle = 'Rời trận đấu?';
   static const quitConfirmBodyPregame =
-      'Né trận ở phần chọn đặc vụ có thể khiến bạn bị phạt (mất RR, khóa '
+      'Né trận ở màn hình chọn đặc vụ có thể khiến bạn bị phạt (mất RR, khóa '
       'hàng chờ). Bạn vẫn muốn rời?';
   static const quitConfirmBodyInGame =
       'Rời trận có thể khiến bạn bị phạt (mất RR, khóa hàng chờ). Bạn vẫn '
       'muốn rời?';
   static const quitDone = 'Đã rời trận.';
-  static const quitFailed = 'Không thể rời trận.';
+  static const quitFailed = 'Chưa rời được trận.';
   static const quitMatchChanged =
       'Trận đã chuyển giai đoạn trong lúc bạn xác nhận. Chưa rời trận, hãy thử lại.';
 

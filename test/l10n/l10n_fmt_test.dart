@@ -71,7 +71,7 @@ void main() {
         'store',
         'wishlist',
       ]);
-      expect(kKeyPrefixOrder.last, 'home');
+      expect(kKeyPrefixOrder.skip(19), ['home', 'communityError']);
     });
   });
 

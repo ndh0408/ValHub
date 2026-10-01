@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/ui/maintenance_banner.dart';
+import 'package:valvn/core/l10n/account_strings.dart';
 import 'package:valvn/features/home/data/home_card.dart';
 import 'package:valvn/features/home/home_strings.dart';
 import 'package:valvn/features/home/providers/home_refresh.dart';
@@ -32,7 +33,10 @@ void main() {
       _card(),
       overrides: [vmStatus(homeServerStatus())],
     );
-    expect(find.text(HomeStrings.statusMaintenanceNow('AP')), findsOneWidget);
+    expect(
+      find.text(HomeStrings.statusMaintenanceNow(AccountStrings.regionAp)),
+      findsOneWidget,
+    );
     expect(find.text('Bảo trì để cập nhật phiên bản mới.'), findsOneWidget);
     expect(find.byIcon(Icons.construction_outlined), findsOneWidget);
     expect(find.text(HomeStrings.statusDetails), findsOneWidget);
@@ -50,7 +54,9 @@ void main() {
       overrides: [vmStatus(homeServerStatus(status: 'scheduled'))],
     );
     expect(
-      find.text(HomeStrings.statusMaintenanceScheduled('AP')),
+      find.text(
+        HomeStrings.statusMaintenanceScheduled(AccountStrings.regionAp),
+      ),
       findsOneWidget,
     );
     await homeUnmount(tester);
@@ -63,7 +69,10 @@ void main() {
         vmStatus(homeServerStatus(kind: 'incident', status: 'warning')),
       ],
     );
-    expect(find.text(HomeStrings.statusIncident('AP')), findsOneWidget);
+    expect(
+      find.text(HomeStrings.statusIncident(AccountStrings.regionAp)),
+      findsOneWidget,
+    );
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
     await homeUnmount(tester);
   });

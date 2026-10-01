@@ -428,8 +428,8 @@ class AccountTile extends ConsumerWidget {
     if (live) ref.watch(accountRankRefreshProvider(account.puuid));
     final tier = account.rankTier;
     final meta = [
-      account.region.toUpperCase(),
       if (account.level != null) AccountStrings.levelShort(account.level!),
+      AccountStrings.regionName(account.region),
     ].join(' · ');
     final small = theme.textTheme.bodySmall;
     final Widget subtitle;

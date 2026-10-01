@@ -42,7 +42,7 @@ abstract final class HomeStrings {
   static const cardFriendsDesc = 'Bạn bè đang trong trận hoặc đang tìm trận.';
   static const cardCommunity = 'Cộng đồng';
   static const cardCommunityDesc =
-      'Tìm đồng đội hợp rank và skin hot trong tuần.';
+      'Tìm đồng đội hợp rank và skin được yêu thích trong tuần.';
   static const cardOtherAccounts = 'Tài khoản khác';
   static const cardOtherAccountsDesc =
       'Trạng thái và wishlist của các tài khoản còn lại.';
@@ -104,15 +104,15 @@ abstract final class HomeStrings {
   static String lossStreak(int n) => 'Chuỗi $n trận thua xếp hạng';
   static String matchesToRankUp(int n, String rank) => '≈ $n trận để lên $rank';
   static String previousAct(String rank) => 'Phần trước: $rank';
-  static String leaderboard(String pos) => 'Hạng $pos bảng xếp hạng';
+  static String leaderboard(String pos) => 'Hạng $pos trên bảng xếp hạng';
 
   // Friends card
   static String friendsPlaying(int n) => '$n bạn đang chơi';
   static const friendsConsentTitle = 'Xem bạn bè nào đang chơi?';
   static const friendsConsentBody =
-      'ValVN sẽ kết nối trò chuyện Riot của tài khoản đang dùng khi bạn mở '
-      'Trang chủ. Bạn bè có thể thấy bạn đang trực tuyến. Bạn có thể tắt '
-      'trong Tùy chỉnh Trang chủ.';
+      'Để biết bạn bè nào đang chơi, ValVN sẽ kết nối trò chuyện Riot của tài '
+      'khoản đang dùng mỗi khi bạn mở Trang chủ. Bạn bè sẽ thấy bạn đang '
+      'trực tuyến. Bạn có thể tắt trong Tùy chỉnh Trang chủ.';
   static const friendsConsentAllow = 'Bật';
   static const friendsConsentDecline = 'Không, ẩn thẻ';
   static const friendsSeeAll = 'Xem tất cả';
@@ -122,7 +122,7 @@ abstract final class HomeStrings {
   // Community card
   static const lfgTitle = 'Tìm đồng đội hợp rank bạn';
   static String lfgNeeds(int n) => 'Cần $n người';
-  static const trendingTitle = 'Skin hot tuần này';
+  static const trendingTitle = 'Skin được yêu thích tuần này';
   static String trendingVotes(int n) => '$n lượt thích';
 
   /// Screen-reader label of a trending skin: "Reaver Vandal, 120 lượt thích,
@@ -137,7 +137,7 @@ abstract final class HomeStrings {
 
   // Other accounts card
   static String otherAccountsTitle(int n) => 'Tài khoản khác ($n)';
-  static const otherWishlistHit = 'Có skin wishlist';
+  static const otherWishlistHit = 'Có skin trong wishlist';
   static String otherMore(int n) => '+$n tài khoản';
 
   // Server status card

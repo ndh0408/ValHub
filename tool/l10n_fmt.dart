@@ -47,6 +47,7 @@ const List<String> kKeyPrefixOrder = [
   'store',
   'wishlist',
   'home',
+  'communityError',
 ];
 
 /// The template locale's file.

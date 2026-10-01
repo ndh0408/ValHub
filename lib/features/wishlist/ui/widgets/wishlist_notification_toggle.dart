@@ -10,6 +10,7 @@ import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../settings/ui/notification_priming_sheet.dart';
 import '../../../settings/providers/settings_providers.dart';
+import '../../../settings/settings_strings.dart';
 import '../../wishlist_strings.dart';
 
 /// "Thông báo wishlist" switch (S3A shortcut to the settings switch
@@ -87,7 +88,7 @@ class _WishlistNotificationToggleState
         subtitle: Text(
           account == null
               ? WishlistStrings.notifToggleSubtitle
-              : 'Thông báo cho ${account.riotId}',
+              : SettingsStrings.platformAppliesTo(account.riotId),
         ),
       ),
     );

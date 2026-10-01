@@ -20,9 +20,10 @@ const termsOfService = LegalDocument(
     LegalCallout(
       'Tóm tắt: ValVN là ứng dụng đồng hành không chính thức, không thuộc Riot '
       'Games. Bạn đăng nhập bằng tài khoản Riot của chính mình trên trang chính '
-      'thức của Riot, tự chịu trách nhiệm về tài khoản và mọi thao tác bạn thực '
-      'hiện, cư xử văn minh trong Cộng đồng và không dùng ứng dụng để gian lận, '
-      'tự động hóa hay khai thác trái phép. Ứng dụng được cung cấp nguyên trạng.',
+      'thức của Riot. Bạn tự chịu trách nhiệm về tài khoản và mọi thao tác bạn '
+      'thực hiện, cư xử văn minh trong Cộng đồng và không dùng ứng dụng để gian '
+      'lận, tự động hóa hay khai thác trái phép. Ứng dụng được cung cấp nguyên '
+      'trạng.',
     ),
   ],
   sections: [
@@ -51,8 +52,8 @@ const termsOfService = LegalDocument(
         ),
         LegalItem(
           'các tính năng xã hội của ValVN như bảng tin, bài đăng, hình ảnh, '
-          'bình luận, lượt thích, bình chọn skin và tìm đồng đội (LFG), vận '
-          'hành trên máy chủ cộng đồng của ValVN.',
+          'bình luận, lượt thích, bình chọn skin và tìm đồng đội, vận hành '
+          'trên máy chủ Cộng đồng của ValVN.',
           lead: '"Cộng đồng":',
         ),
         LegalItem(
@@ -90,8 +91,9 @@ const termsOfService = LegalDocument(
       LegalParagraph(
         'Bạn đăng nhập trong một cửa sổ web hiển thị trang đăng nhập chính thức '
         'của Riot Games. ValVN không nhận, không đọc và không lưu mật khẩu mà '
-        'bạn nhập vào trang đó. Sau khi đăng nhập, phiên đăng nhập (token và '
-        'cookie) chỉ được lưu trong vùng lưu trữ bảo mật của hệ điều hành trên '
+        'bạn nhập vào trang đó. Sau khi đăng nhập, dữ liệu đăng nhập do Riot '
+        'cấp (mã truy cập và cookie, tức là tệp giúp Riot nhớ bạn đã đăng '
+        'nhập) chỉ được lưu trong vùng lưu trữ bảo mật của hệ điều hành trên '
         'thiết bị của bạn.',
       ),
       LegalList([
@@ -104,11 +106,11 @@ const termsOfService = LegalDocument(
           'hai lớp và mọi hoạt động diễn ra trên Tài khoản Riot của mình.',
         ),
         LegalItem(
-          'Tính năng "Ghi chú đăng nhập" là tùy chọn: nếu bạn tự lưu tên đăng '
-          'nhập và mật khẩu, chúng chỉ nằm trong vùng lưu trữ bảo mật trên '
-          'thiết bị và chỉ được điền vào trang đăng nhập của Riot khi bạn yêu '
-          'cầu. Bạn cân nhắc rủi ro khi lưu mật khẩu trên thiết bị dùng chung '
-          'và có thể xóa ghi chú bất cứ lúc nào.',
+          'Tính năng "Thông tin đăng nhập đã lưu" là tùy chọn: nếu bạn tự lưu '
+          'tên đăng nhập và mật khẩu, chúng chỉ nằm trong vùng lưu trữ bảo mật '
+          'trên thiết bị và chỉ được điền vào trang đăng nhập của Riot khi bạn '
+          'yêu cầu. Bạn cân nhắc rủi ro khi lưu mật khẩu trên thiết bị dùng '
+          'chung và có thể xóa thông tin này bất cứ lúc nào.',
         ),
         LegalItem(
           'Hãy đăng xuất khỏi Ứng dụng và đổi mật khẩu Riot ngay nếu bạn nghi '
@@ -149,14 +151,14 @@ const termsOfService = LegalDocument(
           'thương mại Ứng dụng hay bất kỳ phần nào của Ứng dụng.',
         ),
         LegalItem(
-          'Dùng Ứng dụng, bot, script hoặc công cụ tự động để gian lận, can '
-          'thiệp vào trò chơi, thu thập dữ liệu hàng loạt, spam hàng chờ, hoặc '
-          'bất kỳ hành vi nào vi phạm chính sách của Riot Games.',
+          'Dùng Ứng dụng, bot, script (đoạn mã tự chạy) hoặc công cụ tự động để '
+          'gian lận, can thiệp vào trò chơi, thu thập dữ liệu hàng loạt, spam '
+          'hàng chờ, hoặc bất kỳ hành vi nào vi phạm chính sách của Riot Games.',
         ),
         LegalItem(
           'Truy cập hoặc cố truy cập tài khoản, dữ liệu, máy chủ hay hệ thống '
-          'mà bạn không được phép; vượt qua giới hạn tần suất, cơ chế bảo mật '
-          'hoặc kiểm duyệt của Ứng dụng và máy chủ cộng đồng.',
+          'mà bạn không được phép; vượt qua giới hạn số lần gửi yêu cầu, cơ '
+          'chế bảo mật hoặc kiểm duyệt của Ứng dụng và máy chủ Cộng đồng.',
         ),
         LegalItem(
           'Mạo danh người khác, cung cấp thông tin sai lệch về danh tính hoặc '
@@ -164,7 +166,7 @@ const termsOfService = LegalDocument(
         ),
         LegalItem(
           'Phát tán mã độc, gây quá tải, làm gián đoạn hoặc làm suy giảm hoạt '
-          'động của Ứng dụng, máy chủ cộng đồng hay dịch vụ của bên thứ ba.',
+          'động của Ứng dụng, máy chủ Cộng đồng hay dịch vụ của bên thứ ba.',
         ),
         LegalItem(
           'Sử dụng Ứng dụng cho mục đích trái pháp luật Việt Nam hoặc pháp luật '
@@ -175,8 +177,8 @@ const termsOfService = LegalDocument(
     LegalSection('Thao tác trên Tài khoản Riot', [
       LegalParagraph(
         'Một số tính năng cho phép thay đổi trạng thái Tài khoản Riot của bạn, '
-        'ví dụ: thay đổi trang bị (loadout), chọn hoặc khóa đặc vụ, tham gia '
-        'hay rời tổ đội, bắt đầu hoặc hủy tìm trận, rời trận đấu.',
+        'ví dụ: đổi trang bị, chọn hoặc khóa đặc vụ, tham gia hay rời tổ đội, '
+        'bắt đầu hoặc hủy tìm trận, rời trận đấu.',
       ),
       LegalList([
         LegalItem(
@@ -198,7 +200,7 @@ const termsOfService = LegalDocument(
       LegalSubheading('Xác minh Riot ID'),
       LegalParagraph(
         'Để dùng Cộng đồng, Ứng dụng xác minh Riot ID của bạn với Riot Games '
-        'thông qua máy chủ cộng đồng của ValVN như mô tả trong Chính sách '
+        'thông qua máy chủ Cộng đồng của ValVN, như mô tả trong Chính sách '
         'quyền riêng tư. Tên hiển thị của bạn trong Cộng đồng là Riot ID đã '
         'được xác minh, kèm thẻ người chơi, rank và khu vực.',
       ),
@@ -226,11 +228,12 @@ const termsOfService = LegalDocument(
       LegalParagraph(
         'Bạn vẫn là chủ sở hữu Nội dung người dùng của mình. Khi đăng, bạn cấp '
         'cho chúng tôi quyền không độc quyền, miễn phí, có hiệu lực trên toàn '
-        'thế giới để lưu trữ, sao chép kỹ thuật, định dạng lại (ví dụ nén hoặc '
-        'đổi kích thước ảnh) và hiển thị nội dung đó cho người dùng khác trong '
-        'Ứng dụng, chỉ nhằm mục đích vận hành Cộng đồng. Quyền này chấm dứt khi '
-        'nội dung bị xóa khỏi hệ thống, trừ bản sao lưu còn tồn tại trong thời '
-        'gian ngắn hoặc trường hợp pháp luật yêu cầu lưu giữ.',
+        'thế giới. Quyền này cho phép chúng tôi lưu trữ, sao chép kỹ thuật, '
+        'định dạng lại (ví dụ nén hoặc đổi kích thước ảnh) và hiển thị nội '
+        'dung đó cho người dùng khác trong Ứng dụng, chỉ nhằm mục đích vận '
+        'hành Cộng đồng. Quyền này chấm dứt khi nội dung bị xóa khỏi hệ thống, '
+        'trừ bản sao lưu còn tồn tại trong thời gian ngắn hoặc trường hợp pháp '
+        'luật yêu cầu lưu giữ.',
       ),
       LegalSubheading('Báo cáo và kiểm duyệt'),
       LegalList([
@@ -241,8 +244,9 @@ const termsOfService = LegalDocument(
         ),
         LegalItem(
           'Chúng tôi có quyền, nhưng không có nghĩa vụ, xem xét, ẩn, gỡ bỏ nội '
-          'dung, hạn chế hoặc khóa quyền sử dụng Cộng đồng của bất kỳ ai vi phạm '
-          'Điều khoản hoặc Tiêu chuẩn cộng đồng, có hoặc không cần báo trước.',
+          'dung, hạn chế hoặc khóa quyền sử dụng Cộng đồng của bất kỳ ai vi '
+          'phạm Điều khoản hoặc Tiêu chuẩn cộng đồng, có hoặc không cần báo '
+          'trước.',
         ),
         LegalItem(
           'Chúng tôi không kiểm tra trước mọi nội dung và không chịu trách '
@@ -283,8 +287,8 @@ const termsOfService = LegalDocument(
           lead: 'valorant-api.com:',
         ),
         LegalItem(
-          'mạng chuyển tiếp (Cloudflare Tunnel) cho lưu lượng tới máy chủ '
-          'cộng đồng do chúng tôi tự vận hành.',
+          'mạng chuyển tiếp kết nối tới máy chủ Cộng đồng do chúng tôi tự vận '
+          'hành.',
           lead: 'Cloudflare:',
         ),
         LegalItem(
@@ -296,8 +300,9 @@ const termsOfService = LegalDocument(
         'Các dịch vụ này có điều khoản và chính sách riêng mà bạn cần tuân thủ. '
         'Chúng tôi không kiểm soát và không chịu trách nhiệm về tính sẵn sàng, '
         'độ chính xác hay thay đổi của các dịch vụ đó. Nếu Riot Games thay đổi '
-        'hoặc ngừng cung cấp giao diện kỹ thuật mà Ứng dụng sử dụng, một số '
-        'tính năng có thể tạm thời hoặc vĩnh viễn không hoạt động.',
+        'hoặc ngừng cung cấp cách kết nối kỹ thuật mà Ứng dụng dùng để làm '
+        'việc với Riot, một số tính năng có thể tạm thời hoặc vĩnh viễn không '
+        'hoạt động.',
       ),
     ]),
     LegalSection('Không phải sản phẩm chính thức của Riot Games', [

@@ -64,7 +64,7 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>ValVN cần truy cập thư viện ảnh để bạn đính kèm ảnh vào bài đăng Cộng đồng.</string>
+	<string>Chọn ảnh từ thư viện để đính kèm vào bài đăng của bạn trên Cộng đồng ValVN. ValVN chỉ dùng những ảnh bạn chọn.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

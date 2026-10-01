@@ -30,8 +30,8 @@ abstract final class SocialStrings {
   static const reconnecting = 'Mất kết nối trò chuyện. Đang kết nối lại…';
   static const chatUnavailable = 'Trò chuyện đang ngoại tuyến.';
   static const friendsPrivacyNote =
-      'Danh sách bạn bè và tin nhắn được tải trực tiếp từ Riot, không lưu '
-      'trên máy chủ nào khác.';
+      'Danh sách bạn bè và tin nhắn lấy trực tiếp từ Riot. ValVN không lưu '
+      'chúng ở nơi nào khác.';
 
   // Status lines (SUMMARY §9.9, VF S60)
   static String inMatch(String? map, {int? ally, int? enemy}) {
@@ -88,14 +88,16 @@ abstract final class SocialStrings {
   static const viewProfile = 'Xem hồ sơ';
   static const sendFailed =
       'Không gửi được tin nhắn. Kiểm tra kết nối rồi thử lại.';
-  static const historyFailed = 'Không tải được lịch sử trò chuyện.';
+  static const historyFailed =
+      'Chưa tải được tin nhắn cũ. Hãy kết nối lại rồi thử lại.';
   static const waitingForConnection =
       'Đang kết nối… Bạn có thể gửi tin khi kết nối xong.';
   static const notFriend = 'Người này không có trong danh sách bạn bè.';
   static const failedBadge = 'Chưa gửi được';
 
   // --------------------------------------------------------------- party
-  static const gameNotRunningTitle = 'Mở VALORANT trên máy tính hoặc console';
+  static const gameNotRunningTitle =
+      'Mở VALORANT trên máy tính hoặc máy chơi game';
   static const gameNotRunningBody =
       'Tổ đội & hàng chờ chỉ hoạt động khi VALORANT đang chạy trên máy tính '
       'hoặc console của bạn. Mở game rồi kéo xuống để làm mới.';
@@ -124,7 +126,7 @@ abstract final class SocialStrings {
   static const cancelQueueShort = 'Hủy tìm trận';
   static String searching(String elapsed) => 'Đang tìm trận · $elapsed';
   static const matchFound = 'Đã tìm thấy trận!';
-  static const customGameLobby = 'Tổ đội đang ở phòng chơi tự do.';
+  static const customGameLobby = 'Tổ đội đang ở sảnh Chơi tự do.';
   static const onlyLeader =
       'Chỉ trưởng nhóm mới có thể đổi hàng chờ và bắt đầu tìm trận.';
   static const queueLocked = 'Không thể đổi hàng chờ khi đang trong trận.';
@@ -215,7 +217,8 @@ abstract final class SocialStrings {
   static const closeParty = 'Đóng tổ đội';
   static const moreActions = 'Tùy chọn khác';
 
-  static String actionFailed(String message) => 'Không thể thực hiện. $message';
+  static String actionFailed(String message) =>
+      'Chưa hoàn tất thao tác. $message';
 
   /// Platform labels of party members (shown for console players only).
   static String? consolePlatform(String? type) => switch (type?.toLowerCase()) {

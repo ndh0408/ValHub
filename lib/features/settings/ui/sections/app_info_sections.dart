@@ -6,9 +6,12 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/l10n/common_strings.dart';
+import '../../../../core/logging/session_log.dart';
 import '../../../../core/riot/platform_status.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/skeleton.dart';
+import '../../../../core/util/clock.dart';
+import '../../data/bug_report.dart';
 import '../../data/cache_stats.dart';
 import '../../providers/settings_providers.dart';
 import '../../settings_routes.dart';
@@ -33,8 +36,7 @@ Future<void> openSettingsLink(
 }
 
 /// "HỖ TRỢ": server status of the active account's region (with a colored
-/// dot while Riot reports a maintenance or an incident), the session log
-/// and feedback.
+/// dot while Riot reports a maintenance or an incident) and feedback.
 class SettingsSupportSection extends ConsumerWidget {
   const SettingsSupportSection({super.key});
 
@@ -49,13 +51,6 @@ class SettingsSupportSection extends ConsumerWidget {
           subtitle: const Text(SettingsStrings.serverStatusSubtitle),
           trailing: const _ServerStatusValue(),
           onTap: () => unawaited(context.push(SettingsRoutes.status)),
-        ),
-        ListTile(
-          leading: const SettingsIcon(Icons.receipt_long_outlined),
-          title: const Text(SettingsStrings.exportLog),
-          subtitle: const Text(SettingsStrings.exportLogSubtitle),
-          trailing: const SettingsChevron(),
-          onTap: () => unawaited(context.push(SettingsRoutes.log)),
         ),
         ListTile(
           leading: const SettingsIcon(Icons.forum_outlined),
@@ -129,7 +124,10 @@ class _ServerStatusValue extends ConsumerWidget {
   }
 }
 
-/// "ỨNG DỤNG" (S70, X2): version and clear cache (with its size).
+/// "NÂNG CAO" (S70, X2): the only two actions a player may ever need that
+/// are not about the game: send a bug report to ValVN (a scrubbed file handed
+/// to the share sheet, never shown on screen) and clear temporary data (with
+/// its size). The app version lives on the About screen only.
 class SettingsAppSection extends ConsumerStatefulWidget {
   const SettingsAppSection({super.key});
 
@@ -140,12 +138,50 @@ class SettingsAppSection extends ConsumerStatefulWidget {
 class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
   bool _clearing = false;
 
+  void _snack(String message) {
+    ScaffoldMessenger.maybeOf(context)
+      ?..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _sendReport(BuildContext rowContext) async {
+    final log = ref.read(sessionLogProvider);
+    if (log.entries.isEmpty) {
+      _snack(SettingsStrings.exportLogEmpty);
+      return;
+    }
+    final box = rowContext.findRenderObject();
+    final origin = box is RenderBox && box.hasSize
+        ? box.localToGlobal(Offset.zero) & box.size
+        : null;
+    String? version;
+    try {
+      version = (await ref.read(packageInfoProvider.future)).version;
+    } on Object {
+      // A report can still be shared when app information is unavailable.
+    }
+    if (!mounted) return;
+    final report = buildBugReport(
+      log,
+      now: ref.read(clockProvider).now(),
+      version: version,
+    );
+    try {
+      await ref.read(bugReportSharerProvider)(report, origin: origin);
+    } on Object {
+      if (mounted) _snack(SettingsStrings.logShareFailed);
+    }
+  }
+
+  /// Clears the image / offline-response caches and the recorded bug-report
+  /// data; sign-in, wishlist and settings are never touched.
   Future<void> _clearCache() async {
     setState(() => _clearing = true);
     final messenger = ScaffoldMessenger.maybeOf(context);
     String message;
     try {
       final freed = await ref.read(cacheServiceProvider).clear();
+      await ref.read(sessionLogProvider).clear();
       message = SettingsStrings.cacheCleared(formatBytes(freed));
     } on Object {
       message = SettingsStrings.clearCacheFailed;
@@ -160,30 +196,19 @@ class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
 
   @override
   Widget build(BuildContext context) {
-    final packageInfo = ref.watch(packageInfoProvider);
     final cacheSize = ref.watch(cacheSizeBytesProvider);
     final muted = Theme.of(context).colorScheme.onSurfaceVariant;
     return SettingsGroup(
       title: SettingsStrings.appHeader,
       children: [
-        ListTile(
-          leading: const SettingsIcon(Icons.info_outline),
-          title: switch (packageInfo) {
-            AsyncData(:final value) => Text(
-              SettingsStrings.version(value.version),
-            ),
-            AsyncError() => Text(SettingsStrings.version(CommonStrings.dash)),
-            _ => const Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: Skeleton(width: 120, height: 14),
-            ),
-          },
-          subtitle: switch (packageInfo) {
-            AsyncData(:final value) when value.buildNumber.isNotEmpty => Text(
-              SettingsStrings.buildNumber(value.buildNumber),
-            ),
-            _ => null,
-          },
+        Builder(
+          builder: (rowContext) => ListTile(
+            leading: const SettingsIcon(Icons.bug_report_outlined),
+            title: const Text(SettingsStrings.exportLog),
+            subtitle: const Text(SettingsStrings.exportLogSubtitle),
+            trailing: const SettingsChevron(icon: Icons.ios_share),
+            onTap: () => unawaited(_sendReport(rowContext)),
+          ),
         ),
         ListTile(
           leading: const SettingsIcon(Icons.cleaning_services_outlined),

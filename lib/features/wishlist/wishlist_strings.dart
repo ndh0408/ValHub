@@ -13,7 +13,7 @@ abstract final class WishlistStrings {
   // --------------------------------------------------------- S3A wishlist
   static const addSkins = 'Thêm skin';
   static const emptyTitle = 'Chưa có skin nào';
-  static const empty = 'Wishlist trống. Nhấn ♡ ở bất kỳ skin nào để thêm.';
+  static const empty = 'Wishlist trống. Chạm ♡ ở bất kỳ skin nào để thêm.';
   static const browseCatalog = 'Xem tất cả skin';
   static const totalValue = 'Tổng giá trị wishlist';
   static const excludedRewards = 'Không tính skin phần thưởng';
@@ -45,7 +45,7 @@ abstract final class WishlistStrings {
   // Notification toggle (VF §6.4 S3A, §8.5 notifWishlistBg).
   static const notifToggle = 'Thông báo wishlist';
   static const notifToggleSubtitle =
-      'Kiểm tra wishlist trong nền cho tài khoản này';
+      'Cho tài khoản này, kể cả khi bạn không mở ứng dụng';
   static const notifPermissionMissing = 'Ứng dụng chưa có quyền gửi thông báo.';
   static const openSettings = 'Mở cài đặt';
 
@@ -63,12 +63,13 @@ abstract final class WishlistStrings {
   static const allWeapons = 'Tất cả vũ khí';
   static const chooseWeapon = 'Chọn vũ khí';
   static const noMatchTitle = 'Không tìm thấy skin';
-  static const noMatch = 'Không có skin nào khớp bộ lọc.';
-  static const clearFilters = 'Xóa bộ lọc';
+  static const noMatch = 'Không có skin phù hợp. Bỏ lọc để xem thêm.';
+  static const clearFilters = 'Bỏ lọc';
 
   // ------------------------------------------------------------ S3B catalog
   static const catalogEmptyTitle = 'Chưa có skin';
-  static const catalogEmpty = 'Chưa có dữ liệu skin.';
+  static const catalogEmpty =
+      'Chưa tải được danh sách skin. Hãy làm mới để thử lại.';
   static String catalogCount(String count) => '$count skin';
   static String catalogInWishlist(String count) => '$count trong wishlist';
   static const addToWishlist = 'Thêm vào wishlist';

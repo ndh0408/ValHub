@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:material_ui/material_ui.dart' hide ErrorDescription;
 
 import '../../../core/network/error_classifier.dart' show parseRetryAfter;
+import '../../../core/l10n/community_error_strings.dart';
 import '../../../core/ui/error_view.dart';
 import '../../../core/util/format.dart';
 import '../../../core/util/json.dart';
@@ -17,6 +18,7 @@ class CommunityException implements Exception {
     this.status,
     this.retryAfter,
     this.serverMessage,
+    this.reason,
   });
 
   static const unauthorized = 'unauthorized';
@@ -52,10 +54,11 @@ class CommunityException implements Exception {
   final int? status;
   final Duration? retryAfter;
 
-  /// The ValVN server's Vietnamese message. Shown for `invalid_input`
-  /// (content filter: "Nội dung chứa từ ngữ không phù hợp", account-selling /
-  /// phone-number ads, field validation); other codes use the app's copy.
+  /// Kept for compatibility with older callers; never rendered in the UI.
   final String? serverMessage;
+
+  /// Stable v3 reason. Unknown and legacy reasons use the app's fallback.
+  final String? reason;
 
   bool get isAuthFailure => code == unauthorized || status == 401;
 
@@ -65,6 +68,7 @@ class CommunityException implements Exception {
       code == serverError ||
       code == rateLimited ||
       code == riotUnavailable ||
+      code == 'server_busy' ||
       code == badResponse;
 
   /// Maps a dio failure (or anything else) to a [CommunityException].
@@ -117,6 +121,7 @@ class CommunityException implements Exception {
       status: status,
       retryAfter: retryAfter,
       serverMessage: asNonEmptyString(error?['message']),
+      reason: asNonEmptyString(error?['reason']),
     );
   }
 
@@ -130,6 +135,19 @@ class CommunityException implements Exception {
 ErrorDescription describeCommunityError(Object error) {
   if (error is! CommunityException) return describeError(error);
   final e = error;
+  final reasonMessage =
+      e.code == CommunityException.invalidInput || e.code == 'suspended'
+      ? CommunityErrorStrings.forReason(e.reason)
+      : null;
+  if (reasonMessage != null) {
+    return ErrorDescription(
+      message: reasonMessage,
+      icon: e.code == 'suspended'
+          ? Icons.block_outlined
+          : Icons.edit_note_outlined,
+      canRetry: false,
+    );
+  }
   return switch (e.code) {
     CommunityException.network => const ErrorDescription(
       message: CommunityStrings.errorNetwork,
@@ -181,7 +199,7 @@ ErrorDescription describeCommunityError(Object error) {
       canRetry: false,
     ),
     CommunityException.invalidInput => ErrorDescription(
-      message: e.serverMessage ?? CommunityStrings.errorInvalid,
+      message: CommunityStrings.errorInvalid,
       icon: Icons.edit_note_outlined,
       canRetry: false,
     ),
@@ -204,6 +222,19 @@ ErrorDescription describeCommunityError(Object error) {
       message: CommunityStrings.unavailableBody,
       icon: Icons.cloud_off_outlined,
       canRetry: false,
+    ),
+    'suspended' => const ErrorDescription(
+      message: CommunityStrings.errorForbidden,
+      icon: Icons.block_outlined,
+      canRetry: false,
+    ),
+    'server_busy' => ErrorDescription(
+      message: e.retryAfter == null
+          ? CommunityStrings.errorServer
+          : CommunityStrings.errorRateLimitedIn(
+              formatDurationCoarse(e.retryAfter!),
+            ),
+      icon: Icons.cloud_off_outlined,
     ),
     _ => const ErrorDescription(
       message: CommunityStrings.errorServer,

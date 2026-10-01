@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../core/l10n/account_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../settings/settings_routes.dart';
 import '../../data/home_card.dart';
@@ -27,7 +28,7 @@ class ServerStatusHomeCard extends ConsumerWidget {
     final theme = Theme.of(context);
     final head = status.headline;
     final notice = head.notice;
-    final region = head.region.toUpperCase();
+    final region = AccountStrings.regionName(head.region);
     final title = notice.isMaintenance
         ? (head.isInProgress
               ? HomeStrings.statusMaintenanceNow(region)

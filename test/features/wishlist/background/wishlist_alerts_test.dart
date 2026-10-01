@@ -116,7 +116,7 @@ void main() {
         db: ContentDb.empty(),
         now: now,
       );
-      expect(unknown.body, startsWith('Vật phẩm không xác định'));
+      expect(unknown.body, startsWith('Vật phẩm chưa rõ tên'));
     },
   );
 

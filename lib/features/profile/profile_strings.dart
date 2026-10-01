@@ -102,7 +102,7 @@ abstract final class ProfileStrings {
       'Không có trận nào trên bản đồ này trong các '
       'trận đã tải.';
   static const endOfHistory = 'Đã hiển thị tất cả trận đấu';
-  static const matchUnavailable = 'Không tải được trận đấu';
+  static const matchUnavailable = 'Chưa tải được trận đấu';
 
   /// "5/9/1".
   static String kdaValue(int k, int d, int a) => '$k/$d/$a';
@@ -144,8 +144,8 @@ abstract final class ProfileStrings {
   static String recentForm(int w, int l) =>
       'Phong độ gần đây: $w thắng – $l thua';
   static const rankUpFootnote =
-      'Ước tính dựa trên các trận xếp hạng gần đây, chưa tính giáp hạng và '
-      'trận phân hạng.';
+      'Ước tính dựa trên các trận xếp hạng gần đây, chưa tính các trận phân '
+      'hạng và cơ chế bảo vệ xuống hạng.';
   static const rankUpUnranked =
       'Hãy hoàn thành các trận phân hạng để dùng tính năng tính toán lên hạng.';
   static const rankUpImmortal =
@@ -208,8 +208,8 @@ abstract final class ProfileStrings {
   static const firstHalf = 'Hiệp 1';
   static const secondHalf = 'Hiệp 2';
   static const overtime = 'Hiệp phụ';
-  static const noRounds = 'Trận này không có dữ liệu vòng đấu.';
-  static const noPlayers = 'Trận này không có dữ liệu người chơi.';
+  static const noRounds = 'Chưa có thông tin từng vòng của trận này.';
+  static const noPlayers = 'Chưa có thông tin người chơi của trận này.';
 
   /// "3 hạ gục".
   static String roundKills(int n) => '$n hạ gục';
@@ -287,7 +287,7 @@ abstract final class ProfileStrings {
       joined([map, result, ?score]);
   static const kast = 'KAST';
   static const kastHint =
-      'Tỉ lệ vòng bạn có hạ gục, hỗ trợ, sống sót hoặc được đồng đội trả thù';
+      'Tỉ lệ vòng bạn hạ gục, hỗ trợ, sống sót hoặc được đồng đội hạ đối thủ vừa hạ bạn';
   static const hitDistribution = 'Phân bố phát bắn trúng';
   static const hitHead = 'Đầu';
   static const hitBody = 'Thân';
@@ -298,7 +298,7 @@ abstract final class ProfileStrings {
 
   // Round timeline: kill feed per round
   static const roundsHint = 'Chạm vào một vòng để xem từng pha hạ gục.';
-  static const noKillsInRound = 'Vòng này không có dữ liệu hạ gục.';
+  static const noKillsInRound = 'Chưa có thông tin hạ gục trong vòng này.';
   static const spike = 'Spike';
   static const fallDamage = 'Rơi từ trên cao';
   static const ability = 'Kỹ năng';
@@ -319,10 +319,10 @@ abstract final class ProfileStrings {
   /// "7 ngày qua".
   static String lastDays(int n) => '$n ngày qua';
 
-  /// "Ngày tính theo giờ trên máy (UTC+7)".
+  /// "Ngày tính theo giờ thiết bị (UTC+7)".
   static String dayBoundary(String zone) => 'Ngày tính theo $zone';
 
-  /// The device time zone: "giờ trên máy (UTC+9)", "giờ trên máy
+  /// The device time zone: "giờ thiết bị (UTC+9)", "giờ thiết bị
   /// (UTC−3:30)".
   static String timeZoneLabel(Duration offset) {
     final sign = offset.isNegative ? '−' : '+';
@@ -332,7 +332,7 @@ abstract final class ProfileStrings {
     final utc = m == 0
         ? 'UTC$sign$h'
         : 'UTC$sign$h:${m.toString().padLeft(2, '0')}';
-    return 'giờ trên máy ($utc)';
+    return 'giờ thiết bị ($utc)';
   }
 
   /// "5 ngày có trận".

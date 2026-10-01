@@ -2,9 +2,11 @@
 
 <img src="assets/icon/icon.png" width="96" alt="Icon ValVN" align="right">
 
-Ứng dụng đồng hành Valorant **tiếng Việt** cho Android và iOS, viết bằng Flutter. Tính năng tương
-đương ValBuddy 2.1.2:
+Ứng dụng đồng hành **VALORANT** cho Android và iOS, viết bằng Flutter, dành cho người chơi ở mọi
+quốc gia. Tiếng Việt là ngôn ngữ gốc; ValVN đang được chuyển sang 18 ngôn ngữ của VALORANT. Tính
+năng chính:
 
+- **Trang chủ**: cửa hàng hôm nay, rank, Battle Pass và trận đang diễn ra ngay khi mở app.
 - **Cửa hàng**: cửa hàng hằng ngày, Chợ Đêm, phụ kiện, bundle, chi tiết skin kèm video.
 - **Battle Pass**: tiến độ, cột mốc hằng ngày, nhiệm vụ tuần, danh sách phần thưởng.
 - **Bộ sưu tập**: đổi thẻ, danh hiệu, skin, phụ kiện súng, tổ hợp cảm xúc, preset trang bị.
@@ -12,11 +14,12 @@
 - **Hồ sơ**: rank, lịch sử trận, chi tiết trận, RR theo ngày, tính số trận lên hạng.
 - **Trận hiện tại**: đội hình kèm rank, chọn/khóa đặc vụ, trang bị người chơi.
 - **Xã hội**: bạn bè, trò chuyện, tổ đội và hàng chờ.
+- **Cộng đồng**: bảng tin, tìm đồng đội, xếp hạng và đánh giá skin.
 - Tối đa 10 tài khoản Riot, đổi qua lại nhanh.
 
-Bạn đăng nhập tài khoản Riot **của chính mình** qua trang đăng nhập chính thức của Riot. Token chỉ
-lưu trên máy (secure storage). Mọi thao tác thay đổi tài khoản đều do bạn bấm, và có hộp xác nhận
-khi có thể bị phạt.
+Bạn đăng nhập tài khoản Riot **của chính mình** trên trang đăng nhập chính thức của Riot. Thông tin
+đăng nhập chỉ lưu trên thiết bị của bạn. Mọi thao tác thay đổi tài khoản đều do bạn bấm, và có hộp
+xác nhận khi có thể bị phạt.
 
 ## Build
 

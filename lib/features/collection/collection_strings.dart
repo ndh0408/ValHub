@@ -41,8 +41,8 @@ abstract final class CollectionStrings {
   static String valueRewardCount(int n) =>
       '$n skin phần thưởng không được tính';
   static const cachedLoadout =
-      'Đang ngoại tuyến — trang bị hiển thị là bản đã lưu. Kéo để làm mới trước '
-      'khi thay đổi.';
+      'Đang hiển thị trang bị đã lưu. Kéo để làm mới '
+      'trước khi thay đổi.';
 
   // --------------------------------------------------- S31 / S32 pickers
   static const playerCardTitle = 'Đổi thẻ người chơi';
@@ -52,7 +52,7 @@ abstract final class CollectionStrings {
   static const playerTitleSubtitle =
       'Hiện dưới tên của bạn ở sảnh chờ và trong trận.';
   static String equippedCardLabel(String name) => 'Thẻ đang dùng: $name';
-  static const unknownCard = 'Thẻ không xác định';
+  static const unknownCard = 'Thẻ chưa rõ tên';
   static String cardsCount(String n) => '$n thẻ đã sở hữu';
   static String titlesCount(String n) => '$n danh hiệu đã sở hữu';
   static const lobbyBanner = 'Ảnh ở sảnh chờ';
@@ -118,7 +118,7 @@ abstract final class CollectionStrings {
   static const move = 'Chuyển';
   static const noBuddies = 'Bạn chưa có phụ kiện súng nào.';
   static const buddyUnavailable =
-      'Không tìm thấy bản sao nào của phụ kiện này để gắn.';
+      'Chưa gắn được phụ kiện này. Hãy làm mới hoặc chọn phụ kiện khác.';
   static String buddyFor(String weapon) => 'Cho $weapon';
 
   // ---------------------------------------------------- S37 expressions

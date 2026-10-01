@@ -4,13 +4,16 @@ import 'legal/legal_documents.dart';
 import 'ui/about_screen.dart';
 import 'ui/legal_document_screen.dart';
 import 'ui/server_status_screen.dart';
-import 'ui/session_log_screen.dart';
 import 'ui/settings_screen.dart';
 import 'ui/welcome_screen.dart';
 
 /// Locations of the settings / onboarding feature.
 abstract final class SettingsRoutes {
   static const root = '/settings';
+
+  /// Retired: the session-log viewer no longer exists (the app shows no log
+  /// lines). Old links to it go to [root] instead of an error page; the bug
+  /// report is sent from Cài đặt > Nâng cao.
   static const log = '/settings/log';
   static const about = '/settings/about';
 
@@ -29,10 +32,7 @@ List<RouteBase> get settingsBranchRoutes => [
     path: SettingsRoutes.root,
     builder: (context, state) => const SettingsScreen(),
     routes: [
-      GoRoute(
-        path: 'log',
-        builder: (context, state) => const SessionLogScreen(),
-      ),
+      GoRoute(path: 'log', redirect: (context, state) => SettingsRoutes.root),
       GoRoute(
         path: 'status',
         builder: (context, state) => const ServerStatusScreen(),

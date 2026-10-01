@@ -9,15 +9,15 @@ abstract final class CommunityStrings {
   static const sectionSkins = 'Xếp hạng skin';
 
   // ------------------------------------------------------- general states
-  static const unavailableTitle = 'Cộng đồng chưa sẵn sàng';
+  static const unavailableTitle = 'Chưa kết nối được Cộng đồng';
   static const unavailableBody =
-      'Máy chủ Cộng đồng đang được chuẩn bị. Bạn quay lại sau nhé!';
+      'Chưa kết nối được Cộng đồng ValVN. Hãy thử lại sau ít phút.';
   static const noAccountTitle = 'Đăng nhập để tham gia';
   static const noAccountBody =
       'Thêm tài khoản Riot để đăng bài, tìm đồng đội và bình chọn skin.';
   static const privacyNote =
-      'Riot ID của bạn được xác minh một lần với máy chủ Cộng đồng ValVN. '
-      'Máy chủ không lưu mật khẩu, token hay PUUID.';
+      'ValVN xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng '
+      'không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.';
   static const you = 'Bạn';
   static const unknownPlayer = 'Người chơi';
   static const moreActions = 'Tùy chọn khác';
@@ -27,42 +27,42 @@ abstract final class CommunityStrings {
   static String pageOf(String i, String n) => '$i/$n';
   static String charCount(String n, String max) => '$n/$max';
   static const retry = 'Thử lại';
-  static const loadMoreFailed = 'Không tải thêm được.';
+  static const loadMoreFailed = 'Chưa tải thêm được bài. Hãy thử lại.';
 
   // --------------------------------------------------------------- errors
-  static const errorGeneric = 'Đã xảy ra lỗi. Vui lòng thử lại.';
+  static const errorGeneric = 'Có gì đó trục trặc. Hãy thử lại.';
   static const errorNetwork =
-      'Không kết nối được máy chủ Cộng đồng. Kiểm tra mạng rồi thử lại.';
-  static const errorTimeout =
-      'Máy chủ Cộng đồng phản hồi quá lâu. Vui lòng thử lại.';
+      'Không kết nối được Cộng đồng ValVN. Kiểm tra mạng rồi thử lại.';
+  static const errorTimeout = 'Cộng đồng ValVN phản hồi quá lâu. Hãy thử lại.';
   static const errorServer =
-      'Máy chủ Cộng đồng đang gặp sự cố. Vui lòng thử lại sau ít phút.';
-  static const errorUnauthorized =
-      'Phiên Cộng đồng đã hết hạn. Vui lòng thử lại.';
+      'Cộng đồng ValVN đang gặp sự cố. Hãy thử lại sau ít phút.';
+  static const errorUnauthorized = 'Kết nối Cộng đồng đã hết hạn. Hãy thử lại.';
   static const errorRiotRejected =
       'Riot chưa xác minh được tài khoản của bạn. Hãy đăng nhập lại tài khoản '
       'Riot rồi thử lại.';
   static const riotUnavailableTitle = 'Riot đang gặp sự cố';
   static const errorRiotUnavailable =
-      'Riot đang gặp sự cố. Thử lại sau ít phút.';
+      'Riot đang gặp sự cố. Hãy thử lại sau ít phút.';
   static String errorRiotUnavailableIn(String duration) =>
-      'Riot đang gặp sự cố, thử lại sau $duration.';
+      'Riot đang gặp sự cố. Hãy thử lại sau $duration.';
   static const errorStorageFull =
-      'Máy chủ Cộng đồng đã đầy dung lượng ảnh. Bạn vẫn đăng bài được nhưng '
-      'chưa thể kèm ảnh; hãy thử lại ảnh sau.';
-  static const errorForbidden = 'Bạn không có quyền thực hiện thao tác này.';
+      'Kho ảnh của Cộng đồng đã đầy. Bạn vẫn đăng bài được, nhưng chưa thể kèm '
+      'ảnh. Hãy thử lại sau.';
+  static const errorForbidden =
+      'Bạn chưa thể thực hiện việc này. Hãy xem Tiêu chuẩn cộng đồng hoặc liên hệ ValVN.';
   static const errorNotFound = 'Nội dung này không còn tồn tại.';
-  static const errorInvalid = 'Nội dung chưa hợp lệ. Kiểm tra lại rồi thử lại.';
+  static const errorInvalid =
+      'Nội dung chưa được chấp nhận. Hãy kiểm tra lại rồi thử lại.';
   static const errorRateLimited =
-      'Bạn thao tác hơi nhanh. Thử lại sau ít phút.';
+      'Cộng đồng đang nhận quá nhiều yêu cầu. Hãy thử lại sau ít phút.';
   static String errorRateLimitedIn(String duration) =>
-      'Bạn thao tác hơi nhanh. Thử lại sau $duration.';
+      'Cộng đồng đang nhận quá nhiều yêu cầu. Hãy thử lại sau $duration.';
   static const errorImageTooLarge =
       'Ảnh quá lớn (tối đa 2 MB). Hãy chọn ảnh khác.';
-  static const errorImageType = 'Chỉ hỗ trợ ảnh JPEG, PNG hoặc WebP.';
-  static const errorPickImage = 'Không mở được thư viện ảnh.';
-  static const errorTitle = 'Có lỗi xảy ra';
-  static const rateLimitedTitle = 'Chậm lại một chút';
+  static const errorImageType = 'Hãy chọn ảnh JPEG, PNG hoặc WebP.';
+  static const errorPickImage = 'Chưa mở được thư viện ảnh. Hãy thử lại.';
+  static const errorTitle = 'Chưa hoàn tất';
+  static const rateLimitedTitle = 'Hãy đợi một chút';
 
   // ----------------------------------------------------------------- feed
   static const feedEmptyTitle = 'Bảng tin còn trống';
@@ -177,7 +177,7 @@ abstract final class CommunityStrings {
   static const mode = 'Chế độ';
   static const slots = 'Số người cần';
   static const note = 'Ghi chú';
-  static const noteHint = 'VD: cần 1 Controller, mic đầy đủ, vui vẻ là chính';
+  static const noteHint = 'VD: cần 1 người Kiểm soát, có mic, vui vẻ là chính';
   static const partyCode = 'Mã tổ đội';
   static const partyCodeHint = 'VD: A1B2C3';
   static const generateCode = 'Tạo mã tổ đội';
@@ -208,13 +208,13 @@ abstract final class CommunityStrings {
 
   /// Community regions (`region` of the API).
   static String regionLabel(String region) => switch (region) {
-    'ap' => 'Châu Á – Thái Bình Dương',
+    'ap' => 'Châu Á - Thái Bình Dương',
     'na' => 'Bắc Mỹ',
     'eu' => 'Châu Âu',
     'kr' => 'Hàn Quốc',
     'latam' => 'Mỹ Latinh',
     'br' => 'Brazil',
-    _ => region.toUpperCase(),
+    _ => 'Chưa rõ máy chủ',
   };
 
   // ---------------------------------------------------------- skin votes
@@ -281,7 +281,8 @@ abstract final class CommunityStrings {
   static const rankFrom = 'Từ';
   static const rankTo = 'Đến';
   static String rankBetween(String a, String b) => '$a – $b';
-  static const rankRangeInvalid = 'Rank thấp nhất phải nhỏ hơn rank cao nhất.';
+  static const rankRangeInvalid =
+      'Hãy chọn rank thấp nhất không cao hơn rank cao nhất.';
   static const roles = 'Vai trò cần';
   static const roleFlex = 'Linh hoạt';
   static const mic = 'Cần mic';
@@ -350,7 +351,7 @@ abstract final class CommunityStrings {
 
   // ------------------------------------------------------------ previews
   static const lfgPreviewTitle = 'Tìm đồng đội hợp rank';
-  static const trendingTitle = 'Skin hot trong tuần';
+  static const trendingTitle = 'Skin được yêu thích trong tuần';
 
   // --------------------------------------------------------- scopes (v3)
   static const scopeCountry = 'Nước bạn';
@@ -373,7 +374,7 @@ abstract final class CommunityStrings {
   static const apply = 'Áp dụng';
   static const feedEmptyScopeTitle = 'Chưa có bài trong phạm vi này';
   static const feedEmptyScopeBody =
-      'Hãy là người đầu tiên đăng bài, hoặc mở rộng sang khu vực / quốc tế để xem thêm.';
+      'Đăng bài đầu tiên hoặc chọn Khu vực hay Quốc tế để xem thêm.';
   static const lfgSameShardNote = 'Chỉ người cùng máy chủ mới vào tổ đội được.';
   static String lfgOtherShardNote(String region) =>
       'Bạn đang xem máy chủ $region — chỉ người cùng máy chủ với tài khoản của bạn mới vào tổ đội được.';
@@ -509,7 +510,7 @@ abstract final class CommunityStrings {
   static const translateUnavailable = 'Thiết bị này chưa hỗ trợ dịch trên máy.';
   static const translateDownloadTitle = 'Tải gói dịch trên máy?';
   static String translateDownloadBody(String from, String to, String size) =>
-      'Để dịch từ $from sang $to, ValVN cần tải gói ngôn ngữ (khoảng $size). '
+      'Để dịch từ $from sang $to, ValVN cần tải gói ngôn ngữ từ Google (khoảng $size). '
       'Chỉ tải một lần; nội dung được dịch hoàn toàn trên máy của bạn và '
       'không gửi tới máy chủ nào.';
   static String modelSize(int mb) => '$mb MB';
@@ -526,12 +527,12 @@ abstract final class CommunityStrings {
   static const dataTitle = 'Dữ liệu Cộng đồng của bạn';
   static String dataFooter(String riotId) =>
       'Áp dụng cho tài khoản đang dùng: $riotId. Tệp tải về không chứa mật '
-      'khẩu hay token.';
+      'khẩu hay dữ liệu đăng nhập Riot.';
 
   static const exportTitle = 'Tải dữ liệu của tôi';
   static const exportSubtitle =
-      'Bản sao bài viết, bình luận, đánh giá, lượt thích, bình chọn và tin '
-      'tìm đồng đội (tệp .json).';
+      'Bản sao mọi thứ bạn đã đăng trong Cộng đồng: bài viết, bình luận, đánh '
+      'giá, lượt thích, bình chọn và tin tìm đồng đội.';
   static const exportSubject = 'Dữ liệu Cộng đồng ValVN';
   static const exportPreparing = 'Đang chuẩn bị…';
 
@@ -554,8 +555,8 @@ abstract final class CommunityStrings {
       'Ngừng dùng Cộng đồng bằng tài khoản này. Bài đã đăng vẫn được giữ.';
   static const withdrawConfirmTitle = 'Rút lại đồng ý?';
   static String withdrawConfirmBody(String riotId) =>
-      'Ứng dụng sẽ ngừng dùng Cộng đồng bằng $riotId: phiên Cộng đồng trên '
-      'thiết bị bị xóa và bạn quay lại chế độ xem ẩn danh.\n\n'
+      'ValVN sẽ ngừng dùng Cộng đồng bằng $riotId: kết nối Cộng đồng trên '
+      'thiết bị này bị xóa và bạn quay lại chế độ xem ẩn danh.\n\n'
       'Bài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng '
       'vẫn còn trên '
       'Cộng đồng và vẫn hiện Riot ID của bạn cho đến khi bạn xóa chúng từng '
@@ -569,19 +570,20 @@ abstract final class CommunityStrings {
   static const consentTitle = 'Tham gia Cộng đồng ValVN';
   static String consentAccount(String riotId) => 'Tài khoản: $riotId';
   static const consentVerify =
-      'Để xác minh Riot ID, ValVN gửi mã truy cập Riot của bạn một lần tới máy '
-      'chủ cộng đồng. Máy chủ dùng ngay rồi bỏ, không lưu.';
+      'Khi cần xác minh Riot ID, ValVN gửi quyền truy cập Riot của bạn cho '
+      'Cộng đồng ValVN. Cộng đồng dùng xong là bỏ ngay, không lưu.';
   static const consentPublic =
       'Người khác sẽ thấy Riot ID, thẻ người chơi, rank và quốc gia của bạn.';
   static const consentLocal =
-      'Mật khẩu, cookie và PUUID của bạn không bao giờ rời khỏi máy.';
+      'Mật khẩu và dữ liệu đăng nhập khác của bạn luôn ở lại trên thiết bị '
+      'này. Bạn có thể rút lại đồng ý trong Cài đặt.';
   static const consentPrivacy = 'Chính sách quyền riêng tư';
   static const consentGuidelines = 'Tiêu chuẩn cộng đồng';
   static const consentAgree = 'Đồng ý và tiếp tục';
   static const consentLater = 'Để sau';
   static const consentGateAction = 'Xem lại và tham gia';
   static const anonymousBanner =
-      'Bạn đang xem ẩn danh — tham gia để đăng bài, vote và tìm đồng đội.';
+      'Bạn đang xem ẩn danh — tham gia để đăng bài, bình chọn và tìm đồng đội.';
   static const lfgGateTitle = 'Tìm đồng đội dành cho thành viên';
   static const lfgGateBody =
       'Tham gia (xác minh Riot ID một lần) để xem tin của người chơi cùng máy '

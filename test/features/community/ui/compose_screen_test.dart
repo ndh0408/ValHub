@@ -239,7 +239,7 @@ void main() {
       await unmount(tester);
     });
 
-    testWidgets('the per-user quota message of the server is shown as-is', (
+    testWidgets('legacy validation keeps the draft and hides server text', (
       tester,
     ) async {
       const quota =
@@ -249,7 +249,8 @@ void main() {
       }, status: 400);
       await publishWithPhoto(tester);
 
-      expect(find.text(quota), findsOneWidget);
+      expect(find.text(quota), findsNothing);
+      expect(find.text(CommunityStrings.errorInvalid), findsOneWidget);
       expect(find.text('Có ảnh nè'), findsOneWidget);
       await unmount(tester);
     });
