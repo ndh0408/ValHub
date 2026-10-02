@@ -1,8 +1,11 @@
 # Hoàn thiện ValHub — nhật ký triển khai Codex
 
 Checkpoint 03/10: [Review Gemini và tích hợp ValHub](VALHUB_INTEGRATION_2026-10-03.md). Đã sửa lỗi
-Gemini và gộp locale nền/bộ chọn/thông báo; build kế tiếp **4009**. Các số
-02/10 bên dưới là checkpoint lịch sử; kiểm chứng code gộp đang thực hiện.
+Gemini và gộp locale nền/bộ chọn/thông báo. Windows/Mac **4.236 tests**,
+analyzer 0; backend 867, native 6, public-flow 10 cases đạt. APK/iOS không ký
+**4009** đã build; bốn tài khoản, active, wishlist và settings giữ sau nâng APK.
+Cutover còn **514 refs / 52 structural members**, chưa nghiệm thu toàn app.
+Các số 02/10 bên dưới là checkpoint lịch sử.
 
 Yêu cầu của chủ dự án: hoàn thiện toàn bộ yêu cầu để Claude kiểm tra sau khi hết giới hạn. Nhánh tích hợp: `ndh0408/codex-complete`; worktree `C:/Users/Admin/orca/workspaces/ValVN/codex-complete`. Đây là tiến độ đang triển khai, **chưa phải nghiệm thu toàn bộ**.
 

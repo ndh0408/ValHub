@@ -60,7 +60,8 @@ disclaimer (VanHub vs ValHub). It was regenerated with the existing exporter;
 both full suites above were then rerun and passed. The incoming 38 Flutter
 failures and disabled native smoke are resolved within this executed scope.
 Mac SSH was initially unavailable; the existing QA VM was started and SSH
-became reachable. No final merged Mac result is asserted here yet.
+became reachable. Final combined results are in the
+[03/10 integration checkpoint](../VALHUB_INTEGRATION_2026-10-03.md).
 
 ## Retained improvements
 
@@ -90,5 +91,5 @@ account or claim restoration/PC propagation without evidence.
 **Request changes for the incoming Gemini snapshot.** The useful implementation
 is retained; the proven Flutter/native regressions are repaired and the checks
 above pass. Unsupported acceptance claims have been corrected. Green unit
-tests alone are not whole-product acceptance. Integration with the separate
-background-locale phase still requires verification of the combined code.
+tests alone are not whole-product acceptance. The separate background-locale
+phase was subsequently merged and verified; see the 03/10 checkpoint above.

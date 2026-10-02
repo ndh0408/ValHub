@@ -1,6 +1,7 @@
 # Build & phát hành ValHub
 
-Trạng thái kiểm chứng mới nhất: [Locale nền / CI local 02/10](I18N_BACKGROUND_2026-10-02.md),
+Trạng thái kiểm chứng mới nhất: [Tích hợp ValHub / CI local 03/10](VALHUB_INTEGRATION_2026-10-03.md).
+Checkpoint trước: [Locale nền / CI local 02/10](I18N_BACKGROUND_2026-10-02.md),
 tiếp sau [Runtime locale](I18N_RUNTIME_2026-10-02.md) và
 [Final gap audit](FINAL_GAP_AUDIT_2026-10-02.md).
 APK/IPA mang tên ValVN trong pipeline để giữ tương thích artifact; thương hiệu

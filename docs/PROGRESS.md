@@ -1,8 +1,11 @@
 # Tiến độ ValHub (điểm dừng để làm tiếp)
 
 Checkpoint 03/10: [Review Gemini và tích hợp ValHub](VALHUB_INTEGRATION_2026-10-03.md). Đã sửa lỗi
-Gemini và gộp locale nền/bộ chọn/thông báo; build kế tiếp **4009**. Các số
-02/10 bên dưới là checkpoint lịch sử; kiểm chứng code gộp đang thực hiện.
+Gemini và gộp locale nền/bộ chọn/thông báo. Windows/Mac **4.236 tests**,
+analyzer 0; backend 867, native 6, public-flow 10 cases đạt. APK/iOS không ký
+**4009** đã build; bốn tài khoản, active, wishlist và settings giữ sau nâng APK.
+Cutover còn **514 refs / 52 structural members**, chưa nghiệm thu toàn app.
+Các số 02/10 bên dưới là checkpoint lịch sử.
 
 Checkpoint mới 02/10: [Locale nền, bộ chọn và CI local](I18N_BACKGROUND_2026-10-02.md).
 Windows vi/device-en và Mac toàn bộ đạt **4.232 tests**, analyzer 0 issues;

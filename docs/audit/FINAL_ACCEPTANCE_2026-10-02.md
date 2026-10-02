@@ -33,8 +33,10 @@ Mac build access is available; unsigned build evidence is not store acceptance.
 The incoming Gemini snapshot failed 38 Flutter cases and disabled native smoke.
 The repaired snapshot passed both full suites (4,205 each), analyzer and five
 native tests. These reproduced regressions are resolved in that snapshot;
-the subsequent combined code still needs its own verification. Untested
-workflows are not certified by this result.
+the combined build 4009 subsequently passed 4,236 tests on Windows (both defines)
+and Mac, analyzer, six Android native cases, ten public flows and APK/unsigned
+iOS builds. See [combined checkpoint](../VALHUB_INTEGRATION_2026-10-03.md).
+Untested workflows are not certified by this result.
 
 ## Actual operating instructions
 
