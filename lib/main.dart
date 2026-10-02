@@ -68,7 +68,10 @@ Future<void> main() async {
         ReleaseErrorView(fallbackResources: fallbackResources);
   }
 
-  final notifications = NotificationService(prefs: prefs);
+  final notifications = NotificationService(
+    prefs: prefs,
+    l10n: lookupAppLocalizations(boot.locale.flutter),
+  );
   await notifications.init();
   await runAccountStartupMaintenance(
     prefs: prefs,

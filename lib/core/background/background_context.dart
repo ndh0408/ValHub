@@ -11,7 +11,10 @@ import '../auth/session_manager.dart';
 import '../config/client_version.dart';
 import '../config/remote_config.dart';
 import '../content/content_repository.dart';
-import '../l10n/locale.dart';
+import '../l10n/background_locale.dart';
+import '../l10n/formats.dart';
+import '../l10n/intl_init.dart';
+import '../l10n/l10n.dart' show AppLocalizations;
 import '../logging/session_log.dart';
 import '../network/auth_traffic.dart';
 import '../network/dio_factory.dart';
@@ -48,6 +51,7 @@ class BackgroundContext {
     required this.content,
     required this.notifications,
     required this.wishlist,
+    required this.locale,
   });
 
   static Future<BackgroundContext>? _instance;
@@ -58,9 +62,10 @@ class BackgroundContext {
   static Future<BackgroundContext> _create() async {
     WidgetsFlutterBinding.ensureInitialized();
     DartPluginRegistrant.ensureInitialized();
-    await initAppLocale();
     await initTimeZone();
     final prefs = await Prefs.create();
+    final locale = BackgroundLocale.fromPrefs(prefs);
+    await initIntl(locale.effective.formatTag);
     final remote = await RemoteConfigLoader(prefs).load();
     final secure = FlutterSecureStore();
     final log = SessionLog.persistent();
@@ -93,7 +98,7 @@ class BackgroundContext {
       lock: PrefsAccountLock(),
       log: log,
     );
-    final notifications = NotificationService(prefs: prefs);
+    final notifications = NotificationService(prefs: prefs, l10n: locale.l10n);
     await notifications.init();
     // Use validated last-known-good headers when the version endpoint is down.
     if (versions.current.fetchedAt == null ||
@@ -116,6 +121,7 @@ class BackgroundContext {
       content: ContentRepository(versions: versions, prefs: prefs),
       notifications: notifications,
       wishlist: WishlistRepository(prefs),
+      locale: locale,
     );
   }
 
@@ -130,6 +136,17 @@ class BackgroundContext {
   final ContentRepository content;
   final NotificationService notifications;
   final WishlistRepository wishlist;
+  BackgroundLocale locale;
+  AppLocalizations get l10n => locale.l10n;
+  AppFormats get formats => locale.formats;
+
+  /// A cached background context must pick up choices made since its last job.
+  Future<void> reloadLocale() async {
+    await prefs.reload();
+    locale = BackgroundLocale.fromPrefs(prefs);
+    await initIntl(locale.effective.formatTag);
+    await notifications.refreshChannels(l10n);
+  }
 
   /// Current app settings (read fresh from disk).
   AppSettings get settings => readAppSettings(prefs);

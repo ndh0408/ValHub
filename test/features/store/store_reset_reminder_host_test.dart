@@ -10,6 +10,7 @@ import 'package:valvn/core/accounts/account.dart';
 import 'package:valvn/core/accounts/account_providers.dart';
 import 'package:valvn/core/content/content_repository.dart';
 import 'package:valvn/core/domain/economy/economy.dart';
+import 'package:valvn/l10n/gen/app_localizations_vi.dart';
 import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/core/riot/pvp_api.dart';
 import 'package:valvn/core/settings/app_settings.dart';
@@ -85,11 +86,15 @@ class _Env {
   ];
 }
 
-Future<ProviderContainer> _pumpHost(WidgetTester tester, _Env env) async {
+Future<ProviderContainer> _pumpHost(
+  WidgetTester tester,
+  _Env env, {
+  List<Override> overrides = const [],
+}) async {
   usePhoneViewport(tester);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: env.overrides,
+      overrides: [...env.overrides, ...overrides],
       retry: (_, _) => null,
       child: const MaterialApp(
         localizationsDelegates: appLocalizationsDelegates,
@@ -105,6 +110,34 @@ Future<ProviderContainer> _pumpHost(WidgetTester tester, _Env env) async {
 }
 
 void main() {
+  testWidgets(
+    'locale resources reschedule reminders using the same account/day ids',
+    (tester) async {
+      final env = await _Env.create();
+      AppLocalizations messages = lookupAppLocalizations(const Locale('vi'));
+      final container = await _pumpHost(
+        tester,
+        env,
+        overrides: [l10nProvider.overrideWith((ref) => messages)],
+      );
+      expect(env.notifications.calls, hasLength(5));
+      final originalIds = env.notifications.calls.map((c) => c.id).toList();
+      messages = _ChangedReminderMessages();
+      container.invalidate(l10nProvider);
+      await settle(tester);
+      expect(env.notifications.calls, hasLength(10));
+      final replacements = env.notifications.calls.skip(5).toList();
+      expect(replacements.map((c) => c.id).toList(), originalIds);
+      expect(
+        replacements.every(
+          (c) => c.title == 'QA reset' && c.body == 'QA reminder',
+        ),
+        isTrue,
+      );
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+    },
+  );
   testWidgets('scheduled at the reset time when the setting is on', (
     tester,
   ) async {
@@ -277,4 +310,12 @@ void main() {
       await tester.pump(const Duration(minutes: 6));
     },
   );
+}
+
+class _ChangedReminderMessages extends AppLocalizationsVi {
+  _ChangedReminderMessages() : super('qa');
+  @override
+  String get storeResetNotificationTitle => 'QA reset';
+  @override
+  String get notificationStoreResetBody => 'QA reminder';
 }

@@ -33,11 +33,10 @@ flutter build apk --release
 Chi tiết (APK/IPA từ GitHub Actions, ký release): [`docs/BUILD.md`](docs/BUILD.md).
 Kiến trúc: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Tiến độ: [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
-Kiểm chứng mới nhất: [Runtime locale / CI local 02/10](docs/I18N_RUNTIME_2026-10-02.md).
-Windows: 4.201 Flutter tests đạt ở cả hai lượt; Mac: 25 test liên quan và build
-iOS 4006 không ký đạt; analyzer 0 issues ở cả hai máy. Bộ Mac đầy đủ 4.197 test
-và backend 867 test thuộc [checkpoint trước](docs/FINAL_GAP_AUDIT_2026-10-02.md).
-APK review 4006 đạt 10 public-flow cases và đã cài trên emulator có cửa sổ.
+Kiểm chứng mới nhất: [Locale nền / bộ chọn / CI local 02/10](docs/I18N_BACKGROUND_2026-10-02.md).
+Windows hai lượt và Mac toàn bộ đều đạt 4.232 Flutter tests; analyzer 0 issues
+ở cả hai máy. Backend 867 tests, native Android 6 và public-flow 10 cases đạt.
+APK review và iOS không ký 4007 đã build; APK đã cài trên emulator có cửa sổ.
 Quốc tế hóa và các gate release còn thiếu; chưa tuyên bố production-ready.
 GitHub Actions hiện bị khóa billing.
 

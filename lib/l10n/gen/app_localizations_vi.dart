@@ -10,6 +10,9 @@ class AppLocalizationsVi extends AppLocalizations {
   AppLocalizationsVi([String locale = 'vi']) : super(locale);
 
   @override
+  String get commonListSeparator => ', ';
+
+  @override
   String get commonPriceSourceLabel => 'Xem nguồn bảng giá';
 
   @override
@@ -949,6 +952,10 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get authStateMismatch =>
       'Lần đăng nhập này không hợp lệ. Hãy đăng nhập lại từ đầu.';
+
+  @override
+  String get notificationSessionExpiredBody =>
+      'Đăng nhập lại để tiếp tục nhận thông báo wishlist.';
 
   @override
   String get notificationBackgroundTimingHint =>
@@ -4319,6 +4326,16 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get settingsUiLanguageTitle => 'Ngôn ngữ giao diện';
+
+  @override
+  String get settingsLanguageFollowDevice => 'Theo thiết bị';
+
+  @override
+  String get settingsLanguageSaveFailed =>
+      'Chưa lưu được ngôn ngữ. Vui lòng thử lại.';
+
+  @override
   String get settingsGeoCountry => 'Quốc gia';
 
   @override
@@ -5742,6 +5759,61 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String storeWishlistCount(int n) {
     return '$n trong wishlist';
+  }
+
+  @override
+  String wishlistNotifDailyBody(
+    String skin,
+    String account,
+    String hasTime,
+    String left,
+  ) {
+    String _temp0 = intl.Intl.selectLogic(hasTime, {
+      'yes': '$skin đang có trong cửa hàng của $account — còn $left.',
+      'other': '$skin đang có trong cửa hàng của $account.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String wishlistNotifNightMarketBody(
+    String skin,
+    String mode,
+    String percent,
+    String price,
+    String account,
+  ) {
+    String _temp0 = intl.Intl.selectLogic(mode, {
+      'discount': '$skin giảm $percent% còn $price ($account).',
+      'price': '$skin chỉ còn $price ($account).',
+      'other': '$skin đang có trong Chợ Đêm của $account.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String wishlistNotifBundleBody(
+    String skin,
+    String hasName,
+    String bundle,
+    String account,
+  ) {
+    String _temp0 = intl.Intl.selectLogic(hasName, {
+      'yes': '$skin nằm trong bundle $bundle ($account).',
+      'other': '$skin nằm trong một bundle đang bán ($account).',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String wishlistNotifSummaryBody(String names, int more, String account) {
+    String _temp0 = intl.Intl.pluralLogic(
+      more,
+      locale: localeName,
+      other: '$names và $more skin khác đang có trong cửa hàng của $account.',
+      zero: '$names đang có trong cửa hàng của $account.',
+    );
+    return '$_temp0';
   }
 
   @override

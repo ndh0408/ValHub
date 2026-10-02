@@ -9,7 +9,6 @@ import '../../../../core/riot/pvp_api.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/json.dart';
 import '../../community_routes.dart';
-import '../../community_strings.dart';
 import '../../data/community_exception.dart';
 import '../../data/lfg_sync.dart';
 import '../../providers/community_providers.dart';
@@ -137,7 +136,9 @@ class _LfgPosterSyncState extends ConsumerState<LfgPosterSync> {
     } on Object {
       // Fall back to a generic name.
     }
+    if (!mounted) return;
     final service = ref.read(notificationServiceProvider);
+    final l10n = service.l10n;
     for (final id in members) {
       final entry = names
           .where((n) => lowerUuid(n['Subject']) == id)
@@ -145,13 +146,13 @@ class _LfgPosterSyncState extends ConsumerState<LfgPosterSync> {
       final game = asNonEmptyString(entry?['GameName']);
       final tag = asNonEmptyString(entry?['TagLine']);
       final name = game == null
-          ? CommunityStrings.unknownPlayer
-          : (tag == null ? game : CommunityStrings.riotId(game, tag));
+          ? l10n.communityUnknownPlayer
+          : (tag == null ? game : l10n.communityRiotId(game, tag));
       try {
         await service.showNow(
           id: NotificationIds.forKey('lfg-join:$puuid:$id'),
-          title: CommunityStrings.memberJoined(name),
-          body: CommunityStrings.memberJoinedBody,
+          title: l10n.communityMemberJoined(name),
+          body: l10n.communityMemberJoinedBody,
           channel: NotificationChannel.account,
           payload:
               '${CommunityRoutes.section(CommunitySection.lfg)}'

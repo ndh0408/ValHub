@@ -6,13 +6,57 @@ import 'package:mocktail/mocktail.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:valvn/core/accounts/account.dart';
+import 'package:valvn/l10n/gen/app_localizations_vi.dart';
 import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/core/settings/app_settings.dart';
 import 'package:valvn/core/storage/prefs.dart';
 
 import '../../helpers/test_prefs.dart';
 
+class RecordingAndroid extends AndroidFlutterLocalNotificationsPlugin {
+  final channels = <String, AndroidNotificationChannel>{};
+  int deletions = 0;
+  int permissionPrompts = 0;
+  bool failNext = false;
+  @override
+  Future<void> createNotificationChannel(
+    AndroidNotificationChannel channel,
+  ) async {
+    if (failNext) {
+      failNext = false;
+      throw StateError('simulated channel update failure');
+    }
+    channels[channel.id] = channel;
+  }
+
+  @override
+  Future<void> deleteNotificationChannel({required String channelId}) async =>
+      deletions++;
+  @override
+  Future<bool?> requestNotificationsPermission() async {
+    permissionPrompts++;
+    return true;
+  }
+}
+
+class ProbeNotificationMessages extends AppLocalizationsVi {
+  ProbeNotificationMessages(super.locale);
+  @override
+  String get notificationChannelStoreResetName => 'QA reset';
+  @override
+  String get notificationChannelStoreResetDescription => 'QA reminder';
+  @override
+  String get notificationPrivateAccount => 'QA private account';
+  @override
+  String get notificationLfgJoinedTitle => 'QA party join';
+}
+
 class RecordingPlugin extends Mock implements FlutterLocalNotificationsPlugin {
+  final android = RecordingAndroid();
+  @override
+  T? resolvePlatformSpecificImplementation<
+    T extends FlutterLocalNotificationsPlatform
+  >() => T == AndroidFlutterLocalNotificationsPlugin ? android as T : null;
   DidReceiveNotificationResponseCallback? onTap;
   NotificationDetails? details;
   String? title;
@@ -100,6 +144,49 @@ void main() {
     service = NotificationService(plugin: plugin, prefs: prefs);
   });
   tearDown(() => service.dispose());
+
+  test(
+    'channel refresh updates metadata with stable ids and no permission/delete',
+    () async {
+      await service.init();
+      expect(
+        plugin.android.channels.keys.toSet(),
+        NotificationChannel.values.map((c) => c.id).toSet(),
+      );
+      await service.refreshChannels(ProbeNotificationMessages('qa'));
+      final channel =
+          plugin.android.channels[NotificationChannel.storeReset.id]!;
+      expect(channel.name, 'QA reset');
+      expect(channel.description, 'QA reminder');
+      expect(plugin.android.deletions, 0);
+      expect(plugin.android.permissionPrompts, 0);
+      await service.showNow(
+        id: 123,
+        title: 'Tên#日本語',
+        body: 'Tên#日本語',
+        channel: NotificationChannel.storeReset,
+        accountPuuid: account.puuid,
+      );
+      expect(plugin.title, 'QA private account');
+      expect(plugin.details!.android!.channelName, 'QA reset');
+    },
+  );
+
+  test('channel refresh recovers after a native failure', () async {
+    await service.init();
+    plugin.android.failNext = true;
+    await expectLater(
+      service.refreshChannels(ProbeNotificationMessages('qa')),
+      throwsStateError,
+    );
+    await service.refreshChannels(ProbeNotificationMessages('qa'));
+    expect(
+      plugin.android.channels[NotificationChannel.storeReset.id]!.name,
+      'QA reset',
+    );
+    expect(plugin.initializations, 1);
+    expect(plugin.android.deletions, 0);
+  });
 
   Future<void> schedule(int id, {String body = 'body'}) => service.scheduleAt(
     id: id,

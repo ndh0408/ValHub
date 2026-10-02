@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../core/accounts/account.dart';
 import '../../core/accounts/account_providers.dart';
 import '../../core/domain/economy/economy.dart';
+import '../../core/l10n/l10n.dart';
 import '../../core/notifications/notification_service.dart';
 import '../../core/settings/app_settings.dart';
 import '../../core/util/clock.dart';
@@ -39,13 +40,15 @@ class _StoreResetReminderHostState
   /// Last storefront a reminder was scheduled for, per account (one per
   /// fetch, so rebuilds do not reschedule).
   final Map<String, Storefront> _scheduled = {};
+  AppLocalizations? _scheduledLocale;
 
   void _onStorefront(Account account, Storefront? store) {
     final puuid = account.puuid;
     if (store == null || identical(_scheduled[puuid], store)) return;
     _scheduled[puuid] = store;
+    final l10n = _scheduledLocale!;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
+      if (!mounted || !identical(_scheduledLocale, l10n)) return;
       if (!ref.read(appSettingsProvider).storeResetNotifications ||
           ref.read(accountProvider(puuid)) == null) {
         return;
@@ -56,6 +59,7 @@ class _StoreResetReminderHostState
           account: account,
           store: store,
           now: ref.read(clockProvider).now(),
+          l10n: l10n,
         ),
       );
     });
@@ -63,6 +67,11 @@ class _StoreResetReminderHostState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = ref.watch(l10nProvider);
+    if (!identical(_scheduledLocale, l10n)) {
+      _scheduled.clear();
+      _scheduledLocale = l10n;
+    }
     final on = ref.watch(
       appSettingsProvider.select((s) => s.storeResetNotifications),
     );

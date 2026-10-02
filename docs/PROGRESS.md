@@ -1,6 +1,16 @@
 # Tiến độ VanHub (điểm dừng để làm tiếp)
 
-Checkpoint mới 02/10: [Runtime locale và CI local](I18N_RUNTIME_2026-10-02.md).
+Checkpoint mới 02/10: [Locale nền, bộ chọn và CI local](I18N_BACKGROUND_2026-10-02.md).
+Windows vi/device-en và Mac toàn bộ đạt **4.232 tests**, analyzer 0 issues;
+backend 867, native Android 6 và public-flow 10 cases đạt. APK/iOS không ký
+**4007** đã build. Background locale, thông báo/kênh và reminder dùng generated
+resources; UI picker chỉ mở shipped locales. Global còn **514 references /
+52 structural members / 762 literal hits**, chỉ vi ships. Chủ dự án đã cho phép
+test tài khoản thật; sau manual login, MCP/cache/log xác nhận metadata, ví và
+loadout thật. Wishlist/restart/remove và đổi ba tài khoản đã trả trạng thái cũ;
+thẻ tạm giữ sau restart nhưng trả thẻ cũ/đối chiếu PC còn chưa xác nhận.
+
+Checkpoint trước: [Runtime locale và CI local](I18N_RUNTIME_2026-10-02.md).
 Root đã nối locale/format provider và ghi snapshot theo thứ tự, giữ riêng tên
 vật phẩm tiếng Anh. Windows **4.201 tests** đạt ở cả hai lượt; Mac **25 test liên
 quan**, analyzer và build iOS **4006** không ký đạt. APK **4006** đạt 10 public

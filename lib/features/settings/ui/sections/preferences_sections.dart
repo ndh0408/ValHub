@@ -13,6 +13,7 @@ import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/ui/sub_page.dart';
 import '../../../../core/util/format.dart';
 import '../widgets/settings_widgets.dart';
+import '../widgets/language_picker.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 import 'package:valvn/core/l10n/account_labels.dart';
@@ -243,6 +244,12 @@ class SettingsAppearanceSection extends ConsumerWidget {
           title: Text(context.l10n.settingsThemeLabel),
           trailing: SettingsValue(themeModeLabel(theme, context.l10n)),
           onTap: () => unawaited(_pickTheme(context, ref)),
+        ),
+        ListTile(
+          leading: const SettingsIcon(Icons.language),
+          title: Text(context.l10n.settingsUiLanguageTitle),
+          trailing: SettingsValue(uiLanguageLabel(ref, context.l10n)),
+          onTap: () => unawaited(pickUiLanguage(context, ref)),
         ),
         ListTile(
           leading: const SettingsIcon(Icons.translate_outlined),

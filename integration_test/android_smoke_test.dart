@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +9,7 @@ import 'package:valvn/core/geo/country_picker.dart';
 import 'package:valvn/core/geo/country_preference.dart';
 import 'package:valvn/core/l10n/l10n.dart';
 import 'package:valvn/core/l10n/locale.dart';
+import 'package:valvn/l10n/gen/app_localizations_vi.dart';
 import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/storage/secure_store.dart';
@@ -21,6 +23,15 @@ import 'package:valvn/features/settings/legal/legal_info.dart';
 // Run only on an isolated emulator. Uses real Android preferences, Keystore,
 // notification scheduling and bundled CLDR assets. No Riot login or tokens;
 // a passing smoke test is not evidence of live Riot/Community E2E behavior.
+class _ProbeChannelMessages extends AppLocalizationsVi {
+  _ProbeChannelMessages() : super('qa');
+  @override
+  String get notificationChannelStoreResetName => 'VanHub channel QA';
+  @override
+  String get notificationChannelStoreResetDescription =>
+      'Synthetic channel metadata';
+}
+
 Future<void> waitForNativeCondition(
   WidgetTester tester,
   bool Function() completed,
@@ -220,6 +231,35 @@ void main() {
     await secure.delete(first);
     expect(await secure.containsKey(first), isFalse);
     expect(await secure.read(second), 'synthetic-b');
+  });
+
+  testWidgets('native channel rename retains ids and existing importance', (
+    tester,
+  ) async {
+    final plugin = FlutterLocalNotificationsPlugin();
+    final service = NotificationService(plugin: plugin);
+    addTearDown(service.dispose);
+    await service.init();
+    final android = plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()!;
+    final before = (await android.getNotificationChannels())!;
+    final original = before.singleWhere(
+      (c) => c.id == NotificationChannel.storeReset.id,
+    );
+    addTearDown(
+      () => service.refreshChannels(lookupAppLocalizations(appLocale)),
+    );
+    await service.refreshChannels(_ProbeChannelMessages());
+    final after = (await android.getNotificationChannels())!;
+    final renamed = after.singleWhere((c) => c.id == original.id);
+    expect(renamed.name, 'VanHub channel QA');
+    expect(renamed.description, 'Synthetic channel metadata');
+    expect(renamed.importance, original.importance);
+    expect(renamed.playSound, original.playSound);
+    expect(renamed.enableVibration, original.enableVibration);
+    expect(after.map((c) => c.id).toSet(), before.map((c) => c.id).toSet());
   });
 
   testWidgets('native schedules enforce 60 slots and allow replacement', (

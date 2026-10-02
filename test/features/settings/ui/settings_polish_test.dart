@@ -9,6 +9,7 @@ import 'package:valvn/core/auth/auth_routes.dart';
 import 'package:valvn/core/l10n/account_strings.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/theme/app_theme.dart';
+import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/features/settings/settings_routes.dart';
 import 'package:valvn/features/settings/settings_strings.dart';
 import 'package:valvn/features/settings/ui/widgets/settings_widgets.dart';
@@ -118,6 +119,7 @@ void main() {
     ]) {
       testWidgets('welcome ($name)', (tester) async {
         _phone(tester, height: 640);
+        final prefs = await createTestPrefs();
         final router = GoRouter(
           initialLocation: SettingsRoutes.welcome,
           routes: [
@@ -128,13 +130,17 @@ void main() {
             ),
           ],
         );
+        addTearDown(router.dispose);
         await tester.pumpWidget(
-          _bigText(
-            MaterialApp.router(
-              localizationsDelegates: appLocalizationsDelegates,
-              supportedLocales: const [Locale('vi')],
-              theme: theme,
-              routerConfig: router,
+          ProviderScope(
+            overrides: [prefsProvider.overrideWithValue(prefs)],
+            child: _bigText(
+              MaterialApp.router(
+                localizationsDelegates: appLocalizationsDelegates,
+                supportedLocales: const [Locale('vi')],
+                theme: theme,
+                routerConfig: router,
+              ),
             ),
           ),
         );
