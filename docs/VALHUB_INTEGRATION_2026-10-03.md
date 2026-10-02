@@ -47,6 +47,7 @@ remain scoped to that phase. They are not combined-code results.
 | Owner emulator upgrade | Four account identities, active account, wishlist and settings preserved; actual APK 4009 confirmed |
 | ARB validation / canonical format | **0 errors / 0 warnings** / pass |
 | Final Dart format check | **718 files, 0 changed**; line-ending normalization leaves no tracked source diff |
+| Codemod package's own `dart pub get` / analyze / tests | Pass / **0 issues** / **35 passed** |
 | Extraction / parity byte stability | Pass; 1,612 members / 1,754 messages / 52 structural members |
 | Codemod `verify --ci` | **Exit 1**, 514 references / 762 literal hits, cutover false |
 | Backend | Source unchanged by merge; fresh repaired-snapshot typecheck/build and 867 tests pass; dependency audit 0 vulnerabilities |
@@ -86,6 +87,10 @@ Artifacts, git-ignored and for review:
 
 Both default and integration branches were pushed at `0347613` after merging.
 GitHub billing did not prevent this push; hosted CI remains a separate gate.
+Hosted i18n check annotation for the merge explicitly states that the job was
+not started because the account is locked due to a billing issue. Its empty
+step list and missing job log are not application test failures. Local results
+above do not claim a hosted green run.
 
 Keyword triage retained ValVN package/storage/routes and repository redirects;
 historical VanHub checkpoint names remain dated evidence. VND hits are currency
