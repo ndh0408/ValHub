@@ -257,7 +257,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
     });
 
-    final roomy = MediaQuery.sizeOf(context).width >= 360;
+    final roomy = MediaQuery.sizeOf(context).width >= 480 &&
+        MediaQuery.textScalerOf(context).scale(1) < 1.5;
     if (puuid == null) {
       return const TabPageScaffold(
         title: HomeStrings.title,

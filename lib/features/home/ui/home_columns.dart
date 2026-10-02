@@ -13,7 +13,7 @@ import 'package:flutter/semantics.dart' show OrdinalSortKey;
 import '../data/home_card.dart';
 
 /// Gap between cards (and between columns).
-const kHomeCardGap = 12.0;
+const kHomeCardGap = 16.0;
 
 /// Columns for a content area [contentWidth] dp wide at [textScale]:
 /// `≥ 1000` gives 3, `≥ 568` gives 2, otherwise 1; large text means fewer

@@ -262,8 +262,8 @@ abstract final class ValText {
     fontFamily: AppFonts.body,
     fontSize: 32,
     height: 1.15,
-    fontWeight: FontWeight.w800,
-    letterSpacing: -0.4,
+    fontWeight: FontWeight.w700,
+    letterSpacing: -0.8,
   );
 
   /// Section title inside a screen ("Trang bị", "Nhiệm vụ tuần").
@@ -297,7 +297,7 @@ abstract final class ValText {
 
 /// Corner radii of the design system.
 abstract final class ValRadius {
-  static const card = 16.0;
+  static const card = 20.0;
   static const small = 12.0;
   static const pill = 999.0;
 }
@@ -372,9 +372,21 @@ ThemeData _build({
       displayLarge: display(text.displayLarge),
       displayMedium: display(text.displayMedium),
       displaySmall: display(text.displaySmall),
-      headlineLarge: display(text.headlineLarge),
-      headlineMedium: display(text.headlineMedium),
-      headlineSmall: text.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+      headlineLarge: text.headlineLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.8,
+        height: 1.2,
+      ),
+      headlineMedium: text.headlineMedium?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.5,
+        height: 1.25,
+      ),
+      headlineSmall: text.headlineSmall?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.3,
+        height: 1.25,
+      ),
       titleLarge: text.titleLarge?.copyWith(
         fontSize: 20,
         fontWeight: FontWeight.w700,
@@ -451,6 +463,7 @@ ThemeData _build({
         ),
       ),
     ),
+
     cardTheme: CardThemeData(
       color: card,
       surfaceTintColor: Colors.transparent,
@@ -561,13 +574,26 @@ ThemeData _build({
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: card,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(ValRadius.small),
-        borderSide: BorderSide.none,
+        borderSide: BorderSide(color: extras.hairline),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(ValRadius.small),
+        borderSide: BorderSide(color: extras.hairline),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(ValRadius.small),
-        borderSide: BorderSide(color: accent),
+        borderSide: BorderSide(color: accent, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(ValRadius.small),
+        borderSide: BorderSide(color: scheme.error),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(ValRadius.small),
+        borderSide: BorderSide(color: scheme.error, width: 1.5),
       ),
     ),
     bottomSheetTheme: BottomSheetThemeData(

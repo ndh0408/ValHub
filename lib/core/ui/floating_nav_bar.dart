@@ -126,8 +126,15 @@ class _NavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final accent = legibleAccent(context, scheme.primary, min: 3);
+    final navBackground = theme.navigationBarTheme.backgroundColor ??
+        scheme.surfaceContainer;
+    final selectedBackground = Color.alphaBlend(
+      scheme.primary.withValues(alpha: 0.16),
+      navBackground,
+    );
+    final accent = legibleOn(scheme.primary, selectedBackground);
     final fg = selected ? accent : scheme.onSurfaceVariant;
+    final reducedMotion = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
     final icon = selected
         ? (destination.selectedIcon ?? destination.icon)
         : destination.icon;
@@ -139,9 +146,10 @@ class _NavItem extends StatelessWidget {
       excludeSemantics: true,
       child: InkWell(
         onTap: onTap,
+        excludeFromSemantics: true,
         customBorder: const StadiumBorder(),
         child: AnimatedContainer(
-          duration: ValMotion.medium,
+          duration: reducedMotion ? Duration.zero : ValMotion.medium,
           curve: ValMotion.curve,
           decoration: BoxDecoration(
             color: selected
@@ -207,7 +215,9 @@ class _EmphasizedIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return AnimatedContainer(
-      duration: ValMotion.medium,
+      duration: (MediaQuery.maybeDisableAnimationsOf(context) ?? false)
+          ? Duration.zero
+          : ValMotion.medium,
       curve: ValMotion.curve,
       width: size,
       height: size,

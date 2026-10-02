@@ -8,7 +8,7 @@ import '../theme/app_theme.dart';
 /// `docs/design/DESIGN.md`): cards, uppercase section labels, grouped list
 /// rows, progress bar, diamond pips, pills and badges.
 
-/// Rounded card on the `s1` surface (radius 16). Optional [gradient],
+/// Rounded card on the `s1` surface (radius 20). Optional [gradient],
 /// [borderColor] and tap handling (ink clipped to the shape).
 class ValCard extends StatelessWidget {
   const ValCard({
@@ -34,16 +34,11 @@ class ValCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // On the light theme a white card on the pale background needs a
-    // hairline edge to read as a card.
-    final light = Theme.of(context).brightness == Brightness.light;
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(radius),
-      side: borderColor != null
-          ? BorderSide(color: borderColor!)
-          : light
-          ? BorderSide(color: valColorsOf(context).hairline)
-          : BorderSide.none,
+      side: BorderSide(
+        color: borderColor ?? valColorsOf(context).hairline,
+      ),
     );
     final bg = color ?? Theme.of(context).colorScheme.surfaceContainer;
     Widget content = Padding(padding: padding, child: child);
@@ -122,9 +117,7 @@ class GroupedSection extends StatelessWidget {
         color: Theme.of(context).colorScheme.surfaceContainer,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(ValRadius.card),
-          side: Theme.of(context).brightness == Brightness.light
-              ? BorderSide(color: hairline)
-              : BorderSide.none,
+          side: BorderSide(color: hairline),
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(

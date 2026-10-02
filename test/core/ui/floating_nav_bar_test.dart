@@ -15,8 +15,13 @@ Future<void> _pump(
   required int selected,
   int? emphasized,
   ThemeData? theme,
+  Size size = const Size(400, 800),
+  List<NavigationDestination> destinations = _destinations,
+  bool compact = false,
+  bool reduceMotion = false,
+  double textScale = 1,
 }) async {
-  tester.view.physicalSize = const Size(400, 800);
+  tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
@@ -24,10 +29,18 @@ Future<void> _pump(
       localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: theme ?? buildDarkTheme(),
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          textScaler: TextScaler.linear(textScale),
+          disableAnimations: reduceMotion,
+        ),
+        child: child!,
+      ),
       home: Scaffold(
         bottomNavigationBar: FloatingNavBar(
-          destinations: _destinations,
+          destinations: destinations,
           selectedIndex: selected,
+          compact: compact,
           emphasizedIndex: emphasized,
           onDestinationSelected: (_) {},
         ),
@@ -100,6 +113,65 @@ void main() {
       );
     });
   }
+
+  for (final width in [320.0, 360.0, 430.0]) {
+    for (final (name, theme) in [
+      ('dark', buildDarkTheme()),
+      ('light', buildLightTheme()),
+    ]) {
+      testWidgets('five mobile tabs fit at $width dp, large text ($name)', (
+        tester,
+      ) async {
+        const tabs = [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            label: 'Trang chủ',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.storefront_outlined),
+            label: 'Cửa hàng',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.forum_outlined),
+            label: 'Cộng đồng',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.inventory_2_outlined),
+            label: 'Bộ sưu tập',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            label: 'Hồ sơ',
+          ),
+        ];
+        await _pump(
+          tester,
+          selected: 2,
+          emphasized: 2,
+          theme: theme,
+          size: Size(width, 800),
+          destinations: tabs,
+          compact: width < 360,
+          textScale: 2,
+        );
+        for (final tab in tabs) {
+          final destination = find.bySemanticsLabel(tab.label);
+          expect(destination, findsOneWidget);
+          expect(tester.getSize(destination).height, greaterThanOrEqualTo(48));
+        }
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
+
+  testWidgets('mobile navigation respects reduced motion', (tester) async {
+    await _pump(tester, selected: 1, emphasized: 1, reduceMotion: true);
+    for (final container in tester.widgetList<AnimatedContainer>(
+      find.byType(AnimatedContainer),
+    )) {
+      expect(container.duration, Duration.zero);
+    }
+  });
 
   testWidgets('tapping selects the destination, emphasized or not', (
     tester,

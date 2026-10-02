@@ -84,7 +84,10 @@ class TabPageScaffold extends StatelessWidget {
           ),
           actions: [
             ...actions,
-            if (showAccountChip) const AccountChip(),
+            if (showAccountChip)
+              AccountChip(
+                showName: window.pane.width >= 480 && window.textScale < 1.5,
+              ),
             const SizedBox(width: 16),
           ],
         ),

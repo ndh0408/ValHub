@@ -87,7 +87,7 @@ Future<void> hideHomeCard(
     );
 }
 
-/// A Home card: `ValCard` (radius 16) with a header row (24 dp outline icon,
+/// A Home card: `ValCard` (radius 20) with a header row (36 dp icon tile,
 /// the title as a heading, an optional compact [trailing] widget and the
 /// "⋯" menu with "Ẩn thẻ này" / "Tùy chỉnh Trang chủ…") above the [child].
 /// [onTap] is the card's primary destination; buttons inside the child are
@@ -166,16 +166,33 @@ class HomeCardFrame extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsetsDirectional.only(start: 16, end: 4, top: 4),
+          padding: const EdgeInsetsDirectional.only(
+            start: 16,
+            end: 4,
+            top: 12,
+            bottom: 8,
+          ),
           child: Row(
             children: [
               ExcludeSemantics(
-                child: Icon(
-                  icon ?? card.icon,
-                  size: 24,
-                  color:
-                      iconColor ??
-                      legibleAccent(context, theme.colorScheme.primary, min: 3),
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHigh,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: valColorsOf(context).hairline),
+                  ),
+                  child: Icon(
+                    icon ?? card.icon,
+                    size: 20,
+                    color: legibleOn(
+                      iconColor ?? theme.colorScheme.primary,
+                      theme.colorScheme.surfaceContainerHigh,
+                      minContrast: 3,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 10),

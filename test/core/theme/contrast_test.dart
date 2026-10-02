@@ -73,6 +73,29 @@ void main() {
     );
   });
 
+  for (final (name, theme) in [
+    ('dark', buildDarkTheme()),
+    ('light', buildLightTheme()),
+  ]) {
+    test('selected mobile tab label reaches WCAG AA ($name)', () {
+      final scheme = theme.colorScheme;
+      final background = Color.alphaBlend(
+        scheme.primary.withValues(alpha: 0.16),
+        theme.navigationBarTheme.backgroundColor!,
+      );
+      expect(
+        _contrast(legibleOn(scheme.primary, background), background),
+        greaterThanOrEqualTo(4.5),
+      );
+    });
+
+    test('headings use the bundled body font ($name)', () {
+      expect(theme.textTheme.headlineMedium?.fontFamily, AppFonts.body);
+      expect(theme.textTheme.headlineMedium?.fontWeight, FontWeight.w700);
+      expect(ValText.screenTitle.fontWeight, FontWeight.w700);
+    });
+  }
+
   test('legibleOn darkens pale rarity colors on light surfaces', () {
     const ultra = TierColors.ultra; // #FAD663, 1.4:1 on white
     final fixed = legibleOn(ultra, ValColors.lightSurface);

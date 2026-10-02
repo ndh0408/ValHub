@@ -32,7 +32,13 @@ class SectionHeader extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(uppercase ? title.toUpperCase() : title, style: style),
+            child: Semantics(
+              header: true,
+              child: Text(
+                uppercase ? title.toUpperCase() : title,
+                style: style,
+              ),
+            ),
           ),
           ?trailing,
           if (onTap != null && trailing == null)
