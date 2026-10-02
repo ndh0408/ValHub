@@ -4,9 +4,10 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/skeleton.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
-import '../../battlepass_strings.dart';
 import '../../data/battlepass_models.dart';
 import '../../data/xp_pace.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// P2 row (ValBuddy style): red outline gift icon, "Xem tất cả phần
 /// thưởng", muted "46/55 đã mở khóa" and "›".
@@ -37,7 +38,7 @@ class ViewRewardsRow extends StatelessWidget {
           const SizedBox(width: 14),
           Expanded(
             child: Text(
-              BattlePassStrings.viewAllRewards,
+              context.l10n.battlePassViewAllRewards,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
@@ -46,7 +47,7 @@ class ViewRewardsRow extends StatelessWidget {
           const SizedBox(width: 8),
           Flexible(
             child: Text(
-              BattlePassStrings.unlockedCount(
+              context.l10n.battlePassUnlockedCount(
                 formatNumber(progress.unlockedLevels),
                 formatNumber(progress.levelCount),
               ),
@@ -116,7 +117,7 @@ class XpEstimateCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      BattlePassStrings.xpToFinish(
+                      context.l10n.battlePassXpToFinish(
                         formatNumber(progress.xpRemaining),
                       ),
                       style: theme.textTheme.bodyMedium?.copyWith(
@@ -124,7 +125,7 @@ class XpEstimateCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      BattlePassStrings.matchesEstimate(
+                      context.l10n.battlePassMatchesEstimate(
                         formatNumber(matches),
                         queueName,
                       ),
@@ -143,14 +144,14 @@ class XpEstimateCard extends StatelessWidget {
               children: [
                 PaceStat(
                   icon: Icons.bolt,
-                  value: BattlePassStrings.xpPerDay(
+                  value: context.l10n.battlePassXpPerDay(
                     formatNumber(pace.xpPerDay),
                   ),
-                  caption: BattlePassStrings.xpPerDayCaption,
+                  caption: context.l10n.battlePassXpPerDayCaption,
                 ),
                 PaceStat(
                   icon: Icons.event,
-                  value: BattlePassStrings.daysLeft(pace.daysLeft),
+                  value: context.l10n.battlePassDaysLeft(pace.daysLeft),
                 ),
               ],
             ),
@@ -158,7 +159,7 @@ class XpEstimateCard extends StatelessWidget {
           if (weeklyXpLeft > 0) ...[
             const SizedBox(height: 10),
             Text(
-              BattlePassStrings.weeklyXpLeft(formatNumber(weeklyXpLeft)),
+              context.l10n.battlePassWeeklyXpLeft(formatNumber(weeklyXpLeft)),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: legibleAccent(context, win),
                 fontWeight: FontWeight.w600,
@@ -167,7 +168,7 @@ class XpEstimateCard extends StatelessWidget {
           ],
           const SizedBox(height: 6),
           Text(
-            BattlePassStrings.estimateNote,
+            context.l10n.battlePassEstimateNote,
             style: theme.textTheme.bodySmall?.copyWith(color: muted),
           ),
         ],

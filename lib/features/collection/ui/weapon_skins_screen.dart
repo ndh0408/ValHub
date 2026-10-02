@@ -20,7 +20,6 @@ import '../../../core/ui/skin_art_card.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/price_estimate.dart';
 import '../collection_routes.dart';
-import '../collection_strings.dart';
 import '../data/collection_search.dart';
 import '../data/loadout_view.dart';
 import '../data/query_memory.dart';
@@ -28,6 +27,8 @@ import '../data/skin_query.dart';
 import '../providers/collection_providers.dart';
 import 'widgets/collection_widgets.dart';
 import 'widgets/gun_hero.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S34 "Chọn skin" for one weapon: the equipped render as the header art
 /// (flies in from the weapon grid), pinned search + sort (Độ hiếm · Tên ·
@@ -66,7 +67,8 @@ class _WeaponSkinsScreenState extends ConsumerState<WeaponSkinsScreen> {
   Widget build(BuildContext context) {
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final weapon = db.weapon(_weaponId);
-    final title = weapon?.displayName ?? CollectionStrings.weaponSkinsTitle;
+    final title =
+        weapon?.displayName ?? context.l10n.collectionWeaponSkinsTitle;
     final account = ref.watch(activeAccountProvider);
     if (account == null) return NoAccountPage(title: title);
     final puuid = account.puuid;
@@ -82,7 +84,7 @@ class _WeaponSkinsScreenState extends ConsumerState<WeaponSkinsScreen> {
       title: title,
       subtitle: equipped == null
           ? null
-          : CollectionStrings.equippedLine(skinLabel(equipped)),
+          : context.l10n.collectionEquippedLine(skinLabel(equipped)),
       hero: GunHero(
         render: gunRender(gun, db, weapon: weapon),
         tint: tint,
@@ -92,7 +94,7 @@ class _WeaponSkinsScreenState extends ConsumerState<WeaponSkinsScreen> {
       onRefresh: () => refreshCollection(ref, puuid),
       header: SearchStrip(
         search: CollectionSearchField(
-          hint: CollectionStrings.searchSkins,
+          hint: context.l10n.collectionSearchSkins,
           initialValue: _query.search,
           onChanged: (v) => setState(() => _query = _query.copyWith(search: v)),
         ),
@@ -111,10 +113,10 @@ class _WeaponSkinsScreenState extends ConsumerState<WeaponSkinsScreen> {
           final w = db.weapon(_weaponId);
           if (w == null) {
             return [
-              const SliverFillRemaining(
+              SliverFillRemaining(
                 hasScrollBody: false,
                 child: EmptyView(
-                  message: CollectionStrings.weaponNotFound,
+                  message: context.l10n.collectionWeaponNotFound,
                   icon: Icons.help_outline,
                 ),
               ),
@@ -129,7 +131,7 @@ class _WeaponSkinsScreenState extends ConsumerState<WeaponSkinsScreen> {
                   _query.tiers.isEmpty &&
                   matchesSearch(_query.search, [
                     s.displayName,
-                    CollectionStrings.defaultSkin,
+                    context.l10n.collectionDefaultSkin,
                   ]))
                 s,
           ];
@@ -150,11 +152,11 @@ class _WeaponSkinsScreenState extends ConsumerState<WeaponSkinsScreen> {
             SliverToBoxAdapter(
               child: SummaryStrip(
                 text: _query.isFiltering
-                    ? CollectionStrings.summaryFilteredItems(
+                    ? context.l10n.collectionSummaryFilteredItems(
                         skins.length,
                         all.length,
                       )
-                    : CollectionStrings.ownedForWeapon(collectible),
+                    : context.l10n.collectionOwnedForWeapon(collectible),
                 highlighted: _query.isFiltering,
               ),
             ),
@@ -163,8 +165,8 @@ class _WeaponSkinsScreenState extends ConsumerState<WeaponSkinsScreen> {
                 hasScrollBody: false,
                 child: _query.isFiltering
                     ? EmptyView(
-                        title: CollectionStrings.noResultsTitle,
-                        message: CollectionStrings.noResults,
+                        title: context.l10n.collectionNoResultsTitle,
+                        message: context.l10n.collectionNoResults,
                         icon: Icons.search_off,
                         action: _query.tiers.isEmpty
                             ? null
@@ -172,11 +174,11 @@ class _WeaponSkinsScreenState extends ConsumerState<WeaponSkinsScreen> {
                                 onPressed: () =>
                                     _setQuery(_query.copyWith(tiers: {})),
                                 icon: const Icon(Icons.filter_alt_off_outlined),
-                                label: const Text(CollectionStrings.clearTiers),
+                                label: Text(context.l10n.collectionClearTiers),
                               ),
                       )
-                    : const EmptyView(
-                        message: CollectionStrings.noSkinsForWeapon,
+                    : EmptyView(
+                        message: context.l10n.collectionNoSkinsForWeapon,
                         icon: Icons.inventory_2_outlined,
                       ),
               )
@@ -260,9 +262,9 @@ class SkinRow extends ConsumerWidget {
     final chromas = owned.ownedChromas(skin).length;
     final details = [
       if (skin.levels.length > 1)
-        CollectionStrings.levelCount(levels, skin.levels.length),
+        context.l10n.collectionLevelCount(levels, skin.levels.length),
       if (skin.chromas.length > 1)
-        CollectionStrings.chromaCount(chromas, skin.chromas.length),
+        context.l10n.collectionChromaCount(chromas, skin.chromas.length),
     ];
     final narrow = MediaQuery.sizeOf(context).width < 360;
     final q = quote;

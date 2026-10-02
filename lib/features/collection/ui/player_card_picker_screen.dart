@@ -6,7 +6,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/models/cosmetic_models.dart';
 import '../../../core/domain/loadout/loadout.dart';
-import '../../../core/l10n/content_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
@@ -22,6 +21,8 @@ import '../providers/collection_providers.dart';
 import 'widgets/collection_widgets.dart';
 import 'widgets/identity_preview.dart';
 import 'widgets/loadout_actions.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Tall card art grid: tile width limit and art height.
 const _cardMaxExtent = 130.0;
@@ -48,17 +49,17 @@ class _PlayerCardPickerScreenState
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const NoAccountPage(title: CollectionStrings.playerCardTitle);
+      return NoAccountPage(title: context.l10n.collectionPlayerCardTitle);
     }
     final puuid = account.puuid;
     final search = CollectionSearchField(
-      hint: CollectionStrings.searchCards,
+      hint: context.l10n.collectionSearchCards,
       initialValue: _search,
       onChanged: (v) => setState(() => _search = v),
     );
     return SubPageScaffold(
-      title: CollectionStrings.playerCardTitle,
-      subtitle: CollectionStrings.playerCardSubtitle,
+      title: context.l10n.collectionPlayerCardTitle,
+      subtitle: context.l10n.collectionPlayerCardSubtitle,
       onRefresh: () => refreshCollection(ref, puuid),
       slivers: loadoutSlivers(
         ref,
@@ -87,12 +88,12 @@ class _PlayerCardPickerScreenState
                   cardArt: equipped?.wideArt,
                   name: account.gameName,
                   title: title == null || title.isNoTitle ? null : title.text,
-                  badge: const ArtPill(
-                    label: CollectionStrings.equipped,
+                  badge: ArtPill(
+                    label: context.l10n.collectionEquipped,
                     icon: Icons.check,
                   ),
-                  semanticsLabel: CollectionStrings.equippedCardLabel(
-                    equipped?.displayName ?? CollectionStrings.unknownCard,
+                  semanticsLabel: context.l10n.collectionEquippedCardLabel(
+                    equipped?.displayName ?? context.l10n.collectionUnknownCard,
                   ),
                   onTap: equipped == null
                       ? null
@@ -129,11 +130,13 @@ class _PlayerCardPickerScreenState
             SliverToBoxAdapter(
               child: SummaryStrip(
                 text: filtering
-                    ? CollectionStrings.summaryFilteredItems(
+                    ? context.l10n.collectionSummaryFilteredItems(
                         cards.length,
                         all.length,
                       )
-                    : CollectionStrings.cardsCount(formatNumber(all.length)),
+                    : context.l10n.collectionCardsCount(
+                        formatNumber(all.length),
+                      ),
                 highlighted: filtering,
               ),
             ),
@@ -141,14 +144,14 @@ class _PlayerCardPickerScreenState
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: all.isEmpty
-                    ? const EmptyView(
-                        title: CollectionStrings.browseEmptyTitle,
-                        message: CollectionStrings.browseEmpty,
+                    ? EmptyView(
+                        title: context.l10n.collectionBrowseEmptyTitle,
+                        message: context.l10n.collectionBrowseEmpty,
                         icon: Icons.style_outlined,
                       )
-                    : const EmptyView(
-                        title: CollectionStrings.noResultsTitle,
-                        message: CollectionStrings.noResults,
+                    : EmptyView(
+                        title: context.l10n.collectionNoResultsTitle,
+                        message: context.l10n.collectionNoResults,
                         icon: Icons.search_off,
                       ),
               )
@@ -228,7 +231,7 @@ Future<void> showCardPreview(
 }) => showValSheet<void>(
   context,
   title: card.displayName,
-  subtitle: ContentStrings.itemCard,
+  subtitle: context.l10n.contentItemCard,
   builder: (context, _) => _CardPreviewSheet(puuid: puuid, card: card),
 );
 
@@ -278,8 +281,8 @@ class _CardPreviewSheet extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const SectionLabel(
-            CollectionStrings.lobbyBanner,
+          SectionLabel(
+            context.l10n.collectionLobbyBanner,
             padding: EdgeInsets.zero,
           ),
           const SizedBox(height: 6),
@@ -311,10 +314,10 @@ class _CardPreviewSheet extends ConsumerWidget {
             icon: Icon(isEquipped ? Icons.check : Icons.style_outlined),
             label: Text(
               isEquipped
-                  ? CollectionStrings.equipped
+                  ? context.l10n.collectionEquipped
                   : (saving
-                        ? CollectionStrings.saving
-                        : CollectionStrings.equip),
+                        ? context.l10n.collectionSaving
+                        : context.l10n.collectionEquip),
             ),
             style: FilledButton.styleFrom(
               minimumSize: const Size.fromHeight(48),

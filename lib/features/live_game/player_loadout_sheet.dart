@@ -5,7 +5,6 @@ import '../../core/accounts/account_providers.dart';
 import '../../core/content/content_db.dart';
 import '../../core/content/content_repository.dart';
 import '../../core/domain/loadout/loadout.dart';
-import '../../core/l10n/common_strings.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tier_colors.dart';
 import '../../core/ui/adaptive.dart';
@@ -16,7 +15,8 @@ import '../../core/ui/section_header.dart';
 import '../../core/ui/skeleton.dart';
 import '../../core/ui/skin_art_card.dart';
 import '../../core/ui/sub_page.dart';
-import 'live_game_strings.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Opens S51 "Trang bị của người chơi" for [playerPuuid] in [matchId].
 ///
@@ -68,15 +68,15 @@ class PlayerLoadoutSheet extends ConsumerWidget {
     final viewer = viewerPuuid ?? ref.watch(activePuuidProvider);
     final name = playerName;
     final title = name == null || name.trim().isEmpty
-        ? LiveGameStrings.playerLoadoutTitle
-        : LiveGameStrings.playerLoadoutOf(name);
+        ? context.l10n.liveGamePlayerLoadoutTitle
+        : context.l10n.liveGamePlayerLoadoutOf(name);
 
     Widget? leading;
     Object? staleError;
     final Widget body;
     if (viewer == null) {
-      body = const EmptyView(
-        message: CommonStrings.errorNoAccount,
+      body = EmptyView(
+        message: context.l10n.commonErrorNoAccount,
         icon: Icons.person_off_outlined,
       );
     } else {
@@ -113,9 +113,9 @@ class PlayerLoadoutSheet extends ConsumerWidget {
           onRefresh: refresh,
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
-            children: const [
+            children: [
               EmptyView(
-                message: LiveGameStrings.noLoadout,
+                message: context.l10n.liveGameNoLoadout,
                 icon: Icons.inventory_2_outlined,
               ),
             ],
@@ -136,8 +136,8 @@ class PlayerLoadoutSheet extends ConsumerWidget {
           SheetHeader(
             title: title,
             subtitle: pregame
-                ? LiveGameStrings.loadoutFromAgentSelect
-                : LiveGameStrings.loadoutFromMatch,
+                ? context.l10n.liveGameLoadoutFromAgentSelect
+                : context.l10n.liveGameLoadoutFromMatch,
             leading: leading,
             padding: const EdgeInsets.fromLTRB(20, 0, 12, 10),
           ),
@@ -289,8 +289,8 @@ class PlayerLoadoutView extends ConsumerWidget {
             ),
           ),
         if (weapons.isNotEmpty) ...[
-          const SliverToBoxAdapter(
-            child: SectionHeader(LiveGameStrings.weapons),
+          SliverToBoxAdapter(
+            child: SectionHeader(context.l10n.liveGameWeapons),
           ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -314,9 +314,7 @@ class PlayerLoadoutView extends ConsumerWidget {
           ),
         ],
         if (sprays.isNotEmpty) ...[
-          const SliverToBoxAdapter(
-            child: SectionHeader(LiveGameStrings.sprays),
-          ),
+          SliverToBoxAdapter(child: SectionHeader(context.l10n.liveGameSprays)),
           SliverToBoxAdapter(
             child: _ImageStrip(
               items: [for (final s in sprays) (s.image, s.displayName)],
@@ -324,7 +322,7 @@ class PlayerLoadoutView extends ConsumerWidget {
           ),
         ],
         if (flexItems.isNotEmpty) ...[
-          const SliverToBoxAdapter(child: SectionHeader(LiveGameStrings.flex)),
+          SliverToBoxAdapter(child: SectionHeader(context.l10n.liveGameFlex)),
           SliverToBoxAdapter(
             child: _ImageStrip(
               items: [
@@ -481,7 +479,9 @@ class _GunTile extends StatelessWidget {
         ? db.buddyByLevelUuid(gun.buddyLevelId!)
         : (gun.buddyId == null ? null : db.buddy(gun.buddyId!));
     final skinName =
-        skin?.displayName ?? weapon?.displayName ?? CommonStrings.unknownItem;
+        skin?.displayName ??
+        weapon?.displayName ??
+        context.l10n.commonUnknownItem;
     final tierHex = skin == null
         ? null
         : db.contentTier(skin.contentTierUuid)?.highlightColor;

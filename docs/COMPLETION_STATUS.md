@@ -2,6 +2,18 @@
 
 Yêu cầu của chủ dự án: hoàn thiện toàn bộ yêu cầu để Claude kiểm tra sau khi hết giới hạn. Nhánh tích hợp: `ndh0408/codex-complete`; worktree `C:/Users/Admin/orca/workspaces/ValVN/codex-complete`. Đây là tiến độ đang triển khai, **chưa phải nghiệm thu toàn bộ**.
 
+Checkpoint mới nhất: [Final gap audit / CI local 02/10](FINAL_GAP_AUDIT_2026-10-02.md).
+**4.197 Flutter tests đạt trên Windows và Mac**, Windows device locale `en` cũng
+đạt 4.197 với fallback vi; analyzer 0 issues. Backend 867 tests, Docker native
+backup/restore smoke và 10 public-flow cases APK **4005** đạt. Bản 4005 đã cài trên
+emulator có cửa sổ; không thay đổi tài khoản thật. Global cutover còn **560
+production references / 52 structural members / 762 literal hits** (chủ yếu
+pháp lý). Build iOS không ký trên Mac đạt: Runner.app 82,7 MB, IPA kiểm tra đã
+đóng gói và manifest có trong app. Chưa test native trên iPhone/ký store. GitHub-hosted CI bị
+khóa billing; CI local không giải quyết khóa tài khoản GitHub. Các đợt dưới đây
+là checkpoint lịch sử. Giữ ML Kit miễn phí đã có theo xác nhận của chủ dự án;
+không thêm AI/API trả phí.
+
 Giữ nhánh chính và các báo cáo bàn giao cũ để đối chiếu. Theo yêu cầu mới của chủ dự án, gộp và push nhánh mặc định GitHub để mọi người đọc code mới nhất; chưa deploy/publish store. Không thêm chatbot/LLM hay dịch vụ AI vào ứng dụng; số liệu sản phẩm phải có nguồn thật. Báo cáo `docs/CODEX_REVIEW.md` và `docs/handoffs/` ghi trạng thái trước các sửa đổi tích hợp, không dùng chúng làm tiến độ hiện tại.
 
 Đợt mới nhất: [Cộng đồng/bố cục/chia sẻ bài](COMMUNITY_FEATURES_2026-10-02.md), **4.195 Flutter tests đạt**, analyzer 0 issues, 1 Android native share integration và 10 public-flow cases trên APK cuối code 4003 đạt; bản mới đã cài trên emulator có cửa sổ. Global cutover còn **1.762 production references**, không đánh dấu xong quốc tế hóa. [Tài nguyên dùng chung](I18N_SHARED_2026-10-02.md) là checkpoint 4.184 tests; [bản sửa hook 02/10](WINDOWS_HOOK_FIX_2026-10-02.md) lưu bridge ngoài thư mục tạm, 14 tests đạt. Checkpoint trước: [Cài đặt](I18N_SETTINGS_2026-10-01.md), 4.178 tests; [đăng nhập/kết nối](COUNTRY_CONNECTION_2026-10-01.md), 4.176 tests; [VanHub và kiểm thử toàn tính năng](VANHUB_REVIEW_2026-10-01.md), 4.143 Flutter / 867 backend / 35 tool tests. Đối chiếu đủ 37 mục bàn giao xem [QA_2026-10-01.md](QA_2026-10-01.md); các báo cáo cũ là checkpoint, không thay nghiệm thu tổng thể.
@@ -13,10 +25,10 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 | Yêu cầu | Trạng thái hiện tại | Việc phải làm tiếp |
 |---|---|---|
 | Đọc việc Claude giao và làm hết yêu cầu | Đã tích hợp bốn WP, giữ report và đối chiếu đủ 37 mục | Đóng các mục I18N/COUNTRIES/DEVICES/Community còn mở phía dưới; chưa nghiệm thu tổng thể |
-| Mở emulator cho chủ dự án xem | Cửa sổ Pixel 5580 đang mở với APK code 4003; lượt 02/10 đọc hai tài khoản hiện có và đủ metadata | Không suy ra ba tài khoản của checkpoint trước còn trong trạng thái emulator mới; tiếp tục rà các luồng còn lại, QA riêng 5582 |
+| Mở emulator cho chủ dự án xem | Cửa sổ Pixel 5580 đã cài APK code 4005; lượt 02/10 đọc hai tài khoản hiện có và đủ metadata | Không suy ra ba tài khoản của checkpoint trước còn trong trạng thái emulator mới; tiếp tục rà các luồng còn lại, QA riêng 5582 |
 | Commit, push và gộp để người khác thấy code mới nhất | UI/kết nối, Settings `a4afe4e`, hook `9850063`, tài nguyên dùng chung `04e6288` đã push integration và fast-forward/push nhánh mặc định; Cộng đồng tiếp sau | Tiếp tục commit các phase còn thiếu; đối chiếu `git log -1`, không coi merge là nghiệm thu toàn dự án |
 | Ẩn bảng nguồn dữ liệu | Đã bỏ card Giới thiệu và có test | Đã kiểm tra About bản cài trong lượt read-only; giữ pháp lý/giấy phép cần thiết |
-| Cộng đồng rõ ràng, bộ lọc không bị cắt | Tab gọn và một scope selector; banner ngắn, lời trống theo scope/ngôn ngữ/consent, FAB contrast đạt; test 360dp/chữ 200% | Bản code 4003 đã rà read-only; tiếp tục các màn còn lại |
+| Cộng đồng rõ ràng, bộ lọc không bị cắt | Tab gọn và một scope selector; banner ngắn, lời trống theo scope/ngôn ngữ/consent, FAB contrast đạt; test 360dp/chữ 200% | Bản code 4005 đã rà read-only; tiếp tục các màn còn lại |
 | Đăng bài, thích, bình luận, share | Luồng đăng/thích/bình luận/khoe shop đã có; thêm share từng bài ở feed/detail, native Android chooser + Back đạt | Link hiện mở bằng VanHub đã cài; HTTPS/trang web/đa thiết bị và server ghi thật chưa nghiệm thu |
 | Tài khoản chữ dễ đọc, đủ tên/vùng/rank | Đã chia dòng, wrap Riot ID/vùng và đưa nút phụ xuống dưới; lượt 02/10 Settings/switcher đọc đủ metadata hai tài khoản hiện có | Còn kiểm tra chủ động chuyển/reauth; ba tài khoản là bằng chứng checkpoint trước |
 | Trang bị cập nhật game | Đã xác nhận giá trị sau lưu và thêm refresh identity ở sảnh | Đối chiếu trực tiếp VALORANT PC đang mở; chưa có bằng chứng live |
@@ -33,7 +45,7 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 - [ ] RV-03 toàn bộ: recorder nền, RR/cache tên, cancellation, deferred links, release errors, LFG join, logout/consent và ẩn/chặn cục bộ đã nối; còn nghiệm thu rộng cùng quốc tế hóa/thiết bị.
 - [ ] RV-05 toàn bộ: privacy và Community disclosure đã đồng bộ, Markdown sinh từ Dart; vẫn cần rà lời toàn cầu khi cutover.
 - [x] I18N W1 nền công cụ: resolved extractor, ARB, manifest, parity, kiểm tra chạy lại; danh sách 52 member cần xử lý cấu trúc được giữ rõ.
-- [ ] I18N W2–W4: Settings, widget dùng chung/tài khoản và lời trống Cộng đồng đã chuyển thêm direct references; global còn **1.762 references / 52 structural members**. Chưa tách hết domain, chuyển hết call site và cutover.
+- [ ] I18N W2–W4: Migrate UI bằng công cụ có sẵn, giảm thêm 1.202 references; global còn **560 references / 52 structural members**. Chưa tách hết domain, chuyển hết async call site và cutover.
 - [ ] I18N W5: UI language picker, device default/upgrade pin, contentLocale/ui_locales/status, isolate thông báo.
 - [ ] I18N W6: đủ 18 bản dịch UI, plural/select, glossary và fallback/status gates.
 - [ ] I18N W7: RTL toàn ứng dụng, font CJK, pseudo locale và stale-string tests.
@@ -47,7 +59,8 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 - [x] Android APK release build + xác minh chữ ký cho bản kiểm tra.
 - [x] Native plugin smoke trên Android 15/API 35: country preference/keyboard, Keystore và 60 lịch thông báo.
 - [x] APK release trên emulator: 10 public-flow cases; lỗi deep link lúc đang login được tái hiện, sửa và chạy lại đạt.
-- [ ] QA native/visual toàn luồng; iOS build trên Mac.
+- [x] iOS release build không ký trên Mac và đóng gói IPA kiểm tra; manifest API đã có trong bundle.
+- [ ] QA native/visual toàn luồng, iPhone thật, ký và nghiệm thu iOS store.
 - [ ] Release/CI/store metadata/signing/domain/off-site/alert destination thật do chủ dự án cấu hình.
 - [ ] Báo cáo nghiệm thu cuối từng ID, commit, test và giới hạn sau khi toàn bộ yêu cầu thực sự đạt.
 

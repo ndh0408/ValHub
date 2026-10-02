@@ -32,6 +32,8 @@ import '../../home_strings.dart';
 import '../../providers/home_card_providers.dart';
 import '../home_card_frame.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 class CommunityHomeCard extends ConsumerWidget {
   const CommunityHomeCard({super.key, required this.puuid});
 
@@ -52,10 +54,10 @@ class CommunityHomeCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (lfg.isNotEmpty) ...[
-            _SectionTitle(HomeStrings.lfgTitle),
+            _SectionTitle(context.l10n.homeLfgTitle),
             for (final p in lfg) _LfgRow(post: p),
             _LinkButton(
-              label: HomeStrings.openLfg,
+              label: context.l10n.homeOpenLfg,
               onPressed: () =>
                   context.go(CommunityRoutes.section(CommunitySection.lfg)),
             ),
@@ -63,18 +65,18 @@ class CommunityHomeCard extends ConsumerWidget {
           if (lfg.isNotEmpty && snap.trending.isNotEmpty)
             const SizedBox(height: 8),
           if (snap.trending.isNotEmpty) ...[
-            _SectionTitle(HomeStrings.trendingTitle),
+            _SectionTitle(context.l10n.homeTrendingTitle),
             const SizedBox(height: 8),
             _TrendingStrip(skins: snap.trending, wishlist: snap.wishlist),
             _LinkButton(
-              label: HomeStrings.openRanking,
+              label: context.l10n.homeOpenRanking,
               onPressed: () =>
                   context.go(CommunityRoutes.section(CommunitySection.skins)),
             ),
           ],
           if (snap.isEmpty)
             Text(
-              HomeStrings.cardCommunityDesc,
+              context.l10n.homeCardCommunityDesc,
               style: theme.textTheme.bodyMedium,
             ),
         ],
@@ -131,13 +133,13 @@ class _LfgRow extends ConsumerWidget {
     final theme = Theme.of(context);
     final now = ref.watch(clockProvider).now();
     final left = post.expiresAt?.difference(now);
-    final author = post.author.riotId ?? CommunityStrings.unknownPlayer;
+    final author = post.author.riotId ?? context.l10n.communityUnknownPlayer;
     final details = [
       CommunityStrings.modeLabel(post.mode),
-      HomeStrings.lfgNeeds(post.slots),
+      context.l10n.homeLfgNeeds(post.slots),
       if (left != null && !left.isNegative)
-        HomeStrings.lfgExpiresIn(formatDurationCoarse(left)),
-    ].join(HomeStrings.dot);
+        context.l10n.homeLfgExpiresIn(formatDurationCoarse(left)),
+    ].join(context.l10n.homeDot);
     final tier = post.rankTier ?? post.author.rankTier;
     return InkWell(
       onTap: () => context.go(CommunityRoutes.section(CommunitySection.lfg)),
@@ -146,7 +148,7 @@ class _LfgRow extends ConsumerWidget {
         constraints: const BoxConstraints(minHeight: 56),
         child: Semantics(
           button: true,
-          label: HomeStrings.lfgRowSemantics(author, details),
+          label: context.l10n.homeLfgRowSemantics(author, details),
           excludeSemantics: true,
           child: Row(
             children: [
@@ -265,7 +267,7 @@ class _TrendingTile extends StatelessWidget {
       fallback: valColorsOf(context).muted,
     );
     final name = data?.displayName ?? '';
-    final votes = HomeStrings.trendingVotes(skin.vote.votes);
+    final votes = context.l10n.homeTrendingVotes(skin.vote.votes);
     return Semantics(
       button: true,
       label: HomeStrings.trendingSkinSemantics(name, votes, wished),

@@ -8,7 +8,6 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/riot/riot_ids.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/content_tier_badge.dart';
@@ -22,10 +21,11 @@ import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
 import '../../skin_detail/skin_detail_sheet.dart';
 import '../store_routes.dart';
-import '../store_strings.dart';
 import 'store_screen.dart' show StoreSegment;
 import 'widgets/bundle_banner.dart' show bundleArtHeroTag;
 import 'widgets/store_ui_bits.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S14 "Chi tiết bundle". Route `/store/bundle/:id` where `id` is the
 /// storefront bundle `ID` (the valorant-api `DataAssetID` also works).
@@ -44,10 +44,10 @@ class BundleDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const SubPageScaffold(
-        title: StoreStrings.bundleDetailTitle,
+      return SubPageScaffold(
+        title: context.l10n.storeBundleDetailTitle,
         body: EmptyView(
-          message: CommonStrings.errorNoAccount,
+          message: context.l10n.commonErrorNoAccount,
           icon: Icons.person_off_outlined,
         ),
       );
@@ -77,7 +77,7 @@ class BundleDetailScreen extends ConsumerWidget {
     if (bundle == null) {
       if (failed) {
         return SubPageScaffold(
-          title: StoreStrings.bundleDetailTitle,
+          title: context.l10n.storeBundleDetailTitle,
           onRefresh: refresh,
           body: ErrorView(
             error: storeAsync.error!,
@@ -88,15 +88,15 @@ class BundleDetailScreen extends ConsumerWidget {
       }
       if (store != null) {
         return SubPageScaffold(
-          title: StoreStrings.bundleDetailTitle,
+          title: context.l10n.storeBundleDetailTitle,
           onRefresh: refresh,
           body: EmptyView(
-            title: StoreStrings.bundleNotFoundTitle,
-            message: StoreStrings.bundleNotFound,
+            title: context.l10n.storeBundleNotFoundTitle,
+            message: context.l10n.storeBundleNotFound,
             icon: Icons.inventory_2_outlined,
             action: FilledButton.tonal(
               onPressed: () => _backToBundles(context),
-              child: const Text(StoreStrings.backToBundles),
+              child: Text(context.l10n.storeBackToBundles),
             ),
           ),
         );
@@ -104,7 +104,7 @@ class BundleDetailScreen extends ConsumerWidget {
       // Loading: the skeleton mirrors the final page (hero, title, summary,
       // grid).
       return SubPageScaffold(
-        title: StoreStrings.bundleDetailTitle,
+        title: context.l10n.storeBundleDetailTitle,
         showLargeTitle: false,
         heroHeight: heroHeight,
         hero: const SkeletonShimmer(
@@ -114,7 +114,7 @@ class BundleDetailScreen extends ConsumerWidget {
       );
     }
 
-    final name = content?.displayName ?? StoreStrings.bundleDetailTitle;
+    final name = content?.displayName ?? context.l10n.storeBundleDetailTitle;
     final art = content?.displayIcon ?? content?.cardImage;
     return SubPageScaffold(
       title: name,
@@ -227,16 +227,16 @@ class _BundleBody extends ConsumerWidget {
         ),
         CountdownRow(
           expiresAt: expiresAt,
-          builder: StoreStrings.bundleEndsIn,
+          builder: context.l10n.storeBundleEndsIn,
           note: expiresAt == null
               ? null
-              : StoreStrings.bundleEndsAt(formatWallTime(expiresAt, now)),
+              : context.l10n.storeBundleEndsAt(formatWallTime(expiresAt, now)),
           period: const Duration(days: 14),
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
           trailing: ownedCount > 0
               ? StoreStatChip(
                   icon: Icons.check_circle_outline,
-                  label: StoreStrings.bundleOwnedCount(
+                  label: context.l10n.storeBundleOwnedCount(
                     ownedCount,
                     bundle.items.length,
                   ),
@@ -258,7 +258,7 @@ class _BundleBody extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    StoreStrings.bundleWholesaleOnly,
+                    context.l10n.storeBundleWholesaleOnly,
                     style: theme.textTheme.bodySmall?.copyWith(color: muted),
                   ),
                 ),
@@ -272,7 +272,7 @@ class _BundleBody extends ConsumerWidget {
             children: [
               Expanded(
                 child: Text(
-                  StoreStrings.bundleItemsTitle,
+                  context.l10n.storeBundleItemsTitle,
                   style: ValText.sectionTitle.copyWith(
                     color: theme.colorScheme.onSurface,
                   ),
@@ -280,7 +280,7 @@ class _BundleBody extends ConsumerWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                StoreStrings.bundleItemCount(bundle.items.length),
+                context.l10n.storeBundleItemCount(bundle.items.length),
                 style: theme.textTheme.bodySmall?.copyWith(color: muted),
               ),
             ],
@@ -366,16 +366,16 @@ class _PriceSummary extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          cell(StoreStrings.bundlePriceLabel, bundle.price, vnd: true),
+          cell(context.l10n.storeBundlePriceLabel, bundle.price, vnd: true),
           const SizedBox(width: 12),
           cell(
-            StoreStrings.bundleBuySeparateLabel,
+            context.l10n.storeBundleBuySeparateLabel,
             bundle.itemsTotal,
             strike: bundle.savings > 0,
           ),
           const SizedBox(width: 12),
           cell(
-            StoreStrings.bundleSavingsLabel,
+            context.l10n.storeBundleSavingsLabel,
             bundle.savings,
             color: win,
             vnd: true,
@@ -410,7 +410,7 @@ class _BundleItemTile extends ConsumerWidget {
             .value
             ?.owns(item.item.itemTypeId, item.item.itemId) ??
         false;
-    final name = itemRef?.name ?? CommonStrings.unknownItem;
+    final name = itemRef?.name ?? context.l10n.commonUnknownItem;
     final isSkin = item.item.isSkinLevel;
     final showVnd =
         item.currencyId == CurrencyIds.vp &&
@@ -458,7 +458,7 @@ class _BundleItemTile extends ConsumerWidget {
               [
                 ?itemRef?.typeLabel,
                 if (item.item.quantity > 1)
-                  StoreStrings.quantity(item.item.quantity),
+                  context.l10n.storeQuantity(item.item.quantity),
               ].join(' · '),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -482,7 +482,7 @@ class _BundleItemTile extends ConsumerWidget {
                   ),
                 if (item.isFree)
                   Text(
-                    StoreStrings.bundleItemFree,
+                    context.l10n.storeBundleItemFree,
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: legibleAccent(context, win),
                       fontWeight: FontWeight.w700,

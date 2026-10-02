@@ -6,7 +6,6 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/accounts/account_widgets.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
@@ -14,7 +13,6 @@ import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
 import '../battlepass_routes.dart';
-import '../battlepass_strings.dart';
 import '../data/battlepass_models.dart';
 import '../data/xp_pace.dart';
 import '../providers/battlepass_providers.dart';
@@ -23,6 +21,8 @@ import 'widgets/daily_checkpoints.dart';
 import 'widgets/overview_bits.dart';
 import 'widgets/pass_card.dart';
 import 'widgets/weekly_missions.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Riot queue id of Unrated ("Đấu thường"), used by the XP estimate.
 const kUnratedQueueId = 'unrated';
@@ -43,10 +43,10 @@ class BattlePassScreen extends ConsumerWidget {
     // ("BATTLE PASS" is long, so the name needs a wider screen than Store.)
     final roomy = MediaQuery.sizeOf(context).width >= 400;
     if (account == null) {
-      return const TabPageScaffold(
-        title: BattlePassStrings.title,
+      return TabPageScaffold(
+        title: context.l10n.battlePassTitle,
         body: EmptyView(
-          message: CommonStrings.errorNoAccount,
+          message: context.l10n.commonErrorNoAccount,
           icon: Icons.person_off_outlined,
         ),
       );
@@ -54,7 +54,7 @@ class BattlePassScreen extends ConsumerWidget {
     final puuid = account.puuid;
     final overview = ref.watch(battlePassOverviewProvider(puuid));
     return TabPageScaffold(
-      title: BattlePassStrings.title,
+      title: context.l10n.battlePassTitle,
       showAccountChip: false,
       actions: [AccountChip(showName: roomy)],
       onRefresh: () => refreshBattlePass(ref, puuid),
@@ -95,7 +95,7 @@ class BattlePassOverviewView extends ConsumerWidget {
     final bp = overview.battlePass;
     final unrated = db.queueName(kUnratedQueueId);
     final queueName = unrated.isEmpty || unrated == kUnratedQueueId
-        ? BattlePassStrings.unratedFallback
+        ? context.l10n.battlePassUnratedFallback
         : unrated;
     void refetchContracts() => ref.invalidate(playerContractsProvider(puuid));
 
@@ -107,10 +107,10 @@ class BattlePassOverviewView extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
           child: bp == null
-              ? const ValCard(
+              ? ValCard(
                   padding: EdgeInsets.zero,
                   child: EmptyView(
-                    message: BattlePassStrings.noBattlePass,
+                    message: context.l10n.battlePassNoBattlePass,
                     icon: Icons.military_tech_outlined,
                   ),
                 )
@@ -145,12 +145,12 @@ class BattlePassOverviewView extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             child: PassCard(
               progress: e.progress,
-              kicker: BattlePassStrings.eventPass,
+              kicker: context.l10n.battlePassEventPass,
               isPremium: overview.isPremiumFor(e.progress.contract.uuid),
               endsAt: e.endsAt,
               endsAtFormatter: (d) =>
-                  BattlePassStrings.eventEndsIn(formatCountdown(d)),
-              endsAtWall: BattlePassStrings.endsAtWall,
+                  context.l10n.battlePassEventEndsIn(formatCountdown(d)),
+              endsAtWall: context.l10n.battlePassEndsAtWall,
               onTap: () => context.push(
                 BattlePassRoutes.rewardsFor(e.progress.contract.uuid),
               ),

@@ -15,10 +15,11 @@ import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 import '../../../community/ui/share_to_community_button.dart';
 import '../../providers/store_share.dart';
-import '../../store_strings.dart';
 import '../share/store_share_sheet.dart';
 import 'daily_offer_card.dart';
 import 'store_ui_bits.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S10 body: "Làm mới sau …" countdown with the local reset time and the
 /// "Tổng" total (+ VND estimate), what is already owned / wishlisted,
@@ -32,9 +33,9 @@ class DailySection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (daily.isEmpty) {
-      return const EmptyView(
-        title: StoreStrings.dailyEmptyTitle,
-        message: StoreStrings.dailyEmpty,
+      return EmptyView(
+        title: context.l10n.storeDailyEmptyTitle,
+        message: context.l10n.storeDailyEmpty,
         icon: Icons.storefront_outlined,
       );
     }
@@ -57,11 +58,13 @@ class DailySection extends ConsumerWidget {
       children: [
         CountdownRow(
           expiresAt: expiresAt,
-          builder: StoreStrings.resetsIn,
+          builder: context.l10n.storeResetsIn,
           // The daily shop always resets at the same local time.
           note: expiresAt == null
               ? null
-              : StoreStrings.dailyResetAt(formatTime(roundToMinute(expiresAt))),
+              : context.l10n.storeDailyResetAt(
+                  formatTime(roundToMinute(expiresAt)),
+                ),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
           trailing: daily.totalVp > 0
               ? Column(
@@ -74,7 +77,7 @@ class DailySection extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            '${StoreStrings.dailyTotalLabel} ',
+                            '${context.l10n.storeDailyTotalLabel} ',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: muted,
                             ),
@@ -100,7 +103,7 @@ class DailySection extends ConsumerWidget {
               if (ownedCount > 0)
                 StoreStatChip(
                   icon: Icons.check_circle_outline,
-                  label: StoreStrings.ownedCount(
+                  label: context.l10n.storeOwnedCount(
                     ownedCount,
                     daily.offers.length,
                   ),
@@ -109,13 +112,13 @@ class DailySection extends ConsumerWidget {
               if (wishCount > 0)
                 StoreStatChip(
                   icon: Icons.favorite,
-                  label: StoreStrings.wishlistCount(wishCount),
+                  label: context.l10n.storeWishlistCount(wishCount),
                   color: ValColors.red,
                 ),
             ],
             action: StoreActionPill(
               icon: isCupertino(context) ? Icons.ios_share : Icons.share,
-              label: StoreStrings.shareImage,
+              label: context.l10n.storeShareImage,
               onTap: () => unawaited(
                 showStoreShareSheet(
                   context,

@@ -3,12 +3,13 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../community_strings.dart';
 import '../../data/community_translator.dart';
 import '../../providers/community_providers.dart';
 import '../../providers/translation_providers.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// User-authored text with an on-device "Dịch bằng Google" button when it
 /// is written in another language than the app's. The first translation of
@@ -111,9 +112,9 @@ class _TranslatableTextState extends ConsumerState<TranslatableText> {
                       )
                     : const Icon(Icons.translate_rounded, size: 16),
                 label: Text(switch (_phase) {
-                  _Phase.downloading => CommunityStrings.downloadingModels,
-                  _Phase.translating => CommunityStrings.translating,
-                  _Phase.idle => CommunityStrings.translate,
+                  _Phase.downloading => context.l10n.communityDownloadingModels,
+                  _Phase.translating => context.l10n.communityTranslating,
+                  _Phase.idle => context.l10n.communityTranslate,
                 }),
               )
             else ...[
@@ -127,7 +128,7 @@ class _TranslatableTextState extends ConsumerState<TranslatableText> {
                     vertical: 6,
                   ),
                   child: Text(
-                    CommunityStrings.translatedByGoogle,
+                    context.l10n.communityTranslatedByGoogle,
                     style: theme.textTheme.labelSmall?.copyWith(color: muted),
                   ),
                 ),
@@ -139,8 +140,8 @@ class _TranslatableTextState extends ConsumerState<TranslatableText> {
                 style: _compact,
                 child: Text(
                   _showTranslated
-                      ? CommunityStrings.showOriginal
-                      : CommunityStrings.showTranslation,
+                      ? context.l10n.communityShowOriginal
+                      : context.l10n.communityShowTranslation,
                 ),
               ),
             ],
@@ -214,12 +215,12 @@ class _TranslatableTextState extends ConsumerState<TranslatableText> {
   Future<void> _showDisclaimer() => showAdaptiveDialog<void>(
     context: context,
     builder: (context) => AlertDialog.adaptive(
-      title: const Text(CommunityStrings.googleDisclaimerTitle),
-      content: const Text(CommunityStrings.googleDisclaimer),
+      title: Text(context.l10n.communityGoogleDisclaimerTitle),
+      content: Text(context.l10n.communityGoogleDisclaimer),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text(CommonStrings.close),
+          child: Text(context.l10n.commonClose),
         ),
       ],
     ),

@@ -7,8 +7,9 @@ import '../../../../core/content/content_db.dart';
 import '../../../../core/theme/tier_colors.dart';
 import '../../../../core/ui/filter_bar.dart';
 import '../../data/skin_query.dart';
-import '../../wishlist_strings.dart';
 import 'weapon_picker_sheet.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Height of the pinned [SkinSearchField] strip for the current text size
 /// (the field grows with the accessibility text scale).
@@ -57,7 +58,7 @@ class _SkinSearchFieldState extends State<SkinSearchField> {
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
     child: GlassSearchField(
       controller: _search,
-      hintText: WishlistStrings.searchHint,
+      hintText: context.l10n.wishlistSearchHint,
       onChanged: (t) => widget.onChanged(widget.query.copyWith(text: t)),
     ),
   );
@@ -128,7 +129,7 @@ class SkinFilterChips extends StatelessWidget {
           if (weapons != null)
             ValFilterChip(
               icon: Icons.filter_alt_outlined,
-              label: weaponName ?? WishlistStrings.allWeapons,
+              label: weaponName ?? context.l10n.wishlistAllWeapons,
               selected: weaponName != null,
               onSelected: (_) => unawaited(_pickWeapon(context)),
             ),

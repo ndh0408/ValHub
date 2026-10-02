@@ -8,7 +8,6 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
@@ -23,6 +22,8 @@ import '../profile_strings.dart';
 import 'widgets/profile_widgets.dart';
 import 'widgets/rr_trend_chart.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// S42 "RR theo ngày". Route `/profile/daily-rr`.
 ///
 /// A 7-day summary (net RR, record, RR trend), then one card per local day
@@ -35,18 +36,18 @@ class DailyRrScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final account = ref.watch(activeAccountProvider);
     final now = ref.watch(clockProvider).now();
-    final zone = ProfileStrings.dayBoundary(
+    final zone = context.l10n.profileDayBoundary(
       ProfileStrings.timeZoneLabel(now.timeZoneOffset),
     );
     if (account == null) {
-      return const SubPageScaffold(
-        title: ProfileStrings.dailyRrTitle,
-        body: EmptyView(message: CommonStrings.errorNoAccount),
+      return SubPageScaffold(
+        title: context.l10n.profileDailyRrTitle,
+        body: EmptyView(message: context.l10n.commonErrorNoAccount),
       );
     }
     final puuid = account.puuid;
     return SubPageScaffold(
-      title: ProfileStrings.dailyRrTitle,
+      title: context.l10n.profileDailyRrTitle,
       subtitle: zone,
       onRefresh: () => ref
           .refresh(competitiveUpdatesProvider(puuid).future)
@@ -102,9 +103,9 @@ class DailyRrScreen extends ConsumerWidget {
             hasScrollBody: false,
             child: updates.isLoading
                 ? const _DaysSkeleton()
-                : const EmptyView(
+                : EmptyView(
                     icon: Icons.calendar_month_outlined,
-                    message: ProfileStrings.dailyRrEmpty,
+                    message: context.l10n.profileDailyRrEmpty,
                   ),
           ),
         );
@@ -190,13 +191,13 @@ class _WeekCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        ProfileStrings.lastDays(_window).toUpperCase(),
+                        context.l10n.profileLastDays(_window).toUpperCase(),
                         style: ValText.label.copyWith(color: muted),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         summary.isEmpty
-                            ? ProfileStrings.todayNone
+                            ? context.l10n.profileTodayNone
                             : ProfileStrings.joined([
                                 ProfileStrings.winsLosses(
                                   summary.wins,
@@ -204,8 +205,10 @@ class _WeekCard extends StatelessWidget {
                                   summary.draws,
                                   summary.unknown,
                                 ),
-                                ProfileStrings.matchCount(summary.matches),
-                                ProfileStrings.daysPlayed(summary.daysPlayed),
+                                context.l10n.profileMatchCount(summary.matches),
+                                context.l10n.profileDaysPlayed(
+                                  summary.daysPlayed,
+                                ),
                               ]),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: muted,
@@ -230,7 +233,7 @@ class _WeekCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      ProfileStrings.rrTrendTitle,
+                      context.l10n.profileRrTrendTitle,
                       style: theme.textTheme.labelMedium?.copyWith(
                         color: muted,
                       ),
@@ -362,7 +365,7 @@ class _DayCard extends ConsumerWidget {
                       day.draws,
                       day.unknown,
                     ),
-                    ProfileStrings.matchCount(day.matches.length),
+                    context.l10n.profileMatchCount(day.matches.length),
                   ]),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -370,7 +373,7 @@ class _DayCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Semantics(
-                  label: ProfileStrings.rankChange(
+                  label: context.l10n.profileRankChange(
                     start.tierName,
                     end.tierName,
                   ),
@@ -475,7 +478,7 @@ class _MatchRow extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    map?.displayName ?? CommonStrings.dash,
+                    map?.displayName ?? context.l10n.commonDash,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodyMedium?.copyWith(
@@ -485,7 +488,7 @@ class _MatchRow extends ConsumerWidget {
                   Text(
                     ProfileStrings.joined([
                       if (start != null) formatTime(start),
-                      ProfileStrings.rankWithRr(
+                      context.l10n.profileRankWithRr(
                         after.tierName,
                         formatNumber(after.rr),
                       ),
@@ -557,7 +560,7 @@ class _Footer extends ConsumerWidget {
                 ref.read(competitiveUpdatesProvider(puuid).notifier).loadMore(),
               ),
               icon: const Icon(Icons.history_rounded, size: 18),
-              label: const Text(CommonStrings.loadMore),
+              label: Text(context.l10n.commonLoadMore),
             ),
           const SizedBox(height: 12),
           Row(
@@ -571,7 +574,7 @@ class _Footer extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  ProfileStrings.dailyRrFootnote,
+                  context.l10n.profileDailyRrFootnote,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),

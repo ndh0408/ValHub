@@ -6,8 +6,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/domain/economy/economy.dart';
-import '../../../core/l10n/common_strings.dart';
-import '../../../core/l10n/content_strings.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
@@ -30,6 +28,8 @@ import '../data/skin_query.dart';
 import '../providers/collection_providers.dart';
 import 'player_card_picker_screen.dart';
 import 'widgets/collection_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// `:type` of `/collection/browse/:type` (S39).
 enum CollectionBrowseType {
@@ -100,8 +100,8 @@ class _BrowseCollectionScreenState
       header: SearchStrip(
         search: CollectionSearchField(
           hint: isSkin
-              ? CollectionStrings.searchSkins
-              : CollectionStrings.searchItems,
+              ? context.l10n.collectionSearchSkins
+              : context.l10n.collectionSearchItems,
           onChanged: (v) => setState(() => _query = _query.copyWith(search: v)),
         ),
         filters: isSkin
@@ -219,7 +219,7 @@ class _BrowseCollectionScreenState
                   context,
                   image: sprays[i].animatedImage ?? sprays[i].image,
                   name: sprays[i].displayName,
-                  type: ContentStrings.itemSpray,
+                  type: context.l10n.contentItemSpray,
                 ),
               ),
             ),
@@ -248,7 +248,7 @@ class _BrowseCollectionScreenState
                   context,
                   image: items[i].displayIcon,
                   name: items[i].displayName,
-                  type: ContentStrings.itemFlex,
+                  type: context.l10n.contentItemFlex,
                 ),
               ),
             ),
@@ -275,7 +275,7 @@ class _BrowseCollectionScreenState
               label: items[i].buddy.displayName,
               footer: items[i].total > 1
                   ? Text(
-                      CollectionStrings.copies(items[i].total),
+                      context.l10n.collectionCopies(items[i].total),
                       style: Theme.of(context).textTheme.labelSmall,
                     )
                   : null,
@@ -284,7 +284,7 @@ class _BrowseCollectionScreenState
                   context,
                   image: items[i].buddy.image,
                   name: items[i].buddy.displayName,
-                  type: ContentStrings.itemBuddy,
+                  type: context.l10n.contentItemBuddy,
                 ),
               ),
             ),
@@ -305,10 +305,10 @@ class _BrowseCollectionScreenState
     return _list(
       summary: SummaryStrip(
         text: _query.isFiltering
-            ? CollectionStrings.summaryFiltered(skins.length, amount)
-            : CollectionStrings.summarySkins(skins.length, amount),
+            ? context.l10n.collectionSummaryFiltered(skins.length, amount)
+            : context.l10n.collectionSummarySkins(skins.length, amount),
         caption: value.rewardCount > 0
-            ? CollectionStrings.excludedRewards
+            ? context.l10n.collectionExcludedRewards
             : null,
         highlighted: _query.isFiltering,
         trailing: value.totalVp > 0 ? PriceEstimate(value.totalVp) : null,
@@ -337,8 +337,8 @@ class _BrowseCollectionScreenState
 
   Widget _itemsSummary(int shown, int total) => SummaryStrip(
     text: _query.search.trim().isEmpty
-        ? CollectionStrings.summaryItems(total)
-        : CollectionStrings.summaryFilteredItems(shown, total),
+        ? context.l10n.collectionSummaryItems(total)
+        : context.l10n.collectionSummaryFilteredItems(shown, total),
     highlighted: _query.search.trim().isNotEmpty,
   );
 
@@ -354,21 +354,21 @@ class _BrowseCollectionScreenState
       SliverFillRemaining(
         hasScrollBody: false,
         child: empty
-            ? const EmptyView(
-                title: CollectionStrings.browseEmptyTitle,
-                message: CollectionStrings.browseEmpty,
+            ? EmptyView(
+                title: context.l10n.collectionBrowseEmptyTitle,
+                message: context.l10n.collectionBrowseEmpty,
                 icon: Icons.inventory_2_outlined,
               )
             : EmptyView(
-                title: CollectionStrings.noResultsTitle,
-                message: CollectionStrings.noResults,
+                title: context.l10n.collectionNoResultsTitle,
+                message: context.l10n.collectionNoResults,
                 icon: Icons.search_off,
                 action: _query.tiers.isEmpty
                     ? null
                     : OutlinedButton.icon(
                         onPressed: () => _setQuery(_query.copyWith(tiers: {})),
                         icon: const Icon(Icons.filter_alt_off_outlined),
-                        label: const Text(CollectionStrings.clearTiers),
+                        label: Text(context.l10n.collectionClearTiers),
                       ),
               ),
       )
@@ -475,7 +475,7 @@ class SkinGridTile extends ConsumerWidget {
           const SizedBox(width: 4),
           Expanded(
             child: Text(
-              caption ?? CommonStrings.dash,
+              caption ?? context.l10n.commonDash,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.labelSmall?.copyWith(
@@ -497,7 +497,7 @@ class SkinGridTile extends ConsumerWidget {
       footer: footer,
       semanticsLabel:
           '${skin.displayName}, '
-          '${quote.vp == null ? (caption ?? CommonStrings.dash) : formatVp(quote.vp!)}',
+          '${quote.vp == null ? (caption ?? context.l10n.commonDash) : formatVp(quote.vp!)}',
       onTap: () {
         Haptics.selection();
         unawaited(

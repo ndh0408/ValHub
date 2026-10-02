@@ -14,6 +14,8 @@ import '../live_game_strings.dart';
 import '../providers/live_game_providers.dart';
 import 'live_widgets.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Header of the "Chi tiết trận" sheet (G3, ValBuddy "Game Details"): the
 /// shared sheet header (bold title + round close button), a large rounded
 /// map splash carrying the status chip, the refresh ring, the map name and
@@ -44,7 +46,7 @@ class LiveSheetHeader extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SheetHeader(
-          title: LiveGameStrings.sheetTitle,
+          title: context.l10n.liveGameSheetTitle,
           // Outside a match there is no hero: keep the ring here.
           actions: [
             if (status == null) ...[
@@ -108,7 +110,7 @@ class LiveMapBanner extends StatelessWidget {
     final theme = Theme.of(context);
     final art = splash;
     final hasArt = art != null && art.isNotEmpty;
-    final name = (mapName ?? LiveGameStrings.sheetTitle).toUpperCase();
+    final name = (mapName ?? context.l10n.liveGameSheetTitle).toUpperCase();
     return Semantics(
       container: true,
       label: LiveGameStrings.joinParts([name, mode, status.label]),
@@ -231,7 +233,7 @@ class LiveScoreBanner extends ConsumerWidget {
       color: theme.colorScheme.onSurface,
     ).copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
     final label = Text(
-      LiveGameStrings.liveScore.toUpperCase(),
+      context.l10n.liveGameLiveScore.toUpperCase(),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: ValText.label.copyWith(color: colors.muted, fontSize: 11),
@@ -246,7 +248,7 @@ class LiveScoreBanner extends ConsumerWidget {
           if (compact) Flexible(child: label) else label,
           const SizedBox(width: 12, height: 2),
           Semantics(
-            label: '${LiveGameStrings.liveScore} ${score.text}',
+            label: '${context.l10n.liveGameLiveScore} ${score.text}',
             excludeSemantics: true,
             child: Text.rich(
               TextSpan(

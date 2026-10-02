@@ -8,8 +8,6 @@ import '../../core/accounts/account_providers.dart';
 import '../../core/content/content_db.dart';
 import '../../core/content/content_repository.dart';
 import '../../core/domain/economy/economy.dart';
-import '../../core/l10n/common_strings.dart';
-import '../../core/l10n/content_strings.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/ui/adaptive.dart';
 import '../../core/ui/content_tier_badge.dart';
@@ -27,6 +25,8 @@ import 'providers/skin_availability.dart';
 import 'skin_detail_strings.dart';
 import 'skin_video_view.dart';
 import 'store_history_line.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Context the sheet is opened from.
 enum SkinDetailMode {
@@ -117,8 +117,8 @@ class _SkinDetailSheetState extends ConsumerState<SkinDetailSheet> {
           : const _LoadingBody();
     } else if (skin == null) {
       _reportMiss();
-      body = const EmptyView(
-        message: SkinDetailStrings.notFound,
+      body = EmptyView(
+        message: context.l10n.skinDetailNotFound,
         icon: Icons.search_off,
       );
     } else {
@@ -137,7 +137,7 @@ class _SkinDetailSheetState extends ConsumerState<SkinDetailSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SheetHeader(
-            title: skin?.displayName ?? SkinDetailStrings.title,
+            title: skin?.displayName ?? context.l10n.skinDetailTitle,
             subtitle: skin == null ? null : _subtitle(db!, skin),
           ),
           Expanded(child: body),
@@ -290,7 +290,7 @@ class _SkinBody extends ConsumerWidget {
                           reward.contractName,
                           reward.level == null
                               ? null
-                              : ContentStrings.level(reward.level!),
+                              : context.l10n.contentLevel(reward.level!),
                         ),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: muted,
@@ -308,7 +308,7 @@ class _SkinBody extends ConsumerWidget {
               ],
               if (isOwned) ...[
                 const SizedBox(height: 10),
-                const OwnedBadge(label: SkinDetailStrings.owned),
+                OwnedBadge(label: context.l10n.skinDetailOwned),
               ],
             ],
           ),
@@ -325,7 +325,7 @@ class _SkinBody extends ConsumerWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  SkinDetailStrings.availableInStoreOf(
+                  context.l10n.skinDetailAvailableInStoreOf(
                     elsewhere.map((a) => a.riotId).join(', '),
                   ),
                   style: theme.textTheme.bodySmall?.copyWith(color: muted),
@@ -337,7 +337,7 @@ class _SkinBody extends ConsumerWidget {
         if (skin.chromas.length > 1) ...[
           const SizedBox(height: 20),
           _SectionTitle(
-            SkinDetailStrings.variants,
+            context.l10n.skinDetailVariants,
             trailing: chroma == null || chroma!.isBase ? null : chroma!.label,
           ),
           const SizedBox(height: 10),
@@ -362,7 +362,7 @@ class _SkinBody extends ConsumerWidget {
         ],
         if (skin.levels.length > 1) ...[
           const SizedBox(height: 20),
-          const _SectionTitle(SkinDetailStrings.upgrades),
+          _SectionTitle(context.l10n.skinDetailUpgrades),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
@@ -413,7 +413,7 @@ class _Media extends StatelessWidget {
     final v = video;
     return Semantics(
       button: v != null,
-      label: v == null ? null : SkinDetailStrings.playVideo,
+      label: v == null ? null : context.l10n.skinDetailPlayVideo,
       child: Material(
         color: scheme.surfaceContainer,
         shape: RoundedRectangleBorder(
@@ -487,7 +487,7 @@ class _Media extends StatelessWidget {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                SkinDetailStrings.playVideo,
+                                context.l10n.skinDetailPlayVideo,
                                 style: theme.textTheme.labelMedium?.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
@@ -528,7 +528,7 @@ class _PriceLabel extends StatelessWidget {
       );
     }
     final vp = quote.vp;
-    if (vp == null) return Text(CommonStrings.dash, style: style);
+    if (vp == null) return Text(context.l10n.commonDash, style: style);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
@@ -603,7 +603,7 @@ class _ChromaSwatch extends StatelessWidget {
       button: true,
       selected: selected,
       label: locked
-          ? '${chroma.label}, ${SkinDetailStrings.locked}'
+          ? '${chroma.label}, ${context.l10n.skinDetailLocked}'
           : chroma.label,
       excludeSemantics: true,
       child: Tooltip(
@@ -674,13 +674,13 @@ class _LevelChip extends StatelessWidget {
     final theme = Theme.of(context);
     final video = level.streamedVideo;
     final muted = theme.colorScheme.onSurfaceVariant;
-    final levelText = ContentStrings.level(level.levelNumber);
+    final levelText = context.l10n.contentLevel(level.levelNumber);
     return Semantics(
       button: video != null,
       label: [
-        SkinDetailStrings.levelCaption(levelText, level.levelItemLabel),
-        if (locked) SkinDetailStrings.locked,
-        if (video != null) SkinDetailStrings.playVideo,
+        context.l10n.skinDetailLevelCaption(levelText, level.levelItemLabel),
+        if (locked) context.l10n.skinDetailLocked,
+        if (video != null) context.l10n.skinDetailPlayVideo,
       ].join(', '),
       excludeSemantics: true,
       child: ConstrainedBox(
@@ -767,11 +767,13 @@ class _WishlistButton extends StatelessWidget {
       ),
     );
     final label = Text(
-      active ? SkinDetailStrings.inWishlist : SkinDetailStrings.addToWishlist,
+      active
+          ? context.l10n.skinDetailInWishlist
+          : context.l10n.skinDetailAddToWishlist,
     );
     return Semantics(
       toggled: active,
-      hint: active ? SkinDetailStrings.removeFromWishlist : null,
+      hint: active ? context.l10n.skinDetailRemoveFromWishlist : null,
       child: SizedBox(
         height: 48,
         child: active

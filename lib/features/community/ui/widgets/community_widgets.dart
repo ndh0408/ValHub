@@ -22,6 +22,8 @@ import '../../data/community_exception.dart';
 import '../../data/community_models.dart';
 import '../consent/consent_sheet.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 // ---------------------------------------------------------------- segments
 
 /// One segment of [GlassSegmentedControl].
@@ -407,14 +409,14 @@ class AuthorRow extends ConsumerWidget {
                         children: [
                           TextSpan(
                             text: author.gameName.isEmpty
-                                ? CommunityStrings.unknownPlayer
+                                ? context.l10n.communityUnknownPlayer
                                 : author.gameName,
                             style: const TextStyle(fontWeight: FontWeight.w700),
                           ),
                           if (author.tagLine.isNotEmpty)
                             TextSpan(
                               text:
-                                  ' ${CommunityStrings.tagSuffix(author.tagLine)}',
+                                  ' ${context.l10n.communityTagSuffix(author.tagLine)}',
                               style: TextStyle(
                                 color: muted,
                                 fontWeight: FontWeight.w500,
@@ -444,7 +446,7 @@ class AuthorRow extends ConsumerWidget {
                   ],
                   if (isMe) ...[
                     const SizedBox(width: 6),
-                    const _MiniBadge(CommunityStrings.you),
+                    _MiniBadge(context.l10n.communityYou),
                   ],
                 ],
               ),
@@ -810,13 +812,13 @@ class CommunityErrorState extends StatelessWidget {
             onPressed: () => context.push(
               AuthRoutes.loginPath(reauthPuuid: d.puuid ?? puuid),
             ),
-            child: const Text(CommonStrings.signInAgain),
+            child: Text(context.l10n.commonSignInAgain),
           )
         : (onRetry != null && d.canRetry)
         ? OutlinedButton.icon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh),
-            label: const Text(CommonStrings.retry),
+            label: Text(context.l10n.commonRetry),
           )
         : null;
     if (compact) {
@@ -841,7 +843,7 @@ class CommunityErrorState extends StatelessWidget {
     }
     return CommunityEmptyState(
       icon: d.icon,
-      title: d.title ?? CommunityStrings.errorTitle,
+      title: d.title ?? context.l10n.communityErrorTitle,
       message: d.message,
       action: button,
     );
@@ -1006,7 +1008,7 @@ class _PagedFooterState extends State<PagedFooter> {
             ),
             TextButton(
               onPressed: widget.onLoadMore,
-              child: const Text(CommonStrings.retry),
+              child: Text(context.l10n.commonRetry),
             ),
           ],
         ),

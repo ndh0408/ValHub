@@ -14,6 +14,8 @@ import '../../data/scoreboard_order.dart';
 import '../../profile_strings.dart';
 import 'profile_widgets.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Column widths of the scoreboard (fit a 360 dp phone; values scale down).
 const double _wAcs = 38;
 const double _wKda = 26;
@@ -44,8 +46,8 @@ class ScoreboardSliver extends StatelessWidget {
   Widget build(BuildContext context) {
     final sides = scoreboardOrder(details, perspective);
     if (sides.isEmpty) {
-      return const SliverToBoxAdapter(
-        child: EmptyView(message: ProfileStrings.noPlayers),
+      return SliverToBoxAdapter(
+        child: EmptyView(message: context.l10n.profileNoPlayers),
       );
     }
     final slivers = <Widget>[];
@@ -53,8 +55,8 @@ class ScoreboardSliver extends StatelessWidget {
       if (side.freeForAll) {
         slivers
           ..add(
-            const SliverToBoxAdapter(
-              child: _TeamHeader(title: ProfileStrings.allPlayers),
+            SliverToBoxAdapter(
+              child: _TeamHeader(title: context.l10n.profileAllPlayers),
             ),
           )
           ..add(
@@ -78,8 +80,8 @@ class ScoreboardSliver extends StatelessWidget {
         continue;
       }
       final title = switch (side.relation) {
-        SideRelation.yours => ProfileStrings.yourTeam,
-        SideRelation.enemy => ProfileStrings.enemyTeam,
+        SideRelation.yours => context.l10n.profileYourTeam,
+        SideRelation.enemy => context.l10n.profileEnemyTeam,
         SideRelation.neutral => _teamName(side.teamId ?? ''),
       };
       slivers
@@ -243,19 +245,20 @@ class _ColumnHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
         children: [
-          if (deathmatch) _Cell(ProfileStrings.colPlace, _wPlace, style: style),
+          if (deathmatch)
+            _Cell(context.l10n.profileColPlace, _wPlace, style: style),
           const SizedBox(width: 50),
           const Spacer(),
           Tooltip(
-            message: ProfileStrings.acsHint,
-            child: _Cell(ProfileStrings.acs, _wAcs, style: style),
+            message: context.l10n.profileAcsHint,
+            child: _Cell(context.l10n.profileAcs, _wAcs, style: style),
           ),
-          _Cell(ProfileStrings.colK, _wKda, style: style),
-          _Cell(ProfileStrings.colD, _wKda, style: style),
-          _Cell(ProfileStrings.colA, _wKda, style: style),
+          _Cell(context.l10n.profileColK, _wKda, style: style),
+          _Cell(context.l10n.profileColD, _wKda, style: style),
+          _Cell(context.l10n.profileColA, _wKda, style: style),
           if (!deathmatch)
-            _Cell(ProfileStrings.colPlusMinus, _wPm, style: style),
-          _Cell(ProfileStrings.hs, _wHs, style: style),
+            _Cell(context.l10n.profileColPlusMinus, _wPm, style: style),
+          _Cell(context.l10n.profileHs, _wHs, style: style),
         ],
       ),
     );
@@ -398,7 +401,7 @@ class _PlayerRow extends ConsumerWidget {
                     ),
                     if (place == null && s.placement > 0)
                       Text(
-                        ProfileStrings.placement(s.placement),
+                        context.l10n.profilePlacement(s.placement),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -406,8 +409,8 @@ class _PlayerRow extends ConsumerWidget {
                     if (s.isMatchMvp || s.isTeamMvp)
                       Text(
                         s.isMatchMvp
-                            ? ProfileStrings.mvp
-                            : ProfileStrings.teamMvp,
+                            ? context.l10n.profileMvp
+                            : context.l10n.profileTeamMvp,
                         maxLines: 1,
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: s.isMatchMvp
@@ -421,7 +424,7 @@ class _PlayerRow extends ConsumerWidget {
               ),
               _Cell(
                 s.acs == null
-                    ? CompetitiveStrings.noValue
+                    ? context.l10n.competitiveNoValue
                     : formatNumber(s.acs!.round()),
                 _wAcs,
                 style: numStyle,
@@ -439,7 +442,7 @@ class _PlayerRow extends ConsumerWidget {
                 ),
               _Cell(
                 s.headshotRate == null
-                    ? CompetitiveStrings.noValue
+                    ? context.l10n.competitiveNoValue
                     : formatPercent(s.headshotRate!),
                 _wHs,
                 style: numStyle,

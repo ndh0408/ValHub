@@ -31,6 +31,8 @@ import 'ui/lfg/lfg_bits.dart';
 import 'ui/skins/star_rating.dart';
 import 'ui/widgets/community_widgets.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// The 2 newest open LFG posts that fit [puuid]'s rank and region.
 final matchingLfgPreviewProvider = FutureProvider.autoDispose
     .family<List<LfgPost>, String>((ref, puuid) async {
@@ -98,7 +100,7 @@ class LfgPreviewCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            CommunityStrings.lfgPreviewTitle,
+            context.l10n.communityLfgPreviewTitle,
             style: theme.textTheme.titleSmall,
           ),
           for (final p in posts)
@@ -113,7 +115,8 @@ class LfgPreviewCard extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          p.author.riotId ?? CommunityStrings.unknownPlayer,
+                          p.author.riotId ??
+                              context.l10n.communityUnknownPlayer,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -123,7 +126,7 @@ class LfgPreviewCard extends ConsumerWidget {
                         Text(
                           CommunityStrings.dotJoin([
                             CommunityStrings.modeLabel(p.mode),
-                            CommunityStrings.slotsWanted(p.slots),
+                            context.l10n.communitySlotsWanted(p.slots),
                           ]),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -164,7 +167,7 @@ class TrendingSkinsCard extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              CommunityStrings.trendingTitle,
+              context.l10n.communityTrendingTitle,
               style: theme.textTheme.titleSmall,
             ),
           ),

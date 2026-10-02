@@ -1,5 +1,14 @@
 # Tiến độ VanHub (điểm dừng để làm tiếp)
 
+Checkpoint 02/10: [Final gap audit và CI local](FINAL_GAP_AUDIT_2026-10-02.md).
+4.197 Flutter tests đạt trên Windows và Mac; lượt device locale `en` trên Windows
+cũng đạt 4.197 (fallback vi), analyzer 0 issues. Backend 867 tests đạt; Docker
+native backup/restore smoke đạt. APK 4005 có 10 public-flow cases đạt và đã cài
+lên emulator có cửa sổ. I18N còn **560 references / 52 structural members**,
+chưa có đủ bản dịch; build iOS không ký trên Mac đạt (82,7 MB), IPA kiểm tra đã
+đóng gói; chưa nghiệm thu native trên iPhone/ký release.
+GitHub Actions không khởi động do tài khoản bị khóa billing. Các số bên dưới là lịch sử.
+
 Đợt đổi tên VanHub, sửa UI và rà tính năng: xem [VANHUB_REVIEW_2026-10-01.md](VANHUB_REVIEW_2026-10-01.md). Trạng thái tích hợp 01/10/2026: xem [COMPLETION_STATUS.md](COMPLETION_STATUS.md) và [QA_2026-10-01.md](QA_2026-10-01.md). Bốn WP và phần sửa/test tiếp theo đã gộp trên `ndh0408/codex-complete`; chủ dự án yêu cầu cập nhật cả nhánh mặc định GitHub `claude/jolly-hawking-23o2j8`; toàn bộ yêu cầu global **chưa hoàn tất**. Phần dưới là snapshot lịch sử 29/09, không phải bằng chứng nghiệm thu bản mới.
 
 ## Snapshot 29/09/2026

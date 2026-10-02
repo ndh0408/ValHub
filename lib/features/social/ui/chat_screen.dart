@@ -7,7 +7,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
-import '../../../core/domain/competitive/competitive_strings.dart';
 import '../../../core/domain/competitive/names.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
@@ -25,6 +24,8 @@ import '../data/friend_status.dart';
 import '../social_strings.dart';
 import 'widgets/friend_tile.dart';
 import 'widgets/social_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Messages closer than this (same side, same day) form one group: one
 /// avatar, one time label, tighter spacing.
@@ -115,7 +116,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ),
         actions: [
           IconButton(
-            tooltip: SocialStrings.viewProfile,
+            tooltip: context.l10n.socialViewProfile,
             icon: const Icon(Icons.person_outline),
             onPressed: _openProfile,
           ),
@@ -191,7 +192,7 @@ class _ChatHeader extends StatelessWidget {
     final online = friend?.isOnline ?? false;
     return Semantics(
       button: true,
-      label: SocialStrings.viewProfile,
+      label: context.l10n.socialViewProfile,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(ValRadius.small),
@@ -217,7 +218,7 @@ class _ChatHeader extends StatelessWidget {
                   children: [
                     RiotIdText(
                       name,
-                      fallback: CompetitiveStrings.unknownPlayer,
+                      fallback: context.l10n.competitiveUnknownPlayer,
                       style: theme.textTheme.titleMedium,
                     ),
                     if (s != null)
@@ -284,8 +285,8 @@ class _ConversationBody extends StatelessWidget {
           children: [
             const SizedBox(height: 32),
             EmptyView(
-              title: SocialStrings.emptyChatTitle,
-              message: SocialStrings.emptyChat,
+              title: context.l10n.socialEmptyChatTitle,
+              message: context.l10n.socialEmptyChat,
               icon: Icons.waving_hand_outlined,
               action: Wrap(
                 alignment: WrapAlignment.center,
@@ -559,7 +560,7 @@ class _Bubble extends StatelessWidget {
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
-                        SocialStrings.failedBadge,
+                        context.l10n.socialFailedBadge,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.labelSmall?.copyWith(
@@ -632,8 +633,8 @@ class _Composer extends StatelessWidget {
                   onSubmitted: (_) => onSend(),
                   decoration: InputDecoration(
                     hintText: connected
-                        ? SocialStrings.messageHint
-                        : SocialStrings.waitingForConnection,
+                        ? context.l10n.socialMessageHint
+                        : context.l10n.socialWaitingForConnection,
                     hintMaxLines: 2,
                     counterText: '',
                     isDense: true,
@@ -660,7 +661,7 @@ class _Composer extends StatelessWidget {
                     duration: ValMotion.fast,
                     curve: ValMotion.curve,
                     child: IconButton.filled(
-                      tooltip: SocialStrings.send,
+                      tooltip: context.l10n.socialSend,
                       onPressed: canSend
                           ? () {
                               Haptics.light();

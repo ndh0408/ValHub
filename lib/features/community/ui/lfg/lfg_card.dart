@@ -17,6 +17,8 @@ import '../widgets/community_widgets.dart';
 import '../widgets/translatable_text.dart';
 import 'lfg_bits.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// One "Tìm đồng đội" post: author, time left, mode, rank range, roles,
 /// mic / language, party size dots, picked agents, note and "Vào tổ đội"
 /// (or, on the user's own post, live members + "Gia hạn" / "Gỡ tin").
@@ -123,7 +125,7 @@ class LfgCard extends ConsumerWidget {
                 RankRangeBadge(min: post.rankMin, max: post.rankMax),
                 if (post.mic == true)
                   Tooltip(
-                    message: CommunityStrings.mic,
+                    message: context.l10n.communityMic,
                     child: Icon(Icons.mic_rounded, size: 18, color: muted),
                   ),
                 if (langTag.isNotEmpty)
@@ -133,7 +135,7 @@ class LfgCard extends ConsumerWidget {
                   ),
                 if (outOfRange)
                   ValBadge(
-                    CommunityStrings.outOfRange,
+                    context.l10n.communityOutOfRange,
                     color: colors.warning,
                     soft: true,
                   ),
@@ -148,7 +150,7 @@ class LfgCard extends ConsumerWidget {
             children: [
               PartyDots(size: partySize),
               Text(
-                CommunityStrings.slotsWanted(post.slots),
+                context.l10n.communitySlotsWanted(post.slots),
                 style: theme.textTheme.labelLarge?.copyWith(
                   color: legibleAccent(context, colors.win),
                   fontWeight: FontWeight.w700,
@@ -238,8 +240,8 @@ class LfgCard extends ConsumerWidget {
                           : const Icon(Icons.group_add_rounded),
                       label: Text(
                         expired
-                            ? CommunityStrings.expired
-                            : CommunityStrings.joinParty,
+                            ? context.l10n.communityExpired
+                            : context.l10n.communityJoinParty,
                       ),
                     ),
                   ),
@@ -293,7 +295,7 @@ class _MineActions extends StatelessWidget {
                 child: OutlinedButton.icon(
                   onPressed: onExtend,
                   icon: const Icon(Icons.update_rounded),
-                  label: const Text(CommunityStrings.extend),
+                  label: Text(context.l10n.communityExtend),
                 ),
               ),
             ),
@@ -304,7 +306,7 @@ class _MineActions extends StatelessWidget {
                 child: OutlinedButton.icon(
                   onPressed: onRemove,
                   icon: const Icon(Icons.delete_outline_rounded),
-                  label: const Text(CommunityStrings.removeLfg),
+                  label: Text(context.l10n.communityRemoveLfg),
                 ),
               ),
             ),
@@ -313,8 +315,8 @@ class _MineActions extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           CommunityStrings.dotJoin([
-            CommunityStrings.partyCodeValue(post.partyCode),
-            CommunityStrings.joinsCount(formatNumber(post.joins)),
+            context.l10n.communityPartyCodeValue(post.partyCode),
+            context.l10n.communityJoinsCount(formatNumber(post.joins)),
           ]),
           style: theme.textTheme.labelMedium?.copyWith(
             color: muted,
@@ -339,7 +341,7 @@ class _LiveMembers extends StatelessWidget {
     return Row(
       children: [
         Text(
-          CommunityStrings.liveMembers.toUpperCase(),
+          context.l10n.communityLiveMembers.toUpperCase(),
           style: ValText.label.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -402,7 +404,7 @@ class _TimeLeftPill extends StatelessWidget {
           CountdownText(
             expiresAt: expiresAt,
             format: (d) => formatMinutesSeconds(d),
-            builder: CommunityStrings.expiresIn,
+            builder: context.l10n.communityExpiresIn,
             onExpired: onExpired,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
               color: fg,

@@ -3,7 +3,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/l10n/content_strings.dart';
 import '../../../../core/l10n/locale.dart';
 import '../../../../core/riot/riot_ids.dart';
@@ -12,6 +11,8 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/rank_badge.dart';
 import '../../community_strings.dart';
 import '../../data/community_models.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Agent role uuid of an LFG role (`null` for `flex`).
 String? lfgRoleUuid(String role) => switch (role) {
@@ -120,14 +121,14 @@ class RankRangeBadge extends ConsumerWidget {
       fontWeight: FontWeight.w700,
     );
     final child = min == null && max == null
-        ? Text(CommunityStrings.anyRank, style: style)
+        ? Text(context.l10n.communityAnyRank, style: style)
         : Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               RankBadge(tier: min ?? 3, size: 18, showName: false),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Text(CommonStrings.dash, style: style),
+                child: Text(context.l10n.commonDash, style: style),
               ),
               RankBadge(tier: max ?? kMaxRankTier, size: 18, showName: false),
             ],
@@ -174,7 +175,7 @@ class PartyDots extends StatelessWidget {
     final track = valColorsOf(context).track;
     return Semantics(
       container: true,
-      label: CommunityStrings.partySizeValue(filled),
+      label: context.l10n.communityPartySizeValue(filled),
       excludeSemantics: true,
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -220,17 +221,17 @@ class LfgStatusChip extends StatelessWidget {
     final c = valColorsOf(context);
     final (label, color, icon) = switch (status) {
       LfgStatus.open => (
-        CommunityStrings.statusOpen,
+        context.l10n.communityStatusOpen,
         c.win,
         Icons.search_rounded,
       ),
       LfgStatus.full => (
-        CommunityStrings.statusFull,
+        context.l10n.communityStatusFull,
         c.warning,
         Icons.groups_rounded,
       ),
       LfgStatus.inGame => (
-        CommunityStrings.statusInGame,
+        context.l10n.communityStatusInGame,
         ValColors.red,
         Icons.sports_esports_rounded,
       ),

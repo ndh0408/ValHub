@@ -4,7 +4,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/economy/economy.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/riot/riot_ids.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/countdown_ring.dart';
@@ -14,8 +13,9 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/util/format.dart';
 import '../../store_routes.dart';
-import '../../store_strings.dart';
 import 'store_ui_bits.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Hero tag shared by the bundle banner art and the S14 hero.
 Object bundleArtHeroTag(String bundleId) => ('bundle-art', bundleId);
@@ -33,14 +33,14 @@ class BundleBanner extends ConsumerWidget {
         .watch(contentProvider)
         .value
         ?.bundleByUuid(bundle.dataAssetId);
-    final name = content?.displayName ?? CommonStrings.unknownItem;
+    final name = content?.displayName ?? context.l10n.commonUnknownItem;
     final expiresAt = bundle.expiresAt;
     final theme = Theme.of(context);
     const onArt = Colors.white;
 
     return Semantics(
       button: true,
-      label: StoreStrings.offerSemantics(
+      label: context.l10n.storeOfferSemantics(
         name,
         '${formatNumber(bundle.price)} ${currencyOf(ref, bundle.currencyId)?.label ?? ''}'
             .trim(),
@@ -158,7 +158,7 @@ class BundleBanner extends ConsumerWidget {
                                   Flexible(
                                     child: CountdownText(
                                       expiresAt: expiresAt,
-                                      builder: StoreStrings.bundleEndsIn,
+                                      builder: context.l10n.storeBundleEndsIn,
                                       style: theme.textTheme.labelMedium
                                           ?.copyWith(
                                             color: Colors.white,

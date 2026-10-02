@@ -1,9 +1,10 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/domain/economy/economy.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/currency_amount.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// B9 price of a skin: "2.175 VP", "≈ 1.775 VP", or the reward / not-for-sale
 /// caption ("Phần thưởng Battle Pass", "Không bán").
@@ -38,7 +39,7 @@ class SkinPriceText extends StatelessWidget {
       );
     }
     final vp = quote.vp;
-    if (vp == null) return Text(CommonStrings.dash, style: base);
+    if (vp == null) return Text(context.l10n.commonDash, style: base);
     return FittedBox(
       fit: BoxFit.scaleDown,
       alignment: textAlign == TextAlign.start

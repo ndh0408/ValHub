@@ -21,6 +21,8 @@ import '../data/live_game_models.dart';
 import '../live_game_strings.dart';
 import '../providers/live_game_providers.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Typical length of agent select (competitive: 85 s), for the timer ring.
 const kAgentSelectPeriod = Duration(seconds: 85);
 
@@ -85,8 +87,8 @@ class _AgentSelectViewState extends ConsumerState<AgentSelectView> {
 
   void _explain(AgentTileState state) {
     final message = switch (state) {
-      AgentTileState.notOwned => LiveGameStrings.agentNotOwned,
-      AgentTileState.taken => LiveGameStrings.agentTaken,
+      AgentTileState.notOwned => context.l10n.liveGameAgentNotOwned,
+      AgentTileState.taken => context.l10n.liveGameAgentTaken,
       _ => null,
     };
     if (message != null) showAppSnackBar(context, message);
@@ -104,10 +106,10 @@ class _AgentSelectViewState extends ConsumerState<AgentSelectView> {
     final loading = agents.isEmpty && content.isLoading;
     final Widget grid;
     if (agents.isEmpty && !loading) {
-      grid = const SliverFillRemaining(
+      grid = SliverFillRemaining(
         hasScrollBody: false,
         child: EmptyView(
-          message: LiveGameStrings.noAgents,
+          message: context.l10n.liveGameNoAgents,
           icon: Icons.person_search_outlined,
         ),
       );
@@ -216,7 +218,7 @@ class _AgentSelectInfo extends StatelessWidget {
               CountdownText(
                 expiresAt: endsAt,
                 format: (d) => formatMinutesSeconds(d, padMinutes: false),
-                builder: LiveGameStrings.timeLeft,
+                builder: context.l10n.liveGameTimeLeft,
                 onExpired: onExpired,
                 style: theme.textTheme.titleSmall?.copyWith(
                   color: colors.warning,
@@ -242,7 +244,7 @@ class _AgentSelectInfo extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(LiveGameStrings.hoverLockHint, style: muted),
+                child: Text(context.l10n.liveGameHoverLockHint, style: muted),
               ),
             ],
           ),
@@ -256,7 +258,7 @@ class _AgentSelectInfo extends StatelessWidget {
                 ?timer,
                 if (enemySize > 0)
                   Text(
-                    LiveGameStrings.enemyLocked(
+                    context.l10n.liveGameEnemyLocked(
                       (match.enemyTeamLockCount ?? 0).clamp(0, enemySize),
                       enemySize,
                     ),
@@ -278,8 +280,8 @@ class _AgentSelectInfo extends StatelessWidget {
                 Expanded(
                   child: Text(
                     myLocked
-                        ? LiveGameStrings.youLocked(agent.displayName)
-                        : LiveGameStrings.youHover(agent.displayName),
+                        ? context.l10n.liveGameYouLocked(agent.displayName)
+                        : context.l10n.liveGameYouHover(agent.displayName),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodyMedium?.copyWith(

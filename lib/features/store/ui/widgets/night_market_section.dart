@@ -14,10 +14,11 @@ import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 import '../../../community/ui/share_to_community_button.dart';
 import '../../providers/store_share.dart';
-import '../../store_strings.dart';
 import '../share/store_share_sheet.dart';
 import 'night_market_card.dart';
 import 'store_ui_bits.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S11 body: countdown (+ local end time), "Chia sẻ ảnh", up to 6 cards,
 /// total-savings footer (+ VND estimate), info note.
@@ -35,9 +36,9 @@ class NightMarketSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final nm = nightMarket;
     if (nm == null || nm.offers.isEmpty) {
-      return const EmptyView(
-        title: StoreStrings.nightMarketEmptyTitle,
-        message: StoreStrings.nightMarketEmpty,
+      return EmptyView(
+        title: context.l10n.storeNightMarketEmptyTitle,
+        message: context.l10n.storeNightMarketEmpty,
         icon: Icons.nightlight_outlined,
       );
     }
@@ -59,10 +60,12 @@ class NightMarketSection extends ConsumerWidget {
       children: [
         CountdownRow(
           expiresAt: expiresAt,
-          builder: StoreStrings.nightMarketEndsIn,
+          builder: context.l10n.storeNightMarketEndsIn,
           note: expiresAt == null
               ? null
-              : StoreStrings.nightMarketEndsAt(formatWallTime(expiresAt, now)),
+              : context.l10n.storeNightMarketEndsAt(
+                  formatWallTime(expiresAt, now),
+                ),
           period: const Duration(days: 14),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
         ),
@@ -73,19 +76,22 @@ class NightMarketSection extends ConsumerWidget {
               if (ownedCount > 0)
                 StoreStatChip(
                   icon: Icons.check_circle_outline,
-                  label: StoreStrings.ownedCount(ownedCount, nm.offers.length),
+                  label: context.l10n.storeOwnedCount(
+                    ownedCount,
+                    nm.offers.length,
+                  ),
                   color: win,
                 ),
               if (wishCount > 0)
                 StoreStatChip(
                   icon: Icons.favorite,
-                  label: StoreStrings.wishlistCount(wishCount),
+                  label: context.l10n.storeWishlistCount(wishCount),
                   color: ValColors.red,
                 ),
             ],
             action: StoreActionPill(
               icon: isCupertino(context) ? Icons.ios_share : Icons.share,
-              label: StoreStrings.shareImage,
+              label: context.l10n.storeShareImage,
               onTap: () => unawaited(
                 showStoreShareSheet(
                   context,
@@ -133,7 +139,7 @@ class NightMarketSection extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        StoreStrings.nightMarketTotalSavings(
+                        context.l10n.storeNightMarketTotalSavings(
                           formatVp(nm.totalSavings),
                         ),
                         style: theme.textTheme.bodyMedium?.copyWith(
@@ -161,7 +167,7 @@ class NightMarketSection extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  StoreStrings.nightMarketNote,
+                  context.l10n.storeNightMarketNote,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),

@@ -15,7 +15,6 @@ import '../../../../core/l10n/l10n.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../settings/settings_routes.dart';
 import '../../data/home_card.dart';
-import '../../home_strings.dart';
 import '../../providers/home_card_providers.dart';
 import '../home_card_frame.dart';
 
@@ -32,9 +31,9 @@ class ServerStatusHomeCard extends ConsumerWidget {
     final region = context.l10n.riotRegionName(head.region);
     final title = notice.isMaintenance
         ? (head.isInProgress
-              ? HomeStrings.statusMaintenanceNow(region)
-              : HomeStrings.statusMaintenanceScheduled(region))
-        : HomeStrings.statusIncident(region);
+              ? context.l10n.homeStatusMaintenanceNow(region)
+              : context.l10n.homeStatusMaintenanceScheduled(region))
+        : context.l10n.homeStatusIncident(region);
     final colors = valColorsOf(context);
     final tone = notice.isMaintenance
         ? colors.warning
@@ -67,7 +66,7 @@ class ServerStatusHomeCard extends ConsumerWidget {
             children: [
               if (more > 0)
                 Text(
-                  HomeStrings.statusMore(more),
+                  context.l10n.homeStatusMore(more),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -77,7 +76,7 @@ class ServerStatusHomeCard extends ConsumerWidget {
                     unawaited(context.push<Object?>(SettingsRoutes.status)),
                 icon: const Icon(Icons.chevron_right),
                 iconAlignment: IconAlignment.end,
-                label: const Text(HomeStrings.statusDetails),
+                label: Text(context.l10n.homeStatusDetails),
               ),
             ],
           ),

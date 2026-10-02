@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../core/accounts/account_providers.dart';
-import '../../core/l10n/common_strings.dart';
 import '../../core/ui/adaptive.dart';
 import '../../core/ui/empty_view.dart';
 import '../../core/ui/error_view.dart';
@@ -20,6 +19,8 @@ import 'ui/live_ended_view.dart';
 import 'ui/live_game_header.dart';
 import 'ui/live_idle_view.dart';
 import 'ui/live_roster.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Opens S50 "Chi tiết trận" (full-height sheet) for the active account.
 /// While it is open the live game is polled every few seconds (SUMMARY §10).
@@ -57,13 +58,13 @@ class LiveGameSheet extends ConsumerWidget {
         height: height,
         child: Column(
           children: [
-            const SheetHeader(
-              title: LiveGameStrings.sheetTitle,
+            SheetHeader(
+              title: context.l10n.liveGameSheetTitle,
               padding: EdgeInsets.fromLTRB(20, 0, 12, 10),
             ),
-            const Expanded(
+            Expanded(
               child: EmptyView(
-                message: CommonStrings.errorNoAccount,
+                message: context.l10n.commonErrorNoAccount,
                 icon: Icons.person_off_outlined,
               ),
             ),
@@ -161,7 +162,10 @@ class _PregameTabs extends StatelessWidget {
     final teams = splitTeams(match, puuid);
     final theme = Theme.of(context);
     return LiveTabs(
-      labels: const [LiveGameStrings.tabAgents, LiveGameStrings.tabYourTeam],
+      labels: [
+        context.l10n.liveGameTabAgents,
+        context.l10n.liveGameTabYourTeam,
+      ],
       children: [
         AgentSelectView(puuid: puuid, match: match),
         LiveRosterList(
@@ -180,7 +184,7 @@ class _PregameTabs extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    LiveGameStrings.enemyHiddenInAgentSelect,
+                    context.l10n.liveGameEnemyHiddenInAgentSelect,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -208,7 +212,10 @@ class _InGameTabs extends StatelessWidget {
       return LiveRosterList(puuid: puuid, match: match, players: teams.ally);
     }
     return LiveTabs(
-      labels: const [LiveGameStrings.tabYourTeam, LiveGameStrings.tabEnemyTeam],
+      labels: [
+        context.l10n.liveGameTabYourTeam,
+        context.l10n.liveGameTabEnemyTeam,
+      ],
       children: [
         LiveRosterList(puuid: puuid, match: match, players: teams.ally),
         LiveRosterList(puuid: puuid, match: match, players: teams.enemy),
@@ -278,7 +285,7 @@ class _QuitBarState extends ConsumerState<_QuitBar> {
                 child: CircularProgressIndicator.adaptive(strokeWidth: 2),
               )
             : const Icon(Icons.logout),
-        label: const Text(LiveGameStrings.quitMatch),
+        label: Text(context.l10n.liveGameQuitMatch),
       ),
     );
   }
@@ -291,11 +298,11 @@ Future<bool> showQuitMatchDialog(
   required bool pregame,
 }) => showConfirmDialog(
   context,
-  title: LiveGameStrings.quitConfirmTitle,
+  title: context.l10n.liveGameQuitConfirmTitle,
   message: pregame
-      ? LiveGameStrings.quitConfirmBodyPregame
-      : LiveGameStrings.quitConfirmBodyInGame,
-  confirmLabel: LiveGameStrings.quitMatch,
+      ? context.l10n.liveGameQuitConfirmBodyPregame
+      : context.l10n.liveGameQuitConfirmBodyInGame,
+  confirmLabel: context.l10n.liveGameQuitMatch,
   destructive: true,
   icon: Icons.warning_amber_rounded,
 );

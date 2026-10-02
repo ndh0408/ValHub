@@ -23,6 +23,8 @@ import '../../home_strings.dart';
 import '../../providers/home_card_providers.dart';
 import '../home_card_frame.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 class RankHomeCard extends ConsumerStatefulWidget {
   const RankHomeCard({super.key, required this.puuid});
 
@@ -145,7 +147,7 @@ class _RankBody extends ConsumerWidget {
                 )
               else if (snap.previousAct != null)
                 Text(
-                  HomeStrings.previousAct(snap.previousAct!.tierName),
+                  context.l10n.homePreviousAct(snap.previousAct!.tierName),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -154,7 +156,7 @@ class _RankBody extends ConsumerWidget {
                 ),
               if (snap.leaderboard != null)
                 Text(
-                  HomeStrings.leaderboard(formatNumber(snap.leaderboard!)),
+                  context.l10n.homeLeaderboard(formatNumber(snap.leaderboard!)),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -166,7 +168,9 @@ class _RankBody extends ConsumerWidget {
                 ValProgressBar(
                   value: snap.progress!,
                   height: 4,
-                  semanticsLabel: HomeStrings.rankToNext(snap.rrToNext ?? 0),
+                  semanticsLabel: context.l10n.homeRankToNext(
+                    snap.rrToNext ?? 0,
+                  ),
                 ),
               ],
             ],
@@ -182,7 +186,7 @@ class _RankBody extends ConsumerWidget {
         _FormRow(snap: snap, now: now),
         if (snap.matchesToNext != null && snap.nextTierName != null)
           _EstimateRow(
-            text: HomeStrings.matchesToRankUp(
+            text: context.l10n.homeMatchesToRankUp(
               snap.matchesToNext!,
               snap.nextTierName!,
             ),
@@ -244,8 +248,8 @@ class _FormRow extends StatelessWidget {
       );
       final value = formatSignedRr(net);
       final label = snap.today != null
-          ? HomeStrings.rrToday(value)
-          : HomeStrings.rrOnDay(formatDayHeader(day.date, now), value);
+          ? context.l10n.homeRrToday(value)
+          : context.l10n.homeRrOnDay(formatDayHeader(day.date, now), value);
       children.add(
         _ChipButton(
           color: color,
@@ -254,7 +258,7 @@ class _FormRow extends StatelessWidget {
               : net < 0
               ? Icons.arrow_drop_down_rounded
               : Icons.remove_rounded,
-          label: '$label${HomeStrings.dot}$record',
+          label: '$label${context.l10n.homeDot}$record',
           semanticsLabel: snap.today != null
               ? HomeStrings.rrTodaySemantics(net, day.wins, day.losses)
               : null,
@@ -266,7 +270,7 @@ class _FormRow extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Text(
-            HomeStrings.noRankedToday,
+            context.l10n.homeNoRankedToday,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -279,8 +283,8 @@ class _FormRow extends StatelessWidget {
       children.add(
         StatusPill(
           label: win
-              ? HomeStrings.winStreak(streak.count)
-              : HomeStrings.lossStreak(streak.count),
+              ? context.l10n.homeWinStreak(streak.count)
+              : context.l10n.homeLossStreak(streak.count),
           color: win ? colors.win : colors.loss,
           icon: win
               ? Icons.local_fire_department_rounded

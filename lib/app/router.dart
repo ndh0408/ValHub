@@ -6,7 +6,6 @@ import 'package:material_ui/material_ui.dart';
 import '../core/accounts/account_providers.dart';
 import '../core/auth/auth_routes.dart';
 import '../core/auth/login_screen.dart';
-import '../core/l10n/common_strings.dart';
 import '../core/ui/empty_view.dart';
 import '../features/battlepass/battlepass_routes.dart';
 import '../features/collection/collection_routes.dart';
@@ -18,6 +17,8 @@ import '../features/social/social_routes.dart';
 import '../features/store/store_routes.dart';
 import '../features/wishlist/wishlist_routes.dart';
 import 'shell.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Root navigator (full-screen routes above the tab bar: /welcome, /login,
 /// /player/:puuid, sheets opened with `useRootNavigator`).
@@ -93,11 +94,11 @@ GoRouter createAppRouter({
   errorBuilder: (context, state) => Scaffold(
     appBar: AppBar(),
     body: EmptyView(
-      message: CommonStrings.pageNotFound,
+      message: context.l10n.commonPageNotFound,
       icon: Icons.explore_off_outlined,
       action: FilledButton(
         onPressed: () => context.go('/'),
-        child: const Text(CommonStrings.goHome),
+        child: Text(context.l10n.commonGoHome),
       ),
     ),
   ),

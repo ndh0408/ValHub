@@ -16,12 +16,13 @@ import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../collection_routes.dart';
-import '../collection_strings.dart';
 import '../data/collection_search.dart';
 import '../data/loadout_view.dart';
 import '../data/weapon_sections.dart';
 import '../providers/collection_providers.dart';
 import 'widgets/collection_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Weapon grid: tile width limit and render height.
 const _weaponMaxExtent = 220.0;
@@ -45,7 +46,7 @@ class _WeaponLoadoutScreenState extends ConsumerState<WeaponLoadoutScreen> {
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const NoAccountPage(title: CollectionStrings.weaponLoadoutTitle);
+      return NoAccountPage(title: context.l10n.collectionWeaponLoadoutTitle);
     }
     final puuid = account.puuid;
     final snapshot = ref.watch(loadoutProvider(puuid)).value;
@@ -57,15 +58,18 @@ class _WeaponLoadoutScreenState extends ConsumerState<WeaponLoadoutScreen> {
         final skin = equippedSkin(g, db);
         return skin != null && !skin.isStandard;
       }).length;
-      subtitle = CollectionStrings.weaponLoadoutSubtitle(custom, guns.length);
+      subtitle = context.l10n.collectionWeaponLoadoutSubtitle(
+        custom,
+        guns.length,
+      );
     }
     return SubPageScaffold(
-      title: CollectionStrings.weaponLoadoutTitle,
+      title: context.l10n.collectionWeaponLoadoutTitle,
       subtitle: subtitle,
       onRefresh: () => refreshCollection(ref, puuid),
       header: SearchStrip(
         search: CollectionSearchField(
-          hint: CollectionStrings.searchWeapons,
+          hint: context.l10n.collectionSearchWeapons,
           initialValue: _search,
           onChanged: (v) => setState(() => _search = v),
         ),
@@ -104,13 +108,13 @@ class _WeaponLoadoutScreenState extends ConsumerState<WeaponLoadoutScreen> {
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: _search.trim().isEmpty
-                    ? const EmptyView(
-                        message: CollectionStrings.weaponNotFound,
+                    ? EmptyView(
+                        message: context.l10n.collectionWeaponNotFound,
                         icon: Icons.gps_off_outlined,
                       )
-                    : const EmptyView(
-                        title: CollectionStrings.noResultsTitle,
-                        message: CollectionStrings.noResults,
+                    : EmptyView(
+                        title: context.l10n.collectionNoResultsTitle,
+                        message: context.l10n.collectionNoResults,
                         icon: Icons.search_off,
                       ),
               ),
@@ -118,7 +122,7 @@ class _WeaponLoadoutScreenState extends ConsumerState<WeaponLoadoutScreen> {
               SliverToBoxAdapter(
                 child: SectionLabel(
                   section.category.label.isEmpty
-                      ? CollectionStrings.otherWeapons
+                      ? context.l10n.collectionOtherWeapons
                       : section.category.label,
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
                 ),
@@ -289,7 +293,7 @@ class WeaponTile extends ConsumerWidget {
                     ),
                   ),
                   Text(
-                    skinName ?? CollectionStrings.defaultSkin,
+                    skinName ?? context.l10n.collectionDefaultSkin,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.labelMedium?.copyWith(

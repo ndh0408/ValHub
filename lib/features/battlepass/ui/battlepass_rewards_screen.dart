@@ -7,7 +7,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../../../core/ui/async_value_view.dart';
@@ -25,6 +24,8 @@ import '../providers/battlepass_providers.dart';
 import 'widgets/bp_ui_bits.dart';
 import 'widgets/overview_bits.dart';
 import 'widgets/reward_tile.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Reward filter of S21, remembered across launches
 /// (`UiMemory` key `battlepass.rewardsFilter`).
@@ -88,10 +89,10 @@ class _BattlePassRewardsScreenState
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const SubPageScaffold(
-        title: BattlePassStrings.rewardsTitle,
+      return SubPageScaffold(
+        title: context.l10n.battlePassRewardsTitle,
         body: EmptyView(
-          message: CommonStrings.errorNoAccount,
+          message: context.l10n.commonErrorNoAccount,
           icon: Icons.person_off_outlined,
         ),
       );
@@ -126,11 +127,11 @@ class _BattlePassRewardsScreenState
       }
       if (pass == null || pass.levelCount == 0) {
         slivers.add(
-          const SliverFillRemaining(
+          SliverFillRemaining(
             hasScrollBody: false,
             child: EmptyView(
-              title: BattlePassStrings.noRewardsTitle,
-              message: BattlePassStrings.noRewards,
+              title: context.l10n.battlePassNoRewardsTitle,
+              message: context.l10n.battlePassNoRewards,
               icon: Icons.card_giftcard,
             ),
           ),
@@ -182,7 +183,7 @@ class _BattlePassRewardsScreenState
     slivers.add(const SliverToBoxAdapter(child: SizedBox(height: 16)));
 
     return SubPageScaffold(
-      title: BattlePassStrings.rewardsTitle,
+      title: context.l10n.battlePassRewardsTitle,
       subtitle: pass?.contract.displayName,
       onRefresh: () => refreshBattlePass(ref, puuid),
       header: header,
@@ -327,11 +328,11 @@ class _RewardsBody extends StatelessWidget {
     // must not exist twice during a cross-fade.
     if (sections.isEmpty) {
       return EmptyView(
-        message: BattlePassStrings.noRewardsInFilter,
+        message: context.l10n.battlePassNoRewardsInFilter,
         icon: Icons.filter_alt_off_outlined,
         action: TextButton(
           onPressed: onShowAll,
-          child: const Text(BattlePassStrings.showAllRewards),
+          child: Text(context.l10n.battlePassShowAllRewards),
         ),
       );
     }
@@ -395,8 +396,8 @@ class _SummaryCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   BpBadge(
                     premium
-                        ? BattlePassStrings.premium
-                        : BattlePassStrings.free,
+                        ? context.l10n.battlePassPremium
+                        : context.l10n.battlePassFree,
                     color: premium ? gold : muted,
                     filled: premium,
                     icon: premium ? Icons.workspace_premium : null,
@@ -409,7 +410,7 @@ class _SummaryCard extends StatelessWidget {
             if (premium == false) ...[
               const SizedBox(height: 12),
               Text(
-                BattlePassStrings.premiumHint,
+                context.l10n.battlePassPremiumHint,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: legibleAccent(context, colors.warning),
                   height: 1.4,
@@ -449,8 +450,8 @@ class _ChapterSection extends StatelessWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
     final colors = valColorsOf(context);
     final title = chapter.isEpilogue
-        ? BattlePassStrings.epilogue
-        : BattlePassStrings.chapter(chapter.number);
+        ? context.l10n.battlePassEpilogue
+        : context.l10n.battlePassChapter(chapter.number);
     final reached = chapter.levelsReached(level);
     final done = reached >= chapter.levelCount;
     return Padding(
@@ -473,13 +474,16 @@ class _ChapterSection extends StatelessWidget {
               if (chapter.isCurrent) ...[
                 const SizedBox(width: 8),
                 BpBadge(
-                  BattlePassStrings.currentChapter,
+                  context.l10n.battlePassCurrentChapter,
                   color: theme.colorScheme.primary,
                 ),
               ],
               const Spacer(),
               Text(
-                BattlePassStrings.chapterProgress(reached, chapter.levelCount),
+                context.l10n.battlePassChapterProgress(
+                  reached,
+                  chapter.levelCount,
+                ),
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: done ? legibleAccent(context, colors.win) : muted,
                   fontFeatures: const [FontFeature.tabularFigures()],
@@ -507,7 +511,7 @@ class _ChapterSection extends StatelessWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    BattlePassStrings.freeTrack,
+                    context.l10n.battlePassFreeTrack,
                     style: theme.textTheme.labelMedium?.copyWith(
                       color: legibleAccent(context, colors.win),
                       fontWeight: FontWeight.w600,
@@ -622,17 +626,17 @@ class RewardPreviewSheet extends StatelessWidget {
     final tier = reward.tier;
     final (stateLabel, stateColor, stateIcon) = switch (tier.state) {
       RewardState.unlocked => (
-        BattlePassStrings.rewardUnlocked,
+        context.l10n.battlePassRewardUnlocked,
         colors.win,
         Icons.check_circle,
       ),
       RewardState.locked => (
-        BattlePassStrings.rewardLocked,
+        context.l10n.battlePassRewardLocked,
         muted,
         Icons.lock_outline,
       ),
       RewardState.needsPremium => (
-        BattlePassStrings.rewardNeedsPremium,
+        context.l10n.battlePassRewardNeedsPremium,
         colors.warning,
         Icons.lock,
       ),
@@ -691,26 +695,26 @@ class RewardPreviewSheet extends StatelessWidget {
           children: [
             GroupedRow(
               icon: Icons.flag_outlined,
-              title: BattlePassStrings.rewardLevelLabel,
-              value: BattlePassStrings.levelShort(tier.level),
+              title: context.l10n.battlePassRewardLevelLabel,
+              value: context.l10n.battlePassLevelShort(tier.level),
             ),
             GroupedRow(
               icon: Icons.category_outlined,
-              title: BattlePassStrings.rewardTypeLabel,
+              title: context.l10n.battlePassRewardTypeLabel,
               value: reward.typeLabel,
             ),
             GroupedRow(
               icon: tier.isFree
                   ? Icons.card_giftcard
                   : Icons.workspace_premium_outlined,
-              title: BattlePassStrings.rewardTrackLabel,
+              title: context.l10n.battlePassRewardTrackLabel,
               value: tier.isFree
-                  ? BattlePassStrings.free
-                  : BattlePassStrings.premium,
+                  ? context.l10n.battlePassFree
+                  : context.l10n.battlePassPremium,
             ),
             GroupedRow(
               leading: Icon(stateIcon, size: 22, color: stateColor),
-              title: BattlePassStrings.rewardStatusLabel,
+              title: context.l10n.battlePassRewardStatusLabel,
               value: stateLabel,
             ),
           ],

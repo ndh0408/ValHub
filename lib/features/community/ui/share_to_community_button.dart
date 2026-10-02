@@ -9,10 +9,11 @@ import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/util/clock.dart';
-import '../community_strings.dart';
 import '../data/compose_draft.dart';
 import '../providers/community_providers.dart';
 import 'feed/feed_section.dart' show openComposer;
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// "Khoe lên Cộng đồng" for the store's daily offers or Night Market: opens
 /// the composer prefilled with a store / Night Market attachment. Renders
@@ -89,7 +90,7 @@ class ShareToCommunityButton extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          CommunityStrings.shareStore,
+                          context.l10n.communityShareStore,
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w700,
                           ),
@@ -97,8 +98,8 @@ class ShareToCommunityButton extends ConsumerWidget {
                         const SizedBox(height: 2),
                         Text(
                           isNightMarket
-                              ? CommunityStrings.shareNightMarketHint
-                              : CommunityStrings.shareStoreHint,
+                              ? context.l10n.communityShareNightMarketHint
+                              : context.l10n.communityShareStoreHint,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.bodySmall?.copyWith(

@@ -23,6 +23,8 @@ import 'lfg/lfg_section.dart';
 import 'skins/top_skins_section.dart';
 import 'widgets/community_widgets.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// `UiMemory` key of the last community section.
 const kSectionMemoryKey = 'community.section';
 
@@ -98,25 +100,25 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const TabPageScaffold(
-        title: CommunityStrings.title,
+      return TabPageScaffold(
+        title: context.l10n.communityTitle,
         body: Center(
           child: CommunityEmptyState(
             icon: Icons.person_add_alt_1_rounded,
-            title: CommunityStrings.noAccountTitle,
-            message: CommunityStrings.noAccountBody,
+            title: context.l10n.communityNoAccountTitle,
+            message: context.l10n.communityNoAccountBody,
           ),
         ),
       );
     }
     if (!ref.watch(communityEnabledProvider)) {
-      return const TabPageScaffold(
-        title: CommunityStrings.title,
+      return TabPageScaffold(
+        title: context.l10n.communityTitle,
         body: Center(
           child: CommunityEmptyState(
             icon: Icons.cloud_off_rounded,
-            title: CommunityStrings.unavailableTitle,
-            message: CommunityStrings.unavailableBody,
+            title: context.l10n.communityUnavailableTitle,
+            message: context.l10n.communityUnavailableBody,
           ),
         ),
       );
@@ -126,7 +128,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
         ref.watch(communityConsentProvider(account.puuid)) ==
         CommunityConsent.granted;
     final page = TabPageScaffold(
-      title: CommunityStrings.title,
+      title: context.l10n.communityTitle,
       showMaintenanceBanner: false,
       headerHeight: MediaQuery.textScalerOf(context).scale(14) > 20 ? 100 : 56,
       header: _SectionTabs(
@@ -167,13 +169,13 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
   Widget? _fab(Account account, {required bool joined}) {
     final (label, icon, onPressed) = switch (_section) {
       CommunitySection.feed => (
-        CommunityStrings.newPost,
+        context.l10n.communityNewPost,
         Icons.edit_rounded,
         () => unawaited(openComposer(context)),
       ),
       CommunitySection.lfg when !joined => (null, null, null),
       CommunitySection.lfg => (
-        CommunityStrings.createLfgShort,
+        context.l10n.communityCreateLfgShort,
         Icons.group_add_rounded,
         () => unawaited(
           openCreateLfg(
@@ -238,13 +240,13 @@ class _LfgJoinGate extends StatelessWidget {
   Widget build(BuildContext context) {
     return CommunityEmptyState(
       icon: Icons.groups_2_outlined,
-      title: CommunityStrings.lfgGateTitle,
-      message: CommunityStrings.lfgGateBody,
+      title: context.l10n.communityLfgGateTitle,
+      message: context.l10n.communityLfgGateBody,
       action: FilledButton(
         key: const ValueKey('lfg-join-gate-action'),
         onPressed: () =>
             unawaited(ensureCommunityConsent(context, account, askAgain: true)),
-        child: const Text(CommunityStrings.consentGateAction),
+        child: Text(context.l10n.communityConsentGateAction),
       ),
     );
   }

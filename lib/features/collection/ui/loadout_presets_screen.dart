@@ -11,7 +11,6 @@ import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/domain/loadout/loadout.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/riot/riot_ids.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
@@ -26,6 +25,8 @@ import '../providers/collection_providers.dart';
 import 'widgets/collection_widgets.dart';
 import 'widgets/loadout_actions.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// S38 "Bộ trang bị đã lưu" (local presets per account): large title with
 /// the "only on this device" note, one card per preset (card art, name,
 /// saved date, the Vandal / Phantom skins, "Áp dụng" behind a confirmation),
@@ -38,7 +39,7 @@ class LoadoutPresetsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const NoAccountPage(title: CollectionStrings.presetsTitle);
+      return NoAccountPage(title: context.l10n.collectionPresetsTitle);
     }
     return _PresetsBody(puuid: account.puuid);
   }
@@ -82,8 +83,8 @@ class _PresetsBody extends ConsumerWidget {
     }
 
     return SubPageScaffold(
-      title: CollectionStrings.presetsTitle,
-      subtitle: CollectionStrings.presetsNote,
+      title: context.l10n.collectionPresetsTitle,
+      subtitle: context.l10n.collectionPresetsNote,
       onRefresh: () => refreshCollection(ref, puuid),
       bottomBar: FilledButton.icon(
         style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
@@ -91,7 +92,7 @@ class _PresetsBody extends ConsumerWidget {
             ? null
             : () => unawaited(save()),
         icon: const Icon(Icons.bookmark_add_outlined),
-        label: const Text(CollectionStrings.savePreset),
+        label: Text(context.l10n.collectionSavePreset),
       ),
       slivers: [
         SliverToBoxAdapter(child: SavingBar(visible: saving || loading)),
@@ -105,18 +106,18 @@ class _PresetsBody extends ConsumerWidget {
             ),
           ),
         if (notifier.isFull)
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: CollectionNotice(
               icon: Icons.inventory_2_outlined,
-              text: CollectionStrings.presetsFull,
+              text: context.l10n.collectionPresetsFull,
             ),
           ),
         if (presets.isEmpty)
-          const SliverFillRemaining(
+          SliverFillRemaining(
             hasScrollBody: false,
             child: EmptyView(
-              title: CollectionStrings.presetsEmptyTitle,
-              message: CollectionStrings.presetsEmpty,
+              title: context.l10n.collectionPresetsEmptyTitle,
+              message: context.l10n.collectionPresetsEmpty,
               icon: Icons.inventory_2_outlined,
             ),
           )
@@ -290,14 +291,14 @@ class _PresetNameDialogState extends State<_PresetNameDialog> {
     final valid = normalizePresetName(_controller.text) != null;
     if (isCupertino(context)) {
       return CupertinoAlertDialog(
-        title: const Text(CollectionStrings.presetNameTitle),
+        title: Text(context.l10n.collectionPresetNameTitle),
         content: Padding(
           padding: const EdgeInsets.only(top: 12),
           child: CupertinoTextField(
             controller: _controller,
             autofocus: true,
             maxLength: kPresetNameMaxLength,
-            placeholder: CollectionStrings.presetNameHint,
+            placeholder: context.l10n.collectionPresetNameHint,
             textInputAction: TextInputAction.done,
             onChanged: (_) => setState(() {}),
             onSubmitted: (_) => _submit(),
@@ -306,18 +307,18 @@ class _PresetNameDialogState extends State<_PresetNameDialog> {
         actions: [
           CupertinoDialogAction(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text(CommonStrings.cancel),
+            child: Text(context.l10n.commonCancel),
           ),
           CupertinoDialogAction(
             isDefaultAction: true,
             onPressed: valid ? _submit : null,
-            child: const Text(CommonStrings.save),
+            child: Text(context.l10n.commonSave),
           ),
         ],
       );
     }
     return AlertDialog(
-      title: const Text(CollectionStrings.presetNameTitle),
+      title: Text(context.l10n.collectionPresetNameTitle),
       content: TextField(
         controller: _controller,
         autofocus: true,
@@ -325,18 +326,18 @@ class _PresetNameDialogState extends State<_PresetNameDialog> {
         textInputAction: TextInputAction.done,
         onChanged: (_) => setState(() {}),
         onSubmitted: (_) => _submit(),
-        decoration: const InputDecoration(
-          hintText: CollectionStrings.presetNameHint,
+        decoration: InputDecoration(
+          hintText: context.l10n.collectionPresetNameHint,
         ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text(CommonStrings.cancel),
+          child: Text(context.l10n.commonCancel),
         ),
         FilledButton(
           onPressed: valid ? _submit : null,
-          child: const Text(CommonStrings.save),
+          child: Text(context.l10n.commonSave),
         ),
       ],
     );
@@ -447,7 +448,7 @@ class PresetCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            CollectionStrings.presetSavedAt(
+                            context.l10n.collectionPresetSavedAt(
                               formatDate(preset.createdAt),
                             ),
                             style: theme.textTheme.bodySmall?.copyWith(
@@ -458,7 +459,7 @@ class PresetCard extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      tooltip: CollectionStrings.presetActions,
+                      tooltip: context.l10n.collectionPresetActions,
                       icon: const Icon(Icons.more_horiz),
                       onPressed: () => unawaited(_actions(context)),
                     ),
@@ -492,7 +493,8 @@ class PresetCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            db.weapon(w)?.displayName ?? CommonStrings.dash,
+                            db.weapon(w)?.displayName ??
+                                context.l10n.commonDash,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.labelSmall?.copyWith(
@@ -515,7 +517,7 @@ class PresetCard extends StatelessWidget {
               ),
               onPressed: busy ? null : onApply,
               icon: const Icon(Icons.download_done),
-              label: const Text(CollectionStrings.applyPreset),
+              label: Text(context.l10n.collectionApplyPreset),
             ),
           ),
         ],

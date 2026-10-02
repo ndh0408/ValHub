@@ -7,15 +7,13 @@ import '../core/accounts/account_providers.dart';
 import '../core/accounts/account_data_warmup.dart';
 import '../core/accounts/account_link_guard.dart';
 import '../core/auth/auth_routes.dart';
-import '../core/l10n/account_strings.dart';
 
 import 'package:go_router/go_router.dart';
 
 import '../core/config/client_version.dart';
 import '../core/content/content_repository.dart';
-import '../core/l10n/common_strings.dart';
 import '../core/notifications/progress_notifications.dart';
-import '../core/l10n/l10n.dart' show appLocalizationsDelegates;
+import '../core/l10n/l10n.dart' show appLocalizationsDelegates, l10nProvider;
 import '../core/l10n/locale.dart';
 import '../core/notifications/notification_service.dart';
 import '../core/storage/prefs.dart';
@@ -95,7 +93,9 @@ class _ValVnAppState extends ConsumerState<ValVnApp>
       case AccountLinkDecision.unknownAccount:
         _pendingLink = null;
         _messenger.currentState?.showSnackBar(
-          const SnackBar(content: Text(AccountStrings.linkAccountMissing)),
+          SnackBar(
+            content: Text(ref.read(l10nProvider).accountLinkAccountMissing),
+          ),
         );
       case AccountLinkDecision.open:
         _pendingLink = null;
@@ -138,7 +138,7 @@ class _ValVnAppState extends ConsumerState<ValVnApp>
   Widget build(BuildContext context) {
     return MaterialApp.router(
       scaffoldMessengerKey: _messenger,
-      title: CommonStrings.appName,
+      title: ref.watch(l10nProvider).commonAppName,
       debugShowCheckedModeBanner: false,
       theme: buildLightTheme(),
       darkTheme: buildDarkTheme(),

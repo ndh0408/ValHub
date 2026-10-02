@@ -15,14 +15,16 @@ import '../home_strings.dart';
 import '../providers/home_layout_provider.dart';
 import 'home_card_frame.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Opens the customize sheet: every card (also those with no data now) with
 /// a drag handle, its description and a switch, plus "Khôi phục mặc định".
 /// The Material reorder semantics (move up / down / start / end) let screen
 /// readers and switch access reorder without dragging.
 Future<void> showCustomizeHomeSheet(BuildContext context) => showValSheet<void>(
   context,
-  title: HomeStrings.customize,
-  subtitle: HomeStrings.customizeHint,
+  title: context.l10n.homeCustomize,
+  subtitle: context.l10n.homeCustomizeHint,
   builder: (context, _) => const CustomizeHomeList(),
 );
 
@@ -79,7 +81,7 @@ class CustomizeHomeList extends ConsumerWidget {
           child: TextButton.icon(
             onPressed: () => unawaited(notifier.reset()),
             icon: const Icon(Icons.restart_alt_rounded),
-            label: const Text(HomeStrings.resetLayout),
+            label: Text(context.l10n.homeResetLayout),
           ),
         ),
       ),

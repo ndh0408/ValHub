@@ -5,15 +5,15 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tier_colors.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
-import '../../community_strings.dart';
 import '../../data/community_models.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Compact grid of the skins of a store / Night Market post: tier-tinted
 /// tiles with render, name and VP price (names / images / tiers from the
@@ -41,11 +41,11 @@ class OffersGrid extends ConsumerWidget {
     final day = payload.dayMonth;
     final title = nightMarket
         ? (day == null
-              ? CommunityStrings.kindNightMarket
-              : CommunityStrings.nightMarketOf(day))
+              ? context.l10n.communityKindNightMarket
+              : context.l10n.communityNightMarketOf(day))
         : (day == null
-              ? CommunityStrings.kindStore
-              : CommunityStrings.storeOf(day));
+              ? context.l10n.communityKindStore
+              : context.l10n.communityStoreOf(day));
     final offers = payload.offers;
     final rows = <Widget>[];
     for (var i = 0; i < offers.length; i += 2) {
@@ -127,7 +127,7 @@ class OffersGrid extends ConsumerWidget {
                 ),
                 if (payload.total > 0)
                   Text(
-                    CommunityStrings.offersTotal(formatVp(payload.total)),
+                    context.l10n.communityOffersTotal(formatVp(payload.total)),
                     style: theme.textTheme.labelMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
@@ -165,7 +165,7 @@ class _OfferTile extends StatelessWidget {
       tier?.highlightColor,
       fallback: valColorsOf(context).muted,
     );
-    final name = skin?.displayName ?? CommonStrings.unknownItem;
+    final name = skin?.displayName ?? context.l10n.commonUnknownItem;
     final price = offer.price;
     final base = offer.baseCost;
     final percent = offer.discountPercent;
@@ -174,7 +174,7 @@ class _OfferTile extends StatelessWidget {
       button: interactive,
       label: price == null
           ? name
-          : CommunityStrings.offerSemantics(name, formatVp(price)),
+          : context.l10n.communityOfferSemantics(name, formatVp(price)),
       excludeSemantics: true,
       child: Material(
         color: theme.colorScheme.surfaceContainer,
@@ -255,7 +255,9 @@ class _OfferTile extends StatelessWidget {
                       const SizedBox(width: 5),
                       Flexible(
                         child: Text(
-                          price == null ? CommonStrings.dash : formatVp(price),
+                          price == null
+                              ? context.l10n.commonDash
+                              : formatVp(price),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.labelSmall?.copyWith(

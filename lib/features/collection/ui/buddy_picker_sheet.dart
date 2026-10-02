@@ -20,6 +20,8 @@ import '../data/loadout_view.dart';
 import 'widgets/collection_widgets.dart';
 import 'widgets/loadout_actions.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 const _buddyMaxExtent = 120.0;
 const _buddyArtHeight = 64.0;
 
@@ -35,10 +37,10 @@ Future<void> showBuddyPickerSheet(
   ).read(contentProvider).value?.weapon(id);
   return showValSheet<void>(
     context,
-    title: CollectionStrings.buddyPickerTitle,
+    title: context.l10n.collectionBuddyPickerTitle,
     subtitle: weapon == null
         ? null
-        : CollectionStrings.buddyFor(weapon.displayName),
+        : context.l10n.collectionBuddyFor(weapon.displayName),
     scrollable: true,
     initialSize: 0.85,
     minSize: 0.5,
@@ -75,7 +77,7 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           CollectionSearchField(
-            hint: CollectionStrings.searchBuddies,
+            hint: context.l10n.collectionSearchBuddies,
             initialValue: _search,
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             onChanged: (v) => setState(() => _search = v),
@@ -119,7 +121,7 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
                                 leading: _Thumb(image: current?.image),
                                 title:
                                     current?.displayName ??
-                                    CommonStrings.unknownItem,
+                                    context.l10n.commonUnknownItem,
                                 trailing: TextButton.icon(
                                   style: TextButton.styleFrom(
                                     foregroundColor: theme.colorScheme.error,
@@ -130,8 +132,8 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
                                           _remove(context, account.puuid),
                                         ),
                                   icon: const Icon(Icons.link_off, size: 18),
-                                  label: const Text(
-                                    CollectionStrings.removeBuddy,
+                                  label: Text(
+                                    context.l10n.collectionRemoveBuddy,
                                   ),
                                 ),
                               ),
@@ -144,11 +146,11 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
                         hasScrollBody: false,
                         child: EmptyView(
                           title: searching
-                              ? CollectionStrings.noResultsTitle
+                              ? context.l10n.collectionNoResultsTitle
                               : null,
                           message: searching
-                              ? CollectionStrings.noResults
-                              : CollectionStrings.noBuddies,
+                              ? context.l10n.collectionNoResults
+                              : context.l10n.collectionNoBuddies,
                           icon: searching
                               ? Icons.search_off
                               : Icons.key_off_outlined,
@@ -173,10 +175,8 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
                           itemBuilder: (context, i) {
                             final o = options[i];
                             final on = o.isOn(_weaponId);
-                            final available = CollectionStrings.buddyAvailable(
-                              o.free,
-                              o.total,
-                            );
+                            final available = context.l10n
+                                .collectionBuddyAvailable(o.free, o.total);
                             return ArtTile(
                               key: ValueKey(o.buddy.uuid),
                               image: o.buddy.image,
@@ -235,7 +235,7 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
     final messenger = ScaffoldMessenger.maybeOf(context);
     final copy = option.copyFor(_weaponId);
     if (copy == null) {
-      showCollectionSnack(messenger, CollectionStrings.buddyUnavailable);
+      showCollectionSnack(messenger, context.l10n.collectionBuddyUnavailable);
       return;
     }
     Haptics.selection();

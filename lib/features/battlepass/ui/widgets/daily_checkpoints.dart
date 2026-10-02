@@ -15,6 +15,8 @@ import '../../data/daily_ticket.dart';
 import '../../providers/battlepass_providers.dart';
 import 'bp_ui_bits.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// P4 "Nhiệm vụ hằng ngày": the four daily checkpoints of P-16, the reset
 /// countdown, and a user-initiated renew when the ticket is missing or
 /// expired (SUMMARY U6).
@@ -35,18 +37,18 @@ class DailyCheckpointsSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         BpSectionTitle(
-          title: BattlePassStrings.dailyMissions,
+          title: context.l10n.battlePassDailyMissions,
           subtitle: live && expiresAt != null
-              ? BattlePassStrings.dailyCaptionReset(
-                  BattlePassStrings.resetsAtWall(
+              ? context.l10n.battlePassDailyCaptionReset(
+                  context.l10n.battlePassResetsAtWall(
                     formatWallTime(expiresAt, now),
                   ),
                 )
-              : BattlePassStrings.dailyCaption,
+              : context.l10n.battlePassDailyCaption,
           trailing: live && expiresAt != null
               ? BpHeaderCountdown(
                   expiresAt: expiresAt,
-                  builder: BattlePassStrings.resetsIn,
+                  builder: context.l10n.battlePassResetsIn,
                   onExpired: retry,
                 )
               : null,
@@ -114,7 +116,7 @@ class DailyCheckpointsCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      BattlePassStrings.dailyAllDone,
+                      context.l10n.battlePassDailyAllDone,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: legibleAccent(context, win),
                         fontWeight: FontWeight.w700,
@@ -128,7 +130,7 @@ class DailyCheckpointsCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    BattlePassStrings.checkpointsDone(
+                    context.l10n.battlePassCheckpointsDone(
                       done,
                       kDailyCheckpointCount,
                     ),
@@ -137,7 +139,7 @@ class DailyCheckpointsCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    BattlePassStrings.nextCheckpoint(
+                    context.l10n.battlePassNextCheckpoint(
                       ticket.currentCharges,
                       kChargesPerCheckpoint,
                     ),
@@ -147,18 +149,20 @@ class DailyCheckpointsCard extends StatelessWidget {
               ),
             const SizedBox(height: 4),
             Text(
-              BattlePassStrings.checkpointRewards,
+              context.l10n.battlePassCheckpointRewards,
               style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),
             if (!ticket.isAllComplete)
               Text(
-                BattlePassStrings.checkpointHint,
+                context.l10n.battlePassCheckpointHint,
                 style: theme.textTheme.bodySmall?.copyWith(color: muted),
               ),
             if (ticket.bonusMilestonesPending > 0) ...[
               const SizedBox(height: 4),
               Text(
-                BattlePassStrings.bonusPending(ticket.bonusMilestonesPending),
+                context.l10n.battlePassBonusPending(
+                  ticket.bonusMilestonesPending,
+                ),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: valColorsOf(context).warning,
                 ),
@@ -194,7 +198,7 @@ class CheckpointPip extends StatelessWidget {
     final accent = scheme.primary;
     final outline = complete || isCurrent ? accent : scheme.outline;
     return Semantics(
-      label: BattlePassStrings.checkpointLabel(
+      label: context.l10n.battlePassCheckpointLabel(
         index,
         milestone.progress,
         kChargesPerCheckpoint,
@@ -226,7 +230,7 @@ class CheckpointPip extends StatelessWidget {
                     right: -6,
                     top: -2,
                     child: BpBadge(
-                      BattlePassStrings.bonusBadge,
+                      context.l10n.battlePassBonusBadge,
                       color: valColorsOf(context).warning,
                       filled: true,
                     ),
@@ -236,7 +240,7 @@ class CheckpointPip extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            BattlePassStrings.charges(
+            context.l10n.battlePassCharges(
               milestone.progress,
               kChargesPerCheckpoint,
             ),
@@ -359,9 +363,9 @@ class _DailyTicketNotReadyState extends ConsumerState<DailyTicketNotReady> {
                   child: Text(
                     canRenew
                         ? (widget.ticket == null
-                              ? BattlePassStrings.dailyNotReady
-                              : BattlePassStrings.dailyExpired)
-                        : BattlePassStrings.dailyPlayToStart,
+                              ? context.l10n.battlePassDailyNotReady
+                              : context.l10n.battlePassDailyExpired)
+                        : context.l10n.battlePassDailyPlayToStart,
                     style: theme.textTheme.bodyMedium,
                   ),
                 ),
@@ -381,7 +385,7 @@ class _DailyTicketNotReadyState extends ConsumerState<DailyTicketNotReady> {
                           ),
                         )
                       : const Icon(Icons.refresh, size: 18),
-                  label: const Text(BattlePassStrings.renewButton),
+                  label: Text(context.l10n.battlePassRenewButton),
                 ),
               ),
             ],

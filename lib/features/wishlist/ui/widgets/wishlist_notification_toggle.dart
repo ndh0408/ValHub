@@ -10,8 +10,9 @@ import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../settings/ui/notification_priming_sheet.dart';
 import '../../../settings/providers/settings_providers.dart';
-import '../../../settings/settings_strings.dart';
 import '../../wishlist_strings.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// "Thông báo wishlist" switch (S3A shortcut to the settings switch
 /// "Kiểm tra wishlist trong nền", W2/W4). Turning it on primes the OS
@@ -84,11 +85,11 @@ class _WishlistNotificationToggleState
           on ? Icons.notifications_active : Icons.notifications_none_outlined,
           color: theme.colorScheme.primary,
         ),
-        title: const Text(WishlistStrings.notifToggle),
+        title: Text(context.l10n.wishlistNotifToggle),
         subtitle: Text(
           account == null
-              ? WishlistStrings.notifToggleSubtitle
-              : SettingsStrings.platformAppliesTo(account.riotId),
+              ? context.l10n.wishlistNotifToggleSubtitle
+              : context.l10n.settingsPlatformAppliesTo(account.riotId),
         ),
       ),
     );

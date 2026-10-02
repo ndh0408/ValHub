@@ -321,8 +321,9 @@ SkinStoreHistory summarizeSkin(StoreHistory history, Iterable<String> levels) {
 /// Only own accounts are recorded: callers pass the PUUID of a signed-in
 /// account.
 ///
-/// Every [record] reads the file again before writing, so the UI isolate and
-/// the background check (another isolate) do not overwrite each other's days.
+/// Every [record] reloads under a shared isolate-local queue and an OS lock.
+/// POSIX advisory locks protect separate processes, not two isolates in the
+/// same process; that background-engine case still needs native verification.
 class StoreHistoryStore {
   StoreHistoryStore(this._files, {this.maxDays = 365, this.canRecord});
 
@@ -340,7 +341,9 @@ class StoreHistoryStore {
   final JsonFileCache _files;
   final int maxDays;
 
-  final Map<String, Future<void>> _locks = {};
+  // POSIX file locks belong to the process: two instances in this isolate can
+  // both acquire one. Queue by canonical path across instances as well.
+  static final Map<String, Future<void>> _locks = {};
   final StreamController<String> _changes = StreamController.broadcast();
 
   static const schema = 1;
@@ -412,13 +415,16 @@ class StoreHistoryStore {
   // ---------------------------------------------------------------- internals
 
   Future<T> _locked<T>(String id, Future<T> Function() body) async {
-    final previous = _locks[id];
+    final path = await _files.fileFor(key(id));
+    await path.parent.create(recursive: true);
+    final parent = await path.parent.resolveSymbolicLinks();
+    final absolute = '$parent/${path.uri.pathSegments.last}';
+    final lockKey = Platform.isWindows ? absolute.toLowerCase() : absolute;
+    final previous = _locks[lockKey];
     final done = Completer<void>();
-    _locks[id] = done.future;
+    _locks[lockKey] = done.future;
     try {
       if (previous != null) await previous;
-      final path = await _files.fileFor(key(id));
-      await path.parent.create(recursive: true);
       final lock = await File('${path.path}.lock').open(mode: FileMode.append);
       try {
         for (var attempt = 0; ; attempt++) {
@@ -440,7 +446,7 @@ class StoreHistoryStore {
       }
     } finally {
       done.complete();
-      _locks.removeWhere((k, f) => k == id && identical(f, done.future));
+      _locks.removeWhere((k, f) => k == lockKey && identical(f, done.future));
     }
   }
 

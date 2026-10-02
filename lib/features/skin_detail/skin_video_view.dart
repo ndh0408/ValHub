@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:material_ui/material_ui.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../core/l10n/common_strings.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/ui/adaptive.dart';
-import 'skin_detail_strings.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Opens S16 (full-screen looping skin video with a mute toggle) above
 /// everything, on the root navigator.
@@ -154,7 +154,9 @@ class _SkinVideoViewState extends State<SkinVideoView> {
       final ratio = c.value.aspectRatio;
       body = Semantics(
         button: true,
-        label: _playing ? SkinDetailStrings.pause : SkinDetailStrings.play,
+        label: _playing
+            ? context.l10n.skinDetailPause
+            : context.l10n.skinDetailPlay,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: _togglePlay,
@@ -222,11 +224,13 @@ class _SkinVideoViewState extends State<SkinVideoView> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text(SkinDetailStrings.playVideo),
+        title: Text(context.l10n.skinDetailPlayVideo),
         actions: [
           IconButton(
             icon: Icon(_muted ? Icons.volume_off : Icons.volume_up),
-            tooltip: _muted ? SkinDetailStrings.unmute : SkinDetailStrings.mute,
+            tooltip: _muted
+                ? context.l10n.skinDetailUnmute
+                : context.l10n.skinDetailMute,
             onPressed: _toggleMute,
           ),
         ],
@@ -256,7 +260,7 @@ class _VideoError extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            SkinDetailStrings.videoError,
+            context.l10n.skinDetailVideoError,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white70),
           ),
@@ -268,7 +272,7 @@ class _VideoError extends StatelessWidget {
               side: const BorderSide(color: Colors.white54),
             ),
             icon: const Icon(Icons.refresh),
-            label: const Text(CommonStrings.retry),
+            label: Text(context.l10n.commonRetry),
           ),
         ],
       ),

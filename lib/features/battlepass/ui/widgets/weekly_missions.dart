@@ -6,9 +6,10 @@ import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
-import '../../battlepass_strings.dart';
 import '../../data/battlepass_models.dart';
 import 'bp_ui_bits.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// P3 "Nhiệm vụ hằng tuần" (S20) with the P5 completed state: header with
 /// the refill countdown and "1/3 hoàn thành", then one card per mission.
@@ -36,18 +37,21 @@ class WeeklyMissionsSection extends ConsumerWidget {
     final now = ref.watch(clockProvider).now();
     final done = weekly.isEmpty
         ? null
-        : BattlePassStrings.missionsCompleted(weekly.completedCount, total);
+        : context.l10n.battlePassMissionsCompleted(
+            weekly.completedCount,
+            total,
+          );
     final reset = refill == null
         ? null
-        : BattlePassStrings.resetsAtWall(formatWallTime(refill, now));
+        : context.l10n.battlePassResetsAtWall(formatWallTime(refill, now));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         BpSectionTitle(
-          title: BattlePassStrings.weeklyMissions,
+          title: context.l10n.battlePassWeeklyMissions,
           subtitle: done == null && reset == null
               ? null
-              : [?done, ?reset].join(BattlePassStrings.dot),
+              : [?done, ?reset].join(context.l10n.battlePassDot),
           trailing: refill == null
               ? null
               : BpHeaderCountdown(expiresAt: refill, onExpired: onRefill),
@@ -63,8 +67,8 @@ class WeeklyMissionsSection extends ConsumerWidget {
                 if (weekly.isAllComplete) ...[
                   MissionsDoneCard(
                     title: dailyAllComplete
-                        ? BattlePassStrings.allMissionsDone
-                        : BattlePassStrings.allWeeklyDone,
+                        ? context.l10n.battlePassAllMissionsDone
+                        : context.l10n.battlePassAllWeeklyDone,
                     refillAt: refill,
                   ),
                   const SizedBox(height: 8),
@@ -101,7 +105,7 @@ class WeeklyMissionTile extends StatelessWidget {
     final colors = valColorsOf(context);
     final win = colors.win;
     final muted = scheme.onSurfaceVariant;
-    final title = mission.title ?? BattlePassStrings.unknownMission;
+    final title = mission.title ?? context.l10n.battlePassUnknownMission;
     final small = theme.textTheme.bodySmall?.copyWith(
       color: muted,
       fontFeatures: const [FontFeature.tabularFigures()],
@@ -125,7 +129,7 @@ class WeeklyMissionTile extends StatelessWidget {
                       Icons.check,
                       size: 15,
                       color: readableOn(win),
-                      semanticLabel: BattlePassStrings.missionDone,
+                      semanticLabel: context.l10n.battlePassMissionDone,
                     ),
                   )
                 : Container(
@@ -163,7 +167,7 @@ class WeeklyMissionTile extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        BattlePassStrings.missionProgress(
+                        context.l10n.battlePassMissionProgress(
                           formatNumber(mission.progress),
                           formatNumber(mission.target),
                         ),
@@ -176,7 +180,7 @@ class WeeklyMissionTile extends StatelessWidget {
                       const SizedBox(width: 8),
                       Flexible(
                         child: Text(
-                          BattlePassStrings.xpReward(
+                          context.l10n.battlePassXpReward(
                             formatNumber(mission.xpGrant),
                           ),
                           maxLines: 1,
@@ -252,7 +256,7 @@ class MissionsDoneCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   CountdownText(
                     expiresAt: refill,
-                    builder: BattlePassStrings.newMissionsIn,
+                    builder: context.l10n.battlePassNewMissionsIn,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontFeatures: const [FontFeature.tabularFigures()],
@@ -260,7 +264,7 @@ class MissionsDoneCard extends StatelessWidget {
                   ),
                   BpWallTimeText(
                     at: refill,
-                    builder: BattlePassStrings.newMissionsAtWall,
+                    builder: context.l10n.battlePassNewMissionsAtWall,
                   ),
                 ],
               ],
@@ -292,13 +296,13 @@ class _NoMissionsCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  BattlePassStrings.noWeeklyMissions,
+                  context.l10n.battlePassNoWeeklyMissions,
                   style: theme.textTheme.bodyMedium,
                 ),
                 if (refill != null) ...[
                   CountdownText(
                     expiresAt: refill,
-                    builder: BattlePassStrings.newMissionsIn,
+                    builder: context.l10n.battlePassNewMissionsIn,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: muted,
                       fontFeatures: const [FontFeature.tabularFigures()],
@@ -306,7 +310,7 @@ class _NoMissionsCard extends StatelessWidget {
                   ),
                   BpWallTimeText(
                     at: refill,
-                    builder: BattlePassStrings.newMissionsAtWall,
+                    builder: context.l10n.battlePassNewMissionsAtWall,
                   ),
                 ],
               ],

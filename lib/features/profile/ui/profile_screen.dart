@@ -7,7 +7,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/accounts/account.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/domain/competitive/competitive.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../../../core/ui/val_widgets.dart';
@@ -26,6 +25,8 @@ import 'widgets/profile_widgets.dart';
 import 'widgets/rank_card.dart';
 import 'widgets/recent_form_card.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// TAB 4 "Hồ sơ" (S40). Route `/profile`. Hosts the live-game
 /// [CurrentGameCard] (owned by the live_game feature). Battle Pass and Cài
 /// đặt are not tabs: this screen has a "Battle Pass" row and a ⚙ button in
@@ -41,17 +42,17 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const TabPageScaffold(
-        title: ProfileStrings.title,
+      return TabPageScaffold(
+        title: context.l10n.profileTitle,
         body: EmptyView(
           icon: Icons.person_off_outlined,
-          message: CommonStrings.errorNoAccount,
+          message: context.l10n.commonErrorNoAccount,
         ),
       );
     }
     final puuid = account.puuid;
     return TabPageScaffold(
-      title: ProfileStrings.title,
+      title: context.l10n.profileTitle,
       actions: const [SettingsGearButton()],
       onRefresh: () => _refresh(ref, account),
       slivers: [
@@ -72,7 +73,7 @@ class ProfileScreen extends ConsumerWidget {
                 padding: EdgeInsets.zero,
                 child: ProfileNavRow(
                   icon: Icons.insights_outlined,
-                  title: ProfileStrings.performanceTitle,
+                  title: context.l10n.profilePerformanceTitle,
                   onTap: () =>
                       unawaited(context.push(ProfileRoutes.performance)),
                 ),
@@ -86,7 +87,7 @@ class ProfileScreen extends ConsumerWidget {
                   children: [
                     ProfileNavRow(
                       icon: Icons.military_tech_outlined,
-                      title: CommonStrings.tabBattlePass,
+                      title: context.l10n.commonTabBattlePass,
                       subtitle: BattlePassProgressSubtitle(puuid: puuid),
                       onTap: () =>
                           unawaited(context.push(BattlePassRoutes.root)),
@@ -94,13 +95,13 @@ class ProfileScreen extends ConsumerWidget {
                     const Divider(indent: 66, height: 1),
                     ProfileNavRow(
                       icon: Icons.groups_outlined,
-                      title: ProfileStrings.partyRow,
+                      title: context.l10n.profilePartyRow,
                       onTap: () => unawaited(context.push(SocialRoutes.party)),
                     ),
                     const Divider(indent: 66, height: 1),
                     ProfileNavRow(
                       icon: Icons.forum_outlined,
-                      title: ProfileStrings.friendsRow,
+                      title: context.l10n.profileFriendsRow,
                       onTap: () =>
                           unawaited(context.push(SocialRoutes.friends)),
                     ),
@@ -147,13 +148,13 @@ class _DailyRrRow extends ConsumerWidget {
       padding: EdgeInsets.zero,
       child: ProfileNavRow(
         icon: Icons.calendar_month_rounded,
-        title: ProfileStrings.dailyRrTitle,
+        title: context.l10n.profileDailyRrTitle,
         subtitle: days == null
             ? null
             : Text(
                 today == null
-                    ? ProfileStrings.todayNone
-                    : ProfileStrings.today(
+                    ? context.l10n.profileTodayNone
+                    : context.l10n.profileToday(
                         ProfileStrings.winsLosses(
                           today.wins,
                           today.losses,

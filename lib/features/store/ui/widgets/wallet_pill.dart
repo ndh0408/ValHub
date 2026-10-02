@@ -2,13 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/domain/economy/economy.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/riot/riot_ids.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/ui/skeleton.dart';
 import '../../../../core/util/format.dart';
-import '../../store_strings.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Common-header wallet: ONE full-width pill with the VP / KC / RP balances
 /// centered side by side, each with its currency icon (VF §6.2).
@@ -26,7 +26,7 @@ class WalletPill extends ConsumerWidget {
     final Widget content;
     if (w != null) {
       content = Semantics(
-        label: StoreStrings.walletSemantics(
+        label: context.l10n.storeWalletSemantics(
           formatNumber(w.vp),
           formatNumber(w.kc),
           formatNumber(w.rp),
@@ -75,7 +75,7 @@ class _Pill extends StatelessWidget {
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: amounts[i] == null
-                      ? Text(CommonStrings.dash, style: style)
+                      ? Text(context.l10n.commonDash, style: style)
                       : CurrencyAmount(
                           currencyId: WalletPill._ids[i],
                           amount: amounts[i]!,

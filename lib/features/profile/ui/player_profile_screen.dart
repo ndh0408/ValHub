@@ -6,16 +6,16 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/domain/competitive/competitive.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/sub_page.dart';
 import '../profile_routes.dart';
-import '../profile_strings.dart';
 import '../providers/profile_providers.dart';
 import 'widgets/identity_banner.dart';
 import 'widgets/match_history_sliver.dart';
 import 'widgets/rank_card.dart';
 import 'widgets/recent_form_card.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S44 "Hồ sơ người chơi" (any player). Top-level route `/player/:puuid`
 /// (`?hidden=1` keeps an incognito player's name hidden, SUMMARY U16).
@@ -39,16 +39,16 @@ class PlayerProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final id = puuid.trim().toLowerCase();
     if (id.isEmpty) {
-      return const SubPageScaffold(
-        title: ProfileStrings.playerProfileTitle,
+      return SubPageScaffold(
+        title: context.l10n.profilePlayerProfileTitle,
         body: EmptyView(
           icon: Icons.person_search_outlined,
-          message: CommonStrings.errorNotFound,
+          message: context.l10n.commonErrorNotFound,
         ),
       );
     }
     return SubPageScaffold(
-      title: ProfileStrings.playerProfileTitle,
+      title: context.l10n.profilePlayerProfileTitle,
       onRefresh: () => _refresh(ref, id),
       slivers: [
         SliverToBoxAdapter(
@@ -66,7 +66,7 @@ class PlayerProfileScreen extends ConsumerWidget {
         ),
         MatchHistorySliver(
           puuid: id,
-          title: ProfileStrings.recentMatches,
+          title: context.l10n.profileRecentMatches,
           onOpenMatch: (m) => unawaited(
             context.push(ProfileRoutes.matchFullScreen(m, player: id)),
           ),

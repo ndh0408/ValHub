@@ -3,8 +3,9 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
-import '../battlepass_strings.dart';
 import '../providers/battlepass_providers.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Subtitle of the "Battle Pass" row of the Profile tab (Battle Pass is not
 /// a tab any more): "Cấp 46 / 55 · Còn 15 ngày". Renders nothing while the
@@ -25,13 +26,13 @@ class BattlePassProgressSubtitle extends ConsumerWidget {
         ? (ends.difference(now).inMinutes / Duration.minutesPerDay).ceil()
         : null;
     final text = [
-      BattlePassStrings.levelOf(
+      context.l10n.battlePassLevelOf(
         formatNumber(pass.level),
         formatNumber(pass.levelCount),
       ),
       if (days != null && !pass.isComplete)
-        BattlePassStrings.daysLeft(days < 1 ? 1 : days),
-    ].join(BattlePassStrings.dot);
+        context.l10n.battlePassDaysLeft(days < 1 ? 1 : days),
+    ].join(context.l10n.battlePassDot);
     return Text(text, maxLines: 2, overflow: TextOverflow.ellipsis);
   }
 }

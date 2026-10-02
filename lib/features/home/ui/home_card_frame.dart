@@ -10,7 +10,6 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/auth/auth_routes.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/error_view.dart';
@@ -21,6 +20,8 @@ import '../data/home_card.dart';
 import '../home_strings.dart';
 import '../providers/home_layout_provider.dart';
 import 'customize_home_sheet.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Title, description and icon of each card (the catalogue shown in
 /// "Tùy chỉnh Trang chủ").
@@ -201,7 +202,7 @@ class HomeCardFrame extends ConsumerWidget {
                   ),
                   icon: const Icon(Icons.more_horiz_rounded),
                   color: theme.colorScheme.onSurfaceVariant,
-                  tooltip: HomeStrings.moreActions(name),
+                  tooltip: context.l10n.homeMoreActions(name),
                   onPressed: () => unawaited(_openMenu(context, ref, name)),
                 )
               else
@@ -330,7 +331,7 @@ class HomeCardError extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: Text(
-            d.needsLogin ? CommonStrings.errorNeedsLoginTitle : d.message,
+            d.needsLogin ? context.l10n.commonErrorNeedsLoginTitle : d.message,
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.bodyMedium,
@@ -341,10 +342,10 @@ class HomeCardError extends StatelessWidget {
             onPressed: () => unawaited(
               context.push<Object?>(AuthRoutes.loginPath(reauthPuuid: puuid)),
             ),
-            child: const Text(CommonStrings.signInAgain),
+            child: Text(context.l10n.commonSignInAgain),
           )
         else if (retry != null && d.canRetry)
-          TextButton(onPressed: retry, child: const Text(CommonStrings.retry)),
+          TextButton(onPressed: retry, child: Text(context.l10n.commonRetry)),
       ],
     );
   }

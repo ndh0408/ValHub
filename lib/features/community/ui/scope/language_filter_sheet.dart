@@ -3,6 +3,8 @@ import 'package:material_ui/material_ui.dart';
 import '../../community_strings.dart';
 import '../../data/community_models.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Opens the multi-language filter of the international scope; resolves to
 /// the chosen codes (empty = every language) or `null` when dismissed.
 Future<Set<String>?> showLanguageFilterSheet(
@@ -40,14 +42,14 @@ class _LanguageFilterSheetState extends State<LanguageFilterSheet> {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
             child: Text(
-              CommunityStrings.languageFilter,
+              context.l10n.communityLanguageFilter,
               style: theme.textTheme.titleLarge,
             ),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
             child: Text(
-              CommunityStrings.languageFilterHint,
+              context.l10n.communityLanguageFilterHint,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -81,7 +83,7 @@ class _LanguageFilterSheetState extends State<LanguageFilterSheet> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => setState(_selected.clear),
-                      child: const Text(CommunityStrings.clearFilter),
+                      child: Text(context.l10n.communityClearFilter),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -89,7 +91,7 @@ class _LanguageFilterSheetState extends State<LanguageFilterSheet> {
                     child: FilledButton(
                       onPressed: () =>
                           Navigator.of(context).pop({..._selected}),
-                      child: const Text(CommunityStrings.apply),
+                      child: Text(context.l10n.communityApply),
                     ),
                   ),
                 ],

@@ -8,7 +8,6 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/accounts/account_widgets.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/async_value_view.dart';
@@ -16,7 +15,6 @@ import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../providers/night_market_seen.dart';
-import '../store_strings.dart';
 import 'widgets/accessory_section.dart';
 import 'widgets/bundle_section.dart';
 import 'widgets/daily_section.dart';
@@ -25,6 +23,8 @@ import 'widgets/store_segment_bar.dart';
 import 'widgets/store_skeletons.dart';
 import 'widgets/store_ui_bits.dart';
 import 'widgets/wallet_pill.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Store segments (VF §6.2). The Night Market segment appears only while
 /// `BonusStore` exists.
@@ -123,10 +123,10 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const TabPageScaffold(
-        title: StoreStrings.title,
+      return TabPageScaffold(
+        title: context.l10n.storeTitle,
         body: EmptyView(
-          message: CommonStrings.errorNoAccount,
+          message: context.l10n.commonErrorNoAccount,
           icon: Icons.person_off_outlined,
         ),
       );
@@ -151,31 +151,31 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
     );
 
     final tabs = <SegmentedTab<StoreSegment>>[
-      const SegmentedTab(
+      SegmentedTab(
         value: StoreSegment.daily,
-        label: StoreStrings.segmentDaily,
+        label: context.l10n.storeSegmentDaily,
       ),
       // While loading, keep a deep-linked Night Market tab visible.
       if (nm != null || (store == null && segment == StoreSegment.nightMarket))
         SegmentedTab(
           value: StoreSegment.nightMarket,
-          label: StoreStrings.segmentNightMarket,
+          label: context.l10n.storeSegmentNightMarket,
           showDot: hasUnseen && segment != StoreSegment.nightMarket,
         ),
-      const SegmentedTab(
+      SegmentedTab(
         value: StoreSegment.accessories,
-        label: StoreStrings.segmentAccessories,
+        label: context.l10n.storeSegmentAccessories,
       ),
-      const SegmentedTab(
+      SegmentedTab(
         value: StoreSegment.bundles,
-        label: StoreStrings.segmentBundles,
+        label: context.l10n.storeSegmentBundles,
       ),
     ];
 
     // On narrow phones the chip shows only the avatar so the title fits.
     final roomy = MediaQuery.sizeOf(context).width >= 360;
     return TabPageScaffold(
-      title: StoreStrings.title,
+      title: context.l10n.storeTitle,
       showAccountChip: false,
       actions: [AccountChip(showName: roomy)],
       onRefresh: () => _refresh(puuid),

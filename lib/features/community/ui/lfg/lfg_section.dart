@@ -21,6 +21,8 @@ import 'create_lfg_sheet.dart';
 import 'lfg_bits.dart';
 import 'lfg_card.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// "Tìm đồng đội": filters ("Phù hợp rank của bạn" on by default, region,
 /// mic, mode, role), the user's own post pinned on top with its live party,
 /// then open posts. The list refreshes every 20 s while visible.
@@ -138,10 +140,10 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
           ),
         ),
       if (others.isEmpty && mine == null)
-        const CommunityEmptyState(
+        CommunityEmptyState(
           icon: Icons.groups_2_outlined,
-          title: CommunityStrings.lfgEmptyTitle,
-          message: CommunityStrings.lfgEmptyBody,
+          title: context.l10n.communityLfgEmptyTitle,
+          message: context.l10n.communityLfgEmptyBody,
         ),
     ];
 
@@ -204,7 +206,7 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
   }
 
   Future<void> _join(LfgPost post, LfgQuery query) async {
-    final name = post.author.riotId ?? CommunityStrings.unknownPlayer;
+    final name = post.author.riotId ?? context.l10n.communityUnknownPlayer;
     final ok = await showConfirmDialog(
       context,
       title: CommunityStrings.joinConfirmTitle,
@@ -379,7 +381,7 @@ class _Filters extends ConsumerWidget {
                 key: const ValueKey('lfg-region'),
                 icon: Icons.public_rounded,
                 label: CommunityStrings.regionLabel(region),
-                tooltip: CommunityStrings.region,
+                tooltip: context.l10n.communityRegion,
                 items: [
                   for (final r in kCommunityRegions)
                     (r, CommunityStrings.regionLabel(r)),
@@ -391,7 +393,7 @@ class _Filters extends ConsumerWidget {
                 CommunityChip(
                   key: const ValueKey('lfg-match-rank'),
                   icon: Icons.verified_rounded,
-                  label: CommunityStrings.matchMyRank,
+                  label: context.l10n.communityMatchMyRank,
                   selected: filter.matchRank,
                   onSelected: () => n.setMatchRank(!filter.matchRank),
                 ),
@@ -401,11 +403,11 @@ class _Filters extends ConsumerWidget {
                 key: const ValueKey('lfg-role'),
                 icon: Icons.shield_outlined,
                 label: filter.role == null
-                    ? CommunityStrings.anyRole
+                    ? context.l10n.communityAnyRole
                     : lfgRoleLabel(filter.role!),
-                tooltip: CommunityStrings.roles,
+                tooltip: context.l10n.communityRoles,
                 items: [
-                  ('', CommunityStrings.anyRole),
+                  ('', context.l10n.communityAnyRole),
                   for (final r in kLfgRoles) (r, lfgRoleLabel(r)),
                 ],
                 onSelected: (r) => n.setRole(r.isEmpty ? null : r),
@@ -413,7 +415,7 @@ class _Filters extends ConsumerWidget {
               const SizedBox(width: 8),
               CommunityChip(
                 icon: Icons.mic_rounded,
-                label: CommunityStrings.micOn,
+                label: context.l10n.communityMicOn,
                 selected: filter.micOnly,
                 onSelected: () => n.setMicOnly(!filter.micOnly),
               ),
@@ -424,9 +426,9 @@ class _Filters extends ConsumerWidget {
                 label: CommunityStrings.languageLabel(
                   filter.language ?? kLfgAnyLanguage,
                 ),
-                tooltip: CommunityStrings.language,
+                tooltip: context.l10n.communityLanguage,
                 items: [
-                  (kLfgAnyLanguage, CommunityStrings.anyLanguage),
+                  (kLfgAnyLanguage, context.l10n.communityAnyLanguage),
                   for (final l in kLfgLanguages)
                     (l, CommunityStrings.languageLabel(l)),
                 ],
@@ -444,7 +446,7 @@ class _Filters extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
             children: [
               CommunityChip(
-                label: CommunityStrings.allModes,
+                label: context.l10n.communityAllModes,
                 selected: filter.mode == null,
                 onSelected: () => n.setMode(null),
               ),
@@ -469,8 +471,8 @@ class _Filters extends ConsumerWidget {
               Expanded(
                 child: Text(
                   region == myRegion
-                      ? CommunityStrings.lfgSameShardNote
-                      : CommunityStrings.lfgOtherShardNote(
+                      ? context.l10n.communityLfgSameShardNote
+                      : context.l10n.communityLfgOtherShardNote(
                           CommunityStrings.regionLabel(region),
                         ),
                   style: theme.textTheme.bodySmall?.copyWith(color: muted),

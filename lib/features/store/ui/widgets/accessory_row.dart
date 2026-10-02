@@ -4,14 +4,14 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/economy/economy.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/riot/riot_ids.dart';
 import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/val_widgets.dart';
-import '../../store_strings.dart';
 import 'store_ui_bits.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S12 accessory-store row: image, name, type label, optional
 /// "Từ: `<contract>`", KC price.
@@ -68,7 +68,7 @@ class AccessoryRow extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item?.name ?? CommonStrings.unknownItem,
+                  item?.name ?? context.l10n.commonUnknownItem,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleSmall?.copyWith(
@@ -85,7 +85,7 @@ class AccessoryRow extends ConsumerWidget {
                 if (contractName != null) ...[
                   const SizedBox(height: 2),
                   Text(
-                    StoreStrings.accessoryFrom(contractName),
+                    context.l10n.storeAccessoryFrom(contractName),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodySmall?.copyWith(color: muted),
@@ -100,7 +100,7 @@ class AccessoryRow extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (kc == null)
-                Text(CommonStrings.dash, style: theme.textTheme.titleSmall)
+                Text(context.l10n.commonDash, style: theme.textTheme.titleSmall)
               else
                 Container(
                   padding: const EdgeInsets.symmetric(

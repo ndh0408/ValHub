@@ -8,7 +8,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/storage/ui_memory.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -34,6 +33,8 @@ import 'review_editor_sheet.dart';
 import 'skin_vote_button.dart';
 import '../widgets/translatable_text.dart';
 import 'star_rating.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// `UiMemory` key of the review list order.
 const kReviewSortMemoryKey = 'community.reviews.sort';
@@ -85,9 +86,9 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            const SliverAppBar(
+            SliverAppBar(
               pinned: true,
-              title: Text(CommunityStrings.reviewTitle),
+              title: Text(context.l10n.communityReviewTitle),
             ),
             SliverToBoxAdapter(
               child: _Hero(skinUuid: skinId, db: db, tint: tint),
@@ -115,7 +116,7 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
             ),
             SliverToBoxAdapter(
               child: SectionLabel(
-                CommunityStrings.reviewsHeader(
+                context.l10n.communityReviewsHeader(
                   formatNumber(summary.value?.rating.reviewCount ?? 0),
                 ),
               ),
@@ -123,14 +124,14 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
             SliverToBoxAdapter(
               child: SegmentedTabs<ReviewSort>(
                 expand: true,
-                tabs: const [
+                tabs: [
                   SegmentedTab(
                     value: ReviewSort.newest,
-                    label: CommunityStrings.sortNewest,
+                    label: context.l10n.communitySortNewest,
                   ),
                   SegmentedTab(
                     value: ReviewSort.top,
-                    label: CommunityStrings.sortHelpful,
+                    label: context.l10n.communitySortHelpful,
                   ),
                 ],
                 selected: _sort,
@@ -173,12 +174,12 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
     }
     final state = async.requireValue;
     if (state.items.isEmpty) {
-      return const [
+      return [
         SliverToBoxAdapter(
           child: CommunityEmptyState(
             icon: Icons.rate_review_outlined,
-            title: CommunityStrings.reviewsEmptyTitle,
-            message: CommunityStrings.reviewsEmptyBody,
+            title: context.l10n.communityReviewsEmptyTitle,
+            message: context.l10n.communityReviewsEmptyBody,
           ),
         ),
       ];
@@ -354,7 +355,7 @@ class _Hero extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                CommunityStrings.playVideo,
+                                context.l10n.communityPlayVideo,
                                 style: theme.textTheme.labelMedium?.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
@@ -393,7 +394,7 @@ class _Header extends ConsumerWidget {
         child: db.isEmpty
             ? const Skeleton(width: 200, height: 22)
             : Text(
-                CommunityStrings.skinNotFound,
+                context.l10n.communitySkinNotFound,
                 style: theme.textTheme.titleMedium?.copyWith(color: muted),
               ),
       );
@@ -519,7 +520,9 @@ class _ScoreCard extends ConsumerWidget {
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
-                        avg == null ? CommonStrings.dash : formatRating(avg),
+                        avg == null
+                            ? context.l10n.commonDash
+                            : formatRating(avg),
                         style: ValText.display(52),
                       ),
                     ),
@@ -529,7 +532,7 @@ class _ScoreCard extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      CommunityStrings.ratingCount(
+                      context.l10n.communityRatingCount(
                         formatNumber(s.rating.count),
                       ),
                       textAlign: TextAlign.center,
@@ -550,8 +553,8 @@ class _ScoreCard extends ConsumerWidget {
             child: HeartButton(
               active: vote.voted,
               count: vote.votes,
-              semanticsOff: CommunityStrings.vote,
-              semanticsOn: CommunityStrings.unvote,
+              semanticsOff: context.l10n.communityVote,
+              semanticsOn: context.l10n.communityUnvote,
               onTap: p == null
                   ? null
                   : () => unawaited(
@@ -620,7 +623,7 @@ class _MyReviewCard extends ConsumerWidget {
     Widget body;
     if (p == null) {
       body = Text(
-        CommunityStrings.signInToReview,
+        context.l10n.communitySignInToReview,
         style: theme.textTheme.bodyMedium?.copyWith(color: muted),
       );
     } else if (loading) {
@@ -630,7 +633,7 @@ class _MyReviewCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            CommunityStrings.tapToRate,
+            context.l10n.communityTapToRate,
             style: theme.textTheme.bodyMedium?.copyWith(color: muted),
           ),
           const SizedBox(height: 6),
@@ -672,13 +675,13 @@ class _MyReviewCard extends ConsumerWidget {
               TextButton.icon(
                 onPressed: () => unawaited(_edit(context)),
                 icon: const Icon(Icons.edit_outlined, size: 18),
-                label: const Text(CommunityStrings.editReview),
+                label: Text(context.l10n.communityEditReview),
               ),
               TextButton.icon(
                 onPressed: () =>
                     unawaited(confirmDeleteReview(context, ref, p, skinUuid)),
                 icon: const Icon(Icons.delete_outline_rounded, size: 18),
-                label: const Text(CommunityStrings.deleteReview),
+                label: Text(context.l10n.communityDeleteReview),
               ),
             ],
           ),
@@ -692,7 +695,7 @@ class _MyReviewCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            CommunityStrings.yourReview.toUpperCase(),
+            context.l10n.communityYourReview.toUpperCase(),
             style: ValText.label.copyWith(color: muted),
           ),
           const SizedBox(height: 10),
@@ -738,7 +741,7 @@ class ReviewTile extends ConsumerWidget {
             trailing: ContentMenuButton(
               author: review.author,
               isMine: isMine,
-              deleteLabel: CommunityStrings.deleteReview,
+              deleteLabel: context.l10n.communityDeleteReview,
               onSelected: onAction,
             ),
           ),
@@ -750,7 +753,7 @@ class ReviewTile extends ConsumerWidget {
               StarRow(value: review.rating.toDouble(), size: 16),
               if (review.edited)
                 Text(
-                  CommunityStrings.edited,
+                  context.l10n.communityEdited,
                   style: theme.textTheme.labelSmall?.copyWith(color: muted),
                 ),
             ],
@@ -784,8 +787,10 @@ class ReviewTile extends ConsumerWidget {
               ),
               label: Text(
                 review.likes > 0
-                    ? CommunityStrings.helpfulCount(formatNumber(review.likes))
-                    : CommunityStrings.helpful,
+                    ? context.l10n.communityHelpfulCount(
+                        formatNumber(review.likes),
+                      )
+                    : context.l10n.communityHelpful,
               ),
             )
           else

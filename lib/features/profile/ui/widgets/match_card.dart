@@ -4,7 +4,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/competitive/competitive.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/network/riot_exception.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/net_image.dart';
@@ -14,6 +13,8 @@ import '../../../../core/util/format.dart';
 import '../../data/match_filter.dart';
 import '../../profile_strings.dart';
 import 'profile_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Match-history card (R8, S40.6), ValBuddy-style: a large map image with
 /// the agent (+ rank icon) and ±RR on its corners, then "Icebox 4 – 5 Thua",
@@ -64,8 +65,8 @@ class MatchCard extends ConsumerWidget {
         accent: Theme.of(context).colorScheme.outline,
         child: _FallbackBody(
           title: error is NotFoundException
-              ? CompetitiveStrings.matchPending
-              : ProfileStrings.matchUnavailable,
+              ? context.l10n.competitiveMatchPending
+              : context.l10n.profileMatchUnavailable,
           subtitle: ProfileStrings.joined([queue, ?when]),
           onRetry: () => ref.invalidate(matchDetailsProvider(entry.matchId)),
         ),
@@ -78,7 +79,7 @@ class MatchCard extends ConsumerWidget {
         ?.forMatch(entry.matchId);
     final map = db.mapByUrl(value.info.mapId);
     final result = value.result;
-    final mapName = map?.displayName ?? CommonStrings.dash;
+    final mapName = map?.displayName ?? context.l10n.commonDash;
     final competitive = baseQueueId(value.info.queueId) == kCompetitiveQueue;
     final accent = outcomeColor(context, result.outcome);
     return _CardShell(
@@ -100,7 +101,7 @@ class MatchCard extends ConsumerWidget {
         mapName,
         result.outcome.label,
         result.hasScore
-            ? ProfileStrings.score(result.myScore!, result.otherScore!)
+            ? context.l10n.profileScore(result.myScore!, result.otherScore!)
             : null,
       ),
       child: _SummaryBody(
@@ -312,7 +313,7 @@ class _SummaryBody extends StatelessWidget {
     final s = summary.stats;
     final color = outcomeColor(context, result.outcome);
     final score = result.hasScore
-        ? ProfileStrings.score(result.myScore!, result.otherScore!)
+        ? context.l10n.profileScore(result.myScore!, result.otherScore!)
         : null;
     final place = result.placement;
     final mvp = s.isMatchMvp || s.isTeamMvp;
@@ -350,7 +351,7 @@ class _SummaryBody extends StatelessWidget {
                       )
                     else if (place != null)
                       Text(
-                        ProfileStrings.placement(place),
+                        context.l10n.profilePlacement(place),
                         maxLines: 1,
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w700,
@@ -367,8 +368,8 @@ class _SummaryBody extends StatelessWidget {
                     if (mvp)
                       Text(
                         s.isMatchMvp
-                            ? ProfileStrings.mvp
-                            : ProfileStrings.teamMvp,
+                            ? context.l10n.profileMvp
+                            : context.l10n.profileTeamMvp,
                         maxLines: 1,
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: s.isMatchMvp
@@ -392,7 +393,7 @@ class _SummaryBody extends StatelessWidget {
                     ),
                     if (when != null)
                       Text(
-                        '${ProfileStrings.separator}$when',
+                        '${context.l10n.profileSeparator}$when',
                         maxLines: 1,
                         style: small,
                       ),
@@ -459,7 +460,7 @@ class _FallbackBody extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: CommonStrings.retry,
+            tooltip: context.l10n.commonRetry,
             onPressed: onRetry,
             icon: const Icon(Icons.refresh),
           ),

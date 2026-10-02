@@ -13,6 +13,8 @@ import '../../providers/community_providers.dart';
 import '../consent/consent_sheet.dart';
 import '../widgets/community_widgets.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Overflow actions of a post / comment / LFG post.
 enum ContentAction { delete, report }
 
@@ -38,7 +40,7 @@ class ContentMenuButton extends ConsumerWidget {
     final account = ref.watch(activeAccountProvider);
     final muted = Theme.of(context).colorScheme.onSurfaceVariant;
     return PopupMenuButton<_MenuAction>(
-      tooltip: CommunityStrings.moreActions,
+      tooltip: context.l10n.communityMoreActions,
       icon: Icon(Icons.more_horiz_rounded, color: muted),
       onSelected: (action) {
         if (action == _MenuAction.mute || action == _MenuAction.block) {
@@ -75,26 +77,26 @@ class ContentMenuButton extends ConsumerWidget {
             ),
           )
         else
-          const PopupMenuItem(
+          PopupMenuItem(
             value: _MenuAction.report,
             child: _MenuRow(
               icon: Icons.flag_outlined,
-              label: CommunityStrings.report,
+              label: context.l10n.communityReport,
             ),
           ),
         if (!isMine && author != null && account != null) ...[
-          const PopupMenuItem(
+          PopupMenuItem(
             value: _MenuAction.mute,
             child: _MenuRow(
               icon: Icons.visibility_off_outlined,
-              label: CommunityStrings.muteAuthor,
+              label: context.l10n.communityMuteAuthor,
             ),
           ),
-          const PopupMenuItem(
+          PopupMenuItem(
             value: _MenuAction.block,
             child: _MenuRow(
               icon: Icons.block,
-              label: CommunityStrings.blockAuthor,
+              label: context.l10n.communityBlockAuthor,
             ),
           ),
         ],
@@ -189,14 +191,14 @@ class _ReasonPicker extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
             child: Text(
-              CommunityStrings.reportTitle,
+              context.l10n.communityReportTitle,
               style: theme.textTheme.titleMedium,
             ),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(
-              CommunityStrings.reportPrompt,
+              context.l10n.communityReportPrompt,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),

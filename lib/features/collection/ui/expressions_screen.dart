@@ -24,6 +24,8 @@ import '../providers/collection_providers.dart';
 import 'widgets/collection_widgets.dart';
 import 'widgets/loadout_actions.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// What a wheel slot shows.
 typedef _SlotView = ({String? image, String name, bool isEmpty});
 
@@ -55,12 +57,12 @@ class ExpressionsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const NoAccountPage(title: CollectionStrings.expressionsTitle);
+      return NoAccountPage(title: context.l10n.collectionExpressionsTitle);
     }
     final puuid = account.puuid;
     return SubPageScaffold(
-      title: CollectionStrings.expressionsTitle,
-      subtitle: CollectionStrings.expressionsHint,
+      title: context.l10n.collectionExpressionsTitle,
+      subtitle: context.l10n.collectionExpressionsHint,
       onRefresh: () => refreshCollection(ref, puuid),
       slivers: loadoutSlivers(
         ref,
@@ -92,8 +94,8 @@ class ExpressionsScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            const SliverToBoxAdapter(
-              child: SectionLabel(CollectionStrings.expressionsSlots),
+            SliverToBoxAdapter(
+              child: SectionLabel(context.l10n.collectionExpressionsSlots),
             ),
             SliverToBoxAdapter(
               child: GroupedSection(
@@ -282,7 +284,7 @@ Future<void> showExpressionPicker(
 }) => showValSheet<void>(
   context,
   title: CollectionStrings.slotTitle(slot),
-  subtitle: CollectionStrings.expressionsTitle,
+  subtitle: context.l10n.collectionExpressionsTitle,
   scrollable: true,
   initialSize: 0.85,
   minSize: 0.5,
@@ -343,14 +345,14 @@ class _ExpressionPickerSheetState extends ConsumerState<ExpressionPickerSheet> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: SegmentedTabs<_PickerTab>(
             expand: true,
-            tabs: const [
+            tabs: [
               SegmentedTab(
                 value: _PickerTab.sprays,
-                label: CollectionStrings.tabSprays,
+                label: context.l10n.collectionTabSprays,
               ),
               SegmentedTab(
                 value: _PickerTab.flex,
-                label: CollectionStrings.tabFlex,
+                label: context.l10n.collectionTabFlex,
               ),
             ],
             selected: tab,
@@ -360,8 +362,8 @@ class _ExpressionPickerSheetState extends ConsumerState<ExpressionPickerSheet> {
         CollectionSearchField(
           key: ValueKey(tab),
           hint: tab == _PickerTab.sprays
-              ? CollectionStrings.searchSprays
-              : CollectionStrings.searchFlex,
+              ? context.l10n.collectionSearchSprays
+              : context.l10n.collectionSearchFlex,
           initialValue: _search,
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           onChanged: (v) => setState(() => _search = v),
@@ -383,12 +385,12 @@ class _ExpressionPickerSheetState extends ConsumerState<ExpressionPickerSheet> {
                     <({String id, String? image, String name, bool flex})>[
                       if (tab == _PickerTab.sprays) ...[
                         if (matchesSearch(_search, [
-                          CollectionStrings.emptySlot,
+                          context.l10n.collectionEmptySlot,
                         ]))
                           (
                             id: SpecialIds.nullSpray,
                             image: null,
-                            name: CollectionStrings.emptySlot,
+                            name: context.l10n.collectionEmptySlot,
                             flex: false,
                           ),
                         for (final s in ownedSprays(owned, db))
@@ -426,13 +428,13 @@ class _ExpressionPickerSheetState extends ConsumerState<ExpressionPickerSheet> {
                             ? Icons.search_off
                             : Icons.format_paint_outlined,
                         title: searching
-                            ? CollectionStrings.noResultsTitle
+                            ? context.l10n.collectionNoResultsTitle
                             : null,
                         message: searching
-                            ? CollectionStrings.noResults
+                            ? context.l10n.collectionNoResults
                             : (tab == _PickerTab.flex
-                                  ? CollectionStrings.noFlex
-                                  : CollectionStrings.noSprays),
+                                  ? context.l10n.collectionNoFlex
+                                  : context.l10n.collectionNoSprays),
                       ),
                     )
                   else

@@ -6,7 +6,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/economy/economy.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/currency_amount.dart';
@@ -14,8 +13,9 @@ import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
 import '../../../skin_detail/community_skin_score.dart';
-import '../../store_strings.dart';
 import 'store_ui_bits.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S10 daily-shop card, image-forward (ValBuddy style): full width, ~2.8:1,
 /// tier-tinted background with a soft glow and a large centered render;
@@ -48,15 +48,15 @@ class DailyOfferCard extends ConsumerWidget {
       offer.skinLevelUuid,
       db,
     );
-    final name = skin?.displayName ?? CommonStrings.unknownItem;
+    final name = skin?.displayName ?? context.l10n.commonUnknownItem;
     final price = offer.vpCost;
     final roomyText = MediaQuery.textScalerOf(context).scale(1) <= 1.35;
 
     return TierCard(
       tint: tint,
-      semanticsLabel: StoreStrings.offerSemantics(
+      semanticsLabel: context.l10n.storeOfferSemantics(
         name,
-        price == null ? CommonStrings.dash : formatVp(price),
+        price == null ? context.l10n.commonDash : formatVp(price),
       ),
       onTap: () => unawaited(
         showSkinDetailSheet(
@@ -143,7 +143,7 @@ class DailyOfferCard extends ConsumerWidget {
                           alignment: AlignmentDirectional.centerEnd,
                           child: price == null
                               ? Text(
-                                  CommonStrings.dash,
+                                  context.l10n.commonDash,
                                   style: theme.textTheme.bodyLarge,
                                 )
                               : CurrencyAmount.vp(

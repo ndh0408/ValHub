@@ -4,7 +4,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/economy/economy.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/countdown_text.dart';
@@ -12,9 +11,10 @@ import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/util/format.dart';
 import '../../data/wishlist_view.dart';
-import '../../wishlist_strings.dart';
 import '../../../skin_detail/community_skin_score.dart';
 import 'skin_bits.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// One S3A card (same family as the store cards): a tier-tinted card with
 /// the render centered on top, then tier icon + name + weapon (left) and
@@ -41,7 +41,7 @@ class WishlistRow extends ConsumerWidget {
     final theme = Theme.of(context);
     final colors = valColorsOf(context);
     final facts = entry.facts;
-    final name = facts?.name ?? CommonStrings.unknownItem;
+    final name = facts?.name ?? context.l10n.commonUnknownItem;
     final tint = contentTierTint(
       ref,
       facts?.skin.contentTierUuid,
@@ -80,7 +80,7 @@ class WishlistRow extends ConsumerWidget {
                       left: 0,
                       top: 0,
                       child: SmallBadge(
-                        WishlistStrings.owned,
+                        context.l10n.wishlistOwned,
                         color: colors.win,
                         icon: Icons.check_circle,
                       ),
@@ -195,7 +195,7 @@ class _PriceColumn extends StatelessWidget {
     }
     final quote = entry.facts?.quote;
     if (quote == null) {
-      return Text(CommonStrings.dash, style: theme.textTheme.labelLarge);
+      return Text(context.l10n.commonDash, style: theme.textTheme.labelLarge);
     }
     return SkinPriceText(quote: quote);
   }
@@ -213,10 +213,10 @@ class _HitBar extends ConsumerWidget {
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final expiresAt = hit.expiresAt;
     final accent = theme.colorScheme.primary;
-    final text = EconomyStrings.availableNow(hit.placeLabel(db));
+    final text = context.l10n.economyAvailableNow(hit.placeLabel(db));
     return Semantics(
       button: true,
-      label: '$text ${WishlistStrings.viewInStore}',
+      label: '$text ${context.l10n.wishlistViewInStore}',
       excludeSemantics: true,
       child: Material(
         color: accent.withValues(alpha: 0.14),
@@ -246,7 +246,7 @@ class _HitBar extends ConsumerWidget {
                       if (expiresAt != null)
                         CountdownText(
                           expiresAt: expiresAt,
-                          builder: WishlistStrings.endsIn,
+                          builder: context.l10n.wishlistEndsIn,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontFeatures: const [FontFeature.tabularFigures()],

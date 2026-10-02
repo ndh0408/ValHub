@@ -8,6 +8,8 @@ import '../../battlepass_strings.dart';
 import '../../data/battlepass_models.dart';
 import 'bp_ui_bits.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// A reward of the track resolved against the content.
 @immutable
 class ResolvedReward {
@@ -105,20 +107,20 @@ class RewardTile extends StatelessWidget {
       RewardState.needsPremium => colors.warning,
     };
     final stateLabel = switch (state) {
-      RewardState.unlocked => BattlePassStrings.rewardUnlocked,
-      RewardState.locked => BattlePassStrings.rewardLocked,
-      RewardState.needsPremium => BattlePassStrings.rewardNeedsPremium,
+      RewardState.unlocked => context.l10n.battlePassRewardUnlocked,
+      RewardState.locked => context.l10n.battlePassRewardLocked,
+      RewardState.needsPremium => context.l10n.battlePassRewardNeedsPremium,
     };
     return Semantics(
       button: onTap != null,
       label: [
-        BattlePassStrings.levelShort(tier.level),
+        context.l10n.battlePassLevelShort(tier.level),
         reward.typeLabel,
         reward.name,
-        if (tier.isFree) BattlePassStrings.free,
+        if (tier.isFree) context.l10n.battlePassFree,
         stateLabel,
-        if (isNext) BattlePassStrings.nextReward,
-      ].join(BattlePassStrings.dot),
+        if (isNext) context.l10n.battlePassNextReward,
+      ].join(context.l10n.battlePassDot),
       excludeSemantics: true,
       child: Material(
         clipBehavior: Clip.antiAlias,
@@ -175,7 +177,7 @@ class RewardTile extends StatelessWidget {
                           borderRadius: BorderRadius.circular(ValRadius.pill),
                         ),
                         child: Text(
-                          BattlePassStrings.levelShort(tier.level),
+                          context.l10n.battlePassLevelShort(tier.level),
                           style: theme.textTheme.labelSmall?.copyWith(
                             fontWeight: FontWeight.w700,
                             color: scheme.onSurface,
@@ -194,7 +196,7 @@ class RewardTile extends StatelessWidget {
                         left: 6,
                         bottom: 6,
                         child: BpBadge(
-                          BattlePassStrings.free,
+                          context.l10n.battlePassFree,
                           color: colors.win,
                           filled: true,
                         ),
@@ -204,7 +206,7 @@ class RewardTile extends StatelessWidget {
                         left: 6,
                         bottom: 6,
                         child: BpBadge(
-                          BattlePassStrings.nextReward,
+                          context.l10n.battlePassNextReward,
                           color: scheme.primary,
                           filled: true,
                         ),

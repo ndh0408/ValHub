@@ -2,13 +2,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_repository.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/xmpp/xmpp_models.dart';
 import '../../data/friend_status.dart';
 import '../../social_strings.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Colour of a status line / presence dot.
 Color statusColor(BuildContext context, StatusTone tone) {
@@ -119,7 +120,7 @@ class UnreadBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     if (count <= 0) return const SizedBox.shrink();
     return Semantics(
-      label: SocialStrings.unread(count),
+      label: context.l10n.socialUnread(count),
       excludeSemantics: true,
       child: Container(
         constraints: const BoxConstraints(minWidth: 22),
@@ -164,9 +165,9 @@ class ConnectionBanner extends StatelessWidget {
     final busy = state.isBusy || state.status == XmppStatus.idle;
     final tint = busy ? valColorsOf(context).warning : theme.colorScheme.error;
     final text = switch (state.status) {
-      XmppStatus.connecting || XmppStatus.idle => SocialStrings.connecting,
-      XmppStatus.reconnecting => SocialStrings.reconnecting,
-      _ => SocialStrings.chatUnavailable,
+      XmppStatus.connecting || XmppStatus.idle => context.l10n.socialConnecting,
+      XmppStatus.reconnecting => context.l10n.socialReconnecting,
+      _ => context.l10n.socialChatUnavailable,
     };
     return Padding(
       padding: margin,
@@ -207,7 +208,7 @@ class ConnectionBanner extends StatelessWidget {
               if (!busy && onRetry != null)
                 TextButton(
                   onPressed: onRetry,
-                  child: const Text(CommonStrings.retry),
+                  child: Text(context.l10n.commonRetry),
                 ),
             ],
           ),

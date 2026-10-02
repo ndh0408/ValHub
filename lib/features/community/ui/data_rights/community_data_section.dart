@@ -14,6 +14,8 @@ import '../../providers/community_providers.dart';
 import '../../providers/consent_providers.dart';
 import '../../providers/data_rights_providers.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Settings group "DỮ LIỆU CỘNG ĐỒNG CỦA BẠN": download, delete or stop
 /// sharing what the account has on the Community server. Only shown for the
 /// active account when it agreed to join (an account that never joined has
@@ -140,9 +142,9 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
     );
 
     return SettingsGroup(
-      title: CommunityStrings.dataTitle,
+      title: context.l10n.communityDataTitle,
       footer: Text(
-        CommunityStrings.dataFooter(account.riotId),
+        context.l10n.communityDataFooter(account.riotId),
         style: theme.textTheme.bodySmall?.copyWith(
           color: scheme.onSurfaceVariant,
         ),
@@ -153,11 +155,11 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
             key: const ValueKey('community-data-export'),
             enabled: busy == null,
             leading: const SettingsIcon(Icons.download_outlined),
-            title: const Text(CommunityStrings.exportTitle),
+            title: Text(rowContext.l10n.communityExportTitle),
             subtitle: Text(
               busy == _DataAction.export
-                  ? CommunityStrings.exportPreparing
-                  : CommunityStrings.exportSubtitle,
+                  ? rowContext.l10n.communityExportPreparing
+                  : rowContext.l10n.communityExportSubtitle,
             ),
             trailing: busy == _DataAction.export
                 ? spinner()
@@ -173,10 +175,10 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
             color: scheme.error,
           ),
           title: Text(
-            CommunityStrings.deleteDataTitle,
+            context.l10n.communityDeleteDataTitle,
             style: TextStyle(color: scheme.error),
           ),
-          subtitle: const Text(CommunityStrings.deleteDataSubtitle),
+          subtitle: Text(context.l10n.communityDeleteDataSubtitle),
           trailing: busy == _DataAction.delete ? spinner() : null,
           onTap: () => unawaited(_delete(context, account)),
         ),
@@ -184,8 +186,8 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
           key: const ValueKey('community-data-withdraw'),
           enabled: busy == null,
           leading: const SettingsIcon(Icons.logout_rounded),
-          title: const Text(CommunityStrings.withdrawTitle),
-          subtitle: const Text(CommunityStrings.withdrawSubtitle),
+          title: Text(context.l10n.communityWithdrawTitle),
+          subtitle: Text(context.l10n.communityWithdrawSubtitle),
           trailing: busy == _DataAction.withdraw ? spinner() : null,
           onTap: () => unawaited(_withdraw(context, account)),
         ),

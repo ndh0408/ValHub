@@ -12,9 +12,10 @@ import '../../../core/ui/empty_view.dart';
 import '../../../core/util/format.dart';
 import '../../social/social_routes.dart';
 import '../data/live_game_models.dart';
-import '../live_game_strings.dart';
 import '../providers/live_game_providers.dart';
 import 'live_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Sheet body outside a match: not running / lobby / queueing (with the
 /// "Đang tìm trận · 01:32" timer). Pull to refresh polls at once.
@@ -30,9 +31,12 @@ class LiveIdleView extends ConsumerWidget {
     final colors = valColorsOf(context);
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final (icon, hint) = switch (state.phase) {
-      LivePhase.queueing => (Icons.radar, LiveGameStrings.queueHint),
-      LivePhase.lobby => (Icons.weekend_outlined, LiveGameStrings.lobbyHint),
-      _ => (Icons.sports_esports_outlined, LiveGameStrings.notInGameHint),
+      LivePhase.queueing => (Icons.radar, context.l10n.liveGameQueueHint),
+      LivePhase.lobby => (
+        Icons.weekend_outlined,
+        context.l10n.liveGameLobbyHint,
+      ),
+      _ => (Icons.sports_esports_outlined, context.l10n.liveGameNotInGameHint),
     };
     final queueEntry = state.queueEntryTime;
     final queueId = state.party?.queueId;
@@ -76,16 +80,16 @@ class LiveIdleView extends ConsumerWidget {
           switch (state.phase) {
             LivePhase.queueing when queueEntry != null => TickingBuilder(
               builder: (context, now) => title(
-                LiveGameStrings.inQueueFor(
+                context.l10n.liveGameInQueueFor(
                   formatMinutesSeconds(
                     now.toUtc().difference(queueEntry.toUtc()),
                   ),
                 ),
               ),
             ),
-            LivePhase.queueing => title(LiveGameStrings.inQueue),
-            LivePhase.lobby => title(LiveGameStrings.inLobby),
-            _ => title(LiveGameStrings.notInGameTitle),
+            LivePhase.queueing => title(context.l10n.liveGameInQueue),
+            LivePhase.lobby => title(context.l10n.liveGameInLobby),
+            _ => title(context.l10n.liveGameNotInGameTitle),
           },
           if (state.phase == LivePhase.queueing &&
               queueId != null &&
@@ -115,7 +119,7 @@ class LiveIdleView extends ConsumerWidget {
             FilledButton.icon(
               onPressed: () => _openParty(context),
               icon: const Icon(Icons.groups_2_outlined),
-              label: const Text(LiveGameStrings.openParty),
+              label: Text(context.l10n.liveGameOpenParty),
             ),
           if (state.phase == LivePhase.lobby || queueing)
             const SizedBox(height: 10),
@@ -123,11 +127,11 @@ class LiveIdleView extends ConsumerWidget {
             onPressed: () =>
                 unawaited(ref.read(liveGameProvider(puuid).notifier).refresh()),
             icon: const Icon(Icons.refresh),
-            label: const Text(LiveGameStrings.refreshNow),
+            label: Text(context.l10n.liveGameRefreshNow),
           ),
           const SizedBox(height: 12),
           Text(
-            LiveGameStrings.autoRefreshNote,
+            context.l10n.liveGameAutoRefreshNote,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,

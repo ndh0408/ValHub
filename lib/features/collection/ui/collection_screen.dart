@@ -10,7 +10,6 @@ import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/domain/loadout/loadout.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
@@ -23,7 +22,6 @@ import '../../../core/ui/price_estimate.dart';
 import '../../../core/util/format.dart';
 import '../../wishlist/wishlist_routes.dart';
 import '../collection_routes.dart';
-import '../collection_strings.dart';
 import '../data/buddy_options.dart';
 import '../data/collection_items.dart';
 import '../data/hub_art.dart';
@@ -33,6 +31,8 @@ import 'browse_collection_screen.dart';
 import 'widgets/collection_widgets.dart';
 import 'widgets/level_border_sheet.dart';
 import 'widgets/loadout_actions.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// TAB 3 "Bộ sưu tập" hub (S30). Route `/collection`.
 ///
@@ -47,16 +47,16 @@ class CollectionScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const TabPageScaffold(
-        title: CollectionStrings.title,
+      return TabPageScaffold(
+        title: context.l10n.collectionTitle,
         body: EmptyView(
-          message: CommonStrings.errorNoAccount,
+          message: context.l10n.commonErrorNoAccount,
           icon: Icons.person_off_outlined,
         ),
       );
     }
     return TabPageScaffold(
-      title: CollectionStrings.title,
+      title: context.l10n.collectionTitle,
       onRefresh: () => refreshCollection(ref, account.puuid),
       slivers: [
         SliverToBoxAdapter(child: _Header(account: account)),
@@ -111,7 +111,7 @@ class _Header extends ConsumerWidget {
     final card = identity.playerCardId == null
         ? null
         : db.card(identity.playerCardId!);
-    final cardName = card?.displayName ?? CommonStrings.unknownItem;
+    final cardName = card?.displayName ?? context.l10n.commonUnknownItem;
     return Column(
       children: [
         if (snapshot.isFromCache) const CachedLoadoutBanner(),
@@ -120,8 +120,8 @@ class _Header extends ConsumerWidget {
           child: Semantics(
             button: true,
             label:
-                '${CollectionStrings.equippedCard}: $cardName. '
-                '${CollectionStrings.tapToChangeCard}',
+                '${context.l10n.collectionEquippedCard}: $cardName. '
+                '${context.l10n.collectionTapToChangeCard}',
             excludeSemantics: true,
             child: _CardBanner(
               art: card?.wideArt,
@@ -240,7 +240,8 @@ class _LoadoutSection extends ConsumerWidget {
         : db.card(identity!.playerCardId!)?.displayName;
     final titleText = identity == null
         ? null
-        : db.title(identity.titleOrNone)?.text ?? CollectionStrings.noTitle;
+        : db.title(identity.titleOrNone)?.text ??
+              context.l10n.collectionNoTitle;
     final cardArt = identity?.playerCardId == null
         ? null
         : db.card(identity!.playerCardId!)?.smallArt;
@@ -252,37 +253,37 @@ class _LoadoutSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const CollectionSectionTitle(CollectionStrings.sectionLoadout),
+        CollectionSectionTitle(context.l10n.collectionSectionLoadout),
         GroupedSection(
           children: [
             HubRow(
               icon: Icons.flag_outlined,
               image: cardArt,
-              title: CollectionStrings.playerCardTitle,
+              title: context.l10n.collectionPlayerCardTitle,
               value: cardName,
               onTap: () => go(CollectionRoutes.card),
             ),
             HubRow(
               icon: Icons.text_fields,
-              title: CollectionStrings.playerTitleTitle,
+              title: context.l10n.collectionPlayerTitleTitle,
               value: titleText,
               onTap: () => go(CollectionRoutes.title),
             ),
             HubRow(
               icon: Icons.gps_fixed,
               image: weaponArt,
-              title: CollectionStrings.rowWeapons,
+              title: context.l10n.collectionRowWeapons,
               onTap: () => go(CollectionRoutes.weapons),
             ),
             HubRow(
               icon: Icons.auto_fix_high_outlined,
-              title: CollectionStrings.rowExpressions,
+              title: context.l10n.collectionRowExpressions,
               onTap: () => go(CollectionRoutes.expressions),
             ),
             HubRow(
               icon: Icons.inventory_2_outlined,
-              title: CollectionStrings.rowPresets,
-              value: CollectionStrings.presetCount(presets.length),
+              title: context.l10n.collectionRowPresets,
+              value: context.l10n.collectionPresetCount(presets.length),
               onTap: () => go(CollectionRoutes.presets),
             ),
           ],
@@ -348,29 +349,29 @@ class _IdentitySection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const CollectionSectionTitle(CollectionStrings.sectionIdentity),
+        CollectionSectionTitle(context.l10n.collectionSectionIdentity),
         GroupedSection(
           children: [
             HubRow(
               icon: Icons.filter_frames_outlined,
-              title: CollectionStrings.rowLevelBorder,
+              title: context.l10n.collectionRowLevelBorder,
               value: border?.displayName.isNotEmpty ?? false
                   ? border!.displayName
-                  : CollectionStrings.levelBorderAuto,
+                  : context.l10n.collectionLevelBorderAuto,
               onTap: () =>
                   unawaited(showLevelBorderSheet(context, account: account)),
             ),
             toggle(
               icon: Icons.visibility_off_outlined,
-              title: CollectionStrings.hideAccountLevel,
-              hint: CollectionStrings.hideAccountLevelHint,
+              title: context.l10n.collectionHideAccountLevel,
+              hint: context.l10n.collectionHideAccountLevelHint,
               value: identity.hideAccountLevel,
               change: SetHideAccountLevel.new,
             ),
             toggle(
               icon: Icons.person_off_outlined,
-              title: CollectionStrings.incognito,
-              hint: CollectionStrings.incognitoHint,
+              title: context.l10n.collectionIncognito,
+              hint: context.l10n.collectionIncognitoHint,
               value: snapshot.loadout.incognito,
               change: SetIncognito.new,
             ),
@@ -417,7 +418,7 @@ class _BrowseSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const CollectionSectionTitle(CollectionStrings.sectionBrowse),
+        CollectionSectionTitle(context.l10n.collectionSectionBrowse),
         GroupedSection(
           children: [
             row(
@@ -470,8 +471,8 @@ class _BrowseSection extends ConsumerWidget {
             ),
             HubRow(
               icon: Icons.favorite_border,
-              title: CollectionStrings.rowWishlist,
-              value: CollectionStrings.wishlistCount(wishlist.length),
+              title: context.l10n.collectionRowWishlist,
+              value: context.l10n.collectionWishlistCount(wishlist.length),
               onTap: () => unawaited(context.push(WishlistRoutes.wishlist)),
             ),
           ],
@@ -511,7 +512,7 @@ class _ValueCard extends ConsumerWidget {
             children: [
               Expanded(
                 child: Text(
-                  CollectionStrings.collectionValue.toUpperCase(),
+                  context.l10n.collectionCollectionValue.toUpperCase(),
                   style: ValText.label.copyWith(color: gold),
                 ),
               ),
@@ -532,10 +533,10 @@ class _ValueCard extends ConsumerWidget {
           const SizedBox(height: 2),
           Text(
             [
-              CollectionStrings.ownedSkinsStat(
+              context.l10n.collectionOwnedSkinsStat(
                 formatNumber(o.ownedCollectibleSkins.length),
               ),
-              CollectionStrings.valueAtStorePrices,
+              context.l10n.collectionValueAtStorePrices,
             ].join(' · '),
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurface,
@@ -544,16 +545,16 @@ class _ValueCard extends ConsumerWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            CollectionStrings.excludedRewards,
+            context.l10n.collectionExcludedRewards,
             style: theme.textTheme.bodySmall?.copyWith(color: muted),
           ),
           if (value.skinCount > 0)
             Text(
               [
-                CollectionStrings.valueSkinCount(value.pricedCount),
+                context.l10n.collectionValueSkinCount(value.pricedCount),
                 if (value.rewardCount > 0)
-                  CollectionStrings.valueRewardCount(value.rewardCount),
-                if (value.isEstimate) CollectionStrings.valueHasEstimates,
+                  context.l10n.collectionValueRewardCount(value.rewardCount),
+                if (value.isEstimate) context.l10n.collectionValueHasEstimates,
               ].join(' · '),
               style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),
@@ -585,7 +586,7 @@ class _ValueCard extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
       child: Semantics(
         button: onTap != null,
-        hint: onTap == null ? null : CollectionStrings.valueSeeSkins,
+        hint: onTap == null ? null : context.l10n.collectionValueSeeSkins,
         child: Material(
           color: theme.colorScheme.surfaceContainer,
           shape: RoundedRectangleBorder(

@@ -9,7 +9,6 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/theme/app_theme.dart';
@@ -29,10 +28,11 @@ import '../data/skin_query_memory.dart';
 import '../data/wishlist_view.dart';
 import '../providers/wishlist_providers.dart';
 import '../wishlist_routes.dart';
-import '../wishlist_strings.dart';
 import 'widgets/skin_filter_bar.dart';
 import 'widgets/wishlist_notification_toggle.dart';
 import 'widgets/wishlist_row.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S3A "Wishlist" of the active account. Route `/collection/wishlist`
 /// (`?skin=<uuid>` opens that skin's detail sheet: notification deep link).
@@ -187,16 +187,16 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
 
   void _remove(String puuid, WishlistEntry entry, ContentDb db) {
     final notifier = ref.read(wishlistProvider(puuid).notifier);
-    final name = entry.facts?.name ?? CommonStrings.unknownItem;
+    final name = entry.facts?.name ?? context.l10n.commonUnknownItem;
     Haptics.light();
     unawaited(notifier.removeSkin(entry.key, db));
     ScaffoldMessenger.maybeOf(context)
       ?..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text(WishlistStrings.removed(name)),
+          content: Text(context.l10n.wishlistRemoved(name)),
           action: SnackBarAction(
-            label: WishlistStrings.undo,
+            label: context.l10n.wishlistUndo,
             onPressed: () => unawaited(notifier.addSkin(entry.key, db)),
           ),
         ),
@@ -207,10 +207,10 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const SubPageScaffold(
-        title: WishlistStrings.title,
+      return SubPageScaffold(
+        title: context.l10n.wishlistTitle,
         body: EmptyView(
-          message: CommonStrings.errorNoAccount,
+          message: context.l10n.commonErrorNoAccount,
           icon: Icons.person_off_outlined,
         ),
       );
@@ -246,13 +246,13 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
         SliverFillRemaining(
           hasScrollBody: false,
           child: EmptyView(
-            title: WishlistStrings.emptyTitle,
-            message: WishlistStrings.empty,
+            title: context.l10n.wishlistEmptyTitle,
+            message: context.l10n.wishlistEmpty,
             icon: Icons.favorite_border,
             action: FilledButton.icon(
               onPressed: _openCatalog,
               icon: const Icon(Icons.add),
-              label: const Text(WishlistStrings.browseCatalog),
+              label: Text(context.l10n.wishlistBrowseCatalog),
             ),
           ),
         ),
@@ -288,12 +288,12 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
           SliverFillRemaining(
             hasScrollBody: false,
             child: EmptyView(
-              title: WishlistStrings.noMatchTitle,
-              message: WishlistStrings.noMatch,
+              title: context.l10n.wishlistNoMatchTitle,
+              message: context.l10n.wishlistNoMatch,
               icon: Icons.search_off,
               action: TextButton(
                 onPressed: () => _setQuery(_query.cleared()),
-                child: const Text(WishlistStrings.clearFilters),
+                child: Text(context.l10n.wishlistClearFilters),
               ),
             ),
           )
@@ -320,11 +320,11 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
     }
 
     return SubPageScaffold(
-      title: WishlistStrings.title,
-      subtitle: WishlistStrings.ofAccount(account.riotId),
+      title: context.l10n.wishlistTitle,
+      subtitle: context.l10n.wishlistOfAccount(account.riotId),
       actions: [
         IconButton(
-          tooltip: WishlistStrings.addSkins,
+          tooltip: context.l10n.wishlistAddSkins,
           icon: const Icon(Icons.add),
           onPressed: _openCatalog,
         ),
@@ -374,7 +374,7 @@ class _DismissibleRow extends StatelessWidget {
           children: [
             Flexible(
               child: Text(
-                WishlistStrings.removeAction,
+                context.l10n.wishlistRemoveAction,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.labelLarge?.copyWith(
@@ -390,7 +390,7 @@ class _DismissibleRow extends StatelessWidget {
       ),
       child: Semantics(
         customSemanticsActions: {
-          const CustomSemanticsAction(label: WishlistStrings.removeAction):
+          CustomSemanticsAction(label: context.l10n.wishlistRemoveAction):
               onRemove,
         },
         child: WishlistRow(
@@ -427,7 +427,7 @@ class _SummaryStrip extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            WishlistStrings.totalValue,
+            context.l10n.wishlistTotalValue,
             style: theme.textTheme.labelMedium?.copyWith(color: muted),
           ),
           const SizedBox(height: 2),
@@ -451,7 +451,9 @@ class _SummaryStrip extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                WishlistStrings.skinCount(formatNumber(view.entries.length)),
+                context.l10n.wishlistSkinCount(
+                  formatNumber(view.entries.length),
+                ),
                 style: theme.textTheme.labelLarge?.copyWith(color: muted),
               ),
             ],
@@ -460,7 +462,7 @@ class _SummaryStrip extends StatelessWidget {
           if (view.query.isFiltering) ...[
             const SizedBox(height: 6),
             Text(
-              WishlistStrings.filtered(
+              context.l10n.wishlistFiltered(
                 formatNumber(view.visible.length),
                 filteredText,
               ),
@@ -473,7 +475,7 @@ class _SummaryStrip extends StatelessWidget {
           if (total.rewardCount > 0) ...[
             const SizedBox(height: 4),
             Text(
-              WishlistStrings.excludedRewards,
+              context.l10n.wishlistExcludedRewards,
               style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),
           ],
@@ -514,14 +516,14 @@ class _OnSaleBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  WishlistStrings.onSaleBanner(count),
+                  context.l10n.wishlistOnSaleBanner(count),
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  WishlistStrings.onSaleBannerHint,
+                  context.l10n.wishlistOnSaleBannerHint,
                   style: theme.textTheme.bodySmall,
                 ),
               ],

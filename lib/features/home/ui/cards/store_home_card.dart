@@ -13,7 +13,6 @@ import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_fallbacks.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/economy/economy.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tier_colors.dart';
 import '../../../../core/ui/countdown_ring.dart';
@@ -30,6 +29,8 @@ import '../../data/home_store.dart';
 import '../../home_strings.dart';
 import '../../providers/home_card_providers.dart';
 import '../home_card_frame.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 class StoreHomeCard extends ConsumerStatefulWidget {
   const StoreHomeCard({super.key, required this.puuid});
@@ -110,14 +111,14 @@ class _StoreBody extends ConsumerWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
     final footer = <String>[
       if (summary.totalVp > 0)
-        HomeStrings.storeTotal(formatVp(summary.totalVp)),
+        context.l10n.homeStoreTotal(formatVp(summary.totalVp)),
       if (summary.walletVp != null)
         summary.affordableTogether > 0
-            ? HomeStrings.storeWalletCanBuy(
+            ? context.l10n.homeStoreWalletCanBuy(
                 formatVp(summary.walletVp!),
                 summary.affordableTogether,
               )
-            : HomeStrings.storeWallet(formatVp(summary.walletVp!)),
+            : context.l10n.homeStoreWallet(formatVp(summary.walletVp!)),
     ];
     return HomeCardFrame(
       card: HomeCardId.store,
@@ -148,7 +149,7 @@ class _StoreBody extends ConsumerWidget {
           if (footer.isNotEmpty) ...[
             const SizedBox(height: 12),
             Text(
-              footer.join(HomeStrings.dot),
+              footer.join(context.l10n.homeDot),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.bodyMedium?.copyWith(color: muted),
@@ -164,7 +165,7 @@ class _StoreBody extends ConsumerWidget {
           ],
           if (summary.isFromCache)
             HomeCardFootnote(
-              CommonStrings.updatedAt(formatTime(summary.receivedAt)),
+              context.l10n.commonUpdatedAt(formatTime(summary.receivedAt)),
             ),
         ],
       ),
@@ -207,7 +208,7 @@ class _ResetPillState extends State<_ResetPill> {
     if (_expired) {
       final theme = Theme.of(context);
       return Text(
-        HomeStrings.storeRefreshing,
+        context.l10n.homeStoreRefreshing,
         style: theme.textTheme.labelMedium?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,
         ),
@@ -217,7 +218,7 @@ class _ResetPillState extends State<_ResetPill> {
       child: CountdownPill(
         expiresAt: widget.expiresAt,
         period: const Duration(days: 1),
-        builder: HomeStrings.storeResetsIn,
+        builder: context.l10n.homeStoreResetsIn,
         dense: true,
         onExpired: () {
           if (mounted) setState(() => _expired = true);
@@ -244,8 +245,8 @@ class _WishlistBanner extends StatelessWidget {
     final red = theme.colorScheme.primary;
     final first = hits.first;
     final title = hits.length == 1
-        ? HomeStrings.storeWishlistHit
-        : HomeStrings.storeWishlistHits(hits.length);
+        ? context.l10n.homeStoreWishlistHit
+        : context.l10n.homeStoreWishlistHits(hits.length);
     final place = first.placeLabel(db);
     return Material(
       color: red.withValues(alpha: 0.12),
@@ -368,9 +369,9 @@ class HomeSkinTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final tier = _tierOf(db, offer.tierUuid, valColorsOf(context).muted);
-    final name = offer.skin?.displayName ?? CommonStrings.unknownItem;
+    final name = offer.skin?.displayName ?? context.l10n.commonUnknownItem;
     final price = offer.vp;
-    final priceText = price == null ? CommonStrings.dash : formatVp(price);
+    final priceText = price == null ? context.l10n.commonDash : formatVp(price);
     return Semantics(
       button: true,
       label: HomeStrings.skinTileSemantics(
@@ -448,7 +449,7 @@ class HomeSkinTile extends ConsumerWidget {
                         alignment: AlignmentDirectional.centerStart,
                         child: price == null
                             ? Text(
-                                CommonStrings.dash,
+                                context.l10n.commonDash,
                                 style: theme.textTheme.labelMedium,
                               )
                             : CurrencyAmount.vp(
@@ -493,24 +494,24 @@ class _NightMarketRow extends ConsumerWidget {
     final Widget detail;
     if (market.unseen || best == null) {
       detail = Text(
-        HomeStrings.nightMarketWaiting(market.count),
+        context.l10n.homeNightMarketWaiting(market.count),
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: theme.textTheme.bodyMedium,
       );
     } else {
       final skin = db.skinByLevelUuid(best.skinLevelUuid);
-      final name = skin?.displayName ?? CommonStrings.unknownItem;
+      final name = skin?.displayName ?? context.l10n.commonUnknownItem;
       final price = best.discountedPrice;
       final base = best.basePrice;
       detail = Text.rich(
         TextSpan(
           children: [
             TextSpan(
-              text: HomeStrings.nightMarketBest(
+              text: context.l10n.homeNightMarketBest(
                 formatDiscountPercent(best.discountPercent),
                 name,
-                price == null ? CommonStrings.dash : formatVp(price),
+                price == null ? context.l10n.commonDash : formatVp(price),
               ),
             ),
             if (base != null && price != null && base > price)
@@ -551,7 +552,7 @@ class _NightMarketRow extends ConsumerWidget {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Text(
-                            HomeStrings.nightMarketTitle,
+                            context.l10n.homeNightMarketTitle,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                             ),
@@ -560,7 +561,7 @@ class _NightMarketRow extends ConsumerWidget {
                             ExcludeSemantics(
                               child: CountdownText(
                                 expiresAt: market.expiresAt!,
-                                builder: HomeStrings.nightMarketEndsIn,
+                                builder: context.l10n.homeNightMarketEndsIn,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: muted,
                                   fontFeatures: const [
@@ -579,7 +580,7 @@ class _NightMarketRow extends ConsumerWidget {
                 if (market.unseen) ...[
                   const SizedBox(width: 8),
                   ValBadge(
-                    HomeStrings.nightMarketNew,
+                    context.l10n.homeNightMarketNew,
                     color: theme.colorScheme.primary,
                   ),
                 ],

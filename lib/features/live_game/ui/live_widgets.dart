@@ -11,6 +11,8 @@ import '../../../core/util/clock.dart';
 import '../live_game_strings.dart';
 import '../providers/live_game_providers.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Status pill of the sheet header (G3): amber agent select, green in
 /// progress, grey ended.
 enum LiveStatus {
@@ -284,8 +286,8 @@ class _LiveRefreshRingState extends ConsumerState<LiveRefreshRing>
         : theme.colorScheme.outlineVariant.withValues(alpha: 0.5);
     final ring = Tooltip(
       message: _source?.value == null
-          ? LiveGameStrings.refresh
-          : LiveGameStrings.refreshIn(seconds),
+          ? context.l10n.liveGameRefresh
+          : context.l10n.liveGameRefreshIn(seconds),
       child: InkResponse(
         onTap: _busy ? null : () => unawaited(_refresh()),
         radius: size / 2 + 4,
@@ -319,7 +321,7 @@ class _LiveRefreshRingState extends ConsumerState<LiveRefreshRing>
                 Icons.refresh,
                 size: size * 0.5,
                 color: onImage ? Colors.white : null,
-                semanticLabel: LiveGameStrings.refresh,
+                semanticLabel: context.l10n.liveGameRefresh,
               ),
             ],
           ),

@@ -16,6 +16,8 @@ import '../../providers/store_share.dart';
 import '../../store_strings.dart';
 import 'store_share_card.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// "Chia sẻ ảnh": preview of the branded picture with the "Hiện Riot ID"
 /// (off by default) and "Hiện giá quy đổi" switches, then the platform's
 /// native share sheet with the PNG.
@@ -27,9 +29,9 @@ Future<void> showStoreShareSheet(
   return showValSheet<void>(
     context,
     title: data.isNightMarket
-        ? StoreStrings.shareNightMarketTitle
-        : StoreStrings.shareDailyTitle,
-    subtitle: StoreStrings.shareSubtitle,
+        ? context.l10n.storeShareNightMarketTitle
+        : context.l10n.storeShareDailyTitle,
+    subtitle: context.l10n.storeShareSubtitle,
     scrollable: true,
     initialSize: 0.92,
     minSize: 0.5,
@@ -137,16 +139,16 @@ class _StoreShareSheetBodyState extends ConsumerState<StoreShareSheetBody> {
     final switches = [
       if (riotId != null)
         _SwitchRow(
-          title: StoreStrings.shareShowRiotId,
-          subtitle: StoreStrings.shareShowRiotIdHint,
+          title: context.l10n.storeShareShowRiotId,
+          subtitle: context.l10n.storeShareShowRiotIdHint,
           icon: Icons.badge_outlined,
           value: _showRiotId,
           onChanged: (v) => setState(() => _showRiotId = v),
         ),
       if (price != null)
         _SwitchRow(
-          title: StoreStrings.shareShowPrice,
-          subtitle: StoreStrings.shareShowPriceHint,
+          title: context.l10n.storeShareShowPrice,
+          subtitle: context.l10n.storeShareShowPriceHint,
           icon: Icons.payments_outlined,
           value: _showPrice,
           onChanged: (v) => setState(() => _showPrice = v),
@@ -194,7 +196,9 @@ class _StoreShareSheetBodyState extends ConsumerState<StoreShareSheetBody> {
                   )
                 : Icon(isCupertino(context) ? Icons.ios_share : Icons.share),
             label: Text(
-              _ready ? StoreStrings.shareButton : StoreStrings.sharePreparing,
+              _ready
+                  ? context.l10n.storeShareButton
+                  : context.l10n.storeSharePreparing,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

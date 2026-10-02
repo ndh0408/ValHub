@@ -7,13 +7,14 @@ import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/util/format.dart';
 import '../../community_routes.dart';
-import '../../community_strings.dart';
 import '../../data/community_models.dart';
 import '../../providers/community_providers.dart';
 import '../../providers/skin_vote_providers.dart';
 import '../consent/consent_sheet.dart';
 import '../widgets/community_widgets.dart';
 import 'star_rating.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Toggles the active account's vote on [vote] (optimistic) and reports a
 /// failure in a snackbar.
@@ -96,8 +97,8 @@ class SkinVoteButton extends ConsumerWidget {
                   active: vote.voted,
                   count: vote.votes,
                   dense: true,
-                  semanticsOff: CommunityStrings.vote,
-                  semanticsOn: CommunityStrings.unvote,
+                  semanticsOff: context.l10n.communityVote,
+                  semanticsOn: context.l10n.communityUnvote,
                   onTap: puuid == null
                       ? null
                       : () => unawaited(
@@ -112,7 +113,7 @@ class SkinVoteButton extends ConsumerWidget {
                 ),
                 Flexible(
                   child: Text(
-                    CommunityStrings.communityVotes,
+                    context.l10n.communityCommunityVotes,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.labelMedium?.copyWith(
@@ -126,7 +127,7 @@ class SkinVoteButton extends ConsumerWidget {
           ),
           Semantics(
             button: true,
-            label: CommunityStrings.openReviews,
+            label: context.l10n.communityOpenReviews,
             child: Material(
               color: starColor(context).withValues(alpha: 0.12),
               shape: const StadiumBorder(),
@@ -153,8 +154,8 @@ class SkinVoteButton extends ConsumerWidget {
                       Flexible(
                         child: Text(
                           avg == null
-                              ? CommunityStrings.writeFirstReview
-                              : CommunityStrings.ratingSummary(
+                              ? context.l10n.communityWriteFirstReview
+                              : context.l10n.communityRatingSummary(
                                   formatRating(avg),
                                   formatNumber(rating.count),
                                 ),

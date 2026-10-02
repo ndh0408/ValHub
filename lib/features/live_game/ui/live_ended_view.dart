@@ -7,7 +7,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/network/riot_exception.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
@@ -22,6 +21,8 @@ import '../../../core/util/format.dart';
 import '../../profile/profile_routes.dart';
 import '../data/live_game_models.dart';
 import '../live_game_strings.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// How often a "still processing" (404) match is fetched again (G11).
 const kEndedRetryEvery = Duration(seconds: 20);
@@ -98,12 +99,12 @@ class _LiveEndedViewState extends ConsumerState<LiveEndedView> {
         children: [
           EmptyView(
             icon: Icons.hourglass_top_rounded,
-            title: CompetitiveStrings.matchPending,
-            message: LiveGameStrings.matchPendingHint,
+            title: context.l10n.competitiveMatchPending,
+            message: context.l10n.liveGameMatchPendingHint,
             action: OutlinedButton.icon(
               onPressed: () => ref.invalidate(matchDetailsProvider(_id)),
               icon: const Icon(Icons.refresh),
-              label: const Text(CommonStrings.retry),
+              label: Text(context.l10n.commonRetry),
             ),
           ),
         ],
@@ -139,8 +140,8 @@ class _LiveEndedViewState extends ConsumerState<LiveEndedView> {
                 minimumSize: const Size.fromHeight(52),
                 shape: const StadiumBorder(),
               ),
-              label: const Text(
-                LiveGameStrings.viewMatchDetails,
+              label: Text(
+                context.l10n.liveGameViewMatchDetails,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -202,7 +203,7 @@ class _Scoreboard extends ConsumerWidget {
     final sections = <Widget>[];
     if (ffa) {
       sections
-        ..add(const SectionHeader(LiveGameStrings.tabAllPlayers))
+        ..add(SectionHeader(context.l10n.liveGameTabAllPlayers))
         ..add(
           GroupedSection(
             children: [
@@ -226,8 +227,8 @@ class _Scoreboard extends ConsumerWidget {
           ..add(
             SectionHeader(
               side == myTeam
-                  ? LiveGameStrings.tabYourTeam
-                  : LiveGameStrings.tabEnemyTeam,
+                  ? context.l10n.liveGameTabYourTeam
+                  : context.l10n.liveGameTabEnemyTeam,
             ),
           )
           ..add(
@@ -275,7 +276,7 @@ class _Scoreboard extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                LiveGameStrings.finalScoreboard.toUpperCase(),
+                context.l10n.liveGameFinalScoreboard.toUpperCase(),
                 style: ValText.label.copyWith(
                   color: colors.muted,
                   fontSize: 11,
@@ -296,7 +297,7 @@ class _Scoreboard extends ConsumerWidget {
                   ),
                   if (result.hasScore)
                     Text(
-                      LiveGameStrings.score(
+                      context.l10n.liveGameScore(
                         result.myScore!,
                         result.otherScore!,
                       ),
@@ -343,11 +344,11 @@ class _ColumnsHeader extends StatelessWidget {
       child: Row(
         children: [
           const Spacer(),
-          Text(LiveGameStrings.kda, style: style),
+          Text(context.l10n.liveGameKda, style: style),
           SizedBox(
             width: 52,
             child: Text(
-              LiveGameStrings.acs,
+              context.l10n.liveGameAcs,
               textAlign: TextAlign.end,
               style: style,
             ),
@@ -384,7 +385,7 @@ class _ScoreRow extends StatelessWidget {
         : db.agent(player.characterId!);
     final s = stats;
     final kda = s == null
-        ? CommonStrings.dash
+        ? context.l10n.commonDash
         : '${formatNumber(s.kills)}/${formatNumber(s.deaths)}/'
               '${formatNumber(s.assists)}';
     final acs = s?.acs;
@@ -434,14 +435,14 @@ class _ScoreRow extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Semantics(
-            label: '${LiveGameStrings.kda} $kda',
+            label: '${context.l10n.liveGameKda} $kda',
             excludeSemantics: true,
             child: Text(kda, style: numbers),
           ),
           SizedBox(
             width: 52,
             child: Text(
-              acs == null ? CommonStrings.dash : formatNumber(acs.round()),
+              acs == null ? context.l10n.commonDash : formatNumber(acs.round()),
               textAlign: TextAlign.end,
               style: numbers?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,

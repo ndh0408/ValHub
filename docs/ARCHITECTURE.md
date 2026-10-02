@@ -1,5 +1,12 @@
 # ValVN architecture and internal API
 
+Current verification/cutover status: [final gap audit 02/10](FINAL_GAP_AUDIT_2026-10-02.md).
+ValVN remains the compatibility namespace; VanHub is the product brand. UI
+references now mostly use existing generated l10n resources, but root locale
+cutover and domain/structural migration are unfinished. Store-history instances
+share a canonical-path queue within one isolate; POSIX OS locks alone do not
+verify same-process, different-isolate concurrency. Preserve that open gate.
+
 This is the contract between the **foundation** (`lib/core/`, `lib/app/`) and the
 **feature agents** (`lib/features/<name>/`). Everything listed here exists in the code
 today; if you need something that is not here, ask the lead instead of editing

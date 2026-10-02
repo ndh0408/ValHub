@@ -12,7 +12,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
-import '../../../../core/l10n/account_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/util/clock.dart';
@@ -21,10 +20,11 @@ import '../../../social/data/friend_status.dart';
 import '../../../social/social_routes.dart';
 import '../../data/home_card.dart';
 import '../../data/home_friends.dart';
-import '../../home_strings.dart';
 import '../../providers/home_card_providers.dart';
 import '../../providers/home_layout_provider.dart';
 import '../home_card_frame.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 class FriendsHomeCard extends ConsumerWidget {
   const FriendsHomeCard({super.key});
@@ -56,14 +56,14 @@ class _ConsentPrompt extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            HomeStrings.friendsConsentTitle,
+            context.l10n.homeFriendsConsentTitle,
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 6),
           Text(
-            HomeStrings.friendsConsentBody,
+            context.l10n.homeFriendsConsentBody,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
               height: 1.4,
@@ -76,7 +76,7 @@ class _ConsentPrompt extends ConsumerWidget {
             children: [
               FilledButton(
                 onPressed: () => unawaited(notifier.set(allowed: true)),
-                child: const Text(HomeStrings.friendsConsentAllow),
+                child: Text(context.l10n.homeFriendsConsentAllow),
               ),
               TextButton(
                 onPressed: () {
@@ -87,16 +87,16 @@ class _ConsentPrompt extends ConsumerWidget {
                     ..showSnackBar(
                       SnackBar(
                         content: Text(
-                          HomeStrings.cardHidden(HomeCardId.friends.title),
+                          context.l10n.homeCardHidden(HomeCardId.friends.title),
                         ),
                         action: SnackBarAction(
-                          label: HomeStrings.undo,
+                          label: context.l10n.homeUndo,
                           onPressed: () => unawaited(notifier.clear()),
                         ),
                       ),
                     );
                 },
-                child: const Text(HomeStrings.friendsConsentDecline),
+                child: Text(context.l10n.homeFriendsConsentDecline),
               ),
             ],
           ),
@@ -118,7 +118,7 @@ class _FriendsBody extends ConsumerWidget {
     final now = ref.watch(clockProvider).now();
     return HomeCardFrame(
       card: HomeCardId.friends,
-      title: HomeStrings.friendsPlaying(snap.total),
+      title: context.l10n.homeFriendsPlaying(snap.total),
       onTap: () => unawaited(context.push<Object?>(SocialRoutes.friends)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -138,7 +138,7 @@ class _FriendsBody extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 14),
                     child: Text(
-                      HomeStrings.friendsMore(snap.hidden),
+                      context.l10n.homeFriendsMore(snap.hidden),
                       style: theme.textTheme.titleSmall,
                     ),
                   ),
@@ -152,7 +152,7 @@ class _FriendsBody extends ConsumerWidget {
                   unawaited(context.push<Object?>(SocialRoutes.friends)),
               icon: const Icon(Icons.chevron_right),
               iconAlignment: IconAlignment.end,
-              label: const Text(HomeStrings.friendsSeeAll),
+              label: Text(context.l10n.homeFriendsSeeAll),
             ),
           ),
         ],
@@ -186,14 +186,14 @@ class _FriendAvatar extends StatelessWidget {
       FriendActivity.inMatch => colors.win,
       _ => colors.warning,
     };
-    final name = friend.name?.riotId ?? AccountStrings.unknownPlayer;
+    final name = friend.name?.riotId ?? context.l10n.accountUnknownPlayer;
     final art = friend.playerCardId == null
         ? null
         : db.card(friend.playerCardId!)?.smallArt;
     final oneLine = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Semantics(
       button: true,
-      label: HomeStrings.friendSemantics(name, status.text),
+      label: context.l10n.homeFriendSemantics(name, status.text),
       excludeSemantics: true,
       child: InkWell(
         onTap: () =>

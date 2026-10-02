@@ -6,7 +6,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/economy/economy.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/currency_amount.dart';
@@ -14,8 +13,9 @@ import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
 import '../../../skin_detail/community_skin_score.dart';
-import '../../store_strings.dart';
 import 'store_ui_bits.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S11 Night Market card: `-xx%` badge, skin, struck "giá gốc" and the
 /// "giá ưu đãi". Tap → S15.
@@ -46,13 +46,13 @@ class NightMarketCard extends ConsumerWidget {
       offer.skinLevelUuid,
       db,
     );
-    final name = skin?.displayName ?? CommonStrings.unknownItem;
+    final name = skin?.displayName ?? context.l10n.commonUnknownItem;
     final base = offer.basePrice;
     final discounted = offer.discountedPrice;
 
     return TierCard(
       tint: tint,
-      semanticsLabel: StoreStrings.offerSemantics(
+      semanticsLabel: context.l10n.storeOfferSemantics(
         name,
         [
           if (discounted != null) formatVp(discounted),
@@ -87,7 +87,7 @@ class NightMarketCard extends ConsumerWidget {
                         ),
                       if (!offer.isSeen)
                         StoreBadge(
-                          StoreStrings.nightMarketUnrevealed,
+                          context.l10n.storeNightMarketUnrevealed,
                           color: ValColors.amber,
                           foreground: readableOn(ValColors.amber),
                           icon: Icons.visibility_off_outlined,
@@ -157,7 +157,10 @@ class NightMarketCard extends ConsumerWidget {
                     ),
                   )
                 else
-                  Text(CommonStrings.dash, style: theme.textTheme.titleSmall),
+                  Text(
+                    context.l10n.commonDash,
+                    style: theme.textTheme.titleSmall,
+                  ),
               ],
             ),
             if (discounted != null)

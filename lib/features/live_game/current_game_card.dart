@@ -16,9 +16,10 @@ import '../../core/xmpp/xmpp.dart';
 import 'data/live_game_logic.dart';
 import 'data/live_game_models.dart';
 import 'live_game_sheet.dart';
-import 'live_game_strings.dart';
 import 'providers/live_game_providers.dart';
 import 'ui/live_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// R7 "Trận hiện tại" card shown on the profile tab: state line
 /// ("Không trong trận", "Đang chọn đặc vụ · Ascent", "Đang đấu · Lotus · 8 – 4")
@@ -44,7 +45,7 @@ class CurrentGameCard extends ConsumerWidget {
       subtitle = Text(
         describeError(value.error!).needsLogin
             ? describeError(value.error!).message
-            : LiveGameStrings.statusUnavailable,
+            : context.l10n.liveGameStatusUnavailable,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: theme.textTheme.bodyMedium?.copyWith(
@@ -119,7 +120,7 @@ class CurrentGameCard extends ConsumerWidget {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Text(
-                            LiveGameStrings.currentGame.toUpperCase(),
+                            context.l10n.liveGameCurrentGame.toUpperCase(),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: ValText.label.copyWith(

@@ -21,6 +21,8 @@ import 'widgets/collection_widgets.dart';
 import 'widgets/identity_preview.dart';
 import 'widgets/loadout_actions.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// S32 "Đổi danh hiệu" (+ "Không có danh hiệu"). Route `/collection/title`.
 ///
 /// A live preview of the lobby banner (name + title over the equipped
@@ -42,17 +44,17 @@ class _PlayerTitlePickerScreenState
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const NoAccountPage(title: CollectionStrings.playerTitleTitle);
+      return NoAccountPage(title: context.l10n.collectionPlayerTitleTitle);
     }
     final puuid = account.puuid;
     final search = CollectionSearchField(
-      hint: CollectionStrings.searchTitles,
+      hint: context.l10n.collectionSearchTitles,
       initialValue: _search,
       onChanged: (v) => setState(() => _search = v),
     );
     return SubPageScaffold(
-      title: CollectionStrings.playerTitleTitle,
-      subtitle: CollectionStrings.playerTitleSubtitle,
+      title: context.l10n.collectionPlayerTitleTitle,
+      subtitle: context.l10n.collectionPlayerTitleSubtitle,
       onRefresh: () => refreshCollection(ref, puuid),
       slivers: loadoutSlivers(
         ref,
@@ -65,7 +67,9 @@ class _PlayerTitlePickerScreenState
           final card = identity.playerCardId == null
               ? null
               : db.card(identity.playerCardId!);
-          final showNone = matchesSearch(_search, [CollectionStrings.noTitle]);
+          final showNone = matchesSearch(_search, [
+            context.l10n.collectionNoTitle,
+          ]);
           final all = ownedTitles(owned, db);
           final titles = [
             for (final t in all)
@@ -99,8 +103,8 @@ class _PlayerTitlePickerScreenState
                   title: equippedTitle == null || equippedTitle.isNoTitle
                       ? null
                       : equippedTitle.text,
-                  badge: const ArtPill(
-                    label: CollectionStrings.preview,
+                  badge: ArtPill(
+                    label: context.l10n.collectionPreview,
                     icon: Icons.visibility_outlined,
                   ),
                 ),
@@ -114,20 +118,22 @@ class _PlayerTitlePickerScreenState
             SliverToBoxAdapter(
               child: SummaryStrip(
                 text: filtering
-                    ? CollectionStrings.summaryFilteredItems(
+                    ? context.l10n.collectionSummaryFilteredItems(
                         titles.length,
                         all.length,
                       )
-                    : CollectionStrings.titlesCount(formatNumber(all.length)),
+                    : context.l10n.collectionTitlesCount(
+                        formatNumber(all.length),
+                      ),
                 highlighted: filtering,
               ),
             ),
             if (!showNone && titles.isEmpty)
-              const SliverFillRemaining(
+              SliverFillRemaining(
                 hasScrollBody: false,
                 child: EmptyView(
-                  title: CollectionStrings.noResultsTitle,
-                  message: CollectionStrings.noResults,
+                  title: context.l10n.collectionNoResultsTitle,
+                  message: context.l10n.collectionNoResults,
                   icon: Icons.search_off,
                 ),
               )
@@ -138,12 +144,15 @@ class _PlayerTitlePickerScreenState
                     if (showNone)
                       _TitleRow(
                         key: const ValueKey(SpecialIds.noTitle),
-                        label: CollectionStrings.noTitle,
+                        label: context.l10n.collectionNoTitle,
                         muted: true,
                         selected: equipped == SpecialIds.noTitle,
                         enabled: !saving,
                         onTap: () => unawaited(
-                          pick(SpecialIds.noTitle, CollectionStrings.noTitle),
+                          pick(
+                            SpecialIds.noTitle,
+                            context.l10n.collectionNoTitle,
+                          ),
                         ),
                       ),
                     for (final t in titles)

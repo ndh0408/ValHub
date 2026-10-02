@@ -2,7 +2,7 @@ name: iOS IPA
 
 on:
   push:
-    branches: [main]
+    branches: [main, claude/jolly-hawking-23o2j8]
     tags: ['v*']
   workflow_dispatch:
 
@@ -43,7 +43,9 @@ jobs:
         run: |
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then NAME="${GITHUB_REF_NAME#v}"; else NAME="$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')"; fi
           echo "name=$NAME" >> "$GITHUB_OUTPUT"
-          echo "number=${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          BASE="$(sed -n 's/^version:.*+\([0-9][0-9]*\).*$/\1/p' pubspec.yaml)"
+          [[ "$BASE" =~ ^[0-9]+$ ]] || { echo "::error::Missing pubspec build number"; exit 1; }
+          echo "number=$((BASE + ${{ github.run_number }}))" >> "$GITHUB_OUTPUT"
 
       - run: flutter --version && xcodebuild -version
       - run: flutter pub get
@@ -162,12 +164,18 @@ jobs:
         if: env.HAS_SIGNING == 'true' && steps.signed.outcome != 'success'
         run: echo "::warning::Signed IPA failed (see the signing steps); only the unsigned IPA is published."
 
-      # Publishes whatever was built (unsigned always, signed when it worked).
+      - name: Refuse an unsigned release
+        if: startsWith(github.ref, 'refs/tags/v') && steps.signed.outcome != 'success'
+        run: |
+          echo "::error::A tag release requires a successfully signed IPA. Unsigned review artifacts remain available from this run."
+          exit 1
+
+      # Unsigned IPAs remain review artifacts; tag releases require signing.
       - name: GitHub Release
-        if: always() && startsWith(github.ref, 'refs/tags/v') && steps.unsigned.outcome == 'success'
+        if: success() && startsWith(github.ref, 'refs/tags/v') && steps.signed.outcome == 'success'
         uses: softprops/action-gh-release@v3
         with:
-          files: dist/*.ipa
+          files: dist/*-signed.ipa
           prerelease: ${{ contains(github.ref_name, '-') }}
 
       - name: Remove keychain

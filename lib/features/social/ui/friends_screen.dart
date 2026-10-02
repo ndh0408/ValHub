@@ -7,7 +7,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
-import '../../../core/domain/competitive/competitive_strings.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
@@ -26,6 +25,8 @@ import '../social_routes.dart';
 import '../social_strings.dart';
 import 'widgets/friend_tile.dart';
 import 'widgets/social_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S60 "Bạn bè & trò chuyện". Route `/profile/friends`.
 ///
@@ -98,11 +99,11 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
             ),
           ),
         if (view.isEmpty)
-          const SliverFillRemaining(
+          SliverFillRemaining(
             hasScrollBody: false,
             child: EmptyView(
-              title: SocialStrings.noFriendsTitle,
-              message: SocialStrings.noFriends,
+              title: context.l10n.socialNoFriendsTitle,
+              message: context.l10n.socialNoFriends,
               icon: Icons.group_outlined,
             ),
           )
@@ -133,17 +134,20 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     }
 
     return SubPageScaffold(
-      title: SocialStrings.friendsTitle,
+      title: context.l10n.socialFriendsTitle,
       subtitle: view == null || view.isEmpty
           ? null
-          : SocialStrings.friendsSummary(view.all.length, view.online.length),
+          : context.l10n.socialFriendsSummary(
+              view.all.length,
+              view.online.length,
+            ),
       onRefresh: _refresh,
       slivers: [
         PinnedHeaderSliver(
           child: _SearchStrip(
             child: GlassSearchField(
               controller: _search,
-              hintText: SocialStrings.searchHint,
+              hintText: context.l10n.socialSearchHint,
               onChanged: (v) => setState(() => _query = v),
             ),
           ),
@@ -156,13 +160,13 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                 for (final f in FriendsFilter.values)
                   ValFilterChip(
                     label: switch (f) {
-                      FriendsFilter.all => SocialStrings.filterAll,
-                      FriendsFilter.online => SocialStrings.filterOnline,
+                      FriendsFilter.all => context.l10n.socialFilterAll,
+                      FriendsFilter.online => context.l10n.socialFilterOnline,
                       FriendsFilter.unread =>
                         unread > 0
-                            ? '${SocialStrings.filterUnread} '
+                            ? '${context.l10n.socialFilterUnread} '
                                   '(${SocialStrings.unreadBadge(unread)})'
-                            : SocialStrings.filterUnread,
+                            : context.l10n.socialFilterUnread,
                     },
                     dotColor: f == FriendsFilter.online
                         ? valColorsOf(context).win
@@ -216,10 +220,10 @@ abstract final class _FriendsSlivers {
         SliverFillRemaining(
           hasScrollBody: false,
           child: EmptyView(
-            title: searching ? SocialStrings.noSearchResultsTitle : null,
+            title: searching ? context.l10n.socialNoSearchResultsTitle : null,
             message: searching
-                ? SocialStrings.noSearchResults
-                : SocialStrings.noFilterResults,
+                ? context.l10n.socialNoSearchResults
+                : context.l10n.socialNoFilterResults,
             icon: searching
                 ? Icons.search_off_outlined
                 : Icons.filter_alt_off_outlined,
@@ -227,8 +231,8 @@ abstract final class _FriendsSlivers {
               onPressed: searching ? onClearSearch : onShowAll,
               child: Text(
                 searching
-                    ? SocialStrings.showEveryone
-                    : SocialStrings.filterAll,
+                    ? context.l10n.socialShowEveryone
+                    : context.l10n.socialFilterAll,
               ),
             ),
           ),
@@ -242,7 +246,7 @@ abstract final class _FriendsSlivers {
       status: friendStatus(f, db: db, now: now),
       detail: friendDetail(f, db: db),
       rankTier: friendRankTier(f),
-      unknownName: CompetitiveStrings.unknownPlayer,
+      unknownName: context.l10n.competitiveUnknownPlayer,
       heroTag: friendAvatarHeroTag(f.puuid),
       onTap: () => unawaited(context.push(SocialRoutes.chat(f.puuid))),
     );
@@ -251,13 +255,13 @@ abstract final class _FriendsSlivers {
       for (final section in sections) ...[
         SliverToBoxAdapter(
           child: SectionLabel(switch (section.kind) {
-            FriendSectionKind.playing => SocialStrings.playingSection(
+            FriendSectionKind.playing => context.l10n.socialPlayingSection(
               section.friends.length,
             ),
-            FriendSectionKind.online => SocialStrings.onlineSection(
+            FriendSectionKind.online => context.l10n.socialOnlineSection(
               section.friends.length,
             ),
-            FriendSectionKind.offline => SocialStrings.offlineSection(
+            FriendSectionKind.offline => context.l10n.socialOfflineSection(
               section.friends.length,
             ),
           }, padding: const EdgeInsets.fromLTRB(20, 16, 20, 8)),
@@ -289,7 +293,7 @@ class _PrivacyNote extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              SocialStrings.friendsPrivacyNote,
+              context.l10n.socialFriendsPrivacyNote,
               style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),
           ),

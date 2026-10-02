@@ -17,6 +17,8 @@ import '../../providers/lfg_providers.dart';
 import '../widgets/community_widgets.dart';
 import 'lfg_bits.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Validates a typed party code: `null` when valid, else the message.
 String? validatePartyCode(String code) {
   final c = code.trim().toUpperCase();
@@ -121,16 +123,19 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(CommunityStrings.createLfg, style: theme.textTheme.titleLarge),
+            Text(
+              context.l10n.communityCreateLfg,
+              style: theme.textTheme.titleLarge,
+            ),
             const SizedBox(height: 4),
             Text(
-              CommunityStrings.lfgSheetSubtitle(
+              context.l10n.communityLfgSheetSubtitle(
                 CommunityStrings.regionLabel(widget.region),
               ),
               style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),
             const SizedBox(height: 20),
-            _label(CommunityStrings.mode),
+            _label(context.l10n.communityMode),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -144,13 +149,13 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
               ],
             ),
             const SizedBox(height: 20),
-            _label(CommunityStrings.rankRange),
+            _label(context.l10n.communityRankRange),
             Row(
               children: [
                 Expanded(
                   child: _RankButton(
                     key: const ValueKey('rank-min'),
-                    caption: CommunityStrings.rankFrom,
+                    caption: context.l10n.communityRankFrom,
                     tier: _rankMin,
                     onTap: () => unawaited(_pickRank(db, min: true)),
                   ),
@@ -159,7 +164,7 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
                 Expanded(
                   child: _RankButton(
                     key: const ValueKey('rank-max'),
-                    caption: CommunityStrings.rankTo,
+                    caption: context.l10n.communityRankTo,
                     tier: _rankMax,
                     onTap: () => unawaited(_pickRank(db, min: false)),
                   ),
@@ -172,7 +177,7 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
               runSpacing: 8,
               children: [
                 CommunityChip(
-                  label: CommunityStrings.anyRank,
+                  label: context.l10n.communityAnyRank,
                   selected: _rankMin == null && _rankMax == null,
                   onSelected: () => setState(() {
                     _rankMin = null;
@@ -195,7 +200,7 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
               ],
             ),
             const SizedBox(height: 20),
-            _label(CommunityStrings.roles),
+            _label(context.l10n.communityRoles),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -216,9 +221,9 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
               value: _mic,
               onChanged: (v) => setState(() => _mic = v),
               secondary: const Icon(Icons.mic_rounded),
-              title: const Text(CommunityStrings.mic),
+              title: Text(context.l10n.communityMic),
             ),
-            _label(CommunityStrings.language),
+            _label(context.l10n.communityLanguage),
             Material(
               color: theme.colorScheme.surfaceContainer,
               borderRadius: BorderRadius.circular(ValRadius.small),
@@ -234,13 +239,13 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
               ),
             ),
             const SizedBox(height: 20),
-            _label(CommunityStrings.partySize),
+            _label(context.l10n.communityPartySize),
             _Stepper(
               key: const ValueKey('party-size'),
               value: _partySize,
               min: 1,
               max: 4,
-              format: CommunityStrings.partySizeValue,
+              format: context.l10n.communityPartySizeValue,
               onChanged: (v) => setState(() {
                 _partySize = v;
                 _slots = _slots.clamp(1, 5 - v);
@@ -251,22 +256,22 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  CommunityStrings.partySizeFromGame,
+                  context.l10n.communityPartySizeFromGame,
                   style: theme.textTheme.labelSmall?.copyWith(color: muted),
                 ),
               ),
             const SizedBox(height: 16),
-            _label(CommunityStrings.slots),
+            _label(context.l10n.communitySlots),
             _Stepper(
               key: const ValueKey('slots'),
               value: _slots,
               min: 1,
               max: maxSlots,
-              format: CommunityStrings.slotsWanted,
+              format: context.l10n.communitySlotsWanted,
               onChanged: (v) => setState(() => _slots = v),
             ),
             const SizedBox(height: 20),
-            _label(CommunityStrings.partyCode),
+            _label(context.l10n.communityPartyCode),
             TextField(
               key: const ValueKey('lfg-code'),
               controller: _code,
@@ -280,9 +285,9 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
               ],
               style: theme.textTheme.titleMedium?.copyWith(letterSpacing: 3),
               decoration: InputDecoration(
-                hintText: CommunityStrings.partyCodeHint,
+                hintText: context.l10n.communityPartyCodeHint,
                 counterText: '',
-                helperText: CommunityStrings.codeAuto,
+                helperText: context.l10n.communityCodeAuto,
                 helperMaxLines: 3,
                 errorText: _codeError,
                 errorMaxLines: 3,
@@ -292,15 +297,15 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
               },
             ),
             const SizedBox(height: 12),
-            _label(CommunityStrings.note),
+            _label(context.l10n.communityNote),
             TextField(
               controller: _note,
               maxLength: 140,
               minLines: 2,
               maxLines: 3,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                hintText: CommunityStrings.noteHint,
+              decoration: InputDecoration(
+                hintText: context.l10n.communityNoteHint,
               ),
             ),
             if (_formError != null)
@@ -328,7 +333,7 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
                         ),
                       )
                     : const Icon(Icons.campaign_rounded),
-                label: const Text(CommunityStrings.postLfg),
+                label: Text(context.l10n.communityPostLfg),
               ),
             ),
           ],
@@ -432,11 +437,11 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
       setState(() {
         switch (problem) {
           case LfgProblem.rankRange:
-            _formError = CommunityStrings.rankRangeInvalid;
+            _formError = context.l10n.communityRankRangeInvalid;
           case LfgProblem.tooManyPlayers:
-            _formError = CommunityStrings.slotsTooMany(5 - _partySize);
+            _formError = context.l10n.communitySlotsTooMany(5 - _partySize);
           case LfgProblem.codeInvalid:
-            _codeError = CommunityStrings.codeInvalid;
+            _codeError = context.l10n.communityCodeInvalid;
         }
       });
       return;
@@ -521,7 +526,7 @@ class _RankButton extends StatelessWidget {
               const SizedBox(height: 4),
               if (t == null)
                 Text(
-                  CommunityStrings.anyRank,
+                  context.l10n.communityAnyRank,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -564,7 +569,7 @@ class _Stepper extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            tooltip: CommunityStrings.decrease,
+            tooltip: context.l10n.communityDecrease,
             onPressed: value > min ? () => onChanged(value - 1) : null,
             icon: const Icon(Icons.remove_rounded),
           ),
@@ -578,7 +583,7 @@ class _Stepper extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: CommunityStrings.increase,
+            tooltip: context.l10n.communityIncrease,
             onPressed: value < max ? () => onChanged(value + 1) : null,
             icon: const Icon(Icons.add_rounded),
           ),

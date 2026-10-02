@@ -15,6 +15,8 @@ import '../../profile_strings.dart';
 import '../../providers/profile_providers.dart';
 import 'profile_widgets.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// "Phong độ gần đây": win-rate ring, W/L strip of the last
 /// [kRecentFormMatches] matches of the current history filter, the running
 /// streak and the per-round stats (K/D · ACS · ADR · HS%).
@@ -103,7 +105,7 @@ class _FormBody extends StatelessWidget {
     final rate = form.winRate;
     final streak = form.streakKind;
     String fmt(double? v, {int decimals = 0}) => v == null
-        ? CompetitiveStrings.noValue
+        ? context.l10n.competitiveNoValue
         : decimals == 0
         ? formatNumber(v.round())
         : formatNumber(double.parse(v.toStringAsFixed(decimals)));
@@ -122,7 +124,7 @@ class _FormBody extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      ProfileStrings.recentFormTitle.toUpperCase(),
+                      context.l10n.profileRecentFormTitle.toUpperCase(),
                       style: ValText.label.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -130,8 +132,8 @@ class _FormBody extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       ProfileStrings.joined([
-                        ProfileStrings.lastMatches(form.games),
-                        ProfileStrings.recordShort(
+                        context.l10n.profileLastMatches(form.games),
+                        context.l10n.profileRecordShort(
                           form.wins,
                           form.losses,
                           form.draws,
@@ -155,8 +157,8 @@ class _FormBody extends StatelessWidget {
                       const SizedBox(height: 10),
                       StatusPill(
                         label: streak == StreakKind.win
-                            ? ProfileStrings.winStreak(form.streak)
-                            : ProfileStrings.lossStreak(form.streak),
+                            ? context.l10n.profileWinStreak(form.streak)
+                            : context.l10n.profileLossStreak(form.streak),
                         color: streak == StreakKind.win
                             ? colors.win
                             : colors.loss,
@@ -176,7 +178,7 @@ class _FormBody extends StatelessWidget {
               columns: form.adr == null ? 3 : 4,
               tiles: [
                 StatTile(
-                  label: ProfileStrings.kd,
+                  label: context.l10n.profileKd,
                   value: fmt(form.kd, decimals: 2),
                   valueColor: form.kd == null
                       ? null
@@ -185,16 +187,19 @@ class _FormBody extends StatelessWidget {
                       : colors.loss,
                 ),
                 StatTile(
-                  label: ProfileStrings.acs,
+                  label: context.l10n.profileAcs,
                   value: fmt(form.acs),
-                  tooltip: ProfileStrings.acsHint,
+                  tooltip: context.l10n.profileAcsHint,
                 ),
                 if (form.adr != null)
-                  StatTile(label: ProfileStrings.adr, value: fmt(form.adr)),
+                  StatTile(
+                    label: context.l10n.profileAdr,
+                    value: fmt(form.adr),
+                  ),
                 StatTile(
-                  label: ProfileStrings.hs,
+                  label: context.l10n.profileHs,
                   value: form.headshotRate == null
-                      ? CompetitiveStrings.noValue
+                      ? context.l10n.competitiveNoValue
                       : formatPercent(form.headshotRate!),
                 ),
               ],
@@ -202,14 +207,17 @@ class _FormBody extends StatelessWidget {
             if (form.roundStatsArePartial) ...[
               const SizedBox(height: 8),
               _FormNote(
-                ProfileStrings.formRoundStatsNote(form.roundGames, form.games),
+                context.l10n.profileFormRoundStatsNote(
+                  form.roundGames,
+                  form.games,
+                ),
               ),
             ],
           ] else
-            const _FormNote(ProfileStrings.formNoRoundStats),
+            _FormNote(context.l10n.profileFormNoRoundStats),
           if (pending > 0) ...[
             const SizedBox(height: 8),
-            _FormNote(ProfileStrings.formPending(pending)),
+            _FormNote(context.l10n.profileFormPending(pending)),
           ],
         ],
       ),
@@ -247,7 +255,11 @@ class _OutcomeStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       container: true,
-      label: ProfileStrings.formSemantics(form.wins, form.losses, form.games),
+      label: context.l10n.profileFormSemantics(
+        form.wins,
+        form.losses,
+        form.games,
+      ),
       excludeSemantics: true,
       child: Wrap(
         spacing: 4,
@@ -290,8 +302,8 @@ class _WinRateRing extends StatelessWidget {
         : colors.loss;
     return Semantics(
       container: true,
-      label: ProfileStrings.winRate,
-      value: r == null ? CompetitiveStrings.noValue : formatPercent(r),
+      label: context.l10n.profileWinRate,
+      value: r == null ? context.l10n.competitiveNoValue : formatPercent(r),
       excludeSemantics: true,
       child: SizedBox.square(
         dimension: 72,
@@ -309,7 +321,9 @@ class _WinRateRing extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: Text(
-                  r == null ? CompetitiveStrings.noValue : formatPercent(r),
+                  r == null
+                      ? context.l10n.competitiveNoValue
+                      : formatPercent(r),
                   maxLines: 1,
                   style: ValText.display(20, color: color),
                 ),

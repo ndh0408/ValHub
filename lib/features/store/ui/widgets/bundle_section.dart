@@ -2,8 +2,9 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/ui/empty_view.dart';
-import '../../store_strings.dart';
 import 'bundle_banner.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S13 body: one banner per featured bundle.
 class BundleSection extends StatelessWidget {
@@ -14,9 +15,9 @@ class BundleSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (bundles.isEmpty) {
-      return const EmptyView(
-        title: StoreStrings.bundlesEmptyTitle,
-        message: StoreStrings.bundlesEmpty,
+      return EmptyView(
+        title: context.l10n.storeBundlesEmptyTitle,
+        message: context.l10n.storeBundlesEmpty,
         icon: Icons.inventory_2_outlined,
       );
     }

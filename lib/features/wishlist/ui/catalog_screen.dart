@@ -16,9 +16,10 @@ import '../../../core/util/format.dart';
 import '../data/skin_query.dart';
 import '../data/skin_query_memory.dart';
 import '../providers/wishlist_providers.dart';
-import '../wishlist_strings.dart';
 import 'widgets/catalog_tile.dart';
 import 'widgets/skin_filter_bar.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S3B "Tất cả skin": every weapon skin of the current content
 /// (valorant-api, vi-VN) with search, weapon + edition filters, sort (the
@@ -88,12 +89,12 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
     if (catalog != null && catalog.skins.isNotEmpty) {
       slivers = _slivers(context, catalog, puuid);
     } else if (catalog != null) {
-      slivers = const [
+      slivers = [
         SliverFillRemaining(
           hasScrollBody: false,
           child: EmptyView(
-            title: WishlistStrings.catalogEmptyTitle,
-            message: WishlistStrings.catalogEmpty,
+            title: context.l10n.wishlistCatalogEmptyTitle,
+            message: context.l10n.wishlistCatalogEmpty,
             icon: Icons.style_outlined,
           ),
         ),
@@ -109,8 +110,8 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
       slivers = const [SliverToBoxAdapter(child: _CatalogSkeleton())];
     }
     return SubPageScaffold(
-      title: WishlistStrings.catalogTitle,
-      subtitle: WishlistStrings.catalogSubtitle,
+      title: context.l10n.wishlistCatalogTitle,
+      subtitle: context.l10n.wishlistCatalogSubtitle,
       onRefresh: () => _refresh(puuid),
       header: SkinSearchField(query: _query, onChanged: _setQuery),
       headerHeight: skinSearchHeaderHeight(context),
@@ -146,12 +147,12 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
         SliverFillRemaining(
           hasScrollBody: false,
           child: EmptyView(
-            title: WishlistStrings.noMatchTitle,
-            message: WishlistStrings.noMatch,
+            title: context.l10n.wishlistNoMatchTitle,
+            message: context.l10n.wishlistNoMatch,
             icon: Icons.search_off,
             action: TextButton(
               onPressed: () => _setQuery(_query.cleared()),
-              child: const Text(WishlistStrings.clearFilters),
+              child: Text(context.l10n.wishlistClearFilters),
             ),
           ),
         )
@@ -205,7 +206,7 @@ class _CountLine extends ConsumerWidget {
         children: [
           Expanded(
             child: Text(
-              WishlistStrings.catalogCount(formatNumber(count)),
+              context.l10n.wishlistCatalogCount(formatNumber(count)),
               style: theme.textTheme.labelLarge?.copyWith(
                 color: filtering
                     ? legibleAccent(context, theme.colorScheme.primary)
@@ -226,7 +227,7 @@ class _CountLine extends ConsumerWidget {
                   const SizedBox(width: 4),
                   Flexible(
                     child: Text(
-                      WishlistStrings.catalogInWishlist(
+                      context.l10n.wishlistCatalogInWishlist(
                         formatNumber(inWishlist),
                       ),
                       maxLines: 1,

@@ -5,7 +5,6 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
@@ -15,8 +14,9 @@ import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
-import '../profile_strings.dart';
 import 'widgets/rank_card.dart' show formatRr;
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S41 "Tính toán lên hạng". Route `/profile/rankup`.
 ///
@@ -40,14 +40,14 @@ class _RankUpCalculatorScreenState
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const SubPageScaffold(
-        title: ProfileStrings.rankUpTitle,
-        body: EmptyView(message: CommonStrings.errorNoAccount),
+      return SubPageScaffold(
+        title: context.l10n.profileRankUpTitle,
+        body: EmptyView(message: context.l10n.commonErrorNoAccount),
       );
     }
     final puuid = account.puuid;
     return SubPageScaffold(
-      title: ProfileStrings.rankUpTitle,
+      title: context.l10n.profileRankUpTitle,
       onRefresh: () async {
         ref.invalidate(competitiveUpdatesProvider(puuid));
         await ref
@@ -93,23 +93,23 @@ class _RankUpCalculatorScreenState
 
   List<Widget> _content(String puuid, RankInfo current) {
     if (current.isUnranked) {
-      return const [
+      return [
         SliverFillRemaining(
           hasScrollBody: false,
           child: EmptyView(
             icon: Icons.military_tech_outlined,
-            message: ProfileStrings.rankUpUnranked,
+            message: context.l10n.profileRankUpUnranked,
           ),
         ),
       ];
     }
     if (current.normalizedTier >= kRankUpMaxTier) {
-      return const [
+      return [
         SliverFillRemaining(
           hasScrollBody: false,
           child: EmptyView(
             icon: Icons.emoji_events_outlined,
-            message: ProfileStrings.rankUpImmortal,
+            message: context.l10n.profileRankUpImmortal,
           ),
         ),
       ];
@@ -123,15 +123,15 @@ class _RankUpCalculatorScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SectionLabel(
-              ProfileStrings.yourRank,
+            SectionLabel(
+              context.l10n.profileYourRank,
               padding: EdgeInsets.fromLTRB(20, 4, 20, 8),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: _CurrentRankCard(rank: current),
             ),
-            const SectionLabel(ProfileStrings.targetRank),
+            SectionLabel(context.l10n.profileTargetRank),
             _TargetPicker(
               targets: targets,
               actUuid: current.actUuid,
@@ -248,7 +248,7 @@ class _CurrentRankCard extends StatelessWidget {
                   ValProgressBar(
                     value: rank.rr / 100,
                     height: 5,
-                    semanticsLabel: ProfileStrings.rrToNext(rank.rr),
+                    semanticsLabel: context.l10n.profileRrToNext(rank.rr),
                   ),
                 ],
               ],
@@ -395,7 +395,7 @@ class _Results extends ConsumerWidget {
           ),
         );
       }
-      return const EmptyView(message: CommonStrings.emptyGeneric);
+      return EmptyView(message: context.l10n.commonEmptyGeneric);
     }
     return _ResultCards(estimate: value, current: current);
   }
@@ -450,7 +450,7 @@ class _ResultCards extends ConsumerWidget {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        ProfileStrings.progressTo(target.tierName),
+                        context.l10n.profileProgressTo(target.tierName),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.labelLarge?.copyWith(
@@ -463,8 +463,10 @@ class _ResultCards extends ConsumerWidget {
                 const SizedBox(height: 12),
                 Text(
                   estimate.alreadyReached
-                      ? ProfileStrings.alreadyReached
-                      : ProfileStrings.rrLeft(formatNumber(estimate.rrNeeded)),
+                      ? context.l10n.profileAlreadyReached
+                      : context.l10n.profileRrLeft(
+                          formatNumber(estimate.rrNeeded),
+                        ),
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w800,
                   ),
@@ -474,7 +476,7 @@ class _ResultCards extends ConsumerWidget {
                   value: progress,
                   height: 6,
                   color: estimate.alreadyReached ? colors.win : null,
-                  semanticsLabel: ProfileStrings.progressToTarget,
+                  semanticsLabel: context.l10n.profileProgressToTarget,
                 ),
               ],
             ),
@@ -488,20 +490,20 @@ class _ResultCards extends ConsumerWidget {
               children: [
                 Text(
                   hasForm
-                      ? ProfileStrings.atCurrentFormWith(
+                      ? context.l10n.profileAtCurrentFormWith(
                           formatSigned(form.avgGain.round()),
                           formatSigned(-form.avgLoss.round()),
                         )
-                      : ProfileStrings.atCurrentForm,
+                      : context.l10n.profileAtCurrentForm,
                   style: theme.textTheme.bodyMedium?.copyWith(color: muted),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   !hasForm
-                      ? ProfileStrings.rankUpNoForm
+                      ? context.l10n.profileRankUpNoForm
                       : matches == null
-                      ? CompetitiveStrings.cannotEstimate
-                      : ProfileStrings.aboutMatches(matches),
+                      ? context.l10n.competitiveCannotEstimate
+                      : context.l10n.profileAboutMatches(matches),
                   style: hasForm
                       ? theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w800,
@@ -511,7 +513,7 @@ class _ResultCards extends ConsumerWidget {
                 if (hasForm) ...[
                   const SizedBox(height: 4),
                   Text(
-                    ProfileStrings.recentForm(form.wins, form.losses),
+                    context.l10n.profileRecentForm(form.wins, form.losses),
                     style: theme.textTheme.bodySmall?.copyWith(color: muted),
                   ),
                 ],
@@ -532,7 +534,7 @@ class _ResultCards extends ConsumerWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            ProfileStrings.bestCase(best),
+                            context.l10n.profileBestCase(best),
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -545,24 +547,24 @@ class _ResultCards extends ConsumerWidget {
               ],
             ),
           ),
-          const SectionLabel(
-            ProfileStrings.byWinRateTitle,
+          SectionLabel(
+            context.l10n.profileByWinRateTitle,
             padding: EdgeInsets.fromLTRB(4, 20, 4, 8),
           ),
           GroupedSection(
             margin: EdgeInsets.zero,
             children: [
               _TableRow(
-                left: ProfileStrings.winRate,
-                right: ProfileStrings.matchesNeeded,
+                left: context.l10n.profileWinRate,
+                right: context.l10n.profileMatchesNeeded,
                 header: true,
               ),
               for (final row in estimate.byWinRate)
                 _TableRow(
                   left: formatPercent(row.winRate),
                   right: row.matches == null
-                      ? CompetitiveStrings.noValue
-                      : ProfileStrings.aboutMatches(row.matches!),
+                      ? context.l10n.competitiveNoValue
+                      : context.l10n.profileAboutMatches(row.matches!),
                   highlighted: estimate.isNearestWinRate(row.winRate),
                 ),
             ],
@@ -575,7 +577,7 @@ class _ResultCards extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  ProfileStrings.rankUpFootnote,
+                  context.l10n.profileRankUpFootnote,
                   style: theme.textTheme.bodySmall?.copyWith(color: muted),
                 ),
               ),
@@ -614,7 +616,7 @@ class _TableRow extends StatelessWidget {
           );
     return Semantics(
       selected: highlighted,
-      hint: highlighted ? ProfileStrings.yourWinRate : null,
+      hint: highlighted ? context.l10n.profileYourWinRate : null,
       child: Container(
         decoration: BoxDecoration(
           color: highlighted

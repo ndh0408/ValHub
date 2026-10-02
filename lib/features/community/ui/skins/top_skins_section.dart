@@ -5,7 +5,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tier_colors.dart';
 import '../../../../core/ui/net_image.dart';
@@ -20,6 +19,8 @@ import '../scope/scope_bar.dart';
 import '../widgets/community_widgets.dart';
 import 'skin_vote_button.dart';
 import 'star_rating.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Weapons for the filter chips: by category (sidearms … melee), then name.
 List<Weapon> leaderboardWeapons(ContentDb db) {
@@ -112,10 +113,10 @@ class TopSkinsSliver extends ConsumerWidget {
         child: Column(
           children: [
             header,
-            const CommunityEmptyState(
+            CommunityEmptyState(
               icon: Icons.favorite_border_rounded,
-              title: CommunityStrings.skinsEmptyTitle,
-              message: CommunityStrings.skinsEmptyBody,
+              title: context.l10n.communitySkinsEmptyTitle,
+              message: context.l10n.communitySkinsEmptyBody,
             ),
           ],
         ),
@@ -179,18 +180,18 @@ class _Filters extends ConsumerWidget {
           section: ScopedSection.skins,
           puuid: puuid,
           applied: applied,
-          globalLabel: CommunityStrings.scopeWorldwide,
+          globalLabel: context.l10n.communityScopeWorldwide,
         ),
         SegmentedTabs<TopPeriod>(
           expand: true,
-          tabs: const [
+          tabs: [
             SegmentedTab(
               value: TopPeriod.all,
-              label: CommunityStrings.periodAllTime,
+              label: context.l10n.communityPeriodAllTime,
             ),
             SegmentedTab(
               value: TopPeriod.week,
-              label: CommunityStrings.periodWeek,
+              label: context.l10n.communityPeriodWeek,
             ),
           ],
           selected: filter.period,
@@ -227,7 +228,7 @@ class _Filters extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 6, 16, 4),
             children: [
               CommunityChip(
-                label: CommunityStrings.allWeapons,
+                label: context.l10n.communityAllWeapons,
                 selected: filter.weapon == null,
                 onSelected: () => notifier.setWeapon(null),
               ),
@@ -278,10 +279,10 @@ class _ChampionCard extends StatelessWidget {
     final gold = valColorsOf(context).gold;
     final tint = opaqueRgba(tier?.highlightColor, fallback: gold);
     final weapon = db.weaponBySkin(row.skinUuid);
-    final name = skin?.displayName ?? CommonStrings.unknownItem;
+    final name = skin?.displayName ?? context.l10n.commonUnknownItem;
     return Semantics(
       container: true,
-      label: CommunityStrings.rankSemantics(formatNumber(row.rank), name),
+      label: context.l10n.communityRankSemantics(formatNumber(row.rank), name),
       child: Material(
         color: theme.colorScheme.surfaceContainer,
         shape: RoundedRectangleBorder(
@@ -312,7 +313,7 @@ class _ChampionCard extends StatelessWidget {
                       Icon(Icons.emoji_events_rounded, color: gold, size: 22),
                       const SizedBox(width: 6),
                       Text(
-                        CommunityStrings.rankNumber(formatNumber(1)),
+                        context.l10n.communityRankNumber(formatNumber(1)),
                         style: ValText.display(26, color: gold),
                       ),
                       const Spacer(),
@@ -320,8 +321,8 @@ class _ChampionCard extends StatelessWidget {
                         active: vote.voted,
                         count: vote.votes,
                         size: 24,
-                        semanticsOff: CommunityStrings.vote,
-                        semanticsOn: CommunityStrings.unvote,
+                        semanticsOff: context.l10n.communityVote,
+                        semanticsOn: context.l10n.communityUnvote,
                         onTap: onVote,
                       ),
                     ],
@@ -391,10 +392,10 @@ class TopSkinRow extends StatelessWidget {
       fallback: valColorsOf(context).muted,
     );
     final weapon = db.weaponBySkin(row.skinUuid);
-    final name = skin?.displayName ?? CommonStrings.unknownItem;
+    final name = skin?.displayName ?? context.l10n.commonUnknownItem;
     return Semantics(
       container: true,
-      label: CommunityStrings.rankSemantics(formatNumber(row.rank), name),
+      label: context.l10n.communityRankSemantics(formatNumber(row.rank), name),
       child: Material(
         color: theme.colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(ValRadius.card),
@@ -476,8 +477,8 @@ class TopSkinRow extends StatelessWidget {
                     active: vote.voted,
                     count: vote.votes,
                     dense: true,
-                    semanticsOff: CommunityStrings.vote,
-                    semanticsOn: CommunityStrings.unvote,
+                    semanticsOff: context.l10n.communityVote,
+                    semanticsOn: context.l10n.communityUnvote,
                     onTap: onVote,
                   ),
                   const SizedBox(width: 8),

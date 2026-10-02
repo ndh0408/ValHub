@@ -13,6 +13,8 @@ import '../../../../core/util/format.dart';
 import '../../data/round_timeline.dart';
 import '../../profile_strings.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Icon of a round end type (VF §8.8).
 IconData roundEndIcon(RoundEndType type) => switch (type) {
   RoundEndType.elimination => Icons.gps_fixed_rounded,
@@ -45,8 +47,8 @@ class RoundTimelineSliver extends StatelessWidget {
   Widget build(BuildContext context) {
     final rows = buildRoundRows(details, puuid: perspective);
     if (rows.isEmpty) {
-      return const SliverToBoxAdapter(
-        child: EmptyView(message: ProfileStrings.noRounds),
+      return SliverToBoxAdapter(
+        child: EmptyView(message: context.l10n.profileNoRounds),
       );
     }
     final showHalves = roundsPerHalf(details.info.queueId) != null;
@@ -104,7 +106,7 @@ class _RoundStrip extends StatelessWidget {
       if (markHalves && i > 0 && rows[i - 1].half != r.half) {
         items.add(
           Tooltip(
-            message: ProfileStrings.sideSwitch,
+            message: context.l10n.profileSideSwitch,
             child: Container(
               width: 3,
               height: 28,
@@ -121,10 +123,12 @@ class _RoundStrip extends StatelessWidget {
       items.add(
         Tooltip(
           message: ProfileStrings.joined([
-            ProfileStrings.round(r.number),
+            context.l10n.profileRound(r.number),
             if (r.won != null)
-              r.won! ? ProfileStrings.roundWon : ProfileStrings.roundLost,
-            r.endType.label ?? CompetitiveStrings.noValue,
+              r.won!
+                  ? context.l10n.profileRoundWon
+                  : context.l10n.profileRoundLost,
+            r.endType.label ?? context.l10n.competitiveNoValue,
           ]),
           child: Container(
             width: 26,
@@ -171,7 +175,7 @@ class _RoundStrip extends StatelessWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    ProfileStrings.roundsHint,
+                    context.l10n.profileRoundsHint,
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -208,9 +212,9 @@ class _HalfHeader extends StatelessWidget {
             Flexible(
               child: Text(
                 switch (half) {
-                  MatchHalf.first => ProfileStrings.firstHalf,
-                  MatchHalf.second => ProfileStrings.secondHalf,
-                  MatchHalf.overtime => ProfileStrings.overtime,
+                  MatchHalf.first => context.l10n.profileFirstHalf,
+                  MatchHalf.second => context.l10n.profileSecondHalf,
+                  MatchHalf.overtime => context.l10n.profileOvertime,
                 },
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: muted,
@@ -265,9 +269,9 @@ class _RoundLineState extends ConsumerState<_RoundLine> {
     final site = row.round.plantSite;
     final facts = [
       ?row.mySide?.label,
-      if (site != null && site.isNotEmpty) ProfileStrings.plantedAt(site),
-      if (row.myKills > 0) ProfileStrings.roundKills(row.myKills),
-      if (row.firstBloodByMe) ProfileStrings.firstBloods,
+      if (site != null && site.isNotEmpty) context.l10n.profilePlantedAt(site),
+      if (row.myKills > 0) context.l10n.profileRoundKills(row.myKills),
+      if (row.firstBloodByMe) context.l10n.profileFirstBloods,
     ];
     final gold = valColorsOf(context).gold;
     final header = Row(
@@ -302,7 +306,7 @@ class _RoundLineState extends ConsumerState<_RoundLine> {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text(
-                    row.endType.label ?? ProfileStrings.round(row.number),
+                    row.endType.label ?? context.l10n.profileRound(row.number),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodyMedium?.copyWith(
@@ -343,7 +347,7 @@ class _RoundLineState extends ConsumerState<_RoundLine> {
         ),
         const SizedBox(width: 8),
         Text(
-          ProfileStrings.score(row.myScore, row.otherScore),
+          context.l10n.profileScore(row.myScore, row.otherScore),
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w800,
             fontFeatures: const [FontFeature.tabularFigures()],
@@ -379,8 +383,8 @@ class _RoundLineState extends ConsumerState<_RoundLine> {
                 button: true,
                 expanded: _expanded,
                 hint: _expanded
-                    ? ProfileStrings.hideKills
-                    : ProfileStrings.showKills,
+                    ? context.l10n.profileHideKills
+                    : context.l10n.profileShowKills,
                 child: InkWell(
                   onTap: () {
                     Haptics.selection();
@@ -438,7 +442,7 @@ class _KillFeed extends ConsumerWidget {
       return Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
         child: Text(
-          ProfileStrings.noKillsInRound,
+          context.l10n.profileNoKillsInRound,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -542,17 +546,17 @@ class _KillRow extends StatelessWidget {
         error: Icon(Icons.auto_awesome, size: 16, color: muted),
       );
     } else if (type == 'bomb') {
-      how = ProfileStrings.spike;
+      how = context.l10n.profileSpike;
       howIcon = Icon(
         Icons.local_fire_department_rounded,
         size: 18,
         color: muted,
       );
     } else if (type == 'fall') {
-      how = ProfileStrings.fallDamage;
+      how = context.l10n.profileFallDamage;
       howIcon = Icon(Icons.south_rounded, size: 18, color: muted);
     } else {
-      how = slot == null ? null : ProfileStrings.ability;
+      how = slot == null ? null : context.l10n.profileAbility;
       howIcon = Icon(Icons.gps_fixed_rounded, size: 16, color: muted);
     }
     final time = formatMinutesSeconds(

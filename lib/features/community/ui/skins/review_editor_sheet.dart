@@ -13,6 +13,8 @@ import '../../providers/skin_review_providers.dart';
 import '../widgets/community_widgets.dart';
 import 'star_rating.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Opens the review editor (create or edit). Resolves to `true` when saved.
 Future<bool> showReviewEditor(
   BuildContext context, {
@@ -91,7 +93,7 @@ class _ReviewEditorSheetState extends ConsumerState<ReviewEditorSheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              CommunityStrings.yourReview,
+              context.l10n.communityYourReview,
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
@@ -111,7 +113,7 @@ class _ReviewEditorSheetState extends ConsumerState<ReviewEditorSheet> {
                 duration: const Duration(milliseconds: 180),
                 child: Text(
                   _rating == 0
-                      ? CommunityStrings.tapToRate
+                      ? context.l10n.communityTapToRate
                       : CommunityStrings.ratingWords[_rating - 1],
                   key: ValueKey(_rating),
                   textAlign: TextAlign.center,
@@ -131,9 +133,9 @@ class _ReviewEditorSheetState extends ConsumerState<ReviewEditorSheet> {
               maxLengthEnforcement: MaxLengthEnforcement.none,
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
-                hintText: CommunityStrings.reviewHint,
+                hintText: context.l10n.communityReviewHint,
                 errorText: problem == ReviewProblem.tooLong
-                    ? CommunityStrings.tooLong(kMaxReviewLength)
+                    ? context.l10n.communityTooLong(kMaxReviewLength)
                     : null,
               ),
             ),
@@ -141,7 +143,7 @@ class _ReviewEditorSheetState extends ConsumerState<ReviewEditorSheet> {
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: Text(
-                CommunityStrings.charCount(
+                context.l10n.communityCharCount(
                   formatNumber(length),
                   formatNumber(kMaxReviewLength),
                 ),
@@ -168,7 +170,7 @@ class _ReviewEditorSheetState extends ConsumerState<ReviewEditorSheet> {
                           color: Colors.white,
                         ),
                       )
-                    : const Text(CommunityStrings.saveReview),
+                    : Text(context.l10n.communitySaveReview),
               ),
             ),
           ],

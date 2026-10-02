@@ -19,7 +19,6 @@ import '../config/app_constants.dart';
 import '../config/remote_config.dart';
 import '../l10n/account_strings.dart';
 import '../l10n/auth_strings.dart';
-import '../l10n/common_strings.dart';
 import '../logging/session_log.dart';
 import '../network/riot_exception.dart';
 import '../theme/app_theme.dart';
@@ -30,6 +29,8 @@ import '../ui/sub_page.dart';
 import '../ui/val_widgets.dart';
 import 'auth_callback.dart';
 import 'cookie_jar.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S02 "Đăng nhập Riot": Riot's official login page in a WebView
 /// (SUMMARY §3.2). The app never sees the password; it only reads the
@@ -274,9 +275,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<bool?> _confirmAddAsNew() => showConfirmDialog(
     context,
-    title: AuthStrings.differentAccountTitle,
-    message: AuthStrings.differentAccountBody,
-    confirmLabel: AuthStrings.addAsNew,
+    title: context.l10n.authDifferentAccountTitle,
+    message: context.l10n.authDifferentAccountBody,
+    confirmLabel: context.l10n.authAddAsNew,
   );
 
   Future<NavigationActionPolicy> _shouldOverride(
@@ -347,8 +348,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<Account?> _pickNote(List<(Account, LoginNote)> saved) =>
       showValSheet<Account>(
         context,
-        title: AccountStrings.quickFillTitle,
-        subtitle: AccountStrings.quickFillSubtitle,
+        title: context.l10n.accountQuickFillTitle,
+        subtitle: context.l10n.accountQuickFillSubtitle,
         builder: (context, _) => ListView(
           shrinkWrap: true,
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
@@ -358,7 +359,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 for (final (account, _) in saved)
                   GroupedRow(
                     title: account.riotId,
-                    subtitle: AccountStrings.loginNote,
+                    subtitle: context.l10n.accountLoginNote,
                     leading: AccountAvatar(
                       account: account,
                       size: 40,
@@ -403,27 +404,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             : null,
       ),
       body: switch (_phase) {
-        _Phase.preparing => const _CenteredStatus(
-          message: AuthStrings.preparing,
+        _Phase.preparing => _CenteredStatus(
+          message: context.l10n.authPreparing,
         ),
-        _Phase.finishing => const _CenteredStatus(
-          message: AuthStrings.loadingAccount,
+        _Phase.finishing => _CenteredStatus(
+          message: context.l10n.authLoadingAccount,
         ),
         _Phase.failed => _FailedView(
-          message: _errorMessage ?? AuthStrings.loginFailedBody,
+          message: _errorMessage ?? context.l10n.authLoginFailedBody,
           onRetry: _restart,
         ),
         _Phase.web => Column(
           children: [
             _Hint(
-              text: AuthStrings.rememberMeHint,
-              secondary: socialHint ? AuthStrings.socialLoginHint : null,
+              text: context.l10n.authRememberMeHint,
+              secondary: socialHint ? context.l10n.authSocialLoginHint : null,
               action: saved.isEmpty
                   ? null
                   : FilledButton.tonalIcon(
                       onPressed: () => unawaited(_quickFill(saved)),
                       icon: const Icon(Icons.key, size: 18),
-                      label: const Text(AccountStrings.quickFill),
+                      label: Text(context.l10n.accountQuickFill),
                     ),
             ),
             Expanded(child: _webView()),
@@ -469,7 +470,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final uri = Uri.tryParse(request.url.toString());
       if (isCallbackLocation(uri)) return; // the cancelled callback navigation
       if (request.isForMainFrame ?? true) {
-        _fail(AuthStrings.pageLoadFailed, logDetail: error.type.toString());
+        _fail(
+          context.l10n.authPageLoadFailed,
+          logDetail: error.type.toString(),
+        );
       }
     },
   );
@@ -566,8 +570,8 @@ class _LoginTitle extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text(
-          AuthStrings.loginTitle,
+        Text(
+          context.l10n.authLoginTitle,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -578,7 +582,7 @@ class _LoginTitle extends StatelessWidget {
             const SizedBox(width: 4),
             Flexible(
               child: Text(
-                AuthStrings.officialHost,
+                context.l10n.authOfficialHost,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.labelSmall?.copyWith(
@@ -658,7 +662,7 @@ class _FailedView extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                AuthStrings.loginFailed,
+                context.l10n.authLoginFailed,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
@@ -677,7 +681,7 @@ class _FailedView extends StatelessWidget {
               FilledButton.icon(
                 onPressed: () => unawaited(onRetry()),
                 icon: const Icon(Icons.refresh),
-                label: const Text(CommonStrings.retry),
+                label: Text(context.l10n.commonRetry),
               ),
             ],
           ),

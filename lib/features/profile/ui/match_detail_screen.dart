@@ -8,7 +8,6 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/network/riot_exception.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
@@ -25,6 +24,8 @@ import 'widgets/profile_widgets.dart';
 import '../data/hit_distribution.dart';
 import 'widgets/round_timeline_view.dart';
 import 'widgets/scoreboard_view.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S43 "Chi tiết trận đấu". Routes `/profile/match/:id` (inside the tab)
 /// and `/match/:id` (above the tab bar); `?player=<puuid>` picks whose
@@ -79,17 +80,17 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
     if (details.hasError && !details.isLoading) {
       final error = details.error!;
       return SubPageScaffold(
-        title: ProfileStrings.matchDetailTitle,
+        title: context.l10n.profileMatchDetailTitle,
         onRefresh: _refresh,
         body: error is NotFoundException
             ? EmptyView(
                 icon: Icons.hourglass_top_rounded,
                 color: valColorsOf(context).warning,
-                message: CompetitiveStrings.matchPending,
+                message: context.l10n.competitiveMatchPending,
                 action: OutlinedButton.icon(
                   onPressed: () => ref.invalidate(matchDetailsProvider(_id)),
                   icon: const Icon(Icons.refresh),
-                  label: const Text(CommonStrings.retry),
+                  label: Text(context.l10n.commonRetry),
                 ),
               )
             : ErrorView(
@@ -100,7 +101,7 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
       );
     }
     return SubPageScaffold(
-      title: ProfileStrings.matchDetailTitle,
+      title: context.l10n.profileMatchDetailTitle,
       showLargeTitle: false,
       heroHeight: _heroHeight(context),
       hero: const _HeroSkeleton(),
@@ -125,12 +126,12 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
       context.push(ProfileRoutes.player(puuid, hidden: hidden.contains(puuid))),
     );
     final score = result.hasScore
-        ? ProfileStrings.score(result.myScore!, result.otherScore!)
+        ? context.l10n.profileScore(result.myScore!, result.otherScore!)
         : null;
     return SubPageScaffold(
       // Bar title once the hero has collapsed: "Sunset · 4 – 13".
       title: ProfileStrings.joined([
-        map?.displayName ?? ProfileStrings.matchDetailTitle,
+        map?.displayName ?? context.l10n.profileMatchDetailTitle,
         ?score,
       ]),
       showLargeTitle: false,
@@ -151,8 +152,8 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
             child: Text(
               ranked
-                  ? ProfileStrings.rankedScoreboard
-                  : ProfileStrings.scoreboard,
+                  ? context.l10n.profileRankedScoreboard
+                  : context.l10n.profileScoreboard,
               style: ValText.sectionTitle.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -177,7 +178,7 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
                     expanded: _roundsExpanded,
                     child: GroupedRow(
                       icon: Icons.timeline_rounded,
-                      title: ProfileStrings.roundTimeline,
+                      title: context.l10n.profileRoundTimeline,
                       trailing: Icon(
                         _roundsExpanded ? Icons.expand_less : Icons.expand_more,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -238,9 +239,9 @@ class _MatchHero extends ConsumerWidget {
       MatchOutcome.loss => dark.loss,
       _ => Colors.white,
     };
-    final mapName = map?.displayName ?? CommonStrings.dash;
+    final mapName = map?.displayName ?? context.l10n.commonDash;
     final score = result.hasScore
-        ? ProfileStrings.score(result.myScore!, result.otherScore!)
+        ? context.l10n.profileScore(result.myScore!, result.otherScore!)
         : null;
     final white70 = Colors.white.withValues(alpha: 0.78);
     return Semantics(
@@ -308,7 +309,7 @@ class _MatchHero extends ConsumerWidget {
                               ),
                             if (result.placement case final p?)
                               _HeroChip(
-                                label: ProfileStrings.placement(p),
+                                label: context.l10n.profilePlacement(p),
                                 color: dark.gold,
                               ),
                           ],
@@ -572,7 +573,7 @@ class _PlayerSummary extends ConsumerWidget {
         : outcomeColor(context, outcome);
     final roundBased = details.modeKind.isRoundBased;
     String fmt(double? v) =>
-        v == null ? CompetitiveStrings.noValue : formatNumber(v.round());
+        v == null ? context.l10n.competitiveNoValue : formatNumber(v.round());
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: ValCard(
@@ -605,8 +606,8 @@ class _PlayerSummary extends ConsumerWidget {
                     children: [
                       Text(
                         isOwn
-                            ? ProfileStrings.yourSummary
-                            : ProfileStrings.playerSummary,
+                            ? context.l10n.profileYourSummary
+                            : context.l10n.profilePlayerSummary,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.labelMedium?.copyWith(
@@ -651,40 +652,44 @@ class _PlayerSummary extends ConsumerWidget {
             StatGrid(
               tiles: [
                 StatTile(
-                  label: ProfileStrings.kdaLabel,
-                  value: ProfileStrings.kdaValue(s.kills, s.deaths, s.assists),
+                  label: context.l10n.profileKdaLabel,
+                  value: context.l10n.profileKdaValue(
+                    s.kills,
+                    s.deaths,
+                    s.assists,
+                  ),
                 ),
                 StatTile(
-                  label: ProfileStrings.acs,
+                  label: context.l10n.profileAcs,
                   value: fmt(s.acs),
-                  tooltip: ProfileStrings.acsHint,
+                  tooltip: context.l10n.profileAcsHint,
                 ),
                 StatTile(
-                  label: ProfileStrings.hs,
+                  label: context.l10n.profileHs,
                   value: s.headshotRate == null
-                      ? CompetitiveStrings.noValue
+                      ? context.l10n.competitiveNoValue
                       : formatPercent(s.headshotRate!),
                 ),
-                StatTile(label: ProfileStrings.adr, value: fmt(s.adr)),
-                StatTile(label: ProfileStrings.kd, value: fmt(s.kd)),
+                StatTile(label: context.l10n.profileAdr, value: fmt(s.adr)),
+                StatTile(label: context.l10n.profileKd, value: fmt(s.kd)),
                 StatTile(
-                  label: ProfileStrings.firstDeaths,
+                  label: context.l10n.profileFirstDeaths,
                   value: roundBased
                       ? formatNumber(s.firstDeaths)
-                      : CompetitiveStrings.noValue,
+                      : context.l10n.competitiveNoValue,
                 ),
                 StatTile(
-                  label: ProfileStrings.kast,
+                  label: context.l10n.profileKast,
                   value: s.kast == null
-                      ? CompetitiveStrings.noValue
+                      ? context.l10n.competitiveNoValue
                       : formatPercent(s.kast!),
-                  tooltip: ProfileStrings.kastHint,
+                  tooltip: context.l10n.profileKastHint,
                 ),
                 StatTile(
-                  label: ProfileStrings.firstBloods,
+                  label: context.l10n.profileFirstBloods,
                   value: roundBased
                       ? formatNumber(s.firstBloods)
-                      : CompetitiveStrings.noValue,
+                      : context.l10n.competitiveNoValue,
                 ),
               ],
             ),
@@ -716,19 +721,19 @@ class _HitDistribution extends StatelessWidget {
     );
     final parts = [
       (
-        label: ProfileStrings.hitHead,
+        label: context.l10n.profileHitHead,
         n: stats.headshots,
         share: shares.head,
         color: theme.colorScheme.primary,
       ),
       (
-        label: ProfileStrings.hitBody,
+        label: context.l10n.profileHitBody,
         n: stats.bodyshots,
         share: shares.body,
         color: legibleAccent(context, ValColors.muted, min: 3),
       ),
       (
-        label: ProfileStrings.hitLegs,
+        label: context.l10n.profileHitLegs,
         n: stats.legshots,
         share: shares.legs,
         color: valColorsOf(context).track,
@@ -736,19 +741,22 @@ class _HitDistribution extends StatelessWidget {
     ];
     final legend = [
       for (final p in parts)
-        ProfileStrings.hitShare(
+        context.l10n.profileHitShare(
           p.label,
-          p.share == null ? CommonStrings.dash : formatPercent(p.share!),
+          p.share == null ? context.l10n.commonDash : formatPercent(p.share!),
         ),
     ];
     return Semantics(
-      label: ProfileStrings.joined([ProfileStrings.hitDistribution, ...legend]),
+      label: ProfileStrings.joined([
+        context.l10n.profileHitDistribution,
+        ...legend,
+      ]),
       excludeSemantics: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            ProfileStrings.hitDistribution,
+            context.l10n.profileHitDistribution,
             style: theme.textTheme.labelMedium?.copyWith(color: muted),
           ),
           const SizedBox(height: 6),
@@ -828,7 +836,7 @@ class _MvpBadge extends StatelessWidget {
           Icon(Icons.star_rounded, size: 13, color: color),
           const SizedBox(width: 3),
           Text(
-            match ? ProfileStrings.mvp : ProfileStrings.teamMvp,
+            match ? context.l10n.profileMvp : context.l10n.profileTeamMvp,
             style: theme.textTheme.labelSmall?.copyWith(
               color: color,
               fontWeight: FontWeight.w800,

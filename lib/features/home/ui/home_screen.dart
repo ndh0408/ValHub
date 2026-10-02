@@ -16,7 +16,6 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/accounts/account_widgets.dart';
 import '../../../core/auth/auth_routes.dart';
 import '../../../core/geo/region_mismatch_banner.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/riot/platform_status.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
@@ -27,7 +26,6 @@ import '../../community/community_previews.dart';
 import '../../settings/ui/settings_gear_button.dart';
 import '../data/home_card.dart';
 import '../data/home_layout.dart';
-import '../home_strings.dart';
 import '../providers/home_arrangement.dart';
 import '../providers/home_card_providers.dart';
 import '../providers/home_layout_provider.dart';
@@ -43,6 +41,8 @@ import 'cards/store_home_card.dart';
 import 'customize_home_sheet.dart';
 import 'home_card_frame.dart';
 import 'home_columns.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// How long a `?focus=` link waits for its card to have data.
 const kHomeFocusWait = Duration(seconds: 5);
@@ -144,7 +144,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         unawaited(
           SemanticsService.sendAnnouncement(
             View.of(context),
-            HomeStrings.focused(card.title),
+            context.l10n.homeFocused(card.title),
             Directionality.of(context),
           ),
         );
@@ -259,12 +259,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final roomy = MediaQuery.sizeOf(context).width >= 360;
     if (puuid == null) {
-      return const TabPageScaffold(
-        title: HomeStrings.title,
+      return TabPageScaffold(
+        title: context.l10n.homeTitle,
         showAccountChip: false,
         showMaintenanceBanner: false,
         body: EmptyView(
-          message: CommonStrings.errorNoAccount,
+          message: context.l10n.commonErrorNoAccount,
           icon: Icons.person_off_outlined,
         ),
       );
@@ -288,7 +288,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onTick: _pollLfg,
         child: TabPageScaffold(
           maxContentWidth: double.infinity,
-          title: HomeStrings.title,
+          title: context.l10n.homeTitle,
           showAccountChip: false,
           // The server-status card replaces the banner (no duplicate).
           showMaintenanceBanner: false,
@@ -333,20 +333,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       if (arrangement.allUserHidden)
                         EmptyView(
                           icon: Icons.visibility_off_outlined,
-                          title: HomeStrings.allHiddenTitle,
-                          message: HomeStrings.allHiddenBody,
+                          title: context.l10n.homeAllHiddenTitle,
+                          message: context.l10n.homeAllHiddenBody,
                           action: FilledButton.icon(
                             onPressed: () =>
                                 unawaited(showCustomizeHomeSheet(context)),
                             icon: const Icon(Icons.tune_rounded),
-                            label: const Text(HomeStrings.customize),
+                            label: Text(context.l10n.homeCustomize),
                           ),
                         )
                       else if (arrangement.isEmpty)
-                        const EmptyView(
+                        EmptyView(
                           icon: Icons.inbox_outlined,
-                          title: HomeStrings.quietTitle,
-                          message: HomeStrings.quietBody,
+                          title: context.l10n.homeQuietTitle,
+                          message: context.l10n.homeQuietBody,
                         ),
                       // Also in the quiet state: the user can still arrange the
                       // cards for when they have something to show.
@@ -357,7 +357,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             onPressed: () =>
                                 unawaited(showCustomizeHomeSheet(context)),
                             icon: const Icon(Icons.tune_rounded),
-                            label: const Text(HomeStrings.customize),
+                            label: Text(context.l10n.homeCustomize),
                           ),
                         ),
                       const SizedBox(height: 32),
@@ -438,7 +438,7 @@ class _NeedsLoginBanner extends ConsumerWidget {
                   Semantics(
                     header: true,
                     child: Text(
-                      CommonStrings.errorNeedsLoginTitle,
+                      context.l10n.commonErrorNeedsLoginTitle,
                       style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
@@ -446,7 +446,7 @@ class _NeedsLoginBanner extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    HomeStrings.needsLoginBody(riotId),
+                    context.l10n.homeNeedsLoginBody(riotId),
                     style: theme.textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 12),
@@ -456,7 +456,7 @@ class _NeedsLoginBanner extends ConsumerWidget {
                         AuthRoutes.loginPath(reauthPuuid: puuid),
                       ),
                     ),
-                    child: const Text(CommonStrings.signInAgain),
+                    child: Text(context.l10n.commonSignInAgain),
                   ),
                 ],
               ),

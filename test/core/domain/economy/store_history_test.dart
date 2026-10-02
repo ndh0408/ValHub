@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -126,6 +127,65 @@ void main() {
     expect((await foreground.read('me')).daysRecorded, 2);
     foreground.dispose();
     background.dispose();
+  });
+
+  test(
+    'independent cache instances retain every concurrent rotation',
+    () async {
+      final writers = List.generate(
+        12,
+        (_) => StoreHistoryStore(JsonFileCache(() async => temp)),
+      );
+      try {
+        await Future.wait([
+          for (var day = 0; day < writers.length; day++)
+            writers[day].record(
+              'me',
+              shop(now.add(Duration(days: day))),
+              now.add(Duration(days: day)),
+            ),
+        ]);
+        final history = await writers.first.read('me');
+        expect(history.daysRecorded, writers.length);
+        expect(history.days.map((d) => d.key).toSet().length, writers.length);
+      } finally {
+        for (final writer in writers) {
+          writer.dispose();
+        }
+      }
+    },
+  );
+
+  test('the same account in a different cache root does not wait', () async {
+    final otherRoot = await Directory.systemTemp.createTemp('vanhub_history');
+    final entered = Completer<void>();
+    final release = Completer<void>();
+    final first = StoreHistoryStore(
+      files,
+      canRecord: (_) async {
+        entered.complete();
+        await release.future;
+        return true;
+      },
+    );
+    final second = StoreHistoryStore(JsonFileCache(() async => otherRoot));
+    final pending = first.record('me', shop(now), now);
+    try {
+      await entered.future;
+      expect(
+        await second
+            .record('me', shop(now), now)
+            .timeout(const Duration(seconds: 5)),
+        isTrue,
+      );
+      expect((await second.read('me')).daysRecorded, 1);
+    } finally {
+      release.complete();
+      await pending;
+      first.dispose();
+      second.dispose();
+      await deleteTempDir(otherRoot);
+    }
   });
 
   test(

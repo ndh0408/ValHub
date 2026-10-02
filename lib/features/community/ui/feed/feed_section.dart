@@ -126,7 +126,7 @@ class FeedSliver extends ConsumerWidget {
                   : OutlinedButton.icon(
                       key: const ValueKey('feed-empty-global'),
                       icon: const Icon(Icons.public_rounded),
-                      label: const Text(CommunityStrings.scopeGlobal),
+                      label: Text(context.l10n.communityScopeGlobal),
                       onPressed: () {
                         final filters = ref.read(
                           communityScopeProvider(ScopedSection.feed),

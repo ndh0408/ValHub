@@ -10,6 +10,8 @@ import '../../core/ui/adaptive.dart';
 import '../../core/util/format.dart';
 import 'skin_detail_strings.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 class StoreHistoryLine extends ConsumerWidget {
   const StoreHistoryLine({super.key, required this.puuid, required this.skin});
   final String puuid;
@@ -25,7 +27,7 @@ class StoreHistoryLine extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          SkinDetailStrings.history(
+          context.l10n.skinDetailHistory(
             summary.dailyDays,
             summary.nightMarketRuns,
             formatDate(since.toLocal()),
@@ -33,7 +35,7 @@ class StoreHistoryLine extends ConsumerWidget {
         ),
         TextButton.icon(
           icon: const Icon(Icons.delete_outline),
-          label: const Text(SkinDetailStrings.historyDelete),
+          label: Text(context.l10n.skinDetailHistoryDelete),
           onPressed: () => unawaited(_delete(context, ref)),
         ),
       ],

@@ -9,9 +9,10 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/skeleton.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
-import '../../profile_strings.dart';
 import '../../providers/profile_providers.dart';
 import 'profile_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Player identity (S40.1, S44), ValBuddy-style: the wide player-card art
 /// in a rounded banner, then the name (tap copies the Riot ID), title and
@@ -73,7 +74,11 @@ class IdentityBanner extends ConsumerWidget {
           borderRadius: BorderRadius.circular(6),
           onTap: copy == null
               ? null
-              : () => copyWithSnack(context, copy, ProfileStrings.riotIdCopied),
+              : () => copyWithSnack(
+                  context,
+                  copy,
+                  context.l10n.profileRiotIdCopied,
+                ),
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 32),
             child: Row(
@@ -86,7 +91,7 @@ class IdentityBanner extends ConsumerWidget {
                         TextSpan(text: name),
                         if (tag.isNotEmpty)
                           TextSpan(
-                            text: ProfileStrings.tagSuffix(tag),
+                            text: context.l10n.profileTagSuffix(tag),
                             style: TextStyle(
                               color: muted,
                               fontWeight: FontWeight.w600,
@@ -106,7 +111,7 @@ class IdentityBanner extends ConsumerWidget {
                   Icon(
                     Icons.copy_rounded,
                     size: 15,
-                    semanticLabel: ProfileStrings.copyRiotId,
+                    semanticLabel: context.l10n.profileCopyRiotId,
                     color: muted,
                   ),
                 ],
@@ -129,8 +134,8 @@ class IdentityBanner extends ConsumerWidget {
             padding: const EdgeInsets.only(top: 2),
             child: Text(
               levelHidden
-                  ? ProfileStrings.levelHidden
-                  : ProfileStrings.level(lvl!),
+                  ? context.l10n.profileLevelHidden
+                  : context.l10n.profileLevel(lvl!),
               style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),
           ),
@@ -144,7 +149,7 @@ class IdentityBanner extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            ProfileStrings.xpProgress(
+            context.l10n.profileXpProgress(
               formatNumber(x.xp),
               formatNumber(x.xpPerLevel),
             ),
@@ -159,7 +164,7 @@ class IdentityBanner extends ConsumerWidget {
           ValProgressBar(
             value: x.progress,
             height: 5,
-            semanticsLabel: ProfileStrings.level(x.level),
+            semanticsLabel: context.l10n.profileLevel(x.level),
           ),
         ],
       );

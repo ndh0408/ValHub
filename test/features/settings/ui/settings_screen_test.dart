@@ -1,10 +1,12 @@
 import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:workmanager/workmanager.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/accounts/account.dart';
 import 'package:valvn/core/accounts/account_providers.dart';
+import 'package:valvn/core/background/background_tasks.dart';
 import 'package:valvn/core/auth/auth_routes.dart';
 import 'package:valvn/core/l10n/account_strings.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
@@ -41,10 +43,21 @@ void main() {
   late Prefs prefs;
   late SettingsTestEnv env;
   late ProviderContainer container;
+  final cancelledBackgroundTasks = <String>[];
 
   setUp(() async {
     prefs = await createTestPrefs();
     env = SettingsTestEnv(prefs);
+    cancelledBackgroundTasks.clear();
+    // Initialise the facade before replacing its platform instance. Last-account
+    // sign-out must cancel work, but settings widget tests use in-memory plugin
+    // boundaries rather than unhandled native messages outside the fake clock.
+    Workmanager();
+    final previousWorkmanager = WorkmanagerPlatform.instance;
+    WorkmanagerPlatform.instance = FakeSettingsWorkmanager(
+      cancelledBackgroundTasks,
+    );
+    addTearDown(() => WorkmanagerPlatform.instance = previousWorkmanager);
   });
 
   GoRouter buildRouter() => GoRouter(
@@ -206,6 +219,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(container.read(accountsProvider), isEmpty);
+      expect(cancelledBackgroundTasks, [kWishlistCheckTask]);
       expect(find.text(CommonStrings.errorNoAccount), findsOneWidget);
       await _drainSnackBars(tester);
     });
@@ -288,6 +302,7 @@ void main() {
 
       expect(find.text(header), findsNothing);
       expect(prefs.getString(communityConsentKey(testPuuid(1))), isNull);
+      expect(cancelledBackgroundTasks, [kWishlistCheckTask]);
       await _drainSnackBars(tester);
     });
   });

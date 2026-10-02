@@ -1,12 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Thin design-system progress bar (theme accent fill on the track color);
 /// the fill animates to new values.
@@ -235,7 +236,7 @@ class BpOfflineNotice extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              CommonStrings.offlineCached(formatTime(receivedAt)),
+              context.l10n.commonOfflineCached(formatTime(receivedAt)),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: legibleAccent(context, warning),
               ),

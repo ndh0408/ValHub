@@ -3,6 +3,7 @@ import 'dart:ui' show Rect;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:mocktail/mocktail.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:workmanager/workmanager.dart';
 import 'package:valvn/core/accounts/account.dart';
 import 'package:valvn/core/accounts/local_data.dart';
 import 'package:valvn/core/domain/competitive/rr_history.dart';
@@ -23,6 +24,15 @@ import 'package:valvn/features/settings/providers/settings_providers.dart';
 class MockPvpApi extends Mock implements PvpApi {}
 
 class MockSessionManager extends Mock implements SessionManager {}
+
+class FakeSettingsWorkmanager extends WorkmanagerPlatform {
+  FakeSettingsWorkmanager(this.cancelled);
+  final List<String> cancelled;
+
+  @override
+  Future<void> cancelByUniqueName(String uniqueName) async =>
+      cancelled.add(uniqueName);
+}
 
 /// In-memory [JsonFileCache] (no `dart:io`, so nothing races against
 /// `pumpAndSettle`).

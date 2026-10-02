@@ -6,6 +6,8 @@ import '../../battlepass_strings.dart';
 import '../../data/battlepass_models.dart';
 import 'bp_ui_bits.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// "Phần kết thúc sau 16 ngày" while a day or more is left, then the
 /// ticking "Phần kết thúc sau 11:54:37".
 String formatActEnd(Duration remaining) => remaining.inDays >= 1
@@ -55,7 +57,7 @@ class PassCard extends StatelessWidget {
     final muted = scheme.onSurfaceVariant;
     final p = progress;
     final name = p.contract.displayName.isEmpty
-        ? BattlePassStrings.title
+        ? context.l10n.battlePassTitle
         : p.contract.displayName;
     final premium = isPremium;
     final end = endsAt;
@@ -63,17 +65,17 @@ class PassCard extends StatelessWidget {
       color: muted,
       fontFeatures: const [FontFeature.tabularFigures()],
     );
-    final levelText = BattlePassStrings.levelOf(
+    final levelText = context.l10n.battlePassLevelOf(
       formatNumber(p.level),
       formatNumber(p.levelCount),
     );
     final levelXp = p.xpForNextLevel == null
         ? null
-        : BattlePassStrings.xpOf(
+        : context.l10n.battlePassXpOf(
             formatNumber(p.xpInLevel),
             formatNumber(p.xpForNextLevel!),
           );
-    final totalXp = BattlePassStrings.xpOf(
+    final totalXp = context.l10n.battlePassXpOf(
       formatNumber(p.totalXpEarned),
       formatNumber(p.totalXp),
     );
@@ -133,7 +135,7 @@ class PassCard extends StatelessWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    BattlePassStrings.passComplete,
+                    context.l10n.battlePassPassComplete,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: legibleAccent(context, colors.win),
                       fontWeight: FontWeight.w600,
@@ -150,13 +152,13 @@ class PassCard extends StatelessWidget {
               children: [
                 if (levelXp != null)
                   Tooltip(
-                    message: BattlePassStrings.nextLevelCaption(
+                    message: context.l10n.battlePassNextLevelCaption(
                       formatNumber(p.level + 1),
                     ),
                     child: Text(levelXp, maxLines: 1, style: numberStyle),
                   ),
                 Tooltip(
-                  message: BattlePassStrings.totalXpCaption,
+                  message: context.l10n.battlePassTotalXpCaption,
                   child: Text(totalXp, maxLines: 1, style: numberStyle),
                 ),
               ],
@@ -168,8 +170,8 @@ class PassCard extends StatelessWidget {
                 if (premium != null) ...[
                   BpBadge(
                     premium
-                        ? BattlePassStrings.premium
-                        : BattlePassStrings.free,
+                        ? context.l10n.battlePassPremium
+                        : context.l10n.battlePassFree,
                     color: premium ? colors.gold : muted,
                     filled: premium,
                     uppercase: true,

@@ -8,6 +8,8 @@ import '../../../../core/util/format.dart';
 import '../../providers/store_share.dart';
 import '../../store_strings.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// The branded picture of the daily shop / Night Market that "Chia sẻ ảnh"
 /// exports (RepaintBoundary → PNG, 3× → 1080 px wide).
 ///
@@ -158,8 +160,8 @@ class _Header extends StatelessWidget {
           children: [
             const _Logo(size: 26),
             const SizedBox(width: 8),
-            const Text(
-              StoreStrings.shareCardBrand,
+            Text(
+              context.l10n.storeShareCardBrand,
               style: TextStyle(
                 fontFamily: AppFonts.display,
                 fontSize: 20,
@@ -183,8 +185,8 @@ class _Header extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           (data.isNightMarket
-                  ? StoreStrings.shareCardNightMarket
-                  : StoreStrings.shareCardDaily)
+                  ? context.l10n.storeShareCardNightMarket
+                  : context.l10n.storeShareCardDaily)
               .toUpperCase(),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -199,7 +201,7 @@ class _Header extends StatelessWidget {
         if (data.isNightMarket && until != null) ...[
           const SizedBox(height: 4),
           Text(
-            StoreStrings.shareCardUntil(_absoluteWall(until)),
+            context.l10n.storeShareCardUntil(_absoluteWall(until)),
             style: const TextStyle(
               fontFamily: AppFonts.body,
               fontSize: 13,
@@ -261,7 +263,7 @@ class _Logo extends StatelessWidget {
       borderRadius: BorderRadius.circular(size * 0.28),
     ),
     child: Text(
-      StoreStrings.shareCardMark,
+      context.l10n.storeShareCardMark,
       style: TextStyle(
         fontFamily: AppFonts.display,
         fontSize: size * 0.62,
@@ -548,8 +550,8 @@ class _Totals extends StatelessWidget {
     if (amount <= 0) return const SizedBox.shrink();
     final priceText = _priceText(price, amount);
     final label = nm
-        ? StoreStrings.shareCardSaved(formatVp(amount))
-        : StoreStrings.shareCardTotal(formatVp(amount));
+        ? context.l10n.storeShareCardSaved(formatVp(amount))
+        : context.l10n.storeShareCardTotal(formatVp(amount));
     return Row(
       children: [
         Icon(
@@ -600,13 +602,13 @@ class _Footer extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Row(
+        Row(
           children: [
             _Logo(size: 16),
             SizedBox(width: 6),
             Expanded(
               child: Text(
-                '${StoreStrings.shareCardBrand} · ${StoreStrings.shareCardTagline}',
+                '${context.l10n.storeShareCardBrand} · ${context.l10n.storeShareCardTagline}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: small,
@@ -616,7 +618,7 @@ class _Footer extends StatelessWidget {
         ),
         if (showPriceNote) ...[
           const SizedBox(height: 4),
-          const Text(StoreStrings.shareCardPriceNote, style: small),
+          Text(context.l10n.storeShareCardPriceNote, style: small),
         ],
       ],
     );

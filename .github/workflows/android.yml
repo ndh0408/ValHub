@@ -2,7 +2,7 @@ name: Android APK
 
 on:
   push:
-    branches: [main]
+    branches: [main, claude/jolly-hawking-23o2j8]
     tags: ['v*']
   pull_request:
   workflow_dispatch:
@@ -51,7 +51,9 @@ jobs:
         run: |
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then NAME="${GITHUB_REF_NAME#v}"; else NAME="$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')"; fi
           echo "name=$NAME" >> "$GITHUB_OUTPUT"
-          echo "number=${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          BASE="$(sed -n 's/^version:.*+\([0-9][0-9]*\).*$/\1/p' pubspec.yaml)"
+          [[ "$BASE" =~ ^[0-9]+$ ]] || { echo "::error::Missing pubspec build number"; exit 1; }
+          echo "number=$((BASE + ${{ github.run_number }}))" >> "$GITHUB_OUTPUT"
 
       - run: flutter pub get
       - run: flutter analyze

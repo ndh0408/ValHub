@@ -26,6 +26,8 @@ import 'widgets/collection_widgets.dart';
 import 'widgets/gun_hero.dart';
 import 'widgets/loadout_actions.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// S35 "Tùy chỉnh skin": the chosen variant / level render as the header
 /// art (flies in from the skin list; cross-fades on change) with "Xem
 /// video", owned variants and levels (locked ones greyed, each level's
@@ -125,7 +127,7 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final skin = db.skinByAnyUuid(widget.skinId);
     final title = skin == null
-        ? CollectionStrings.skinCustomizeTitle
+        ? context.l10n.collectionSkinCustomizeTitle
         : skinLabel(skin);
     final account = ref.watch(activeAccountProvider);
     if (account == null) return NoAccountPage(title: title);
@@ -135,8 +137,8 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
         title: title,
         body: db.isEmpty
             ? const _CustomizeSkeleton()
-            : const EmptyView(
-                message: CollectionStrings.skinNotFound,
+            : EmptyView(
+                message: context.l10n.collectionSkinNotFound,
                 icon: Icons.help_outline,
               ),
       );
@@ -196,7 +198,7 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
                 onPressed: () =>
                     unawaited(openSkinVideo(context, videoUrl: video)),
                 icon: const Icon(Icons.play_arrow_rounded),
-                label: const Text(CollectionStrings.playVideo),
+                label: Text(context.l10n.collectionPlayVideo),
               ),
       ),
       heroHeight: 250,
@@ -226,10 +228,10 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
         icon: Icon(sel.isEquipped ? Icons.check : Icons.done_all),
         label: Text(
           pending
-              ? CollectionStrings.saving
+              ? context.l10n.collectionSaving
               : (sel.isEquipped
-                    ? CollectionStrings.equipped
-                    : CollectionStrings.equip),
+                    ? context.l10n.collectionEquipped
+                    : context.l10n.collectionEquip),
         ),
       ),
       slivers: loadoutSlivers(
@@ -241,10 +243,10 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
             const SliverToBoxAdapter(child: CachedLoadoutBanner()),
           SliverToBoxAdapter(child: SavingBar(visible: snapshot.isPending)),
           if (!isOwned)
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: CollectionNotice(
                 icon: Icons.lock_outline,
-                text: CollectionStrings.skinNotOwned,
+                text: context.l10n.collectionSkinNotOwned,
                 margin: EdgeInsets.fromLTRB(16, 4, 16, 0),
               ),
             ),
@@ -273,8 +275,8 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
       if (skin.chromas.length > 1) ...[
         SliverToBoxAdapter(
           child: CollectionSectionTitle(
-            CollectionStrings.variants,
-            trailing: CollectionStrings.chromaCount(
+            context.l10n.collectionVariants,
+            trailing: context.l10n.collectionChromaCount(
               ownedChromas.length,
               skin.chromas.length,
             ),
@@ -327,8 +329,8 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
       if (skin.levels.length > 1) ...[
         SliverToBoxAdapter(
           child: CollectionSectionTitle(
-            CollectionStrings.levels,
-            trailing: CollectionStrings.levelsUnlocked(
+            context.l10n.collectionLevels,
+            trailing: context.l10n.collectionLevelsUnlocked(
               ownedLevels.length,
               skin.levels.length,
             ),
@@ -339,7 +341,7 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
             children: [
               for (final l in skin.levels)
                 _LevelTile(
-                  title: CollectionStrings.levelLabel(
+                  title: context.l10n.collectionLevelLabel(
                     l.levelNumber,
                     l.levelItemLabel,
                   ),
@@ -356,14 +358,14 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
         ),
       ],
       if (gun != null) ...[
-        const SliverToBoxAdapter(
-          child: CollectionSectionTitle(CollectionStrings.buddySlot),
+        SliverToBoxAdapter(
+          child: CollectionSectionTitle(context.l10n.collectionBuddySlot),
         ),
         SliverToBoxAdapter(
           child: isMelee
-              ? const CollectionNotice(
+              ? CollectionNotice(
                   icon: Icons.info_outline,
-                  text: CollectionStrings.meleeNoBuddy,
+                  text: context.l10n.collectionMeleeNoBuddy,
                   margin: EdgeInsets.symmetric(horizontal: 16),
                 )
               : GroupedSection(
@@ -371,8 +373,9 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
                     HubRow(
                       icon: Icons.link,
                       leading: _BuddyThumb(image: buddy?.image),
-                      title: buddy?.displayName ?? CollectionStrings.noBuddy,
-                      value: CollectionStrings.changeBuddy,
+                      title:
+                          buddy?.displayName ?? context.l10n.collectionNoBuddy,
+                      value: context.l10n.collectionChangeBuddy,
                       onTap: pending
                           ? null
                           : () => unawaited(
@@ -412,10 +415,10 @@ class _ChromaSwatch extends StatelessWidget {
       button: true,
       selected: selected,
       enabled: !locked,
-      label: locked ? '$label, ${CollectionStrings.locked}' : label,
+      label: locked ? '$label, ${context.l10n.collectionLocked}' : label,
       excludeSemantics: true,
       child: Tooltip(
-        message: locked ? '$label · ${CollectionStrings.locked}' : label,
+        message: locked ? '$label · ${context.l10n.collectionLocked}' : label,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(14),
@@ -533,7 +536,7 @@ class _LevelTile extends StatelessWidget {
                         ),
                         if (locked)
                           Text(
-                            CollectionStrings.locked,
+                            context.l10n.collectionLocked,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: scheme.onSurfaceVariant,
                             ),
@@ -543,7 +546,7 @@ class _LevelTile extends StatelessWidget {
                   ),
                   if (v != null)
                     IconButton(
-                      tooltip: CollectionStrings.playLevelVideo,
+                      tooltip: context.l10n.collectionPlayLevelVideo,
                       icon: const Icon(Icons.play_circle_outline),
                       color: scheme.onSurfaceVariant,
                       onPressed: () =>

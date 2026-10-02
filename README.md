@@ -33,6 +33,11 @@ flutter build apk --release
 Chi tiết (APK/IPA từ GitHub Actions, ký release): [`docs/BUILD.md`](docs/BUILD.md).
 Kiến trúc: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Tiến độ: [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
+Kiểm chứng hiện tại: [Final gap audit / CI local 02/10](docs/FINAL_GAP_AUDIT_2026-10-02.md).
+Windows và Mac: 4.197 Flutter tests đạt, analyzer 0 issues; backend 867 tests đạt.
+APK review 4005 đã kiểm tra trên emulator. Quốc tế hóa và các gate release còn
+thiếu; chưa tuyên bố production-ready. GitHub Actions hiện bị khóa billing.
+
 ## Tuyên bố miễn trừ
 
 VanHub không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai

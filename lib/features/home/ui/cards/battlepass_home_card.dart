@@ -15,16 +15,15 @@ import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../../battlepass/battlepass_routes.dart';
-import '../../../battlepass/battlepass_strings.dart';
 import '../../../battlepass/data/battlepass_models.dart';
 import '../../../battlepass/data/daily_ticket.dart';
 import '../../../battlepass/providers/battlepass_providers.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../data/home_battlepass.dart';
 import '../../data/home_card.dart';
-import '../../home_strings.dart';
 import '../../providers/home_card_providers.dart';
 import '../home_card_frame.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 class BattlePassHomeCard extends ConsumerWidget {
   const BattlePassHomeCard({super.key, required this.puuid});
@@ -41,9 +40,9 @@ class BattlePassHomeCard extends ConsumerWidget {
         card: HomeCardId.battlePass,
         title: snap.isEvent
             ? [
-                BattlePassStrings.eventPass,
+                context.l10n.battlePassEventPass,
                 ?snap.eventName,
-              ].join(HomeStrings.dot)
+              ].join(context.l10n.homeDot)
             : null,
         onTap: () => unawaited(context.push<Object?>(BattlePassRoutes.root)),
         child: _BpBody(snap: snap, puuid: puuid),
@@ -86,7 +85,7 @@ class _BpBody extends ConsumerWidget {
           alignment: WrapAlignment.spaceBetween,
           children: [
             Text(
-              BattlePassStrings.levelOf(
+              context.l10n.battlePassLevelOf(
                 formatNumber(pass.level),
                 formatNumber(pass.levelCount),
               ),
@@ -96,7 +95,7 @@ class _BpBody extends ConsumerWidget {
             ),
             if (snap.daysLeft != null)
               StatusPill(
-                label: BattlePassStrings.daysLeft(snap.daysLeft!),
+                label: context.l10n.battlePassDaysLeft(snap.daysLeft!),
                 color: muted,
                 showDot: false,
                 icon: Icons.schedule_rounded,
@@ -108,7 +107,7 @@ class _BpBody extends ConsumerWidget {
           value: pass.levelFraction,
           height: 6,
           complete: pass.isComplete,
-          semanticsLabel: BattlePassStrings.levelOf(
+          semanticsLabel: context.l10n.battlePassLevelOf(
             formatNumber(pass.level),
             formatNumber(pass.levelCount),
           ),
@@ -116,13 +115,13 @@ class _BpBody extends ConsumerWidget {
         if (pace != null) ...[
           const SizedBox(height: 10),
           Text(
-            BattlePassStrings.xpPerDay(formatNumber(pace.xpPerDay)),
+            context.l10n.battlePassXpPerDay(formatNumber(pace.xpPerDay)),
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w700,
             ),
           ),
           Text(
-            BattlePassStrings.xpPerDayCaption,
+            context.l10n.battlePassXpPerDayCaption,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.bodySmall?.copyWith(color: muted),
@@ -142,7 +141,7 @@ class _BpBody extends ConsumerWidget {
         ],
         if (snap.isFromCache)
           HomeCardFootnote(
-            CommonStrings.updatedAt(formatTime(snap.receivedAt)),
+            context.l10n.commonUpdatedAt(formatTime(snap.receivedAt)),
           ),
       ],
     );
@@ -158,8 +157,8 @@ class _MissionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
-    final title = mission.title ?? BattlePassStrings.unknownMission;
-    final progress = BattlePassStrings.missionProgress(
+    final title = mission.title ?? context.l10n.battlePassUnknownMission;
+    final progress = context.l10n.battlePassMissionProgress(
       formatNumber(mission.progress),
       formatNumber(mission.target),
     );
@@ -184,7 +183,9 @@ class _MissionRow extends StatelessWidget {
                 if (mission.xpGrant > 0) ...[
                   const SizedBox(width: 8),
                   Text(
-                    BattlePassStrings.xpReward(formatNumber(mission.xpGrant)),
+                    context.l10n.battlePassXpReward(
+                      formatNumber(mission.xpGrant),
+                    ),
                     style: theme.textTheme.labelMedium?.copyWith(
                       color: legibleAccent(context, theme.colorScheme.primary),
                       fontWeight: FontWeight.w700,
@@ -248,7 +249,7 @@ class _FooterRow extends ConsumerWidget {
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  BattlePassStrings.checkpointsDone(
+                  context.l10n.battlePassCheckpointsDone(
                     done,
                     kDailyCheckpointCount,
                   ),
@@ -263,7 +264,7 @@ class _FooterRow extends ConsumerWidget {
           ExcludeSemantics(
             child: CountdownText(
               expiresAt: refill,
-              builder: BattlePassStrings.newMissionsIn,
+              builder: context.l10n.battlePassNewMissionsIn,
               onExpired: () => ref.invalidate(playerContractsProvider(puuid)),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: muted,
@@ -286,13 +287,13 @@ class _EventLine extends StatelessWidget {
     final theme = Theme.of(context);
     final p = event.progress;
     final text = [
-      BattlePassStrings.eventPass,
+      context.l10n.battlePassEventPass,
       ?event.eventName,
-      BattlePassStrings.levelOf(
+      context.l10n.battlePassLevelOf(
         formatNumber(p.level),
         formatNumber(p.levelCount),
       ),
-    ].join(HomeStrings.dot);
+    ].join(context.l10n.homeDot);
     return InkWell(
       onTap: () => unawaited(
         context.push<Object?>(BattlePassRoutes.rewardsFor(p.contract.uuid)),

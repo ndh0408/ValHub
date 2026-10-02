@@ -7,7 +7,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/accounts/account.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/accounts/account_widgets.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/util/format.dart';
@@ -22,6 +21,8 @@ import '../providers/feed_providers.dart';
 import 'feed/offers_grid.dart';
 import 'consent/consent_sheet.dart';
 import 'widgets/community_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Maximum post length (server limit).
 const kMaxPostLength = 1000;
@@ -95,11 +96,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            tooltip: CommonStrings.close,
+            tooltip: context.l10n.commonClose,
             icon: const Icon(Icons.close_rounded),
             onPressed: () => Navigator.of(context).maybePop(),
           ),
-          title: const Text(CommunityStrings.composerTitle),
+          title: Text(context.l10n.communityComposerTitle),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 12),
@@ -118,14 +119,14 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
                           color: Colors.white,
                         ),
                       )
-                    : const Text(CommunityStrings.publish),
+                    : Text(context.l10n.communityPublish),
               ),
             ),
           ],
         ),
         body: account == null
-            ? const EmptyView(
-                message: CommonStrings.errorNoAccount,
+            ? EmptyView(
+                message: context.l10n.commonErrorNoAccount,
                 icon: Icons.person_off_outlined,
               )
             : Column(
@@ -175,8 +176,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
             fontWeight: FontWeight.w400,
             height: 1.4,
           ),
-          decoration: const InputDecoration(
-            hintText: CommunityStrings.composerHint,
+          decoration: InputDecoration(
+            hintText: context.l10n.communityComposerHint,
             filled: false,
             border: InputBorder.none,
             focusedBorder: InputBorder.none,
@@ -186,7 +187,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
         Align(
           alignment: AlignmentDirectional.centerEnd,
           child: Text(
-            CommunityStrings.charCount(
+            context.l10n.communityCharCount(
               formatNumber(length),
               formatNumber(kMaxPostLength),
             ),
@@ -201,7 +202,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Text(
-              CommunityStrings.tooLong(kMaxPostLength),
+              context.l10n.communityTooLong(kMaxPostLength),
               style: theme.textTheme.bodySmall?.copyWith(color: ValColors.red),
             ),
           ),
@@ -218,7 +219,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
                 top: 4,
                 right: 4,
                 child: _RemoveButton(
-                  tooltip: CommunityStrings.removeAttachment,
+                  tooltip: context.l10n.communityRemoveAttachment,
                   onTap: () => setState(() => _draft = null),
                 ),
               ),
@@ -244,7 +245,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              CommunityStrings.emptyPost,
+              context.l10n.communityEmptyPost,
               style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),
           ),
@@ -266,19 +267,22 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
               TextButton.icon(
                 onPressed: full || _busy ? null : () => unawaited(_pick()),
                 icon: const Icon(Icons.add_photo_alternate_outlined),
-                label: const Text(CommunityStrings.addPhotos),
+                label: Text(context.l10n.communityAddPhotos),
               ),
               const Spacer(),
               if (_busy)
                 Text(
-                  CommunityStrings.publishing,
+                  context.l10n.communityPublishing,
                   style: theme.textTheme.labelMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 )
               else
                 Text(
-                  CommunityStrings.photoCount(_images.length, kMaxPostImages),
+                  context.l10n.communityPhotoCount(
+                    _images.length,
+                    kMaxPostImages,
+                  ),
                   style: theme.textTheme.labelMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -413,7 +417,7 @@ class _Thumb extends StatelessWidget {
             top: 4,
             right: 4,
             child: _RemoveButton(
-              tooltip: CommunityStrings.removePhoto,
+              tooltip: context.l10n.communityRemovePhoto,
               onTap: onRemove,
             ),
           ),

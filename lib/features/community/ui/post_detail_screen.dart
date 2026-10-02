@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/accounts/account_providers.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/val_widgets.dart';
@@ -23,6 +22,8 @@ import 'feed/post_card.dart';
 import 'feed/report_sheet.dart';
 import 'widgets/community_widgets.dart';
 import 'widgets/translatable_text.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Post detail: the full post, its comments (paged, oldest first) and a
 /// comment composer that stays above the keyboard.
@@ -62,10 +63,10 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text(CommunityStrings.postTitle)),
+      appBar: AppBar(title: Text(context.l10n.communityPostTitle)),
       body: account == null
-          ? const EmptyView(
-              message: CommonStrings.errorNoAccount,
+          ? EmptyView(
+              message: context.l10n.commonErrorNoAccount,
               icon: Icons.person_off_outlined,
             )
           : _body(account.puuid),
@@ -84,10 +85,10 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
         final gone =
             e is CommunityException && e.code == CommunityException.notFound;
         return gone
-            ? const CommunityEmptyState(
+            ? CommunityEmptyState(
                 icon: Icons.delete_sweep_outlined,
-                title: CommunityStrings.errorTitle,
-                message: CommunityStrings.postNotFound,
+                title: context.l10n.communityErrorTitle,
+                message: context.l10n.communityPostNotFound,
               )
             : Center(
                 child: CommunityErrorState(
@@ -101,7 +102,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     }
 
     if (ref.watch(hiddenAuthorsProvider(puuid)).containsKey(post.author.id)) {
-      return const Center(child: Text(CommunityStrings.hiddenAuthorsHint));
+      return Center(child: Text(context.l10n.communityHiddenAuthorsHint));
     }
     final comments = ref.watch(commentsProvider(key));
     final notifier = ref.read(postDetailProvider(key).notifier);
@@ -136,7 +137,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                 ),
                 SliverToBoxAdapter(
                   child: SectionLabel(
-                    CommunityStrings.commentsHeader(
+                    context.l10n.communityCommentsHeader(
                       formatNumber(post.comments),
                     ),
                   ),
@@ -188,7 +189,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
             child: Text(
-              CommunityStrings.noComments,
+              context.l10n.communityNoComments,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -250,7 +251,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                   maxLines: 5,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
-                    hintText: CommunityStrings.commentHint,
+                    hintText: context.l10n.communityCommentHint,
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -265,14 +266,14 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                       borderSide: const BorderSide(color: ValColors.red),
                     ),
                     errorText: tooLong
-                        ? CommunityStrings.tooLong(_maxComment)
+                        ? context.l10n.communityTooLong(_maxComment)
                         : null,
                   ),
                 ),
               ),
               const SizedBox(width: 6),
               IconButton.filled(
-                tooltip: CommunityStrings.sendComment,
+                tooltip: context.l10n.communitySendComment,
                 onPressed: canSend ? () => unawaited(_send(key, post)) : null,
                 style: IconButton.styleFrom(
                   backgroundColor: ValColors.red,
@@ -402,7 +403,7 @@ class _CommentTile extends StatelessWidget {
             trailing: ContentMenuButton(
               author: comment.author,
               isMine: isMine,
-              deleteLabel: CommunityStrings.deleteComment,
+              deleteLabel: context.l10n.communityDeleteComment,
               onSelected: onAction,
             ),
           ),

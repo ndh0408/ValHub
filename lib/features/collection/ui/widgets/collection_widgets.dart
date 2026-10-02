@@ -10,7 +10,6 @@ import '../../../../core/content/content_fallbacks.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/domain/loadout/loadout.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tier_colors.dart';
 import '../../../../core/ui/content_tier_badge.dart';
@@ -23,6 +22,8 @@ import '../../../../core/ui/skeleton.dart';
 import '../../../../core/ui/sub_page.dart';
 import '../../collection_strings.dart';
 import '../../data/skin_query.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Hero tags shared by the collection screens (list → detail flights).
 abstract final class CollectionHeroTags {
@@ -47,8 +48,8 @@ class CollectionAccountGate extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const EmptyView(
-        message: CommonStrings.errorNoAccount,
+      return EmptyView(
+        message: context.l10n.commonErrorNoAccount,
         icon: Icons.person_off_outlined,
       );
     }
@@ -65,8 +66,8 @@ class NoAccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SubPageScaffold(
     title: title,
-    body: const EmptyView(
-      message: CommonStrings.errorNoAccount,
+    body: EmptyView(
+      message: context.l10n.commonErrorNoAccount,
       icon: Icons.person_off_outlined,
     ),
   );
@@ -833,7 +834,7 @@ class CachedLoadoutBanner extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              CollectionStrings.cachedLoadout,
+              context.l10n.collectionCachedLoadout,
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
@@ -891,9 +892,9 @@ class SavingBar extends StatelessWidget {
   Widget build(BuildContext context) => SizedBox(
     height: 2,
     child: visible
-        ? const LinearProgressIndicator(
+        ? LinearProgressIndicator(
             minHeight: 2,
-            semanticsLabel: CollectionStrings.saving,
+            semanticsLabel: context.l10n.collectionSaving,
           )
         : null,
   );

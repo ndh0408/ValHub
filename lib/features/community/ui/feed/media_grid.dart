@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/util/format.dart';
-import '../../community_strings.dart';
 import '../../data/community_models.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Hero tag of image [index] of post [postId].
 String mediaHeroTag(String postId, int index) => 'community-$postId-$index';
@@ -27,7 +27,7 @@ class MediaGrid extends StatelessWidget {
     Widget tile(int i) => _MediaTile(
       url: items[i].url,
       heroTag: mediaHeroTag(postId, i),
-      label: CommunityStrings.imageOf(i + 1, items.length),
+      label: context.l10n.communityImageOf(i + 1, items.length),
       onTap: () => unawaited(
         openImageViewer(
           context,
@@ -230,7 +230,7 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    tooltip: CommonStrings.close,
+                    tooltip: context.l10n.commonClose,
                     color: Colors.white,
                     icon: const Icon(Icons.close_rounded),
                     onPressed: () => Navigator.of(context).maybePop(),
@@ -248,7 +248,7 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
                         borderRadius: BorderRadius.circular(ValRadius.pill),
                       ),
                       child: Text(
-                        CommunityStrings.pageOf(
+                        context.l10n.communityPageOf(
                           formatNumber(_index + 1),
                           formatNumber(widget.urls.length),
                         ),

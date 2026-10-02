@@ -4,7 +4,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/competitive/competitive.dart';
-import '../../../../core/l10n/content_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/error_view.dart';
 import '../../../../core/ui/net_image.dart';
@@ -15,6 +14,8 @@ import '../../data/rr_trend.dart';
 import '../../profile_strings.dart';
 import 'profile_widgets.dart';
 import 'rr_trend_chart.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Rank card (S40.2, R2/R3): current rank | peak with true-peak RR, act
 /// record, RR trend of the last 20 ranked matches and the rank-up hint.
@@ -80,8 +81,8 @@ class _RankCardBody extends ConsumerWidget {
     final peak = summary.peak;
     final peakAct = peak?.actUuid == null ? null : db.season(peak!.actUuid!);
     final peakLabel = peakAct == null
-        ? ProfileStrings.peakRank
-        : ProfileStrings.peakRankOf(viTitleCase(db.actTitle(peakAct)));
+        ? context.l10n.profilePeakRank
+        : context.l10n.profilePeakRankOf(viTitleCase(db.actTitle(peakAct)));
     final updates = showTrend
         ? ref.watch(competitiveUpdatesProvider(puuid)).value?.items
         : null;
@@ -100,7 +101,7 @@ class _RankCardBody extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: _RankColumn(
-                      label: ProfileStrings.currentRank,
+                      label: context.l10n.profileCurrentRank,
                       rank: current,
                       detail: current.isPlacement
                           ? current.placementText
@@ -118,9 +119,9 @@ class _RankCardBody extends ConsumerWidget {
                   Expanded(
                     child: peak == null
                         ? _RankColumn(
-                            label: ProfileStrings.peakRank,
+                            label: context.l10n.profilePeakRank,
                             rank: null,
-                            detail: ProfileStrings.neverRanked,
+                            detail: context.l10n.profileNeverRanked,
                           )
                         : _RankColumn(
                             label: peakLabel,
@@ -129,7 +130,7 @@ class _RankCardBody extends ConsumerWidget {
                                 ? null
                                 : formatRr(peak.truePeakRr!),
                             caption: peak.truePeakFromLocalHistory
-                                ? ProfileStrings.truePeakLocal
+                                ? context.l10n.profileTruePeakLocal
                                 : null,
                           ),
                   ),
@@ -142,13 +143,13 @@ class _RankCardBody extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
               child: Text(
                 ProfileStrings.joined([
-                  ProfileStrings.actRecord(
+                  context.l10n.profileActRecord(
                     summary.wins,
                     summary.games,
                     formatPercent(summary.winRate ?? 0),
                   ),
                   if (summary.leaderboardRank case final r?)
-                    ProfileStrings.leaderboard(formatNumber(r)),
+                    context.l10n.profileLeaderboard(formatNumber(r)),
                 ]),
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -226,7 +227,7 @@ class _RankColumn extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            r?.tierName ?? ContentStrings.unranked,
+            r?.tierName ?? context.l10n.contentUnranked,
             maxLines: 2,
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
@@ -250,7 +251,7 @@ class _RankColumn extends StatelessWidget {
               child: ValProgressBar(
                 value: progress!,
                 height: 4,
-                semanticsLabel: ProfileStrings.rrToNext(r?.rr ?? 0),
+                semanticsLabel: context.l10n.profileRrToNext(r?.rr ?? 0),
               ),
             ),
           ],
@@ -289,8 +290,8 @@ class _TrendRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   ProfileStrings.joined([
-                    ProfileStrings.rrTrendTitle,
-                    ProfileStrings.lastMatches(changes.length),
+                    context.l10n.profileRrTrendTitle,
+                    context.l10n.profileLastMatches(changes.length),
                   ]),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -335,8 +336,8 @@ class _RankUpHint extends ConsumerWidget {
       actUuid: current.actUuid,
     );
     final text = estimate != null && matches != null && matches > 0
-        ? ProfileStrings.rankUpHint(matches, target.tierName)
-        : ProfileStrings.rankUpTitle;
+        ? context.l10n.profileRankUpHint(matches, target.tierName)
+        : context.l10n.profileRankUpTitle;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -362,7 +363,7 @@ class _RankUpHint extends ConsumerWidget {
               Icon(
                 Icons.chevron_right,
                 color: theme.colorScheme.primary,
-                semanticLabel: ProfileStrings.rankUpOpen,
+                semanticLabel: context.l10n.profileRankUpOpen,
               ),
             ],
           ),

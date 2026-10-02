@@ -6,7 +6,8 @@ import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/sub_page.dart';
 import '../../../../core/ui/val_widgets.dart';
-import '../../wishlist_strings.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Result of [showWeaponPickerSheet]: `weaponUuid == null` = "Tất cả vũ khí".
 typedef WeaponChoice = ({String? weaponUuid});
@@ -20,7 +21,7 @@ Future<WeaponChoice?> showWeaponPickerSheet(
   String? selected,
 }) => showValSheet<WeaponChoice>(
   context,
-  title: WishlistStrings.chooseWeapon,
+  title: context.l10n.wishlistChooseWeapon,
   scrollable: true,
   builder: (context, controller) => WeaponPickerList(
     weapons: weapons,
@@ -93,13 +94,13 @@ class WeaponPickerList extends StatelessWidget {
             tile(
               picked: selected == null,
               leading: const Icon(Icons.apps),
-              title: WishlistStrings.allWeapons,
+              title: context.l10n.wishlistAllWeapons,
               onTap: () => onPicked(null),
             ),
           ],
         ),
         for (final c in categories) ...[
-          SectionLabel(c.label.isEmpty ? WishlistStrings.weapon : c.label),
+          SectionLabel(c.label.isEmpty ? context.l10n.wishlistWeapon : c.label),
           GroupedSection(
             children: [
               for (final w in byCategory[c]!)

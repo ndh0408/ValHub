@@ -9,8 +9,9 @@ import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../settings/legal/legal_documents.dart';
 import '../../../settings/settings_routes.dart';
-import '../../community_strings.dart';
 import '../../providers/consent_providers.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Opens a legal document of Settings ("Chính sách quyền riêng tư", "Tiêu
 /// chuẩn cộng đồng") from the consent sheet.
@@ -107,28 +108,28 @@ class CommunityConsentSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            CommunityStrings.consentTitle,
+            context.l10n.communityConsentTitle,
             textAlign: TextAlign.center,
             style: theme.textTheme.titleLarge,
           ),
           const SizedBox(height: 4),
           Text(
-            CommunityStrings.consentAccount(account.riotId),
+            context.l10n.communityConsentAccount(account.riotId),
             textAlign: TextAlign.center,
             style: theme.textTheme.bodySmall?.copyWith(color: muted),
           ),
           const SizedBox(height: 20),
-          const _Point(
+          _Point(
             icon: Icons.lock_outline_rounded,
-            text: CommunityStrings.consentVerify,
+            text: context.l10n.communityConsentVerify,
           ),
-          const _Point(
+          _Point(
             icon: Icons.visibility_outlined,
-            text: CommunityStrings.consentPublic,
+            text: context.l10n.communityConsentPublic,
           ),
-          const _Point(
+          _Point(
             icon: Icons.phonelink_lock_outlined,
-            text: CommunityStrings.consentLocal,
+            text: context.l10n.communityConsentLocal,
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -139,13 +140,13 @@ class CommunityConsentSheet extends StatelessWidget {
                 key: const ValueKey('consent-privacy'),
                 onPressed: () =>
                     onOpenDocument(context, LegalDocuments.privacy.id),
-                child: const Text(CommunityStrings.consentPrivacy),
+                child: Text(context.l10n.communityConsentPrivacy),
               ),
               TextButton(
                 key: const ValueKey('consent-guidelines'),
                 onPressed: () =>
                     onOpenDocument(context, LegalDocuments.community.id),
-                child: const Text(CommunityStrings.consentGuidelines),
+                child: Text(context.l10n.communityConsentGuidelines),
               ),
             ],
           ),
@@ -155,14 +156,14 @@ class CommunityConsentSheet extends StatelessWidget {
             child: FilledButton(
               key: const ValueKey('consent-agree'),
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text(CommunityStrings.consentAgree),
+              child: Text(context.l10n.communityConsentAgree),
             ),
           ),
           const SizedBox(height: 4),
           TextButton(
             key: const ValueKey('consent-later'),
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text(CommunityStrings.consentLater),
+            child: Text(context.l10n.communityConsentLater),
           ),
         ],
       ),

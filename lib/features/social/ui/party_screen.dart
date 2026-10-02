@@ -26,6 +26,8 @@ import '../social_strings.dart';
 import 'widgets/party_widgets.dart';
 import 'widgets/social_widgets.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// S55 "Tổ đội & hàng chờ". Route `/profile/party`.
 ///
 /// Remote party control while VALORANT runs on PC / console (GLZ
@@ -94,9 +96,9 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
-      return const SubPageScaffold(
-        title: SocialStrings.partyTitle,
-        body: EmptyView(message: CommonStrings.errorNoAccount),
+      return SubPageScaffold(
+        title: context.l10n.socialPartyTitle,
+        body: EmptyView(message: context.l10n.commonErrorNoAccount),
       );
     }
     final puuid = account.puuid;
@@ -141,14 +143,14 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
     }
 
     return SubPageScaffold(
-      title: SocialStrings.partyTitle,
+      title: context.l10n.socialPartyTitle,
       subtitle: party == null || !(view?.gameRunning ?? false)
           ? null
           : SocialStrings.partySummary(party.size, 5, open: party.isOpen),
       actions: [
         RefreshRing(
           period: widget.pollInterval,
-          tooltip: SocialStrings.autoRefresh,
+          tooltip: context.l10n.socialAutoRefresh,
           onCycle: () => _notifier(puuid).refresh(),
         ),
         if (party != null && view!.gameRunning)
@@ -176,12 +178,12 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
           child: _Banner(
             icon: Icons.sports_esports_outlined,
-            text: SocialStrings.inMatchBanner,
+            text: context.l10n.socialInMatchBanner,
             color: valColorsOf(context).warning,
           ),
         ),
       if (v.invites.isNotEmpty) ...[
-        const SectionLabel(SocialStrings.invitesSection),
+        SectionLabel(context.l10n.socialInvitesSection),
         GroupedSection(
           children: [
             for (final invite in v.invites)
@@ -199,7 +201,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: _statusCard(v, p, me),
         ),
-        SectionLabel(SocialStrings.membersSection(p.size, 5)),
+        SectionLabel(context.l10n.socialMembersSection(p.size, 5)),
         GroupedSection(
           children: [
             for (final m in _ordered(p.members, me))
@@ -214,7 +216,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
           ],
         ),
         if (p.isOwner(me) && p.requests.isNotEmpty) ...[
-          const SectionLabel(SocialStrings.requestsSection),
+          SectionLabel(context.l10n.socialRequestsSection),
           GroupedSection(
             children: [
               for (final r in p.requests)
@@ -229,19 +231,19 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
             ],
           ),
         ],
-        const SectionLabel(SocialStrings.inviteFriends),
+        SectionLabel(context.l10n.socialInviteFriends),
         _inviteSection(v, p, me),
-        const SectionLabel(SocialStrings.partyCode),
+        SectionLabel(context.l10n.socialPartyCode),
         _codeSection(p, me),
       ] else
-        const Padding(
+        Padding(
           padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: _Banner(
             icon: Icons.group_off_outlined,
-            text: CommonStrings.errorNotFound,
+            text: context.l10n.commonErrorNotFound,
           ),
         ),
-      const SectionLabel(SocialStrings.joinSection),
+      SectionLabel(context.l10n.socialJoinSection),
       _joinSection(p, me),
       const _RemoteNote(),
     ];
@@ -299,13 +301,13 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                SocialStrings.queueLabel.toUpperCase(),
+                context.l10n.socialQueueLabel.toUpperCase(),
                 style: ValText.label.copyWith(color: muted, fontSize: 11),
               ),
               const SizedBox(height: 2),
               Text(
                 p.queueId == null
-                    ? SocialStrings.queueLabel
+                    ? context.l10n.socialQueueLabel
                     : db.queueName(p.queueId),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -345,17 +347,17 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
               Flexible(
                 child: StatusPill(
                   label: p.isMatchFound
-                      ? SocialStrings.matchFound
+                      ? context.l10n.socialMatchFound
                       : p.isMatchmaking
                       ? SocialStrings.inQueue(null)
-                      : SocialStrings.idleQueue,
+                      : context.l10n.socialIdleQueue,
                   color: accent,
                 ),
               ),
               const SizedBox(width: 8),
               const Spacer(),
               Text(
-                SocialStrings.readyCount(
+                context.l10n.socialReadyCount(
                   p.members.where((m) => m.isReady || m.isOwner).length,
                   p.size,
                 ),
@@ -369,7 +371,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
           const SizedBox(height: 12),
           if (canChange)
             Tooltip(
-              message: SocialStrings.changeQueue,
+              message: context.l10n.socialChangeQueue,
               child: InkWell(
                 borderRadius: BorderRadius.circular(ValRadius.small),
                 onTap: () => unawaited(_pickQueue(me, p)),
@@ -393,7 +395,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                 Expanded(
                   child: ElapsedText(
                     since: since,
-                    builder: SocialStrings.searching,
+                    builder: context.l10n.socialSearching,
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: legibleAccent(context, colors.warning),
                       fontWeight: FontWeight.w700,
@@ -406,7 +408,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
           if (p.isMatchFound) ...[
             const SizedBox(height: 10),
             Text(
-              SocialStrings.matchFound,
+              context.l10n.socialMatchFound,
               style: theme.textTheme.titleSmall?.copyWith(
                 color: legibleAccent(context, colors.win),
                 fontWeight: FontWeight.w700,
@@ -416,28 +418,28 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
           if (p.isCustomGame || choice != null && !choice.eligible)
             const SizedBox(height: 8),
           if (p.isCustomGame)
-            const PartyNotice(
+            PartyNotice(
               icon: Icons.tune,
-              text: SocialStrings.customGameLobby,
+              text: context.l10n.socialCustomGameLobby,
             ),
           if (choice != null && !choice.eligible)
             PartyNotice(
               icon: Icons.block,
               color: theme.colorScheme.error,
-              text: SocialStrings.cantQueue(
+              text: context.l10n.socialCantQueue(
                 db.queueName(choice.queueId),
                 queueBlockReason(choice, p),
               ),
             ),
           if (v.inMatch)
-            const PartyNotice(
+            PartyNotice(
               icon: Icons.lock_outline,
-              text: SocialStrings.queueLocked,
+              text: context.l10n.socialQueueLocked,
             )
           else if (!isOwner)
-            const PartyNotice(
+            PartyNotice(
               icon: Icons.info_outline,
-              text: SocialStrings.onlyLeader,
+              text: context.l10n.socialOnlyLeader,
             ),
         ],
       ),
@@ -483,8 +485,11 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
               },
         icon: const Icon(Icons.close_rounded),
         label: since == null
-            ? const Text(SocialStrings.cancelQueueShort)
-            : ElapsedText(since: since, builder: SocialStrings.cancelQueue),
+            ? Text(context.l10n.socialCancelQueueShort)
+            : ElapsedText(
+                since: since,
+                builder: context.l10n.socialCancelQueue,
+              ),
       );
     } else {
       primary = FilledButton.icon(
@@ -500,7 +505,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                 child: CircularProgressIndicator.adaptive(strokeWidth: 2),
               )
             : const Icon(Icons.play_arrow_rounded),
-        label: const Text(SocialStrings.startQueue),
+        label: Text(context.l10n.socialStartQueue),
       );
     }
     final readyButton = OutlinedButton.icon(
@@ -511,7 +516,9 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
               unawaited(_run('ready', () => _notifier(me).setReady(!ready)));
             },
       icon: Icon(ready ? Icons.remove_done : Icons.done_all),
-      label: Text(ready ? SocialStrings.unready : SocialStrings.ready),
+      label: Text(
+        ready ? context.l10n.socialUnready : context.l10n.socialReady,
+      ),
     );
     return Row(
       children: [
@@ -541,19 +548,19 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
         onInvite: (f) => _invite(me, p, f),
       );
     } else if (friends.hasValue) {
-      strip = const Padding(
+      strip = Padding(
         padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
         child: PartyNotice(
           icon: Icons.person_search_outlined,
-          text: SocialStrings.noOnlineFriends,
+          text: context.l10n.socialNoOnlineFriends,
         ),
       );
     } else if (friends.hasError) {
-      strip = const Padding(
+      strip = Padding(
         padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
         child: PartyNotice(
           icon: Icons.cloud_off_outlined,
-          text: SocialStrings.chatUnavailable,
+          text: context.l10n.socialChatUnavailable,
         ),
       );
     } else {
@@ -577,8 +584,8 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
         strip,
         GroupedRow(
           icon: Icons.person_add_alt_1_outlined,
-          title: SocialStrings.inviteByRiotId,
-          subtitle: SocialStrings.inviteByRiotIdHint,
+          title: context.l10n.socialInviteByRiotId,
+          subtitle: context.l10n.socialInviteByRiotIdHint,
           onTap: v.inMatch ? null : () => unawaited(_inviteByRiotId(me, p)),
         ),
       ],
@@ -588,7 +595,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
   void _invite(String me, Party p, Friend f) {
     final name = f.name;
     if (name == null || name.tagLine.isEmpty) {
-      showAppSnackBar(context, SocialStrings.inviteNeedsName);
+      showAppSnackBar(context, context.l10n.socialInviteNeedsName);
       return;
     }
     unawaited(
@@ -596,7 +603,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
         await _notifier(me)
             .invite(gameName: name.gameName, tagLine: name.tagLine);
         if (mounted) setState(() => _invited.add('${p.id}/${f.puuid}'));
-      }, success: SocialStrings.inviteSent(name.riotId)),
+      }, success: context.l10n.socialInviteSent(name.riotId)),
     );
   }
 
@@ -619,7 +626,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
   Future<void> _accept(String me, PartyInvite invite) async {
     final notifier = _notifier(me);
     if (!notifier.canAcceptInvites) {
-      showAppSnackBar(context, SocialStrings.acceptInGame);
+      showAppSnackBar(context, context.l10n.socialAcceptInGame);
       return;
     }
     await _run(
@@ -644,7 +651,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Semantics(
-              label: SocialStrings.partyCodeValue(code),
+              label: context.l10n.socialPartyCodeValue(code),
               excludeSemantics: true,
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -680,16 +687,16 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                     }
                   },
                   icon: const Icon(Icons.copy_rounded, size: 18),
-                  label: const Text(SocialStrings.copyCode),
+                  label: Text(context.l10n.socialCopyCode),
                 ),
                 FilledButton.tonalIcon(
                   onPressed: () => unawaited(
                     ref.read(partyShareProvider)(
-                      SocialStrings.shareCodeText(code),
+                      context.l10n.socialShareCodeText(code),
                     ),
                   ),
                   icon: Icon(Icons.adaptive.share, size: 18),
-                  label: const Text(SocialStrings.shareCode),
+                  label: Text(context.l10n.socialShareCode),
                 ),
                 if (isOwner)
                   TextButton(
@@ -699,7 +706,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                     onPressed: _isBusy('code')
                         ? null
                         : () => _run('code', () => _notifier(me).disableCode()),
-                    child: const Text(SocialStrings.disableCode),
+                    child: Text(context.l10n.socialDisableCode),
                   ),
               ],
             ),
@@ -715,7 +722,9 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                isOwner ? SocialStrings.noCode : SocialStrings.noCodeMember,
+                isOwner
+                    ? context.l10n.socialNoCode
+                    : context.l10n.socialNoCodeMember,
                 style: theme.textTheme.bodyMedium?.copyWith(color: muted),
               ),
             ),
@@ -725,7 +734,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                 onPressed: _isBusy('code')
                     ? null
                     : () => _run('code', () => _notifier(me).generateCode()),
-                child: const Text(SocialStrings.generateCode),
+                child: Text(context.l10n.socialGenerateCode),
               ),
             ],
           ],
@@ -753,7 +762,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                   textInputAction: TextInputAction.go,
                   onSubmitted: (_) => unawaited(_join(me, p)),
                   decoration: InputDecoration(
-                    hintText: SocialStrings.joinWithCode,
+                    hintText: context.l10n.socialJoinWithCode,
                     counterText: '',
                     isDense: true,
                     prefixIcon: const Icon(Icons.tag_rounded, size: 20),
@@ -766,7 +775,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                 onPressed: _isBusy('join')
                     ? null
                     : () => unawaited(_join(me, p)),
-                child: const Text(SocialStrings.join),
+                child: Text(context.l10n.socialJoin),
               ),
             ],
           ),
@@ -778,7 +787,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
   Future<void> _join(String me, Party? p) async {
     final code = _code.text.trim();
     if (!_codePattern.hasMatch(code)) {
-      showAppSnackBar(context, SocialStrings.codeInvalid);
+      showAppSnackBar(context, context.l10n.socialCodeInvalid);
       return;
     }
     if (p != null && p.size > 1) {
@@ -802,7 +811,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
   Future<bool> _kick(String me, PartyMember m) async {
     final name =
         ref.read(playerNameProvider(m.puuid)).value?.riotId ??
-        CompetitiveStrings.unknownPlayer;
+        context.l10n.competitiveUnknownPlayer;
     final ok = await confirmAction(
       context,
       title: SocialStrings.removeConfirmTitle,
@@ -848,7 +857,7 @@ class _RiotIdFormState extends State<_RiotIdForm> {
   void _submit() {
     final name = parseRiotIdInput(_field.text);
     if (name == null) {
-      setState(() => _error = SocialStrings.riotIdInvalid);
+      setState(() => _error = context.l10n.socialRiotIdInvalid);
       return;
     }
     Haptics.light();
@@ -877,7 +886,7 @@ class _RiotIdFormState extends State<_RiotIdForm> {
               if (_error != null) setState(() => _error = null);
             },
             decoration: InputDecoration(
-              hintText: SocialStrings.riotIdFieldHint,
+              hintText: context.l10n.socialRiotIdFieldHint,
               prefixIcon: const Icon(Icons.person_search_outlined),
               errorText: _error,
               errorMaxLines: 3,
@@ -887,7 +896,7 @@ class _RiotIdFormState extends State<_RiotIdForm> {
           FilledButton.icon(
             onPressed: _submit,
             icon: const Icon(Icons.send_rounded, size: 18),
-            label: const Text(SocialStrings.sendInvite),
+            label: Text(context.l10n.socialSendInvite),
           ),
         ],
       ),
@@ -913,7 +922,7 @@ class _MoreMenu extends StatelessWidget {
     final canLeave = party.size > 1;
     if (!canLeave && !isOwner) return const SizedBox.shrink();
     return IconButton(
-      tooltip: SocialStrings.moreActions,
+      tooltip: context.l10n.socialMoreActions,
       icon: Icon(Icons.adaptive.more),
       onPressed: () async {
         final v = await showActionSheet<String>(
@@ -1015,8 +1024,8 @@ class _InviteRow extends ConsumerWidget {
               Expanded(
                 child: Text(
                   name == null
-                      ? SocialStrings.partyInvite
-                      : SocialStrings.inviteFrom(name.riotId),
+                      ? context.l10n.socialPartyInvite
+                      : context.l10n.socialInviteFrom(name.riotId),
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -1033,11 +1042,11 @@ class _InviteRow extends ConsumerWidget {
               children: [
                 TextButton(
                   onPressed: busy ? null : onDecline,
-                  child: const Text(SocialStrings.decline),
+                  child: Text(context.l10n.socialDecline),
                 ),
                 FilledButton(
                   onPressed: busy ? null : onAccept,
-                  child: const Text(SocialStrings.accept),
+                  child: Text(context.l10n.socialAccept),
                 ),
               ],
             ),
@@ -1074,8 +1083,8 @@ class _RequestRow extends ConsumerWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              SocialStrings.requestFrom(
-                name?.riotId ?? CompetitiveStrings.unknownPlayer,
+              context.l10n.socialRequestFrom(
+                name?.riotId ?? context.l10n.competitiveUnknownPlayer,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -1083,7 +1092,7 @@ class _RequestRow extends ConsumerWidget {
           ),
           TextButton(
             onPressed: busy ? null : onDecline,
-            child: const Text(SocialStrings.decline),
+            child: Text(context.l10n.socialDecline),
           ),
         ],
       ),
@@ -1107,7 +1116,7 @@ class _RemoteNote extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              SocialStrings.remoteNote,
+              context.l10n.socialRemoteNote,
               style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),
           ),
@@ -1126,12 +1135,12 @@ class _GameNotRunning extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyView(
       icon: Icons.desktop_windows_outlined,
-      title: SocialStrings.gameNotRunningTitle,
-      message: SocialStrings.gameNotRunningBody,
+      title: context.l10n.socialGameNotRunningTitle,
+      message: context.l10n.socialGameNotRunningBody,
       action: OutlinedButton.icon(
         onPressed: () => unawaited(onRetry()),
         icon: const Icon(Icons.refresh),
-        label: const Text(CommonStrings.retry),
+        label: Text(context.l10n.commonRetry),
       ),
     );
   }

@@ -3,7 +3,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_fallbacks.dart';
 import '../../../../core/content/content_repository.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tier_colors.dart';
 import '../../../../core/ui/adaptive.dart';
@@ -13,6 +12,8 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../store_strings.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Small solid badge ("Đã sở hữu", "-32%").
 class StoreBadge extends StatelessWidget {
@@ -103,8 +104,8 @@ class WishlistHeartButton extends StatelessWidget {
       button: true,
       toggled: active,
       label: active
-          ? StoreStrings.removeFromWishlist
-          : StoreStrings.addToWishlist,
+          ? context.l10n.storeRemoveFromWishlist
+          : context.l10n.storeAddToWishlist,
       excludeSemantics: true,
       child: SizedBox.square(
         dimension: 48,
@@ -434,7 +435,7 @@ class OfflineNotice extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              CommonStrings.offlineCached(formatTime(receivedAt)),
+              context.l10n.commonOfflineCached(formatTime(receivedAt)),
               style: theme.textTheme.bodySmall?.copyWith(color: warning),
             ),
           ),

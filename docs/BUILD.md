@@ -1,4 +1,9 @@
-# Build & phát hành ValVN
+# Build & phát hành VanHub
+
+Trạng thái kiểm chứng mới nhất: [CI local 02/10](FINAL_GAP_AUDIT_2026-10-02.md).
+APK/IPA mang tên ValVN trong pipeline để giữ tương thích artifact; thương hiệu
+sản phẩm là VanHub. Bản debug-signed/unsigned dùng kiểm tra, chưa là bản store.
+GitHub Actions hiện không khởi động vì billing; kiểm tra local không mở khóa GitHub.
 
 Tài liệu này hướng dẫn: build APK ở máy local, lấy APK/IPA từ GitHub Actions, cài IPA chưa ký
 lên iPhone (AltStore/Sideloadly), và cấu hình secret để CI ký release bằng key thật.
@@ -38,7 +43,8 @@ flutter build ios --release --no-codesign
 
 ## 2. Lấy APK/IPA từ GitHub Actions (không cần máy Mac)
 
-Hai workflow chạy tự động khi push lên nhánh `main`, khi tag dạng `v*` (ví dụ `v1.0.0`), hoặc bấm
+Hai workflow chạy tự động khi push lên `main` hoặc nhánh mặc định
+`claude/jolly-hawking-23o2j8`, khi tag dạng `v*` (ví dụ `v1.0.0`), hoặc bấm
 chạy tay (**Run workflow**). Riêng **Android APK** còn chạy trên mọi Pull Request, nhưng chỉ để
 kiểm tra `flutter analyze` + `flutter test` (không build APK) — **iOS IPA** không chạy trên PR vì
 cần runner macOS đắt hơn nhiều lần so với Linux:
@@ -63,8 +69,10 @@ git tag v1.0.0
 git push origin v1.0.0
 ```
 
-CI sẽ tự tạo **GitHub Release** kèm sẵn APK/IPA đính vào release đó — không cần vào tab Actions để
-tải Artifact, file nằm luôn ở tab **Releases** của repo.
+CI chỉ tạo **GitHub Release** khi gate ký bản phát hành đạt. Android yêu cầu
+release signer; iOS yêu cầu signed IPA thành công. iOS unsigned vẫn được lưu
+thành artifact kiểm tra, không được đưa vào tag release. Build number lấy base
+trong pubspec cộng run number để không hạ version code của bản review đã cài.
 
 ## 3. Cài IPA chưa ký lên iPhone (AltStore / Sideloadly)
 

@@ -7,7 +7,6 @@ import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/competitive/competitive.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/empty_view.dart';
 import '../../../../core/ui/error_view.dart';
@@ -24,6 +23,8 @@ import '../../profile_strings.dart';
 import '../../providers/profile_providers.dart';
 import 'match_card.dart';
 import 'profile_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// "Lịch sử đấu" (R8/R9, S40.6) as one sliver: title, queue chips, map
 /// filter and an infinitely scrolled list of [MatchCard]s (pages of 20).
@@ -77,8 +78,8 @@ class MatchHistorySliver extends ConsumerWidget {
         child: EmptyView(
           icon: Icons.sports_esports_outlined,
           message: filter.queue == null
-              ? ProfileStrings.noMatches
-              : ProfileStrings.noMatchesQueue,
+              ? context.l10n.profileNoMatches
+              : context.l10n.profileNoMatchesQueue,
         ),
       );
     } else {
@@ -156,7 +157,7 @@ class _Filters extends ConsumerWidget {
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final notifier = ref.read(matchFilterProvider(puuid).notifier);
     final map = filter.mapUrl == null ? null : db.mapByUrl(filter.mapUrl);
-    final mapName = map?.displayName ?? ProfileStrings.filterAll;
+    final mapName = map?.displayName ?? context.l10n.profileFilterAll;
     final accent = theme.colorScheme.primary;
     final thumb = map?.listViewIcon;
     return Column(
@@ -165,7 +166,7 @@ class _Filters extends ConsumerWidget {
         SegmentedTabs<String?>(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
           tabs: [
-            const SegmentedTab(value: null, label: ProfileStrings.filterAll),
+            SegmentedTab(value: null, label: context.l10n.profileFilterAll),
             for (final q in kProfileQueueFilters)
               SegmentedTab(value: q, label: db.queueShortName(q)),
           ],
@@ -209,7 +210,7 @@ class _Filters extends ConsumerWidget {
                   children: [
                     Flexible(
                       child: Text(
-                        ProfileStrings.mapFilter(mapName),
+                        context.l10n.profileMapFilter(mapName),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -420,9 +421,9 @@ class _NoMapMatches extends ConsumerWidget {
     if (counts.unknown > 0 || counts.visible > 0) {
       return const SizedBox.shrink();
     }
-    return const EmptyView(
+    return EmptyView(
       icon: Icons.map_outlined,
-      message: ProfileStrings.noMatchesMap,
+      message: context.l10n.profileNoMatchesMap,
       padding: EdgeInsets.fromLTRB(32, 16, 32, 8),
     );
   }
@@ -498,14 +499,14 @@ class _FooterState extends State<_Footer> {
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
         child: OutlinedButton(
           onPressed: widget.onLoadMore,
-          child: const Text(CommonStrings.loadMore),
+          child: Text(context.l10n.commonLoadMore),
         ),
       );
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       child: Text(
-        ProfileStrings.endOfHistory,
+        context.l10n.profileEndOfHistory,
         textAlign: TextAlign.center,
         style: theme.textTheme.labelSmall?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,

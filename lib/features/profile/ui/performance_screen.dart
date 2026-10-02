@@ -5,7 +5,6 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
@@ -13,6 +12,8 @@ import '../../../core/util/format.dart';
 import '../data/performance_view.dart';
 import '../profile_strings.dart';
 import 'widgets/profile_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Own-account analytics read the compact ledger; opening this page never
 /// requests match details or reconstructs unrecorded history.
@@ -48,7 +49,7 @@ class _PerformanceScreenState extends ConsumerState<PerformanceScreen> {
             queueId: _queue,
           );
     return SubPageScaffold(
-      title: ProfileStrings.performanceTitle,
+      title: context.l10n.profilePerformanceTitle,
       slivers: [
         SliverToBoxAdapter(
           child: Padding(
@@ -57,14 +58,14 @@ class _PerformanceScreenState extends ConsumerState<PerformanceScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (id == null)
-                  const Text(CommonStrings.errorNoAccount)
+                  Text(context.l10n.commonErrorNoAccount)
                 else if (view == null)
                   const Center(child: CircularProgressIndicator())
                 else ...[
                   Text(
                     view.oldest == null
-                        ? ProfileStrings.performanceEmpty
-                        : ProfileStrings.performanceSince(
+                        ? context.l10n.profilePerformanceEmpty
+                        : context.l10n.profilePerformanceSince(
                             formatDate(view.oldest!.toLocal()),
                           ),
                   ),
@@ -84,7 +85,7 @@ class _PerformanceScreenState extends ConsumerState<PerformanceScreen> {
                     spacing: 8,
                     children: [
                       ChoiceChip(
-                        label: const Text(ProfileStrings.filterAll),
+                        label: Text(context.l10n.profileFilterAll),
                         selected: _queue == null,
                         onSelected: (_) => setState(() => _queue = null),
                       ),
@@ -99,7 +100,7 @@ class _PerformanceScreenState extends ConsumerState<PerformanceScreen> {
                   const SizedBox(height: 12),
                   _Summary(stats: view.overall),
                   const SizedBox(height: 12),
-                  Text(ProfileStrings.performanceSample),
+                  Text(context.l10n.profilePerformanceSample),
                   Wrap(
                     spacing: 8,
                     children: [
@@ -115,27 +116,27 @@ class _PerformanceScreenState extends ConsumerState<PerformanceScreen> {
                   ),
                   const SizedBox(height: 12),
                   if (view.filteredOut)
-                    const Text(ProfileStrings.performanceNoMatches)
+                    Text(context.l10n.profilePerformanceNoMatches)
                   else if (_segment == PerfSegment.sides) ...[
                     Text(
-                      ProfileStrings.performanceSideCoverage(
+                      context.l10n.profilePerformanceSideCoverage(
                         view.roundsWithSide,
                         view.roundsTotal,
                       ),
                     ),
                     _Side(
-                      title: ProfileStrings.performanceAttack,
+                      title: context.l10n.profilePerformanceAttack,
                       stats: view.overall.attack,
                       qualifies: view.attackQualifies,
                     ),
                     _Side(
-                      title: ProfileStrings.performanceDefense,
+                      title: context.l10n.profilePerformanceDefense,
                       stats: view.overall.defense,
                       qualifies: view.defenseQualifies,
                     ),
                   ] else if (_segment == PerfSegment.trend) ...[
                     if (!view.hasTrend)
-                      const Text(ProfileStrings.performanceTrendEmpty),
+                      Text(context.l10n.profilePerformanceTrendEmpty),
                     for (final point in view.trend) ...[
                       Text(formatDate(point.start)),
                       _Summary(stats: point.aggregate),
@@ -150,10 +151,10 @@ class _PerformanceScreenState extends ConsumerState<PerformanceScreen> {
                       Text(switch (_segment) {
                         PerfSegment.agents =>
                           db.agent(group.key)?.displayName ??
-                              CommonStrings.unknownItem,
+                              context.l10n.commonUnknownItem,
                         PerfSegment.maps =>
                           db.mapByUrl(group.key)?.displayName ??
-                              CommonStrings.unknownItem,
+                              context.l10n.commonUnknownItem,
                         _ => db.queueName(group.key),
                       }, style: Theme.of(context).textTheme.titleMedium),
                       _Summary(stats: group.aggregate),
@@ -178,38 +179,39 @@ class _Summary extends StatelessWidget {
   Widget build(BuildContext context) {
     final rates = stats.hasWinRateSample;
     final roundRates = stats.hasRoundSample;
-    String number(double? value, bool allowed) =>
-        allowed && value != null ? formatNumber(value) : CommonStrings.dash;
+    String number(double? value, bool allowed) => allowed && value != null
+        ? formatNumber(value)
+        : context.l10n.commonDash;
     return ValCard(
       child: StatGrid(
         tiles: [
           StatTile(
-            label: ProfileStrings.performanceGames,
+            label: context.l10n.profilePerformanceGames,
             value: formatNumber(stats.games),
           ),
           StatTile(
-            label: ProfileStrings.winRate,
+            label: context.l10n.profileWinRate,
             value: rates && stats.winRate != null
                 ? formatPercent(stats.winRate!)
-                : CommonStrings.dash,
+                : context.l10n.commonDash,
           ),
           StatTile(
-            label: ProfileStrings.kd,
+            label: context.l10n.profileKd,
             value: number(stats.kd, roundRates),
           ),
           StatTile(
-            label: ProfileStrings.acs,
+            label: context.l10n.profileAcs,
             value: number(stats.acs, roundRates),
           ),
           StatTile(
-            label: ProfileStrings.adr,
+            label: context.l10n.profileAdr,
             value: number(stats.adr, stats.hasDamageSample),
           ),
           StatTile(
-            label: ProfileStrings.hs,
+            label: context.l10n.profileHs,
             value: stats.hasHitSample && stats.headshotRate != null
                 ? formatPercent(stats.headshotRate!)
-                : CommonStrings.dash,
+                : context.l10n.commonDash,
           ),
         ],
       ),
@@ -230,11 +232,11 @@ class _Side extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListTile(
     title: Text(title),
-    subtitle: Text(ProfileStrings.performanceRounds(stats.rounds)),
+    subtitle: Text(context.l10n.profilePerformanceRounds(stats.rounds)),
     trailing: Text(
       qualifies && stats.winRate != null
           ? formatPercent(stats.winRate!)
-          : CommonStrings.dash,
+          : context.l10n.commonDash,
     ),
   );
 }

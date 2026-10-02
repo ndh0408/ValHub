@@ -6,9 +6,10 @@ import '../../../../core/ui/empty_view.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
-import '../../store_strings.dart';
 import 'accessory_row.dart';
 import 'store_ui_bits.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S12 body: countdown row (+ local reset time), then the accessory rows in
 /// one card.
@@ -26,9 +27,9 @@ class AccessorySection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final store = accessoryStore;
     if (store == null || store.offers.isEmpty) {
-      return const EmptyView(
-        title: StoreStrings.accessoryEmptyTitle,
-        message: StoreStrings.accessoryEmpty,
+      return EmptyView(
+        title: context.l10n.storeAccessoryEmptyTitle,
+        message: context.l10n.storeAccessoryEmpty,
         icon: Icons.style_outlined,
       );
     }
@@ -38,10 +39,10 @@ class AccessorySection extends ConsumerWidget {
       children: [
         CountdownRow(
           expiresAt: expiresAt,
-          builder: StoreStrings.accessoryRefreshIn,
+          builder: context.l10n.storeAccessoryRefreshIn,
           note: expiresAt == null
               ? null
-              : StoreStrings.accessoryResetAt(
+              : context.l10n.storeAccessoryResetAt(
                   formatWallTime(expiresAt, ref.watch(clockProvider).now()),
                 ),
           period: const Duration(days: 7),

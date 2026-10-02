@@ -3,8 +3,9 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/util/format.dart';
-import '../../community_strings.dart';
 import '../../data/community_models.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Star color (gold, darkened on light backgrounds).
 Color starColor(BuildContext context) => valColorsOf(context).gold;
@@ -21,7 +22,7 @@ class StarRow extends StatelessWidget {
     final gold = starColor(context);
     final empty = valColorsOf(context).track;
     return Semantics(
-      label: CommunityStrings.starsSemantics(formatRating(value)),
+      label: context.l10n.communityStarsSemantics(formatRating(value)),
       excludeSemantics: true,
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -58,7 +59,7 @@ class RatingBadge extends StatelessWidget {
     final avg = rating.average;
     if (avg == null || rating.count == 0) {
       return Text(
-        CommunityStrings.noRatings,
+        context.l10n.communityNoRatings,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: base?.copyWith(
@@ -76,7 +77,7 @@ class RatingBadge extends StatelessWidget {
         const SizedBox(width: 4),
         Flexible(
           child: Text(
-            CommunityStrings.ratingCount(formatNumber(rating.count)),
+            context.l10n.communityRatingCount(formatNumber(rating.count)),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: base?.copyWith(
@@ -115,7 +116,7 @@ class StarRatingInput extends StatelessWidget {
           Semantics(
             button: true,
             selected: value == i,
-            label: CommunityStrings.starLabel(i),
+            label: context.l10n.communityStarLabel(i),
             excludeSemantics: true,
             child: InkResponse(
               key: ValueKey('star-$i'),

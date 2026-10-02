@@ -10,7 +10,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/net_image.dart';
@@ -25,9 +24,10 @@ import '../../../live_game/providers/live_game_providers.dart';
 import '../../../live_game/ui/live_widgets.dart';
 import '../../data/home_card.dart';
 import '../../data/home_live.dart';
-import '../../home_strings.dart';
 import '../../providers/home_card_providers.dart';
 import '../home_card_frame.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 class LiveHomeCard extends ConsumerWidget {
   const LiveHomeCard({super.key, required this.puuid});
@@ -42,9 +42,9 @@ class LiveHomeCard extends ConsumerWidget {
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final surface = theme.colorScheme.surfaceContainer;
     final phaseText = switch (snap.phase) {
-      LivePhase.queueing => LiveGameStrings.inQueue,
-      LivePhase.pregame => LiveGameStrings.agentSelect,
-      _ => LiveGameStrings.inMatch,
+      LivePhase.queueing => context.l10n.liveGameInQueue,
+      LivePhase.pregame => context.l10n.liveGameAgentSelect,
+      _ => context.l10n.liveGameInMatch,
     };
     final summary = LiveGameStrings.joinParts([
       phaseText,
@@ -162,16 +162,16 @@ class _QueueBody extends ConsumerWidget {
               child: Semantics(
                 liveRegion: true,
                 label: waited == null
-                    ? LiveGameStrings.inQueue
-                    : HomeStrings.liveQueueSemantics(
+                    ? context.l10n.liveGameInQueue
+                    : context.l10n.homeLiveQueueSemantics(
                         formatDurationCoarse(waited),
                       ),
                 child: ExcludeSemantics(
                   child: entry == null
-                      ? Text(LiveGameStrings.inQueue, style: style)
+                      ? Text(context.l10n.liveGameInQueue, style: style)
                       : TickingBuilder(
                           builder: (context, now) => Text(
-                            LiveGameStrings.inQueueFor(
+                            context.l10n.liveGameInQueueFor(
                               formatMinutesSeconds(
                                 now.toUtc().difference(entry.toUtc()),
                               ),
@@ -246,8 +246,8 @@ class _PregameBody extends StatelessWidget {
                     if (agentName.isNotEmpty)
                       Text(
                         snap.myAgentLocked
-                            ? LiveGameStrings.youLocked(agentName)
-                            : LiveGameStrings.youHover(agentName),
+                            ? context.l10n.liveGameYouLocked(agentName)
+                            : context.l10n.liveGameYouHover(agentName),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodyMedium?.copyWith(
@@ -260,7 +260,7 @@ class _PregameBody extends StatelessWidget {
                           expiresAt: ends,
                           format: (d) =>
                               formatMinutesSeconds(d, padMinutes: false),
-                          builder: LiveGameStrings.timeLeft,
+                          builder: context.l10n.liveGameTimeLeft,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: valColorsOf(context).warning,
                             fontFeatures: const [FontFeature.tabularFigures()],
@@ -304,20 +304,20 @@ class _InGameBody extends ConsumerWidget {
         if (score != null) ...[
           const SizedBox(height: 10),
           Semantics(
-            label: HomeStrings.liveScoreSemantics(score.ally, score.enemy),
+            label: context.l10n.homeLiveScoreSemantics(score.ally, score.enemy),
             excludeSemantics: true,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 _ScoreColumn(
                   value: score.ally,
-                  label: HomeStrings.liveAllyLabel,
+                  label: context.l10n.homeLiveAllyLabel,
                   color: valColorsOf(context).win,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
-                    CommonStrings.dash,
+                    context.l10n.commonDash,
                     style: ValText.display(
                       26,
                       color: theme.colorScheme.onSurfaceVariant,
@@ -326,7 +326,7 @@ class _InGameBody extends ConsumerWidget {
                 ),
                 _ScoreColumn(
                   value: score.enemy,
-                  label: HomeStrings.liveEnemyLabel,
+                  label: context.l10n.homeLiveEnemyLabel,
                   color: valColorsOf(context).loss,
                 ),
               ],

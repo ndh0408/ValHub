@@ -5,7 +5,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_db.dart';
 import '../../../../core/domain/economy/economy.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/content_tier_badge.dart';
@@ -15,6 +14,8 @@ import '../../../skin_detail/skin_detail_sheet.dart';
 import '../../data/skin_query.dart';
 import '../../wishlist_strings.dart';
 import 'skin_bits.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// S3B grid tile: edition, render, name, price and the wishlist heart.
 /// Tap → S15 (catalog mode). Only this tile rebuilds when its heart flips.
@@ -58,7 +59,7 @@ class CatalogSkinTile extends ConsumerWidget {
     final priceText =
         quote.caption ??
         (quote.vp == null
-            ? CommonStrings.dash
+            ? context.l10n.commonDash
             : (quote.isEstimate
                   ? formatEstimatedVp(quote.vp!)
                   : formatVp(quote.vp!)));
@@ -92,12 +93,12 @@ class CatalogSkinTile extends ConsumerWidget {
                   const Spacer(),
                   if (owned)
                     Tooltip(
-                      message: WishlistStrings.owned,
+                      message: context.l10n.wishlistOwned,
                       child: Icon(
                         Icons.check_circle,
                         size: 18,
                         color: colors.win,
-                        semanticLabel: WishlistStrings.owned,
+                        semanticLabel: context.l10n.wishlistOwned,
                       ),
                     ),
                   if (puuid != null)
@@ -167,8 +168,8 @@ class _HeartButton extends StatelessWidget {
     return IconButton(
       onPressed: onTap,
       tooltip: active
-          ? WishlistStrings.removeFromWishlist
-          : WishlistStrings.addToWishlist,
+          ? context.l10n.wishlistRemoveFromWishlist
+          : context.l10n.wishlistAddToWishlist,
       isSelected: active,
       visualDensity: VisualDensity.compact,
       padding: EdgeInsets.zero,

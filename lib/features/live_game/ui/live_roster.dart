@@ -20,6 +20,8 @@ import '../player_loadout_sheet.dart';
 import '../providers/live_game_providers.dart';
 import 'live_widgets.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// One roster tab (G5): your team, the enemy team or everyone (FFA).
 class LiveRosterList extends ConsumerWidget {
   const LiveRosterList({
@@ -132,7 +134,7 @@ class LivePlayerRow extends ConsumerWidget {
       isPartyMember: isPartyMember,
     );
     final name = hidden
-        ? LiveGameStrings.anonymous
+        ? context.l10n.liveGameAnonymous
         : playerDisplayName(
             ref.watch(playerNameProvider(player.subject)).value,
             fallback: agent?.displayName,
@@ -143,9 +145,9 @@ class LivePlayerRow extends ConsumerWidget {
       isSelf: isSelf,
       isPartyMember: isPartyMember,
     );
-    final agentLabel = agent?.displayName ?? LiveGameStrings.noAgentYet;
+    final agentLabel = agent?.displayName ?? context.l10n.liveGameNoAgentYet;
     final subtitle = LiveGameStrings.joinParts([
-      if (level != null) LiveGameStrings.level(level),
+      if (level != null) context.l10n.liveGameLevel(level),
       agentLabel,
     ]);
     final locked = match.isPregame && player.isLocked;
@@ -220,7 +222,7 @@ class LivePlayerRow extends ConsumerWidget {
                           if (isSelf) ...[
                             const SizedBox(width: 8),
                             ValBadge(
-                              LiveGameStrings.you,
+                              context.l10n.liveGameYou,
                               color: theme.colorScheme.primary,
                             ),
                           ],
@@ -243,13 +245,13 @@ class LivePlayerRow extends ConsumerWidget {
                           children: [
                             if (group != null)
                               LiveTag(
-                                LiveGameStrings.party,
+                                context.l10n.liveGameParty,
                                 color: partyColor(group),
                                 icon: Icons.group,
                               ),
                             if (locked)
                               LiveTag(
-                                LiveGameStrings.lockedTag,
+                                context.l10n.liveGameLockedTag,
                                 color: colors.win,
                                 icon: Icons.lock,
                               ),
@@ -264,7 +266,7 @@ class LivePlayerRow extends ConsumerWidget {
                 Icon(
                   Icons.chevron_right,
                   color: theme.colorScheme.onSurfaceVariant,
-                  semanticLabel: LiveGameStrings.openLoadoutOf(name),
+                  semanticLabel: context.l10n.liveGameOpenLoadoutOf(name),
                 ),
               ],
             ),
@@ -339,7 +341,7 @@ class _RankColumn extends ConsumerWidget {
     if (value == null) {
       child = summary.hasError && !summary.isLoading
           ? Text(
-              LiveGameStrings.rankUnavailable,
+              context.l10n.liveGameRankUnavailable,
               maxLines: 2,
               textAlign: TextAlign.center,
               style: theme.textTheme.labelSmall?.copyWith(color: muted),
@@ -375,7 +377,7 @@ class _RankColumn extends ConsumerWidget {
           ),
           if (showPeak && peak != null && !peak.isUnranked)
             Text(
-              LiveGameStrings.peak(peak.tierName),
+              context.l10n.liveGamePeak(peak.tierName),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,

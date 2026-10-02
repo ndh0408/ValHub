@@ -14,8 +14,9 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/skeleton.dart';
 import '../../../../core/ui/sub_page.dart';
 import '../../../../core/ui/val_widgets.dart';
-import '../../collection_strings.dart';
 import 'loadout_actions.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Picker for `Identity.PreferredLevelBorderID`: "Tự động theo cấp" or a
 /// border unlocked at the account's level (P-9), in the shared sheet chrome.
@@ -24,10 +25,10 @@ Future<void> showLevelBorderSheet(
   required Account account,
 }) => showValSheet<void>(
   context,
-  title: CollectionStrings.levelBorderTitle,
+  title: context.l10n.collectionLevelBorderTitle,
   subtitle: account.level == null
       ? null
-      : CollectionStrings.levelBorderSubtitle(account.level!),
+      : context.l10n.collectionLevelBorderSubtitle(account.level!),
   scrollable: true,
   initialSize: 0.7,
   minSize: 0.45,
@@ -81,7 +82,7 @@ class LevelBorderSheet extends ConsumerWidget {
               children: [
                 _BorderTile(
                   border: db.levelBorderFor(level),
-                  title: CollectionStrings.levelBorderAuto,
+                  title: context.l10n.collectionLevelBorderAuto,
                   selected: current?.isAutoLevelBorder ?? false,
                   onTap: () => unawaited(pick(null)),
                 ),
@@ -89,7 +90,7 @@ class LevelBorderSheet extends ConsumerWidget {
                   _BorderTile(
                     border: b,
                     title: b.displayName,
-                    subtitle: CollectionStrings.levelBorderFrom(
+                    subtitle: context.l10n.collectionLevelBorderFrom(
                       b.startingLevel,
                     ),
                     selected:

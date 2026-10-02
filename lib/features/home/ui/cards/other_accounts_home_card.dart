@@ -16,7 +16,6 @@ import '../../../../core/accounts/account_status.dart';
 import '../../../../core/accounts/account_widgets.dart';
 import '../../../../core/auth/auth_routes.dart';
 import '../../../../core/domain/economy/economy.dart';
-import '../../../../core/l10n/account_strings.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/l10n/account_labels.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -25,7 +24,6 @@ import '../../../store/store_routes.dart';
 import '../../../store/ui/store_screen.dart' show StoreSegment;
 import '../../data/home_accounts.dart';
 import '../../data/home_card.dart';
-import '../../home_strings.dart';
 import '../../providers/home_card_providers.dart';
 import '../../providers/home_refresh.dart';
 import '../home_card_frame.dart';
@@ -52,7 +50,7 @@ class OtherAccountsHomeCard extends ConsumerWidget {
       },
       child: HomeCardFrame(
         card: HomeCardId.otherAccounts,
-        title: HomeStrings.otherAccountsTitle(count),
+        title: context.l10n.homeOtherAccountsTitle(count),
         childPadding: const EdgeInsetsDirectional.fromSTEB(4, 0, 4, 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -68,7 +66,7 @@ class OtherAccountsHomeCard extends ConsumerWidget {
                         unawaited(showAccountSwitcherSheet(context)),
                     icon: const Icon(Icons.chevron_right),
                     iconAlignment: IconAlignment.end,
-                    label: Text(HomeStrings.otherMore(data.more)),
+                    label: Text(context.l10n.homeOtherMore(data.more)),
                   ),
                 ),
               ),
@@ -99,13 +97,13 @@ class _AccountRow extends ConsumerWidget {
     final account = row.account;
     final activity = row.activity;
     final meta = [
-      if (account.level != null) AccountStrings.levelShort(account.level!),
+      if (account.level != null) context.l10n.accountLevelShort(account.level!),
       context.l10n.riotRegionName(account.region),
-    ].join(HomeStrings.dot);
+    ].join(context.l10n.homeDot);
     final needsLogin = account.needsLogin;
     final subtitle = needsLogin
         ? Text(
-            AccountStrings.needsLogin,
+            context.l10n.accountNeedsLogin,
             style: theme.textTheme.bodySmall?.copyWith(
               color: legibleAccent(context, valColorsOf(context).warning),
             ),
@@ -122,7 +120,7 @@ class _AccountRow extends ConsumerWidget {
                     fontWeight: activity.isOnline ? FontWeight.w700 : null,
                   ),
                 ),
-                TextSpan(text: '${HomeStrings.dot}$meta'),
+                TextSpan(text: '${context.l10n.homeDot}$meta'),
               ],
             ),
             maxLines: 2,
@@ -135,7 +133,7 @@ class _AccountRow extends ConsumerWidget {
         Expanded(
           child: Semantics(
             button: true,
-            label: AccountStrings.switchTo(account.riotId),
+            label: context.l10n.accountSwitchTo(account.riotId),
             excludeSemantics: true,
             child: InkWell(
               borderRadius: BorderRadius.circular(ValRadius.small),
@@ -227,7 +225,7 @@ class _HitBadge extends StatelessWidget {
     final fg = legibleAccent(context, red, min: 4.5);
     return Semantics(
       button: true,
-      label: HomeStrings.otherWishlistHit,
+      label: context.l10n.homeOtherWishlistHit,
       excludeSemantics: true,
       child: InkWell(
         onTap: onTap,
@@ -250,7 +248,7 @@ class _HitBadge extends StatelessWidget {
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 88),
                     child: Text(
-                      HomeStrings.otherWishlistHit,
+                      context.l10n.homeOtherWishlistHit,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.labelSmall?.copyWith(

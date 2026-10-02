@@ -19,6 +19,8 @@ import '../../social_strings.dart';
 import 'friend_tile.dart';
 import 'social_widgets.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Countdown ring in the app bar: completes every [period], then calls
 /// [onCycle] and starts over (VF S4 "a countdown ring shows the next
 /// refresh"). Ticker-driven, so it pauses while the app is backgrounded.
@@ -224,8 +226,8 @@ String queueBlockReason(QueueChoice c, Party party) => switch (c.block) {
 Future<String?> showQueuePickerSheet(BuildContext context, Party party) =>
     showValSheet<String>(
       context,
-      title: SocialStrings.pickQueueTitle,
-      subtitle: SocialStrings.pickQueueSubtitle(party.size),
+      title: context.l10n.socialPickQueueTitle,
+      subtitle: context.l10n.socialPickQueueSubtitle(party.size),
       builder: (context, _) => _QueuePickerBody(party: party),
     );
 
@@ -254,7 +256,7 @@ class _QueuePickerBody extends ConsumerWidget {
                   final String? subtitle = !c.eligible
                       ? SocialStrings.sentence(queueBlockReason(c, party))
                       : max != null
-                      ? SocialStrings.queueMaxParty(max)
+                      ? context.l10n.socialQueueMaxParty(max)
                       : null;
                   final enabled = !current && c.selectable;
                   return GroupedRow(
@@ -278,7 +280,7 @@ class _QueuePickerBody extends ConsumerWidget {
                     ),
                     trailing: current
                         ? ValBadge(
-                            SocialStrings.currentQueue,
+                            context.l10n.socialCurrentQueue,
                             color: theme.colorScheme.primary,
                             soft: true,
                           )
@@ -384,7 +386,7 @@ class PartyMemberTile extends ConsumerWidget {
                   children: [
                     if (member.isOwner) ...[
                       Tooltip(
-                        message: SocialStrings.leader,
+                        message: context.l10n.socialLeader,
                         child: Icon(
                           Icons.workspace_premium,
                           size: 18,
@@ -396,13 +398,13 @@ class PartyMemberTile extends ConsumerWidget {
                     Flexible(
                       child: RiotIdText(
                         name,
-                        fallback: CompetitiveStrings.unknownPlayer,
+                        fallback: context.l10n.competitiveUnknownPlayer,
                       ),
                     ),
                     if (isSelf) ...[
                       const SizedBox(width: 6),
                       ValBadge(
-                        SocialStrings.you,
+                        context.l10n.socialYou,
                         color: theme.colorScheme.primary,
                         soft: true,
                         uppercase: true,
@@ -426,10 +428,10 @@ class PartyMemberTile extends ConsumerWidget {
                       ),
                     ),
                     if (level != null)
-                      Text(SocialStrings.level(level), style: small),
+                      Text(context.l10n.socialLevel(level), style: small),
                     if (member.isOwner)
                       Text(
-                        SocialStrings.leader,
+                        context.l10n.socialLeader,
                         style: small?.copyWith(
                           color: colors.gold,
                           fontWeight: FontWeight.w600,
@@ -446,7 +448,7 @@ class PartyMemberTile extends ConsumerWidget {
           _ReadyIcon(ready: ready),
           if (onRemove != null)
             IconButton(
-              tooltip: SocialStrings.removeMember,
+              tooltip: context.l10n.socialRemoveMember,
               icon: const Icon(Icons.person_remove_outlined),
               onPressed: () => unawaited(onRemove!()),
             )
@@ -476,7 +478,7 @@ class PartyMemberTile extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  SocialStrings.removeMember,
+                  context.l10n.socialRemoveMember,
                   style: theme.textTheme.labelLarge?.copyWith(
                     color: theme.colorScheme.onError,
                   ),
@@ -509,14 +511,14 @@ class _PingLabel extends StatelessWidget {
         : colors.loss;
     final c = legibleAccent(context, color, min: 4.5);
     return Tooltip(
-      message: SocialStrings.pingTooltip,
+      message: context.l10n.socialPingTooltip,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.network_check_rounded, size: 14, color: c),
           const SizedBox(width: 3),
           Text(
-            SocialStrings.ping(ms),
+            context.l10n.socialPing(ms),
             style: theme.textTheme.bodySmall?.copyWith(
               color: c,
               fontWeight: FontWeight.w600,
@@ -540,12 +542,14 @@ class _ReadyIcon extends StatelessWidget {
     final colors = valColorsOf(context);
     final c = ready ? colors.win : theme.colorScheme.onSurfaceVariant;
     return Tooltip(
-      message: ready ? SocialStrings.ready : SocialStrings.notReady,
+      message: ready ? context.l10n.socialReady : context.l10n.socialNotReady,
       child: Icon(
         ready ? Icons.check_circle : Icons.radio_button_unchecked,
         color: c,
         size: 22,
-        semanticLabel: ready ? SocialStrings.ready : SocialStrings.notReady,
+        semanticLabel: ready
+            ? context.l10n.socialReady
+            : context.l10n.socialNotReady,
       ),
     );
   }
@@ -581,12 +585,13 @@ class InviteStrip extends StatelessWidget {
         itemBuilder: (context, i) {
           final f = friends[i];
           final ticked = isTicked(f);
-          final label = f.name?.gameName ?? CompetitiveStrings.unknownPlayer;
+          final label =
+              f.name?.gameName ?? context.l10n.competitiveUnknownPlayer;
           return Semantics(
             button: true,
             label: ticked
-                ? SocialStrings.invitedLabel(label)
-                : SocialStrings.inviteLabel(label),
+                ? context.l10n.socialInvitedLabel(label)
+                : context.l10n.socialInviteLabel(label),
             excludeSemantics: true,
             child: InkWell(
               borderRadius: BorderRadius.circular(ValRadius.small),

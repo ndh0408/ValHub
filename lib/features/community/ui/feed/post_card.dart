@@ -3,7 +3,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
-import '../../community_strings.dart';
 import '../../data/community_models.dart';
 import '../widgets/community_widgets.dart';
 import '../widgets/translatable_text.dart';
@@ -11,6 +10,8 @@ import 'media_grid.dart';
 import 'offers_grid.dart';
 import 'post_share_button.dart';
 import 'report_sheet.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// A feed post: author row, text, store / Night Market skins, images and
 /// the like / comment bar. [onOpen] opens the detail (null inside it).
@@ -40,8 +41,8 @@ class PostCard extends StatelessWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
     final payload = post.payload;
     final kindBadge = switch (post.kind) {
-      PostKind.store => CommunityStrings.kindStore,
-      PostKind.nightmarket => CommunityStrings.kindNightMarket,
+      PostKind.store => context.l10n.communityKindStore,
+      PostKind.nightmarket => context.l10n.communityKindNightMarket,
       PostKind.text => null,
     };
     return ValCard(
@@ -59,7 +60,7 @@ class PostCard extends StatelessWidget {
               trailing: ContentMenuButton(
                 author: post.author,
                 isMine: isMine,
-                deleteLabel: CommunityStrings.deletePost,
+                deleteLabel: context.l10n.communityDeletePost,
                 onSelected: onAction,
               ),
             ),
@@ -115,7 +116,9 @@ class PostCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Semantics(
                   button: onOpen != null,
-                  label: CommunityStrings.comments(formatNumber(post.comments)),
+                  label: context.l10n.communityComments(
+                    formatNumber(post.comments),
+                  ),
                   excludeSemantics: true,
                   child: InkWell(
                     onTap: onOpen,
