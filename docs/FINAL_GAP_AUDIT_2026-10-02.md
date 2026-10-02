@@ -196,3 +196,17 @@ No unresolved failures in the rerun suites/public smoke scope. Initial Mac
 store-write and Settings harness failures were fixed and rerun. This does not
 prove absence of regressions outside the exercised scope or resolve the remaining
 POSIX cross-isolate gate.
+
+## Publication verification
+
+Implementation checkpoint [`1fd5825`](https://github.com/ndh0408/ValVN/commit/1fd5825c4d92ea8baa1f84a7f7b3e57425994f54)
+was pushed to both `ndh0408/codex-complete` and the default branch
+`claude/jolly-hawking-23o2j8`; `git ls-remote` confirmed matching heads.
+Default-branch push actually created [i18n run 36971013057](https://github.com/ndh0408/ValVN/actions/runs/36971013057),
+[Android run 36971013080](https://github.com/ndh0408/ValVN/actions/runs/36971013080)
+and [iOS run 36971013008](https://github.com/ndh0408/ValVN/actions/runs/36971013008).
+All six jobs had zero executed steps. Their failure annotations say the account
+is locked due to a billing issue; iOS also has an informational arm64 capacity
+notice. Do not label these as a compile/test failure or claim hosted CI passed.
+The main workspace retains the owner's four untracked design images; private
+captures, logs and APK/IPA binaries were not committed.
