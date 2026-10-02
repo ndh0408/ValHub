@@ -2,7 +2,15 @@
 
 Yêu cầu của chủ dự án: hoàn thiện toàn bộ yêu cầu để Claude kiểm tra sau khi hết giới hạn. Nhánh tích hợp: `ndh0408/codex-complete`; worktree `C:/Users/Admin/orca/workspaces/ValVN/codex-complete`. Đây là tiến độ đang triển khai, **chưa phải nghiệm thu toàn bộ**.
 
-Checkpoint mới nhất: [Final gap audit / CI local 02/10](FINAL_GAP_AUDIT_2026-10-02.md).
+Checkpoint mới nhất: [Runtime locale / CI local 02/10](I18N_RUNTIME_2026-10-02.md).
+Root app đã đọc provider locale/format và lưu snapshot theo thứ tự, giữ riêng
+lựa chọn tên vật phẩm tiếng Anh. Windows đạt **4.201 tests** ở cả hai lượt,
+Mac đạt **25 test liên quan** và build iOS **4006** không ký; analyzer 0 issues
+ở cả hai máy. APK **4006** đã đạt 10 public-flow cases và cài trên emulator có
+cửa sổ; rà chỉ đọc hai tài khoản đạt. W5 vẫn partial; chỉ vi được phát hành,
+tác vụ nền còn chuỗi cũ.
+
+Checkpoint trước: [Final gap audit / CI local 02/10](FINAL_GAP_AUDIT_2026-10-02.md).
 **4.197 Flutter tests đạt trên Windows và Mac**, Windows device locale `en` cũng
 đạt 4.197 với fallback vi; analyzer 0 issues. Backend 867 tests, Docker native
 backup/restore smoke và 10 public-flow cases APK **4005** đạt. Bản 4005 đã cài trên
@@ -25,10 +33,10 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 | Yêu cầu | Trạng thái hiện tại | Việc phải làm tiếp |
 |---|---|---|
 | Đọc việc Claude giao và làm hết yêu cầu | Đã tích hợp bốn WP, giữ report và đối chiếu đủ 37 mục | Đóng các mục I18N/COUNTRIES/DEVICES/Community còn mở phía dưới; chưa nghiệm thu tổng thể |
-| Mở emulator cho chủ dự án xem | Cửa sổ Pixel 5580 đã cài APK code 4005; lượt 02/10 đọc hai tài khoản hiện có và đủ metadata | Không suy ra ba tài khoản của checkpoint trước còn trong trạng thái emulator mới; tiếp tục rà các luồng còn lại, QA riêng 5582 |
+| Mở emulator cho chủ dự án xem | Cửa sổ Pixel 5580 đã cài APK code 4006; lượt 02/10 đọc hai tài khoản hiện có và đủ metadata | Không suy ra ba tài khoản của checkpoint trước còn trong trạng thái emulator mới; tiếp tục rà các luồng còn lại, QA riêng 5582 |
 | Commit, push và gộp để người khác thấy code mới nhất | UI/kết nối, Settings `a4afe4e`, hook `9850063`, tài nguyên dùng chung `04e6288` đã push integration và fast-forward/push nhánh mặc định; Cộng đồng tiếp sau | Tiếp tục commit các phase còn thiếu; đối chiếu `git log -1`, không coi merge là nghiệm thu toàn dự án |
 | Ẩn bảng nguồn dữ liệu | Đã bỏ card Giới thiệu và có test | Đã kiểm tra About bản cài trong lượt read-only; giữ pháp lý/giấy phép cần thiết |
-| Cộng đồng rõ ràng, bộ lọc không bị cắt | Tab gọn và một scope selector; banner ngắn, lời trống theo scope/ngôn ngữ/consent, FAB contrast đạt; test 360dp/chữ 200% | Bản code 4005 đã rà read-only; tiếp tục các màn còn lại |
+| Cộng đồng rõ ràng, bộ lọc không bị cắt | Tab gọn và một scope selector; banner ngắn, lời trống theo scope/ngôn ngữ/consent, FAB contrast đạt; test 360dp/chữ 200% | Bản code 4006 đã rà read-only; tiếp tục các màn còn lại |
 | Đăng bài, thích, bình luận, share | Luồng đăng/thích/bình luận/khoe shop đã có; thêm share từng bài ở feed/detail, native Android chooser + Back đạt | Link hiện mở bằng VanHub đã cài; HTTPS/trang web/đa thiết bị và server ghi thật chưa nghiệm thu |
 | Tài khoản chữ dễ đọc, đủ tên/vùng/rank | Đã chia dòng, wrap Riot ID/vùng và đưa nút phụ xuống dưới; lượt 02/10 Settings/switcher đọc đủ metadata hai tài khoản hiện có | Còn kiểm tra chủ động chuyển/reauth; ba tài khoản là bằng chứng checkpoint trước |
 | Trang bị cập nhật game | Đã xác nhận giá trị sau lưu và thêm refresh identity ở sảnh | Đối chiếu trực tiếp VALORANT PC đang mở; chưa có bằng chứng live |

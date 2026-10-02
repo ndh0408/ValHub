@@ -12,6 +12,7 @@ import 'package:flutter/widgets.dart'
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../storage/prefs.dart';
+import '../settings/app_settings.dart';
 import '../util/json.dart';
 import 'app_locale.dart';
 import 'locale_boot.dart';
@@ -217,5 +218,10 @@ final effectiveLocaleProvider = Provider<EffectiveLocale>(
     app: ref.watch(appLocaleProvider),
     formatTag: ref.watch(formatTagProvider),
     h24: ref.watch(use24hProvider),
+    // Keep the existing item-name choice independent of UI language. W5's
+    // eventual contentLocale picker must migrate this preference explicitly.
+    content: ref.watch(
+      appSettingsProvider.select((settings) => settings.itemLanguage.apiCode),
+    ),
   ),
 );

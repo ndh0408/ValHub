@@ -1,6 +1,7 @@
 # Build & phát hành VanHub
 
-Trạng thái kiểm chứng mới nhất: [CI local 02/10](FINAL_GAP_AUDIT_2026-10-02.md).
+Trạng thái kiểm chứng mới nhất: [Runtime locale / CI local 02/10](I18N_RUNTIME_2026-10-02.md),
+tiếp sau [Final gap audit](FINAL_GAP_AUDIT_2026-10-02.md).
 APK/IPA mang tên ValVN trong pipeline để giữ tương thích artifact; thương hiệu
 sản phẩm là VanHub. Bản debug-signed/unsigned dùng kiểm tra, chưa là bản store.
 GitHub Actions hiện không khởi động vì billing; kiểm tra local không mở khóa GitHub.

@@ -1,6 +1,13 @@
 # Tiến độ VanHub (điểm dừng để làm tiếp)
 
-Checkpoint 02/10: [Final gap audit và CI local](FINAL_GAP_AUDIT_2026-10-02.md).
+Checkpoint mới 02/10: [Runtime locale và CI local](I18N_RUNTIME_2026-10-02.md).
+Root đã nối locale/format provider và ghi snapshot theo thứ tự, giữ riêng tên
+vật phẩm tiếng Anh. Windows **4.201 tests** đạt ở cả hai lượt; Mac **25 test liên
+quan**, analyzer và build iOS **4006** không ký đạt. APK **4006** đạt 10 public
+flows và đã cài trên emulator có cửa sổ. W5 vẫn partial, chỉ vi ships;
+không coi snapshot mới là đã dịch thông báo nền.
+
+Checkpoint trước 02/10: [Final gap audit và CI local](FINAL_GAP_AUDIT_2026-10-02.md).
 4.197 Flutter tests đạt trên Windows và Mac; lượt device locale `en` trên Windows
 cũng đạt 4.197 (fallback vi), analyzer 0 issues. Backend 867 tests đạt; Docker
 native backup/restore smoke đạt. APK 4005 có 10 public-flow cases đạt và đã cài

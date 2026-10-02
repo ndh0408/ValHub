@@ -1,9 +1,12 @@
 # ValVN architecture and internal API
 
-Current verification/cutover status: [final gap audit 02/10](FINAL_GAP_AUDIT_2026-10-02.md).
+Current verification/cutover status: [runtime locale 02/10](I18N_RUNTIME_2026-10-02.md),
+following the [final gap audit](FINAL_GAP_AUDIT_2026-10-02.md).
 ValVN remains the compatibility namespace; VanHub is the product brand. UI
-references now mostly use existing generated l10n resources, but root locale
-cutover and domain/structural migration are unfinished. Store-history instances
+references now mostly use existing generated l10n resources. The root watches
+the existing locale/format providers and serializes effective-locale snapshots,
+preserving the item-name setting. Only vi ships; remaining switch effects,
+background localization and domain/structural migration are unfinished. Store-history instances
 share a canonical-path queue within one isolate; POSIX OS locks alone do not
 verify same-process, different-isolate concurrency. Preserve that open gate.
 
@@ -25,8 +28,8 @@ lib/
 ├─ main.dart                 bootstrap: locale, tz, prefs, keychain wipe after reinstall,
 │                            remote config, session log, notifications, workmanager, ProviderScope(retry: riotRetry)
 ├─ app/
-│  ├─ app.dart               ValVnApp: MaterialApp.router (material_ui), themes, vi locale,
-│  │                         notification deep links, resume hooks
+│  ├─ app.dart               ValVnApp: MaterialApp.router (material_ui), themes, shipped locale,
+│  │                         AppFormatsScope, ordered locale snapshots, notification links, resume hooks
 │  ├─ router.dart            routerProvider, appRedirect(), buildAppRoutes(), createAppRouter()
 │  ├─ shell.dart             AppTab (5 tabs), AppShell: FloatingNavBar + LiveGameOverlayHost + StoreResetReminderHost
 │  └─ deep_links.dart        parseDeepLink(), planLinkNavigation(), openAppLink() for notification payloads

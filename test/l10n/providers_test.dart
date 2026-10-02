@@ -275,8 +275,9 @@ void main() {
       expect(EffectiveLocale.read(prefs)?.app, AppLocale.vi);
     });
 
-    test('effectiveLocaleProvider composes the runtime state', () {
-      final c = make();
+    test('effectiveLocaleProvider composes the runtime state', () async {
+      final prefs = await createTestPrefs();
+      final c = make([prefsProvider.overrideWithValue(prefs)]);
       expect(
         c.read(effectiveLocaleProvider),
         const EffectiveLocale(app: AppLocale.vi, formatTag: 'vi', h24: false),

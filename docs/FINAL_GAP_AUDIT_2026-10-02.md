@@ -1,5 +1,8 @@
 # VanHub — final gap audit, implementation and verification
 
+Later implementation checkpoint: [runtime locale wiring / build 4006](I18N_RUNTIME_2026-10-02.md).
+The counts and device results below remain evidence for this earlier checkpoint.
+
 Baseline: `8094ec3`, default branch `claude/jolly-hawking-23o2j8`.
 This is a live gap map, **not product acceptance**. Existing checkpoint evidence is
 identified separately from checks rerun in this audit. An inventory of all 1,150

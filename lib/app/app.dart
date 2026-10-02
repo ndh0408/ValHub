@@ -14,7 +14,11 @@ import '../core/config/client_version.dart';
 import '../core/content/content_repository.dart';
 import '../core/notifications/progress_notifications.dart';
 import '../core/l10n/l10n.dart' show appLocalizationsDelegates, l10nProvider;
-import '../core/l10n/locale.dart';
+import '../core/l10n/app_locale.dart' show kShippedLocales;
+import '../core/l10n/formats.dart';
+import '../core/l10n/intl_init.dart';
+import '../core/l10n/locale_controller.dart';
+import '../core/logging/session_log.dart';
 import '../core/notifications/notification_service.dart';
 import '../core/storage/prefs.dart';
 import '../core/theme/app_theme.dart';
@@ -22,7 +26,7 @@ import '../core/theme/theme_mode_provider.dart';
 import 'deep_links.dart';
 import 'router.dart';
 
-/// Root widget: Material 3 (material_ui) router app, Vietnamese locale,
+/// Root widget: Material 3 (material_ui) router app, shipped locale,
 /// dark Valorant theme, notification deep links, resume hooks.
 class ValVnApp extends ConsumerStatefulWidget {
   const ValVnApp({super.key});
@@ -38,11 +42,26 @@ class _ValVnAppState extends ConsumerState<ValVnApp>
   DeepLink? _pendingLink;
   late final GoRouter _router;
   final _messenger = GlobalKey<ScaffoldMessengerState>();
+  Future<void> _localeWrites = Future<void>.value();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    final prefs = ref.read(prefsProvider);
+    final log = ref.read(sessionLogProvider);
+    ref.listenManual(effectiveLocaleProvider, (_, next) {
+      unawaited(initIntl(next.formatTag));
+      // Native preferences finish asynchronously. Serialize snapshots so an
+      // older write cannot overwrite a rapid content/clock/language change.
+      // Capture dependencies here: a queued write can outlive this widget.
+      _localeWrites = _localeWrites.then((_) => next.write(prefs)).onError((
+        Object error,
+        StackTrace stack,
+      ) {
+        log.add('l10n.persist.failed', detail: error.runtimeType.toString());
+      });
+    }, fireImmediately: true);
     _router = ref.read(routerProvider);
     _router.routerDelegate.addListener(_resumePendingLink);
     final notifications = ref.read(notificationServiceProvider);
@@ -136,29 +155,36 @@ class _ValVnAppState extends ConsumerState<ValVnApp>
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      scaffoldMessengerKey: _messenger,
-      title: ref.watch(l10nProvider).commonAppName,
-      debugShowCheckedModeBanner: false,
-      theme: buildLightTheme(),
-      darkTheme: buildDarkTheme(),
-      themeMode: ref.watch(themeModeProvider),
-      // Still Vietnamese-only: `kShippedLocales` is `{vi}` and the locale
-      // providers are not read here until wave W5 (docs/design/I18N.md).
-      locale: appLocale,
-      supportedLocales: const [appLocale],
-      // AppLocalizations + material_ui's delegates. Never the generated
-      // `AppLocalizations.localizationsDelegates` (legacy Material).
-      localizationsDelegates: appLocalizationsDelegates,
-      // Legacy-Material packages (fl_chart, video_player, inappwebview) still
-      // resolve flutter/material Theme/Localizations; bridge them (FS §2).
-      // ignore: deprecated_member_use
-      builder: (context, child) => MaterialUiCompatibilityBridge(
-        child: ProgressNotificationHost(
-          child: AccountDataWarmupHost(child: child ?? const SizedBox.shrink()),
+    return AppFormatsScope(
+      formats: ref.watch(formatsProvider),
+      child: MaterialApp.router(
+        scaffoldMessengerKey: _messenger,
+        title: ref.watch(l10nProvider).commonAppName,
+        debugShowCheckedModeBanner: false,
+        theme: buildLightTheme(),
+        darkTheme: buildDarkTheme(),
+        themeMode: ref.watch(themeModeProvider),
+        // Only genuinely shipped translations are eligible. Runtime wiring
+        // does not make an untranslated locale available to users.
+        locale: ref.watch(appLocaleProvider).flutter,
+        supportedLocales: [
+          for (final locale in kShippedLocales) locale.flutter,
+        ],
+        // AppLocalizations + material_ui's delegates. Never the generated
+        // `AppLocalizations.localizationsDelegates` (legacy Material).
+        localizationsDelegates: appLocalizationsDelegates,
+        // Legacy-Material packages (fl_chart, video_player, inappwebview) still
+        // resolve flutter/material Theme/Localizations; bridge them (FS §2).
+        // ignore: deprecated_member_use
+        builder: (context, child) => MaterialUiCompatibilityBridge(
+          child: ProgressNotificationHost(
+            child: AccountDataWarmupHost(
+              child: child ?? const SizedBox.shrink(),
+            ),
+          ),
         ),
+        routerConfig: ref.watch(routerProvider),
       ),
-      routerConfig: ref.watch(routerProvider),
     );
   }
 }
