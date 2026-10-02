@@ -22,7 +22,7 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 | Đổi tên VanHub | Tên hiển thị native/UI/pháp lý đã đổi, giữ ID và dữ liệu cập nhật | Quốc tế hóa UI đầy đủ còn thiếu |
 | Kiểm tra mọi chức năng | Full Flutter/backend/tool + plugin/public-route QA đã chạy | Rà real-account/offline/reauth, Social/LFG đa thiết bị, iOS và Doze; không suy ra từ unit tests |
 | Tải và lưu dữ liệu ngay sau login | Warmup card/level/rank và store/wallet/missions/collection dùng cùng cache; bounded login, reauth, region, logout và retry có test | Đã xác nhận ba tài khoản đủ metadata trên bản cài; chưa tự đăng nhập/đăng xuất tài khoản thật |
-| Hook failed lặp lại | Đã sửa lookup Git Bash; sau phản hồi mới thêm adapter cho JSON telemetry Claude mà Codex 0.159.0 từ chối, giữ cảnh báo/quyết định/exit | Adapter chỉ thuộc phiên runtime; chưa xác nhận sau restart, không phải lỗi app hay tắt security hook |
+| Hook failed lặp lại | [02/10: bridge ngoài thư mục tạm và launcher riêng Orca](WINDOWS_HOOK_FIX_2026-10-02.md), hai shortcut đã sao lưu/cập nhật; 14 tests và security pattern hook thật đạt, giữ cảnh báo/quyết định/exit | Đã kiểm tra launcher khi bỏ arg0 khỏi môi trường; còn xác nhận đóng/mở lại Orca thật. Mở trực tiếp executable không dùng private PATH; không tắt security hook |
 
 ## Checklist nghiệm thu
 
