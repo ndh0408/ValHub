@@ -9,7 +9,9 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
-import '../l10n/notification_strings.dart';
+import '../l10n/app_locale.dart';
+import '../l10n/background_locale.dart';
+import '../l10n/l10n.dart' show AppLocalizations, lookupAppLocalizations;
 import '../storage/prefs.dart';
 import '../accounts/account.dart';
 import '../util/json.dart';
@@ -36,52 +38,46 @@ const _accent = Color(0xFFFF4655);
 
 /// Android channels (ids never change after release).
 enum NotificationChannel {
-  storeReset(
-    'store_reset',
-    NotificationStrings.channelStoreResetName,
-    NotificationStrings.channelStoreResetDescription,
-  ),
-  wishlist(
-    'wishlist',
-    NotificationStrings.channelWishlistName,
-    NotificationStrings.channelWishlistDescription,
-  ),
-  nightMarket(
-    'night_market',
-    NotificationStrings.channelNightMarketName,
-    NotificationStrings.channelNightMarketDescription,
-  ),
-  account(
-    'account',
-    NotificationStrings.channelAccountName,
-    NotificationStrings.channelAccountDescription,
-  ),
-  battlePass(
-    'battle_pass',
-    NotificationStrings.channelBattlePassName,
-    NotificationStrings.channelBattlePassDescription,
-  ),
-  rank(
-    'rank',
-    NotificationStrings.channelRankName,
-    NotificationStrings.channelRankDescription,
-  ),
-  community(
-    'community',
-    NotificationStrings.channelCommunityName,
-    NotificationStrings.channelCommunityDescription,
-  ),
-  lfg(
-    'lfg',
-    NotificationStrings.channelLfgName,
-    NotificationStrings.channelLfgDescription,
-  );
+  storeReset('store_reset'),
+  wishlist('wishlist'),
+  nightMarket('night_market'),
+  account('account'),
+  battlePass('battle_pass'),
+  rank('rank'),
+  community('community'),
+  lfg('lfg');
 
-  const NotificationChannel(this.id, this.channelName, this.description);
-
+  const NotificationChannel(this.id);
   final String id;
-  final String channelName;
-  final String description;
+
+  String localizedName(AppLocalizations l10n) => switch (this) {
+    storeReset => l10n.notificationChannelStoreResetName,
+    wishlist => l10n.notificationChannelWishlistName,
+    nightMarket => l10n.notificationChannelNightMarketName,
+    account => l10n.notificationChannelAccountName,
+    battlePass => l10n.notificationChannelBattlePassName,
+    rank => l10n.notificationChannelRankName,
+    community => l10n.notificationChannelCommunityName,
+    lfg => l10n.notificationChannelLfgName,
+  };
+
+  String localizedDescription(AppLocalizations l10n) => switch (this) {
+    storeReset => l10n.notificationChannelStoreResetDescription,
+    wishlist => l10n.notificationChannelWishlistDescription,
+    nightMarket => l10n.notificationChannelNightMarketDescription,
+    account => l10n.notificationChannelAccountDescription,
+    battlePass => l10n.notificationChannelBattlePassDescription,
+    rank => l10n.notificationChannelRankDescription,
+    community => l10n.notificationChannelCommunityDescription,
+    lfg => l10n.notificationChannelLfgDescription,
+  };
+
+  // Compatibility for callers of the original Vietnamese channel metadata.
+  // Production notifications use the explicit resource instance above.
+  String get channelName =>
+      localizedName(lookupAppLocalizations(AppLocale.vi.flutter));
+  String get description =>
+      localizedDescription(lookupAppLocalizations(AppLocale.vi.flutter));
 }
 
 /// Stable notification ids (31-bit FNV-1a of a key).
@@ -117,12 +113,18 @@ class NotificationService {
     FlutterLocalNotificationsPlugin? plugin,
     this._prefs,
     DateTime Function()? now,
+    AppLocalizations? l10n,
   }) : _plugin = plugin ?? FlutterLocalNotificationsPlugin(),
+       _l10n = l10n ?? BackgroundLocale.fromPrefs(_prefs).l10n,
        _now = now ?? DateTime.now;
 
   final FlutterLocalNotificationsPlugin _plugin;
   final Prefs? _prefs;
   final DateTime Function() _now;
+  AppLocalizations _l10n;
+  AppLocalizations get l10n => _l10n;
+  Future<void> _channelUpdates = Future.value();
+  String? _channelsLocale;
   final StreamController<String> _taps = StreamController<String>.broadcast();
   bool _initialized = false;
   Future<void>? _initializing;
@@ -195,9 +197,42 @@ class NotificationService {
           _launchPayload = null;
         }
       }
+      await _updateChannels(_l10n);
     } on Object catch (e) {
       debugPrint('NotificationService.init failed: ${e.runtimeType}');
     }
+  }
+
+  /// Rename channel metadata with stable ids; never delete channels or reset
+  /// the user's sound/importance choices, and never request permission here.
+  Future<void> refreshChannels(AppLocalizations l10n) {
+    _l10n = l10n;
+    final task = _channelUpdates.then((_) async {
+      await init();
+      if (_channelsLocale != l10n.localeName) await _updateChannels(l10n);
+    });
+    _channelUpdates = task.catchError((Object _) {});
+    return task;
+  }
+
+  Future<void> _updateChannels(AppLocalizations l10n) async {
+    final android = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (android != null) {
+      for (final channel in NotificationChannel.values) {
+        await android.createNotificationChannel(
+          AndroidNotificationChannel(
+            channel.id,
+            channel.localizedName(l10n),
+            description: channel.localizedDescription(l10n),
+            importance: Importance.defaultImportance,
+          ),
+        );
+      }
+    }
+    _channelsLocale = l10n.localeName;
   }
 
   /// Asks for permission (Android 13+ runtime dialog / iOS prompt). Returns
@@ -282,15 +317,12 @@ class NotificationService {
       if (saved != null &&
           saved.puuid == account?.toLowerCase() &&
           saved.gameName.isNotEmpty) {
-        text = text.replaceAll(
-          saved.riotId,
-          NotificationStrings.privateAccount,
-        );
+        text = text.replaceAll(saved.riotId, _l10n.notificationPrivateAccount);
       }
     }
     return text.replaceAll(
       RegExp(r'[^\s#/]{2,}#[\p{L}\p{N}]{2,}', unicode: true),
-      NotificationStrings.privateAccount,
+      _l10n.notificationPrivateAccount,
     );
   }
 
@@ -298,8 +330,8 @@ class NotificationService {
       NotificationDetails(
         android: AndroidNotificationDetails(
           channel.id,
-          channel.channelName,
-          channelDescription: channel.description,
+          channel.localizedName(_l10n),
+          channelDescription: channel.localizedDescription(_l10n),
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
           icon: _androidSmallIcon,
@@ -397,7 +429,7 @@ class NotificationService {
     await _plugin.show(
       id: id,
       title: effectiveChannel == NotificationChannel.lfg
-          ? NotificationStrings.lfgJoinedTitle
+          ? _l10n.notificationLfgJoinedTitle
           : _privateBody(title, accountPuuid),
       body: _privateBody(body, accountPuuid),
       notificationDetails: _details(effectiveChannel, tag: tag),

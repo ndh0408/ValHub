@@ -94,6 +94,12 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('vi')];
 
+  /// Separator between item names in a localized list.
+  ///
+  /// In vi, this message translates to:
+  /// **', '**
+  String get commonListSeparator;
+
   /// Source link label for a VP price table; preserves the legacy text without an unused URL placeholder.
   ///
   /// In vi, this message translates to:
@@ -1797,6 +1803,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Lần đăng nhập này không hợp lệ. Hãy đăng nhập lại từ đầu.'**
   String get authStateMismatch;
+
+  /// Expired Riot session notice; intentionally does not include an account name.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đăng nhập lại để tiếp tục nhận thông báo wishlist.'**
+  String get notificationSessionExpiredBody;
 
   /// NotificationStrings.backgroundTimingHint —
   ///
@@ -7582,6 +7594,24 @@ abstract class AppLocalizations {
   /// **'Phiên bản {version}'**
   String legalVersion(String version);
 
+  /// UI language setting and welcome-screen picker; separate from game item names.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngôn ngữ giao diện'**
+  String get settingsUiLanguageTitle;
+
+  /// Follow the device's preferred supported UI language.
+  ///
+  /// In vi, this message translates to:
+  /// **'Theo thiết bị'**
+  String get settingsLanguageFollowDevice;
+
+  /// Language preference could not be persisted; controller restores the committed choice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa lưu được ngôn ngữ. Vui lòng thử lại.'**
+  String get settingsLanguageSaveFailed;
+
   /// Country and Riot connection settings: settingsGeoCountry
   ///
   /// In vi, this message translates to:
@@ -9964,6 +9994,46 @@ abstract class AppLocalizations {
   /// **'{n} trong wishlist'**
   String storeWishlistCount(int n);
 
+  /// Wishlist daily store alert; left is a localized coarse duration, absent when expiry is unknown.
+  ///
+  /// In vi, this message translates to:
+  /// **'{hasTime, select, yes {{skin} đang có trong cửa hàng của {account} — còn {left}.} other {{skin} đang có trong cửa hàng của {account}.}}'**
+  String wishlistNotifDailyBody(
+    String skin,
+    String account,
+    String hasTime,
+    String left,
+  );
+
+  /// Night Market wishlist alert; discount/price branches require real available data, other hides unknown amounts.
+  ///
+  /// In vi, this message translates to:
+  /// **'{mode, select, discount {{skin} giảm {percent}% còn {price} ({account}).} price {{skin} chỉ còn {price} ({account}).} other {{skin} đang có trong Chợ Đêm của {account}.}}'**
+  String wishlistNotifNightMarketBody(
+    String skin,
+    String mode,
+    String percent,
+    String price,
+    String account,
+  );
+
+  /// Wishlist bundle alert with a named or unnamed real bundle.
+  ///
+  /// In vi, this message translates to:
+  /// **'{hasName, select, yes {{skin} nằm trong bundle {bundle} ({account}).} other {{skin} nằm trong một bundle đang bán ({account}).}}'**
+  String wishlistNotifBundleBody(
+    String skin,
+    String hasName,
+    String bundle,
+    String account,
+  );
+
+  /// Summary of multiple wishlist hits; names is a localized list, more counts the remaining hits.
+  ///
+  /// In vi, this message translates to:
+  /// **'{more, plural, =0 {{names} đang có trong cửa hàng của {account}.} other {{names} và {more} skin khác đang có trong cửa hàng của {account}.}}'**
+  String wishlistNotifSummaryBody(String names, int more, String account);
+
   /// WishlistStrings.addSkins — S3A wishlist
   ///
   /// In vi, this message translates to:
@@ -10287,6 +10357,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Vũ khí'**
   String get wishlistWeapon;
+
+  /// Separator between the two live team scores. A game abbreviation.
+  ///
+  /// In vi, this message translates to:
+  /// **'VS'**
+  String get homeLiveScoreSeparator;
 
   /// HomeStrings.allHiddenBody —
   ///
@@ -10767,12 +10843,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chuỗi {n} trận thắng xếp hạng'**
   String homeWinStreak(int n);
-
-  /// Separator between the two live team scores. A game abbreviation.
-  ///
-  /// In vi, this message translates to:
-  /// **'VS'**
-  String get homeLiveScoreSeparator;
 
   /// CommunityStrings.errorConsent — consent
   ///

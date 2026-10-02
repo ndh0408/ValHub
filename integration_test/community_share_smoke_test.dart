@@ -49,7 +49,7 @@ void main() {
                   id: 'vanhub-qa-public-post',
                   author: CommunityAuthor(
                     id: 'qa-author',
-                    gameName: 'VanHub QA',
+                    gameName: 'ValHub QA',
                     tagLine: 'QA',
                   ),
                   body:

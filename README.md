@@ -1,9 +1,13 @@
-# VanHub
+# ValHub
 
-<img src="assets/icon/icon.png" width="96" alt="Icon VanHub" align="right">
+Checkpoint 03/10: [Review Gemini và tích hợp ValHub](docs/VALHUB_INTEGRATION_2026-10-03.md). Đã sửa lỗi
+Gemini và gộp locale nền/bộ chọn/thông báo; build kế tiếp **4009**. Các số
+02/10 bên dưới là checkpoint lịch sử; kiểm chứng code gộp đang thực hiện.
+
+<img src="assets/icon/icon.png" width="96" alt="Icon ValHub" align="right">
 
 Ứng dụng đồng hành **VALORANT** cho Android và iOS, viết bằng Flutter, dành cho người chơi ở mọi
-quốc gia. Tiếng Việt là ngôn ngữ gốc; VanHub đang được chuyển sang 18 ngôn ngữ của VALORANT. Tính
+quốc gia. Tiếng Việt là ngôn ngữ gốc; ValHub đang được chuyển sang 18 ngôn ngữ của VALORANT. Tính
 năng chính:
 
 - **Trang chủ**: cửa hàng hôm nay, rank, Battle Pass và trận đang diễn ra ngay khi mở app.
@@ -33,17 +37,16 @@ flutter build apk --release
 Chi tiết (APK/IPA từ GitHub Actions, ký release): [`docs/BUILD.md`](docs/BUILD.md).
 Kiến trúc: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Tiến độ: [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
-Kiểm chứng mới nhất: [Runtime locale / CI local 02/10](docs/I18N_RUNTIME_2026-10-02.md).
-Windows: 4.201 Flutter tests đạt ở cả hai lượt; Mac: 25 test liên quan và build
-iOS 4006 không ký đạt; analyzer 0 issues ở cả hai máy. Bộ Mac đầy đủ 4.197 test
-và backend 867 test thuộc [checkpoint trước](docs/FINAL_GAP_AUDIT_2026-10-02.md).
-APK review 4006 đạt 10 public-flow cases và đã cài trên emulator có cửa sổ.
+Kiểm chứng mới nhất: [Locale nền / bộ chọn / CI local 02/10](docs/I18N_BACKGROUND_2026-10-02.md).
+Windows hai lượt và Mac toàn bộ đều đạt 4.232 Flutter tests; analyzer 0 issues
+ở cả hai máy. Backend 867 tests, native Android 6 và public-flow 10 cases đạt.
+APK review và iOS không ký 4007 đã build; APK đã cài trên emulator có cửa sổ.
 Quốc tế hóa và các gate release còn thiếu; chưa tuyên bố production-ready.
 GitHub Actions hiện bị khóa billing.
 
 ## Tuyên bố miễn trừ
 
-VanHub không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai
+ValHub không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai
 tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games và mọi tài sản liên quan
 là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc. Dữ liệu nội dung lấy từ
 [valorant-api.com](https://valorant-api.com).

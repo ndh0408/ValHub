@@ -19,12 +19,11 @@ import '../../../core/background/background_context.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/domain/economy/store_history.dart';
-import '../../../core/l10n/notification_strings.dart';
+import '../../../core/l10n/background_locale.dart';
 import '../../../core/network/riot_exception.dart';
 import '../../../core/notifications/notification_service.dart';
 import '../../../core/settings/app_settings.dart';
 import '../../../core/storage/prefs.dart';
-import '../../../core/util/format.dart';
 import '../../store/providers/store_reset_reminder.dart';
 import '../../store/store_routes.dart';
 import '../../store/ui/store_screen.dart' show StoreSegment;
@@ -146,6 +145,7 @@ class WishlistChecker {
   /// Stop starting new accounts after this long (iOS gives ~30 s).
   final Duration budget;
   final int maxSeparateAlerts;
+  late BackgroundLocale _locale;
 
   Future<WishlistCheckReport> run() async {
     final report = WishlistCheckReport();
@@ -159,6 +159,7 @@ class WishlistChecker {
     try {
       if (budget <= Duration.zero) return report;
       await env.reload().timeout(budget);
+      _locale = BackgroundLocale.fromPrefs(env.prefs);
       final settings = readAppSettings(env.prefs);
       final accounts = env.accounts();
       final nightMarketOn = settings.nightMarketNotifications;
@@ -190,9 +191,7 @@ class WishlistChecker {
         try {
           final rest = remaining();
           if (rest <= Duration.zero) return report;
-          db = await env
-              .loadContent(settings.itemLanguage.apiCode)
-              .timeout(rest);
+          db = await env.loadContent(_locale.effective.content).timeout(rest);
         } on Object catch (e) {
           _log('wishlist.check.content_failed', e.runtimeType.toString());
           report.retry = true;
@@ -274,8 +273,8 @@ class WishlistChecker {
         final shown = await _guard(
           () => env.notify(
             id: NotificationIds.sessionExpired(puuid),
-            title: NotificationStrings.sessionExpiredTitle,
-            body: NotificationStrings.sessionExpiredBody(account.riotId),
+            title: _locale.l10n.notificationSessionExpiredTitle,
+            body: _locale.l10n.notificationSessionExpiredBody,
             channel: NotificationChannel.account,
             payload: '/login?reauth=$puuid',
             accountPuuid: puuid,
@@ -309,10 +308,10 @@ class WishlistChecker {
     final shown = await _guard(
       () => env.notify(
         id: NotificationIds.nightMarket(puuid),
-        title: NotificationStrings.nightMarketOpenTitle,
-        body: NotificationStrings.nightMarketOpenBody(
-          formatNumber(market.offers.length),
-          account.riotId,
+        title: _locale.l10n.notificationNightMarketOpenTitle,
+        body: _locale.l10n.notificationNightMarketOpenBody(
+          _locale.formats.number(market.offers.length),
+          _locale.formats.bidi(account.riotId),
         ),
         channel: NotificationChannel.nightMarket,
         payload: withAccountParam(
@@ -355,6 +354,7 @@ class WishlistChecker {
       db: db,
       now: now,
       maxSeparate: maxSeparateAlerts,
+      formats: _locale.formats,
     );
     for (final alert in alerts) {
       final shown = await _guard(
@@ -461,7 +461,7 @@ class BackgroundWishlistCheckEnv
   DateTime now() => DateTime.now();
 
   @override
-  Future<void> reload() => _ctx.prefs.reload();
+  Future<void> reload() => _ctx.reloadLocale();
 
   @override
   List<Account> accounts() => _ctx.accounts.loadAll();

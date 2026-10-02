@@ -1,12 +1,16 @@
 # ValVN architecture and internal API
 
-Current verification/cutover status: [runtime locale 02/10](I18N_RUNTIME_2026-10-02.md),
-following the [final gap audit](FINAL_GAP_AUDIT_2026-10-02.md).
-ValVN remains the compatibility namespace; VanHub is the product brand. UI
+Current verification/cutover status: [background locale 02/10](I18N_BACKGROUND_2026-10-02.md),
+following [runtime locale](I18N_RUNTIME_2026-10-02.md) and the
+[final gap audit](FINAL_GAP_AUDIT_2026-10-02.md).
+ValVN remains the compatibility namespace; ValHub is the product brand. UI
 references now mostly use existing generated l10n resources. The root watches
 the existing locale/format providers and serializes effective-locale snapshots,
-preserving the item-name setting. Only vi ships; remaining switch effects,
-background localization and domain/structural migration are unfinished. Store-history instances
+preserving the item-name setting. BackgroundContext consumes the persisted
+handoff, notifications render generated resources and channel/reminder updates
+preserve stable IDs. Welcome and Settings share the shipped-locale picker.
+Only vi ships; remaining switch effects, translations and domain/structural
+migration are unfinished. Store-history instances
 share a canonical-path queue within one isolate; POSIX OS locks alone do not
 verify same-process, different-isolate concurrency. Preserve that open gate.
 

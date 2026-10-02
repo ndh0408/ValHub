@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/app/deep_links.dart';
+import 'package:valvn/core/l10n/app_locale.dart';
+import 'package:valvn/core/l10n/formats.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/domain/economy/economy.dart';
 import 'package:valvn/core/notifications/notification_service.dart';
@@ -10,6 +12,7 @@ import '../../../core/domain/economy/economy_fixtures.dart';
 import '../wishlist_test_harness.dart';
 
 void main() {
+  final formats = AppFormats.create(AppLocale.vi, 'vi');
   final now = DateTime.utc(2026, 9, 28, 5);
   late ContentDb db;
   late Storefront store;
@@ -37,6 +40,7 @@ void main() {
       hitFor(Fx.aresSentinels),
       account: testAccount,
       db: db,
+      formats: formats,
       now: now,
     );
     expect(alert.title, WishlistStrings.notifDailyTitle);
@@ -56,6 +60,7 @@ void main() {
       hitFor(Fx.aresSentinels),
       account: testAccount,
       db: db,
+      formats: formats,
       now: now.add(const Duration(days: 1)),
     );
     expect(
@@ -69,6 +74,7 @@ void main() {
       hitFor(Fx.reaverVandal),
       account: testAccount,
       db: db,
+      formats: formats,
       now: now,
     );
     expect(alert.title, WishlistStrings.notifNightMarketTitle);
@@ -83,6 +89,7 @@ void main() {
       hitFor(Fx.odinNeoFrontier),
       account: testAccount,
       db: db,
+      formats: formats,
       now: now,
     );
     expect(alert.title, WishlistStrings.notifBundleTitle);
@@ -103,6 +110,7 @@ void main() {
         hitFor(Fx.phantomTocChien),
         account: testAccount,
         db: db,
+        formats: formats,
         now: now,
       );
       expect(
@@ -114,6 +122,7 @@ void main() {
         raw.single,
         account: testAccount,
         db: ContentDb.empty(),
+        formats: formats,
         now: now,
       );
       expect(unknown.body, startsWith('Vật phẩm chưa rõ tên'));
@@ -142,6 +151,7 @@ void main() {
       hits,
       account: testAccount,
       db: db,
+      formats: formats,
       now: now,
     );
     expect(alerts, hasLength(1));
@@ -161,11 +171,18 @@ void main() {
       hits.take(3).toList(),
       account: testAccount,
       db: db,
+      formats: formats,
       now: now,
     );
     expect(few, hasLength(3));
     expect(
-      buildWishlistAlerts(const [], account: testAccount, db: db, now: now),
+      buildWishlistAlerts(
+        const [],
+        account: testAccount,
+        db: db,
+        formats: formats,
+        now: now,
+      ),
       isEmpty,
     );
   });

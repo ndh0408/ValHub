@@ -8,6 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/val_widgets.dart';
 import 'widgets/legal_widgets.dart';
+import 'widgets/language_picker.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -70,6 +71,10 @@ class WelcomeScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        const Align(
+                          alignment: AlignmentDirectional.centerEnd,
+                          child: AppLanguageButton(),
+                        ),
                         Text(
                           context.l10n.settingsWelcomeKicker,
                           style: ValText.label.copyWith(
@@ -144,7 +149,7 @@ class WelcomeScreen extends StatelessWidget {
   }
 }
 
-/// "ValHub" in Anton with a red accent bar and a red "VN".
+/// "ValHub" in Anton with a red accent bar and a red "Hub".
 class _Logo extends StatelessWidget {
   const _Logo();
 

@@ -1,22 +1,28 @@
 import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/auth/auth_routes.dart';
 import 'package:valvn/core/l10n/auth_strings.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/theme/app_theme.dart';
+import 'package:valvn/core/storage/prefs.dart';
+import 'package:valvn/features/settings/ui/widgets/language_picker.dart';
 import 'package:valvn/features/settings/legal/legal_documents.dart';
 import 'package:valvn/features/settings/legal/legal_strings.dart';
 import 'package:valvn/features/settings/settings_routes.dart';
 import 'package:valvn/features/settings/settings_strings.dart';
 import 'package:valvn/features/settings/ui/legal_document_screen.dart';
 
+import '../../../helpers/test_prefs.dart';
+
 void main() {
   Future<void> pumpWelcome(WidgetTester tester, Size size) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
+    final prefs = await createTestPrefs();
     final router = GoRouter(
       initialLocation: SettingsRoutes.welcome,
       routes: [
@@ -27,12 +33,16 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
     await tester.pumpWidget(
-      MaterialApp.router(
-        localizationsDelegates: appLocalizationsDelegates,
-        supportedLocales: const [Locale('vi')],
-        theme: buildDarkTheme(),
-        routerConfig: router,
+      ProviderScope(
+        overrides: [prefsProvider.overrideWithValue(prefs)],
+        child: MaterialApp.router(
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: const [Locale('vi')],
+          theme: buildDarkTheme(),
+          routerConfig: router,
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -44,6 +54,7 @@ void main() {
     await pumpWelcome(tester, const Size(360, 800));
 
     expect(find.bySemanticsLabel(CommonStrings.appName), findsOneWidget);
+    expect(find.byType(AppLanguageButton), findsOneWidget);
     expect(find.text(CommonStrings.tagline), findsOneWidget);
     expect(find.text(SettingsStrings.welcomeBulletStore), findsOneWidget);
     expect(find.text(SettingsStrings.welcomeBulletProfile), findsOneWidget);

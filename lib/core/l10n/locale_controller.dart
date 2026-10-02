@@ -98,18 +98,31 @@ final localeControllerProvider =
     NotifierProvider<LocaleController, LocaleChoice>(LocaleController.new);
 
 class LocaleController extends Notifier<LocaleChoice> {
+  Future<void> _writes = Future.value();
+  late LocaleChoice _committed;
   @override
-  LocaleChoice build() => ref.read(l10nBootProvider).choice;
+  LocaleChoice build() => _committed = ref.read(l10nBootProvider).choice;
 
   /// Switches the language and persists the choice.
   ///
   /// W5 (I18N.md 6.5) adds the rest of the switch procedure: content reload,
   /// notification channels and store-reset reminder, screen-reader
   /// announcement.
-  Future<void> set(LocaleChoice choice) async {
-    if (choice == state) return;
+  Future<void> set(LocaleChoice choice) {
+    if (choice == state) return _writes;
+    final prefs = ref.read(prefsProvider);
     state = choice;
-    await ref.read(prefsProvider).setString(PrefKeys.appLocale, choice.raw);
+    final task = _writes.then((_) async {
+      try {
+        await prefs.setString(PrefKeys.appLocale, choice.raw);
+        _committed = choice;
+      } on Object {
+        if (ref.mounted && state == choice) state = _committed;
+        rethrow;
+      }
+    });
+    _writes = task.catchError((Object _) {});
+    return task;
   }
 }
 

@@ -10,8 +10,8 @@ import '../../../core/accounts/account.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/notifications/notification_service.dart';
 import '../store_routes.dart';
-import '../store_strings.dart';
-import '../../../core/l10n/notification_strings.dart';
+import '../../../core/l10n/l10n.dart' show AppLocalizations;
+import '../../../core/l10n/background_locale.dart';
 
 /// Fire a little after the reset so the new offers are already live.
 const kStoreResetReminderDays = 5;
@@ -46,7 +46,9 @@ StoreResetReminder? storeResetReminderFor({
   required Storefront store,
   required DateTime now,
   int day = 0,
+  AppLocalizations? l10n,
 }) {
+  l10n ??= BackgroundLocale.fromPrefs(null).l10n;
   final resetAt = store.daily.expiresAt;
   if (resetAt == null) return null;
   var first = resetAt.add(kStoreResetReminderDelay);
@@ -63,8 +65,8 @@ StoreResetReminder? storeResetReminderFor({
   return StoreResetReminder(
     id: NotificationIds.storeResetDay(puuid, day),
     at: at,
-    title: StoreStrings.resetNotificationTitle,
-    body: NotificationStrings.storeResetBody,
+    title: l10n.storeResetNotificationTitle,
+    body: l10n.notificationStoreResetBody,
     payload: uri.toString(),
     accountPuuid: puuid,
   );
@@ -78,6 +80,7 @@ Future<bool> scheduleStoreResetReminder(
   required Account account,
   required Storefront store,
   required DateTime now,
+  AppLocalizations? l10n,
 }) async {
   try {
     for (var day = 0; day < kStoreResetReminderDays; day++) {
@@ -86,6 +89,7 @@ Future<bool> scheduleStoreResetReminder(
         store: store,
         now: now,
         day: day,
+        l10n: l10n ?? notifications.l10n,
       );
       if (reminder == null) return false;
       await notifications.scheduleAt(

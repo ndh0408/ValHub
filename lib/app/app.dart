@@ -62,6 +62,15 @@ class _ValVnAppState extends ConsumerState<ValVnApp>
         log.add('l10n.persist.failed', detail: error.runtimeType.toString());
       });
     }, fireImmediately: true);
+    ref.listenManual(l10nProvider, (_, next) {
+      unawaited(
+        ref.read(notificationServiceProvider).refreshChannels(next).catchError((
+          Object error,
+        ) {
+          log.add('l10n.channels.failed', detail: error.runtimeType.toString());
+        }),
+      );
+    }, fireImmediately: true);
     _router = ref.read(routerProvider);
     _router.routerDelegate.addListener(_resumePendingLink);
     final notifications = ref.read(notificationServiceProvider);

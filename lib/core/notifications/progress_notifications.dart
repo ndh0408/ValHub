@@ -7,7 +7,6 @@ import '../accounts/account.dart';
 import '../accounts/account_providers.dart';
 import '../content/content_repository.dart';
 import '../domain/progress_events.dart';
-import '../l10n/notification_strings.dart';
 import '../settings/app_settings.dart';
 import '../storage/prefs.dart';
 import '../util/clock.dart';
@@ -43,6 +42,7 @@ class ProgressNotificationPlanner {
       return;
     }
     final settings = readAppSettings(prefs);
+    final l10n = notifications.l10n;
     switch (event) {
       case RankObserved():
         final key = PrefKeys.account(event.puuid, 'notification.rankSeen');
@@ -58,8 +58,8 @@ class ProgressNotificationPlanner {
         }
         await notifications.showNow(
           id: NotificationIds.forKey('rank:${event.puuid}:${event.season}'),
-          title: NotificationStrings.rankChangedTitle,
-          body: NotificationStrings.rankChangedBody(
+          title: l10n.notificationRankChangedTitle,
+          body: l10n.notificationRankChangedBody(
             tierName?.call(event.tier) ?? '${event.tier}',
           ),
           channel: NotificationChannel.rank,
@@ -87,8 +87,8 @@ class ProgressNotificationPlanner {
           await notifications.scheduleAt(
             id: id,
             at: at,
-            title: NotificationStrings.passEndingTitle,
-            body: NotificationStrings.passEndingBody,
+            title: l10n.notificationPassEndingTitle,
+            body: l10n.notificationPassEndingBody,
             channel: NotificationChannel.battlePass,
             accountPuuid: event.puuid,
             payload: Uri(
@@ -108,8 +108,8 @@ class ProgressNotificationPlanner {
         }
         await notifications.showNow(
           id: NotificationIds.forKey('battlepass_progress:${event.puuid}'),
-          title: NotificationStrings.passProgressTitle,
-          body: NotificationStrings.passProgressBody(event.level),
+          title: l10n.notificationPassProgressTitle,
+          body: l10n.notificationPassProgressBody(event.level),
           channel: NotificationChannel.battlePass,
           accountPuuid: event.puuid,
           payload: Uri(

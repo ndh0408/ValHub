@@ -1,8 +1,23 @@
-# Hoàn thiện VanHub — nhật ký triển khai Codex
+# Hoàn thiện ValHub — nhật ký triển khai Codex
+
+Checkpoint 03/10: [Review Gemini và tích hợp ValHub](VALHUB_INTEGRATION_2026-10-03.md). Đã sửa lỗi
+Gemini và gộp locale nền/bộ chọn/thông báo; build kế tiếp **4009**. Các số
+02/10 bên dưới là checkpoint lịch sử; kiểm chứng code gộp đang thực hiện.
 
 Yêu cầu của chủ dự án: hoàn thiện toàn bộ yêu cầu để Claude kiểm tra sau khi hết giới hạn. Nhánh tích hợp: `ndh0408/codex-complete`; worktree `C:/Users/Admin/orca/workspaces/ValVN/codex-complete`. Đây là tiến độ đang triển khai, **chưa phải nghiệm thu toàn bộ**.
 
-Checkpoint mới nhất: [Runtime locale / CI local 02/10](I18N_RUNTIME_2026-10-02.md).
+Checkpoint mới nhất: [Locale nền / bộ chọn / CI local 02/10](I18N_BACKGROUND_2026-10-02.md).
+Windows hai lượt và Mac toàn bộ đều đạt **4.232 tests**, analyzer 0 issues;
+backend 867 tests, 6 Android plugin tests, 10 public flows và APK/iOS không ký
+**4007** đạt. Locale nền, lời thông báo, cập nhật kênh và nhắc cửa hàng đã nối
+generated resources; bộ chọn UI chỉ cung cấp ngôn ngữ đã phát hành. Cutover còn
+**514 production references / 52 structural members / 762 literal hits**, vẫn đỏ.
+Chủ dự án đã tự login thành công; MCP/cache/log xác nhận dữ liệu thật sau login.
+Wishlist add/restart/remove và chuyển ba tài khoản qua lại đạt, đã trả trạng thái
+ban đầu. Thẻ tạm lưu qua Riot và giữ sau restart; chưa xác nhận trả lại thẻ cũ
+vì phiên test đã thay đổi, cũng chưa đối chiếu trong VALORANT PC.
+
+Checkpoint trước: [Runtime locale / CI local 02/10](I18N_RUNTIME_2026-10-02.md).
 Root app đã đọc provider locale/format và lưu snapshot theo thứ tự, giữ riêng
 lựa chọn tên vật phẩm tiếng Anh. Windows đạt **4.201 tests** ở cả hai lượt,
 Mac đạt **25 test liên quan** và build iOS **4006** không ký; analyzer 0 issues
@@ -33,16 +48,16 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 | Yêu cầu | Trạng thái hiện tại | Việc phải làm tiếp |
 |---|---|---|
 | Đọc việc Claude giao và làm hết yêu cầu | Đã tích hợp bốn WP, giữ report và đối chiếu đủ 37 mục | Đóng các mục I18N/COUNTRIES/DEVICES/Community còn mở phía dưới; chưa nghiệm thu tổng thể |
-| Mở emulator cho chủ dự án xem | Cửa sổ Pixel 5580 đã cài APK code 4006; lượt 02/10 đọc hai tài khoản hiện có và đủ metadata | Không suy ra ba tài khoản của checkpoint trước còn trong trạng thái emulator mới; tiếp tục rà các luồng còn lại, QA riêng 5582 |
+| Mở emulator cho chủ dự án xem | Pixel đã mở lại ở port 5554; QA riêng 5582 | Kiểm chứng bản gộp 4009 đang thực hiện; không xóa phiên owner |
 | Commit, push và gộp để người khác thấy code mới nhất | UI/kết nối, Settings `a4afe4e`, hook `9850063`, tài nguyên dùng chung `04e6288` đã push integration và fast-forward/push nhánh mặc định; Cộng đồng tiếp sau | Tiếp tục commit các phase còn thiếu; đối chiếu `git log -1`, không coi merge là nghiệm thu toàn dự án |
 | Ẩn bảng nguồn dữ liệu | Đã bỏ card Giới thiệu và có test | Đã kiểm tra About bản cài trong lượt read-only; giữ pháp lý/giấy phép cần thiết |
 | Cộng đồng rõ ràng, bộ lọc không bị cắt | Tab gọn và một scope selector; banner ngắn, lời trống theo scope/ngôn ngữ/consent, FAB contrast đạt; test 360dp/chữ 200% | Bản code 4006 đã rà read-only; tiếp tục các màn còn lại |
 | Đăng bài, thích, bình luận, share | Luồng đăng/thích/bình luận/khoe shop đã có; thêm share từng bài ở feed/detail, native Android chooser + Back đạt | Link hiện mở bằng VanHub đã cài; HTTPS/trang web/đa thiết bị và server ghi thật chưa nghiệm thu |
-| Tài khoản chữ dễ đọc, đủ tên/vùng/rank | Đã chia dòng, wrap Riot ID/vùng và đưa nút phụ xuống dưới; lượt 02/10 Settings/switcher đọc đủ metadata hai tài khoản hiện có | Còn kiểm tra chủ động chuyển/reauth; ba tài khoản là bằng chứng checkpoint trước |
+| Tài khoản chữ dễ đọc, đủ tên/vùng/rank | Đã chia dòng, wrap Riot ID/vùng và đưa nút phụ xuống dưới; lượt 02/10 Settings/switcher đọc đủ metadata hai tài khoản hiện có | Đổi ba tài khoản qua lại đạt trên 4007; reauth và bản gộp còn cần kiểm tra |
 | Trang bị cập nhật game | Đã xác nhận giá trị sau lưu và thêm refresh identity ở sảnh | Đối chiếu trực tiếp VALORANT PC đang mở; chưa có bằng chứng live |
-| Đổi tên VanHub | Tên hiển thị native/UI/pháp lý đã đổi, giữ ID và dữ liệu cập nhật | Quốc tế hóa UI đầy đủ còn thiếu |
+| Đổi tên ValHub theo yêu cầu mới | UI/resources/native/pháp lý đã đồng bộ ValHub, giữ ID tương thích | Quốc tế hóa UI đầy đủ còn thiếu |
 | Kiểm tra mọi chức năng | Full Flutter/backend/tool + plugin/public-route QA đã chạy | Rà real-account/offline/reauth, Social/LFG đa thiết bị, iOS và Doze; không suy ra từ unit tests |
-| Tải và lưu dữ liệu ngay sau login | Warmup card/level/rank và store/wallet/missions/collection dùng cùng cache; bounded login, reauth, region, logout và retry có test | Đã xác nhận ba tài khoản đủ metadata trên bản cài; chưa tự đăng nhập/đăng xuất tài khoản thật |
+| Tải và lưu dữ liệu ngay sau login | Warmup card/level/rank và store/wallet/missions/collection dùng cùng cache; bounded login, reauth, region, logout và retry có test | Owner manual login đạt; MCP/cache/log xác nhận metadata và ví thật trên 4007; chưa nghiệm thu mọi lỗi/reauth/logout |
 | Hook failed lặp lại | [02/10: bridge ngoài thư mục tạm và launcher riêng Orca](WINDOWS_HOOK_FIX_2026-10-02.md), hai shortcut đã sao lưu/cập nhật; 14 tests và security pattern hook thật đạt, giữ cảnh báo/quyết định/exit | Đã kiểm tra launcher khi bỏ arg0 khỏi môi trường; còn xác nhận đóng/mở lại Orca thật. Mở trực tiếp executable không dùng private PATH; không tắt security hook |
 
 ## Checklist nghiệm thu
@@ -53,8 +68,8 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 - [ ] RV-03 toàn bộ: recorder nền, RR/cache tên, cancellation, deferred links, release errors, LFG join, logout/consent và ẩn/chặn cục bộ đã nối; còn nghiệm thu rộng cùng quốc tế hóa/thiết bị.
 - [ ] RV-05 toàn bộ: privacy và Community disclosure đã đồng bộ, Markdown sinh từ Dart; vẫn cần rà lời toàn cầu khi cutover.
 - [x] I18N W1 nền công cụ: resolved extractor, ARB, manifest, parity, kiểm tra chạy lại; danh sách 52 member cần xử lý cấu trúc được giữ rõ.
-- [ ] I18N W2–W4: Migrate UI bằng công cụ có sẵn, giảm thêm 1.202 references; global còn **560 references / 52 structural members**. Chưa tách hết domain, chuyển hết async call site và cutover.
-- [ ] I18N W5: UI language picker, device default/upgrade pin, contentLocale/ui_locales/status, isolate thông báo.
+- [ ] I18N W2–W4: Migrate UI bằng công cụ có sẵn; global hiện còn **514 references / 52 structural members**. Chưa tách hết domain, chuyển hết async call site và cutover.
+- [ ] I18N W5 toàn bộ: runtime/device/upgrade pin, picker cho shipped locales, snapshot nền và channel/reminder resources đã nối và test; còn contentLocale/ui_locales/status, pruning và screen-reader announcement.
 - [ ] I18N W6: đủ 18 bản dịch UI, plural/select, glossary và fallback/status gates.
 - [ ] I18N W7: RTL toàn ứng dụng, font CJK, pseudo locale và stale-string tests.
 - [ ] COUNTRIES P0–P3 toàn bộ: 250 mã, tên 18 locale, auto/manual/fail closed, chọn quốc gia/giá VP/picker chung đã nối. [Đợt kết nối](COUNTRY_CONNECTION_2026-10-01.md) thêm refresh 7 ngày, mismatch/ack, login geo outage, GET XP validation/retry và root sheet; còn onboarding, provenance/trạng thái đầy đủ, remote geo và nối quốc tế hóa.

@@ -1,5 +1,10 @@
 {
   "@@locale": "vi",
+  "commonListSeparator": ", ",
+  "@commonListSeparator": {
+    "description": "Separator between item names in a localized list.",
+    "x-context": "lib/core/l10n/formats.dart"
+  },
   "commonPriceSourceLabel": "Xem nguồn bảng giá",
   "@commonPriceSourceLabel": {
     "description": "Source link label for a VP price table; preserves the legacy text without an unused URL placeholder."
@@ -1573,6 +1578,10 @@
   "@authStateMismatch": {
     "description": "AuthStrings.stateMismatch — ",
     "x-context": "lib/core/l10n/auth_strings.dart"
+  },
+  "notificationSessionExpiredBody": "Đăng nhập lại để tiếp tục nhận thông báo wishlist.",
+  "@notificationSessionExpiredBody": {
+    "description": "Expired Riot session notice; intentionally does not include an account name."
   },
   "notificationBackgroundTimingHint": "Chế độ tiết kiệm pin của thiết bị có thể làm thông báo đến muộn.",
   "@notificationBackgroundTimingHint": {
@@ -7422,6 +7431,18 @@
     },
     "x-context": "lib/features/settings/legal/legal_strings.dart"
   },
+  "settingsUiLanguageTitle": "Ngôn ngữ giao diện",
+  "@settingsUiLanguageTitle": {
+    "description": "UI language setting and welcome-screen picker; separate from game item names."
+  },
+  "settingsLanguageFollowDevice": "Theo thiết bị",
+  "@settingsLanguageFollowDevice": {
+    "description": "Follow the device's preferred supported UI language."
+  },
+  "settingsLanguageSaveFailed": "Chưa lưu được ngôn ngữ. Vui lòng thử lại.",
+  "@settingsLanguageSaveFailed": {
+    "description": "Language preference could not be persisted; controller restores the committed choice."
+  },
   "settingsGeoCountry": "Quốc gia",
   "@settingsGeoCountry": {
     "description": "Country and Riot connection settings: settingsGeoCountry"
@@ -9816,6 +9837,78 @@
     },
     "x-context": "lib/features/store/store_strings.dart"
   },
+  "wishlistNotifDailyBody": "{hasTime, select, yes {{skin} đang có trong cửa hàng của {account} — còn {left}.} other {{skin} đang có trong cửa hàng của {account}.}}",
+  "@wishlistNotifDailyBody": {
+    "description": "Wishlist daily store alert; left is a localized coarse duration, absent when expiry is unknown.",
+    "placeholders": {
+      "skin": {
+        "type": "String"
+      },
+      "account": {
+        "type": "String"
+      },
+      "hasTime": {
+        "type": "String"
+      },
+      "left": {
+        "type": "String"
+      }
+    }
+  },
+  "wishlistNotifNightMarketBody": "{mode, select, discount {{skin} giảm {percent}% còn {price} ({account}).} price {{skin} chỉ còn {price} ({account}).} other {{skin} đang có trong Chợ Đêm của {account}.}}",
+  "@wishlistNotifNightMarketBody": {
+    "description": "Night Market wishlist alert; discount/price branches require real available data, other hides unknown amounts.",
+    "placeholders": {
+      "skin": {
+        "type": "String"
+      },
+      "mode": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      },
+      "account": {
+        "type": "String"
+      }
+    }
+  },
+  "wishlistNotifBundleBody": "{hasName, select, yes {{skin} nằm trong bundle {bundle} ({account}).} other {{skin} nằm trong một bundle đang bán ({account}).}}",
+  "@wishlistNotifBundleBody": {
+    "description": "Wishlist bundle alert with a named or unnamed real bundle.",
+    "placeholders": {
+      "skin": {
+        "type": "String"
+      },
+      "hasName": {
+        "type": "String"
+      },
+      "bundle": {
+        "type": "String"
+      },
+      "account": {
+        "type": "String"
+      }
+    }
+  },
+  "wishlistNotifSummaryBody": "{more, plural, =0 {{names} đang có trong cửa hàng của {account}.} other {{names} và {more} skin khác đang có trong cửa hàng của {account}.}}",
+  "@wishlistNotifSummaryBody": {
+    "description": "Summary of multiple wishlist hits; names is a localized list, more counts the remaining hits.",
+    "placeholders": {
+      "names": {
+        "type": "String"
+      },
+      "more": {
+        "type": "int"
+      },
+      "account": {
+        "type": "String"
+      }
+    }
+  },
   "wishlistAddSkins": "Thêm skin",
   "@wishlistAddSkins": {
     "description": "WishlistStrings.addSkins — S3A wishlist",
@@ -10138,6 +10231,12 @@
   "@wishlistWeapon": {
     "description": "WishlistStrings.weapon — search, filter, sort",
     "x-context": "lib/features/wishlist/wishlist_strings.dart"
+  },
+  "homeLiveScoreSeparator": "VS",
+  "@homeLiveScoreSeparator": {
+    "description": "Separator between the two live team scores. A game abbreviation.",
+    "x-context": "lib/features/home/ui/cards/live_home_card.dart",
+    "x-locked": true
   },
   "homeAllHiddenBody": "Mở Tùy chỉnh Trang chủ để hiện lại.",
   "@homeAllHiddenBody": {
@@ -10737,12 +10836,6 @@
       }
     },
     "x-context": "lib/features/home/home_strings.dart"
-  },
-  "homeLiveScoreSeparator": "VS",
-  "@homeLiveScoreSeparator": {
-    "description": "Separator between the two live team scores. A game abbreviation.",
-    "x-context": "lib/features/home/ui/cards/live_home_card.dart",
-    "x-locked": true
   },
   "communityErrorConsent": "Hãy đồng ý chia sẻ Riot ID với Cộng đồng để tiếp tục.",
   "@communityErrorConsent": {

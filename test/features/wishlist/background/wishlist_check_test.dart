@@ -456,6 +456,20 @@ void main() {
     expect(e.languages, [ItemLanguage.en.apiCode]);
   });
 
+  test('uses the persisted content handoff independently of the UI and legacy setting', () async {
+    final prefs = await createTestPrefs({
+      PrefKeys.appSettings:
+          '{"wishlistNotifications": true, "itemLanguage": "en"}',
+      PrefKeys.effectiveLocale:
+          '{"v":1,"app":"vi-VN","format":"vi","h24":true,"content":"ja-JP"}',
+    });
+    final e = _LanguageEnv(prefs, accountList: const [account1], now0: monday)
+      ..wishlists[puuid1] = {Fx.aresSentinels};
+    await WishlistChecker(e).run();
+    expect(e.languages, ['ja-JP']);
+    expect(e.notifications.single.title, 'Skin trong wishlist đã xuất hiện!');
+  });
+
   group('"Chợ Đêm đã mở!"', () {
     List<NotifyCall> nightMarketNotices(FakeEnv e) => [
       for (final n in e.notifications)

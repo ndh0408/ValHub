@@ -11,11 +11,7 @@
 /// `dd/MM/yyyy`, clock `HH:mm`, comma decimals, weekday names); every other
 /// language uses the CLDR patterns of `intl`, by design.
 ///
-/// The methods that need translated words ARE NOT HERE YET: `relative`,
-/// `durationCoarse`, `countdown` (with days), `dayHeader`, `updatedAt`,
-/// `wallTime`, `vp`/`kc`/`rp`, `estimatedPrice`, `listJoin`. They read ARB
-/// messages (`commonMinutesAgo`, `commonDays`, `commonListSeparator`, ...) that
-/// wave W1 creates; they are added on top of [l10n] then (I18N.md 7).
+/// Words and game currency labels come from [l10n], including in headless tasks.
 library;
 
 import 'package:flutter/widgets.dart';
@@ -38,12 +34,18 @@ final String _pdi = String.fromCharCode(0x2069);
 
 @immutable
 final class AppFormats {
-  AppFormats._(this.locale, this.tag, this.h24);
+  AppFormats._(this.locale, this.tag, this.h24, this._messages);
 
   /// [tag] is an `intl` locale id (`vi`, `en_GB`); [h24] the device's 24-hour
   /// clock setting.
-  factory AppFormats.create(AppLocale locale, String tag, {bool h24 = false}) =>
-      AppFormats._(locale, tag, h24);
+  factory AppFormats.create(
+    AppLocale locale,
+    String tag, {
+    bool h24 = false,
+    AppLocalizations? messages,
+  }) => AppFormats._(locale, tag, h24, messages);
+
+  final AppLocalizations? _messages;
 
   /// The formats in effect below [context].
   ///
@@ -71,8 +73,8 @@ final class AppFormats {
   // does not rebuild `NumberFormat`/`DateFormat` on every call.
   static final Map<(AppLocale, String, bool), AppFormats> _memoized = {};
 
-  static AppFormats _memo(AppLocale app, String tag, bool h24) =>
-      _memoized.putIfAbsent((app, tag, h24), () => AppFormats._(app, tag, h24));
+  static AppFormats _memo(AppLocale app, String tag, bool h24) => _memoized
+      .putIfAbsent((app, tag, h24), () => AppFormats._(app, tag, h24, null));
 
   /// The UI language.
   final AppLocale locale;
@@ -86,7 +88,8 @@ final class AppFormats {
   /// The generated messages of [locale], for the methods that need words.
   /// Looked up on first use, so an [AppFormats] of a locale without generated
   /// messages (until W1's scaffold) still formats numbers and dates.
-  late final AppLocalizations l10n = lookupAppLocalizations(locale.flutter);
+  late final AppLocalizations l10n =
+      _messages ?? lookupAppLocalizations(locale.flutter);
 
   bool get _vi => locale == AppLocale.vi;
 
@@ -94,6 +97,20 @@ final class AppFormats {
 
   /// `1162500` -> `1.162.500` (vi), `1,162,500` (en). Non-finite -> `0`.
   String number(num value) => _decimal.format(_finite(value));
+
+  String vp(num amount) => bidi('${number(amount)} ${l10n.contentCurrencyVp}');
+  String kc(num amount) => bidi('${number(amount)} ${l10n.contentCurrencyKc}');
+  String rp(num amount) => bidi('${number(amount)} ${l10n.contentCurrencyRp}');
+  String listJoin(Iterable<String> items) =>
+      items.join(l10n.commonListSeparator);
+
+  String durationCoarse(Duration duration) {
+    if (duration.isNegative) duration = Duration.zero;
+    if (duration.inDays >= 1) return l10n.commonDays(duration.inDays);
+    if (duration.inHours >= 1) return l10n.commonHours(duration.inHours);
+    if (duration.inMinutes >= 1) return l10n.commonMinutes(duration.inMinutes);
+    return l10n.commonSeconds(duration.inSeconds);
+  }
 
   /// The language's compact form: `1200000` -> `1.2M` (en). Non-finite -> `0`.
   String compact(num value) => _compact.format(_finite(value));

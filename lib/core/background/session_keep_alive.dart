@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import '../l10n/notification_strings.dart';
 import '../network/riot_exception.dart';
 import '../notifications/notification_service.dart';
 import '../storage/prefs.dart';
@@ -28,6 +27,7 @@ Future<bool> runSessionKeepAlive({
 
 Future<bool> _keepAlive(BackgroundContext ctx, Duration budget) async {
   final started = DateTime.now();
+  await ctx.reloadLocale().timeout(budget);
   var ok = true;
   for (final account in ctx.accounts.loadAll()) {
     if (DateTime.now().difference(started) > budget) break;
@@ -50,8 +50,8 @@ Future<bool> _keepAlive(BackgroundContext ctx, Duration budget) async {
       if (ctx.prefs.getBool(notifiedKey) != true) {
         await ctx.notifications.showNow(
           id: NotificationIds.sessionExpired(account.puuid),
-          title: NotificationStrings.sessionExpiredTitle,
-          body: NotificationStrings.sessionExpiredBody(account.riotId),
+          title: ctx.l10n.notificationSessionExpiredTitle,
+          body: ctx.l10n.notificationSessionExpiredBody,
           channel: NotificationChannel.account,
           payload: '/login?reauth=${account.puuid}',
           accountPuuid: account.puuid,

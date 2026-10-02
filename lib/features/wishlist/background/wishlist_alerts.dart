@@ -8,13 +8,11 @@ import 'package:flutter/foundation.dart';
 import '../../../core/accounts/account.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/domain/economy/economy.dart';
-import '../../../core/l10n/common_strings.dart';
+import '../../../core/l10n/formats.dart';
 import '../../../core/notifications/notification_service.dart';
-import '../../../core/util/format.dart';
 import '../../store/store_routes.dart';
 import '../../store/ui/store_screen.dart' show StoreSegment;
 import '../wishlist_routes.dart';
-import '../wishlist_strings.dart';
 
 /// Above this many new hits for one account, a single summary notification
 /// is shown instead of one per skin.
@@ -67,18 +65,18 @@ String wishlistHitPayload(WishlistHit hit, String puuid) {
   return withAccountParam(location, puuid);
 }
 
-String _skinName(WishlistHit hit, ContentDb db) {
+String _skinName(WishlistHit hit, ContentDb db, AppFormats formats) {
   final name =
       hit.skin?.displayName ?? db.skinByAnyUuid(hit.levelUuid)?.displayName;
-  return (name == null || name.isEmpty) ? CommonStrings.unknownItem : name;
+  return (name == null || name.isEmpty) ? formats.l10n.commonUnknownItem : name;
 }
 
 /// "11 giờ" / "38 phút" left, or `null` when unknown or over.
-String? _timeLeft(DateTime? expiresAt, DateTime now) {
+String? _timeLeft(DateTime? expiresAt, DateTime now, AppFormats formats) {
   if (expiresAt == null) return null;
   final left = expiresAt.difference(now);
   if (left <= Duration.zero) return null;
-  return formatDurationCoarse(left);
+  return formats.durationCoarse(left);
 }
 
 /// The VF §6.9 notification for one hit of [account].
@@ -87,30 +85,45 @@ WishlistAlert wishlistHitAlert(
   required Account account,
   required ContentDb db,
   required DateTime now,
+  required AppFormats formats,
 }) {
-  final name = _skinName(hit, db);
-  final riotId = account.riotId;
+  final l10n = formats.l10n;
+  final name = _skinName(hit, db, formats);
+  final riotId = formats.bidi(account.riotId);
+  final left = _timeLeft(hit.expiresAt, now, formats);
+  final percent = hit.discountPercent;
   final (title, body) = switch (hit.place) {
     WishlistPlace.daily => (
-      WishlistStrings.notifDailyTitle,
-      WishlistStrings.notifDailyBody(
+      l10n.wishlistNotifDailyTitle,
+      l10n.wishlistNotifDailyBody(
         name,
         riotId,
-        _timeLeft(hit.expiresAt, now),
+        left == null ? 'no' : 'yes',
+        left ?? '',
       ),
     ),
     WishlistPlace.nightMarket => (
-      WishlistStrings.notifNightMarketTitle,
-      WishlistStrings.notifNightMarketBody(
+      l10n.wishlistNotifNightMarketTitle,
+      l10n.wishlistNotifNightMarketBody(
         name,
-        hit.discountPercent,
-        hit.price == null ? null : formatVp(hit.price!),
+        hit.price == null
+            ? 'unknown'
+            : percent != null && percent > 0
+            ? 'discount'
+            : 'price',
+        percent == null ? '' : formats.number(percent),
+        hit.price == null ? '' : formats.vp(hit.price!),
         riotId,
       ),
     ),
     WishlistPlace.bundle => (
-      WishlistStrings.notifBundleTitle,
-      WishlistStrings.notifBundleBody(name, _bundleName(hit, db), riotId),
+      l10n.wishlistNotifBundleTitle,
+      l10n.wishlistNotifBundleBody(
+        name,
+        _bundleName(hit, db) == null ? 'no' : 'yes',
+        _bundleName(hit, db) ?? '',
+        riotId,
+      ),
     ),
   };
   return WishlistAlert(
@@ -135,20 +148,21 @@ WishlistAlert wishlistSummaryAlert(
   List<WishlistHit> hits, {
   required Account account,
   required ContentDb db,
+  required AppFormats formats,
 }) {
   final names = <String>[];
   for (final h in hits) {
-    final name = _skinName(h, db);
+    final name = _skinName(h, db, formats);
     if (!names.contains(name)) names.add(name);
     if (names.length == 2) break;
   }
   return WishlistAlert(
     id: wishlistSummaryId(account.puuid),
-    title: WishlistStrings.notifSummaryTitle(hits.length),
-    body: WishlistStrings.notifSummaryBody(
-      names,
+    title: formats.l10n.wishlistNotifSummaryTitle(hits.length),
+    body: formats.l10n.wishlistNotifSummaryBody(
+      formats.listJoin(names),
       hits.length - names.length,
-      account.riotId,
+      formats.bidi(account.riotId),
     ),
     payload: withAccountParam(WishlistRoutes.wishlist, account.puuid),
   );
@@ -161,14 +175,17 @@ List<WishlistAlert> buildWishlistAlerts(
   required Account account,
   required ContentDb db,
   required DateTime now,
+  required AppFormats formats,
   int maxSeparate = kMaxSeparateWishlistAlerts,
 }) {
   if (hits.isEmpty) return const [];
   if (hits.length > maxSeparate) {
-    return [wishlistSummaryAlert(hits, account: account, db: db)];
+    return [
+      wishlistSummaryAlert(hits, account: account, db: db, formats: formats),
+    ];
   }
   return [
     for (final h in hits)
-      wishlistHitAlert(h, account: account, db: db, now: now),
+      wishlistHitAlert(h, account: account, db: db, now: now, formats: formats),
   ];
 }
