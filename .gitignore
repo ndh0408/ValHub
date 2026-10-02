@@ -1,3 +1,10 @@
+# Web design preview
+/node_modules/
+/.next/
+/out/
+*.tsbuildinfo
+.env*.local
+
 # Miscellaneous
 *.class
 *.log

@@ -31,3 +31,13 @@ flutter build apk --release
 - Mỗi tính năng nằm trong `lib/features/<f>/` (data / providers / ui) và test trong `test/features/<f>/`. Code dùng chung nằm trong `lib/core/`.
 - Parse JSON từ Riot một cách phòng thủ (mọi trường nullable, mảng có thể null, UUID lowercase, số đọc bằng `num`); body lỗi có thể là HTML (Cloudflare). Không bao giờ crash vì dữ liệu lạ.
 - Không log, không gửi token/cookie/PUUID ra ngoài; chỉ lưu trong secure storage. Ngoại lệ duy nhất (chủ dự án đã duyệt): access token Riot được gửi tới `POST /v1/auth/riot` của máy chủ cộng đồng ValVN để xác minh Riot ID; máy chủ bỏ token ngay, không lưu PUUID (xem `docs/community-api.md`). Mọi thao tác thay đổi tài khoản (loadout, khóa đặc vụ, hàng chờ, rời trận) phải do người dùng bấm, có xác nhận nếu có hình phạt.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
