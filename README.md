@@ -1,9 +1,17 @@
 # ValHub
 
-Checkpoint tiếp theo 03/10: [Render-time cutover, build 4010](docs/I18N_RENDER_CUTOVER_2026-10-03.md).
+Checkpoint mới nhất 03/10: [Callback / cách ly tài khoản, build 4011](docs/I18N_CALLBACK_ISOLATION_2026-10-03.md).
+Đã sửa lỗi phản hồi tổ đội đến muộn và xóa mã của tài khoản khác khi chuyển;
+Windows hai lượt và Mac đạt **4.246 tests**, analyzer 0. APK **4011** đã cài
+trên emulator, 10 public flows đạt; bốn tài khoản/active/wishlist/cài đặt giữ
+nguyên. iOS 4011 build trên Mac, **chưa ký/chưa test iPhone**. Cutover còn
+**307 refs / 762 literal hits**, chưa nghiệm thu toàn bộ.
+
+
+Checkpoint trước 03/10: [Render-time cutover, build 4010](docs/I18N_RENDER_CUTOVER_2026-10-03.md).
 Đã chuyển thêm **175 refs** (514 → **339**). Windows hai lượt và Mac đạt
 **4.238 tests**, analyzer 0; backend 867, codemod 37, Android native 6 và public
-flows 10 đạt. APK **4010** đang mở trên emulator; bốn tài khoản/active/wishlist/
+flows 10 đạt. APK **4010** đã được kiểm tra trên emulator; bốn tài khoản/active/wishlist/
 settings giữ nguyên. iOS 4010 build trên Mac nhưng **chưa ký/chưa test iPhone**.
 Cutover còn đỏ, chưa nghiệm thu toàn bộ; chỉ tiếng Việt được phát hành.
 

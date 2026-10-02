@@ -126,6 +126,13 @@ separately), PREGAME → `agentSelect`, then `<show>away` / `isIdle` → `away`,
 remains in `lib/features/social/data/friend_status.dart`; rendered copy receives
 `AppLocalizations` and `AppFormats` in `lib/features/social/ui/friend_status_labels.dart`.
 
+`PartyScreen` keys its internal action state by the active account. Switching
+accounts disposes the previous code field, busy actions and invite ticks; an old
+join completion cannot clear the next account's input or show its success there.
+`PartyNotifier.refresh` and response application check `ref.mounted` before
+accessing disposed provider state. Account-specific Riot requests and server
+ownership checks retain their existing behavior.
+
 ## 5. Roster and chat stanzas
 
 - Roster item: `<item jid puuid subscription><state/><last_online>2025-03-11

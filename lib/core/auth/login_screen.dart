@@ -17,8 +17,6 @@ import '../accounts/account_widgets.dart';
 import '../accounts/login_note.dart';
 import '../config/app_constants.dart';
 import '../config/remote_config.dart';
-import '../l10n/account_strings.dart';
-import '../l10n/auth_strings.dart';
 import '../logging/session_log.dart';
 import '../network/riot_exception.dart';
 import '../theme/app_theme.dart';
@@ -157,7 +155,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   /// Funnel for `shouldOverrideUrlLoading`, `onLoadStart` and
   /// `onUpdateVisitedHistory`; runs once.
   Future<bool> _maybeFinish(WebUri? url) async {
-    if (_completed || url == null) return false;
+    if (!mounted || _completed || url == null) return false;
     final uri = Uri.tryParse(url.toString());
     if (!isAuthCallback(uri)) return false;
     _completed = true;
@@ -167,6 +165,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleCallback(Uri uri) async {
+    if (!mounted) return;
+    final l10n = context.l10n;
     setState(() => _phase = _Phase.finishing);
     final result = validateCallback(
       parseCallbackParams(uri),
@@ -177,17 +177,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     switch (result) {
       case CallbackRejected(failure: CallbackFailure.riotError, :final error):
         await _clearWebCookies();
-        return _fail(AuthStrings.loginCancelledByRiot, logDetail: error);
+        return _fail(l10n.authLoginCancelledByRiot, logDetail: error);
       case CallbackRejected(failure: CallbackFailure.stateMismatch):
         await _clearWebCookies();
-        return _fail(AuthStrings.stateMismatch, logDetail: 'state_mismatch');
+        return _fail(l10n.authStateMismatch, logDetail: 'state_mismatch');
       case CallbackRejected(failure: CallbackFailure.invalidTokens):
       case CallbackRejected(failure: CallbackFailure.nonceMismatch):
         await _clearWebCookies();
-        return _fail(
-          AuthStrings.loginFailedBody,
-          logDetail: 'invalid_callback',
-        );
+        return _fail(l10n.authLoginFailedBody, logDetail: 'invalid_callback');
       case CallbackRejected(
         failure: CallbackFailure.accountMismatch,
         :final tokens?,
@@ -202,7 +199,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         }
         return _complete(tokens, cookies);
       case CallbackRejected():
-        return _fail(AuthStrings.loginFailedBody);
+        return _fail(l10n.authLoginFailedBody);
       case CallbackSuccess(:final tokens):
         final cookies = await _captureCookies();
         return _complete(tokens, cookies);
@@ -216,6 +213,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     var jar = const RiotCookieJar();
     for (final delay in const [300, 700]) {
       await Future<void>.delayed(Duration(milliseconds: delay));
+      if (!mounted) return jar;
       try {
         final list = await CookieManager.instance().getCookies(
           url: WebUri(AuthConstants.cookieUrl),
@@ -230,13 +228,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
       if (jar.has(AuthConstants.sessionCookie)) break;
     }
-    await _clearWebCookies();
+    if (mounted) await _clearWebCookies();
     return jar;
   }
 
   Future<void> _clearWebCookies() => clearLoginWebViewData();
 
   Future<void> _complete(AuthTokens tokens, RiotCookieJar cookies) async {
+    if (!mounted) return;
+    final l10n = context.l10n;
     try {
       final wasSaved = ref.read(accountProvider(tokens.puuid)) != null;
       final account = await ref
@@ -252,9 +252,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           .afterLogin(account.puuid, refresh: wasSaved);
       if (!mounted) return;
       if (!cookies.has(AuthConstants.sessionCookie)) {
-        showAppSnackBar(context, AuthStrings.missingCookies);
+        showAppSnackBar(context, l10n.authMissingCookies);
       } else if (widget.reauthPuuid != null) {
-        showAppSnackBar(context, AuthStrings.reloginDone);
+        showAppSnackBar(context, l10n.authReloginDone);
       }
       if (shouldPopAfterLogin(
         hadAccounts: _hadAccounts,
@@ -270,11 +270,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } on RiotException catch (e) {
       if (!mounted) return;
       _fail(
-        describeError(context.l10n, e).message,
+        describeError(l10n, e).message,
         logDetail: e.runtimeType.toString(),
       );
     } on Object catch (e) {
-      _fail(AuthStrings.loginFailedBody, logDetail: e.runtimeType.toString());
+      _fail(l10n.authLoginFailedBody, logDetail: e.runtimeType.toString());
     }
   }
 
@@ -288,8 +288,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<NavigationActionPolicy> _shouldOverride(
     NavigationAction action,
   ) async {
+    if (!mounted) return NavigationActionPolicy.CANCEL;
+    final l10n = context.l10n;
     final url = action.request.url;
     if (await _maybeFinish(url)) return NavigationActionPolicy.CANCEL;
+    if (!mounted) return NavigationActionPolicy.CANCEL;
     if (url == null || !action.isForMainFrame) {
       return NavigationActionPolicy.ALLOW;
     }
@@ -304,7 +307,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final external = Uri.tryParse(url.toString());
     if (external != null && (scheme == 'https' || scheme == 'http')) {
       unawaited(launchUrl(external, mode: LaunchMode.externalApplication));
-      if (mounted) showAppSnackBar(context, AuthStrings.openedInBrowser);
+      if (mounted) showAppSnackBar(context, l10n.authOpenedInBrowser);
     }
     return NavigationActionPolicy.CANCEL;
   }
@@ -312,6 +315,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   /// Types a saved login note into Riot's page (only on a Riot host; the
   /// values never leave the device otherwise).
   Future<void> _quickFill(List<(Account, LoginNote)> saved) async {
+    if (!mounted) return;
+    final l10n = context.l10n;
     final controller = _controller;
     if (controller == null || saved.isEmpty) return;
     var selected = saved.first.$1;
@@ -330,7 +335,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (url?.scheme != 'https' ||
         (host != 'auth.riotgames.com' &&
             host != 'authenticate.riotgames.com')) {
-      if (mounted) showAppSnackBar(context, AccountStrings.quickFillNotReady);
+      if (mounted) showAppSnackBar(context, l10n.accountQuickFillNotReady);
       return;
     }
     Object? ok;
@@ -344,9 +349,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!mounted) return;
     showAppSnackBar(
       context,
-      ok == true
-          ? AccountStrings.quickFillDone
-          : AccountStrings.quickFillNotReady,
+      ok == true ? l10n.accountQuickFillDone : l10n.accountQuickFillNotReady,
     );
   }
 

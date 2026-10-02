@@ -1,8 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:valvn/core/accounts/account.dart';
+import 'package:valvn/core/accounts/account_providers.dart';
+import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/config/remote_config.dart';
 import 'package:valvn/core/network/riot_exception.dart';
+import 'package:valvn/core/util/json.dart';
 import 'package:valvn/core/xmpp/xmpp.dart';
 import 'package:valvn/features/social/social_strings.dart';
 import 'package:valvn/features/social/ui/party_screen.dart';
@@ -232,6 +239,64 @@ void main() {
     verify(() => env.api.partyJoinByCode(me, 'XYZ789')).called(1);
     await unmount(tester);
   });
+
+  testWidgets('joining completes safely after the screen is closed', (
+    tester,
+  ) async {
+    env.serveParty(partyJson());
+    final response = Completer<JsonMap>();
+    when(() => env.api.partyJoinByCode(any(), any()))
+        .thenAnswer((_) => response.future);
+    await _pump(tester, env);
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Nhập mã để tham gia'),
+      'xyz789',
+    );
+    await tester.tap(find.text('Tham gia'));
+    await tester.pump();
+    verify(() => env.api.partyJoinByCode(me, 'XYZ789')).called(1);
+    await unmount(tester);
+    response.complete(partyJson());
+    await settle(tester);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'old account join cannot clear the next account code or show success',
+    (tester) async {
+      final account = Account.fromJson({
+        ...myAccount.toJson(),
+        'puuid': mate,
+        'gameName': 'Second',
+      })!;
+      await env.prefs.setJson(PrefKeys.accounts, [
+        myAccount.toJson(),
+        account.toJson(),
+      ]);
+      env.serveParty(partyJson());
+      final response = Completer<JsonMap>();
+      when(() => env.api.partyJoinByCode(any(), any()))
+          .thenAnswer((_) => response.future);
+      await _pump(tester, env);
+      final field = find.widgetWithText(TextField, 'Nhập mã để tham gia');
+      await tester.enterText(field, 'OLD123');
+      await tester.tap(find.text('Tham gia'));
+      await tester.pump();
+      verify(() => env.api.partyJoinByCode(me, 'OLD123')).called(1);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(PartyScreen)),
+      );
+      container.read(activePuuidProvider.notifier).select(mate);
+      await settle(tester);
+      await tester.enterText(field, 'NEW789');
+      response.complete(partyJson());
+      await settle(tester);
+      expect(tester.widget<TextField>(field).controller!.text, 'NEW789');
+      expect(find.text(SocialStrings.joined), findsNothing);
+      expect(tester.takeException(), isNull);
+      await unmount(tester);
+    },
+  );
 
   testWidgets('incoming invite: accept needs the flag', (tester) async {
     env.serveParty(

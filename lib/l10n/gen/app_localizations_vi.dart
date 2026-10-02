@@ -5063,6 +5063,15 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String socialPartySummary(int size, int max, String state) {
+    String _temp0 = intl.Intl.selectLogic(state, {
+      'open': 'Tổ đội mở',
+      'other': 'Chỉ người được mời',
+    });
+    return '$size/$max người · $_temp0';
+  }
+
+  @override
   String get socialAccept => 'Chấp nhận';
 
   @override

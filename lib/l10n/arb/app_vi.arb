@@ -8589,6 +8589,21 @@
       }
     }
   },
+  "socialPartySummary": "{size}/{max} người · {state, select, open{Tổ đội mở} other{Chỉ người được mời}}",
+  "@socialPartySummary": {
+    "description": "Party header summary. state=open for an open party; other means invite-only. Manual select preserves legacy partySummary.",
+    "placeholders": {
+      "size": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
   "socialAccept": "Chấp nhận",
   "@socialAccept": {
     "description": "SocialStrings.accept — party",

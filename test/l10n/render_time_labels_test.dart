@@ -13,6 +13,7 @@ import 'package:valvn/core/ui/error_view.dart';
 import 'package:valvn/features/home/data/home_card.dart';
 import 'package:valvn/features/home/ui/home_card_frame.dart';
 import 'package:valvn/features/profile/ui/widgets/profile_widgets.dart';
+import 'package:valvn/features/social/social_strings.dart';
 import 'package:valvn/l10n/gen/app_localizations_vi.dart';
 
 import '../helpers/test_prefs.dart';
@@ -43,6 +44,21 @@ class _MessagesDelegate extends LocalizationsDelegate<AppLocalizations> {
 }
 
 void main() {
+  test('party summary select preserves open and invite-only summaries', () {
+    final messages = AppLocalizationsVi();
+    for (final size in [0, 1, 2, 5]) {
+      for (final open in [false, true]) {
+        expect(
+          messages.socialPartySummary(size, 5, open ? 'open' : 'closed'),
+          SocialStrings.partySummary(size, 5, open: open),
+        );
+      }
+    }
+    expect(
+      messages.socialPartySummary(2, 5, 'unknown'),
+      SocialStrings.partySummary(2, 5, open: false),
+    );
+  });
   testWidgets(
     'shell, home metadata, match tags and errors follow resource reload',
     (tester) async {

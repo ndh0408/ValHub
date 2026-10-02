@@ -77,6 +77,7 @@ class PartyNotifier extends AsyncNotifier<PartyView> {
   /// Background refresh (polling / pull-to-refresh): keeps the data on
   /// screen while loading.
   Future<void> refresh() async {
+    if (!ref.mounted) return;
     ref.invalidateSelf();
     try {
       await future;
@@ -93,6 +94,7 @@ class PartyNotifier extends AsyncNotifier<PartyView> {
 
   Future<void> _apply(Future<JsonMap> call) async {
     final json = await call;
+    if (!ref.mounted) return;
     final party = Party.fromJson(json);
     final current = state.value;
     if (party != null && current != null && ref.mounted) {

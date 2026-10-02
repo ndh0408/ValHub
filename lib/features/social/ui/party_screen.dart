@@ -9,7 +9,6 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/competitive/competitive.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
@@ -22,7 +21,6 @@ import '../../../core/xmpp/xmpp_providers.dart';
 import '../data/party_models.dart';
 import '../data/riot_id_input.dart';
 import '../providers/party_providers.dart';
-import '../social_strings.dart';
 import 'widgets/party_widgets.dart';
 import 'widgets/social_widgets.dart';
 
@@ -38,7 +36,7 @@ import 'package:valvn/core/l10n/l10n.dart';
 /// matchmaking and ready sit in the bottom bar. Polls every [pollInterval]
 /// (ring in the bar). Every change is a user action; removing / leaving /
 /// switching party asks first.
-class PartyScreen extends ConsumerStatefulWidget {
+class PartyScreen extends ConsumerWidget {
   const PartyScreen({
     super.key,
     this.pollInterval = const Duration(seconds: 5),
@@ -47,10 +45,24 @@ class PartyScreen extends ConsumerStatefulWidget {
   final Duration pollInterval;
 
   @override
-  ConsumerState<PartyScreen> createState() => _PartyScreenState();
+  Widget build(BuildContext context, WidgetRef ref) => _PartyAccountScreen(
+    key: ValueKey(ref.watch(activePuuidProvider)),
+    pollInterval: pollInterval,
+  );
 }
 
-class _PartyScreenState extends ConsumerState<PartyScreen> {
+/// Pending actions, invite ticks and the code field belong to one account.
+/// Switching accounts disposes that state before displaying the next party.
+class _PartyAccountScreen extends ConsumerStatefulWidget {
+  const _PartyAccountScreen({super.key, required this.pollInterval});
+
+  final Duration pollInterval;
+
+  @override
+  ConsumerState<_PartyAccountScreen> createState() => _PartyScreenState();
+}
+
+class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
   final _code = TextEditingController();
   final Set<String> _busy = {};
   final Set<String> _invited = {};
@@ -73,6 +85,8 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
     Future<void> Function() action, {
     String? success,
   }) async {
+    if (!mounted) return;
+    final l10n = context.l10n;
     if (_busy.contains(key)) return;
     setState(() => _busy.add(key));
     try {
@@ -82,7 +96,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
       if (mounted) {
         showAppSnackBar(
           context,
-          SocialStrings.actionFailed(describeError(context.l10n, e).message),
+          l10n.socialActionFailed(describeError(l10n, e).message),
         );
       }
     } finally {
@@ -146,7 +160,11 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
       title: context.l10n.socialPartyTitle,
       subtitle: party == null || !(view?.gameRunning ?? false)
           ? null
-          : SocialStrings.partySummary(party.size, 5, open: party.isOpen),
+          : context.l10n.socialPartySummary(
+              party.size,
+              5,
+              party.isOpen ? 'open' : 'closed',
+            ),
       actions: [
         RefreshRing(
           period: widget.pollInterval,
@@ -349,7 +367,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                   label: p.isMatchFound
                       ? context.l10n.socialMatchFound
                       : p.isMatchmaking
-                      ? SocialStrings.inQueue(null)
+                      ? context.l10n.socialPresenceQueue
                       : context.l10n.socialIdleQueue,
                   color: accent,
                 ),
@@ -608,10 +626,12 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
   }
 
   Future<void> _inviteByRiotId(String me, Party p) async {
+    if (!mounted) return;
+    final l10n = context.l10n;
     final name = await showValSheet<RiotName>(
       context,
-      title: SocialStrings.inviteByRiotId,
-      subtitle: SocialStrings.inviteByRiotIdHint,
+      title: l10n.socialInviteByRiotId,
+      subtitle: l10n.socialInviteByRiotIdHint,
       builder: (context, _) => const _RiotIdForm(),
     );
     if (name == null || !mounted) return;
@@ -619,26 +639,29 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
       'invite-id',
       () =>
           _notifier(me).invite(gameName: name.gameName, tagLine: name.tagLine),
-      success: SocialStrings.inviteSent(name.riotId),
+      success: l10n.socialInviteSent(name.riotId),
     );
   }
 
   Future<void> _accept(String me, PartyInvite invite) async {
+    if (!mounted) return;
+    final l10n = context.l10n;
     final notifier = _notifier(me);
     if (!notifier.canAcceptInvites) {
-      showAppSnackBar(context, context.l10n.socialAcceptInGame);
+      showAppSnackBar(context, l10n.socialAcceptInGame);
       return;
     }
     await _run(
       'accept-${invite.partyId}',
       () => notifier.acceptInvite(invite),
-      success: SocialStrings.joined,
+      success: l10n.socialJoined,
     );
   }
 
   // ------------------------------------------------------------ code / join
 
   Widget _codeSection(Party p, String me) {
+    final l10n = context.l10n;
     final theme = Theme.of(context);
     final code = p.inviteCode;
     final isOwner = p.isOwner(me);
@@ -651,7 +674,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Semantics(
-              label: context.l10n.socialPartyCodeValue(code),
+              label: l10n.socialPartyCodeValue(code),
               excludeSemantics: true,
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -683,20 +706,20 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                     await Clipboard.setData(ClipboardData(text: code));
                     Haptics.light();
                     if (mounted) {
-                      showAppSnackBar(context, CommonStrings.copied);
+                      showAppSnackBar(context, l10n.commonCopied);
                     }
                   },
                   icon: const Icon(Icons.copy_rounded, size: 18),
-                  label: Text(context.l10n.socialCopyCode),
+                  label: Text(l10n.socialCopyCode),
                 ),
                 FilledButton.tonalIcon(
                   onPressed: () => unawaited(
                     ref.read(partyShareProvider)(
-                      context.l10n.socialShareCodeText(code),
+                      l10n.socialShareCodeText(code),
                     ),
                   ),
                   icon: Icon(Icons.adaptive.share, size: 18),
-                  label: Text(context.l10n.socialShareCode),
+                  label: Text(l10n.socialShareCode),
                 ),
                 if (isOwner)
                   TextButton(
@@ -706,7 +729,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                     onPressed: _isBusy('code')
                         ? null
                         : () => _run('code', () => _notifier(me).disableCode()),
-                    child: Text(context.l10n.socialDisableCode),
+                    child: Text(l10n.socialDisableCode),
                   ),
               ],
             ),
@@ -722,9 +745,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                isOwner
-                    ? context.l10n.socialNoCode
-                    : context.l10n.socialNoCodeMember,
+                isOwner ? l10n.socialNoCode : l10n.socialNoCodeMember,
                 style: theme.textTheme.bodyMedium?.copyWith(color: muted),
               ),
             ),
@@ -734,7 +755,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                 onPressed: _isBusy('code')
                     ? null
                     : () => _run('code', () => _notifier(me).generateCode()),
-                child: Text(context.l10n.socialGenerateCode),
+                child: Text(l10n.socialGenerateCode),
               ),
             ],
           ],
@@ -745,6 +766,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
   }
 
   Widget _joinSection(Party? p, String me) {
+    final l10n = context.l10n;
     return GroupedSection(
       children: [
         Padding(
@@ -762,7 +784,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                   textInputAction: TextInputAction.go,
                   onSubmitted: (_) => unawaited(_join(me, p)),
                   decoration: InputDecoration(
-                    hintText: context.l10n.socialJoinWithCode,
+                    hintText: l10n.socialJoinWithCode,
                     counterText: '',
                     isDense: true,
                     prefixIcon: const Icon(Icons.tag_rounded, size: 20),
@@ -775,7 +797,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
                 onPressed: _isBusy('join')
                     ? null
                     : () => unawaited(_join(me, p)),
-                child: Text(context.l10n.socialJoin),
+                child: Text(l10n.socialJoin),
               ),
             ],
           ),
@@ -785,38 +807,42 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
   }
 
   Future<void> _join(String me, Party? p) async {
+    if (!mounted) return;
+    final l10n = context.l10n;
     final code = _code.text.trim();
     if (!_codePattern.hasMatch(code)) {
-      showAppSnackBar(context, context.l10n.socialCodeInvalid);
+      showAppSnackBar(context, l10n.socialCodeInvalid);
       return;
     }
     if (p != null && p.size > 1) {
       final ok = await confirmAction(
         context,
-        title: SocialStrings.joinConfirmTitle,
-        body: SocialStrings.joinConfirmBody,
-        confirmLabel: SocialStrings.join,
+        title: l10n.socialJoinConfirmTitle,
+        body: l10n.socialJoinConfirmBody,
+        confirmLabel: l10n.socialJoin,
         destructive: false,
       );
       if (!ok || !mounted) return;
     }
     await _run('join', () async {
       await _notifier(me).joinByCode(code);
-      _code.clear();
-    }, success: SocialStrings.joined);
+      if (mounted) _code.clear();
+    }, success: l10n.socialJoined);
   }
 
   // ------------------------------------------------------ remove / leave
 
   Future<bool> _kick(String me, PartyMember m) async {
+    if (!mounted) return false;
+    final l10n = context.l10n;
     final name =
         ref.read(playerNameProvider(m.puuid)).value?.riotId ??
-        context.l10n.competitiveUnknownPlayer;
+        l10n.competitiveUnknownPlayer;
     final ok = await confirmAction(
       context,
-      title: SocialStrings.removeConfirmTitle,
-      body: SocialStrings.removeConfirmBody(name),
-      confirmLabel: SocialStrings.removeMember,
+      title: l10n.socialRemoveConfirmTitle,
+      body: l10n.socialRemoveConfirmBody(name),
+      confirmLabel: l10n.socialRemoveMember,
     );
     if (ok && mounted) {
       unawaited(_run('kick-${m.puuid}', () => _notifier(me).kick(m.puuid)));
@@ -826,11 +852,13 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
   }
 
   Future<void> _leave(String me, Party p) async {
+    if (!mounted) return;
+    final l10n = context.l10n;
     final ok = await confirmAction(
       context,
-      title: SocialStrings.leaveConfirmTitle,
-      body: SocialStrings.leaveConfirmBody,
-      confirmLabel: SocialStrings.leaveParty,
+      title: l10n.socialLeaveConfirmTitle,
+      body: l10n.socialLeaveConfirmBody,
+      confirmLabel: l10n.socialLeaveParty,
     );
     if (ok && mounted) await _run('leave', () => _notifier(me).leave());
   }
@@ -921,8 +949,9 @@ class _MoreMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final canLeave = party.size > 1;
     if (!canLeave && !isOwner) return const SizedBox.shrink();
+    final l10n = context.l10n;
     return IconButton(
-      tooltip: context.l10n.socialMoreActions,
+      tooltip: l10n.socialMoreActions,
       icon: Icon(Icons.adaptive.more),
       onPressed: () async {
         final v = await showActionSheet<String>(
@@ -932,16 +961,16 @@ class _MoreMenu extends StatelessWidget {
               SheetAction(
                 value: 'open',
                 label: party.isOpen
-                    ? SocialStrings.closeParty
-                    : SocialStrings.openParty,
+                    ? l10n.socialCloseParty
+                    : l10n.socialOpenParty,
                 icon: party.isOpen
                     ? Icons.lock_outline
                     : Icons.lock_open_outlined,
               ),
             if (canLeave)
-              const SheetAction(
+              SheetAction(
                 value: 'leave',
-                label: SocialStrings.leaveParty,
+                label: l10n.socialLeaveParty,
                 icon: Icons.logout,
                 destructive: true,
               ),

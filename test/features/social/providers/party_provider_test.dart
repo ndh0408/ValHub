@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/network/riot_exception.dart';
+import 'package:valvn/core/util/json.dart';
 import 'package:valvn/core/xmpp/xmpp_models.dart';
 import 'package:valvn/features/social/data/party_models.dart';
 import 'package:valvn/features/social/providers/party_providers.dart';
@@ -101,4 +104,40 @@ void main() {
       throwsA(isA<RiotApiException>()),
     );
   });
+
+  for (final action in ['ready', 'join', 'accept', 'kick', 'leave']) {
+    test(
+      '$action completion after disposal does not read state or refetch',
+      () async {
+        env.serveParty(partyJson());
+        await read();
+        final notifier = container.read(partyProvider(me).notifier);
+        final response = Completer<JsonMap>();
+        when(
+          () => env.api.partySetReady(any(), any(), ready: any(named: 'ready')),
+        ).thenAnswer((_) => response.future);
+        when(() => env.api.partyJoinByCode(any(), any()))
+            .thenAnswer((_) => response.future);
+        when(() => env.api.partyAcceptInvite(any(), any()))
+            .thenAnswer((_) => response.future);
+        when(
+          () =>
+              env.api.partyRemovePlayer(any(), subject: any(named: 'subject')),
+        ).thenAnswer((_) => response.future);
+        final pending = switch (action) {
+          'ready' => notifier.setReady(true),
+          'join' => notifier.joinByCode('XYZ789'),
+          'accept' => notifier.acceptInvite(PartyInvite(partyId: otherPartyId)),
+          'kick' => notifier.kick(mate),
+          _ => notifier.leave(),
+        };
+        clearInteractions(env.api);
+        container.dispose();
+        response.complete(partyJson());
+        await expectLater(pending, completes);
+        verifyNever(() => env.api.partyPlayer(any()));
+        verifyNever(() => env.api.party(any(), any()));
+      },
+    );
+  }
 }

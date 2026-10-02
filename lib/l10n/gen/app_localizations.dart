@@ -8848,6 +8848,12 @@ abstract class AppLocalizations {
   /// **'{status} · {detail}'**
   String socialPresenceDetails(String status, String detail);
 
+  /// Party header summary. state=open for an open party; other means invite-only. Manual select preserves legacy partySummary.
+  ///
+  /// In vi, this message translates to:
+  /// **'{size}/{max} người · {state, select, open{Tổ đội mở} other{Chỉ người được mời}}'**
+  String socialPartySummary(int size, int max, String state);
+
   /// SocialStrings.accept — party
   ///
   /// In vi, this message translates to:

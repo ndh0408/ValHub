@@ -111,8 +111,11 @@ Subject-to-account mismatches and current-process native/Flutter error-line
 counts remained zero. These are bounded observations, not a release certificate.
 
 The requested second search includes all 20 terms plus ValHub. Classification:
-TODO/FIXME/HACK are follow-up markers needing contextual review; mock/stub occur
-in test/support paths; placeholder includes ICU metadata; debug/print includes
+The initial case-insensitive substring inventory also matches `toDouble` as
+`TODO`, theme-preview `_mock` widgets and the legal phrase "hack VP". Those are
+not unfinished work or fake Riot data. Actual TODO/FIXME/HACK markers still need
+contextual review. Other mock/stub matches occur in tests/support/docs;
+placeholder includes ICU metadata; debug/print includes
 bounded tooling and intentional test failure diagnostics; VND is pricing/source
 and test data requiring market-specific acceptance; ValVN includes preserved
 compatibility IDs; VanHub includes historical documents; token/cookie/PUUID are
