@@ -122,8 +122,9 @@ should also hide it when the presence is older than 2 min
 `friendActivity(presence)` (SUMMARY §9.9): INGAME → `inMatch` (shooting range
 separately), PREGAME → `agentSelect`, then `<show>away` / `isIdle` → `away`,
 `partyState == MATCHMAKING` → `inQueue`, MENUS → `inLobby`; non-Valorant games →
-`otherGame`; Riot Client only → `online`; no presence → `offline`. The Vietnamese
-lines live in `lib/features/social/data/friend_status.dart`.
+`otherGame`; Riot Client only → `online`; no presence → `offline`. Status data
+remains in `lib/features/social/data/friend_status.dart`; rendered copy receives
+`AppLocalizations` and `AppFormats` in `lib/features/social/ui/friend_status_labels.dart`.
 
 ## 5. Roster and chat stanzas
 

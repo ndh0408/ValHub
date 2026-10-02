@@ -188,7 +188,12 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
                   CommunityChip(
                     key: const ValueKey('rank-suggest'),
                     icon: Icons.auto_awesome_rounded,
-                    label: rankRangeLabel(db, suggestion.min, suggestion.max),
+                    label: rankRangeLabel(
+                      context.l10n,
+                      db,
+                      suggestion.min,
+                      suggestion.max,
+                    ),
                     selected:
                         _rankMin == suggestion.min &&
                         _rankMax == suggestion.max,
@@ -207,7 +212,7 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
               children: [
                 for (final r in kLfgRoles)
                   CommunityChip(
-                    label: lfgRoleLabel(r),
+                    label: lfgRoleLabel(context.l10n, r),
                     selected: _roles.contains(r),
                     onSelected: () => setState(() {
                       if (!_roles.remove(r) && _roles.length < 4) _roles.add(r);

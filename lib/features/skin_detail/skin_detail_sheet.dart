@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -678,7 +680,10 @@ class _LevelChip extends StatelessWidget {
     return Semantics(
       button: video != null,
       label: [
-        context.l10n.skinDetailLevelCaption(levelText, level.levelItemLabel),
+        context.l10n.skinDetailLevelCaption(
+          levelText,
+          context.l10n.skinLevelItem(level),
+        ),
         if (locked) context.l10n.skinDetailLocked,
         if (video != null) context.l10n.skinDetailPlayVideo,
       ].join(', '),
@@ -733,7 +738,7 @@ class _LevelChip extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    level.levelItemLabel,
+                    context.l10n.skinLevelItem(level),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.labelSmall?.copyWith(color: muted),

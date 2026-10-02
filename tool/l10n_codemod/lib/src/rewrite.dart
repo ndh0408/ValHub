@@ -44,8 +44,12 @@ class RewritePlan {
 
 /// Mechanical view-boundary rules only. Defaults, enums, collection lookups, captured fields,
 /// no-context/domain references and reads after await require structural work and are reported.
-RewritePlan planUnit(ResolvedUnitResult unit, Map<String, String> keys) {
-  final visitor = _RewriteVisitor(unit, keys);
+RewritePlan planUnit(
+  ResolvedUnitResult unit,
+  Map<String, String> keys, {
+  bool captureAsync = false,
+}) {
+  final visitor = _RewriteVisitor(unit, keys, captureAsync);
   unit.unit.accept(visitor);
   if (unit.unit.directives.any((d) => d is PartOfDirective)) {
     return RewritePlan(unit.content, const [], [
@@ -78,11 +82,27 @@ RewritePlan planUnit(ResolvedUnitResult unit, Map<String, String> keys) {
 }
 
 class _RewriteVisitor extends RecursiveAstVisitor<void> {
-  _RewriteVisitor(this.unit, this.keys);
+  _RewriteVisitor(this.unit, this.keys, this.captureAsync);
   final ResolvedUnitResult unit;
   final Map<String, String> keys;
+  final bool captureAsync;
   final edits = <int, TextEdit>{};
   final skipped = <Map<String, Object?>>[];
+  final _captures = <int, String>{};
+
+  String _capture(BlockFunctionBody body, String context) {
+    return _captures.putIfAbsent(body.offset, () {
+      var name = 'l10nBeforeAwait';
+      var suffix = 1;
+      while (RegExp('\\b$name\\b').hasMatch(unit.content) ||
+          _captures.values.contains(name)) {
+        name = 'l10nBeforeAwait${++suffix}';
+      }
+      final offset = body.block.leftBracket.end;
+      edits[offset] = TextEdit(offset, 0, '\nfinal $name = $context.l10n;\n');
+      return name;
+    });
+  }
 
   bool replace(AstNode node, Element? element, int end) {
     final cls = element?.enclosingElement;
@@ -94,6 +114,8 @@ class _RewriteVisitor extends RecursiveAstVisitor<void> {
     final key = keys[symbol];
     String? reason;
     String? context;
+    FunctionBody? nearestBody;
+    BlockFunctionBody? captureBody;
     final shadowedParameters = <String>{};
     final consts = <TextEdit>[];
     for (
@@ -129,13 +151,23 @@ class _RewriteVisitor extends RecursiveAstVisitor<void> {
         token = parent.constKeyword;
       }
       if (token != null) consts.add(TextEdit(token.offset, token.length, ''));
-      if (parent is FunctionBody && parent.isAsynchronous) {
-        // An inherited-widget lookup after an await must be captured before suspension by a human.
-        final awaits = _AwaitDetector(node.offset);
-        parent.accept(awaits);
-        if (awaits.found) {
-          reason = 'localization read after await';
-          break;
+      if (parent is FunctionBody) {
+        nearestBody ??= parent;
+        if (parent.isAsynchronous) {
+          final awaits = _AwaitDetector(node.offset);
+          parent.accept(awaits);
+          if (awaits.found) {
+            // Only the function's own explicit BuildContext can be captured.
+            // Lifecycle/State.context and outer/nested closures remain manual.
+            if (captureAsync &&
+                identical(nearestBody, parent) &&
+                parent is BlockFunctionBody) {
+              captureBody = parent;
+            } else {
+              reason = 'localization read after await';
+              break;
+            }
+          }
         }
       }
       if (parent is FunctionExpression ||
@@ -167,6 +199,13 @@ class _RewriteVisitor extends RecursiveAstVisitor<void> {
     }
     if (key == null) reason ??= 'structural or collection member';
     if (context == null) reason ??= 'no BuildContext in scope';
+    if (captureBody != null &&
+        !paramsOf(captureBody.parent!).any(
+          (p) => isBuildContext(paramType(p)) && p.name?.lexeme == context,
+        )) {
+      reason ??=
+          'async capture needs a BuildContext parameter on its own function';
+    }
     if (element is MethodElement &&
         element.formalParameters.any((p) => p.isNamed || p.isOptional)) {
       reason ??= 'optional/named arguments require explicit adapter';
@@ -179,10 +218,13 @@ class _RewriteVisitor extends RecursiveAstVisitor<void> {
       });
       return true;
     }
+    final receiver = captureBody == null
+        ? '$context.l10n'
+        : _capture(captureBody, context!);
     edits[node.offset] = TextEdit(
       node.offset,
       end - node.offset,
-      '$context.l10n.$key',
+      '$receiver.$key',
     );
     for (final edit in consts) {
       edits[edit.offset] = edit;
@@ -236,6 +278,7 @@ Future<Map<String, Object?>> rewrite(
   Catalog catalog, {
   required List<String> only,
   bool apply = false,
+  bool captureAsync = false,
 }) async {
   if (only.isEmpty) {
     throw ProjectException(
@@ -275,7 +318,7 @@ Future<Map<String, Object?>> rewrite(
           unit.diagnostics.any((d) => d.severity.name == 'ERROR')) {
         throw ProjectException('resolve selected file before rewriting: $rel');
       }
-      final plan = planUnit(unit, keys);
+      final plan = planUnit(unit, keys, captureAsync: captureAsync);
       // Validate ranges/overlaps even during a dry run.
       plan.apply();
       planned[path] = plan;

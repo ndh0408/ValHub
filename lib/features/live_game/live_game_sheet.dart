@@ -256,7 +256,7 @@ class _QuitBarState extends ConsumerState<_QuitBar> {
       if (mounted) {
         showAppSnackBar(
           context,
-          '${LiveGameStrings.quitFailed} ${describeError(e).message}',
+          '${LiveGameStrings.quitFailed} ${describeError(context.l10n, e).message}',
         );
       }
     } finally {

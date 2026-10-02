@@ -52,7 +52,10 @@ class _AgentSelectViewState extends ConsumerState<AgentSelectView> {
       await _controller.hoverAgent(agent.uuid);
     } on Object catch (e) {
       if (mounted) {
-        showAppSnackBar(context, _failure(LiveGameStrings.selectFailed, e));
+        showAppSnackBar(
+          context,
+          _failure(context.l10n, LiveGameStrings.selectFailed, e),
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -73,15 +76,18 @@ class _AgentSelectViewState extends ConsumerState<AgentSelectView> {
       }
     } on Object catch (e) {
       if (mounted) {
-        showAppSnackBar(context, _failure(LiveGameStrings.lockFailed, e));
+        showAppSnackBar(
+          context,
+          _failure(context.l10n, LiveGameStrings.lockFailed, e),
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
   }
 
-  static String _failure(String base, Object error) {
-    final detail = describeError(error);
+  static String _failure(AppLocalizations l10n, String base, Object error) {
+    final detail = describeError(l10n, error);
     return detail.needsLogin ? '$base ${detail.message}' : base;
   }
 

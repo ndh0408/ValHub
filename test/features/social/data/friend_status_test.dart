@@ -1,3 +1,9 @@
+import 'package:valvn/core/l10n/app_locale.dart';
+import 'package:valvn/core/l10n/formats.dart';
+
+import '../../../helpers/l10n.dart';
+
+import 'package:valvn/features/social/ui/friend_status_labels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/xmpp/xmpp.dart';
@@ -15,6 +21,8 @@ FriendStatus _status(
   bool online = true,
   DateTime? lastOnline,
 }) => friendStatus(
+  tl,
+  _formats,
   Friend(
     puuid: 'x',
     lastOnline: lastOnline,
@@ -177,7 +185,7 @@ void main() {
         ),
       );
       expect(
-        friendDetail(f, db: _db),
+        friendDetail(tl, _formats, f, db: _db),
         'Thi đấu xếp hạng · Tổ đội 3/5 · Top 1.234',
       );
       expect(friendRankTier(f), 24);
@@ -187,12 +195,14 @@ void main() {
       final f = friend(
         const PresenceSnapshot(loopState: LoopState.menus, partySize: 3),
       );
-      expect(friendDetail(f, db: _db), isNull);
+      expect(friendDetail(tl, _formats, f, db: _db), isNull);
     });
 
     test('custom games, solo players and offline friends add nothing', () {
       expect(
         friendDetail(
+          tl,
+          _formats,
           friend(
             const PresenceSnapshot(
               loopState: LoopState.ingame,
@@ -204,12 +214,12 @@ void main() {
         ),
         isNull,
       );
-      expect(friendDetail(friend(null), db: _db), isNull);
+      expect(friendDetail(tl, _formats, friend(null), db: _db), isNull);
       final offline = friend(
         const PresenceSnapshot(competitiveTier: 20),
         online: false,
       );
-      expect(friendDetail(offline, db: _db), isNull);
+      expect(friendDetail(tl, _formats, offline, db: _db), isNull);
       expect(friendRankTier(offline), isNull);
       expect(
         friendRankTier(friend(const PresenceSnapshot(competitiveTier: 0))),
@@ -218,3 +228,5 @@ void main() {
     });
   });
 }
+
+final _formats = AppFormats.create(AppLocale.vi, 'vi', messages: tl);

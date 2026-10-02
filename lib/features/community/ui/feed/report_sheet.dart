@@ -135,6 +135,8 @@ Future<bool> reportContent(
   required ReportTarget targetType,
   required String targetId,
 }) async {
+  final l10nBeforeAwait = context.l10n;
+
   // Reporting needs a session: ask to join first, then continue.
   if (!await promptConsentFromContext(context) || !context.mounted) {
     return false;
@@ -148,9 +150,9 @@ Future<bool> reportContent(
   if (reason == null || !context.mounted) return false;
   final ok = await confirmCommunityAction(
     context,
-    title: CommunityStrings.reportConfirmTitle,
-    body: CommunityStrings.reportConfirmBody,
-    confirmLabel: CommunityStrings.send,
+    title: l10nBeforeAwait.communityReportConfirmTitle,
+    body: l10nBeforeAwait.communityReportConfirmBody,
+    confirmLabel: l10nBeforeAwait.communitySend,
   );
   if (!ok || !context.mounted) return false;
   try {
@@ -166,7 +168,7 @@ Future<bool> reportContent(
       ScaffoldMessenger.maybeOf(context)
         ?..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(content: Text(CommunityStrings.reported)),
+          SnackBar(content: Text(l10nBeforeAwait.communityReported)),
         );
     }
     return true;

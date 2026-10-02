@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../core/l10n/common_strings.dart';
+import '../core/l10n/l10n.dart';
 import '../core/ui/floating_nav_bar.dart';
 import '../core/ui/window_info.dart';
 import '../features/collection/collection_routes.dart';
@@ -28,39 +28,39 @@ enum AppTab {
   /// The branch's root location.
   final String root;
 
-  String get label => switch (this) {
-    home => CommonStrings.tabHome,
-    store => CommonStrings.tabStore,
-    community => CommonStrings.tabCommunity,
-    collection => CommonStrings.tabCollection,
-    profile => CommonStrings.tabProfile,
+  String label(AppLocalizations l10n) => switch (this) {
+    home => l10n.commonTabHome,
+    store => l10n.commonTabStore,
+    community => l10n.commonTabCommunity,
+    collection => l10n.commonTabCollection,
+    profile => l10n.commonTabProfile,
   };
 
-  NavigationDestination get destination => switch (this) {
-    home => const NavigationDestination(
+  NavigationDestination destination(AppLocalizations l10n) => switch (this) {
+    home => NavigationDestination(
       icon: Icon(Icons.home_outlined),
       selectedIcon: Icon(Icons.home_rounded),
-      label: CommonStrings.tabHome,
+      label: l10n.commonTabHome,
     ),
-    store => const NavigationDestination(
+    store => NavigationDestination(
       icon: Icon(Icons.storefront_outlined),
       selectedIcon: Icon(Icons.storefront),
-      label: CommonStrings.tabStore,
+      label: l10n.commonTabStore,
     ),
-    community => const NavigationDestination(
+    community => NavigationDestination(
       icon: Icon(Icons.forum_outlined),
       selectedIcon: Icon(Icons.forum),
-      label: CommonStrings.tabCommunity,
+      label: l10n.commonTabCommunity,
     ),
-    collection => const NavigationDestination(
+    collection => NavigationDestination(
       icon: Icon(Icons.inventory_2_outlined),
       selectedIcon: Icon(Icons.inventory_2),
-      label: CommonStrings.tabCollection,
+      label: l10n.commonTabCollection,
     ),
-    profile => const NavigationDestination(
+    profile => NavigationDestination(
       icon: Icon(Icons.person_outline),
       selectedIcon: Icon(Icons.person),
-      label: CommonStrings.tabProfile,
+      label: l10n.commonTabProfile,
     ),
   };
 }
@@ -73,16 +73,15 @@ class AppShell extends StatelessWidget {
 
   final StatefulNavigationShell navigationShell;
 
-  static final _destinations = [
-    for (final tab in AppTab.values) tab.destination,
-  ];
-
   /// Below this width only the selected tab shows its label (the others
   /// keep their semantics label). Five tabs fit from 360 dp up.
   static const compactWidth = 360.0;
 
   @override
   Widget build(BuildContext context) {
+    final destinations = [
+      for (final tab in AppTab.values) tab.destination(context.l10n),
+    ];
     final compact = MediaQuery.sizeOf(context).width < compactWidth;
     final window = WindowInfo.of(context);
     final rail = window.useRail;
@@ -105,7 +104,7 @@ class AppShell extends StatelessWidget {
                   labelType: NavigationRailLabelType.all,
                   groupAlignment: window.short ? -1 : 0,
                   destinations: [
-                    for (final d in _destinations)
+                    for (final d in destinations)
                       NavigationRailDestination(
                         icon: d.icon,
                         selectedIcon: d.selectedIcon,
@@ -131,7 +130,7 @@ class AppShell extends StatelessWidget {
                   compact: compact || window.short,
                   emphasizedIndex: AppTab.community.index,
                   onDestinationSelected: select,
-                  destinations: _destinations,
+                  destinations: destinations,
                 ),
               ),
       ),

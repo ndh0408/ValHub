@@ -1,5 +1,13 @@
 # Hoàn thiện ValHub — nhật ký triển khai Codex
 
+Checkpoint tiếp theo 03/10: [Render-time cutover, build 4010](I18N_RENDER_CUTOVER_2026-10-03.md).
+Đã chuyển thêm **175 refs** (514 → **339**). Windows hai lượt và Mac đạt
+**4.238 tests**, analyzer 0; backend 867, codemod 37, Android native 6 và public
+flows 10 đạt. APK **4010** đang mở trên emulator; bốn tài khoản/active/wishlist/
+settings giữ nguyên. iOS 4010 build trên Mac nhưng **chưa ký/chưa test iPhone**.
+Cutover còn đỏ, chưa nghiệm thu toàn bộ; chỉ tiếng Việt được phát hành.
+
+
 Checkpoint 03/10: [Review Gemini và tích hợp ValHub](VALHUB_INTEGRATION_2026-10-03.md). Đã sửa lỗi
 Gemini và gộp locale nền/bộ chọn/thông báo. Windows/Mac **4.236 tests**,
 analyzer 0; backend 867, native 6, public-flow 10 cases đạt. APK/iOS không ký
@@ -71,7 +79,7 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 - [ ] RV-03 toàn bộ: recorder nền, RR/cache tên, cancellation, deferred links, release errors, LFG join, logout/consent và ẩn/chặn cục bộ đã nối; còn nghiệm thu rộng cùng quốc tế hóa/thiết bị.
 - [ ] RV-05 toàn bộ: privacy và Community disclosure đã đồng bộ, Markdown sinh từ Dart; vẫn cần rà lời toàn cầu khi cutover.
 - [x] I18N W1 nền công cụ: resolved extractor, ARB, manifest, parity, kiểm tra chạy lại; danh sách 52 member cần xử lý cấu trúc được giữ rõ.
-- [ ] I18N W2–W4: Migrate UI bằng công cụ có sẵn; global hiện còn **514 references / 52 structural members**. Chưa tách hết domain, chuyển hết async call site và cutover.
+- [ ] I18N W2–W4: Migrate UI bằng công cụ có sẵn; global hiện còn **339 references / 52 structural members**. Chưa tách hết domain, chuyển hết async call site và cutover.
 - [ ] I18N W5 toàn bộ: runtime/device/upgrade pin, picker cho shipped locales, snapshot nền và channel/reminder resources đã nối và test; còn contentLocale/ui_locales/status, pruning và screen-reader announcement.
 - [ ] I18N W6: đủ 18 bản dịch UI, plural/select, glossary và fallback/status gates.
 - [ ] I18N W7: RTL toàn ứng dụng, font CJK, pseudo locale và stale-string tests.

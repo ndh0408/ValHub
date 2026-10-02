@@ -16,6 +16,7 @@ import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/ui/community_screen.dart';
 
 import '../helpers/test_prefs.dart';
+import '../helpers/l10n.dart';
 
 /// The tab shell with five placeholder branches.
 Future<GoRouter> _pumpShell(
@@ -85,7 +86,7 @@ void main() {
   ];
 
   test('AppTab lists the five tabs in bar order, without magic indexes', () {
-    expect(AppTab.values.map((t) => t.label), labels);
+    expect(AppTab.values.map((t) => t.label(tl)), labels);
     expect(AppTab.home.index, 0);
     expect(AppTab.community.index, 2);
     expect(AppTab.profile.root, '/profile');

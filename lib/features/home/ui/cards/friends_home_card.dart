@@ -4,6 +4,8 @@
 /// user opted in, and otherwise asks once.
 library;
 
+import 'package:valvn/features/social/ui/friend_status_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +18,6 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/xmpp/friends.dart';
-import '../../../social/data/friend_status.dart';
 import '../../../social/social_routes.dart';
 import '../../data/home_card.dart';
 import '../../data/home_friends.dart';
@@ -87,7 +88,9 @@ class _ConsentPrompt extends ConsumerWidget {
                     ..showSnackBar(
                       SnackBar(
                         content: Text(
-                          context.l10n.homeCardHidden(HomeCardId.friends.title),
+                          context.l10n.homeCardHidden(
+                            HomeCardId.friends.title(context.l10n),
+                          ),
                         ),
                         action: SnackBarAction(
                           label: context.l10n.homeUndo,
@@ -177,6 +180,8 @@ class _FriendAvatar extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = valColorsOf(context);
     final status = presenceStatus(
+      context.l10n,
+      context.fmt,
       friend.presence,
       lastOnline: friend.lastOnline,
       db: db,

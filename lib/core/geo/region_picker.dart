@@ -111,7 +111,7 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
       );
     } on Object catch (e) {
       if (mounted && !cancel.isCancelled) {
-        setState(() => _error = describeError(e).message);
+        setState(() => _error = describeError(context.l10n, e).message);
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -149,7 +149,9 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
           .refreshRegion(widget.account.puuid);
       if (mounted) ref.read(accountsProvider.notifier).reload();
     } on Object catch (e) {
-      if (mounted) setState(() => _error = describeError(e).message);
+      if (mounted) {
+        setState(() => _error = describeError(context.l10n, e).message);
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }

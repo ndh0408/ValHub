@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/features/community/community_strings.dart';
@@ -151,9 +153,9 @@ void main() {
     test('labels', () {
       expect(countrySegmentLabel('VN'), '🇻🇳 Việt Nam');
       expect(countrySegmentLabel(null), CommunityStrings.scopeCountry);
-      expect(languageFilterLabel({}), CommunityStrings.anyLanguage);
-      expect(languageFilterLabel({'ja'}), '日本語');
-      expect(languageFilterLabel({'ja', 'vi'}), '2 ngôn ngữ');
+      expect(languageFilterLabel(tl, {}), CommunityStrings.anyLanguage);
+      expect(languageFilterLabel(tl, {'ja'}), '日本語');
+      expect(languageFilterLabel(tl, {'ja', 'vi'}), '2 ngôn ngữ');
     });
   });
 

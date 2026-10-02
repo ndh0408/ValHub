@@ -3,13 +3,12 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
-import '../../../../core/l10n/content_strings.dart';
+import '../../../../core/l10n/labels/content_labels.dart';
 import '../../../../core/l10n/locale.dart';
 import '../../../../core/riot/riot_ids.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/rank_badge.dart';
-import '../../community_strings.dart';
 import '../../data/community_models.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -24,11 +23,11 @@ String? lfgRoleUuid(String role) => switch (role) {
 };
 
 /// vi-VN role name (valorant-api names: "Đối đầu", "Khởi tranh"…).
-String lfgRoleLabel(String role) {
+String lfgRoleLabel(AppLocalizations l10n, String role) {
   final uuid = lfgRoleUuid(role);
   return uuid == null
-      ? CommunityStrings.roleFlex
-      : (ContentStrings.roleNames[uuid] ?? role);
+      ? l10n.communityRoleFlex
+      : (l10n.agentRoleName(uuid) ?? role);
 }
 
 /// Role icon from the content (any agent of that role), else `null`.
@@ -93,7 +92,7 @@ class RoleTag extends StatelessWidget {
           const SizedBox(width: 5),
           Flexible(
             child: Text(
-              lfgRoleLabel(role),
+              lfgRoleLabel(context.l10n, role),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.labelSmall?.copyWith(
@@ -135,6 +134,7 @@ class RankRangeBadge extends ConsumerWidget {
           );
     return Semantics(
       label: rankRangeLabel(
+        context.l10n,
         ref.watch(contentProvider).value ?? ContentDb.empty(),
         min,
         max,
@@ -153,13 +153,10 @@ class RankRangeBadge extends ConsumerWidget {
 }
 
 /// "Vàng 1 – Bạch Kim 3" / "Mọi rank".
-String rankRangeLabel(ContentDb db, int? min, int? max) {
-  if (min == null && max == null) return CommunityStrings.anyRank;
-  String name(int t) => db.tier(t)?.displayName ?? ContentStrings.unranked;
-  return CommunityStrings.rankBetween(
-    name(min ?? 3),
-    name(max ?? kMaxRankTier),
-  );
+String rankRangeLabel(AppLocalizations l10n, ContentDb db, int? min, int? max) {
+  if (min == null && max == null) return l10n.communityAnyRank;
+  String name(int t) => db.tier(t)?.displayName ?? l10n.contentUnranked;
+  return l10n.communityRankBetween(name(min ?? 3), name(max ?? kMaxRankTier));
 }
 
 /// Party size as dots: ●●●○○ (filled = members, red rings = open slots).

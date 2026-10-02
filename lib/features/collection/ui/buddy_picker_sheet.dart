@@ -6,14 +6,12 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/loadout/loadout.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
-import '../collection_strings.dart';
 import '../data/buddy_options.dart';
 import '../data/collection_search.dart';
 import '../data/loadout_view.dart';
@@ -213,13 +211,15 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
   }
 
   Future<void> _remove(BuildContext context, String puuid) async {
+    final l10nBeforeAwait = context.l10n;
+
     final navigator = Navigator.of(context);
     final ok = await applyLoadoutChange(
       context,
       ref,
       puuid: puuid,
       change: RemoveBuddy(weaponId: _weaponId),
-      successMessage: CollectionStrings.buddyRemoved,
+      successMessage: l10nBeforeAwait.collectionBuddyRemoved,
     );
     if (ok) Haptics.light();
     if (ok && navigator.mounted) navigator.pop();
@@ -231,6 +231,8 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
     BuddyOption option,
     ContentDb db,
   ) async {
+    final l10nBeforeAwait2 = context.l10n;
+
     final navigator = Navigator.of(context);
     final messenger = ScaffoldMessenger.maybeOf(context);
     final copy = option.copyFor(_weaponId);
@@ -243,13 +245,14 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
     if (from != null && from != _weaponId) {
       final confirmed = await showConfirmDialog(
         context,
-        title: CollectionStrings.moveBuddyTitle,
-        message: CollectionStrings.moveBuddyBody(
+        title: l10nBeforeAwait2.collectionMoveBuddyTitle,
+        message: l10nBeforeAwait2.collectionMoveBuddyBody(
           option.buddy.displayName,
-          db.weapon(from)?.displayName ?? CommonStrings.unknownItem,
-          db.weapon(_weaponId)?.displayName ?? CommonStrings.unknownItem,
+          db.weapon(from)?.displayName ?? l10nBeforeAwait2.commonUnknownItem,
+          db.weapon(_weaponId)?.displayName ??
+              l10nBeforeAwait2.commonUnknownItem,
         ),
-        confirmLabel: CollectionStrings.move,
+        confirmLabel: l10nBeforeAwait2.collectionMove,
         icon: Icons.swap_horiz,
       );
       if (!confirmed || !context.mounted) return;
@@ -259,7 +262,9 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
       ref,
       puuid: puuid,
       change: option.equipOn(_weaponId, copy),
-      successMessage: CollectionStrings.equippedItem(option.buddy.displayName),
+      successMessage: l10nBeforeAwait2.collectionEquippedItem(
+        option.buddy.displayName,
+      ),
     );
     if (ok) Haptics.medium();
     if (ok && navigator.mounted) navigator.pop();

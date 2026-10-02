@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 
 import '../../content/models/game_models.dart' show gameModeKey;
 import '../../util/json.dart';
-import 'competitive_strings.dart';
 import 'names.dart';
 import 'viewer.dart' show baseQueueId;
 
@@ -33,14 +32,6 @@ enum MatchOutcome {
   loss,
   draw,
   unknown;
-
-  /// "Thắng" / "Thua" / "Hòa" / "–".
-  String get label => switch (this) {
-    win => CompetitiveStrings.victory,
-    loss => CompetitiveStrings.defeat,
-    draw => CompetitiveStrings.draw,
-    unknown => CompetitiveStrings.noValue,
-  };
 
   /// Parses [name] (as written by `outcome.name`).
   static MatchOutcome? fromName(String? name) {
@@ -96,15 +87,6 @@ enum RoundEndType {
   surrendered,
   unknown;
 
-  String? get label => switch (this) {
-    elimination => CompetitiveStrings.roundElimination,
-    detonate => CompetitiveStrings.roundDetonate,
-    defuse => CompetitiveStrings.roundDefuse,
-    timeExpired => CompetitiveStrings.roundTimeExpired,
-    surrendered => CompetitiveStrings.roundSurrendered,
-    unknown => null,
-  };
-
   /// From `roundResultCode` (`Elimination`, `Detonate`, `Defuse`,
   /// `Surrendered`, `""` = timer) with `roundResult` text as fallback.
   static RoundEndType parse(String? code, String? text) {
@@ -132,11 +114,6 @@ enum RoundEndType {
 enum TeamRole {
   attacker,
   defender;
-
-  String get label => switch (this) {
-    attacker => CompetitiveStrings.attack,
-    defender => CompetitiveStrings.defense,
-  };
 
   TeamRole get opposite => this == attacker ? defender : attacker;
 

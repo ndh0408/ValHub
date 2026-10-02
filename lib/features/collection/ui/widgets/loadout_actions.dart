@@ -1,12 +1,11 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/auth/auth_routes.dart';
 import '../../../../core/domain/loadout/loadout.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/ui/error_view.dart';
-import '../../collection_strings.dart';
 
 /// Saves [change] for [puuid] after an explicit user action and reports the
 /// outcome in a snackbar: [successMessage] on success, "Không thể lưu trang
@@ -19,6 +18,7 @@ Future<bool> applyLoadoutChange(
   required LoadoutChange change,
   String? successMessage,
 }) async {
+  final l10n = context.l10n;
   final messenger = ScaffoldMessenger.maybeOf(context);
   final router = GoRouter.maybeOf(context);
   try {
@@ -30,13 +30,14 @@ Future<bool> applyLoadoutChange(
     }
     return true;
   } on LoadoutSaveException catch (e) {
-    showLoadoutSaveError(messenger, router, e, puuid: puuid);
+    showLoadoutSaveError(l10n, messenger, router, e, puuid: puuid);
     return false;
   }
 }
 
 /// Snackbar for a failed save.
 void showLoadoutSaveError(
+  AppLocalizations l10n,
   ScaffoldMessengerState? messenger,
   GoRouter? router,
   LoadoutSaveException e, {
@@ -47,19 +48,19 @@ void showLoadoutSaveError(
       e.detail ??
       (cause == null || cause is LoadoutEditException
           ? null
-          : describeError(cause).message);
+          : describeError(l10n, cause).message);
   messenger
     ?..hideCurrentSnackBar()
     ..showSnackBar(
       SnackBar(
         content: Text(
           detail == null
-              ? CollectionStrings.saveFailed
-              : CollectionStrings.saveFailedWith(detail),
+              ? l10n.collectionSaveFailed
+              : l10n.collectionSaveFailedWith(detail),
         ),
         action: e.needsLogin && router != null
             ? SnackBarAction(
-                label: CommonStrings.signInAgain,
+                label: l10n.commonSignInAgain,
                 onPressed: () =>
                     router.push(AuthRoutes.loginPath(reauthPuuid: puuid)),
               )

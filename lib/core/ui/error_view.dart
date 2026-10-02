@@ -2,11 +2,9 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../auth/auth_routes.dart';
-import '../l10n/common_strings.dart';
 import '../network/error_classifier.dart';
 import '../network/riot_exception.dart';
 import '../theme/app_theme.dart';
-import '../util/format.dart';
 import 'empty_view.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -33,51 +31,51 @@ class ErrorDescription {
   final IconData icon;
 }
 
-/// Maps any error (preferably a [RiotException]) to Vietnamese copy
+/// Maps any error (preferably a [RiotException]) to the supplied UI language
 /// (VF §8.13, riot-auth §3.5).
-ErrorDescription describeError(Object error) {
+ErrorDescription describeError(AppLocalizations l10n, Object error) {
   final e = error is RiotException ? error : classifyError(error);
   return switch (e) {
-    UnsupportedRegionException() => const ErrorDescription(
-      message: CommonStrings.errorUnsupportedRegion,
+    UnsupportedRegionException() => ErrorDescription(
+      message: l10n.commonErrorUnsupportedRegion,
       canRetry: false,
       icon: Icons.public_off_outlined,
     ),
     NeedsLoginException(:final puuid) => ErrorDescription(
-      title: CommonStrings.errorNeedsLoginTitle,
-      message: CommonStrings.errorNeedsLogin,
+      title: l10n.commonErrorNeedsLoginTitle,
+      message: l10n.commonErrorNeedsLogin,
       needsLogin: true,
       puuid: puuid,
       canRetry: false,
       icon: Icons.lock_clock_outlined,
     ),
     // Riot's own message is English: it stays in the exception (debug
-    // only); the UI always shows the Vietnamese copy.
+    // only); the UI always shows its own localized copy.
     MaintenanceException() => ErrorDescription(
-      title: CommonStrings.maintenanceTitle,
-      message: CommonStrings.errorMaintenance,
+      title: l10n.commonMaintenanceTitle,
+      message: l10n.commonErrorMaintenance,
       icon: Icons.construction_outlined,
     ),
     TransientException(:final retryAfter, :final reason) => ErrorDescription(
       message: switch (reason) {
-        'timeout' => CommonStrings.errorTimeout,
-        'network' => CommonStrings.errorNetwork,
-        'content_unavailable' => CommonStrings.errorContentUnavailable,
+        'timeout' => l10n.commonErrorTimeout,
+        'network' => l10n.commonErrorNetwork,
+        'content_unavailable' => l10n.commonErrorContentUnavailable,
         _ when retryAfter != null && retryAfter > const Duration(seconds: 5) =>
-          CommonStrings.errorTransientRetryIn(formatDurationCoarse(retryAfter)),
-        _ => CommonStrings.errorTransient,
+          l10n.commonErrorTransientRetryIn(
+            describeRetryDelay(l10n, retryAfter),
+          ),
+        _ => l10n.commonErrorTransient,
       },
       icon: reason == 'network' || reason == 'timeout'
           ? Icons.wifi_off_outlined
           : Icons.cloud_off_outlined,
     ),
-    NotFoundException() => const ErrorDescription(
-      message: CommonStrings.errorNotFound,
+    NotFoundException() => ErrorDescription(
+      message: l10n.commonErrorNotFound,
       icon: Icons.search_off_outlined,
     ),
-    RiotApiException(:final status) => ErrorDescription(
-      message: CommonStrings.errorApi(status),
-    ),
+    RiotApiException() => ErrorDescription(message: l10n.commonErrorApi),
   };
 }
 
@@ -103,7 +101,7 @@ class ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final d = describeError(error);
+    final d = describeError(context.l10n, error);
     final theme = Theme.of(context);
     final button = error is UnsupportedRegionException
         ? FilledButton(
@@ -218,4 +216,13 @@ void showAppSnackBar(BuildContext context, String message) {
   ScaffoldMessenger.maybeOf(context)
     ?..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(content: Text(message)));
+}
+
+/// Coarse retry delay from the same resources as the error message.
+String describeRetryDelay(AppLocalizations l10n, Duration duration) {
+  if (duration.isNegative) duration = Duration.zero;
+  if (duration.inDays >= 1) return l10n.commonDays(duration.inDays);
+  if (duration.inHours >= 1) return l10n.commonHours(duration.inHours);
+  if (duration.inMinutes >= 1) return l10n.commonMinutes(duration.inMinutes);
+  return l10n.commonSeconds(duration.inSeconds);
 }

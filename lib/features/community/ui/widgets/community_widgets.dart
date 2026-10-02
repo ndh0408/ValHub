@@ -1,3 +1,5 @@
+import 'package:valvn/features/community/ui/community_error.dart';
+
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -807,7 +809,7 @@ class CommunityErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final d = describeCommunityError(error);
+    final d = describeCommunityError(context.l10n, error);
     final theme = Theme.of(context);
     final button = d.needsLogin
         ? FilledButton(
@@ -864,7 +866,9 @@ void showCommunityError(BuildContext context, Object error) {
   messenger
     ?..hideCurrentSnackBar()
     ..showSnackBar(
-      SnackBar(content: Text(describeCommunityError(error).message)),
+      SnackBar(
+        content: Text(describeCommunityError(context.l10n, error).message),
+      ),
     );
 }
 
@@ -1001,7 +1005,7 @@ class _PagedFooterState extends State<PagedFooter> {
           children: [
             Flexible(
               child: Text(
-                describeCommunityError(error).message,
+                describeCommunityError(context.l10n, error).message,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,

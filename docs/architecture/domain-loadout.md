@@ -122,11 +122,13 @@ riotError }` is thrown; `message` is always **"Không thể lưu trang bị"**.
 
 ```dart
 Future<void> equip(BuildContext context, WidgetRef ref, LoadoutChange change) async {
+  final l10n = context.l10n;
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  final router = GoRouter.maybeOf(context);
   try {
     await ref.read(loadoutProvider(puuid).notifier).apply(change);   // user tapped "Trang bị"
   } on LoadoutSaveException catch (e) {
-    final detail = e.detail ?? (e.cause == null ? null : describeError(e.cause!).message);
-    showAppSnackBar(context, detail == null ? e.message : '${e.message}. $detail');
+    showLoadoutSaveError(l10n, messenger, router, e, puuid: puuid);
   }
 }
 ```

@@ -268,7 +268,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } on MaxAccountsException catch (e) {
       _fail(e.message, logDetail: 'max_accounts');
     } on RiotException catch (e) {
-      _fail(describeError(e).message, logDetail: e.runtimeType.toString());
+      if (!mounted) return;
+      _fail(
+        describeError(context.l10n, e).message,
+        logDetail: e.runtimeType.toString(),
+      );
     } on Object catch (e) {
       _fail(AuthStrings.loginFailedBody, logDetail: e.runtimeType.toString());
     }

@@ -220,6 +220,11 @@ class RewriteCommand extends Command<int> {
       ..addOption('sdk')
       ..addMultiOption('only')
       ..addFlag('apply', negatable: false)
+      ..addFlag(
+        'capture-async',
+        negatable: false,
+        help: 'Capture resources before await only in functions with their own BuildContext parameter.',
+      )
       ..addOption('out');
   }
   @override
@@ -238,6 +243,7 @@ class RewriteCommand extends Command<int> {
       await extractCatalog(project),
       only: argResults!['only'] as List<String>,
       apply: argResults!['apply'] as bool,
+      captureAsync: argResults!['capture-async'] as bool,
     );
     final out =
         argResults!['out'] as String? ?? '${project.reportsDir}/rewrite.json';

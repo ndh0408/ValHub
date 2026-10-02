@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
@@ -173,23 +175,29 @@ void main() {
 
   test('join error mapping', () {
     expect(
-      joinErrorMessage(const RiotApiException(400, errorCode: 'PARTY_FULL')),
+      joinErrorMessage(
+        tl,
+        const RiotApiException(400, errorCode: 'PARTY_FULL'),
+      ),
       CommunityStrings.joinPartyFull,
     );
     expect(
-      joinErrorMessage(const RiotApiException(409)),
+      joinErrorMessage(tl, const RiotApiException(409)),
       CommunityStrings.joinPartyFull,
     );
     expect(
-      joinErrorMessage(const NotFoundException(errorCode: 'PARTY_NOT_FOUND')),
+      joinErrorMessage(
+        tl,
+        const NotFoundException(errorCode: 'PARTY_NOT_FOUND'),
+      ),
       CommunityStrings.joinCodeExpired,
     );
     expect(
-      joinErrorMessage(const RiotApiException(404, errorCode: 'X')),
+      joinErrorMessage(tl, const RiotApiException(404, errorCode: 'X')),
       CommunityStrings.joinCodeExpired,
     );
     expect(
-      joinErrorMessage(const NotFoundException()),
+      joinErrorMessage(tl, const NotFoundException()),
       CommunityStrings.joinGameNotRunning,
     );
   });

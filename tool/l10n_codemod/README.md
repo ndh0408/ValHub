@@ -11,6 +11,7 @@ dart run bin/l10n.dart extract --check
 dart run bin/l10n.dart parity --check
 dart run bin/l10n.dart rewrite --only 'lib/features/store/ui/**'
 dart run bin/l10n.dart rewrite --only 'lib/features/store/ui/**' --apply
+dart run bin/l10n.dart rewrite --only 'lib/features/store/ui/**' --capture-async
 dart run bin/l10n.dart verify
 dart run bin/l10n.dart verify --ci
 ```
@@ -25,7 +26,10 @@ stable after regeneration; no timestamp is injected.
 then validates edit ranges and rechecks source content before writing. Only references with an in-scope
 BuildContext and a mechanically extracted message are changed. Nested calls and method tearoffs are supported.
 It preserves collection lookups, domain/providers without context, defaults/enums, fields, lifecycle captures,
-named/optional signatures and reads after await for structural migration. It does not introduce a global locale
+named/optional signatures and reads after await for structural migration by default.
+The opt-in `--capture-async` plans one collision-safe resource capture before suspension only for a block async
+function with its own explicit BuildContext parameter. Nested closures, State.context and lifecycle captures
+remain manual. The scope, dry-run and source-change guards still apply. It does not introduce a global locale
 holder. Apply on an isolated checkout, format and run `dart fix --apply` for unused legacy imports, then analyze
 and test the selected package and shared widgets before broadening the selection.
 
@@ -35,4 +39,4 @@ Generated localizations/parity are excluded from the scan so they cannot pollute
 regenerated locally and ignored by Git; the reviewed extraction manifest is committed.
 
 The `rtl` command is still scheduled for W7. No command here claims translations for 18 UI languages, complete
-domain restructuring, async capture conversion or the final cutover. See `docs/design/I18N.md` for those gates.
+domain restructuring, migration of every async consumer or the final cutover. See `docs/design/I18N.md` for those gates.

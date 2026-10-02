@@ -1,3 +1,6 @@
+import 'package:valvn/core/l10n/l10n.dart';
+import 'package:valvn/core/l10n/labels/competitive_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter/services.dart';
@@ -60,7 +63,7 @@ class OutcomeTag extends StatelessWidget {
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
-        outcome.label,
+        context.l10n.matchOutcome(outcome),
         maxLines: 1,
         style:
             (dense

@@ -106,6 +106,12 @@ abstract class AppLocalizations {
   /// **'Xem nguồn bảng giá'**
   String get commonPriceSourceLabel;
 
+  /// Safe fallback for Riot API failures. HTTP status stays in the error data, not the player copy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Riot đang gặp trục trặc. Hãy thử lại sau ít phút.'**
+  String get commonErrorApi;
+
   /// CommonStrings.appName —
   ///
   /// In vi, this message translates to:
@@ -2698,6 +2704,12 @@ abstract class AppLocalizations {
   /// **'Còn cần {xp} XP'**
   String battlePassXpToFinish(String xp);
 
+  /// Loadout save failure with a localized cause.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể lưu trang bị. {detail}'**
+  String collectionSaveFailedWith(String detail);
+
   /// CollectionStrings.applyPreset — S38 presets
   ///
   /// In vi, this message translates to:
@@ -3609,6 +3621,36 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'{n, plural, =0{Trống} other{{n} skin}}'**
   String collectionWishlistCount(int n);
+
+  /// Player-safe copy for Community moderation reason content_inappropriate. Never render arbitrary server text.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa đăng được vì có từ ngữ không phù hợp. Hãy sửa nội dung rồi thử lại.'**
+  String get communityModerationContentInappropriate;
+
+  /// Player-safe copy for Community moderation reason content_scam. Never render arbitrary server text.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cộng đồng không cho phép quảng cáo mua bán tài khoản, cày thuê hay để lại số điện thoại. Hãy bỏ những nội dung này rồi thử lại.'**
+  String get communityModerationContentScam;
+
+  /// Player-safe copy for Community moderation reason content_too_complex. Never render arbitrary server text.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nội dung có quá nhiều ký tự rời rạc. Hãy viết gọn hơn rồi thử lại.'**
+  String get communityModerationContentTooComplex;
+
+  /// Player-safe copy for Community moderation reason account_banned. Never render arbitrary server text.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài khoản này đã bị khóa quyền dùng Cộng đồng. Nếu cho rằng có nhầm lẫn, hãy liên hệ ValHub trong Giới thiệu & pháp lý.'**
+  String get communityModerationAccountBanned;
+
+  /// Player-safe copy for Community moderation reason account_restricted. Never render arbitrary server text.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài khoản này đang bị hạn chế đăng bài, bình luận, tìm đồng đội và bình chọn. Hãy thử lại sau hoặc liên hệ ValHub trong Giới thiệu & pháp lý.'**
+  String get communityModerationAccountRestricted;
 
   /// CommunityStrings.addPhotos — feed
   ///
@@ -8769,6 +8811,42 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Không phát được video. Kiểm tra mạng rồi thử lại.'**
   String get skinDetailVideoError;
+
+  /// Render-time friend presence copy, preserving existing Vietnamese status semantics.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang đấu'**
+  String get socialPresenceInMatch;
+
+  /// Render-time friend presence copy, preserving existing Vietnamese status semantics.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chọn đặc vụ'**
+  String get socialPresenceAgentSelect;
+
+  /// Render-time friend presence copy, preserving existing Vietnamese status semantics.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang tìm trận'**
+  String get socialPresenceQueue;
+
+  /// Render-time friend presence copy, preserving existing Vietnamese status semantics.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang ở sảnh chờ'**
+  String get socialPresenceLobby;
+
+  /// Render-time friend presence copy, preserving existing Vietnamese status semantics.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chơi tự do'**
+  String get socialPresenceCustom;
+
+  /// Render-time friend presence copy, preserving existing Vietnamese status semantics.
+  ///
+  /// In vi, this message translates to:
+  /// **'{status} · {detail}'**
+  String socialPresenceDetails(String status, String detail);
 
   /// SocialStrings.accept — party
   ///

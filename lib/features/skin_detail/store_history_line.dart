@@ -5,10 +5,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../core/content/content_db.dart';
 import '../../core/domain/economy/store_history.dart';
-import '../../core/l10n/common_strings.dart';
 import '../../core/ui/adaptive.dart';
 import '../../core/util/format.dart';
-import 'skin_detail_strings.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -43,12 +41,14 @@ class StoreHistoryLine extends ConsumerWidget {
   }
 
   Future<void> _delete(BuildContext context, WidgetRef ref) async {
+    final l10nBeforeAwait = context.l10n;
+
     final store = ref.read(storeHistoryStoreProvider);
     final confirmed = await showConfirmDialog(
       context,
-      title: SkinDetailStrings.historyDelete,
-      message: SkinDetailStrings.historyDeleteBody,
-      confirmLabel: CommonStrings.delete,
+      title: l10nBeforeAwait.skinDetailHistoryDelete,
+      message: l10nBeforeAwait.skinDetailHistoryDeleteBody,
+      confirmLabel: l10nBeforeAwait.commonDelete,
       destructive: true,
     );
     if (confirmed) await store.delete(puuid);

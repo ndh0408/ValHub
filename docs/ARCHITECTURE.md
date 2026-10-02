@@ -314,8 +314,8 @@ final class RiotApiException      (int status, {String? errorCode, String? messa
 extension on Future<T> { Future<T?> orNullIfNotFound(); }
 ```
 
-`describeError(error) → ErrorDescription(title, message, needsLogin, puuid, canRetry, icon)`
-gives the Vietnamese copy; `classifyError(anyError) → RiotException`; `riotRetry` is the
+`describeError(l10n, error) → ErrorDescription(title, message, needsLogin, puuid, canRetry, icon)`
+resolves copy from the caller's `AppLocalizations`; `classifyError(anyError) → RiotException`; `riotRetry` is the
 global Riverpod retry policy; `backoffDelay(attempt)`, `parseRetryAfter(header)`.
 
 ### 5.4 Sessions (rarely needed directly) — `core/auth/`
@@ -451,7 +451,7 @@ try { … } finally { await ctx.finish(); }
 | Widget | Purpose |
 |---|---|
 | `AsyncValueView<T>(value:, data:, onRetry:, isEmpty:, emptyMessage:, loading:, empty:, puuid:)` | loading skeleton / error ("Thử lại", "Đăng nhập lại" → `/login?reauth=`) / empty / data; keeps stale data visible with a compact error row |
-| `ErrorView(error:, onRetry:, puuid:, compact:)`, `describeError(e)`, `showAppSnackBar(context, msg)` | errors |
+| `ErrorView(error:, onRetry:, puuid:, compact:)`, `describeError(l10n, e)`, `showAppSnackBar(context, msg)` | errors |
 | `EmptyView(message:, title:, icon:, action:, color:)`, `StateIcon` | empty states (icon in a tinted disc, bold title, muted copy, action) |
 | `Skeleton(width:, height:, radius:)`, `SkeletonShimmer`, `SkeletonList`, `SkeletonGrid` | loading |
 | `CountdownText(expiresAt:, builder: (t) => …, onExpired:, format:)` | live `11:54:37` / `2 ngày 15:09:24` |

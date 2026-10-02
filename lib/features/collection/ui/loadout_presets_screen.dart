@@ -179,13 +179,16 @@ class _PresetsBody extends ConsumerWidget {
     WidgetRef ref,
     LoadoutPreset preset,
   ) async {
+    final l10nBeforeAwait = context.l10n;
+
+    final l10n = context.l10n;
     final messenger = ScaffoldMessenger.maybeOf(context);
     final router = GoRouter.maybeOf(context);
     final confirmed = await showConfirmDialog(
       context,
-      title: CollectionStrings.applyPresetTitle(preset.name),
-      message: CollectionStrings.applyPresetBody,
-      confirmLabel: CollectionStrings.applyPreset,
+      title: l10nBeforeAwait.collectionApplyPresetTitle(preset.name),
+      message: l10nBeforeAwait.collectionApplyPresetBody,
+      confirmLabel: l10nBeforeAwait.collectionApplyPreset,
       icon: Icons.download_done,
     );
     if (!confirmed) return;
@@ -205,12 +208,12 @@ class _PresetsBody extends ConsumerWidget {
       showCollectionSnack(
         messenger,
         skipped == 0
-            ? CollectionStrings.presetApplied(preset.name)
-            : '${CollectionStrings.presetApplied(preset.name)}. '
-                  '${CollectionStrings.presetSkipped(skipped)}',
+            ? l10nBeforeAwait.collectionPresetApplied(preset.name)
+            : '${l10nBeforeAwait.collectionPresetApplied(preset.name)}. '
+                  '${l10nBeforeAwait.collectionPresetSkipped(skipped)}',
       );
     } on LoadoutSaveException catch (e) {
-      showLoadoutSaveError(messenger, router, e, puuid: puuid);
+      showLoadoutSaveError(l10n, messenger, router, e, puuid: puuid);
     }
   }
 
@@ -232,14 +235,16 @@ class _PresetsBody extends ConsumerWidget {
     LoadoutPreset preset,
     int index,
   ) async {
+    final l10nBeforeAwait2 = context.l10n;
+
     final messenger = ScaffoldMessenger.maybeOf(context);
     final notifier = ref.read(loadoutPresetsProvider(puuid).notifier);
     await notifier.delete(preset.id);
     showCollectionSnack(
       messenger,
-      CollectionStrings.presetDeleted(preset.name),
+      l10nBeforeAwait2.collectionPresetDeleted(preset.name),
       action: SnackBarAction(
-        label: CollectionStrings.undo,
+        label: l10nBeforeAwait2.collectionUndo,
         onPressed: () => unawaited(notifier.restore(preset, index: index)),
       ),
     );
@@ -373,18 +378,20 @@ class PresetCard extends StatelessWidget {
   }
 
   Future<void> _actions(BuildContext context) async {
+    final l10nBeforeAwait3 = context.l10n;
+
     final picked = await showActionSheet<String>(
       context,
       title: preset.name,
-      actions: const [
+      actions: [
         SheetAction(
           value: 'rename',
-          label: CollectionStrings.renamePreset,
+          label: l10nBeforeAwait3.collectionRenamePreset,
           icon: Icons.edit_outlined,
         ),
         SheetAction(
           value: 'delete',
-          label: CollectionStrings.deletePreset,
+          label: l10nBeforeAwait3.collectionDeletePreset,
           icon: Icons.delete_outline,
           destructive: true,
         ),

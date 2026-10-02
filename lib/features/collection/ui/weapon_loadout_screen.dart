@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -85,7 +87,7 @@ class _WeaponLoadoutScreenState extends ConsumerState<WeaponLoadoutScreen> {
             final gun = loadout.gun(w.uuid);
             return matchesSearch(_search, [
               w.displayName,
-              w.category.label,
+              context.l10n.weaponCategory(w.category),
               equippedSkin(gun, db)?.displayName,
               equippedBuddy(gun, db)?.displayName,
             ]);
@@ -121,9 +123,9 @@ class _WeaponLoadoutScreenState extends ConsumerState<WeaponLoadoutScreen> {
             for (final section in sections) ...[
               SliverToBoxAdapter(
                 child: SectionLabel(
-                  section.category.label.isEmpty
+                  context.l10n.weaponCategory(section.category).isEmpty
                       ? context.l10n.collectionOtherWeapons
-                      : section.category.label,
+                      : context.l10n.weaponCategory(section.category),
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
                 ),
               ),

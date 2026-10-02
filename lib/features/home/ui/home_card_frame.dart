@@ -17,7 +17,6 @@ import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/xmpp/xmpp_providers.dart' show appForegroundProvider;
 import '../data/home_card.dart';
-import '../home_strings.dart';
 import '../providers/home_layout_provider.dart';
 import 'customize_home_sheet.dart';
 
@@ -26,26 +25,26 @@ import 'package:valvn/core/l10n/l10n.dart';
 /// Title, description and icon of each card (the catalogue shown in
 /// "Tùy chỉnh Trang chủ").
 extension HomeCardMeta on HomeCardId {
-  String get title => switch (this) {
-    HomeCardId.live => HomeStrings.cardLive,
-    HomeCardId.store => HomeStrings.cardStore,
-    HomeCardId.rank => HomeStrings.cardRank,
-    HomeCardId.battlePass => HomeStrings.cardBattlePass,
-    HomeCardId.friends => HomeStrings.cardFriends,
-    HomeCardId.community => HomeStrings.cardCommunity,
-    HomeCardId.otherAccounts => HomeStrings.cardOtherAccounts,
-    HomeCardId.serverStatus => HomeStrings.cardServerStatus,
+  String title(AppLocalizations l10n) => switch (this) {
+    HomeCardId.live => l10n.homeCardLive,
+    HomeCardId.store => l10n.homeCardStore,
+    HomeCardId.rank => l10n.homeCardRank,
+    HomeCardId.battlePass => l10n.homeCardBattlePass,
+    HomeCardId.friends => l10n.homeCardFriends,
+    HomeCardId.community => l10n.homeCardCommunity,
+    HomeCardId.otherAccounts => l10n.homeCardOtherAccounts,
+    HomeCardId.serverStatus => l10n.homeCardServerStatus,
   };
 
-  String get description => switch (this) {
-    HomeCardId.live => HomeStrings.cardLiveDesc,
-    HomeCardId.store => HomeStrings.cardStoreDesc,
-    HomeCardId.rank => HomeStrings.cardRankDesc,
-    HomeCardId.battlePass => HomeStrings.cardBattlePassDesc,
-    HomeCardId.friends => HomeStrings.cardFriendsDesc,
-    HomeCardId.community => HomeStrings.cardCommunityDesc,
-    HomeCardId.otherAccounts => HomeStrings.cardOtherAccountsDesc,
-    HomeCardId.serverStatus => HomeStrings.cardServerStatusDesc,
+  String description(AppLocalizations l10n) => switch (this) {
+    HomeCardId.live => l10n.homeCardLiveDesc,
+    HomeCardId.store => l10n.homeCardStoreDesc,
+    HomeCardId.rank => l10n.homeCardRankDesc,
+    HomeCardId.battlePass => l10n.homeCardBattlePassDesc,
+    HomeCardId.friends => l10n.homeCardFriendsDesc,
+    HomeCardId.community => l10n.homeCardCommunityDesc,
+    HomeCardId.otherAccounts => l10n.homeCardOtherAccountsDesc,
+    HomeCardId.serverStatus => l10n.homeCardServerStatusDesc,
   };
 
   IconData get icon => switch (this) {
@@ -72,6 +71,7 @@ Future<void> hideHomeCard(
   WidgetRef ref,
   HomeCardId card,
 ) async {
+  final l10n = context.l10n;
   final messenger = ScaffoldMessenger.maybeOf(context);
   final notifier = ref.read(homeLayoutProvider.notifier);
   await notifier.setHidden(card, hidden: true);
@@ -79,9 +79,9 @@ Future<void> hideHomeCard(
     ?..hideCurrentSnackBar()
     ..showSnackBar(
       SnackBar(
-        content: Text(HomeStrings.cardHidden(card.title)),
+        content: Text(l10n.homeCardHidden(card.title(l10n))),
         action: SnackBarAction(
-          label: HomeStrings.undo,
+          label: l10n.homeUndo,
           onPressed: () => unawaited(notifier.setHidden(card, hidden: false)),
         ),
       ),
@@ -134,17 +134,18 @@ class HomeCardFrame extends ConsumerWidget {
     WidgetRef ref,
     String name,
   ) async {
+    final l10n = context.l10n;
     final choice = await showActionSheet<_CardAction>(
       context,
       actions: [
-        const SheetAction(
+        SheetAction(
           value: _CardAction.hide,
-          label: HomeStrings.hideCard,
+          label: l10n.homeHideCard,
           icon: Icons.visibility_off_outlined,
         ),
-        const SheetAction(
+        SheetAction(
           value: _CardAction.customize,
-          label: '${HomeStrings.customize}…',
+          label: '${l10n.homeCustomize}…',
           icon: Icons.tune_rounded,
         ),
       ],
@@ -161,7 +162,7 @@ class HomeCardFrame extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final name = title ?? card.title;
+    final name = title ?? card.title(context.l10n);
     final body = Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -323,7 +324,7 @@ class HomeCardError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final d = describeError(error);
+    final d = describeError(context.l10n, error);
     final retry = onRetry;
     return Row(
       children: [

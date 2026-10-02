@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/competitive_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -289,7 +291,7 @@ class _Scoreboard extends ConsumerWidget {
                 runSpacing: 2,
                 children: [
                   Text(
-                    result.outcome.label,
+                    context.l10n.matchOutcome(result.outcome),
                     style: ValText.display(
                       34,
                       color: legibleAccent(context, outcomeColor),
@@ -421,6 +423,7 @@ class _ScoreRow extends StatelessWidget {
           Expanded(
             child: Text(
               playerDisplayName(
+                context.l10n,
                 player.name,
                 hidden: hidden,
                 withTag: false,

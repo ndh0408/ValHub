@@ -10,7 +10,7 @@ import '../../storage/prefs.dart';
 import '../../storage/json_file_cache.dart';
 import '../../util/clock.dart';
 import '../../util/json.dart';
-import 'competitive_strings.dart';
+import '../../l10n/l10n.dart';
 import 'viewer.dart';
 
 /// A Riot ID (`gameName#tagLine`). Never holds the PUUID, so it is safe to
@@ -73,17 +73,18 @@ bool isIdentityHidden({
 /// - a known name → `Tên#TAG` (or just `Tên` with `withTag: false`);
 /// - otherwise [fallback] (e.g. the agent name), else "Người chơi".
 String playerDisplayName(
+  AppLocalizations l10n,
   RiotName? name, {
   bool hidden = false,
   bool withTag = true,
   String? fallback,
 }) {
-  if (hidden) return CompetitiveStrings.incognitoPlayer;
+  if (hidden) return l10n.competitiveIncognitoPlayer;
   if (name != null && !name.isBlank) {
     return withTag ? name.riotId : name.gameName;
   }
   final f = fallback?.trim();
-  return (f == null || f.isEmpty) ? CompetitiveStrings.unknownPlayer : f;
+  return (f == null || f.isEmpty) ? l10n.competitiveUnknownPlayer : f;
 }
 
 /// Account level to show, or `null` when `HideAccountLevel` applies.

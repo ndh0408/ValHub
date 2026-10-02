@@ -98,7 +98,7 @@ class _Header extends ConsumerWidget {
       final identity = ref.watch(playerIdentityProvider(puuid)).value;
       final name = RiotName.of(own.gameName, own.tagLine);
       return IdentityBanner(
-        name: playerDisplayName(name, withTag: false),
+        name: playerDisplayName(context.l10n, name, withTag: false),
         tagLine: own.tagLine,
         cardId: identity?.cardId ?? own.cardId,
         titleId: identity?.titleId,
@@ -111,7 +111,12 @@ class _Header extends ConsumerWidget {
     final name = hideName ? null : ref.watch(playerNameProvider(puuid)).value;
     final snapshot = ref.watch(playerSnapshotProvider(puuid)).value;
     return IdentityBanner(
-      name: playerDisplayName(name, hidden: hideName, withTag: false),
+      name: playerDisplayName(
+        context.l10n,
+        name,
+        hidden: hideName,
+        withTag: false,
+      ),
       tagLine: hideName ? null : name?.tagLine,
       cardId: hideName ? null : snapshot?.cardId,
       titleId: hideName ? null : snapshot?.titleId,

@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/competitive_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -99,7 +100,7 @@ class MatchCard extends ConsumerWidget {
       ),
       semanticsLabel: ProfileStrings.matchSemantics(
         mapName,
-        result.outcome.label,
+        context.l10n.matchOutcome(result.outcome),
         result.hasScore
             ? context.l10n.profileScore(result.myScore!, result.otherScore!)
             : null,
@@ -358,7 +359,7 @@ class _SummaryBody extends StatelessWidget {
                         ),
                       ),
                     Text(
-                      result.outcome.label,
+                      context.l10n.matchOutcome(result.outcome),
                       maxLines: 1,
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: color,

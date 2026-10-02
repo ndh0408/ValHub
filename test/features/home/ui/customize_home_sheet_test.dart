@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -43,7 +45,7 @@ void main() {
     // The first rows are on screen (the list is lazy); the rest scrolls.
     for (final id in HomeCardId.values.take(4)) {
       expect(_row(id), findsOneWidget, reason: id.name);
-      expect(find.text(id.title), findsWidgets);
+      expect(find.text(id.title(tl)), findsWidgets);
     }
     await tester.ensureVisible(find.text(HomeStrings.resetLayout));
     await homeSettle(tester);
@@ -300,7 +302,7 @@ void main() {
     );
 
     await tester.tap(
-      find.byTooltip(HomeStrings.moreActions(HomeCardId.rank.title)),
+      find.byTooltip(HomeStrings.moreActions(HomeCardId.rank.title(tl))),
     );
     await homeSettle(tester);
     expect(find.text(HomeStrings.hideCard), findsOneWidget);
@@ -314,7 +316,7 @@ void main() {
     );
     expect(find.byType(RankHomeCard), findsNothing);
     expect(
-      find.text(HomeStrings.cardHidden(HomeCardId.rank.title)),
+      find.text(HomeStrings.cardHidden(HomeCardId.rank.title(tl))),
       findsOneWidget,
     );
 
@@ -333,7 +335,7 @@ void main() {
     await pumpHomeScreen(tester, env, overrides: vmFull());
     await homePastGate(tester);
     await tester.tap(
-      find.byTooltip(HomeStrings.moreActions(HomeCardId.store.title)),
+      find.byTooltip(HomeStrings.moreActions(HomeCardId.store.title(tl))),
     );
     await homeSettle(tester);
     await tester.tap(find.text('${HomeStrings.customize}…'));

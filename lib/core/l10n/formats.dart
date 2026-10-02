@@ -169,6 +169,25 @@ final class AppFormats {
 
   // --- dates and clock (instants are shown in the device time zone) --------
 
+  /// Past activity relative to [now], using device-local calendar days.
+  /// Future values read as "just now"; old activity uses the locale's date.
+  String relative(DateTime then, DateTime now) {
+    final localThen = then.toLocal();
+    final localNow = now.toLocal();
+    final diff = localNow.difference(localThen);
+    if (diff.inMinutes < 1) return l10n.commonJustNow;
+    if (diff.inMinutes < 60) return l10n.commonMinutesAgo(diff.inMinutes);
+    if (diff.inHours < 24) return l10n.commonHoursAgo(diff.inHours);
+    final days = DateTime.utc(localNow.year, localNow.month, localNow.day)
+        .difference(
+          DateTime.utc(localThen.year, localThen.month, localThen.day),
+        )
+        .inDays;
+    if (days <= 1) return l10n.commonYesterday;
+    if (days < 7) return l10n.commonDaysAgo(days);
+    return date(localThen);
+  }
+
   /// `22/09/2026` (vi), `9/22/2026` (en_US).
   String date(DateTime d) => _yMd.format(d.toLocal());
 

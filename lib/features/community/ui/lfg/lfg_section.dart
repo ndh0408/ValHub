@@ -224,7 +224,7 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
     } on Object catch (e) {
       if (!mounted) return;
       _snack(
-        joinErrorMessage(e),
+        joinErrorMessage(context.l10n, e),
         action: SnackBarAction(
           label: CommunityStrings.refreshList,
           onPressed: () {
@@ -282,7 +282,7 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
 }
 
 /// Vietnamese message for a failed join-by-code (G-19).
-String joinErrorMessage(Object error) {
+String joinErrorMessage(AppLocalizations l10n, Object error) {
   bool has(String? code, List<String> parts) {
     final c = code?.toUpperCase() ?? '';
     return parts.any(c.contains);
@@ -290,17 +290,17 @@ String joinErrorMessage(Object error) {
 
   return switch (error) {
     RiotApiException(:final errorCode) when has(errorCode, ['FULL']) =>
-      CommunityStrings.joinPartyFull,
+      l10n.communityJoinPartyFull,
     RiotApiException(:final status) when status == 409 =>
-      CommunityStrings.joinPartyFull,
+      l10n.communityJoinPartyFull,
     NotFoundException(:final errorCode)
         when has(errorCode, ['PARTY', 'CODE', 'INVITE']) =>
-      CommunityStrings.joinCodeExpired,
-    NotFoundException() => CommunityStrings.joinGameNotRunning,
+      l10n.communityJoinCodeExpired,
+    NotFoundException() => l10n.communityJoinGameNotRunning,
     RiotApiException(:final status)
         when status == 400 || status == 403 || status == 404 =>
-      CommunityStrings.joinCodeExpired,
-    _ => describeError(error).message,
+      l10n.communityJoinCodeExpired,
+    _ => describeError(l10n, error).message,
   };
 }
 
@@ -310,6 +310,8 @@ Future<void> openCreateLfg(
   Account account,
   LfgQuery query,
 ) async {
+  final l10nBeforeAwait = context.l10n;
+
   final post = await showCreateLfgSheet(
     context,
     account: account,
@@ -319,7 +321,9 @@ Future<void> openCreateLfg(
   if (post != null && context.mounted) {
     ScaffoldMessenger.maybeOf(context)
       ?..hideCurrentSnackBar()
-      ..showSnackBar(const SnackBar(content: Text(CommunityStrings.lfgPosted)));
+      ..showSnackBar(
+        SnackBar(content: Text(l10nBeforeAwait.communityLfgPosted)),
+      );
   }
 }
 
@@ -439,12 +443,12 @@ class _Filters extends ConsumerWidget {
                 icon: Icons.shield_outlined,
                 label: filter.role == null
                     ? context.l10n.communityAnyRole
-                    : lfgRoleLabel(filter.role!),
+                    : lfgRoleLabel(context.l10n, filter.role!),
                 tooltip: context.l10n.communityRoles,
                 active: filter.role != null,
                 items: [
                   ('', context.l10n.communityAnyRole),
-                  for (final r in kLfgRoles) (r, lfgRoleLabel(r)),
+                  for (final r in kLfgRoles) (r, lfgRoleLabel(context.l10n, r)),
                 ],
                 onSelected: (r) => n.setRole(r.isEmpty ? null : r),
               ),

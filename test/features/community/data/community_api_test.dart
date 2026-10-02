@@ -1,3 +1,7 @@
+import '../../../helpers/l10n.dart';
+
+import 'package:valvn/features/community/ui/community_error.dart';
+
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -199,7 +203,7 @@ void main() {
     expect(ex.code, CommunityException.rateLimited);
     expect(ex.retryAfter, const Duration(minutes: 2));
     expect(
-      describeCommunityError(ex).message,
+      describeCommunityError(tl, ex).message,
       CommunityStrings.errorRateLimitedIn('2 phút'),
     );
 
@@ -248,6 +252,7 @@ void main() {
     );
     expect(
       describeCommunityError(
+        tl,
         const CommunityException(CommunityException.serverError),
       ).message,
       CommunityStrings.errorServer,
@@ -403,7 +408,7 @@ void main() {
       CommunityException.network,
     );
     expect(
-      describeCommunityError(const CommunityException('network')).message,
+      describeCommunityError(tl, const CommunityException('network')).message,
       contains('Không kết nối được'),
     );
   });
@@ -439,11 +444,12 @@ void main() {
         .createPost(mePuuid, kind: PostKind.text, body: 'x')
         .then<Object?>((_) => null, onError: (Object e) => e);
     expect(
-      describeCommunityError(e!).message,
+      describeCommunityError(tl, e!).message,
       CommunityErrorStrings.forReason('content_inappropriate'),
     );
     expect(
       describeCommunityError(
+        tl,
         const CommunityException(CommunityException.invalidInput),
       ).message,
       CommunityStrings.errorInvalid,

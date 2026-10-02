@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/competitive_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -128,7 +129,8 @@ class _RoundStrip extends StatelessWidget {
               r.won!
                   ? context.l10n.profileRoundWon
                   : context.l10n.profileRoundLost,
-            r.endType.label ?? context.l10n.competitiveNoValue,
+            context.l10n.roundEndType(r.endType) ??
+                context.l10n.competitiveNoValue,
           ]),
           child: Container(
             width: 26,
@@ -268,7 +270,7 @@ class _RoundLineState extends ConsumerState<_RoundLine> {
     final muted = theme.colorScheme.onSurfaceVariant;
     final site = row.round.plantSite;
     final facts = [
-      ?row.mySide?.label,
+      ?row.mySide == null ? null : context.l10n.teamRole(row.mySide!),
       if (site != null && site.isNotEmpty) context.l10n.profilePlantedAt(site),
       if (row.myKills > 0) context.l10n.profileRoundKills(row.myKills),
       if (row.firstBloodByMe) context.l10n.profileFirstBloods,
@@ -306,7 +308,8 @@ class _RoundLineState extends ConsumerState<_RoundLine> {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text(
-                    row.endType.label ?? context.l10n.profileRound(row.number),
+                    context.l10n.roundEndType(row.endType) ??
+                        context.l10n.profileRound(row.number),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodyMedium?.copyWith(
@@ -507,6 +510,7 @@ class _KillRow extends StatelessWidget {
         : db.agent(victim!.characterId!);
     String nameOf(MatchPlayer? p, Agent? agent, String subject) =>
         playerDisplayName(
+          context.l10n,
           p?.name,
           hidden: hidden.contains(subject),
           withTag: false,

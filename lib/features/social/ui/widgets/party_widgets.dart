@@ -1,3 +1,5 @@
+import '../../../../core/ui/error_view.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -207,17 +209,18 @@ class PartyNotice extends StatelessWidget {
 }
 
 /// Vietnamese reason of a blocked queue (lowercase first letter).
-String queueBlockReason(QueueChoice c, Party party) => switch (c.block) {
-  QueueBlock.partyTooLarge => SocialStrings.reasonPartyTooLarge(
-    c.maxPartySize ?? 5,
-  ),
-  QueueBlock.accountLevel => SocialStrings.reasonAccountLevel,
-  QueueBlock.rankDisparity => SocialStrings.reasonRankDisparity,
-  QueueBlock.restricted => SocialStrings.reasonRestricted(
-    formatDurationCoarse(Duration(seconds: party.restrictedSeconds)),
-  ),
-  QueueBlock.other || null => SocialStrings.reasonGeneric,
-};
+String queueBlockReason(AppLocalizations l10n, QueueChoice c, Party party) =>
+    switch (c.block) {
+      QueueBlock.partyTooLarge => l10n.socialReasonPartyTooLarge(
+        c.maxPartySize ?? 5,
+      ),
+      QueueBlock.accountLevel => l10n.socialReasonAccountLevel,
+      QueueBlock.rankDisparity => l10n.socialReasonRankDisparity,
+      QueueBlock.restricted => l10n.socialReasonRestricted(
+        describeRetryDelay(l10n, Duration(seconds: party.restrictedSeconds)),
+      ),
+      QueueBlock.other || null => l10n.socialReasonGeneric,
+    };
 
 /// "Chọn hàng chờ" sheet (VF S55): every queue with its vi name, the
 /// current one ticked, blocked ones greyed with the reason; competitive
@@ -254,7 +257,9 @@ class _QueuePickerBody extends ConsumerWidget {
                   final max =
                       kQueuePartyLimits[c.queueId.replaceFirst('console_', '')];
                   final String? subtitle = !c.eligible
-                      ? SocialStrings.sentence(queueBlockReason(c, party))
+                      ? SocialStrings.sentence(
+                          queueBlockReason(context.l10n, c, party),
+                        )
                       : max != null
                       ? context.l10n.socialQueueMaxParty(max)
                       : null;

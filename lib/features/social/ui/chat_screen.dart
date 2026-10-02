@@ -1,3 +1,5 @@
+import 'package:valvn/features/social/ui/friend_status_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -103,7 +105,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final now = ref.watch(clockProvider).now();
     final status = friend == null
         ? null
-        : friendStatus(friend, db: db, now: now);
+        : friendStatus(context.l10n, context.fmt, friend, db: db, now: now);
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,

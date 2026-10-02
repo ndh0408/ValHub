@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-import '../../l10n/content_strings.dart';
 import '../../riot/riot_ids.dart';
 import '../../util/format.dart';
 import '../../util/json.dart';
@@ -19,21 +18,18 @@ String? cleanText(Object? value) => cleanDisplayText(asString(value));
 /// Weapon category keyed by the `category` enum, never by `categoryText`
 /// (the vi Shotgun text is broken; SUMMARY §1 #18).
 enum WeaponCategory {
-  sidearm('Sidearm', ContentStrings.categorySidearm),
-  smg('SMG', ContentStrings.categorySmg),
-  shotgun('Shotgun', ContentStrings.categoryShotgun),
-  rifle('Rifle', ContentStrings.categoryRifle),
-  sniper('Sniper', ContentStrings.categorySniper),
-  heavy('Heavy', ContentStrings.categoryHeavy),
-  melee('Melee', ContentStrings.categoryMelee),
-  unknown('', '');
+  sidearm('Sidearm'),
+  smg('SMG'),
+  shotgun('Shotgun'),
+  rifle('Rifle'),
+  sniper('Sniper'),
+  heavy('Heavy'),
+  melee('Melee'),
+  unknown('');
 
-  const WeaponCategory(this.apiName, this.label);
+  const WeaponCategory(this.apiName);
 
   final String apiName;
-
-  /// Vietnamese section label (VF §8.6).
-  final String label;
 
   static WeaponCategory parse(Object? value) {
     final suffix = enumSuffix(value);
@@ -90,11 +86,6 @@ class SkinLevel {
   final String? streamedVideo;
 
   int get levelNumber => index + 1;
-
-  /// Vietnamese caption for [levelItem] (VF §8.4).
-  String get levelItemLabel => levelItem == null
-      ? ContentStrings.levelBase
-      : (ContentStrings.levelItemLabels[levelItem] ?? levelItem!);
 }
 
 /// One color variant of a skin (`skins[].chromas[]`); index 0 is the base.

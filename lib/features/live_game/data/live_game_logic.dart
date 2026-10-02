@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/util/format.dart';
 import '../../../core/xmpp/xmpp_models.dart';
-import '../live_game_strings.dart';
+import '../../../core/l10n/l10n.dart';
 import 'live_game_models.dart';
 
 // ------------------------------------------------------------------ teams
@@ -99,7 +99,7 @@ class LiveScore {
   final int ally;
   final int enemy;
 
-  String get text => LiveGameStrings.score(ally, enemy);
+  String text(AppLocalizations l10n) => l10n.liveGameScore(ally, enemy);
 
   @override
   bool operator ==(Object other) =>
@@ -143,6 +143,7 @@ String? liveMapName(ContentDb db, String? mapId) {
 /// "Không trong trận", "Đang ở sảnh chờ", "Đang tìm trận · 01:32",
 /// "Đang chọn đặc vụ · Ascent", "Đang đấu · Lotus · 8 – 4".
 String currentGameStatusText(
+  AppLocalizations l10n,
   LiveGameState state,
   ContentDb db, {
   required DateTime now,
@@ -150,22 +151,19 @@ String currentGameStatusText(
 }) {
   final map = liveMapName(db, state.match?.mapId);
   return switch (state.phase) {
-    LivePhase.notRunning => LiveGameStrings.notInGame,
-    LivePhase.lobby => LiveGameStrings.inLobby,
+    LivePhase.notRunning => l10n.liveGameNotInGame,
+    LivePhase.lobby => l10n.liveGameInLobby,
     LivePhase.queueing => switch (state.queueEntryTime) {
-      final DateTime at => LiveGameStrings.inQueueFor(
+      final DateTime at => l10n.liveGameInQueueFor(
         formatMinutesSeconds(now.toUtc().difference(at.toUtc())),
       ),
-      null => LiveGameStrings.inQueue,
+      null => l10n.liveGameInQueue,
     },
-    LivePhase.pregame => LiveGameStrings.joinParts([
-      LiveGameStrings.agentSelect,
+    LivePhase.pregame => _joinStatus([l10n.liveGameAgentSelect, ?map]),
+    LivePhase.ingame => _joinStatus([
+      l10n.liveGameInMatch,
       ?map,
-    ]),
-    LivePhase.ingame => LiveGameStrings.joinParts([
-      LiveGameStrings.inMatch,
-      ?map,
-      ?score?.text,
+      if (score != null) score.text(l10n),
     ]),
   };
 }
@@ -232,3 +230,7 @@ List<Agent> selectableAgents(ContentDb db) =>
       (a, b) =>
           a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()),
     );
+
+// Separator is neutral punctuation; wording comes from the supplied resources.
+String _joinStatus(Iterable<String> parts) =>
+    parts.where((s) => s.isNotEmpty).join(' · ');

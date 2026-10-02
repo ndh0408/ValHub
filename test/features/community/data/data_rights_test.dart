@@ -1,3 +1,7 @@
+import '../../../helpers/l10n.dart';
+
+import 'package:valvn/features/community/ui/community_error.dart';
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -68,7 +72,7 @@ void main() {
       expect(e.isRetryable, isTrue);
       // Never a token refusal.
       expect(e.isAuthFailure, isFalse);
-      final d = describeCommunityError(e);
+      final d = describeCommunityError(tl, e);
       expect(d.message, CommunityStrings.errorRiotUnavailableIn('45 giây'));
       expect(d.message, contains('Riot đang gặp sự cố'));
       expect(d.canRetry, isTrue);
@@ -81,7 +85,7 @@ void main() {
       });
       expect(e.retryAfter, const Duration(seconds: 120));
       expect(
-        describeCommunityError(e).message,
+        describeCommunityError(tl, e).message,
         CommunityStrings.errorRiotUnavailableIn(
           formatDurationCoarse(const Duration(minutes: 2)),
         ),
@@ -94,7 +98,7 @@ void main() {
       });
       expect(e.retryAfter, isNull);
       expect(
-        describeCommunityError(e).message,
+        describeCommunityError(tl, e).message,
         CommunityStrings.errorRiotUnavailable,
       );
     });
@@ -102,7 +106,10 @@ void main() {
     test('an HTML 503 (gateway page) stays a generic server error', () {
       final e = fromBody(503, '<html><body>Bad gateway</body></html>');
       expect(e.code, CommunityException.serverError);
-      expect(describeCommunityError(e).message, CommunityStrings.errorServer);
+      expect(
+        describeCommunityError(tl, e).message,
+        CommunityStrings.errorServer,
+      );
     });
 
     test('storage_full: 507, no retry, says images cannot be added', () {
@@ -111,7 +118,7 @@ void main() {
       });
       expect(e.code, CommunityException.storageFull);
       expect(e.isRetryable, isFalse);
-      final d = describeCommunityError(e);
+      final d = describeCommunityError(tl, e);
       expect(d.message, CommunityStrings.errorStorageFull);
       expect(d.message, contains('Kho ảnh của Cộng đồng đã đầy'));
       expect(d.canRetry, isFalse);
@@ -126,8 +133,11 @@ void main() {
         'error': {'code': 'invalid_input', 'message': message},
       });
       expect(e.code, CommunityException.invalidInput);
-      expect(describeCommunityError(e).message, CommunityStrings.errorInvalid);
-      expect(describeCommunityError(e).canRetry, isFalse);
+      expect(
+        describeCommunityError(tl, e).message,
+        CommunityStrings.errorInvalid,
+      );
+      expect(describeCommunityError(tl, e).canRetry, isFalse);
     });
 
     test('rate_limited keeps retryAfter (body wins over the header)', () {
@@ -136,7 +146,7 @@ void main() {
       }, retryAfterHeader: '5');
       expect(a.retryAfter, const Duration(minutes: 30));
       expect(
-        describeCommunityError(a).message,
+        describeCommunityError(tl, a).message,
         CommunityStrings.errorRateLimitedIn('30 phút'),
       );
       final b = fromBody(429, {

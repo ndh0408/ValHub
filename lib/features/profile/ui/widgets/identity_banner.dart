@@ -263,7 +263,7 @@ class ProfileHeader extends ConsumerWidget {
     final xp = ref.watch(accountXpProvider(account.puuid));
     final name = RiotName.of(account.gameName, account.tagLine);
     return IdentityBanner(
-      name: playerDisplayName(name, withTag: false),
+      name: playerDisplayName(context.l10n, name, withTag: false),
       tagLine: account.tagLine,
       cardId: identity?.cardId ?? account.cardId,
       titleId: identity?.titleId,

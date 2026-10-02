@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -81,11 +83,11 @@ void main() {
 
     test('display name and level', () {
       const name = RiotName(gameName: 'Tên', tagLine: 'VN1');
-      expect(playerDisplayName(name), 'Tên#VN1');
-      expect(playerDisplayName(name, withTag: false), 'Tên');
-      expect(playerDisplayName(name, hidden: true), 'Người chơi ẩn danh');
-      expect(playerDisplayName(null, fallback: 'Jett'), 'Jett');
-      expect(playerDisplayName(null, fallback: ' '), 'Người chơi');
+      expect(playerDisplayName(tl, name), 'Tên#VN1');
+      expect(playerDisplayName(tl, name, withTag: false), 'Tên');
+      expect(playerDisplayName(tl, name, hidden: true), 'Người chơi ẩn danh');
+      expect(playerDisplayName(tl, null, fallback: 'Jett'), 'Jett');
+      expect(playerDisplayName(tl, null, fallback: ' '), 'Người chơi');
       expect(visibleAccountLevel(222, hideAccountLevel: true), isNull);
       expect(
         visibleAccountLevel(222, hideAccountLevel: true, isSelf: true),

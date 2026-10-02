@@ -43,8 +43,8 @@ class CurrentGameCard extends ConsumerWidget {
       subtitle = _StatusLine(state: state, db: db);
     } else if (value.hasError && !value.isLoading) {
       subtitle = Text(
-        describeError(value.error!).needsLogin
-            ? describeError(value.error!).message
+        describeError(context.l10n, value.error!).needsLogin
+            ? describeError(context.l10n, value.error!).message
             : context.l10n.liveGameStatusUnavailable,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
@@ -175,13 +175,14 @@ class _StatusLine extends ConsumerWidget {
       case LivePhase.queueing when state.queueEntryTime != null:
         return TickingBuilder(
           builder: (context, now) =>
-              text(currentGameStatusText(state, db, now: now)),
+              text(currentGameStatusText(context.l10n, state, db, now: now)),
         );
       case LivePhase.ingame when ref.watch(liveScoreEnabledProvider):
         final presence = ref.watch(ownPresenceProvider).value;
         final now = ref.watch(clockProvider).now();
         return text(
           currentGameStatusText(
+            context.l10n,
             state,
             db,
             now: now,
@@ -190,7 +191,12 @@ class _StatusLine extends ConsumerWidget {
         );
       default:
         return text(
-          currentGameStatusText(state, db, now: ref.watch(clockProvider).now()),
+          currentGameStatusText(
+            context.l10n,
+            state,
+            db,
+            now: ref.watch(clockProvider).now(),
+          ),
         );
     }
   }

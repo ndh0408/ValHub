@@ -263,17 +263,21 @@ Future<void> confirmDeleteReview(
   String puuid,
   String skinUuid,
 ) async {
+  final l10nBeforeAwait = context.l10n;
+
   final ok = await showConfirmDialog(
     context,
-    title: CommunityStrings.deleteReviewTitle,
-    message: CommunityStrings.deleteReviewBody,
-    confirmLabel: CommunityStrings.delete,
+    title: l10nBeforeAwait.communityDeleteReviewTitle,
+    message: l10nBeforeAwait.communityDeleteReviewBody,
+    confirmLabel: l10nBeforeAwait.communityDelete,
     destructive: true,
   );
   if (!ok || !context.mounted) return;
   try {
     await deleteOwnSkinReview(ref, puuid: puuid, skinUuid: skinUuid);
-    if (context.mounted) _snack(context, CommunityStrings.reviewDeleted);
+    if (context.mounted) {
+      _snack(context, l10nBeforeAwait.communityReviewDeleted);
+    }
   } on Object catch (e) {
     if (context.mounted) showCommunityError(context, e);
   }
@@ -594,6 +598,8 @@ class _MyReviewCard extends ConsumerWidget {
   final String? weaponUuid;
 
   Future<void> _edit(BuildContext context, {int rating = 0}) async {
+    final l10nBeforeAwait2 = context.l10n;
+
     final p = puuid;
     if (p == null) return;
     final account = ProviderScope.containerOf(context).read(accountProvider(p));
@@ -611,7 +617,9 @@ class _MyReviewCard extends ConsumerWidget {
       initialRating: rating > 0 ? rating : (mine?.rating ?? 0),
       initialBody: mine?.body ?? '',
     );
-    if (saved && context.mounted) _snack(context, CommunityStrings.reviewSaved);
+    if (saved && context.mounted) {
+      _snack(context, l10nBeforeAwait2.communityReviewSaved);
+    }
   }
 
   @override

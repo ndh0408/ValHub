@@ -401,7 +401,7 @@ Providers, in `providers/home_arrangement.dart`:
 | `ownPresenceProvider`, `friendsProvider`, `xmppServiceProvider`, `xmppConnectionProvider`, `appForegroundProvider`, `kXmppLinger` | `lib/core/xmpp/xmpp_providers.dart` | live, friends, pollers |
 | `Friend`, `FriendsView`, `FriendActivity` | `lib/core/xmpp/friends.dart` | friends |
 | `isPlaying` | `lib/features/social/data/friend_sections.dart` | friends |
-| `presenceStatus` | `lib/features/social/data/friend_status.dart` | friends |
+| `presenceStatus(l10n, presence)` | `lib/features/social/ui/friend_status_labels.dart` | friends |
 | `storefrontProvider`, `walletProvider`, `Storefront`, `DailyOffer`, `NightMarket`, `Wallet` | `lib/core/domain/economy/storefront.dart` | store, accounts |
 | `wishlistHitsProvider`, `findWishlistHits`, `WishlistHit`, `WishlistPlace`, `wishlistContains` | `lib/core/domain/economy/wishlist.dart` | store, accounts, community |
 | `wishlistProvider` | `lib/core/wishlist/wishlist_store.dart` | store, accounts, community |

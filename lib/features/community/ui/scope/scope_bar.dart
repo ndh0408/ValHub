@@ -1,3 +1,6 @@
+import '../../../../core/l10n/l10n.dart';
+import '../../../../core/l10n/labels/community_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,11 +24,12 @@ String countrySegmentLabel(String? country, {String? localizedName}) =>
 
 /// Summary of the language filter ("Mọi ngôn ngữ", "Tiếng Việt", "3 ngôn
 /// ngữ").
-String languageFilterLabel(Set<String> languages) => switch (languages.length) {
-  0 => CommunityStrings.anyLanguage,
-  1 => CommunityStrings.languageLabel(languages.first),
-  final n => CommunityStrings.languagesSelected(n),
-};
+String languageFilterLabel(AppLocalizations l10n, Set<String> languages) =>
+    switch (languages.length) {
+      0 => l10n.communityAnyLanguage,
+      1 => l10n.communityLanguageName(languages.first),
+      final n => l10n.communityLanguagesSelected(n),
+    };
 
 /// One scope selector on the page; country and region choices live in a
 /// scrollable sheet. The applied scope and per-section preferences are retained.
@@ -277,7 +281,7 @@ class ScopeBar extends ConsumerWidget {
               ValFilterChip(
                 key: ValueKey('scope-languages-${section.name}'),
                 icon: Icons.translate_rounded,
-                label: languageFilterLabel(chosen.languages),
+                label: languageFilterLabel(context.l10n, chosen.languages),
                 selected: chosen.languages.isNotEmpty,
                 onSelected: (_) => unawaited(pickLanguages()),
               ),

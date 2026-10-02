@@ -9,6 +9,10 @@
   "@commonPriceSourceLabel": {
     "description": "Source link label for a VP price table; preserves the legacy text without an unused URL placeholder."
   },
+  "commonErrorApi": "Riot đang gặp trục trặc. Hãy thử lại sau ít phút.",
+  "@commonErrorApi": {
+    "description": "Safe fallback for Riot API failures. HTTP status stays in the error data, not the player copy."
+  },
   "commonAppName": "ValHub",
   "@commonAppName": {
     "description": "CommonStrings.appName — ",
@@ -2542,6 +2546,15 @@
     },
     "x-context": "lib/features/battlepass/battlepass_strings.dart"
   },
+  "collectionSaveFailedWith": "Không thể lưu trang bị. {detail}",
+  "@collectionSaveFailedWith": {
+    "description": "Loadout save failure with a localized cause.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
   "collectionApplyPreset": "Áp dụng",
   "@collectionApplyPreset": {
     "description": "CollectionStrings.applyPreset — S38 presets",
@@ -3499,6 +3512,26 @@
       }
     },
     "x-context": "lib/features/collection/collection_strings.dart"
+  },
+  "communityModerationContentInappropriate": "Chưa đăng được vì có từ ngữ không phù hợp. Hãy sửa nội dung rồi thử lại.",
+  "@communityModerationContentInappropriate": {
+    "description": "Player-safe copy for Community moderation reason content_inappropriate. Never render arbitrary server text."
+  },
+  "communityModerationContentScam": "Cộng đồng không cho phép quảng cáo mua bán tài khoản, cày thuê hay để lại số điện thoại. Hãy bỏ những nội dung này rồi thử lại.",
+  "@communityModerationContentScam": {
+    "description": "Player-safe copy for Community moderation reason content_scam. Never render arbitrary server text."
+  },
+  "communityModerationContentTooComplex": "Nội dung có quá nhiều ký tự rời rạc. Hãy viết gọn hơn rồi thử lại.",
+  "@communityModerationContentTooComplex": {
+    "description": "Player-safe copy for Community moderation reason content_too_complex. Never render arbitrary server text."
+  },
+  "communityModerationAccountBanned": "Tài khoản này đã bị khóa quyền dùng Cộng đồng. Nếu cho rằng có nhầm lẫn, hãy liên hệ ValHub trong Giới thiệu & pháp lý.",
+  "@communityModerationAccountBanned": {
+    "description": "Player-safe copy for Community moderation reason account_banned. Never render arbitrary server text."
+  },
+  "communityModerationAccountRestricted": "Tài khoản này đang bị hạn chế đăng bài, bình luận, tìm đồng đội và bình chọn. Hãy thử lại sau hoặc liên hệ ValHub trong Giới thiệu & pháp lý.",
+  "@communityModerationAccountRestricted": {
+    "description": "Player-safe copy for Community moderation reason account_restricted. Never render arbitrary server text."
   },
   "communityAddPhotos": "Thêm ảnh",
   "@communityAddPhotos": {
@@ -8523,6 +8556,38 @@
   "@skinDetailVideoError": {
     "description": "SkinDetailStrings.videoError — ",
     "x-context": "lib/features/skin_detail/skin_detail_strings.dart"
+  },
+  "socialPresenceInMatch": "Đang đấu",
+  "@socialPresenceInMatch": {
+    "description": "Render-time friend presence copy, preserving existing Vietnamese status semantics."
+  },
+  "socialPresenceAgentSelect": "Đang chọn đặc vụ",
+  "@socialPresenceAgentSelect": {
+    "description": "Render-time friend presence copy, preserving existing Vietnamese status semantics."
+  },
+  "socialPresenceQueue": "Đang tìm trận",
+  "@socialPresenceQueue": {
+    "description": "Render-time friend presence copy, preserving existing Vietnamese status semantics."
+  },
+  "socialPresenceLobby": "Đang ở sảnh chờ",
+  "@socialPresenceLobby": {
+    "description": "Render-time friend presence copy, preserving existing Vietnamese status semantics."
+  },
+  "socialPresenceCustom": "Đang chơi tự do",
+  "@socialPresenceCustom": {
+    "description": "Render-time friend presence copy, preserving existing Vietnamese status semantics."
+  },
+  "socialPresenceDetails": "{status} · {detail}",
+  "@socialPresenceDetails": {
+    "description": "Render-time friend presence copy, preserving existing Vietnamese status semantics.",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
   },
   "socialAccept": "Chấp nhận",
   "@socialAccept": {

@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/storage/prefs.dart';
@@ -100,7 +102,7 @@ void main() {
       expect(find.text(HomeStrings.friendsConsentTitle), findsNothing);
       expect(find.byType(FriendsHomeCard), findsNothing);
       expect(
-        find.text(HomeStrings.cardHidden(HomeCardId.friends.title)),
+        find.text(HomeStrings.cardHidden(HomeCardId.friends.title(tl))),
         findsOneWidget,
       );
       expect(env.xmppCreated, 0);

@@ -1,3 +1,5 @@
+import 'package:valvn/features/social/ui/friend_status_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -243,8 +245,8 @@ abstract final class _FriendsSlivers {
     Widget tile(Friend f) => FriendTile(
       key: ValueKey(f.puuid),
       friend: f,
-      status: friendStatus(f, db: db, now: now),
-      detail: friendDetail(f, db: db),
+      status: friendStatus(context.l10n, context.fmt, f, db: db, now: now),
+      detail: friendDetail(context.l10n, context.fmt, f, db: db),
       rankTier: friendRankTier(f),
       unknownName: context.l10n.competitiveUnknownPlayer,
       heroTag: friendAvatarHeroTag(f.puuid),

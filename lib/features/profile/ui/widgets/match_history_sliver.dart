@@ -258,10 +258,12 @@ Future<void> _pickMap(
   String? selected,
   void Function(String?) onPicked,
 ) async {
+  final l10nBeforeAwait = context.l10n;
+
   final maps = filterableMaps(db);
   final picked = await showValSheet<({String? url})>(
     context,
-    title: ProfileStrings.chooseMap,
+    title: l10nBeforeAwait.profileChooseMap,
     scrollable: true,
     initialSize: 0.65,
     maxSize: 0.92,

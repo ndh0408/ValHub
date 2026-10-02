@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
 import 'package:flutter/semantics.dart';
@@ -320,14 +322,14 @@ void main() {
         HomeCardId.battlePass,
       ]) {
         expect(
-          find.bySemanticsLabel(RegExp(RegExp.escape(id.title))),
+          find.bySemanticsLabel(RegExp(RegExp.escape(id.title(tl)))),
           findsWidgets,
           reason: id.name,
         );
       }
       // The ⋯ menu of each card names its card.
       expect(
-        find.byTooltip(HomeStrings.moreActions(HomeCardId.store.title)),
+        find.byTooltip(HomeStrings.moreActions(HomeCardId.store.title(tl))),
         findsOneWidget,
       );
       handle.dispose();

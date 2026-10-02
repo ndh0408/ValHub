@@ -6,7 +6,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/l10n/l10n.dart';
 import '../../community_routes.dart';
-import '../../community_strings.dart';
 import '../../data/community_api.dart';
 import '../../data/community_models.dart';
 import '../../providers/community_providers.dart';
@@ -224,13 +223,15 @@ Future<bool> handlePostAction(
   required CommunityPost post,
   Future<void> Function()? delete,
 }) async {
+  final l10nBeforeAwait = context.l10n;
+
   switch (action) {
     case ContentAction.delete:
       final ok = await confirmCommunityAction(
         context,
-        title: CommunityStrings.deletePostTitle,
-        body: CommunityStrings.deletePostBody,
-        confirmLabel: CommunityStrings.delete,
+        title: l10nBeforeAwait.communityDeletePostTitle,
+        body: l10nBeforeAwait.communityDeletePostBody,
+        confirmLabel: l10nBeforeAwait.communityDelete,
       );
       if (!ok || !context.mounted) return false;
       try {
@@ -243,7 +244,7 @@ Future<bool> handlePostAction(
           ScaffoldMessenger.maybeOf(context)
             ?..hideCurrentSnackBar()
             ..showSnackBar(
-              const SnackBar(content: Text(CommunityStrings.deleted)),
+              SnackBar(content: Text(l10nBeforeAwait.communityDeleted)),
             );
         }
         return true;

@@ -1,3 +1,5 @@
+import 'package:valvn/features/community/ui/community_error.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,7 +51,10 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
         error.code == CommunityException.consentRequired) {
       return;
     }
-    showAppSnackBar(context, describeCommunityError(error).message);
+    showAppSnackBar(
+      context,
+      describeCommunityError(context.l10n, error).message,
+    );
   }
 
   Future<void> _export(BuildContext context, Account account) async {
@@ -69,11 +74,14 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
   }
 
   Future<void> _delete(BuildContext context, Account account) async {
+    final l10nBeforeAwait = context.l10n;
+
+    final l10n = context.l10n;
     final ok = await confirmSettingsAction(
       context,
-      title: CommunityStrings.deleteDataConfirmTitle,
-      message: CommunityStrings.deleteDataConfirmBody(account.riotId),
-      confirmLabel: CommunityStrings.deleteDataConfirm,
+      title: l10nBeforeAwait.communityDeleteDataConfirmTitle,
+      message: l10nBeforeAwait.communityDeleteDataConfirmBody(account.riotId),
+      confirmLabel: l10nBeforeAwait.communityDeleteDataConfirm,
       destructive: true,
       icon: Icons.delete_forever_outlined,
     );
@@ -93,18 +101,20 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
         messenger
           ?..hideCurrentSnackBar()
           ..showSnackBar(
-            SnackBar(content: Text(describeCommunityError(e).message)),
+            SnackBar(content: Text(describeCommunityError(l10n, e).message)),
           );
       }
     });
   }
 
   Future<void> _withdraw(BuildContext context, Account account) async {
+    final l10nBeforeAwait2 = context.l10n;
+
     final ok = await confirmSettingsAction(
       context,
-      title: CommunityStrings.withdrawConfirmTitle,
-      message: CommunityStrings.withdrawConfirmBody(account.riotId),
-      confirmLabel: CommunityStrings.withdrawConfirm,
+      title: l10nBeforeAwait2.communityWithdrawConfirmTitle,
+      message: l10nBeforeAwait2.communityWithdrawConfirmBody(account.riotId),
+      confirmLabel: l10nBeforeAwait2.communityWithdrawConfirm,
       icon: Icons.logout_rounded,
     );
     if (!ok || !context.mounted) return;

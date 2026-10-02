@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/competitive_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -248,7 +250,7 @@ class _MatchHero extends ConsumerWidget {
       container: true,
       label: ProfileStrings.matchHeroSemantics(
         mapName,
-        result.outcome.label,
+        context.l10n.matchOutcome(result.outcome),
         score,
       ),
       child: Stack(
@@ -304,7 +306,9 @@ class _MatchHero extends ConsumerWidget {
                             _HeroChip(label: queue),
                             if (known)
                               _HeroChip(
-                                label: result.outcome.label,
+                                label: context.l10n.matchOutcome(
+                                  result.outcome,
+                                ),
                                 color: resultColor,
                               ),
                             if (result.placement case final p?)
@@ -617,6 +621,7 @@ class _PlayerSummary extends ConsumerWidget {
                       Text(
                         ProfileStrings.joined([
                           playerDisplayName(
+                            context.l10n,
                             player.name,
                             hidden: hidden,
                             withTag: false,

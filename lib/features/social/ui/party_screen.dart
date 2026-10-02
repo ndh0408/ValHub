@@ -82,7 +82,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
       if (mounted) {
         showAppSnackBar(
           context,
-          SocialStrings.actionFailed(describeError(e).message),
+          SocialStrings.actionFailed(describeError(context.l10n, e).message),
         );
       }
     } finally {
@@ -428,7 +428,7 @@ class _PartyScreenState extends ConsumerState<PartyScreen> {
               color: theme.colorScheme.error,
               text: context.l10n.socialCantQueue(
                 db.queueName(choice.queueId),
-                queueBlockReason(choice, p),
+                queueBlockReason(context.l10n, choice, p),
               ),
             ),
           if (v.inMatch)

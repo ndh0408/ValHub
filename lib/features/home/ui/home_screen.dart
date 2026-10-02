@@ -144,7 +144,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         unawaited(
           SemanticsService.sendAnnouncement(
             View.of(context),
-            context.l10n.homeFocused(card.title),
+            context.l10n.homeFocused(card.title(context.l10n)),
             Directionality.of(context),
           ),
         );

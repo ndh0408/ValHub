@@ -1,5 +1,13 @@
 # Tiến độ ValHub (điểm dừng để làm tiếp)
 
+Checkpoint tiếp theo 03/10: [Render-time cutover, build 4010](I18N_RENDER_CUTOVER_2026-10-03.md).
+Đã chuyển thêm **175 refs** (514 → **339**). Windows hai lượt và Mac đạt
+**4.238 tests**, analyzer 0; backend 867, codemod 37, Android native 6 và public
+flows 10 đạt. APK **4010** đang mở trên emulator; bốn tài khoản/active/wishlist/
+settings giữ nguyên. iOS 4010 build trên Mac nhưng **chưa ký/chưa test iPhone**.
+Cutover còn đỏ, chưa nghiệm thu toàn bộ; chỉ tiếng Việt được phát hành.
+
+
 Checkpoint 03/10: [Review Gemini và tích hợp ValHub](VALHUB_INTEGRATION_2026-10-03.md). Đã sửa lỗi
 Gemini và gộp locale nền/bộ chọn/thông báo. Windows/Mac **4.236 tests**,
 analyzer 0; backend 867, native 6, public-flow 10 cases đạt. APK/iOS không ký

@@ -1,3 +1,6 @@
+import '../../helpers/l10n.dart';
+
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/riot/riot_ids.dart';
@@ -28,7 +31,7 @@ void main() {
       ]);
       expect(db.weapon(_vandal.toUpperCase())!.displayName, 'Vandal');
       expect(db.weapon(SpecialIds.melee)!.displayName, 'Cận Chiến');
-      expect(WeaponCategory.melee.label, 'Cận chiến');
+      expect(tl.weaponCategory(WeaponCategory.melee), 'Cận chiến');
       expect(db.weapon(_vandal)!.shopCost, 2900);
     });
 
@@ -47,9 +50,9 @@ void main() {
       expect(skin.level1Uuid, _reaverLevel1);
       expect(skin.levels[1].displayName, 'Vandal Reaver Cấp 2');
       expect(skin.levels[1].levelItem, 'VFX');
-      expect(skin.levels[1].levelItemLabel, 'Hiệu ứng hình ảnh');
-      expect(skin.levels[3].levelItemLabel, 'Đòn kết liễu');
-      expect(skin.levels[0].levelItemLabel, 'Cơ bản');
+      expect(tl.skinLevelItem(skin.levels[1]), 'Hiệu ứng hình ảnh');
+      expect(tl.skinLevelItem(skin.levels[3]), 'Đòn kết liễu');
+      expect(tl.skinLevelItem(skin.levels[0]), 'Cơ bản');
       expect(db.skinLevel(_reaverLevel4)!.levelNumber, 4);
     });
 

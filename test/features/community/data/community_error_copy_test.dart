@@ -1,3 +1,6 @@
+import '../../../helpers/l10n.dart';
+
+import 'package:valvn/features/community/ui/community_error.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/l10n/community_error_strings.dart';
 import 'package:valvn/features/community/community_strings.dart';
@@ -19,10 +22,10 @@ void main() {
         },
       });
       expect(
-        describeCommunityError(error).message,
+        describeCommunityError(tl, error).message,
         CommunityStrings.errorInvalid,
       );
-      expect(describeCommunityError(error).canRetry, isFalse);
+      expect(describeCommunityError(tl, error).canRetry, isFalse);
     }
   });
 
@@ -43,7 +46,7 @@ void main() {
           'params': {'field': 'secret'},
         },
       });
-      final description = describeCommunityError(error);
+      final description = describeCommunityError(tl, error);
       expect(description.message, CommunityErrorStrings.forReason(reason));
       expect(description.message, isNot(contains('secret')));
       expect(description.canRetry, isFalse);
@@ -59,9 +62,9 @@ void main() {
       },
     });
     expect(error.isRetryable, isTrue);
-    expect(describeCommunityError(error).canRetry, isTrue);
+    expect(describeCommunityError(tl, error).canRetry, isTrue);
     expect(
-      describeCommunityError(error).message,
+      describeCommunityError(tl, error).message,
       CommunityStrings.errorRateLimitedIn('2 phút'),
     );
   });

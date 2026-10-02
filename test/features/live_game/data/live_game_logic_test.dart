@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/xmpp/xmpp.dart';
@@ -56,7 +58,7 @@ void main() {
   group('liveScoreOf', () {
     test('fresh in-match presence', () {
       expect(liveScoreOf(scorePresence(at), now: at), const LiveScore(8, 4));
-      expect(liveScoreOf(scorePresence(at), now: at)!.text, '8 – 4');
+      expect(liveScoreOf(scorePresence(at), now: at)!.text(tl), '8 – 4');
     });
 
     test('hidden when stale, 0 – 0, outside a match or absent', () {
@@ -94,7 +96,7 @@ void main() {
 
     test('current game status lines (SUMMARY §9.9)', () {
       String text(LiveGameState s, {LiveScore? score}) =>
-          currentGameStatusText(s, db, now: at, score: score);
+          currentGameStatusText(tl, s, db, now: at, score: score);
       expect(
         text(LiveGameState(phase: LivePhase.notRunning, receivedAt: at)),
         'Không trong trận',
@@ -139,7 +141,7 @@ void main() {
       );
       // Unknown map (content missing): no dangling separator.
       expect(
-        currentGameStatusText(ingame, ContentDb.empty(), now: at),
+        currentGameStatusText(tl, ingame, ContentDb.empty(), now: at),
         'Đang đấu',
       );
     });

@@ -14,6 +14,29 @@ void main() {
   group('vi stays byte-identical to core/util/format.dart', () {
     final vi = fmt(AppLocale.vi, 'vi');
 
+    test('relative activity preserves thresholds, future and calendar-day behavior', () {
+      for (final duration in [
+        const Duration(minutes: -5),
+        Duration.zero,
+        const Duration(seconds: 59),
+        const Duration(minutes: 1),
+        const Duration(minutes: 59),
+        const Duration(hours: 1),
+        const Duration(hours: 23),
+        const Duration(hours: 24),
+        const Duration(days: 2),
+        const Duration(days: 6),
+        const Duration(days: 7),
+      ]) {
+        final then = _tue.subtract(duration);
+        expect(
+          vi.relative(then, _tue),
+          legacy.formatRelative(then, _tue, locale: 'vi'),
+          reason: '$duration',
+        );
+      }
+    });
+
     test('numbers, signs and non-finite values', () {
       for (final v in <num>[
         0,

@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -343,7 +345,7 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
                 _LevelTile(
                   title: context.l10n.collectionLevelLabel(
                     l.levelNumber,
-                    l.levelItemLabel,
+                    context.l10n.skinLevelItem(l),
                   ),
                   selected: l.uuid == sel.levelId,
                   locked: !owned.isSkinLevelOwned(l.uuid),

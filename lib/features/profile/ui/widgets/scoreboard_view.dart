@@ -313,6 +313,7 @@ class _PlayerRow extends ConsumerWidget {
         details.statsFor(player.subject) ??
         ScoreboardStats(subject: player.subject);
     final name = playerDisplayName(
+      context.l10n,
       player.name,
       hidden: hidden,
       withTag: false,

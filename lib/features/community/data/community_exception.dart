@@ -1,14 +1,9 @@
 import 'dart:io' show HttpHeaders, SocketException;
 
 import 'package:dio/dio.dart';
-import 'package:material_ui/material_ui.dart' hide ErrorDescription;
 
 import '../../../core/network/error_classifier.dart' show parseRetryAfter;
-import '../../../core/l10n/community_error_strings.dart';
-import '../../../core/ui/error_view.dart';
-import '../../../core/util/format.dart';
 import '../../../core/util/json.dart';
-import '../community_strings.dart';
 
 /// Error of the community server (docs/community-api.md "Errors") or of the
 /// transport to it. Riot errors met while signing in stay `RiotException`s.
@@ -127,118 +122,4 @@ class CommunityException implements Exception {
 
   @override
   String toString() => 'CommunityException($code, $status)';
-}
-
-/// Vietnamese copy for any error of the community feature: community
-/// errors get their own messages, Riot errors (e.g. `NeedsLoginException`
-/// while signing in) keep the app-wide ones.
-ErrorDescription describeCommunityError(Object error) {
-  if (error is! CommunityException) return describeError(error);
-  final e = error;
-  final reasonMessage =
-      e.code == CommunityException.invalidInput || e.code == 'suspended'
-      ? CommunityErrorStrings.forReason(e.reason)
-      : null;
-  if (reasonMessage != null) {
-    return ErrorDescription(
-      message: reasonMessage,
-      icon: e.code == 'suspended'
-          ? Icons.block_outlined
-          : Icons.edit_note_outlined,
-      canRetry: false,
-    );
-  }
-  return switch (e.code) {
-    CommunityException.network => const ErrorDescription(
-      message: CommunityStrings.errorNetwork,
-      icon: Icons.wifi_off_outlined,
-    ),
-    CommunityException.timeout => const ErrorDescription(
-      message: CommunityStrings.errorTimeout,
-      icon: Icons.wifi_off_outlined,
-    ),
-    CommunityException.rateLimited => ErrorDescription(
-      title: CommunityStrings.rateLimitedTitle,
-      message: e.retryAfter == null
-          ? CommunityStrings.errorRateLimited
-          : CommunityStrings.errorRateLimitedIn(
-              formatDurationCoarse(e.retryAfter!),
-            ),
-      icon: Icons.hourglass_top_rounded,
-    ),
-    CommunityException.riotUnavailable => ErrorDescription(
-      title: CommunityStrings.riotUnavailableTitle,
-      message: e.retryAfter == null
-          ? CommunityStrings.errorRiotUnavailable
-          : CommunityStrings.errorRiotUnavailableIn(
-              formatDurationCoarse(e.retryAfter!),
-            ),
-      icon: Icons.cloud_off_outlined,
-    ),
-    CommunityException.storageFull => const ErrorDescription(
-      message: CommunityStrings.errorStorageFull,
-      icon: Icons.cloud_off_outlined,
-      canRetry: false,
-    ),
-    CommunityException.riotRejected => const ErrorDescription(
-      message: CommunityStrings.errorRiotRejected,
-      icon: Icons.verified_user_outlined,
-    ),
-    CommunityException.unauthorized => const ErrorDescription(
-      message: CommunityStrings.errorUnauthorized,
-      icon: Icons.lock_clock_outlined,
-    ),
-    CommunityException.forbidden => const ErrorDescription(
-      message: CommunityStrings.errorForbidden,
-      icon: Icons.block_outlined,
-      canRetry: false,
-    ),
-    CommunityException.notFound => const ErrorDescription(
-      message: CommunityStrings.errorNotFound,
-      icon: Icons.search_off_outlined,
-      canRetry: false,
-    ),
-    CommunityException.invalidInput => ErrorDescription(
-      message: CommunityStrings.errorInvalid,
-      icon: Icons.edit_note_outlined,
-      canRetry: false,
-    ),
-    CommunityException.imageTooLarge => const ErrorDescription(
-      message: CommunityStrings.errorImageTooLarge,
-      icon: Icons.photo_size_select_large_outlined,
-      canRetry: false,
-    ),
-    CommunityException.imageType => const ErrorDescription(
-      message: CommunityStrings.errorImageType,
-      icon: Icons.image_not_supported_outlined,
-      canRetry: false,
-    ),
-    CommunityException.consentRequired => const ErrorDescription(
-      message: CommunityStrings.errorConsent,
-      icon: Icons.verified_user_outlined,
-      canRetry: false,
-    ),
-    CommunityException.disabled => const ErrorDescription(
-      message: CommunityStrings.unavailableBody,
-      icon: Icons.cloud_off_outlined,
-      canRetry: false,
-    ),
-    'suspended' => const ErrorDescription(
-      message: CommunityStrings.errorForbidden,
-      icon: Icons.block_outlined,
-      canRetry: false,
-    ),
-    'server_busy' => ErrorDescription(
-      message: e.retryAfter == null
-          ? CommunityStrings.errorServer
-          : CommunityStrings.errorRateLimitedIn(
-              formatDurationCoarse(e.retryAfter!),
-            ),
-      icon: Icons.cloud_off_outlined,
-    ),
-    _ => const ErrorDescription(
-      message: CommunityStrings.errorServer,
-      icon: Icons.cloud_off_outlined,
-    ),
-  };
 }

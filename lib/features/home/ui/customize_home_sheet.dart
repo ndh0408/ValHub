@@ -131,7 +131,7 @@ class _CardTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  card.title,
+                  card.title(context.l10n),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyLarge?.copyWith(
@@ -139,7 +139,7 @@ class _CardTile extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  card.description,
+                  card.description(context.l10n),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -151,7 +151,7 @@ class _CardTile extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Semantics(
-            label: card.title,
+            label: card.title(context.l10n),
             child: Switch.adaptive(value: on, onChanged: onChanged),
           ),
         ],

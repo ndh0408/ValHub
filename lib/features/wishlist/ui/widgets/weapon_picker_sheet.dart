@@ -1,3 +1,5 @@
+import '../../../../core/l10n/labels/content_labels.dart';
+
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_db.dart';
@@ -100,7 +102,11 @@ class WeaponPickerList extends StatelessWidget {
           ],
         ),
         for (final c in categories) ...[
-          SectionLabel(c.label.isEmpty ? context.l10n.wishlistWeapon : c.label),
+          SectionLabel(
+            context.l10n.weaponCategory(c).isEmpty
+                ? context.l10n.wishlistWeapon
+                : context.l10n.weaponCategory(c),
+          ),
           GroupedSection(
             children: [
               for (final w in byCategory[c]!)

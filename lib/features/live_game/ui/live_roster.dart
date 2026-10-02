@@ -136,6 +136,7 @@ class LivePlayerRow extends ConsumerWidget {
     final name = hidden
         ? context.l10n.liveGameAnonymous
         : playerDisplayName(
+            context.l10n,
             ref.watch(playerNameProvider(player.subject)).value,
             fallback: agent?.displayName,
           );

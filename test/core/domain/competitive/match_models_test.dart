@@ -1,3 +1,7 @@
+import 'package:valvn/core/l10n/labels/competitive_labels.dart';
+
+import '../../../helpers/l10n.dart';
+
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -61,16 +65,16 @@ void main() {
       );
       expect(RoundEndType.parse(null, 'Bomb defused'), RoundEndType.defuse);
       expect(RoundEndType.parse('???', ''), RoundEndType.unknown);
-      expect(RoundEndType.elimination.label, 'Hạ toàn đội');
-      expect(RoundEndType.timeExpired.label, 'Hết giờ');
-      expect(RoundEndType.unknown.label, isNull);
+      expect(tl.roundEndType(RoundEndType.elimination), 'Hạ toàn đội');
+      expect(tl.roundEndType(RoundEndType.timeExpired), 'Hết giờ');
+      expect(tl.roundEndType(RoundEndType.unknown), isNull);
     });
 
     test('outcome labels and RR sign', () {
-      expect(MatchOutcome.win.label, 'Thắng');
-      expect(MatchOutcome.loss.label, 'Thua');
-      expect(MatchOutcome.draw.label, 'Hòa');
-      expect(MatchOutcome.unknown.label, CompetitiveStrings.noValue);
+      expect(tl.matchOutcome(MatchOutcome.win), 'Thắng');
+      expect(tl.matchOutcome(MatchOutcome.loss), 'Thua');
+      expect(tl.matchOutcome(MatchOutcome.draw), 'Hòa');
+      expect(tl.matchOutcome(MatchOutcome.unknown), CompetitiveStrings.noValue);
       expect(MatchOutcome.fromRr(12), MatchOutcome.win);
       expect(MatchOutcome.fromRr(-3), MatchOutcome.loss);
       expect(MatchOutcome.fromRr(0), MatchOutcome.draw);
@@ -78,7 +82,7 @@ void main() {
       expect(MatchOutcome.fromName('bogus'), isNull);
       expect(TeamRole.parse('Attacker'), TeamRole.attacker);
       expect(TeamRole.parse('x'), isNull);
-      expect(TeamRole.defender.label, 'Phòng thủ');
+      expect(tl.teamRole(TeamRole.defender), 'Phòng thủ');
     });
   });
 

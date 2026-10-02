@@ -16,6 +16,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonPriceSourceLabel => 'Xem nguồn bảng giá';
 
   @override
+  String get commonErrorApi =>
+      'Riot đang gặp trục trặc. Hãy thử lại sau ít phút.';
+
+  @override
   String get commonAppName => 'ValHub';
 
   @override
@@ -1499,6 +1503,11 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String collectionSaveFailedWith(String detail) {
+    return 'Không thể lưu trang bị. $detail';
+  }
+
+  @override
   String get collectionApplyPreset => 'Áp dụng';
 
   @override
@@ -2051,6 +2060,26 @@ class AppLocalizationsVi extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get communityModerationContentInappropriate =>
+      'Chưa đăng được vì có từ ngữ không phù hợp. Hãy sửa nội dung rồi thử lại.';
+
+  @override
+  String get communityModerationContentScam =>
+      'Cộng đồng không cho phép quảng cáo mua bán tài khoản, cày thuê hay để lại số điện thoại. Hãy bỏ những nội dung này rồi thử lại.';
+
+  @override
+  String get communityModerationContentTooComplex =>
+      'Nội dung có quá nhiều ký tự rời rạc. Hãy viết gọn hơn rồi thử lại.';
+
+  @override
+  String get communityModerationAccountBanned =>
+      'Tài khoản này đã bị khóa quyền dùng Cộng đồng. Nếu cho rằng có nhầm lẫn, hãy liên hệ ValHub trong Giới thiệu & pháp lý.';
+
+  @override
+  String get communityModerationAccountRestricted =>
+      'Tài khoản này đang bị hạn chế đăng bài, bình luận, tìm đồng đội và bình chọn. Hãy thử lại sau hoặc liên hệ ValHub trong Giới thiệu & pháp lý.';
 
   @override
   String get communityAddPhotos => 'Thêm ảnh';
@@ -5012,6 +5041,26 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get skinDetailVideoError =>
       'Không phát được video. Kiểm tra mạng rồi thử lại.';
+
+  @override
+  String get socialPresenceInMatch => 'Đang đấu';
+
+  @override
+  String get socialPresenceAgentSelect => 'Đang chọn đặc vụ';
+
+  @override
+  String get socialPresenceQueue => 'Đang tìm trận';
+
+  @override
+  String get socialPresenceLobby => 'Đang ở sảnh chờ';
+
+  @override
+  String get socialPresenceCustom => 'Đang chơi tự do';
+
+  @override
+  String socialPresenceDetails(String status, String detail) {
+    return '$status · $detail';
+  }
 
   @override
   String get socialAccept => 'Chấp nhận';

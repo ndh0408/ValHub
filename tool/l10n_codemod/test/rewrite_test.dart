@@ -47,7 +47,7 @@ class Box { const Box(Object child); }
     await root.delete(recursive: true);
   });
 
-  Future<RewritePlan> plan(String code) async {
+  Future<RewritePlan> plan(String code, {bool captureAsync = false}) async {
     final file = File(p.join(root.path, 'lib', 'view.dart'));
     file.writeAsStringSync(
       "import 'package:valvn/core/l10n/l10n.dart';\n$code",
@@ -63,7 +63,7 @@ class Box { const Box(Object child); }
       'CommonStrings.retry': 'commonRetry',
       'CommonStrings.greet': 'commonGreet',
       'CommonStrings.optional': 'commonOptional',
-    });
+    }, captureAsync: captureAsync);
   }
 
   test('rewrites reads, nested calls, tearoffs and all enclosing const expressions', () async {
@@ -99,6 +99,51 @@ String optional(BuildContext c) => CommonStrings.optional();
       contains('localization read after await'),
     );
   });
+  test(
+    'opt-in captures once before suspension and avoids existing identifiers',
+    () async {
+      final result = await plan('''
+Future<String> later(BuildContext c) async {
+  final l10nBeforeAwait = 'existing';
+  await Future<void>.value();
+  return CommonStrings.greet(CommonStrings.retry) + l10nBeforeAwait;
+}
+''', captureAsync: true);
+      final source = result.apply();
+      expect(source, contains('final l10nBeforeAwait2 = c.l10n;'));
+      expect(
+        source.indexOf('= c.l10n;'),
+        lessThan(source.indexOf('await Future')),
+      );
+      expect(
+        source,
+        contains('l10nBeforeAwait2.commonGreet(l10nBeforeAwait2.commonRetry)'),
+      );
+      expect(RegExp('= c.l10n;').allMatches(source), hasLength(1));
+      expect(result.skipped, isEmpty);
+      final second = await plan(
+        source.split('\n').skip(1).join('\n'),
+        captureAsync: true,
+      );
+      expect(second.edits, isEmpty);
+      expect(second.apply(), source);
+    },
+  );
+  test(
+    'opt-in does not capture an outer context inside a nested closure',
+    () async {
+      final result = await plan('''
+Object outer(BuildContext c) => () async { await Future<void>.value(); return CommonStrings.retry; };
+Future<Object> later(BuildContext c) async {
+  await Future<void>.value();
+  String inner(BuildContext local) => CommonStrings.retry;
+  return inner(c);
+}
+''', captureAsync: true);
+      expect(result.edits, isEmpty);
+      expect(result.skipped, hasLength(2));
+    },
+  );
   test('re-running on rewritten code produces no edits and preserves unrelated code', () async {
     final first = await plan(
       "String view(BuildContext c) => CommonStrings.greet('Unicode 日本語');",
