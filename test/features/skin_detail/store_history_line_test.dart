@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/l10n.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -71,6 +73,8 @@ void main() {
             ),
           ],
           child: MaterialApp(
+            localizationsDelegates: appLocalizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: StoreHistoryLine(puuid: 'me', skin: skin),
             ),

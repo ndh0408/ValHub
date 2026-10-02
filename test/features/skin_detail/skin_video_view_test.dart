@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
@@ -48,6 +49,8 @@ void main() {
     final controllers = <_FakeController>[];
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: SkinVideoView(
           videoUrl: 'https://media.valorant-api.com/v.mp4',
           controllerFactory: (_) {
@@ -87,6 +90,8 @@ void main() {
     var calls = 0;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: SkinVideoView(
           videoUrl: 'https://media.valorant-api.com/v.mp4',
           controllerFactory: (_) => _FakeController(fail: calls++ == 0),
@@ -108,6 +113,8 @@ void main() {
     var calls = 0;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: SkinVideoView(
           videoUrl: 'không phải url',
           controllerFactory: (_) {

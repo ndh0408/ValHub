@@ -17,6 +17,8 @@ import '../../../../core/accounts/account_widgets.dart';
 import '../../../../core/auth/auth_routes.dart';
 import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/l10n/account_strings.dart';
+import '../../../../core/l10n/l10n.dart';
+import '../../../../core/l10n/account_labels.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../store/store_routes.dart';
@@ -98,7 +100,7 @@ class _AccountRow extends ConsumerWidget {
     final activity = row.activity;
     final meta = [
       if (account.level != null) AccountStrings.levelShort(account.level!),
-      AccountStrings.regionName(account.region),
+      context.l10n.riotRegionName(account.region),
     ].join(HomeStrings.dot);
     final needsLogin = account.needsLogin;
     final subtitle = needsLogin
@@ -114,7 +116,7 @@ class _AccountRow extends ConsumerWidget {
             TextSpan(
               children: [
                 TextSpan(
-                  text: activity.label,
+                  text: context.l10n.accountActivityName(activity),
                   style: TextStyle(
                     color: legibleAccent(context, activity.color(context)),
                     fontWeight: activity.isOnline ? FontWeight.w700 : null,

@@ -8,7 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../config/local_price.dart';
 import '../config/vp_prices.dart';
-import '../l10n/common_strings.dart';
 import '../settings/app_settings.dart';
 import '../theme/app_theme.dart';
 import '../util/format.dart';
@@ -16,6 +15,8 @@ import 'adaptive.dart';
 import 'currency_amount.dart';
 import 'sub_page.dart';
 import 'val_widgets.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// `≈ 268.000 ₫` for [vp] in the user's currency, or `null` when estimates
 /// are hidden (turned off, or no verified / user-entered price).
@@ -59,7 +60,7 @@ class PriceEstimate extends ConsumerWidget {
     );
     if (!interactive) return label;
     return Tooltip(
-      message: CommonStrings.priceEstimateTooltip,
+      message: context.l10n.commonPriceEstimateTooltip,
       child: InkWell(
         borderRadius: BorderRadius.circular(6),
         onTap: () => unawaited(showPriceEstimateInfoSheet(context)),
@@ -78,7 +79,7 @@ class PriceEstimate extends ConsumerWidget {
 Future<void> showPriceEstimateInfoSheet(BuildContext context) =>
     showValSheet<void>(
       context,
-      title: CommonStrings.priceEstimateTitle,
+      title: context.l10n.commonPriceEstimateTitle,
       builder: (context, _) => const _InfoBody(),
     );
 
@@ -102,14 +103,14 @@ class _InfoBody extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Text(
             price == null
-                ? CommonStrings.priceUnavailable
-                : CommonStrings.priceEstimateBody,
+                ? context.l10n.commonPriceUnavailable
+                : context.l10n.commonPriceEstimateBody,
             style: theme.textTheme.bodyMedium?.copyWith(height: 1.45),
           ),
         ),
         if (price != null && table != null && best != null) ...[
           SectionLabel(
-            CommonStrings.pricePacksTitle,
+            context.l10n.commonPricePacksTitle,
             padding: const EdgeInsets.fromLTRB(4, 20, 4, 8),
           ),
           GroupedSection(
@@ -138,7 +139,7 @@ class _InfoBody extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  CommonStrings.priceBestPack(
+                  context.l10n.commonPriceBestPack(
                     formatVp(best.vp),
                     price.formatPrice(best.price),
                   ),
@@ -146,18 +147,17 @@ class _InfoBody extends ConsumerWidget {
                 ),
                 Text(
                   price.isUserProvided
-                      ? CommonStrings.priceSourceUser
-                      : CommonStrings.priceSourceOfficial(price.country ?? ''),
+                      ? context.l10n.commonPriceSourceUser
+                      : context.l10n.commonPriceSourceOfficial(
+                          price.country ?? '',
+                        ),
                   style: smallMuted,
                 ),
                 if (url != null)
-                  Text(
-                    CommonStrings.priceSource(Uri.tryParse(url)?.host ?? url),
-                    style: smallMuted,
-                  ),
+                  Text(context.l10n.commonPriceSourceLabel, style: smallMuted),
                 if (table.updated != null)
                   Text(
-                    CommonStrings.priceUpdated(formatDate(table.updated!)),
+                    context.l10n.commonPriceUpdated(formatDate(table.updated!)),
                     style: smallMuted,
                   ),
               ],
@@ -171,7 +171,7 @@ class _InfoBody extends ConsumerWidget {
               launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication),
             ),
             icon: const Icon(Icons.open_in_new, size: 18),
-            label: const Text(CommonStrings.priceOpenSource),
+            label: Text(context.l10n.commonPriceOpenSource),
           ),
         const SizedBox(height: 8),
         FilledButton.tonalIcon(
@@ -182,8 +182,8 @@ class _InfoBody extends ConsumerWidget {
           icon: const Icon(Icons.edit_outlined, size: 18),
           label: Text(
             price?.isUserProvided ?? false
-                ? CommonStrings.priceEditOwn
-                : CommonStrings.priceEnterOwn,
+                ? context.l10n.commonPriceEditOwn
+                : context.l10n.commonPriceEnterOwn,
           ),
         ),
         if (price != null) ...[
@@ -198,10 +198,10 @@ class _InfoBody extends ConsumerWidget {
               final messenger = ScaffoldMessenger.maybeOf(context);
               Navigator.of(context).maybePop();
               messenger?.showSnackBar(
-                const SnackBar(content: Text(CommonStrings.priceHidden)),
+                SnackBar(content: Text(context.l10n.commonPriceHidden)),
               );
             },
-            child: const Text(CommonStrings.priceHide),
+            child: Text(context.l10n.commonPriceHide),
           ),
         ],
       ],
@@ -227,7 +227,7 @@ String? deviceCurrencyCode() {
 Future<void> showVpPriceOverrideSheet(BuildContext context) =>
     showValSheet<void>(
       context,
-      title: CommonStrings.priceOverrideTitle,
+      title: context.l10n.commonPriceOverrideTitle,
       builder: (context, _) => const _OverrideEditor(),
     );
 
@@ -286,6 +286,7 @@ class _OverrideEditorState extends ConsumerState<_OverrideEditor> {
   }
 
   Future<void> _save() async {
+    final l10n = context.l10n;
     setState(() => _submitted = true);
     final value = _value;
     if (value == null) return;
@@ -298,17 +299,18 @@ class _OverrideEditorState extends ConsumerState<_OverrideEditor> {
     Haptics.light();
     navigator.pop();
     messenger?.showSnackBar(
-      const SnackBar(content: Text(CommonStrings.priceOverrideSaved)),
+      SnackBar(content: Text(l10n.commonPriceOverrideSaved)),
     );
   }
 
   Future<void> _remove() async {
+    final l10n = context.l10n;
     final messenger = ScaffoldMessenger.maybeOf(context);
     final navigator = Navigator.of(context);
     await ref.read(vpPriceOverrideProvider.notifier).clear();
     navigator.pop();
     messenger?.showSnackBar(
-      const SnackBar(content: Text(CommonStrings.priceOverrideRemoved)),
+      SnackBar(content: Text(l10n.commonPriceOverrideRemoved)),
     );
   }
 
@@ -330,7 +332,7 @@ class _OverrideEditorState extends ConsumerState<_OverrideEditor> {
       ),
       children: [
         Text(
-          CommonStrings.priceOverrideBody,
+          context.l10n.commonPriceOverrideBody,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: muted,
             height: 1.45,
@@ -342,11 +344,11 @@ class _OverrideEditorState extends ConsumerState<_OverrideEditor> {
           textCapitalization: TextCapitalization.characters,
           maxLength: 3,
           decoration: InputDecoration(
-            labelText: CommonStrings.priceOverrideCurrency,
-            hintText: CommonStrings.priceOverrideCurrencyHint,
+            labelText: context.l10n.commonPriceOverrideCurrency,
+            hintText: context.l10n.commonPriceOverrideCurrencyHint,
             counterText: '',
             errorText: _submitted && _currencyCode == null
-                ? CommonStrings.priceOverrideInvalidCurrency
+                ? context.l10n.commonPriceOverrideInvalidCurrency
                 : null,
           ),
           onChanged: (_) => setState(() {}),
@@ -360,10 +362,10 @@ class _OverrideEditorState extends ConsumerState<_OverrideEditor> {
                 controller: _vp,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: CommonStrings.priceOverrideVp,
+                  labelText: context.l10n.commonPriceOverrideVp,
                   hintText: '1000',
                   errorText: _submitted && _vpValue == null
-                      ? CommonStrings.priceOverrideInvalidNumber
+                      ? context.l10n.commonPriceOverrideInvalidNumber
                       : null,
                 ),
                 onChanged: (_) => setState(() {}),
@@ -377,10 +379,10 @@ class _OverrideEditorState extends ConsumerState<_OverrideEditor> {
                   decimal: true,
                 ),
                 decoration: InputDecoration(
-                  labelText: CommonStrings.priceOverridePrice,
+                  labelText: context.l10n.commonPriceOverridePrice,
                   suffixText: _currencyCode,
                   errorText: _submitted && _priceValue == null
-                      ? CommonStrings.priceOverrideInvalidNumber
+                      ? context.l10n.commonPriceOverrideInvalidNumber
                       : null,
                 ),
                 onChanged: (_) => setState(() {}),
@@ -391,11 +393,14 @@ class _OverrideEditorState extends ConsumerState<_OverrideEditor> {
         if (example != null) ...[
           const SizedBox(height: 12),
           Text(
-            CommonStrings.priceOverrideExample(
+            context.l10n.commonPriceOverrideExample(
               formatVp(1775),
               example
                       .format(1775)
-                      ?.replaceFirst('${CommonStrings.estimatePrefix} ', '') ??
+                      ?.replaceFirst(
+                        '${context.l10n.commonEstimatePrefix} ',
+                        '',
+                      ) ??
                   '',
             ),
             style: theme.textTheme.bodySmall?.copyWith(
@@ -407,7 +412,7 @@ class _OverrideEditorState extends ConsumerState<_OverrideEditor> {
         const SizedBox(height: 20),
         FilledButton(
           onPressed: () => unawaited(_save()),
-          child: const Text(CommonStrings.priceOverrideSave),
+          child: Text(context.l10n.commonPriceOverrideSave),
         ),
         if (_initial != null) ...[
           const SizedBox(height: 8),
@@ -416,7 +421,7 @@ class _OverrideEditorState extends ConsumerState<_OverrideEditor> {
               foregroundColor: theme.colorScheme.error,
             ),
             onPressed: () => unawaited(_remove()),
-            child: const Text(CommonStrings.priceOverrideRemove),
+            child: Text(context.l10n.commonPriceOverrideRemove),
           ),
         ],
       ],

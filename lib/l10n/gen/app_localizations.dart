@@ -94,6 +94,12 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('vi')];
 
+  /// Source link label for a VP price table; preserves the legacy text without an unused URL placeholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem nguồn bảng giá'**
+  String get commonPriceSourceLabel;
+
   /// CommonStrings.appName —
   ///
   /// In vi, this message translates to:

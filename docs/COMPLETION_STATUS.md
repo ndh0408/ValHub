@@ -4,7 +4,7 @@ Yêu cầu của chủ dự án: hoàn thiện toàn bộ yêu cầu để Claud
 
 Giữ nhánh chính và các báo cáo bàn giao cũ để đối chiếu. Theo yêu cầu mới của chủ dự án, gộp và push nhánh mặc định GitHub để mọi người đọc code mới nhất; chưa deploy/publish store. Không thêm chatbot/LLM hay dịch vụ AI vào ứng dụng; số liệu sản phẩm phải có nguồn thật. Báo cáo `docs/CODEX_REVIEW.md` và `docs/handoffs/` ghi trạng thái trước các sửa đổi tích hợp, không dùng chúng làm tiến độ hiện tại.
 
-Đợt mới nhất: [tài nguyên ngôn ngữ Cài đặt](I18N_SETTINGS_2026-10-01.md), **4.178 Flutter tests đạt**, analyzer 0 issues, 10 public-flow cases trên APK cuối đạt; đã cài đè trên emulator có cửa sổ và mở sheet kết nối read-only. Global cutover còn 1.866 production references, không đánh dấu xong quốc tế hóa. Checkpoint trước: [đăng nhập và kết nối Riot](COUNTRY_CONNECTION_2026-10-01.md), 4.176 Flutter tests; [VanHub và kiểm thử toàn tính năng](VANHUB_REVIEW_2026-10-01.md), 4.143 Flutter tests, 867 backend / 35 tool tests đạt. Đợt picker trước đó: [bộ chọn quốc gia dùng chung](COUNTRY_PICKER_2026-10-01.md), 4.118 Flutter / 4 Android native tests đạt. Đối chiếu đủ 37 mục bàn giao và phạm vi QA xem [QA_2026-10-01.md](QA_2026-10-01.md); các báo cáo cũ là checkpoint, không thay nghiệm thu tổng thể.
+Đợt mới nhất: [tài nguyên dùng chung và tài khoản](I18N_SHARED_2026-10-02.md), **4.184 Flutter tests đạt**, analyzer 0 issues, 10 public-flow cases trên APK cuối code 4002 đạt; đã cài đè trên emulator có cửa sổ và kiểm tra switcher read-only. Global cutover còn **1.767 production references**, không đánh dấu xong quốc tế hóa. [Bản sửa hook 02/10](WINDOWS_HOOK_FIX_2026-10-02.md) lưu bridge ngoài thư mục tạm, 14 tests đạt. Checkpoint trước: [Cài đặt](I18N_SETTINGS_2026-10-01.md), 4.178 tests; [đăng nhập và kết nối Riot](COUNTRY_CONNECTION_2026-10-01.md), 4.176 tests; [VanHub và kiểm thử toàn tính năng](VANHUB_REVIEW_2026-10-01.md), 4.143 Flutter / 867 backend / 35 tool tests. Đối chiếu đủ 37 mục bàn giao xem [QA_2026-10-01.md](QA_2026-10-01.md); các báo cáo cũ là checkpoint, không thay nghiệm thu tổng thể.
 
 ## Yêu cầu trực tiếp của chủ dự án
 
@@ -13,11 +13,11 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 | Yêu cầu | Trạng thái hiện tại | Việc phải làm tiếp |
 |---|---|---|
 | Đọc việc Claude giao và làm hết yêu cầu | Đã tích hợp bốn WP, giữ report và đối chiếu đủ 37 mục | Đóng các mục I18N/COUNTRIES/DEVICES/Community còn mở phía dưới; chưa nghiệm thu tổng thể |
-| Mở emulator cho chủ dự án xem | Cửa sổ Pixel emulator 5580 đang mở, giữ 3 tài khoản cũ | APK cuối đã cài đè, Bảng tin/sheet đã xem; tiếp tục rà các luồng còn lại, QA riêng 5582 |
-| Commit, push và gộp để người khác thấy code mới nhất | UI `681d213`, báo cáo `12b0bbc` và kết nối `531434d` đã push integration và fast-forward/push nhánh mặc định | Tiếp tục commit các phase còn thiếu; đối chiếu `git log -1`, không coi merge là nghiệm thu toàn dự án |
+| Mở emulator cho chủ dự án xem | Cửa sổ Pixel 5580 đang mở với APK code 4002; lượt 02/10 đọc hai tài khoản hiện có và đủ metadata | Không suy ra ba tài khoản của checkpoint trước còn trong trạng thái emulator mới; tiếp tục rà các luồng còn lại, QA riêng 5582 |
+| Commit, push và gộp để người khác thấy code mới nhất | UI/kết nối, Settings `a4afe4e`, hook `9850063` đã push integration và fast-forward/push nhánh mặc định; tài nguyên dùng chung tiếp sau | Tiếp tục commit các phase còn thiếu; đối chiếu `git log -1`, không coi merge là nghiệm thu toàn dự án |
 | Ẩn bảng nguồn dữ liệu | Đã bỏ card Giới thiệu và có test | Đã kiểm tra About bản cài trong lượt read-only; giữ pháp lý/giấy phép cần thiết |
 | Cộng đồng rõ ràng, bộ lọc không bị cắt | Đã chuyển tab gọn và một scope selector; sheet cuộn giữ query/applied scope, test 360dp/chữ 200% | Bảng tin/sheet đã rà bản cài, sửa thanh tab che sheet; tiếp tục các màn còn lại |
-| Tài khoản chữ dễ đọc, đủ tên/vùng/rank | Đã chia dòng, wrap Riot ID/vùng và đưa nút phụ xuống dưới | Ba tài khoản thật đã đủ metadata trong lượt read-only; còn kiểm tra chủ động chuyển/reauth |
+| Tài khoản chữ dễ đọc, đủ tên/vùng/rank | Đã chia dòng, wrap Riot ID/vùng và đưa nút phụ xuống dưới; lượt 02/10 Settings/switcher đọc đủ metadata hai tài khoản hiện có | Còn kiểm tra chủ động chuyển/reauth; ba tài khoản là bằng chứng checkpoint trước |
 | Trang bị cập nhật game | Đã xác nhận giá trị sau lưu và thêm refresh identity ở sảnh | Đối chiếu trực tiếp VALORANT PC đang mở; chưa có bằng chứng live |
 | Đổi tên VanHub | Tên hiển thị native/UI/pháp lý đã đổi, giữ ID và dữ liệu cập nhật | Quốc tế hóa UI đầy đủ còn thiếu |
 | Kiểm tra mọi chức năng | Full Flutter/backend/tool + plugin/public-route QA đã chạy | Rà real-account/offline/reauth, Social/LFG đa thiết bị, iOS và Doze; không suy ra từ unit tests |
@@ -32,7 +32,7 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 - [ ] RV-03 toàn bộ: recorder nền, RR/cache tên, cancellation, deferred links, release errors, LFG join, logout/consent và ẩn/chặn cục bộ đã nối; còn nghiệm thu rộng cùng quốc tế hóa/thiết bị.
 - [ ] RV-05 toàn bộ: privacy và Community disclosure đã đồng bộ, Markdown sinh từ Dart; vẫn cần rà lời toàn cầu khi cutover.
 - [x] I18N W1 nền công cụ: resolved extractor, ARB, manifest, parity, kiểm tra chạy lại; danh sách 52 member cần xử lý cấu trúc được giữ rõ.
-- [ ] I18N W2–W4: [Settings UI](I18N_SETTINGS_2026-10-01.md) đã chuyển direct references; global còn 1.866 references và 52 structural members. Chưa tách hết domain, chuyển hết call site và cutover.
+- [ ] I18N W2–W4: [Settings UI](I18N_SETTINGS_2026-10-01.md) và [widget dùng chung/tài khoản](I18N_SHARED_2026-10-02.md) đã chuyển thêm direct references; global còn **1.767 references / 52 structural members**. Chưa tách hết domain, chuyển hết call site và cutover.
 - [ ] I18N W5: UI language picker, device default/upgrade pin, contentLocale/ui_locales/status, isolate thông báo.
 - [ ] I18N W6: đủ 18 bản dịch UI, plural/select, glossary và fallback/status gates.
 - [ ] I18N W7: RTL toàn ứng dụng, font CJK, pseudo locale và stale-string tests.

@@ -7,7 +7,6 @@ import '../content/content_repository.dart';
 import '../domain/competitive/rank_calc.dart';
 import '../domain/competitive/rank.dart' show mmrProvider;
 import '../domain/competitive/viewer.dart';
-import '../l10n/account_strings.dart';
 import '../network/riot_exception.dart';
 import '../riot/pvp_api.dart';
 import '../theme/app_theme.dart';
@@ -63,15 +62,6 @@ enum AccountActivity {
 
   /// The game client is running.
   bool get isOnline => this == online || this == agentSelect || this == inMatch;
-
-  String get label => switch (this) {
-    offline => AccountStrings.statusOffline,
-    online => AccountStrings.statusOnline,
-    agentSelect => AccountStrings.statusAgentSelect,
-    inMatch => AccountStrings.statusInMatch,
-    needsLogin => AccountStrings.needsLogin,
-    unknown => AccountStrings.statusUnknown,
-  };
 
   Color color(BuildContext context) {
     final c = valColorsOf(context);

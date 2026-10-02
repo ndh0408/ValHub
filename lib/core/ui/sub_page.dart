@@ -1,11 +1,12 @@
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:material_ui/material_ui.dart';
 
-import '../l10n/common_strings.dart';
 import '../theme/app_theme.dart';
 import 'adaptive.dart';
 import 'net_image.dart';
 import 'segmented_tabs.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Shared chrome for every screen pushed from a tab (bundle, match detail,
 /// pickers, friends, legal documents…), so sub-pages match the tab roots:
@@ -539,7 +540,7 @@ class SheetCloseButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return IconButton(
-      tooltip: CommonStrings.close,
+      tooltip: context.l10n.commonClose,
       onPressed: onPressed ?? () => Navigator.of(context).maybePop(),
       style: IconButton.styleFrom(
         backgroundColor: valColorsOf(context).surface2,

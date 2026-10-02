@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/l10n.dart';
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -531,6 +533,8 @@ Future<void> pumpLive(
       overrides: env.overrides,
       retry: (_, _) => null,
       child: MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         theme: theme ?? buildDarkTheme(),
         home: MediaQuery.withClampedTextScaling(
           minScaleFactor: textScale,

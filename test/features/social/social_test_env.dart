@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/l10n.dart';
+
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -306,6 +308,8 @@ Future<void> pumpSocial(
       overrides: env.overrides,
       retry: (_, _) => null,
       child: MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         theme: theme ?? buildDarkTheme(),
         home: scale == null
             ? child
@@ -336,7 +340,12 @@ Future<GoRouter> pumpSocialRouter(
     ProviderScope(
       overrides: env.overrides,
       retry: (_, _) => null,
-      child: MaterialApp.router(theme: buildDarkTheme(), routerConfig: router),
+      child: MaterialApp.router(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: buildDarkTheme(),
+        routerConfig: router,
+      ),
     ),
   );
   return router;

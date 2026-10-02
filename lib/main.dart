@@ -13,6 +13,7 @@ import 'core/accounts/account_repository.dart';
 import 'core/background/background_tasks.dart';
 import 'core/config/remote_config.dart';
 import 'core/l10n/intl_init.dart';
+import 'core/l10n/l10n.dart' show lookupAppLocalizations;
 import 'core/l10n/locale_boot.dart';
 import 'core/l10n/locale_controller.dart' show l10nBootProvider;
 import 'core/logging/session_log.dart';
@@ -61,7 +62,11 @@ Future<void> main() async {
     sessionLog.add('app.async.error', detail: error.runtimeType.toString());
     return kReleaseMode;
   };
-  if (kReleaseMode) ErrorWidget.builder = (_) => const ReleaseErrorView();
+  if (kReleaseMode) {
+    final fallbackResources = lookupAppLocalizations(boot.locale.flutter);
+    ErrorWidget.builder = (_) =>
+        ReleaseErrorView(fallbackResources: fallbackResources);
+  }
 
   final notifications = NotificationService(prefs: prefs);
   await notifications.init();

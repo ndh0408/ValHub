@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:cupertino_ui/cupertino_ui.dart'
     show CupertinoActionSheet, CupertinoAlertDialog;
 import 'package:flutter/services.dart';
@@ -18,7 +19,8 @@ import '../../helpers/test_prefs.dart';
 Widget _app(Widget home, {TargetPlatform? platform, ThemeData? theme}) =>
     MaterialApp(
       theme: (theme ?? buildDarkTheme()).copyWith(platform: platform),
-      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      localizationsDelegates: appLocalizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: home,
     );
 

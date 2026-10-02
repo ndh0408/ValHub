@@ -5,8 +5,6 @@ import 'secret_access.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../l10n/account_strings.dart';
-import '../l10n/common_strings.dart';
 import '../theme/app_theme.dart';
 import '../ui/adaptive.dart';
 import '../ui/error_view.dart';
@@ -15,12 +13,14 @@ import 'account.dart';
 import 'account_widgets.dart';
 import 'login_note.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// Opens the "Ghi chú đăng nhập" sheet of [account]: view, copy, edit or
 /// delete the saved Riot username / password.
 Future<void> showLoginNoteSheet(BuildContext context, Account account) =>
     showValSheet<void>(
       context,
-      title: AccountStrings.loginNote,
+      title: context.l10n.accountLoginNote,
       subtitle: account.riotId,
       leading: AccountAvatar(account: account, size: 40, circle: true),
       builder: (context, _) => LoginNoteSheet(account: account),
@@ -87,12 +87,14 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
 
   Future<void> _copy(String text) async {
     if (text.isEmpty) return;
+    final l10n = context.l10n;
     if (!await ref.read(secretUnlockProvider)() || !mounted) return;
     await ref.read(secretClipboardProvider).copy(text);
-    if (mounted) showAppSnackBar(context, CommonStrings.copied);
+    if (mounted) showAppSnackBar(context, l10n.commonCopied);
   }
 
   Future<void> _save() async {
+    final l10n = context.l10n;
     setState(() => _saving = true);
     final messenger = ScaffoldMessenger.maybeOf(context);
     final navigator = Navigator.of(context);
@@ -102,17 +104,16 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
     navigator.pop();
     messenger
       ?..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(content: Text(AccountStrings.loginNoteSaved)),
-      );
+      ..showSnackBar(SnackBar(content: Text(l10n.accountLoginNoteSaved)));
   }
 
   Future<void> _delete() async {
+    final l10n = context.l10n;
     final ok = await showConfirmDialog(
       context,
-      title: AccountStrings.deleteLoginNote,
-      message: AccountStrings.deleteLoginNoteConfirm,
-      confirmLabel: CommonStrings.delete,
+      title: l10n.accountDeleteLoginNote,
+      message: l10n.accountDeleteLoginNoteConfirm,
+      confirmLabel: l10n.commonDelete,
       destructive: true,
       icon: Icons.delete_outline,
     );
@@ -123,9 +124,7 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
     navigator.pop();
     messenger
       ?..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(content: Text(AccountStrings.loginNoteDeleted)),
-      );
+      ..showSnackBar(SnackBar(content: Text(l10n.accountLoginNoteDeleted)));
   }
 
   @override
@@ -144,7 +143,7 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
               setState(() => _opened = true);
             }
           },
-          child: const Text(AccountStrings.loginNoteLocked),
+          child: Text(context.l10n.accountLoginNoteLocked),
         ),
       );
     }
@@ -163,7 +162,7 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _PrivacyNote(text: AccountStrings.loginNoteHint),
+          _PrivacyNote(text: context.l10n.accountLoginNoteHint),
           const SizedBox(height: 16),
           if (!async.hasValue)
             const Padding(
@@ -177,11 +176,11 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
               enableSuggestions: false,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                labelText: AccountStrings.loginNoteUsername,
+                labelText: context.l10n.accountLoginNoteUsername,
                 prefixIcon: const Icon(Icons.person_outline),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.copy_rounded),
-                  tooltip: AccountStrings.copyUsername,
+                  tooltip: context.l10n.accountCopyUsername,
                   onPressed: () => unawaited(_copy(_username.text)),
                 ),
               ),
@@ -194,7 +193,7 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
               enableSuggestions: false,
               keyboardType: TextInputType.visiblePassword,
               decoration: InputDecoration(
-                labelText: AccountStrings.loginNotePassword,
+                labelText: context.l10n.accountLoginNotePassword,
                 prefixIcon: const Icon(Icons.lock_outline),
                 suffixIcon: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -206,8 +205,8 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
                             : Icons.visibility_off_outlined,
                       ),
                       tooltip: _obscure
-                          ? AccountStrings.showPassword
-                          : AccountStrings.hidePassword,
+                          ? context.l10n.accountShowPassword
+                          : context.l10n.accountHidePassword,
                       onPressed: () async {
                         if (!_obscure ||
                             await ref.read(secretUnlockProvider)()) {
@@ -217,7 +216,7 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
                     ),
                     IconButton(
                       icon: const Icon(Icons.copy_rounded),
-                      tooltip: AccountStrings.copyPassword,
+                      tooltip: context.l10n.accountCopyPassword,
                       onPressed: () => unawaited(_copy(_password.text)),
                     ),
                   ],
@@ -228,7 +227,7 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
             FilledButton(
               style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
               onPressed: _saving ? null : () => unawaited(_save()),
-              child: const Text(CommonStrings.save),
+              child: Text(context.l10n.commonSave),
             ),
             if (hasNote) ...[
               const SizedBox(height: 4),
@@ -239,7 +238,7 @@ class _LoginNoteSheetState extends ConsumerState<LoginNoteSheet>
                 ),
                 onPressed: _saving ? null : () => unawaited(_delete()),
                 icon: const Icon(Icons.delete_outline),
-                label: const Text(AccountStrings.deleteLoginNote),
+                label: Text(context.l10n.accountDeleteLoginNote),
               ),
             ],
           ],

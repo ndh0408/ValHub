@@ -4,10 +4,11 @@ import 'package:material_ui/material_ui.dart';
 import '../content/content_db.dart';
 import '../content/content_fallbacks.dart';
 import '../content/content_repository.dart';
-import '../l10n/common_strings.dart';
 import '../riot/riot_ids.dart';
 import '../util/format.dart';
 import 'net_image.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Amount with the currency icon from valorant-api (VP / KC / RP), e.g.
 /// `[VP] 2.175`. Falls back to the bundled icon URL and a text label.
@@ -83,7 +84,7 @@ class CurrencyAmount extends ConsumerWidget {
           )
         : base;
     final text = [
-      if (estimate) CommonStrings.estimatePrefix,
+      if (estimate) context.l10n.commonEstimatePrefix,
       formatNumber(amount),
       if (showLabel || currency?.displayIcon == null) ?currency?.label,
     ].join(' ');

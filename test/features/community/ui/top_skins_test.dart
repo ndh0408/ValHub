@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -35,6 +36,8 @@ Future<void> _open(
       ],
       retry: (_, _) => null,
       child: MaterialApp.router(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         theme: light ? buildLightTheme() : buildDarkTheme(),
         routerConfig: router,
         builder: (context, child) => MediaQuery(

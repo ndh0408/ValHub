@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -140,6 +141,8 @@ void main() {
       ProviderScope(
         overrides: overrides(),
         child: MaterialApp(
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           theme: buildDarkTheme(),
           home: Scaffold(
             body: Builder(
@@ -188,6 +191,8 @@ void main() {
       ProviderScope(
         overrides: overrides(),
         child: MaterialApp(
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           theme: buildDarkTheme(),
           home: Scaffold(
             body: Builder(

@@ -8,9 +8,8 @@ import '../auth/auth_routes.dart';
 import '../config/app_constants.dart';
 import '../content/content_repository.dart';
 import '../geo/region_picker.dart';
-import '../l10n/account_strings.dart';
-import '../l10n/common_strings.dart';
 import '../l10n/l10n.dart';
+import '../l10n/account_labels.dart';
 import '../theme/app_theme.dart';
 import '../ui/adaptive.dart';
 import '../ui/error_view.dart';
@@ -94,7 +93,7 @@ class AccountChip extends ConsumerWidget {
     // 48 dp: a 5 dp band above and below belongs to the button.
     return Semantics(
       button: true,
-      label: AccountStrings.switcherTitle,
+      label: context.l10n.accountSwitcherTitle,
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
@@ -179,15 +178,15 @@ class AccountSwitcherSheet extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SheetHeader(
-            title: AccountStrings.switcherTitleCount(accounts.length, max),
-            subtitle: AccountStrings.switcherSubtitle,
+            title: context.l10n.accountSwitcherTitleCount(accounts.length, max),
+            subtitle: context.l10n.accountSwitcherSubtitle,
             actions: [
               if (online > 0)
                 Flexible(
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: StatusPill(
-                      label: AccountStrings.onlineCount(online),
+                      label: context.l10n.accountOnlineCount(online),
                       color: valColorsOf(context).win,
                     ),
                   ),
@@ -263,7 +262,7 @@ class AccountSwitcherSheet extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
                     child: Text(
-                      AccountStrings.manageHint,
+                      context.l10n.accountManageHint,
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
@@ -305,7 +304,8 @@ class _AddAccountRow extends StatelessWidget {
       enabled: !full,
       child: InkWell(
         onTap: full
-            ? () => showAppSnackBar(context, AccountStrings.maxAccounts(max))
+            ? () =>
+                  showAppSnackBar(context, context.l10n.accountMaxAccounts(max))
             : onAdd,
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 64),
@@ -333,7 +333,7 @@ class _AddAccountRow extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        AccountStrings.addAccount(count, max),
+                        context.l10n.accountAddAccount(count, max),
                         style: theme.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                           color: legibleAccent(context, color),
@@ -341,7 +341,7 @@ class _AddAccountRow extends StatelessWidget {
                       ),
                       if (full)
                         Text(
-                          AccountStrings.maxAccounts(max),
+                          context.l10n.accountMaxAccounts(max),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: muted,
                           ),
@@ -431,13 +431,13 @@ class AccountTile extends ConsumerWidget {
     if (live) ref.watch(accountRankRefreshProvider(account.puuid));
     final tier = account.rankTier;
     final meta = [
-      if (account.level != null) AccountStrings.levelShort(account.level!),
+      if (account.level != null) context.l10n.accountLevelShort(account.level!),
     ].join(' · ');
     final small = theme.textTheme.bodySmall;
     final Widget subtitle;
     if (account.needsLogin) {
       subtitle = Text(
-        AccountStrings.needsLogin,
+        context.l10n.accountNeedsLogin,
         style: small?.copyWith(color: valColorsOf(context).warning),
       );
     } else if (activity == null || activity == AccountActivity.unknown) {
@@ -447,7 +447,7 @@ class AccountTile extends ConsumerWidget {
         TextSpan(
           children: [
             TextSpan(
-              text: activity.label,
+              text: context.l10n.accountActivityName(activity),
               style: TextStyle(
                 color: activity.color(context),
                 fontWeight: activity.isOnline ? FontWeight.w700 : null,
@@ -470,17 +470,17 @@ class AccountTile extends ConsumerWidget {
                 Icon(
                   Icons.check_circle,
                   color: theme.colorScheme.primary,
-                  semanticLabel: AccountStrings.active,
+                  semanticLabel: context.l10n.accountActive,
                 ),
               if (account.needsLogin) ...[
                 if (selected) const SizedBox(width: 8),
                 Flexible(
                   child: Tooltip(
-                    message: CommonStrings.signInAgain,
+                    message: context.l10n.commonSignInAgain,
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: ValBadge(
-                        CommonStrings.signInAgain,
+                        context.l10n.commonSignInAgain,
                         color: valColorsOf(context).warning,
                         soft: true,
                       ),
@@ -524,7 +524,7 @@ class AccountTile extends ConsumerWidget {
                     const SizedBox(height: 4),
                     subtitle,
                     Text(
-                      AccountStrings.regionName(account.region),
+                      context.l10n.riotRegionName(account.region),
                       style: small?.copyWith(color: muted),
                     ),
                     if (tier != null) ...[

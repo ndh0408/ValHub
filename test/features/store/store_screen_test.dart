@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/l10n.dart';
+
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -299,7 +301,11 @@ void main() {
       ProviderScope(
         overrides: storeOverrides(api: fixtureApi(), prefs: prefs),
         retry: (_, _) => null,
-        child: MaterialApp.router(routerConfig: router),
+        child: MaterialApp.router(
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+        ),
       ),
     );
     await settle(tester);

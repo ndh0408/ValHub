@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 
-import '../l10n/common_strings.dart';
 import '../theme/app_theme.dart';
 import 'adaptive.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Search, filter-chip and sort building blocks shared by every list screen
 /// (collection browser, wishlist catalog, weapon skins, expressions, match
@@ -17,14 +18,14 @@ class GlassSearchField extends StatefulWidget {
   const GlassSearchField({
     super.key,
     this.controller,
-    this.hintText = CommonStrings.search,
+    this.hintText,
     this.onChanged,
     this.autofocus = false,
     this.focusNode,
   });
 
   final TextEditingController? controller;
-  final String hintText;
+  final String? hintText;
   final ValueChanged<String>? onChanged;
   final bool autofocus;
   final FocusNode? focusNode;
@@ -70,7 +71,7 @@ class _GlassSearchFieldState extends State<GlassSearchField> {
         onTapOutside: (_) => FocusScope.of(context).unfocus(),
         decoration: InputDecoration(
           isDense: true,
-          hintText: widget.hintText,
+          hintText: widget.hintText ?? context.l10n.commonSearch,
           filled: true,
           fillColor: scheme.surfaceContainer.withValues(
             alpha: dark ? 0.78 : 0.95,
@@ -79,7 +80,7 @@ class _GlassSearchFieldState extends State<GlassSearchField> {
           suffixIcon: value.text.isEmpty
               ? null
               : IconButton(
-                  tooltip: CommonStrings.clearSearch,
+                  tooltip: context.l10n.commonClearSearch,
                   icon: const Icon(Icons.close, size: 18),
                   onPressed: _clear,
                 ),
@@ -174,17 +175,18 @@ class SortButton<T> extends StatelessWidget {
   final T selected;
   final ValueChanged<T> onSelected;
 
-  String get _currentLabel {
+  String _currentLabel(AppLocalizations l10n) {
     for (final o in options) {
       if (o.value == selected) return o.label;
     }
-    return CommonStrings.sort;
+    return l10n.commonSort;
   }
 
   Future<void> _open(BuildContext context) async {
+    final l10n = context.l10n;
     final picked = await showActionSheet<T>(
       context,
-      title: CommonStrings.sort,
+      title: l10n.commonSort,
       actions: [
         for (final o in options)
           SheetAction(
@@ -207,11 +209,11 @@ class SortButton<T> extends StatelessWidget {
     final theme = Theme.of(context);
     return Semantics(
       button: true,
-      label: CommonStrings.sortBy(_currentLabel),
+      label: context.l10n.commonSortBy(_currentLabel(context.l10n)),
       excludeSemantics: true,
       child: ActionChip(
         avatar: const Icon(Icons.swap_vert, size: 18),
-        label: Text(_currentLabel),
+        label: Text(_currentLabel(context.l10n)),
         labelStyle: theme.textTheme.labelLarge?.copyWith(
           fontWeight: FontWeight.w600,
         ),
@@ -248,7 +250,7 @@ class FilterChipBar extends StatelessWidget {
       if (onClear != null)
         ActionChip(
           avatar: const Icon(Icons.filter_alt_off_outlined, size: 18),
-          label: const Text(CommonStrings.clearFilters),
+          label: Text(context.l10n.commonClearFilters),
           shape: const StadiumBorder(),
           visualDensity: VisualDensity.compact,
           onPressed: () {

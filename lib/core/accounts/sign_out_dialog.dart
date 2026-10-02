@@ -1,7 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
-import '../l10n/account_strings.dart';
-import '../l10n/common_strings.dart';
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// null = dismissed, false = erase, true = explicitly keep local data.
 Future<bool?> chooseSignOutRetention(
@@ -22,8 +21,8 @@ Future<bool?> chooseSignOutRetention(
             Text(message),
             CheckboxListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text(AccountStrings.keepLocalData),
-              subtitle: const Text(AccountStrings.keepLocalDataHint),
+              title: Text(context.l10n.accountKeepLocalData),
+              subtitle: Text(context.l10n.accountKeepLocalDataHint),
               value: keep,
               onChanged: (v) => setState(() => keep = v ?? false),
             ),
@@ -32,7 +31,7 @@ Future<bool?> chooseSignOutRetention(
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text(CommonStrings.cancel),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(keep),

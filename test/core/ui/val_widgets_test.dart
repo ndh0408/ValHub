@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/theme/app_theme.dart';
@@ -5,6 +6,8 @@ import 'package:valvn/core/ui/skeleton.dart';
 import 'package:valvn/core/ui/val_widgets.dart';
 
 Widget _app(Widget child, {ThemeData? theme}) => MaterialApp(
+  localizationsDelegates: appLocalizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
   theme: theme ?? buildDarkTheme(),
   home: Scaffold(body: Center(child: child)),
 );
@@ -89,6 +92,8 @@ void main() {
 
   group('SkeletonShimmer', () {
     Widget skeletons({bool reduceMotion = false}) => MaterialApp(
+      localizationsDelegates: appLocalizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: buildDarkTheme(),
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(disableAnimations: reduceMotion),

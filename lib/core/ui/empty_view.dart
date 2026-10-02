@@ -1,6 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
-import '../l10n/common_strings.dart';
+import '../l10n/l10n.dart';
 
 /// Centered empty state: the [icon] in a soft tinted disc, an optional bold
 /// [title], the muted [message] and an optional [action] button
@@ -8,7 +8,7 @@ import '../l10n/common_strings.dart';
 class EmptyView extends StatelessWidget {
   const EmptyView({
     super.key,
-    this.message = CommonStrings.noData,
+    this.message,
     this.icon = Icons.inbox_outlined,
     this.action,
     this.padding = const EdgeInsets.all(32),
@@ -16,7 +16,7 @@ class EmptyView extends StatelessWidget {
     this.color,
   });
 
-  final String message;
+  final String? message;
   final IconData icon;
 
   /// Optional button below the message.
@@ -52,7 +52,7 @@ class EmptyView extends StatelessWidget {
                 const SizedBox(height: 6),
               ],
               Text(
-                message,
+                message ?? context.l10n.commonNoData,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,

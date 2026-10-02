@@ -10,8 +10,9 @@ import 'package:cupertino_ui/cupertino_ui.dart'
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../l10n/common_strings.dart';
 import '../theme/app_theme.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Platform-adaptive building blocks: iOS gets Cupertino dialogs and action
 /// sheets, Android keeps Material 3. Every helper reads the platform from
@@ -52,7 +53,7 @@ Future<bool> showConfirmDialog(
   required String title,
   required String message,
   required String confirmLabel,
-  String cancelLabel = CommonStrings.cancel,
+  String? cancelLabel,
   bool destructive = false,
   IconData? icon,
 }) async {
@@ -73,7 +74,7 @@ Future<bool> showConfirmDialog(
             CupertinoDialogAction(
               isDefaultAction: destructive,
               onPressed: () => close(false),
-              child: Text(cancelLabel),
+              child: Text(cancelLabel ?? dialogContext.l10n.commonCancel),
             ),
             CupertinoDialogAction(
               isDefaultAction: !destructive,
@@ -127,7 +128,7 @@ Future<bool> showConfirmDialog(
               minimumSize: const Size(64, 44),
             ),
             onPressed: () => close(false),
-            child: Text(cancelLabel),
+            child: Text(cancelLabel ?? dialogContext.l10n.commonCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
@@ -190,7 +191,7 @@ Future<T?> showActionSheet<T>(
         cancelButton: CupertinoActionSheetAction(
           isDefaultAction: true,
           onPressed: () => Navigator.of(sheetContext).pop(),
-          child: const Text(CommonStrings.cancel),
+          child: Text(sheetContext.l10n.commonCancel),
         ),
       ),
     );

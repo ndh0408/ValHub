@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/l10n.dart';
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -132,6 +134,8 @@ void main() {
             communityEnabledProvider.overrideWithValue(false),
           ],
           child: MaterialApp(
+            localizationsDelegates: appLocalizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             theme: buildDarkTheme(),
             home: const Scaffold(body: CommunityDataSection()),
           ),

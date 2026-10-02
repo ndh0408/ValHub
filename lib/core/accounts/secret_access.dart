@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 
-import '../l10n/account_strings.dart';
+import '../l10n/l10n.dart';
 
 const _secretChannel = MethodChannel('valvn/secrets');
 
@@ -33,11 +33,12 @@ Future<void> _copySecret(String text) async {
 }
 
 final secretUnlockProvider = Provider<Future<bool> Function()>((ref) {
+  final l10n = ref.watch(l10nProvider);
   final auth = LocalAuthentication();
   return () async {
     try {
       return await auth.authenticate(
-        localizedReason: AccountStrings.unlockLoginNote,
+        localizedReason: l10n.accountUnlockLoginNote,
       );
     } on Object {
       return false;

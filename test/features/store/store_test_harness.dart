@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -192,7 +193,12 @@ Widget testApp({required List<Override> overrides, required Widget home}) =>
     ProviderScope(
       overrides: overrides,
       retry: (_, _) => null,
-      child: MaterialApp(theme: buildDarkTheme(), home: home),
+      child: MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: buildDarkTheme(),
+        home: home,
+      ),
     );
 
 /// Uses a small-phone viewport (360×740 dp) for the rest of the test.

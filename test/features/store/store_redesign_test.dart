@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -21,6 +22,8 @@ Widget _app({
   overrides: overrides,
   retry: (_, _) => null,
   child: MaterialApp(
+    localizationsDelegates: appLocalizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
     theme: theme ?? buildDarkTheme(),
     builder: (context, child) => MediaQuery(
       data: MediaQuery.of(context)

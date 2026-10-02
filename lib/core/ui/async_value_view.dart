@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../l10n/common_strings.dart';
 import 'empty_view.dart';
 import 'error_view.dart';
 import 'skeleton.dart';
@@ -29,7 +28,7 @@ class AsyncValueView<T> extends StatelessWidget {
     this.loading,
     this.isEmpty,
     this.empty,
-    this.emptyMessage = CommonStrings.noData,
+    this.emptyMessage,
     this.puuid,
   });
 
@@ -43,7 +42,7 @@ class AsyncValueView<T> extends StatelessWidget {
 
   /// Replaces the default [EmptyView].
   final Widget? empty;
-  final String emptyMessage;
+  final String? emptyMessage;
 
   /// Account to re-login for `NeedsLoginException`.
   final String? puuid;

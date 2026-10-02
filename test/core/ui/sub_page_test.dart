@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -14,7 +15,8 @@ import '../../helpers/test_prefs.dart';
 
 Widget _app(Widget home) => MaterialApp(
   theme: buildDarkTheme(),
-  localizationsDelegates: GlobalMaterialLocalizations.delegates,
+  localizationsDelegates: appLocalizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
   home: home,
 );
 

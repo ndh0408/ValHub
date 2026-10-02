@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import 'dart:typed_data';
@@ -69,7 +70,8 @@ Widget _app(
   overrides: overrides,
   child: MaterialApp(
     theme: theme ?? buildLightTheme(),
-    localizationsDelegates: GlobalMaterialLocalizations.delegates,
+    localizationsDelegates: appLocalizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
     home: Scaffold(body: scroll ? SingleChildScrollView(child: child) : child),
   ),
 );

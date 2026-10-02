@@ -2,9 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../accounts/account_providers.dart';
-import '../l10n/common_strings.dart';
 import '../riot/platform_status.dart';
 import '../theme/app_theme.dart';
+
+import 'package:valvn/core/l10n/l10n.dart';
 
 /// Maintenance / incident banner from the public status JSON (X-1), using
 /// the `vi_VN` title. Renders nothing when there is no notice.
@@ -37,8 +38,8 @@ class MaintenanceBanner extends ConsumerWidget {
         ),
         title: Text(
           notice.isMaintenance
-              ? CommonStrings.maintenanceTitle
-              : CommonStrings.incidentTitle,
+              ? context.l10n.commonMaintenanceTitle
+              : context.l10n.commonIncidentTitle,
           style: TextStyle(color: color, fontWeight: FontWeight.w700),
         ),
         subtitle: Text(

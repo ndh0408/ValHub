@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../accounts/account.dart';
 import '../accounts/account_providers.dart';
-import '../l10n/account_strings.dart';
+import '../l10n/account_labels.dart';
 import '../l10n/l10n.dart';
 import 'region_picker.dart';
 import 'regions.dart';
@@ -70,7 +70,7 @@ class _RegionMismatchBannerState extends ConsumerState<RegionMismatchBanner> {
             children: [
               Text(
                 l10n.settingsGeoMismatch(
-                  AccountStrings.regionName(account.autoRegion!),
+                  context.l10n.riotRegionName(account.autoRegion!),
                 ),
               ),
               const SizedBox(height: 8),

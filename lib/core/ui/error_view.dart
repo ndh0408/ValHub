@@ -9,6 +9,8 @@ import '../theme/app_theme.dart';
 import '../util/format.dart';
 import 'empty_view.dart';
 
+import 'package:valvn/core/l10n/l10n.dart';
+
 /// User-facing description of an error.
 @immutable
 class ErrorDescription {
@@ -106,20 +108,20 @@ class ErrorView extends StatelessWidget {
     final button = error is UnsupportedRegionException
         ? FilledButton(
             onPressed: () => context.push('/settings'),
-            child: const Text(CommonStrings.tabSettings),
+            child: Text(context.l10n.commonTabSettings),
           )
         : d.needsLogin
         ? FilledButton(
             onPressed: () => context.push(
               AuthRoutes.loginPath(reauthPuuid: d.puuid ?? puuid),
             ),
-            child: const Text(CommonStrings.signInAgain),
+            child: Text(context.l10n.commonSignInAgain),
           )
         : (onRetry != null && d.canRetry)
         ? OutlinedButton.icon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh),
-            label: const Text(CommonStrings.retry),
+            label: Text(context.l10n.commonRetry),
           )
         : null;
 
@@ -164,12 +166,12 @@ class ErrorView extends StatelessWidget {
                   onPressed: () => context.push(
                     AuthRoutes.loginPath(reauthPuuid: d.puuid ?? puuid),
                   ),
-                  child: const Text(CommonStrings.signInAgain),
+                  child: Text(context.l10n.commonSignInAgain),
                 )
               else if (onRetry != null && d.canRetry)
                 TextButton(
                   onPressed: onRetry,
-                  child: const Text(CommonStrings.retry),
+                  child: Text(context.l10n.commonRetry),
                 ),
             ],
           ),

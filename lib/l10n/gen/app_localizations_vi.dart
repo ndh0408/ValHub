@@ -10,6 +10,9 @@ class AppLocalizationsVi extends AppLocalizations {
   AppLocalizationsVi([String locale = 'vi']) : super(locale);
 
   @override
+  String get commonPriceSourceLabel => 'Xem nguồn bảng giá';
+
+  @override
   String get commonAppName => 'VanHub';
 
   @override

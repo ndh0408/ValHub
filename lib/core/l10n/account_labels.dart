@@ -1,8 +1,18 @@
 import '../accounts/account.dart';
+import '../accounts/account_status.dart';
 import 'l10n.dart';
 
 /// Resolve metadata labels using the resource instance at render time.
 extension AccountLabels on AppLocalizations {
+  String accountActivityName(AccountActivity activity) => switch (activity) {
+    AccountActivity.offline => accountStatusOffline,
+    AccountActivity.online => accountStatusOnline,
+    AccountActivity.agentSelect => accountStatusAgentSelect,
+    AccountActivity.inMatch => accountStatusInMatch,
+    AccountActivity.needsLogin => accountNeedsLogin,
+    AccountActivity.unknown => accountStatusUnknown,
+  };
+
   String riotRegionName(String region) => switch (region.toLowerCase()) {
     'ap' => accountRegionAp,
     'na' => accountRegionNa,

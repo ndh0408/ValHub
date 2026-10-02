@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -27,6 +28,8 @@ Future<void> _pump(
       ],
       retry: (_, _) => null,
       child: MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         theme: theme ?? buildDarkTheme(),
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context)

@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../accounts/account.dart';
 import '../accounts/account_providers.dart';
 import '../auth/auth_providers.dart';
-import '../l10n/account_strings.dart';
+import '../l10n/account_labels.dart';
 import '../l10n/l10n.dart';
 import '../network/riot_exception.dart';
 import '../riot/pvp_api.dart';
@@ -65,8 +65,8 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
           candidate != account.autoRegion) {
         final confirmed = await _confirm(
           l10n.settingsGeoManualConfirm(
-            AccountStrings.regionName(candidate),
-            AccountStrings.regionName(account.autoRegion!),
+            context.l10n.riotRegionName(candidate),
+            context.l10n.riotRegionName(account.autoRegion!),
           ),
         );
         if (!confirmed || !mounted) return;
@@ -214,7 +214,7 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
               Text(
                 detected == null
                     ? l10n.settingsGeoNoRegion
-                    : AccountStrings.regionName(detected),
+                    : context.l10n.riotRegionName(detected),
               )
             else ...[
               Text(l10n.settingsGeoManualWarning),
@@ -233,7 +233,7 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
                     DropdownMenuItem(
                       value: r,
                       child: Text(
-                        AccountStrings.regionName(r),
+                        context.l10n.riotRegionName(r),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),

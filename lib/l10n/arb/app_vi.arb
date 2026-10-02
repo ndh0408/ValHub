@@ -1,5 +1,9 @@
 {
   "@@locale": "vi",
+  "commonPriceSourceLabel": "Xem nguồn bảng giá",
+  "@commonPriceSourceLabel": {
+    "description": "Source link label for a VP price table; preserves the legacy text without an unused URL placeholder."
+  },
   "commonAppName": "VanHub",
   "@commonAppName": {
     "description": "CommonStrings.appName — ",

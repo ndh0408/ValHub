@@ -11,6 +11,7 @@ import 'package:valvn/core/auth/auth_routes.dart';
 import 'package:valvn/core/auth/session_manager.dart';
 import 'package:valvn/core/l10n/account_strings.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
+import 'package:valvn/core/l10n/l10n.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/riot/pvp_api.dart';
 import 'package:valvn/core/storage/prefs.dart';
@@ -93,6 +94,8 @@ void main() {
       ProviderScope(
         overrides: overrides(),
         child: MaterialApp.router(
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           theme: theme ?? buildDarkTheme(),
           routerConfig: router,
           builder: (context, child) => MediaQuery(
