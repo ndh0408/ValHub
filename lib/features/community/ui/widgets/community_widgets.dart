@@ -176,6 +176,7 @@ class _GlassSegmentButton extends StatelessWidget {
       button: true,
       selected: selected,
       label: label,
+      onTap: onTap,
       excludeSemantics: true,
       child: InkWell(
         onTap: onTap,
@@ -642,6 +643,7 @@ class _HeartButtonState extends State<HeartButton>
       toggled: widget.active,
       label: widget.active ? widget.semanticsOn : widget.semanticsOff,
       value: count == null ? null : formatNumber(count),
+      onTap: widget.onTap == null ? null : _tap,
       excludeSemantics: true,
       child: InkWell(
         onTap: widget.onTap == null ? null : _tap,

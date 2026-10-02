@@ -33,7 +33,7 @@ String itemLanguageLabel(ItemLanguage language, AppLocalizations l10n) =>
 
 /// "TÙY CHỌN" (S70, X1): live-game switches, the platform of the active
 /// account, the local-currency estimate next to VP prices and the user's
-/// own pack price (VanHub extras).
+/// own pack price (ValHub extras).
 class SettingsOptionsSection extends ConsumerWidget {
   const SettingsOptionsSection({super.key});
 
@@ -148,7 +148,7 @@ class SettingsOptionsSection extends ConsumerWidget {
   }
 }
 
-/// "GIAO DIỆN" (S70, VanHub extra): theme and item-name language.
+/// "GIAO DIỆN" (S70, ValHub extra): theme and item-name language.
 class SettingsAppearanceSection extends ConsumerWidget {
   const SettingsAppearanceSection({super.key});
 

@@ -99,6 +99,11 @@ class WishlistHeartButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final disc = size + (subtle ? 14 : 16);
+    void handleTap() {
+      Haptics.light();
+      onTap();
+    }
+
     return Semantics(
       container: true,
       button: true,
@@ -106,15 +111,13 @@ class WishlistHeartButton extends StatelessWidget {
       label: active
           ? context.l10n.storeRemoveFromWishlist
           : context.l10n.storeAddToWishlist,
+      onTap: handleTap,
       excludeSemantics: true,
       child: SizedBox.square(
         dimension: 48,
         child: InkResponse(
           radius: 24,
-          onTap: () {
-            Haptics.light();
-            onTap();
-          },
+          onTap: handleTap,
           child: Center(
             child: Container(
               width: disc,
@@ -392,15 +395,39 @@ class SkinGlowArt extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
+        // Outer soft ambient bloom
         DecoratedBox(
           decoration: BoxDecoration(
             gradient: RadialGradient(
-              radius: 0.8,
+              center: Alignment.center,
+              radius: 0.95,
               colors: [
-                solid.withValues(alpha: dark ? 0.38 : 0.26),
+                solid.withValues(alpha: dark ? 0.32 : 0.20),
                 solid.withValues(alpha: 0),
               ],
             ),
+          ),
+        ),
+        // Inner intense core glow
+        DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment.center,
+              radius: 0.45,
+              colors: [
+                solid.withValues(alpha: dark ? 0.38 : 0.24),
+                solid.withValues(alpha: 0),
+              ],
+            ),
+          ),
+        ),
+        // Subtle Valorant tactical chevron watermark in corner
+        PositionedDirectional(
+          top: 8,
+          end: 12,
+          child: Opacity(
+            opacity: dark ? 0.12 : 0.08,
+            child: Icon(Icons.change_history_rounded, size: 28, color: solid),
           ),
         ),
         Padding(

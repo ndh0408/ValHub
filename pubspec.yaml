@@ -1,7 +1,7 @@
 name: valvn
-description: "VanHub - VALORANT companion app"
+description: "ValHub - VALORANT companion app"
 publish_to: 'none'
-version: 1.0.0+4006
+version: 1.0.0+4008
 
 environment:
   sdk: ^3.13.4

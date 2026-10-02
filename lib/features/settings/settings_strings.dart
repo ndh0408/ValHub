@@ -3,20 +3,20 @@
 abstract final class SettingsStrings {
   static const title = 'Cài đặt';
 
-  /// Subject / title of the shared bug-report file ("Gửi báo lỗi cho VanHub").
-  static const sessionLogTitle = 'Báo lỗi VanHub';
+  /// Subject / title of the shared bug-report file ("Gửi báo lỗi cho ValHub").
+  static const sessionLogTitle = 'Báo lỗi ValHub';
   static const aboutTitle = 'Giới thiệu & pháp lý';
   static const aboutRowSubtitle =
       'Quyền riêng tư, điều khoản, bản quyền và liên hệ';
 
   // Welcome (S01)
-  static const logoPrefix = 'Van';
+  static const logoPrefix = 'Val';
   static const logoSuffix = 'Hub';
   static const welcomeBulletStore = 'Cửa hàng hằng ngày, Chợ Đêm và bundle';
   static const welcomeBulletProfile = 'Rank, lịch sử đấu, trận đang diễn ra';
   static const welcomeBulletWishlist = 'Wishlist & thông báo';
   static const welcomeFootnote =
-      'Bạn đăng nhập trên trang chính thức của Riot. VanHub chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập.';
+      'Bạn đăng nhập trên trang chính thức của Riot. ValHub chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập.';
   static const legalNotice = 'Thông báo pháp lý';
 
   // Notification priming (S04)
@@ -112,7 +112,7 @@ abstract final class SettingsStrings {
   static const clearCacheFailed = 'Chưa xóa được dữ liệu tạm. Hãy thử lại.';
 
   /// Row that builds the bug-report file and opens the share sheet.
-  static const exportLog = 'Gửi báo lỗi cho VanHub';
+  static const exportLog = 'Gửi báo lỗi cho ValHub';
   static const exportLogSubtitle =
       'Báo lỗi không chứa mật khẩu hay dữ liệu đăng nhập Riot của bạn.';
 
@@ -121,15 +121,15 @@ abstract final class SettingsStrings {
       'Chưa có gì để gửi. Hãy dùng ứng dụng một lúc rồi thử lại.';
 
   // HỖ TRỢ
-  static const feedback = 'Góp ý cho VanHub';
-  static const feedbackSubtitle = 'Mở trang góp ý của VanHub';
+  static const feedback = 'Góp ý cho ValHub';
+  static const feedbackSubtitle = 'Mở trang góp ý của ValHub';
   static const linkOpenFailed = 'Chưa mở được liên kết. Hãy thử lại.';
   static const serverStatus = 'Trạng thái máy chủ';
   static const serverStatusSubtitle = 'Bảo trì và sự cố VALORANT theo máy chủ';
   static const serverStatusMaintenance = 'Đang bảo trì';
   static String serverStatusNotices(int n) => '$n thông báo';
 
-  // Server status screen (VanHub extra, X-1)
+  // Server status screen (ValHub extra, X-1)
   static const statusSourceNote =
       'Nguồn: trang trạng thái chính thức của Riot Games. Giờ hiển thị theo '
       'múi giờ của thiết bị.';
@@ -138,7 +138,7 @@ abstract final class SettingsStrings {
       'Không có sự cố hay bảo trì nào ở máy chủ $region.';
   static const statusMaintenanceNow = 'Máy chủ đang bảo trì';
   static const statusMaintenanceNowBody =
-      'Bạn có thể chưa vào được game, và VanHub có thể tạm thời chưa tải được '
+      'Bạn có thể chưa vào được game, và ValHub có thể tạm thời chưa tải được '
       'thông tin.';
   static const statusIssues = 'Riot đang xử lý sự cố';
   static String statusIssuesBody(int n) => 'Máy chủ này có $n thông báo sự cố.';

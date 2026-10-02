@@ -218,7 +218,7 @@ class _Leading extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
-        border: Border(left: BorderSide(color: accent, width: 3)),
+        border: BorderDirectional(start: BorderSide(color: accent, width: 3)),
       ),
       clipBehavior: Clip.antiAlias,
       child: inMatch && mapIcon != null

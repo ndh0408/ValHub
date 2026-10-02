@@ -126,7 +126,7 @@ class _NavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final accent = legibleAccent(context, scheme.primary, min: 3);
+    final accent = legibleAccent(context, scheme.primary, min: 4.0);
     final fg = selected ? accent : scheme.onSurfaceVariant;
     final icon = selected
         ? (destination.selectedIcon ?? destination.icon)
@@ -136,6 +136,7 @@ class _NavItem extends StatelessWidget {
       button: true,
       selected: selected,
       label: destination.label,
+      onTap: onTap,
       excludeSemantics: true,
       child: InkWell(
         onTap: onTap,

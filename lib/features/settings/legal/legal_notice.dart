@@ -15,14 +15,14 @@ const legalNotice = LegalDocument(
   sections: [
     LegalSection('Tuyên bố miễn trừ Riot Games', [
       LegalParagraph(
-        'VanHub được làm theo chính sách "Legal Jibber Jabber" của Riot Games '
+        'ValHub được làm theo chính sách "Legal Jibber Jabber" của Riot Games '
         'và có dùng tài sản thuộc sở hữu của Riot Games. Riot Games không xác '
         'nhận hay tài trợ cho dự án này.',
       ),
       LegalParagraph(
-        'VanHub là ứng dụng độc lập, không phải sản phẩm chính thức của Riot '
+        'ValHub là ứng dụng độc lập, không phải sản phẩm chính thức của Riot '
         'Games và không liên kết với Riot Games dưới bất kỳ hình thức nào. Mọi '
-        'hỗ trợ về VanHub do chúng tôi cung cấp, không phải Riot Games.',
+        'hỗ trợ về ValHub do chúng tôi cung cấp, không phải Riot Games.',
       ),
     ]),
     LegalSection('Nhãn hiệu', [
@@ -46,7 +46,7 @@ const legalNotice = LegalDocument(
         LegalItem(
           'dữ liệu và hình ảnh công khai về vật phẩm, đặc vụ, bản đồ và rank. '
           'valorant-api.com là dự án cộng đồng độc lập, không liên kết với '
-          'VanHub hay Riot Games.',
+          'ValHub hay Riot Games.',
           lead: 'valorant-api.com:',
         ),
         LegalItem(
@@ -54,22 +54,22 @@ const legalNotice = LegalDocument(
           lead: 'techchrism/valorant-api-docs:',
         ),
         LegalItem(
-          'VanHub được xây dựng bằng Flutter cùng nhiều phần mềm mã nguồn mở '
+          'ValHub được xây dựng bằng Flutter cùng nhiều phần mềm mã nguồn mở '
           'khác. Danh sách và giấy phép của từng phần mềm có ở mục "Phần mềm '
           'bên thứ ba" trong trang Giới thiệu & pháp lý.',
           lead: 'Phần mềm mã nguồn mở:',
         ),
       ]),
     ]),
-    LegalSection('Bản quyền VanHub', [
+    LegalSection('Bản quyền ValHub', [
       LegalParagraph(
-        '${LegalInfo.copyrightNotice} VanHub là phần mềm độc quyền; việc sử dụng '
+        '${LegalInfo.copyrightNotice} ValHub là phần mềm độc quyền; việc sử dụng '
         'tuân theo Điều khoản sử dụng.',
       ),
     ]),
     LegalSection('Báo cáo vi phạm quyền sở hữu trí tuệ', [
       LegalParagraph(
-        'Nếu bạn cho rằng nội dung trong VanHub, kể cả nội dung do người dùng '
+        'Nếu bạn cho rằng nội dung trong ValHub, kể cả nội dung do người dùng '
         'đăng trong Cộng đồng, vi phạm quyền sở hữu trí tuệ của bạn, hãy gửi '
         'email tới $_email. Vui lòng nêu rõ: thông tin liên hệ của bạn, tác '
         'phẩm nào của bạn được bảo hộ, nội dung vi phạm nằm ở đâu trong Ứng '

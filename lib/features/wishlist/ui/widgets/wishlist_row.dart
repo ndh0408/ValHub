@@ -217,6 +217,7 @@ class _HitBar extends ConsumerWidget {
     return Semantics(
       button: true,
       label: '$text ${context.l10n.wishlistViewInStore}',
+      onTap: onTap,
       excludeSemantics: true,
       child: Material(
         color: accent.withValues(alpha: 0.14),

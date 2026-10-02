@@ -119,34 +119,68 @@ class StatTile extends StatelessWidget {
     required this.value,
     this.valueColor,
     this.tooltip,
+    this.tag,
+    this.tagColor,
   });
 
   final String label;
   final String value;
   final Color? valueColor;
   final String? tooltip;
+  final String? tag;
+  final Color? tagColor;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scale = MediaQuery.textScalerOf(context).scale(1);
+    final showTag = tag != null && scale < 1.35;
     final tile = Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(ValRadius.small),
+        border: tagColor != null
+            ? Border(
+                bottom: BorderSide(
+                  color: tagColor!.withValues(alpha: 0.65),
+                  width: 2.5,
+                ),
+              )
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: ValText.label.copyWith(
-              fontSize: 11,
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: ValText.label.copyWith(
+                    fontSize: 11,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+              if (showTag)
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Text(
+                    tag!,
+                    maxLines: 1,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      color: tagColor ?? theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+            ],
           ),
           const SizedBox(height: 2),
           FittedBox(
@@ -180,7 +214,11 @@ class StatGrid extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       const gap = 8.0;
-      final width = (constraints.maxWidth - gap * (columns - 1)) / columns;
+      final scale = MediaQuery.textScalerOf(context).scale(1);
+      final cols = (constraints.maxWidth < 320 || scale >= 1.35)
+          ? (columns > 2 ? 2 : columns)
+          : columns;
+      final width = (constraints.maxWidth - gap * (cols - 1)) / cols;
       return Wrap(
         spacing: gap,
         runSpacing: gap,

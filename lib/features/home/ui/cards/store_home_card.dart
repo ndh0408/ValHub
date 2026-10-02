@@ -263,7 +263,7 @@ class _WishlistBanner extends StatelessWidget {
                 Icon(
                   Icons.favorite_rounded,
                   size: 20,
-                  color: legibleAccent(context, red, min: 3),
+                  color: legibleAccent(context, red, min: 4.0),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -372,6 +372,13 @@ class HomeSkinTile extends ConsumerWidget {
     final name = offer.skin?.displayName ?? context.l10n.commonUnknownItem;
     final price = offer.vp;
     final priceText = price == null ? context.l10n.commonDash : formatVp(price);
+    void onTap() => unawaited(
+      showSkinDetailSheet(
+        context,
+        skinOrLevelUuid: offer.levelUuid,
+        mode: SkinDetailMode.store,
+      ),
+    );
     return Semantics(
       button: true,
       label: HomeStrings.skinTileSemantics(
@@ -380,89 +387,95 @@ class HomeSkinTile extends ConsumerWidget {
         tier.name ?? '',
         offer.inWishlist,
       ),
-      child: ExcludeSemantics(
-        child: Material(
-          color: tier.color.withValues(alpha: 0.14),
-          borderRadius: BorderRadius.circular(ValRadius.small),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: () => unawaited(
-              showSkinDetailSheet(
-                context,
-                skinOrLevelUuid: offer.levelUuid,
-                mode: SkinDetailMode.store,
-              ),
+      onTap: onTap,
+      excludeSemantics: true,
+      child: Material(
+        color: tier.color.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(ValRadius.small),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: tier.color, width: 3)),
             ),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: tier.color, width: 3)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AspectRatio(
-                      aspectRatio: showName ? 2.2 : 1.2,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          NetImage(offer.skin?.image, showSkeleton: false),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AspectRatio(
+                    aspectRatio: showName ? 2.2 : 1.2,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: RadialGradient(
+                              center: Alignment.center,
+                              radius: 0.65,
+                              colors: [
+                                tier.color.withValues(alpha: 0.28),
+                                tier.color.withValues(alpha: 0),
+                              ],
+                            ),
+                          ),
+                        ),
+                        NetImage(offer.skin?.image, showSkeleton: false),
+                        PositionedDirectional(
+                          top: 0,
+                          start: 0,
+                          child: DiamondPip(size: 10, color: tier.color),
+                        ),
+                        if (offer.inWishlist)
                           PositionedDirectional(
                             top: 0,
-                            start: 0,
-                            child: DiamondPip(size: 10, color: tier.color),
-                          ),
-                          if (offer.inWishlist)
-                            PositionedDirectional(
-                              top: 0,
-                              end: 0,
-                              child: Icon(
-                                Icons.favorite_rounded,
-                                size: 14,
-                                color: legibleAccent(
-                                  context,
-                                  theme.colorScheme.primary,
-                                  min: 3,
-                                ),
+                            end: 0,
+                            child: Icon(
+                              Icons.favorite_rounded,
+                              size: 14,
+                              color: legibleAccent(
+                                context,
+                                theme.colorScheme.primary,
+                                min: 4.0,
                               ),
                             ),
-                        ],
-                      ),
+                          ),
+                      ],
                     ),
-                    if (showName) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 2),
-                    Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: AlignmentDirectional.centerStart,
-                        child: price == null
-                            ? Text(
-                                context.l10n.commonDash,
-                                style: theme.textTheme.labelMedium,
-                              )
-                            : CurrencyAmount.vp(
-                                price,
-                                iconSize: 12,
-                                style: theme.textTheme.labelMedium?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
+                  ),
+                  if (showName) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
-                ),
+                  const SizedBox(height: 2),
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: AlignmentDirectional.centerStart,
+                      child: price == null
+                          ? Text(
+                              context.l10n.commonDash,
+                              style: theme.textTheme.labelMedium,
+                            )
+                          : CurrencyAmount.vp(
+                              price,
+                              iconSize: 12,
+                              style: theme.textTheme.labelMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -472,7 +485,7 @@ class HomeSkinTile extends ConsumerWidget {
   }
 }
 
-/// "Chợ Đêm · còn 4 ngày …" and, until the user opened it in VanHub, "n ưu
+/// "Chợ Đêm · còn 4 ngày …" and, until the user opened it in ValHub, "n ưu
 /// đãi đang chờ bạn lật" (the best deal stays hidden to keep the surprise);
 /// afterwards the best deal.
 class _NightMarketRow extends ConsumerWidget {

@@ -24,7 +24,11 @@ String _enc(String v) => Uri.encodeComponent(v);
 
 /// Interactive login URL (A-1). Spaces are encoded as `%20` to match the
 /// documented URL exactly.
-String buildAuthorizeUrl({required String state, required String nonce}) =>
+String buildAuthorizeUrl({
+  required String state,
+  required String nonce,
+  String? uiLocales,
+}) =>
     '${AuthConstants.authorizeUrl}'
     '?redirect_uri=${_enc(AuthConstants.redirectUri)}'
     '&client_id=${_enc(AuthConstants.clientId)}'
@@ -32,7 +36,7 @@ String buildAuthorizeUrl({required String state, required String nonce}) =>
     '&scope=${_enc(AuthConstants.scope)}'
     '&nonce=${_enc(nonce)}'
     '&state=${_enc(state)}'
-    '&ui_locales=${_enc(AuthConstants.uiLocales)}';
+    '&ui_locales=${_enc(uiLocales ?? AuthConstants.uiLocales)}';
 
 /// Silent re-auth URL (A-2): `nonce=1&prompt=none`.
 final String reauthAuthorizeUrl =
@@ -45,7 +49,7 @@ final String reauthAuthorizeUrl =
     '&prompt=none';
 
 final RegExp _callbackPath = RegExp(
-  r'^/(?:[a-z]{2}-[a-z]{2}/)?opt_in/?$',
+  r'^/(?:[a-z]{2,3}(?:-[a-z0-9]{2,4})?/)?opt_in/?$',
   caseSensitive: false,
 );
 

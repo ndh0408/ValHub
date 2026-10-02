@@ -126,7 +126,7 @@ class _ServerStatusValue extends ConsumerWidget {
 }
 
 /// "NÂNG CAO" (S70, X2): the only two actions a player may ever need that
-/// are not about the game: send a bug report to VanHub (a scrubbed file handed
+/// are not about the game: send a bug report to ValHub (a scrubbed file handed
 /// to the share sheet, never shown on screen) and clear temporary data (with
 /// its size). The app version lives on the About screen only.
 class SettingsAppSection extends ConsumerStatefulWidget {

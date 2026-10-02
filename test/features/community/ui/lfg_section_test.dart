@@ -398,6 +398,10 @@ void main() {
       await settle(tester);
       expect(tester.takeException(), isNull);
       expect(find.text('Cần 1 Controller, có mic, vui vẻ'), findsOneWidget);
+      expect(
+        tester.getSize(find.byKey(const ValueKey('lfg-region'))).height,
+        greaterThanOrEqualTo(48),
+      );
       await unmount(tester);
     });
   }

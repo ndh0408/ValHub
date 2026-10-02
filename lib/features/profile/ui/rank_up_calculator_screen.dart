@@ -625,7 +625,7 @@ class _TableRow extends StatelessWidget {
               ? theme.colorScheme.surfaceContainerHigh
               : null,
           border: highlighted
-              ? Border(left: BorderSide(color: accent, width: 3))
+              ? BorderDirectional(start: BorderSide(color: accent, width: 3))
               : null,
         ),
         padding: EdgeInsets.fromLTRB(highlighted ? 13 : 16, 11, 16, 11),

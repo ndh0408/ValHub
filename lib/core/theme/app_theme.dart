@@ -3,7 +3,7 @@ import 'package:cupertino_ui/cupertino_ui.dart'
 import 'package:material_ui/material_ui.dart';
 
 /// Valorant-style palette (FS §17), aligned with the Figma tokens
-/// (`docs/design/DESIGN.md`, collection "VanHub Tokens").
+/// (`docs/design/DESIGN.md`, collection "ValHub Tokens").
 abstract final class ValColors {
   /// Valorant red (primary accent) — token `red`.
   static const red = Color(0xFFFF4655);

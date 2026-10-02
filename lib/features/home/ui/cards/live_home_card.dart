@@ -285,7 +285,6 @@ class _InGameBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final showScore = ref.watch(liveScoreEnabledProvider);
     LiveScore? score;
     if (showScore) {
@@ -306,30 +305,11 @@ class _InGameBody extends ConsumerWidget {
           Semantics(
             label: context.l10n.homeLiveScoreSemantics(score.ally, score.enemy),
             excludeSemantics: true,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                _ScoreColumn(
-                  value: score.ally,
-                  label: context.l10n.homeLiveAllyLabel,
-                  color: valColorsOf(context).win,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Text(
-                    context.l10n.commonDash,
-                    style: ValText.display(
-                      26,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
-                _ScoreColumn(
-                  value: score.enemy,
-                  label: context.l10n.homeLiveEnemyLabel,
-                  color: valColorsOf(context).loss,
-                ),
-              ],
+            child: _ScoreboardCapsule(
+              ally: score.ally,
+              enemy: score.enemy,
+              allyLabel: context.l10n.homeLiveAllyLabel,
+              enemyLabel: context.l10n.homeLiveEnemyLabel,
             ),
           ),
         ],
@@ -338,37 +318,128 @@ class _InGameBody extends ConsumerWidget {
   }
 }
 
-class _ScoreColumn extends StatelessWidget {
-  const _ScoreColumn({
-    required this.value,
-    required this.label,
-    required this.color,
+class _ScoreboardCapsule extends StatelessWidget {
+  const _ScoreboardCapsule({
+    required this.ally,
+    required this.enemy,
+    required this.allyLabel,
+    required this.enemyLabel,
   });
 
-  final int value;
-  final String label;
-  final Color color;
+  final int ally;
+  final int enemy;
+  final String allyLabel;
+  final String enemyLabel;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          formatNumber(value),
-          style: ValText.display(30, color: legibleAccent(context, color)),
-        ),
-        Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+    final winColor = valColorsOf(context).win;
+    final lossColor = valColorsOf(context).loss;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHigh.withValues(alpha: 0.65),
+        borderRadius: BorderRadius.circular(ValRadius.small),
+        border: Border.all(color: valColorsOf(context).hairline),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 4,
+                height: 26,
+                decoration: BoxDecoration(
+                  color: winColor,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    formatNumber(ally),
+                    style: ValText.display(
+                      24,
+                      color: legibleAccent(context, winColor),
+                    ),
+                  ),
+                  Text(
+                    allyLabel,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.5,
+                ),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                context.l10n.homeLiveScoreSeparator,
+                style: ValText.label.copyWith(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.0,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    formatNumber(enemy),
+                    style: ValText.display(
+                      24,
+                      color: legibleAccent(context, lossColor),
+                    ),
+                  ),
+                  Text(
+                    enemyLabel,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 8),
+              Container(
+                width: 4,
+                height: 26,
+                decoration: BoxDecoration(
+                  color: lossColor,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

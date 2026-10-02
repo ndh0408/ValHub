@@ -21,11 +21,28 @@ import 'skin_vote_button.dart';
 import 'star_rating.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
+import 'package:valvn/core/riot/riot_ids.dart';
 
-/// Weapons for the filter chips: by category (sidearms … melee), then name.
+/// Priority list of popular Valorant weapons shown first in the filter bar.
+const _kPopularWeapons = [
+  SpecialIds.vandal,
+  SpecialIds.phantom,
+  SpecialIds.operator,
+  SpecialIds.melee,
+  SpecialIds.sheriff,
+  SpecialIds.ghost,
+  SpecialIds.spectre,
+];
+
+/// Weapons for the filter chips: popular meta weapons first, then by category and name.
 List<Weapon> leaderboardWeapons(ContentDb db) {
   final list = [...db.weapons]
     ..sort((a, b) {
+      final aPop = _kPopularWeapons.indexOf(a.uuid);
+      final bPop = _kPopularWeapons.indexOf(b.uuid);
+      if (aPop != -1 && bPop != -1) return aPop.compareTo(bPop);
+      if (aPop != -1) return -1;
+      if (bPop != -1) return 1;
       final c = a.category.index.compareTo(b.category.index);
       return c != 0 ? c : a.displayName.compareTo(b.displayName);
     });
@@ -174,7 +191,10 @@ class _Filters extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(topSkinsFilterProvider.notifier);
     final weapons = leaderboardWeapons(db);
+    final filterHeight = (MediaQuery.textScalerOf(context).scale(14) * 1.5 + 28)
+        .clamp(52.0, double.infinity);
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ScopeBar(
           section: ScopedSection.skins,
@@ -184,6 +204,7 @@ class _Filters extends ConsumerWidget {
         ),
         SegmentedTabs<TopPeriod>(
           expand: true,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
           tabs: [
             SegmentedTab(
               value: TopPeriod.all,
@@ -198,11 +219,11 @@ class _Filters extends ConsumerWidget {
           onChanged: notifier.setPeriod,
         ),
         SizedBox(
-          height: 52,
+          height: filterHeight,
           child: ListView(
             key: const ValueKey('skins-sort'),
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
             children: [
               for (final s in TopSort.values) ...[
                 if (s != TopSort.values.first) const SizedBox(width: 8),
@@ -221,11 +242,11 @@ class _Filters extends ConsumerWidget {
           ),
         ),
         SizedBox(
-          height: 52,
+          height: filterHeight,
           child: ListView(
             key: const ValueKey('skins-weapons'),
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.fromLTRB(16, 6, 16, 4),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
             children: [
               CommunityChip(
                 label: context.l10n.communityAllWeapons,
@@ -244,6 +265,7 @@ class _Filters extends ConsumerWidget {
             ],
           ),
         ),
+        const SizedBox(height: 6),
       ],
     );
   }

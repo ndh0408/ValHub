@@ -2,23 +2,23 @@
 
 # Điều khoản sử dụng
 
-**VanHub** · Phiên bản 1.0 · Hiệu lực từ: 29/09/2026
+**ValHub** · Phiên bản 1.0 · Hiệu lực từ: 29/09/2026
 
-Chào mừng bạn đến với VanHub. Điều khoản sử dụng này ("Điều khoản") là thỏa thuận ràng buộc giữa bạn và Nguyễn Đức Huy ("chúng tôi") về việc tải, cài đặt và sử dụng ứng dụng VanHub trên iOS và Android, bao gồm cả các tính năng Cộng đồng (gọi chung là "Ứng dụng").
+Chào mừng bạn đến với ValHub. Điều khoản sử dụng này ("Điều khoản") là thỏa thuận ràng buộc giữa bạn và Nguyễn Đức Huy ("chúng tôi") về việc tải, cài đặt và sử dụng ứng dụng ValHub trên iOS và Android, bao gồm cả các tính năng Cộng đồng (gọi chung là "Ứng dụng").
 
-> Tóm tắt: VanHub là ứng dụng đồng hành không chính thức, không thuộc Riot Games. Bạn đăng nhập bằng tài khoản Riot của chính mình trên trang chính thức của Riot. Bạn tự chịu trách nhiệm về tài khoản và mọi thao tác bạn thực hiện, cư xử văn minh trong Cộng đồng và không dùng ứng dụng để gian lận, tự động hóa hay khai thác trái phép. Ứng dụng được cung cấp nguyên trạng.
+> Tóm tắt: ValHub là ứng dụng đồng hành không chính thức, không thuộc Riot Games. Bạn đăng nhập bằng tài khoản Riot của chính mình trên trang chính thức của Riot. Bạn tự chịu trách nhiệm về tài khoản và mọi thao tác bạn thực hiện, cư xử văn minh trong Cộng đồng và không dùng ứng dụng để gian lận, tự động hóa hay khai thác trái phép. Ứng dụng được cung cấp nguyên trạng.
 
 ## 1. Chấp nhận Điều khoản
 
-Bằng việc tải, cài đặt, đăng nhập hoặc tiếp tục sử dụng Ứng dụng, bạn xác nhận đã đọc, hiểu và đồng ý với Điều khoản này, Chính sách quyền riêng tư và Tiêu chuẩn cộng đồng của VanHub. Các văn bản này là một phần không tách rời của Điều khoản.
+Bằng việc tải, cài đặt, đăng nhập hoặc tiếp tục sử dụng Ứng dụng, bạn xác nhận đã đọc, hiểu và đồng ý với Điều khoản này, Chính sách quyền riêng tư và Tiêu chuẩn cộng đồng của ValHub. Các văn bản này là một phần không tách rời của Điều khoản.
 
 Nếu bạn không đồng ý với bất kỳ nội dung nào, vui lòng không sử dụng Ứng dụng và gỡ Ứng dụng khỏi thiết bị.
 
 ## 2. Giải thích từ ngữ
 
-- **"Ứng dụng":** ứng dụng VanHub, các bản cập nhật, nội dung và dịch vụ đi kèm do chúng tôi cung cấp.
+- **"Ứng dụng":** ứng dụng ValHub, các bản cập nhật, nội dung và dịch vụ đi kèm do chúng tôi cung cấp.
 - **"Tài khoản Riot":** tài khoản của bạn tại Riot Games dùng để chơi VALORANT.
-- **"Cộng đồng":** các tính năng xã hội của VanHub như bảng tin, bài đăng, hình ảnh, bình luận, lượt thích, bình chọn skin và tìm đồng đội, vận hành trên máy chủ Cộng đồng của VanHub.
+- **"Cộng đồng":** các tính năng xã hội của ValHub như bảng tin, bài đăng, hình ảnh, bình luận, lượt thích, bình chọn skin và tìm đồng đội, vận hành trên máy chủ Cộng đồng của ValHub.
 - **"Nội dung người dùng":** mọi văn bản, hình ảnh, mã tổ đội, bình chọn, báo cáo và thông tin khác bạn gửi lên Cộng đồng.
 
 ## 3. Điều kiện sử dụng
@@ -30,7 +30,7 @@ Nếu bạn không đồng ý với bất kỳ nội dung nào, vui lòng không
 
 ## 4. Tài khoản Riot và thông tin đăng nhập
 
-Bạn đăng nhập trong một cửa sổ web hiển thị trang đăng nhập chính thức của Riot Games. VanHub không nhận, không đọc và không lưu mật khẩu mà bạn nhập vào trang đó. Sau khi đăng nhập, dữ liệu đăng nhập do Riot cấp (mã truy cập và cookie, tức là tệp giúp Riot nhớ bạn đã đăng nhập) chỉ được lưu trong vùng lưu trữ bảo mật của hệ điều hành trên thiết bị của bạn.
+Bạn đăng nhập trong một cửa sổ web hiển thị trang đăng nhập chính thức của Riot Games. ValHub không nhận, không đọc và không lưu mật khẩu mà bạn nhập vào trang đó. Sau khi đăng nhập, dữ liệu đăng nhập do Riot cấp (mã truy cập và cookie, tức là tệp giúp Riot nhớ bạn đã đăng nhập) chỉ được lưu trong vùng lưu trữ bảo mật của hệ điều hành trên thiết bị của bạn.
 
 - Bạn chỉ được thêm vào Ứng dụng những Tài khoản Riot mà bạn sở hữu hoặc được chủ sở hữu cho phép hợp pháp.
 - Bạn chịu trách nhiệm giữ an toàn thiết bị, mật khẩu, mã xác thực hai lớp và mọi hoạt động diễn ra trên Tài khoản Riot của mình.
@@ -42,7 +42,7 @@ Bạn đăng nhập trong một cửa sổ web hiển thị trang đăng nhập 
 
 Với điều kiện bạn tuân thủ Điều khoản này, chúng tôi cấp cho bạn quyền có giới hạn, không độc quyền, không thể chuyển nhượng, không thể cấp phép lại và có thể thu hồi để cài đặt và sử dụng Ứng dụng trên các thiết bị mà bạn sở hữu hoặc kiểm soát, cho mục đích cá nhân, phi thương mại.
 
-VanHub là phần mềm độc quyền, không phải phần mềm mã nguồn mở. Chúng tôi cấp phép sử dụng chứ không bán Ứng dụng cho bạn; mọi quyền không được cấp rõ ràng trong Điều khoản này đều được bảo lưu.
+ValHub là phần mềm độc quyền, không phải phần mềm mã nguồn mở. Chúng tôi cấp phép sử dụng chứ không bán Ứng dụng cho bạn; mọi quyền không được cấp rõ ràng trong Điều khoản này đều được bảo lưu.
 
 ## 6. Các hành vi bị cấm
 
@@ -68,7 +68,7 @@ Một số tính năng cho phép thay đổi trạng thái Tài khoản Riot c�
 
 ### Xác minh Riot ID
 
-Để dùng Cộng đồng, Ứng dụng xác minh Riot ID của bạn với Riot Games thông qua máy chủ Cộng đồng của VanHub, như mô tả trong Chính sách quyền riêng tư. Tên hiển thị của bạn trong Cộng đồng là Riot ID đã được xác minh, kèm thẻ người chơi, rank và khu vực.
+Để dùng Cộng đồng, Ứng dụng xác minh Riot ID của bạn với Riot Games thông qua máy chủ Cộng đồng của ValHub, như mô tả trong Chính sách quyền riêng tư. Tên hiển thị của bạn trong Cộng đồng là Riot ID đã được xác minh, kèm thẻ người chơi, rank và khu vực.
 
 ### Trách nhiệm với nội dung
 
@@ -89,7 +89,7 @@ Bạn vẫn là chủ sở hữu Nội dung người dùng của mình. Khi đă
 
 ## 9. Quyền sở hữu trí tuệ
 
-Ứng dụng, bao gồm mã nguồn, thiết kế giao diện, biểu tượng, tên và logo VanHub, văn bản và các tài liệu đi kèm, thuộc quyền sở hữu của Nguyễn Đức Huy và được bảo hộ theo pháp luật về sở hữu trí tuệ.
+Ứng dụng, bao gồm mã nguồn, thiết kế giao diện, biểu tượng, tên và logo ValHub, văn bản và các tài liệu đi kèm, thuộc quyền sở hữu của Nguyễn Đức Huy và được bảo hộ theo pháp luật về sở hữu trí tuệ.
 
 VALORANT, Riot Games cùng tên, hình ảnh, biểu tượng và nội dung trong trò chơi (skin, đặc vụ, bản đồ, rank…) thuộc quyền sở hữu của Riot Games, Inc. và được hiển thị trong Ứng dụng chỉ nhằm mục đích tham chiếu cho người chơi. Việc hiển thị này không chuyển giao cho bạn hay cho chúng tôi bất kỳ quyền nào đối với các tài sản đó.
 
@@ -106,7 +106,7 @@ Các dịch vụ này có điều khoản và chính sách riêng mà bạn cầ
 
 ## 11. Không phải sản phẩm chính thức của Riot Games
 
-VanHub là ứng dụng độc lập, không được Riot Games xác nhận, tài trợ, giám sát hay liên kết dưới bất kỳ hình thức nào, và không phản ánh quan điểm của Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games không chịu trách nhiệm hỗ trợ cho Ứng dụng; vui lòng liên hệ chúng tôi thay vì Riot Games khi có vấn đề với VanHub.
+ValHub là ứng dụng độc lập, không được Riot Games xác nhận, tài trợ, giám sát hay liên kết dưới bất kỳ hình thức nào, và không phản ánh quan điểm của Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games không chịu trách nhiệm hỗ trợ cho Ứng dụng; vui lòng liên hệ chúng tôi thay vì Riot Games khi có vấn đề với ValHub.
 
 ## 12. Miễn trừ bảo đảm
 

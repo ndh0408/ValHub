@@ -17,7 +17,7 @@ import '../providers/server_status_provider.dart';
 import 'package:valvn/core/l10n/l10n.dart';
 import 'package:valvn/core/l10n/account_labels.dart';
 
-/// "Trạng thái máy chủ" (VanHub extra, X-1): maintenances and incidents that
+/// "Trạng thái máy chủ" (ValHub extra, X-1): maintenances and incidents that
 /// Riot publishes for a region, in Vietnamese when Riot provides it, with
 /// every update and its local time (device time zone, 24 h). Regions: those
 /// of the signed-in accounts (active one first). Route `/settings/status`.
@@ -308,7 +308,7 @@ class _NoticeCardState extends State<_NoticeCard> {
       padding: EdgeInsets.zero,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          border: Border(left: BorderSide(color: color, width: 4)),
+          border: BorderDirectional(start: BorderSide(color: color, width: 4)),
         ),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),

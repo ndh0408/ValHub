@@ -240,7 +240,7 @@ class SettingsSwitchTile extends StatelessWidget {
 /// picked value, or `null` when dismissed.
 ///
 /// iOS: a native action sheet (current option marked with a check, [hint]
-/// as the message). Elsewhere: a VanHub sheet ([showValSheet]: title, close
+/// as the message). Elsewhere: a ValHub sheet ([showValSheet]: title, close
 /// button) with the options on one grouped card and a red check on the
 /// current one.
 Future<T?> showSettingsChoiceSheet<T>({

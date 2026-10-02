@@ -1,5 +1,5 @@
 /// Local "seen" tracking for the Night Market segment (VF §6.2 common
-/// header: red dot on the segment until the user has opened it in VanHub,
+/// header: red dot on the segment until the user has opened it in ValHub,
 /// per account). This is not Riot's `IsSeen` flag, which follows the game
 /// client's card flips.
 library;

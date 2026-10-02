@@ -20,14 +20,14 @@ abstract final class NotificationStrings {
       'Báo thay đổi xếp hạng khi bạn cập nhật hồ sơ';
   static const channelCommunityName = 'Cộng đồng';
   static const channelCommunityDescription =
-      'Báo hoạt động cộng đồng khi bạn mở VanHub';
+      'Báo hoạt động cộng đồng khi bạn mở ValHub';
   static const channelLfgName = 'Tổ đội';
   static const channelLfgDescription =
-      'Báo người chơi tham gia tổ đội khi bạn mở VanHub';
+      'Báo người chơi tham gia tổ đội khi bạn mở ValHub';
   static const privateAccount = 'tài khoản của bạn';
   static const lfgJoinedTitle = 'Có người chơi tham gia tổ đội';
   static const localOnlyHint =
-      'Chỉ báo trên thiết bị này khi VanHub cập nhật dữ liệu';
+      'Chỉ báo trên thiết bị này khi ValHub cập nhật dữ liệu';
   static const backgroundTimingHint =
       'Chế độ tiết kiệm pin của thiết bị có thể làm thông báo đến muộn.';
   static const storeResetBody = 'Skin mới đang chờ bạn trong cửa hàng.';
@@ -45,7 +45,7 @@ abstract final class NotificationStrings {
       'Xếp hạng hiện tại: $rank. Dữ liệu vừa cập nhật từ Riot.';
   static const passEndingTitle = 'Battle Pass sắp kết thúc';
   static const passEndingBody =
-      'Battle Pass còn khoảng một ngày. Mở VanHub để xem tiến độ mới nhất.';
+      'Battle Pass còn khoảng một ngày. Mở ValHub để xem tiến độ mới nhất.';
   static const passProgressTitle = 'Tiến độ Battle Pass';
   static String passProgressBody(int level) =>
       'Bạn đã đạt cấp $level trong Battle Pass hiện tại.';

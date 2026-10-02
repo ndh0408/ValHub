@@ -185,7 +185,7 @@ class LivePlayerRow extends ConsumerWidget {
           decoration: BoxDecoration(
             border: strip == null
                 ? null
-                : Border(left: BorderSide(color: strip, width: 3)),
+                : BorderDirectional(start: BorderSide(color: strip, width: 3)),
           ),
           child: Padding(
             padding: EdgeInsets.fromLTRB(strip == null ? 8 : 6, 10, 0, 10),

@@ -14,7 +14,7 @@ abstract final class SecureKeys {
   /// when the session expires; deleted only with the account.
   static String loginNote(String puuid) => 'acct.$puuid.login';
 
-  /// Session token of the VanHub community server (docs/community-api.md).
+  /// Session token of the ValHub community server (docs/community-api.md).
   static String community(String puuid) => 'acct.$puuid.community';
 
   /// Every key that belongs to [puuid] (wiped on sign-out).
@@ -53,7 +53,7 @@ abstract interface class SecureStore {
   /// (`AccountRepository.sweepOrphans`). Empty when the store cannot be read.
   Future<Set<String>> readAllKeys();
 
-  /// Deletes every VanHub secret (first launch after a reinstall, sign-out all).
+  /// Deletes every ValHub secret (first launch after a reinstall, sign-out all).
   Future<void> deleteAll();
 }
 

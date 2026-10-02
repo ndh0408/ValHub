@@ -28,7 +28,7 @@ final cacheSizeBytesProvider = FutureProvider.autoDispose<int>(
   (ref) => ref.watch(cacheServiceProvider).sizeBytes(),
 );
 
-/// Whether the OS currently allows VanHub to post notifications. Invalidate
+/// Whether the OS currently allows ValHub to post notifications. Invalidate
 /// after a permission request and when the app resumes (the user may have
 /// changed it in the system settings).
 final notificationsAllowedProvider = FutureProvider.autoDispose<bool>(

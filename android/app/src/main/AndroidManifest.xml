@@ -13,13 +13,14 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" tools:node="remove" />
 
     <application
-        android:label="VanHub"
+        android:label="ValHub"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
+        android:supportsRtl="true"
         tools:replace="android:allowBackup">
         <activity
             android:name=".MainActivity"

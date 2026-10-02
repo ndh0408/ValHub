@@ -4,14 +4,14 @@ import 'legal_info.dart';
 const _publisher = LegalInfo.publisherName;
 const _email = LegalInfo.contactEmail;
 
-/// Chính sách quyền riêng tư VanHub.
+/// Chính sách quyền riêng tư ValHub.
 ///
 /// Facts must match the code: Riot secrets only in secure storage
 /// (`SecureStore`), the only Riot token that leaves the device goes to
 /// `POST /v1/auth/riot` (docs/community-api.md) after a one-time consent,
 /// no analytics / ads / crash SDK, local notifications only, scrubbed error
 /// report (the session log; it leaves the device only when the user picks
-/// "Gửi báo lỗi cho VanHub"). The community server is a self-hosted Docker
+/// "Gửi báo lỗi cho ValHub"). The community server is a self-hosted Docker
 /// container (Node + SQLite + files on disk) reached through a Cloudflare
 /// Tunnel; features the server does not implement yet (deleting images with
 /// a post, data export) are written as commitments with a response time,
@@ -29,12 +29,12 @@ const privacyPolicy = LegalDocument(
   version: '1.1',
   preamble: [
     LegalParagraph(
-      'Chính sách này giải thích cách VanHub thu thập, sử dụng, lưu trữ và bảo '
+      'Chính sách này giải thích cách ValHub thu thập, sử dụng, lưu trữ và bảo '
       'vệ dữ liệu cá nhân của bạn, cũng như các quyền của bạn đối với dữ liệu '
       'đó. Chính sách được xây dựng theo pháp luật Việt Nam về bảo vệ dữ liệu '
       'cá nhân (Nghị định 13/2023/NĐ-CP), đồng thời tính đến các quy định bạn '
       'có thể được hưởng ở nơi bạn sống, như GDPR, UK GDPR, CCPA/CPRA hay LGPD '
-      '(xem mục "Quyền của bạn theo luật nơi bạn sống"). VanHub dành cho người '
+      '(xem mục "Quyền của bạn theo luật nơi bạn sống"). ValHub dành cho người '
       'chơi VALORANT ở mọi quốc gia.',
     ),
     LegalCallout(
@@ -42,9 +42,9 @@ const privacyPolicy = LegalDocument(
       'nhập Riot của bạn được lưu trong vùng lưu trữ bảo mật của hệ điều hành '
       'và không gửi cho chúng tôi, trừ một trường hợp duy nhất: khi bạn lần '
       'đầu mở Cộng đồng và xác nhận đồng ý trong hộp thoại hiện ra một lần, '
-      'mã truy cập Riot (access token) được gửi tới máy chủ VanHub để xác minh '
+      'mã truy cập Riot (access token) được gửi tới máy chủ ValHub để xác minh '
       'Riot ID, rồi bị hủy ngay. Máy chủ không lưu PUUID (mã định danh người '
-      'chơi của bạn). VanHub không có quảng cáo, không dùng công cụ phân tích '
+      'chơi của bạn). ValHub không có quảng cáo, không dùng công cụ phân tích '
       'hay theo dõi và không bán dữ liệu của bạn.',
     ),
   ],
@@ -52,13 +52,13 @@ const privacyPolicy = LegalDocument(
     LegalSection('Bên kiểm soát và xử lý dữ liệu', [
       LegalParagraph(
         '$_publisher ("chúng tôi") là bên quyết định mục đích và phương tiện '
-        'xử lý dữ liệu cá nhân trong VanHub (bên kiểm soát và xử lý dữ liệu cá '
+        'xử lý dữ liệu cá nhân trong ValHub (bên kiểm soát và xử lý dữ liệu cá '
         'nhân). Thông tin liên hệ có ở mục cuối của Chính sách này.',
       ),
     ]),
     LegalSection('Phạm vi áp dụng', [
       LegalParagraph(
-        'Chính sách áp dụng cho ứng dụng VanHub trên iOS và Android ở mọi quốc '
+        'Chính sách áp dụng cho ứng dụng ValHub trên iOS và Android ở mọi quốc '
         'gia, bao gồm các tính năng Cộng đồng. Chính sách không áp dụng cho '
         'dịch vụ của Riot Games, valorant-api.com, Apple, Google hay các bên '
         'thứ ba khác. Mỗi bên xử lý dữ liệu theo chính sách riêng của họ.',
@@ -76,7 +76,7 @@ const privacyPolicy = LegalDocument(
           'chính thức của Riot, gồm mã truy cập (access token), mã quyền sở '
           'hữu (entitlement token) và cookie đăng nhập (tệp giúp Riot nhớ '
           'rằng bạn đã đăng nhập). Chúng được lưu trong Keychain (iOS) hoặc '
-          'vùng lưu trữ mã hóa do Keystore bảo vệ (Android). VanHub không bao '
+          'vùng lưu trữ mã hóa do Keystore bảo vệ (Android). ValHub không bao '
           'giờ thấy mật khẩu bạn nhập vào trang của Riot.',
           lead: 'Dữ liệu đăng nhập Riot:',
         ),
@@ -117,7 +117,7 @@ const privacyPolicy = LegalDocument(
           'yêu cầu gửi đi, kết quả và thời gian), dùng để tìm lỗi. Bản ghi '
           'được lọc để không chứa mật khẩu, dữ liệu đăng nhập Riot hay ID tài '
           'khoản, và chỉ rời khỏi thiết bị khi bạn tự chọn "Gửi báo lỗi cho '
-          'VanHub" trong Cài đặt > Nâng cao.',
+          'ValHub" trong Cài đặt > Nâng cao.',
           lead: 'Báo lỗi:',
         ),
       ]),
@@ -213,7 +213,7 @@ const privacyPolicy = LegalDocument(
           'mở tính năng Cộng đồng và xác nhận đồng ý trong hộp thoại hiện ra '
           'một lần, hoặc khi bạn kết nối lại sau khi lần đăng nhập Cộng đồng '
           'của bạn hết hạn. Nếu bạn không đồng ý, Cộng đồng không hoạt động '
-          'và không có mã nào được gửi đi. Mã được gửi tới máy chủ VanHub qua '
+          'và không có mã nào được gửi đi. Mã được gửi tới máy chủ ValHub qua '
           'kết nối mã hóa (HTTPS).',
         ),
         LegalItem(
@@ -252,7 +252,7 @@ const privacyPolicy = LegalDocument(
           'dung bị báo cáo; giới hạn số lần gửi yêu cầu trong một khoảng thời '
           'gian.',
         ),
-        LegalItem('Tìm và sửa lỗi khi bạn chủ động gửi báo lỗi cho VanHub.'),
+        LegalItem('Tìm và sửa lỗi khi bạn chủ động gửi báo lỗi cho ValHub.'),
         LegalItem('Tuân thủ nghĩa vụ theo quy định của pháp luật.'),
       ]),
       LegalParagraph(
@@ -303,7 +303,7 @@ const privacyPolicy = LegalDocument(
         ),
         LegalItem(
           'Ứng dụng có thể tải trạng thái máy chủ công khai của Riot và tệp '
-          'thiết lập chung của VanHub; các yêu cầu này không kèm dữ liệu cá '
+          'thiết lập chung của ValHub; các yêu cầu này không kèm dữ liệu cá '
           'nhân.',
           lead: 'Tệp công khai:',
         ),
@@ -315,7 +315,7 @@ const privacyPolicy = LegalDocument(
         ),
         LegalItem(
           'hồ sơ Cộng đồng, bài đăng, hình ảnh, bình luận và bài tìm đồng đội '
-          'của bạn hiển thị với người dùng VanHub khác. Hình ảnh đã đăng có '
+          'của bạn hiển thị với người dùng ValHub khác. Hình ảnh đã đăng có '
           'thể mở được qua một liên kết công khai.',
           lead: 'Người dùng khác:',
         ),
@@ -331,7 +331,7 @@ const privacyPolicy = LegalDocument(
         'Máy chủ Cộng đồng do nhà phát hành tự vận hành. Kết nối tới máy chủ '
         'này đi qua mạng toàn cầu của Cloudflare, Inc., nên dữ liệu có thể đi '
         'qua nhiều quốc gia. Dữ liệu Cộng đồng bạn đăng hiển thị với người '
-        'dùng VanHub ở mọi nơi. Khi bạn dùng Ứng dụng, thiết bị của bạn cũng '
+        'dùng ValHub ở mọi nơi. Khi bạn dùng Ứng dụng, thiết bị của bạn cũng '
         'kết nối trực tiếp tới máy chủ của Riot Games. Chúng tôi áp dụng các '
         'biện pháp bảo vệ phù hợp và thực hiện nghĩa vụ liên quan đến việc '
         'chuyển dữ liệu cá nhân qua biên giới theo pháp luật Việt Nam và, khi '
@@ -439,7 +439,7 @@ const privacyPolicy = LegalDocument(
     ]),
     LegalSection('Thông báo và tác vụ nền', [
       LegalParagraph(
-        'VanHub chỉ dùng thông báo cục bộ, tức là thông báo do chính thiết bị '
+        'ValHub chỉ dùng thông báo cục bộ, tức là thông báo do chính thiết bị '
         'của bạn tạo ra. Chúng tôi không vận hành máy chủ gửi thông báo đẩy và '
         'không thu thập mã thiết bị. Ứng dụng đăng ký với hệ điều hành một '
         'tác vụ chạy nền định kỳ, chạy ngay trên thiết bị, để giữ đăng nhập '
@@ -450,20 +450,20 @@ const privacyPolicy = LegalDocument(
     ]),
     LegalSection('Dịch nội dung trên thiết bị', [
       LegalParagraph(
-        'Khi bạn chọn dịch nội dung Cộng đồng, VanHub dùng công cụ dịch ML Kit '
+        'Khi bạn chọn dịch nội dung Cộng đồng, ValHub dùng công cụ dịch ML Kit '
         'của Google chạy trên thiết bị. Nếu chưa có gói ngôn ngữ cần thiết, '
-        'VanHub hỏi bạn trước khi tải gói từ Google (khoảng 30 MB mỗi gói). '
+        'ValHub hỏi bạn trước khi tải gói từ Google (khoảng 30 MB mỗi gói). '
         'Việc tải cần kết nối mạng và Google có thể nhận thông tin kỹ thuật '
         'của kết nối, như địa chỉ IP, theo chính sách của Google. Nội dung '
         'bài viết được dịch trên thiết bị, không gửi tới Google để dịch. '
-        'Bạn có thể không dùng tính năng này; VanHub không dùng chatbot hay '
+        'Bạn có thể không dùng tính năng này; ValHub không dùng chatbot hay '
         'dịch vụ tạo nội dung bằng AI.',
       ),
     ]),
     LegalSection('Phân tích, quảng cáo và theo dõi', [
       LegalParagraph(
-        'VanHub không tích hợp công cụ phân tích, công cụ tự động báo cáo sự '
-        'cố, quảng cáo hay công cụ theo dõi của bên thứ ba. VanHub không dùng '
+        'ValHub không tích hợp công cụ phân tích, công cụ tự động báo cáo sự '
+        'cố, quảng cáo hay công cụ theo dõi của bên thứ ba. ValHub không dùng '
         'mã định danh quảng cáo và không theo dõi bạn giữa các ứng dụng hay '
         'trang web. Nếu điều này thay đổi trong tương lai, chúng tôi sẽ cập '
         'nhật Chính sách và xin sự đồng ý của bạn khi pháp luật yêu cầu.',
@@ -615,7 +615,7 @@ const privacyPolicy = LegalDocument(
         ),
         LegalItem(
           'nếu bạn là cư dân California: bạn có quyền biết, xóa, sửa dữ liệu '
-          'và từ chối việc "bán" hay "chia sẻ" dữ liệu. VanHub không bán và '
+          'và từ chối việc "bán" hay "chia sẻ" dữ liệu. ValHub không bán và '
           'không chia sẻ dữ liệu cá nhân cho quảng cáo theo ngữ cảnh khác.',
           lead: 'CCPA / CPRA:',
         ),

@@ -185,7 +185,7 @@ class _PermissionWarning extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: warning.withValues(alpha: 0.10),
-        border: Border(left: BorderSide(color: warning, width: 4)),
+        border: BorderDirectional(start: BorderSide(color: warning, width: 4)),
       ),
       padding: const EdgeInsets.fromLTRB(12, 12, 8, 4),
       child: Column(

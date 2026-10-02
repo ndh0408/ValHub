@@ -38,6 +38,14 @@ void main() {
         '&client_id=play-valorant-web-prod&response_type=token%20id_token'
         '&scope=account%20openid&nonce=n&state=s&ui_locales=vi',
       );
+      final enUrl = buildAuthorizeUrl(state: 's', nonce: 'n', uiLocales: 'en');
+      expect(enUrl, contains('&ui_locales=en'));
+      final esUrl = buildAuthorizeUrl(
+        state: 's',
+        nonce: 'n',
+        uiLocales: 'es-419',
+      );
+      expect(esUrl, contains('&ui_locales=es-419'));
     });
 
     test('re-auth URL uses nonce=1&prompt=none', () {
@@ -59,6 +67,11 @@ void main() {
       expect(isAuthCallback(_callback(path: '/opt_in/')), isTrue);
       expect(isAuthCallback(_callback(path: '/vi-vn/opt_in/')), isTrue);
       expect(isAuthCallback(_callback(path: '/en-US/opt_in')), isTrue);
+      expect(isAuthCallback(_callback(path: '/zh-hans/opt_in')), isTrue);
+      expect(isAuthCallback(_callback(path: '/zh-hant/opt_in')), isTrue);
+      expect(isAuthCallback(_callback(path: '/es-419/opt_in')), isTrue);
+      expect(isAuthCallback(_callback(path: '/ja/opt_in')), isTrue);
+      expect(isAuthCallback(_callback(path: '/ar/opt_in')), isTrue);
       expect(isAuthCallback(_callback(host: 'www.playvalorant.com')), isTrue);
     });
 

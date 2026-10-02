@@ -5,7 +5,7 @@
 /// rồi chạy `dart run tool/export_legal_docs.dart` để cập nhật `docs/legal/`.
 /// Pure Dart (no Flutter import) so the export tool can run it.
 abstract final class LegalInfo {
-  /// Tên cá nhân / tổ chức phát hành VanHub (bên kiểm soát dữ liệu).
+  /// Tên cá nhân / tổ chức phát hành ValHub (bên kiểm soát dữ liệu).
   static const publisherName = 'Nguyễn Đức Huy';
 
   /// Email nhận liên hệ, yêu cầu về dữ liệu cá nhân và báo cáo vi phạm.
@@ -18,7 +18,7 @@ abstract final class LegalInfo {
   static const effectiveDate = '29/09/2026';
 
   /// Tên sản phẩm dùng trong văn bản pháp lý.
-  static const productName = 'VanHub';
+  static const productName = 'ValHub';
 
   /// "© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền."
   static const copyrightNotice =

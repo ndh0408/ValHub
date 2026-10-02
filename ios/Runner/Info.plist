@@ -13,7 +13,7 @@
 		<string>vi</string>
 	</array>
 	<key>CFBundleDisplayName</key>
-	<string>VanHub</string>
+	<string>ValHub</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -21,7 +21,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>VanHub</string>
+	<string>ValHub</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -66,7 +66,7 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Chọn ảnh từ thư viện để đính kèm vào bài đăng của bạn trên Cộng đồng VanHub. VanHub chỉ dùng những ảnh bạn chọn.</string>
+	<string>Chọn ảnh từ thư viện để đính kèm vào bài đăng của bạn trên Cộng đồng ValHub. ValHub chỉ dùng những ảnh bạn chọn.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

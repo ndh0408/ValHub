@@ -36,6 +36,7 @@ class ScopeBar extends ConsumerWidget {
     required this.puuid,
     this.applied,
     this.globalLabel = CommunityStrings.scopeGlobal,
+    this.trailing,
   });
 
   final ScopedSection section;
@@ -49,6 +50,9 @@ class ScopeBar extends ConsumerWidget {
 
   /// Label of the international segment ("Quốc tế" / "Toàn cầu").
   final String globalLabel;
+
+  /// Optional trailing widget aligned on the same row (e.g. period tabs).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -220,10 +224,14 @@ class ScopeBar extends ConsumerWidget {
       width: double.infinity,
       child: Padding(
         key: ValueKey('scope-actions-${section.name}'),
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 6, 16, 4),
         child: Wrap(
           spacing: 8,
-          runSpacing: 4,
+          runSpacing: 6,
+          alignment: trailing != null
+              ? WrapAlignment.spaceBetween
+              : WrapAlignment.start,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Semantics(
               key: ValueKey('scope-selected-${selected.name}'),
@@ -233,20 +241,34 @@ class ScopeBar extends ConsumerWidget {
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(48, 48),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
+                    horizontal: 12,
+                    vertical: 6,
                   ),
                   foregroundColor: Theme.of(context).colorScheme.onSurface,
+                  backgroundColor: Theme.of(context)
+                      .colorScheme
+                      .surfaceContainer
+                      .withValues(alpha: 0.55),
                   side: BorderSide(
-                    color: Theme.of(context).colorScheme.outlineVariant,
+                    color: Theme.of(context).colorScheme.outlineVariant
+                        .withValues(alpha: 0.7),
                   ),
+                  shape: const StadiumBorder(),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Flexible(child: Text(label)),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.expand_more_rounded, size: 20),
+                    Flexible(
+                      child: Text(
+                        label,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(Icons.expand_more_rounded, size: 18),
                   ],
                 ),
               ),
@@ -259,6 +281,7 @@ class ScopeBar extends ConsumerWidget {
                 selected: chosen.languages.isNotEmpty,
                 onSelected: (_) => unawaited(pickLanguages()),
               ),
+            ?trailing,
           ],
         ),
       ),

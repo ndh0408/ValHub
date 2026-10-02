@@ -2,7 +2,7 @@
 ///
 /// Feature-specific copy lives in `lib/features/<f>/<f>_strings.dart`.
 abstract final class CommonStrings {
-  static const appName = 'VanHub';
+  static const appName = 'ValHub';
   static const tagline = 'Trợ thủ VALORANT của bạn';
 
   // Navigation (VF §8.1)
@@ -130,7 +130,7 @@ abstract final class CommonStrings {
     'Chủ Nhật',
   ];
 
-  // Local price estimate next to VP prices (VanHub extra)
+  // Local price estimate next to VP prices (ValHub extra)
   static const priceEstimateTitle = 'Giá quy đổi ước tính';
   static const priceEstimateTooltip = 'Giá ước tính — chạm để xem cách tính';
   static const priceEstimateBody =
@@ -160,7 +160,7 @@ abstract final class CommonStrings {
   static const priceOverrideTitle = 'Giá gói VP của bạn';
   static const priceOverrideBody =
       'Nhập số tiền bạn thực trả cho một gói VP (xem trong cửa hàng của game '
-      'hoặc hóa đơn). VanHub dùng giá này để ước tính giá quy đổi cho mọi món '
+      'hoặc hóa đơn). ValHub dùng giá này để ước tính giá quy đổi cho mọi món '
       'đồ; giá chỉ lưu trên thiết bị này.';
   static const priceOverrideCurrency = 'Mã tiền tệ';
   static const priceOverrideCurrencyHint = 'Ví dụ: VND, USD, EUR, JPY';
@@ -178,7 +178,7 @@ abstract final class CommonStrings {
 
   // Legal (VF §8.13)
   static const riotDisclaimer =
-      'VanHub không được Riot Games xác nhận và không phản ánh quan điểm của '
+      'ValHub không được Riot Games xác nhận và không phản ánh quan điểm của '
       'Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm '
       'của Riot Games. Riot Games và mọi tài sản liên quan là thương hiệu hoặc '
       'thương hiệu đã đăng ký của Riot Games, Inc.';

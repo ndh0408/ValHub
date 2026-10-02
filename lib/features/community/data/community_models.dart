@@ -7,7 +7,7 @@ import '../../../core/accounts/account.dart';
 
 import '../../../core/util/json.dart';
 
-/// Typed models of the VanHub community API (docs/community-api.md). Every
+/// Typed models of the ValHub community API (docs/community-api.md). Every
 /// parser is defensive: missing / odd fields become `null`, defaults or are
 /// skipped; nothing throws.
 

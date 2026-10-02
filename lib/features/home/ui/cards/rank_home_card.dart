@@ -99,7 +99,7 @@ class _RankBody extends ConsumerWidget {
     final rank = snap.current;
     final tint = rank.isUnranked
         ? theme.colorScheme.onSurfaceVariant
-        : legibleAccent(context, rank.color, min: 3.5);
+        : legibleAccent(context, rank.color, min: 4.0);
     final now = ref.watch(clockProvider).now();
     final ranked = !rank.isUnranked;
 

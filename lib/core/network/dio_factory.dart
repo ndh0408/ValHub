@@ -7,7 +7,7 @@ import '../logging/session_log.dart';
 import 'error_classifier.dart';
 import 'riot_exception.dart';
 
-/// `RequestOptions.extra` keys understood by VanHub interceptors.
+/// `RequestOptions.extra` keys understood by ValHub interceptors.
 abstract final class RequestExtras {
   /// PUUID whose session headers must be attached (PD / GLZ / shared).
   static const puuid = 'valvn.puuid';
@@ -41,7 +41,7 @@ Dio createBaseDio({
 }
 
 /// Refuses to send a Riot **access token** anywhere but the pinned community
-/// host (CLAUDE.md: the token goes only to `POST /v1/auth/riot` of the VanHub
+/// host (CLAUDE.md: the token goes only to `POST /v1/auth/riot` of the ValHub
 /// community server; AR-009). A request counts as carrying the token when it is
 /// the community sign-in path or its small JSON body has an `accessToken` key.
 /// The base URL is a compile-time constant already; this guard makes the rule

@@ -157,7 +157,7 @@ void main() {
   );
 
   test('the same account in a different cache root does not wait', () async {
-    final otherRoot = await Directory.systemTemp.createTemp('vanhub_history');
+    final otherRoot = await Directory.systemTemp.createTemp('valhub_history');
     final entered = Completer<void>();
     final release = Completer<void>();
     final first = StoreHistoryStore(

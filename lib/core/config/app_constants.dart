@@ -93,7 +93,7 @@ abstract final class AppConstants {
   static const statusUrlTemplate =
       'https://valorant.secure.dyn.riotcdn.net/channels/public/x/status/{region}.json';
 
-  /// VanHub community server (docs/community-api.md). Fixed at compile time:
+  /// ValHub community server (docs/community-api.md). Fixed at compile time:
   /// this is the only host that ever receives the Riot access token
   /// (`POST /v1/auth/riot`), so remote config cannot replace it (AR-009).
   static const communityBaseUrl = 'https://val.gianguyen.cloud';

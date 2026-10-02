@@ -252,7 +252,7 @@ class GroupedRow extends StatelessWidget {
     if (strip != null) {
       row = DecoratedBox(
         decoration: BoxDecoration(
-          border: Border(left: BorderSide(color: strip, width: 4)),
+          border: BorderDirectional(start: BorderSide(color: strip, width: 4)),
         ),
         child: row,
       );

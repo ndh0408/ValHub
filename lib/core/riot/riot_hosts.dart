@@ -7,7 +7,7 @@ import '../network/riot_exception.dart';
 /// Unknown regions stay unresolved; no token is sent to guessed hosts.
 String shardForRegion(String region) => RegionTable.shardFor(region) ?? '';
 
-/// Regions VanHub supports (PBE hosts are unverified and hidden, U22).
+/// Regions ValHub supports (PBE hosts are unverified and hidden, U22).
 const supportedRegions = {'ap', 'na', 'latam', 'br', 'eu', 'kr'};
 
 /// Base URLs for one account's game servers. Keep region and shard separate:

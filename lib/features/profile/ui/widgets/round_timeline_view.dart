@@ -374,7 +374,9 @@ class _RoundLineState extends ConsumerState<_RoundLine> {
         ),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            border: Border(left: BorderSide(color: color, width: 3)),
+            border: BorderDirectional(
+              start: BorderSide(color: color, width: 3),
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -134,18 +134,42 @@ class DailySection extends ConsumerWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (var i = 0; i < daily.offers.length; i++) ...[
-                if (i > 0) const SizedBox(height: 12),
-                DailyOfferCard(
-                  key: ValueKey(daily.offers[i].skinLevelUuid),
-                  offer: daily.offers[i],
-                  puuid: puuid,
-                ),
-              ],
-            ],
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              const gap = 12.0;
+              final wide = constraints.maxWidth >= 600;
+              if (!wide) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var i = 0; i < daily.offers.length; i++) ...[
+                      if (i > 0) const SizedBox(height: gap),
+                      DailyOfferCard(
+                        key: ValueKey(daily.offers[i].skinLevelUuid),
+                        offer: daily.offers[i],
+                        puuid: puuid,
+                      ),
+                    ],
+                  ],
+                );
+              }
+              final cardWidth = (constraints.maxWidth - gap) / 2;
+              return Wrap(
+                spacing: gap,
+                runSpacing: gap,
+                children: [
+                  for (final offer in daily.offers)
+                    SizedBox(
+                      width: cardWidth,
+                      child: DailyOfferCard(
+                        key: ValueKey(offer.skinLevelUuid),
+                        offer: offer,
+                        puuid: puuid,
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
         ),
         ShareToCommunityButton.daily(daily),

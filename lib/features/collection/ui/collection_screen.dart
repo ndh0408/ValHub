@@ -10,6 +10,7 @@ import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/domain/loadout/loadout.dart';
+import '../../../core/riot/riot_ids.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
@@ -122,6 +123,10 @@ class _Header extends ConsumerWidget {
             label:
                 '${context.l10n.collectionEquippedCard}: $cardName. '
                 '${context.l10n.collectionTapToChangeCard}',
+            onTap: () {
+              Haptics.selection();
+              unawaited(context.push(CollectionRoutes.card));
+            },
             excludeSemantics: true,
             child: _CardBanner(
               art: card?.wideArt,
@@ -195,8 +200,8 @@ class _CardBanner extends StatelessWidget {
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
-                Positioned(
-                  right: 10,
+                PositionedDirectional(
+                  end: 10,
                   top: 10,
                   child: DecoratedBox(
                     decoration: BoxDecoration(
@@ -249,11 +254,19 @@ class _LoadoutSection extends ConsumerWidget {
       snapshot?.loadout.guns ?? const <GunLoadout>[],
       (g) => gunRender(g, db, weapon: db.weapon(g.weaponId)),
     );
+    final guns = snapshot?.loadout.guns ?? const <GunLoadout>[];
+    final featuredGuns = _pickFeaturedGuns(guns, db);
     void go(String route) => unawaited(context.push(route));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         CollectionSectionTitle(context.l10n.collectionSectionLoadout),
+        if (featuredGuns.isNotEmpty)
+          _EquippedWeaponsShowcase(
+            guns: featuredGuns,
+            db: db,
+            onSelect: (weaponId) => go(CollectionRoutes.weapon(weaponId)),
+          ),
         GroupedSection(
           children: [
             HubRow(
@@ -289,6 +302,136 @@ class _LoadoutSection extends ConsumerWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+List<GunLoadout> _pickFeaturedGuns(List<GunLoadout> guns, ContentDb db) {
+  if (guns.isEmpty) return const [];
+  final prioritized = <GunLoadout>[];
+  final others = <GunLoadout>[];
+  for (final g in guns) {
+    final skin = equippedSkin(g, db);
+    final isCustom = skin != null && !skin.isStandard;
+    final isIconic = {
+      SpecialIds.vandal,
+      SpecialIds.phantom,
+      SpecialIds.melee,
+      SpecialIds.operator,
+      SpecialIds.ghost,
+      SpecialIds.sheriff,
+    }.contains(g.weaponId);
+    if (isCustom || isIconic) {
+      prioritized.add(g);
+    } else {
+      others.add(g);
+    }
+  }
+  return [...prioritized, ...others].take(6).toList();
+}
+
+class _EquippedWeaponsShowcase extends StatelessWidget {
+  const _EquippedWeaponsShowcase({
+    required this.guns,
+    required this.db,
+    required this.onSelect,
+  });
+
+  final List<GunLoadout> guns;
+  final ContentDb db;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    if (guns.isEmpty) return const SizedBox.shrink();
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+      child: SizedBox(
+        height: 58 + MediaQuery.textScalerOf(context).scale(12),
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          itemCount: guns.length,
+          separatorBuilder: (_, _) => const SizedBox(width: 8),
+          itemBuilder: (context, index) {
+            final gun = guns[index];
+            final weapon = db.weapon(gun.weaponId);
+            final skin = equippedSkin(gun, db);
+            final render = gunRender(gun, db, weapon: weapon);
+            final weaponName = weapon?.displayName ?? '';
+            final skinName = skin?.displayName ?? weaponName;
+            final isCustom = skin != null && !skin.isStandard;
+            final accent = isCustom
+                ? theme.colorScheme.primary
+                : valColorsOf(context).muted;
+
+            return Semantics(
+              button: true,
+              label: '$weaponName: $skinName',
+              onTap: () => onSelect(gun.weaponId),
+              excludeSemantics: true,
+              child: Material(
+                color: theme.colorScheme.surfaceContainerHigh,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(ValRadius.small),
+                  side: BorderSide(
+                    color: isCustom
+                        ? accent.withValues(alpha: dark ? 0.35 : 0.25)
+                        : theme.colorScheme.outlineVariant.withValues(
+                            alpha: 0.5,
+                          ),
+                  ),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: () => onSelect(gun.weaponId),
+                  child: Container(
+                    width: 120,
+                    padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+                    decoration: BoxDecoration(
+                      border: isCustom
+                          ? Border(
+                              bottom: BorderSide(
+                                color: accent.withValues(alpha: 0.8),
+                                width: 2.5,
+                              ),
+                            )
+                          : null,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Center(
+                            child: NetImage(
+                              render,
+                              fit: BoxFit.contain,
+                              showSkeleton: false,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          skinName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

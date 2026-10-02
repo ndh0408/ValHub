@@ -296,7 +296,9 @@ class SkinRow extends ConsumerWidget {
                 ],
                 stops: const [0, 0.6],
               ),
-              border: Border(left: BorderSide(color: color, width: 4)),
+              border: BorderDirectional(
+                start: BorderSide(color: color, width: 4),
+              ),
             ),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(10, 12, 8, 12),

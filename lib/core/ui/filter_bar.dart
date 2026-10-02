@@ -153,7 +153,8 @@ class ValFilterChip extends StatelessWidget {
             : valColorsOf(context).hairline,
       ),
       shape: const StadiumBorder(),
-      visualDensity: VisualDensity.compact,
+      materialTapTargetSize: MaterialTapTargetSize.padded,
+      visualDensity: VisualDensity.standard,
     );
   }
 }

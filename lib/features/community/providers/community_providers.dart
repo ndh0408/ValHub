@@ -39,7 +39,7 @@ final communityHttpProvider = Provider<CommunityHttp>(
 );
 
 /// The app language as a community language code (`vi` today; follows the
-/// app locale once VanHub ships more languages).
+/// app locale once ValHub ships more languages).
 final communityAppLanguageProvider = Provider<String>(
   (ref) => lfgLanguageForLocale(
     appLocale.languageCode,

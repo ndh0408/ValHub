@@ -13,7 +13,7 @@ import 'package:valvn/core/l10n/l10n.dart';
 /// The branded picture of the daily shop / Night Market that "Chia sẻ ảnh"
 /// exports (RepaintBoundary → PNG, 3× → 1080 px wide).
 ///
-/// Always drawn in the dark VanHub look at 100 % text size, whatever the
+/// Always drawn in the dark ValHub look at 100 % text size, whatever the
 /// app theme or the accessibility text scale, so every shared picture looks
 /// the same. Carries no account identifier unless [riotId] is given (the
 /// user turned "Hiện Riot ID" on).

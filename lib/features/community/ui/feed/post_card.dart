@@ -119,6 +119,7 @@ class PostCard extends StatelessWidget {
                   label: context.l10n.communityComments(
                     formatNumber(post.comments),
                   ),
+                  onTap: onOpen,
                   excludeSemantics: true,
                   child: InkWell(
                     onTap: onOpen,

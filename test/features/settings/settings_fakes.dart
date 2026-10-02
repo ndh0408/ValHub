@@ -187,7 +187,7 @@ class SettingsTestEnv {
   late final FakeCacheService cacheService;
   SessionLog log = SessionLog();
   Future<PackageInfo> Function() loadPackageInfo = () async => PackageInfo(
-    appName: 'VanHub',
+    appName: 'ValHub',
     packageName: 'vn.valvn.app',
     version: '1.2.3',
     buildNumber: '42',
@@ -196,7 +196,7 @@ class SettingsTestEnv {
   bool urlOpens = true;
   final shared = <String>[];
 
-  /// Bug-report files handed to the share sheet ("Gửi báo lỗi cho VanHub").
+  /// Bug-report files handed to the share sheet ("Gửi báo lỗi cho ValHub").
   final reports = <BugReportFile>[];
   bool reportShareFails = false;
   Rect? lastShareOrigin;

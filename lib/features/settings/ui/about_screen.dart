@@ -127,7 +127,7 @@ class AboutScreen extends ConsumerWidget {
   }
 }
 
-/// App icon, "VanHub" wordmark, tagline, version pill and a short intro.
+/// App icon, "ValHub" wordmark, tagline, version pill and a short intro.
 class _Identity extends StatelessWidget {
   const _Identity({required this.packageInfo});
 

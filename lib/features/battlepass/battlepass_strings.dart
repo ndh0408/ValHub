@@ -42,7 +42,7 @@ abstract final class BattlePassStrings {
   static String unlockedCount(String unlocked, String total) =>
       '$unlocked/$total đã mở khóa';
 
-  // XP pace (VanHub extra)
+  // XP pace (ValHub extra)
   /// "21.469 XP / ngày".
   static String xpPerDay(String xp) => '$xp XP / ngày';
   static const xpPerDayCaption = 'Cần mỗi ngày để kịp hoàn thành';
@@ -53,7 +53,7 @@ abstract final class BattlePassStrings {
   /// "Nhiệm vụ tuần còn +76.800 XP".
   static String weeklyXpLeft(String xp) => 'Nhiệm vụ tuần còn +$xp XP';
 
-  // Estimate (VanHub extra)
+  // Estimate (ValHub extra)
   /// "Còn cần 321.034 XP".
   static String xpToFinish(String xp) => 'Còn cần $xp XP';
 

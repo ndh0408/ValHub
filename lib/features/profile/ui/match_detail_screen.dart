@@ -283,9 +283,9 @@ class _MatchHero extends ConsumerWidget {
             height: 3,
             child: ColoredBox(color: known ? resultColor : Colors.transparent),
           ),
-          Positioned(
-            left: 16,
-            right: 16,
+          PositionedDirectional(
+            start: 16,
+            end: 16,
             bottom: 16,
             child: ExcludeSemantics(
               child: Row(
@@ -317,7 +317,7 @@ class _MatchHero extends ConsumerWidget {
                         const SizedBox(height: 6),
                         FittedBox(
                           fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerLeft,
+                          alignment: AlignmentDirectional.centerStart,
                           child: Text(
                             mapName.toUpperCase(),
                             maxLines: 1,

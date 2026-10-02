@@ -29,6 +29,7 @@ import '../ui/sub_page.dart';
 import '../ui/val_widgets.dart';
 import 'auth_callback.dart';
 import 'cookie_jar.dart';
+import '../l10n/locale_controller.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -437,7 +438,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget _webView() => InAppWebView(
     key: ValueKey(_state),
     initialUrlRequest: URLRequest(
-      url: WebUri(buildAuthorizeUrl(state: _state, nonce: _nonce)),
+      url: WebUri(
+        buildAuthorizeUrl(
+          state: _state,
+          nonce: _nonce,
+          uiLocales: ref.read(appLocaleProvider).riotUiLocale,
+        ),
+      ),
     ),
     initialSettings: InAppWebViewSettings(
       useShouldOverrideUrlLoading: true,

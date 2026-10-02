@@ -7,6 +7,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account.dart';
 import '../../../../core/network/riot_exception.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/error_view.dart' show describeError;
 import '../../../../core/util/clock.dart';
@@ -340,48 +341,82 @@ class _Filters extends ConsumerWidget {
     final theme = Theme.of(context);
     final n = ref.read(lfgFilterProvider.notifier);
     final muted = theme.colorScheme.onSurfaceVariant;
+    final filterHeight = (MediaQuery.textScalerOf(context).scale(14) * 1.5 + 28)
+        .clamp(52.0, double.infinity);
     Widget menuChip<T>({
       required IconData icon,
       required String label,
       required List<(T, String)> items,
       required ValueChanged<T> onSelected,
       required String tooltip,
+      bool active = false,
       Key? key,
-    }) => PopupMenuButton<T>(
-      key: key,
-      tooltip: tooltip,
-      onSelected: onSelected,
-      itemBuilder: (context) => [
-        for (final (v, l) in items) PopupMenuItem(value: v, child: Text(l)),
-      ],
-      child: Chip(
-        avatar: Icon(icon, size: 16),
-        shape: const StadiumBorder(),
-        label: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(label),
-            const SizedBox(width: 2),
-            Icon(Icons.expand_more_rounded, size: 16, color: muted),
-          ],
+    }) {
+      final scheme = theme.colorScheme;
+      final accent = scheme.primary;
+      return PopupMenuButton<T>(
+        key: key,
+        tooltip: tooltip,
+        onSelected: onSelected,
+        itemBuilder: (context) => [
+          for (final (v, l) in items) PopupMenuItem(value: v, child: Text(l)),
+        ],
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 48),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            color: active
+                ? accent.withValues(alpha: 0.14)
+                : scheme.surfaceContainer,
+            borderRadius: BorderRadius.circular(ValRadius.pill),
+            border: Border.all(
+              color: active
+                  ? accent.withValues(alpha: 0.7)
+                  : valColorsOf(context).hairline,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 15, color: active ? accent : muted),
+              const SizedBox(width: 5),
+              Text(
+                label,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: active
+                      ? legibleAccent(context, accent)
+                      : scheme.onSurface,
+                  fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+                ),
+              ),
+              const SizedBox(width: 3),
+              Icon(
+                Icons.expand_more_rounded,
+                size: 15,
+                color: active ? accent : muted,
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(
-          height: 52,
+          height: filterHeight,
           child: ListView(
             key: const ValueKey('lfg-filters'),
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
             children: [
               menuChip<String>(
                 key: const ValueKey('lfg-region'),
                 icon: Icons.public_rounded,
                 label: CommunityStrings.regionLabel(region),
                 tooltip: context.l10n.communityRegion,
+                active: region != myRegion,
                 items: [
                   for (final r in kCommunityRegions)
                     (r, CommunityStrings.regionLabel(r)),
@@ -406,6 +441,7 @@ class _Filters extends ConsumerWidget {
                     ? context.l10n.communityAnyRole
                     : lfgRoleLabel(filter.role!),
                 tooltip: context.l10n.communityRoles,
+                active: filter.role != null,
                 items: [
                   ('', context.l10n.communityAnyRole),
                   for (final r in kLfgRoles) (r, lfgRoleLabel(r)),
@@ -427,6 +463,7 @@ class _Filters extends ConsumerWidget {
                   filter.language ?? kLfgAnyLanguage,
                 ),
                 tooltip: context.l10n.communityLanguage,
+                active: filter.language != null,
                 items: [
                   (kLfgAnyLanguage, context.l10n.communityAnyLanguage),
                   for (final l in kLfgLanguages)
@@ -439,11 +476,11 @@ class _Filters extends ConsumerWidget {
           ),
         ),
         SizedBox(
-          height: 48,
+          height: filterHeight,
           child: ListView(
             key: const ValueKey('lfg-modes'),
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
             children: [
               CommunityChip(
                 label: context.l10n.communityAllModes,
@@ -461,13 +498,30 @@ class _Filters extends ConsumerWidget {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
+        Container(
+          margin: const EdgeInsets.fromLTRB(16, 4, 16, 6),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: region == myRegion
+                ? theme.colorScheme.surfaceContainer.withValues(alpha: 0.5)
+                : theme.colorScheme.errorContainer.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: region == myRegion
+                  ? theme.colorScheme.outlineVariant.withValues(alpha: 0.35)
+                  : theme.colorScheme.error.withValues(alpha: 0.3),
+            ),
+          ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.info_outline_rounded, size: 14, color: muted),
-              const SizedBox(width: 6),
+              Icon(
+                region == myRegion
+                    ? Icons.info_outline_rounded
+                    : Icons.warning_amber_rounded,
+                size: 14,
+                color: region == myRegion ? muted : theme.colorScheme.error,
+              ),
+              const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   region == myRegion
@@ -475,7 +529,11 @@ class _Filters extends ConsumerWidget {
                       : context.l10n.communityLfgOtherShardNote(
                           CommunityStrings.regionLabel(region),
                         ),
-                  style: theme.textTheme.bodySmall?.copyWith(color: muted),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: region == myRegion ? muted : theme.colorScheme.error,
+                    fontSize: 11,
+                    height: 1.25,
+                  ),
                 ),
               ),
             ],

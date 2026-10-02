@@ -440,10 +440,16 @@ class _Segment extends StatelessWidget {
 /// the content scrolling underneath. Only use it on fixed, small areas —
 /// never over a whole scrolling list.
 class GlassBar extends StatelessWidget {
-  const GlassBar({super.key, required this.child, this.opacity = 0.82});
+  const GlassBar({
+    super.key,
+    required this.child,
+    this.opacity = 0.90,
+    this.border,
+  });
 
   final Widget child;
   final double opacity;
+  final BoxBorder? border;
 
   @override
   Widget build(BuildContext context) {
@@ -451,8 +457,11 @@ class GlassBar extends StatelessWidget {
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: ColoredBox(
-          color: bg.withValues(alpha: opacity),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: bg.withValues(alpha: opacity),
+            border: border,
+          ),
           child: child,
         ),
       ),
@@ -479,6 +488,10 @@ class GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) => GlassBar(
+    opacity: overlapsContent ? 0.94 : 0.88,
+    border: overlapsContent
+        ? Border(bottom: BorderSide(color: valColorsOf(context).hairline))
+        : null,
     child: SizedBox(
       height: height,
       child: Align(alignment: Alignment.centerLeft, child: child),

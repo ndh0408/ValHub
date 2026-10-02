@@ -53,6 +53,7 @@ class ProfileScreen extends ConsumerWidget {
     final puuid = account.puuid;
     return TabPageScaffold(
       title: context.l10n.profileTitle,
+      showAccountChip: false,
       actions: const [SettingsGearButton()],
       onRefresh: () => _refresh(ref, account),
       slivers: [

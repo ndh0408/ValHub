@@ -57,12 +57,15 @@ void main() {
   }
 
   testWidgets(
-    'shows VanHub identity, version, documents and contact without a source card',
+    'shows ValHub identity, version, documents and contact without a source card',
     (tester) async {
       await pumpAbout(tester);
       await tester.pumpAndSettle();
 
-      expect(find.text(CommonStrings.appName), findsOneWidget);
+      expect(
+        find.text(CommonStrings.appName, findRichText: true),
+        findsOneWidget,
+      );
       expect(find.text(CommonStrings.tagline), findsOneWidget);
       expect(
         find.text(
@@ -117,7 +120,7 @@ void main() {
     expect(find.byType(LicensePage), findsOneWidget);
   });
 
-  testWidgets('feedback opens the VanHub issue page externally', (
+  testWidgets('feedback opens the ValHub issue page externally', (
     tester,
   ) async {
     await pumpAbout(tester);
