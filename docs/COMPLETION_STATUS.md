@@ -4,7 +4,7 @@ Yêu cầu của chủ dự án: hoàn thiện toàn bộ yêu cầu để Claud
 
 Giữ nhánh chính và các báo cáo bàn giao cũ để đối chiếu. Theo yêu cầu mới của chủ dự án, gộp và push nhánh mặc định GitHub để mọi người đọc code mới nhất; chưa deploy/publish store. Không thêm chatbot/LLM hay dịch vụ AI vào ứng dụng; số liệu sản phẩm phải có nguồn thật. Báo cáo `docs/CODEX_REVIEW.md` và `docs/handoffs/` ghi trạng thái trước các sửa đổi tích hợp, không dùng chúng làm tiến độ hiện tại.
 
-Đợt mới nhất: [tài nguyên dùng chung và tài khoản](I18N_SHARED_2026-10-02.md), **4.184 Flutter tests đạt**, analyzer 0 issues, 10 public-flow cases trên APK cuối code 4002 đạt; đã cài đè trên emulator có cửa sổ và kiểm tra switcher read-only. Global cutover còn **1.767 production references**, không đánh dấu xong quốc tế hóa. [Bản sửa hook 02/10](WINDOWS_HOOK_FIX_2026-10-02.md) lưu bridge ngoài thư mục tạm, 14 tests đạt. Checkpoint trước: [Cài đặt](I18N_SETTINGS_2026-10-01.md), 4.178 tests; [đăng nhập và kết nối Riot](COUNTRY_CONNECTION_2026-10-01.md), 4.176 tests; [VanHub và kiểm thử toàn tính năng](VANHUB_REVIEW_2026-10-01.md), 4.143 Flutter / 867 backend / 35 tool tests. Đối chiếu đủ 37 mục bàn giao xem [QA_2026-10-01.md](QA_2026-10-01.md); các báo cáo cũ là checkpoint, không thay nghiệm thu tổng thể.
+Đợt mới nhất: [Cộng đồng/bố cục/chia sẻ bài](COMMUNITY_FEATURES_2026-10-02.md), **4.195 Flutter tests đạt**, analyzer 0 issues, 1 Android native share integration và 10 public-flow cases trên APK cuối code 4003 đạt; bản mới đã cài trên emulator có cửa sổ. Global cutover còn **1.762 production references**, không đánh dấu xong quốc tế hóa. [Tài nguyên dùng chung](I18N_SHARED_2026-10-02.md) là checkpoint 4.184 tests; [bản sửa hook 02/10](WINDOWS_HOOK_FIX_2026-10-02.md) lưu bridge ngoài thư mục tạm, 14 tests đạt. Checkpoint trước: [Cài đặt](I18N_SETTINGS_2026-10-01.md), 4.178 tests; [đăng nhập/kết nối](COUNTRY_CONNECTION_2026-10-01.md), 4.176 tests; [VanHub và kiểm thử toàn tính năng](VANHUB_REVIEW_2026-10-01.md), 4.143 Flutter / 867 backend / 35 tool tests. Đối chiếu đủ 37 mục bàn giao xem [QA_2026-10-01.md](QA_2026-10-01.md); các báo cáo cũ là checkpoint, không thay nghiệm thu tổng thể.
 
 ## Yêu cầu trực tiếp của chủ dự án
 
@@ -13,10 +13,11 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 | Yêu cầu | Trạng thái hiện tại | Việc phải làm tiếp |
 |---|---|---|
 | Đọc việc Claude giao và làm hết yêu cầu | Đã tích hợp bốn WP, giữ report và đối chiếu đủ 37 mục | Đóng các mục I18N/COUNTRIES/DEVICES/Community còn mở phía dưới; chưa nghiệm thu tổng thể |
-| Mở emulator cho chủ dự án xem | Cửa sổ Pixel 5580 đang mở với APK code 4002; lượt 02/10 đọc hai tài khoản hiện có và đủ metadata | Không suy ra ba tài khoản của checkpoint trước còn trong trạng thái emulator mới; tiếp tục rà các luồng còn lại, QA riêng 5582 |
-| Commit, push và gộp để người khác thấy code mới nhất | UI/kết nối, Settings `a4afe4e`, hook `9850063` đã push integration và fast-forward/push nhánh mặc định; tài nguyên dùng chung tiếp sau | Tiếp tục commit các phase còn thiếu; đối chiếu `git log -1`, không coi merge là nghiệm thu toàn dự án |
+| Mở emulator cho chủ dự án xem | Cửa sổ Pixel 5580 đang mở với APK code 4003; lượt 02/10 đọc hai tài khoản hiện có và đủ metadata | Không suy ra ba tài khoản của checkpoint trước còn trong trạng thái emulator mới; tiếp tục rà các luồng còn lại, QA riêng 5582 |
+| Commit, push và gộp để người khác thấy code mới nhất | UI/kết nối, Settings `a4afe4e`, hook `9850063`, tài nguyên dùng chung `04e6288` đã push integration và fast-forward/push nhánh mặc định; Cộng đồng tiếp sau | Tiếp tục commit các phase còn thiếu; đối chiếu `git log -1`, không coi merge là nghiệm thu toàn dự án |
 | Ẩn bảng nguồn dữ liệu | Đã bỏ card Giới thiệu và có test | Đã kiểm tra About bản cài trong lượt read-only; giữ pháp lý/giấy phép cần thiết |
-| Cộng đồng rõ ràng, bộ lọc không bị cắt | Đã chuyển tab gọn và một scope selector; sheet cuộn giữ query/applied scope, test 360dp/chữ 200% | Bảng tin/sheet đã rà bản cài, sửa thanh tab che sheet; tiếp tục các màn còn lại |
+| Cộng đồng rõ ràng, bộ lọc không bị cắt | Tab gọn và một scope selector; banner ngắn, lời trống theo scope/ngôn ngữ/consent, FAB contrast đạt; test 360dp/chữ 200% | Bản code 4003 đã rà read-only; tiếp tục các màn còn lại |
+| Đăng bài, thích, bình luận, share | Luồng đăng/thích/bình luận/khoe shop đã có; thêm share từng bài ở feed/detail, native Android chooser + Back đạt | Link hiện mở bằng VanHub đã cài; HTTPS/trang web/đa thiết bị và server ghi thật chưa nghiệm thu |
 | Tài khoản chữ dễ đọc, đủ tên/vùng/rank | Đã chia dòng, wrap Riot ID/vùng và đưa nút phụ xuống dưới; lượt 02/10 Settings/switcher đọc đủ metadata hai tài khoản hiện có | Còn kiểm tra chủ động chuyển/reauth; ba tài khoản là bằng chứng checkpoint trước |
 | Trang bị cập nhật game | Đã xác nhận giá trị sau lưu và thêm refresh identity ở sảnh | Đối chiếu trực tiếp VALORANT PC đang mở; chưa có bằng chứng live |
 | Đổi tên VanHub | Tên hiển thị native/UI/pháp lý đã đổi, giữ ID và dữ liệu cập nhật | Quốc tế hóa UI đầy đủ còn thiếu |
@@ -32,14 +33,14 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 - [ ] RV-03 toàn bộ: recorder nền, RR/cache tên, cancellation, deferred links, release errors, LFG join, logout/consent và ẩn/chặn cục bộ đã nối; còn nghiệm thu rộng cùng quốc tế hóa/thiết bị.
 - [ ] RV-05 toàn bộ: privacy và Community disclosure đã đồng bộ, Markdown sinh từ Dart; vẫn cần rà lời toàn cầu khi cutover.
 - [x] I18N W1 nền công cụ: resolved extractor, ARB, manifest, parity, kiểm tra chạy lại; danh sách 52 member cần xử lý cấu trúc được giữ rõ.
-- [ ] I18N W2–W4: [Settings UI](I18N_SETTINGS_2026-10-01.md) và [widget dùng chung/tài khoản](I18N_SHARED_2026-10-02.md) đã chuyển thêm direct references; global còn **1.767 references / 52 structural members**. Chưa tách hết domain, chuyển hết call site và cutover.
+- [ ] I18N W2–W4: Settings, widget dùng chung/tài khoản và lời trống Cộng đồng đã chuyển thêm direct references; global còn **1.762 references / 52 structural members**. Chưa tách hết domain, chuyển hết call site và cutover.
 - [ ] I18N W5: UI language picker, device default/upgrade pin, contentLocale/ui_locales/status, isolate thông báo.
 - [ ] I18N W6: đủ 18 bản dịch UI, plural/select, glossary và fallback/status gates.
 - [ ] I18N W7: RTL toàn ứng dụng, font CJK, pseudo locale và stale-string tests.
 - [ ] COUNTRIES P0–P3 toàn bộ: 250 mã, tên 18 locale, auto/manual/fail closed, chọn quốc gia/giá VP/picker chung đã nối. [Đợt kết nối](COUNTRY_CONNECTION_2026-10-01.md) thêm refresh 7 ngày, mismatch/ack, login geo outage, GET XP validation/retry và root sheet; còn onboarding, provenance/trạng thái đầy đủ, remote geo và nối quốc tế hóa.
 - [ ] DEVICES/A11y toàn bộ: breakpoints/rail/hinge/safe area, header theo text scale, nút đỏ đậm/chữ trắng và reduced video motion đã sửa; còn list/detail và semantic/RTL toàn màn hình.
 - [ ] Notifications toàn bộ: Rank/Battle Pass dùng dữ liệu thật, kênh LFG cục bộ và category switches đã nối; lịch tối đa 60, migration 7→5 ngày; còn nguồn badge/activity Community và nghiệm thu native.
-- [ ] External links/sharing toàn bộ: custom scheme/cold/warm start/defer login/account switching đã nối; HTTPS App/Universal Links và domain association còn thiếu.
+- [ ] External links/sharing toàn bộ: custom scheme/cold/warm start/defer login/account switching đã nối; share bài feed/detail đã thêm và native Android đạt. HTTPS App/Universal Links, domain association và trang người chưa cài còn thiếu.
 - [ ] Server toàn bộ: native decoder, atomic idempotency, watchdog và quota counters đã làm; còn review moderation 18 ngôn ngữ/CPU text filter và các mục audit khác chưa đóng.
 - [ ] Native privacy toàn bộ: iOS local-only clipboard/expiration và che snapshot đã viết; iOS backup policy/build và native QA còn thiếu.
 - [x] Checkpoint hiện tại: Flutter analyze 0, toàn bộ Flutter tests xanh; server tests/typecheck/build xanh; ARB/tool checks xanh.

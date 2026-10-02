@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart' show Size;
+import 'package:material_ui/material_ui.dart'
+    show Size, Colors, FloatingActionButton;
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/theme/app_theme.dart';
@@ -101,6 +102,20 @@ void main() {
       expect(find.text(CommunityStrings.writePost), findsNothing);
       // The FAB is the only call to action.
       expect(find.text(CommunityStrings.newPost), findsOneWidget);
+      await unmount(tester);
+    });
+
+    testWidgets('post action white label has accessible contrast', (
+      tester,
+    ) async {
+      env.server.json('GET /v1/posts', page([]));
+      await _open(tester, env);
+      final button = tester.widget<FloatingActionButton>(
+        find.byType(FloatingActionButton),
+      );
+      final lighter = Colors.white.computeLuminance();
+      final darker = button.backgroundColor!.computeLuminance();
+      expect((lighter + 0.05) / (darker + 0.05), greaterThanOrEqualTo(4.5));
       await unmount(tester);
     });
 

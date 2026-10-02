@@ -266,6 +266,43 @@ void main() {
       await settle(tester);
       expect(_lastQuery(env, 'GET /v1/posts')['scope'], 'global');
       expect(find.byKey(const ValueKey('feed-empty-global')), findsNothing);
+      expect(find.text(CommunityStrings.feedEmptyTitle), findsOneWidget);
+      expect(find.text(CommunityStrings.feedEmptyBody), findsOneWidget);
+      expect(find.text(CommunityStrings.feedEmptyScopeBody), findsNothing);
+      await unmount(tester);
+    });
+
+    testWidgets('global language filter empty points to the filter', (
+      tester,
+    ) async {
+      await env.prefs.setString(PrefKeys.ui('community.feed.scope'), 'global');
+      await env.prefs.setString(PrefKeys.ui('community.feed.languages'), 'en');
+      env.server.json('GET /v1/posts', page([]));
+      await _open(tester, env);
+      expect(_lastQuery(env, 'GET /v1/posts')['language'], 'en');
+      expect(find.text(CommunityStrings.feedEmptyFilteredBody), findsOneWidget);
+      expect(find.text(CommunityStrings.feedEmptyBody), findsNothing);
+      expect(find.byKey(const ValueKey('feed-empty-global')), findsNothing);
+      await unmount(tester);
+    });
+
+    testWidgets('empty advice follows global scope applied by the server', (
+      tester,
+    ) async {
+      await env.prefs.setString(PrefKeys.ui('community.feed.scope'), 'country');
+      await env.prefs.setString(PrefKeys.ui('community.feed.languages'), 'en');
+      env.server.json(
+        'GET /v1/posts',
+        page([])..['appliedScope'] = {'scope': 'global'},
+      );
+      await _open(tester, env);
+      expect(_lastQuery(env, 'GET /v1/posts')['scope'], 'country');
+      expect(_lastQuery(env, 'GET /v1/posts')['language'], isNull);
+      expect(find.text(CommunityStrings.feedEmptyBody), findsOneWidget);
+      expect(find.text(CommunityStrings.feedEmptyFilteredBody), findsNothing);
+      expect(find.text(CommunityStrings.feedEmptyTitle), findsOneWidget);
+      expect(find.text(CommunityStrings.feedEmptyScopeBody), findsNothing);
+      expect(find.byKey(const ValueKey('feed-empty-global')), findsNothing);
       await unmount(tester);
     });
   });

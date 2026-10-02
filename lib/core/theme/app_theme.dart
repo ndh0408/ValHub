@@ -7,6 +7,7 @@ import 'package:material_ui/material_ui.dart';
 abstract final class ValColors {
   /// Valorant red (primary accent) — token `red`.
   static const red = Color(0xFFFF4655);
+  static const actionRed = Color(0xFFD42A38);
 
   /// Screen background — token `bg`. True black (OLED, ValBuddy-style);
   /// the historical name is kept for compatibility.
@@ -459,7 +460,7 @@ ThemeData _build({
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: const Color(0xFFD42A38),
+        backgroundColor: ValColors.actionRed,
         foregroundColor: Colors.white,
         minimumSize: const Size(64, 48),
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -632,7 +633,7 @@ ThemeData buildLightTheme() {
         seedColor: ValColors.red,
         brightness: Brightness.light,
       ).copyWith(
-        primary: const Color(0xFFD42A38),
+        primary: ValColors.actionRed,
         onPrimary: Colors.white,
         secondary: const Color(0xFF06785F),
         surface: ValColors.lightBackground,

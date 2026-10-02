@@ -3511,7 +3511,7 @@
     "description": "CommunityStrings.allWeapons — skin votes",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityAnonymousBanner": "Bạn đang xem ẩn danh — tham gia để đăng bài, bình chọn và tìm đồng đội.",
+  "communityAnonymousBanner": "Đang xem ẩn danh",
   "@communityAnonymousBanner": {
     "description": "CommunityStrings.anonymousBanner — consent",
     "x-context": "lib/features/community/community_strings.dart"
@@ -3682,7 +3682,7 @@
     "description": "CommunityStrings.consentAgree — consent",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityConsentGateAction": "Xem lại và tham gia",
+  "communityConsentGateAction": "Tham gia",
   "@communityConsentGateAction": {
     "description": "CommunityStrings.consentGateAction — consent",
     "x-context": "lib/features/community/community_strings.dart"
@@ -4522,7 +4522,17 @@
     "description": "CommunityStrings.feedEmptyBody — feed",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityFeedEmptyScopeBody": "Đăng bài đầu tiên hoặc chọn Khu vực hay Quốc tế để xem thêm.",
+  "communityFeedEmptyFilteredBody": "Không có bài phù hợp. Thử đổi ngôn ngữ hoặc bỏ bộ lọc.",
+  "@communityFeedEmptyFilteredBody": {
+    "description": "CommunityStrings.feedEmptyFilteredBody — scopes (v3)",
+    "x-context": "lib/features/community/community_strings.dart"
+  },
+  "communityFeedEmptyGuestBody": "Chưa có bài mới. Quay lại sau hoặc tham gia để chia sẻ.",
+  "@communityFeedEmptyGuestBody": {
+    "description": "CommunityStrings.feedEmptyGuestBody — scopes (v3)",
+    "x-context": "lib/features/community/community_strings.dart"
+  },
+  "communityFeedEmptyScopeBody": "Thử xem bài từ cộng đồng quốc tế hoặc đổi bộ lọc.",
   "@communityFeedEmptyScopeBody": {
     "description": "CommunityStrings.feedEmptyScopeBody — scopes (v3)",
     "x-context": "lib/features/community/community_strings.dart"
@@ -5514,6 +5524,16 @@
   "communityShareNightMarketHint": "Khoe Chợ Đêm của bạn với mọi người",
   "@communityShareNightMarketHint": {
     "description": "CommunityStrings.shareNightMarketHint — share",
+    "x-context": "lib/features/community/community_strings.dart"
+  },
+  "communitySharePostTitle": "Bài viết của {name} trên VanHub",
+  "@communitySharePostTitle": {
+    "description": "CommunityStrings.sharePostTitle — share",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    },
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communityShareStore": "Khoe lên Cộng đồng",

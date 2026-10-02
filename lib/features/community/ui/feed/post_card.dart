@@ -9,6 +9,7 @@ import '../widgets/community_widgets.dart';
 import '../widgets/translatable_text.dart';
 import 'media_grid.dart';
 import 'offers_grid.dart';
+import 'post_share_button.dart';
 import 'report_sheet.dart';
 
 /// A feed post: author row, text, store / Night Market skins, images and
@@ -103,7 +104,8 @@ class PostCard extends StatelessWidget {
             ),
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
-            child: Row(
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 HeartButton(
                   active: post.liked,
@@ -144,6 +146,7 @@ class PostCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                PostShareButton(post: post),
               ],
             ),
           ),

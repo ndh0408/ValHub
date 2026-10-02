@@ -2058,8 +2058,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityAllWeapons => 'Tất cả vũ khí';
 
   @override
-  String get communityAnonymousBanner =>
-      'Bạn đang xem ẩn danh — tham gia để đăng bài, bình chọn và tìm đồng đội.';
+  String get communityAnonymousBanner => 'Đang xem ẩn danh';
 
   @override
   String get communityAnyLanguage => 'Mọi ngôn ngữ';
@@ -2155,7 +2154,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityConsentAgree => 'Đồng ý và tiếp tục';
 
   @override
-  String get communityConsentGateAction => 'Xem lại và tham gia';
+  String get communityConsentGateAction => 'Tham gia';
 
   @override
   String get communityConsentGuidelines => 'Tiêu chuẩn cộng đồng';
@@ -2665,8 +2664,16 @@ class AppLocalizationsVi extends AppLocalizations {
       'Hãy là người đầu tiên chia sẻ cửa hàng, Chợ Đêm hay khoảnh khắc của bạn!';
 
   @override
+  String get communityFeedEmptyFilteredBody =>
+      'Không có bài phù hợp. Thử đổi ngôn ngữ hoặc bỏ bộ lọc.';
+
+  @override
+  String get communityFeedEmptyGuestBody =>
+      'Chưa có bài mới. Quay lại sau hoặc tham gia để chia sẻ.';
+
+  @override
   String get communityFeedEmptyScopeBody =>
-      'Đăng bài đầu tiên hoặc chọn Khu vực hay Quốc tế để xem thêm.';
+      'Thử xem bài từ cộng đồng quốc tế hoặc đổi bộ lọc.';
 
   @override
   String get communityFeedEmptyScopeTitle => 'Chưa có bài trong phạm vi này';
@@ -3241,6 +3248,11 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get communityShareNightMarketHint =>
       'Khoe Chợ Đêm của bạn với mọi người';
+
+  @override
+  String communitySharePostTitle(String name) {
+    return 'Bài viết của $name trên VanHub';
+  }
 
   @override
   String get communityShareStore => 'Khoe lên Cộng đồng';

@@ -232,6 +232,7 @@ abstract final class CommunityStrings {
   static const communityVotes = 'Cộng đồng yêu thích';
 
   // ---------------------------------------------------------------- share
+  static String sharePostTitle(String name) => 'Bài viết của $name trên VanHub';
   static const shareStore = 'Khoe lên Cộng đồng';
   static const shareStoreHint = 'Khoe cửa hàng hôm nay với mọi người';
   static const shareNightMarketHint = 'Khoe Chợ Đêm của bạn với mọi người';
@@ -374,7 +375,11 @@ abstract final class CommunityStrings {
   static const apply = 'Áp dụng';
   static const feedEmptyScopeTitle = 'Chưa có bài trong phạm vi này';
   static const feedEmptyScopeBody =
-      'Đăng bài đầu tiên hoặc chọn Khu vực hay Quốc tế để xem thêm.';
+      'Thử xem bài từ cộng đồng quốc tế hoặc đổi bộ lọc.';
+  static const feedEmptyGuestBody =
+      'Chưa có bài mới. Quay lại sau hoặc tham gia để chia sẻ.';
+  static const feedEmptyFilteredBody =
+      'Không có bài phù hợp. Thử đổi ngôn ngữ hoặc bỏ bộ lọc.';
   static const lfgSameShardNote = 'Chỉ người cùng máy chủ mới vào tổ đội được.';
   static String lfgOtherShardNote(String region) =>
       'Bạn đang xem máy chủ $region — chỉ người cùng máy chủ với tài khoản của bạn mới vào tổ đội được.';
@@ -581,9 +586,8 @@ abstract final class CommunityStrings {
   static const consentGuidelines = 'Tiêu chuẩn cộng đồng';
   static const consentAgree = 'Đồng ý và tiếp tục';
   static const consentLater = 'Để sau';
-  static const consentGateAction = 'Xem lại và tham gia';
-  static const anonymousBanner =
-      'Bạn đang xem ẩn danh — tham gia để đăng bài, bình chọn và tìm đồng đội.';
+  static const consentGateAction = 'Tham gia';
+  static const anonymousBanner = 'Đang xem ẩn danh';
   static const lfgGateTitle = 'Tìm đồng đội dành cho thành viên';
   static const lfgGateBody =
       'Tham gia (xác minh Riot ID một lần) để xem tin của người chơi cùng máy '

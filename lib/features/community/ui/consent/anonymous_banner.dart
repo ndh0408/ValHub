@@ -3,13 +3,12 @@ import 'dart:async';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account.dart';
+import '../../../../core/l10n/l10n.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../community_strings.dart';
 import 'consent_sheet.dart';
 
-/// "Bạn đang xem ẩn danh — tham gia để đăng bài, vote và tìm đồng đội"
-/// with the "Xem lại và tham gia" button. Shown while the account has not
-/// joined; browsing keeps working (public reads need no session).
+/// Compact browsing status with an explicit join action. The consent sheet
+/// explains data sharing before the account joins; public reads stay available.
 class AnonymousBanner extends StatelessWidget {
   const AnonymousBanner({super.key, required this.account});
 
@@ -21,16 +20,15 @@ class AnonymousBanner extends StatelessWidget {
     return Container(
       key: const ValueKey('anonymous-banner'),
       margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: ValColors.red.withValues(alpha: 0.10),
+        color: theme.colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(ValRadius.card),
-        border: Border.all(color: ValColors.red.withValues(alpha: 0.28)),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final message = Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(
@@ -38,26 +36,49 @@ class AnonymousBanner extends StatelessWidget {
                 size: 20,
                 color: theme.colorScheme.onSurfaceVariant,
               ),
-              const SizedBox(width: 10),
-              const Expanded(child: Text(CommunityStrings.anonymousBanner)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  context.l10n.communityAnonymousBanner,
+                  style: theme.textTheme.bodySmall,
+                ),
+              ),
             ],
-          ),
-          const SizedBox(height: 10),
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: FilledButton(
-              key: const ValueKey('consent-gate-action'),
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(0, 40),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-              ),
-              onPressed: () => unawaited(
-                ensureCommunityConsent(context, account, askAgain: true),
-              ),
-              child: const Text(CommunityStrings.consentGateAction),
+          );
+          final action = OutlinedButton(
+            key: const ValueKey('consent-gate-action'),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size(0, 48),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
             ),
-          ),
-        ],
+            onPressed: () => unawaited(
+              ensureCommunityConsent(context, account, askAgain: true),
+            ),
+            child: Text(context.l10n.communityConsentGateAction),
+          );
+          final inline =
+              constraints.maxWidth >= 260 &&
+              MediaQuery.textScalerOf(context).scale(14) <= 20;
+          return inline
+              ? Row(
+                  children: [
+                    Expanded(child: message),
+                    const SizedBox(width: 12),
+                    action,
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    message,
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: action,
+                    ),
+                  ],
+                );
+        },
       ),
     );
   }

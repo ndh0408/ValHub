@@ -158,7 +158,6 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
             puuid: account.puuid,
           ),
         },
-        if (!joined) const SliverToBoxAdapter(child: _PrivacyNote()),
         const SliverToBoxAdapter(child: SizedBox(height: 96)),
       ],
     );
@@ -189,7 +188,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
     if (label == null || icon == null || onPressed == null) return null;
     return FloatingActionButton.extended(
       heroTag: 'community-fab',
-      backgroundColor: ValColors.red,
+      backgroundColor: ValColors.actionRed,
       foregroundColor: Colors.white,
       onPressed: onPressed,
       icon: Icon(icon),
@@ -226,33 +225,6 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
     } on Object {
       // Rendered by the section.
     }
-  }
-}
-
-/// How the Riot ID is verified (the only data that leaves the device).
-class _PrivacyNote extends StatelessWidget {
-  const _PrivacyNote();
-
-  @override
-  Widget build(BuildContext context) {
-    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.lock_outline_rounded, size: 14, color: muted),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              CommunityStrings.privacyNote,
-              style: Theme.of(context).textTheme.bodySmall
-                  ?.copyWith(color: muted),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 

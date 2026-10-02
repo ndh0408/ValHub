@@ -4,11 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../core/l10n/l10n.dart';
 import '../../community_routes.dart';
 import '../../community_strings.dart';
 import '../../data/community_api.dart';
 import '../../data/community_models.dart';
 import '../../providers/community_providers.dart';
+import '../../providers/consent_providers.dart';
 import '../../providers/feed_providers.dart';
 import '../../providers/hidden_authors.dart';
 import '../../providers/scope_providers.dart';
@@ -88,6 +90,16 @@ class FeedSliver extends ConsumerWidget {
         .toList();
     final staleError = async.hasError && !async.isLoading ? async.error : null;
     if (items.isEmpty) {
+      final isGlobal =
+          (state.applied?.scope ?? scope?.scope) == CommunityScope.global;
+      final joined =
+          ref.watch(communityConsentProvider(puuid)) ==
+          CommunityConsent.granted;
+      final hasLanguageFilter =
+          isGlobal &&
+          scope?.scope == CommunityScope.global &&
+          (scope?.languages.isNotEmpty ?? false);
+      final l10n = context.l10n;
       return SliverToBoxAdapter(
         child: Column(
           children: [
@@ -99,11 +111,17 @@ class FeedSliver extends ConsumerWidget {
               ),
             CommunityEmptyState(
               icon: Icons.forum_outlined,
-              title: CommunityStrings.feedEmptyScopeTitle,
-              message: CommunityStrings.feedEmptyScopeBody,
-              action:
-                  (state.applied?.scope ?? scope?.scope) ==
-                      CommunityScope.global
+              title: isGlobal
+                  ? l10n.communityFeedEmptyTitle
+                  : l10n.communityFeedEmptyScopeTitle,
+              message: hasLanguageFilter
+                  ? l10n.communityFeedEmptyFilteredBody
+                  : !isGlobal
+                  ? l10n.communityFeedEmptyScopeBody
+                  : joined
+                  ? l10n.communityFeedEmptyBody
+                  : l10n.communityFeedEmptyGuestBody,
+              action: isGlobal
                   ? null
                   : OutlinedButton.icon(
                       key: const ValueKey('feed-empty-global'),

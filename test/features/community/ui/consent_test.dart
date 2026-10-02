@@ -285,6 +285,26 @@ void main() {
   );
 
   group('browsing without joining', () {
+    testWidgets('empty global feed stays anonymous with a compact join hint', (
+      tester,
+    ) async {
+      env.server.json('GET /v1/posts', page([]));
+      await _openTab(tester, env);
+      expect(find.text(CommunityStrings.feedEmptyTitle), findsOneWidget);
+      expect(find.text(CommunityStrings.feedEmptyGuestBody), findsOneWidget);
+      expect(find.text(CommunityStrings.feedEmptyBody), findsNothing);
+      expect(find.text(CommunityStrings.feedEmptyScopeBody), findsNothing);
+      expect(find.text(CommunityStrings.privacyNote), findsNothing);
+      expect(
+        tester.getSize(find.byKey(const ValueKey('anonymous-banner'))).height,
+        lessThanOrEqualTo(90),
+        reason:
+            'Banner ${tester.getSize(find.byKey(const ValueKey("anonymous-banner")))}; scaler ${MediaQuery.textScalerOf(tester.element(find.byKey(const ValueKey("anonymous-banner")))).scale(14)}',
+      );
+      _expectAnonymous(env);
+      await unmount(tester);
+    });
+
     testWidgets('the tab opens on the feed, anonymously, with the banner', (
       tester,
     ) async {

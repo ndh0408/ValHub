@@ -3625,7 +3625,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.anonymousBanner — consent
   ///
   /// In vi, this message translates to:
-  /// **'Bạn đang xem ẩn danh — tham gia để đăng bài, bình chọn và tìm đồng đội.'**
+  /// **'Đang xem ẩn danh'**
   String get communityAnonymousBanner;
 
   /// CommunityStrings.anyLanguage — LFG v2
@@ -3787,7 +3787,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.consentGateAction — consent
   ///
   /// In vi, this message translates to:
-  /// **'Xem lại và tham gia'**
+  /// **'Tham gia'**
   String get communityConsentGateAction;
 
   /// CommunityStrings.consentGuidelines — consent
@@ -4774,10 +4774,22 @@ abstract class AppLocalizations {
   /// **'Hãy là người đầu tiên chia sẻ cửa hàng, Chợ Đêm hay khoảnh khắc của bạn!'**
   String get communityFeedEmptyBody;
 
+  /// CommunityStrings.feedEmptyFilteredBody — scopes (v3)
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có bài phù hợp. Thử đổi ngôn ngữ hoặc bỏ bộ lọc.'**
+  String get communityFeedEmptyFilteredBody;
+
+  /// CommunityStrings.feedEmptyGuestBody — scopes (v3)
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có bài mới. Quay lại sau hoặc tham gia để chia sẻ.'**
+  String get communityFeedEmptyGuestBody;
+
   /// CommunityStrings.feedEmptyScopeBody — scopes (v3)
   ///
   /// In vi, this message translates to:
-  /// **'Đăng bài đầu tiên hoặc chọn Khu vực hay Quốc tế để xem thêm.'**
+  /// **'Thử xem bài từ cộng đồng quốc tế hoặc đổi bộ lọc.'**
   String get communityFeedEmptyScopeBody;
 
   /// CommunityStrings.feedEmptyScopeTitle — scopes (v3)
@@ -5781,6 +5793,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Khoe Chợ Đêm của bạn với mọi người'**
   String get communityShareNightMarketHint;
+
+  /// CommunityStrings.sharePostTitle — share
+  ///
+  /// In vi, this message translates to:
+  /// **'Bài viết của {name} trên VanHub'**
+  String communitySharePostTitle(String name);
 
   /// CommunityStrings.shareStore — share
   ///

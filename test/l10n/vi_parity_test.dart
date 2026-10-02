@@ -5770,6 +5770,18 @@ void main() {
   test('communityFeedEmptyBody', () {
     expect(l10n.communityFeedEmptyBody, CommunityStrings.feedEmptyBody);
   });
+  test('communityFeedEmptyFilteredBody', () {
+    expect(
+      l10n.communityFeedEmptyFilteredBody,
+      CommunityStrings.feedEmptyFilteredBody,
+    );
+  });
+  test('communityFeedEmptyGuestBody', () {
+    expect(
+      l10n.communityFeedEmptyGuestBody,
+      CommunityStrings.feedEmptyGuestBody,
+    );
+  });
   test('communityFeedEmptyScopeBody', () {
     expect(
       l10n.communityFeedEmptyScopeBody,
@@ -6736,6 +6748,20 @@ void main() {
     expect(
       l10n.communityShareNightMarketHint,
       CommunityStrings.shareNightMarketHint,
+    );
+  });
+  test('communitySharePostTitle', () {
+    expect(
+      l10n.communitySharePostTitle(''),
+      CommunityStrings.sharePostTitle(''),
+    );
+    expect(
+      l10n.communitySharePostTitle('Nguyễn Văn A'),
+      CommunityStrings.sharePostTitle('Nguyễn Văn A'),
+    );
+    expect(
+      l10n.communitySharePostTitle('{value}\n!'),
+      CommunityStrings.sharePostTitle('{value}\n!'),
     );
   });
   test('communityShareStore', () {
