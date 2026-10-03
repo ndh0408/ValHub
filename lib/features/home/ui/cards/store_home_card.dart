@@ -3,6 +3,8 @@
 /// A core card: it shows a skeleton while loading.
 library;
 
+import 'package:valvn/core/l10n/labels/view_labels.dart';
+
 import 'package:valvn/core/l10n/labels/content_labels.dart';
 
 import 'dart:async';
@@ -28,7 +30,6 @@ import '../../../store/store_routes.dart';
 import '../../../store/ui/store_screen.dart' show StoreSegment;
 import '../../data/home_card.dart';
 import '../../data/home_store.dart';
-import '../../home_strings.dart';
 import '../../providers/home_card_providers.dart';
 import '../home_card_frame.dart';
 
@@ -391,7 +392,7 @@ class HomeSkinTile extends ConsumerWidget {
     );
     return Semantics(
       button: true,
-      label: HomeStrings.skinTileSemantics(
+      label: context.l10n.homeOfferLabel(
         name,
         priceText,
         tier.name ?? '',

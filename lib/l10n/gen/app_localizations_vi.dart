@@ -1522,6 +1522,11 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String collectionSlotCaption(String position) {
+    return 'Ô $position';
+  }
+
+  @override
   String get collectionApplyPreset => 'Áp dụng';
 
   @override
@@ -3521,6 +3526,15 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityYourReview => 'Đánh giá của bạn';
 
   @override
+  String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
+    String _temp0 = intl.Intl.selectLogic(hasAcs, {
+      'yes': ' · ACS $acs',
+      'other': '',
+    });
+    return 'Bạn: $kda$_temp0';
+  }
+
+  @override
   String get liveGameAcs => 'ACS';
 
   @override
@@ -5094,6 +5108,20 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsWelcomeKicker => 'TRỢ THỦ VALORANT';
 
   @override
+  String skinDetailCommunitySummary(
+    String hasAverage,
+    String average,
+    String count,
+    String votes,
+  ) {
+    String _temp0 = intl.Intl.selectLogic(hasAverage, {
+      'yes': '★ $average ($count đánh giá) · ',
+      'other': '',
+    });
+    return 'Cộng đồng: $_temp0$votes lượt thích';
+  }
+
+  @override
   String get skinDetailAddToWishlist => 'Thêm vào wishlist';
 
   @override
@@ -5994,6 +6022,15 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String wishlistItemAccessibility(String name, String price, String wished) {
+    String _temp0 = intl.Intl.selectLogic(wished, {
+      'yes': ', đã có trong wishlist',
+      'other': '',
+    });
+    return '$name, $price$_temp0';
+  }
+
+  @override
   String get wishlistAddSkins => 'Thêm skin';
 
   @override
@@ -6188,6 +6225,60 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeLiveScoreSeparator => 'VS';
+
+  @override
+  String homeOfferAccessibility(
+    String name,
+    String price,
+    String tier,
+    String wished,
+  ) {
+    String _temp0 = intl.Intl.selectLogic(wished, {
+      'yes': ', trong wishlist',
+      'other': '',
+    });
+    return '$name, $price, $tier$_temp0';
+  }
+
+  @override
+  String homeTrendingAccessibility(String name, String votes, String wished) {
+    String _temp0 = intl.Intl.selectLogic(wished, {
+      'yes': ', trong wishlist',
+      'other': '',
+    });
+    return '$name, $votes$_temp0';
+  }
+
+  @override
+  String homeTodayRankAccessibility(
+    String direction,
+    int rr,
+    int wins,
+    int losses,
+  ) {
+    String _temp0 = intl.Intl.selectLogic(direction, {
+      'gain': 'tăng',
+      'other': 'giảm',
+    });
+    return 'Hôm nay $_temp0 $rr RR, $wins thắng, $losses thua';
+  }
+
+  @override
+  String homeResultSummary(int wins, int losses, int draws, int unknown) {
+    String _temp0 = intl.Intl.pluralLogic(
+      draws,
+      locale: localeName,
+      other: ', $draws hòa',
+      zero: '',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      unknown,
+      locale: localeName,
+      other: ', $unknown trận chưa rõ kết quả',
+      zero: '',
+    );
+    return '$wins thắng – $losses thua$_temp0$_temp1';
+  }
 
   @override
   String get homeAllHiddenBody => 'Mở Tùy chỉnh Trang chủ để hiện lại.';

@@ -14,7 +14,6 @@ import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
-import 'widgets/rank_card.dart' show formatRr;
 
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -240,7 +239,7 @@ class _CurrentRankCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  formatRr(rank.rr),
+                  context.fmt.rr(rank.rr),
                   style: theme.textTheme.bodyMedium?.copyWith(color: muted),
                 ),
                 if (showBar) ...[

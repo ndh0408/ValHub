@@ -1,6 +1,7 @@
 # Build & phát hành ValHub
 
-Trạng thái kiểm chứng mới nhất: [Ngày/giờ / giá / CI local, build 4015](I18N_FORMAT_CUTOVER_2026-10-03.md).
+Trạng thái kiểm chứng mới nhất: [Nhãn có điều kiện / CI local, build 4016](I18N_CONDITIONAL_VIEWS_2026-10-03.md).
+Checkpoint nhãn hiển thị: [Ngày/giờ / giá / CI local, build 4015](I18N_FORMAT_CUTOVER_2026-10-03.md).
 Checkpoint nhãn hiển thị: [Nhãn hiển thị / CI local, build 4014](I18N_VIEW_CUTOVER_2026-10-03.md).
 Checkpoint nội dung: [Nội dung / locale / RR loading / CI local, build 4013](I18N_CONTENT_CUTOVER_2026-10-03.md).
 Checkpoint Community: [Build 4012](COMMUNITY_ACCOUNT_ISOLATION_2026-10-03.md).

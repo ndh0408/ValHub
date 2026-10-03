@@ -10,7 +10,6 @@ import '../../../core/util/clock.dart';
 import '../../../core/xmpp/xmpp.dart';
 import '../data/live_game_logic.dart';
 import '../data/live_game_models.dart';
-import '../live_game_strings.dart';
 import '../providers/live_game_providers.dart';
 import 'live_widgets.dart';
 
@@ -114,7 +113,7 @@ class LiveMapBanner extends StatelessWidget {
     final name = (mapName ?? context.l10n.liveGameSheetTitle).toUpperCase();
     return Semantics(
       container: true,
-      label: LiveGameStrings.joinParts([
+      label: context.fmt.nonEmptyFacts([
         name,
         mode,
         status.label(context.l10n),

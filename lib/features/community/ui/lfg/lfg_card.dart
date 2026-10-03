@@ -10,7 +10,6 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
-import '../../community_strings.dart';
 import '../../data/community_models.dart';
 import '../../data/lfg_sync.dart';
 import '../feed/report_sheet.dart';
@@ -66,7 +65,9 @@ class LfgCard extends ConsumerWidget {
         expiresAt != null &&
         expiresAt.difference(now) < const Duration(minutes: 5);
     final partySize = live?.size ?? post.currentPartySize;
-    final langTag = CommunityStrings.languageTag(post.language);
+    final langTag = kLfgLanguages.contains(post.language)
+        ? post.language.toUpperCase()
+        : '';
 
     final card = ValCard(
       padding: const EdgeInsets.fromLTRB(16, 14, 8, 16),
@@ -88,7 +89,7 @@ class LfgCard extends ConsumerWidget {
             author: post.author,
             isMe: isMine,
             avatarSize: 44,
-            subtitle: CommunityStrings.dotJoin([
+            subtitle: context.fmt.inlineFacts([
               context.l10n.communityRegionName(post.region),
               context.l10n.communityLanguageName(post.language),
             ]),
@@ -315,7 +316,7 @@ class _MineActions extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          CommunityStrings.dotJoin([
+          context.fmt.inlineFacts([
             context.l10n.communityPartyCodeValue(post.partyCode),
             context.l10n.communityJoinsCount(formatNumber(post.joins)),
           ]),

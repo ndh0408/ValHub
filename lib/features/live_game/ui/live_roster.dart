@@ -15,7 +15,6 @@ import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../data/live_game_logic.dart';
 import '../data/live_game_models.dart';
-import '../live_game_strings.dart';
 import '../player_loadout_sheet.dart';
 import '../providers/live_game_providers.dart';
 import 'live_widgets.dart';
@@ -30,7 +29,7 @@ class LiveRosterList extends ConsumerWidget {
     required this.match,
     required this.players,
     this.header,
-    this.emptyMessage = LiveGameStrings.emptyTeam,
+    this.emptyMessage,
   });
 
   /// Signed-in account.
@@ -38,7 +37,7 @@ class LiveRosterList extends ConsumerWidget {
   final LiveMatch match;
   final List<LivePlayer> players;
   final Widget? header;
-  final String emptyMessage;
+  final String? emptyMessage;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -68,7 +67,10 @@ class LiveRosterList extends ConsumerWidget {
         children: [
           ?header,
           if (players.isEmpty)
-            EmptyView(message: emptyMessage, icon: Icons.group_outlined)
+            EmptyView(
+              message: emptyMessage ?? context.l10n.liveGameEmptyTeam,
+              icon: Icons.group_outlined,
+            )
           else
             for (var i = 0; i < players.length; i++) ...[
               if (i > 0)
@@ -147,7 +149,7 @@ class LivePlayerRow extends ConsumerWidget {
       isPartyMember: isPartyMember,
     );
     final agentLabel = agent?.displayName ?? context.l10n.liveGameNoAgentYet;
-    final subtitle = LiveGameStrings.joinParts([
+    final subtitle = context.fmt.nonEmptyFacts([
       if (level != null) context.l10n.liveGameLevel(level),
       agentLabel,
     ]);

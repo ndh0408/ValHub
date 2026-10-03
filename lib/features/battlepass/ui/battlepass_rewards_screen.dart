@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/view_labels.dart';
+
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -18,7 +20,6 @@ import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../../skin_detail/skin_detail_sheet.dart';
-import '../battlepass_strings.dart';
 import '../data/battlepass_models.dart';
 import '../providers/battlepass_providers.dart';
 import 'widgets/bp_ui_bits.dart';
@@ -381,7 +382,7 @@ class _SummaryCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    BattlePassStrings.levelSummary(
+                    context.l10n.battlePassSummary(
                       formatNumber(pass.level),
                       formatNumber(pass.levelCount),
                       formatNumber(pass.unlockedLevels),

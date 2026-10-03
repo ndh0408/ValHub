@@ -4,6 +4,8 @@
 /// join a party; joining lives in the Community tab behind a confirmation.
 library;
 
+import 'package:valvn/core/l10n/labels/view_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,13 +23,11 @@ import '../../../../core/ui/rank_badge.dart';
 import '../../../../core/util/clock.dart';
 import '../../../community/community_routes.dart';
 import '../../../community/providers/hidden_authors.dart';
-import '../../../community/community_strings.dart';
 import '../../../community/data/community_models.dart';
 import '../../../community/ui/community_screen.dart' show CommunitySection;
 import '../../../community/ui/lfg/lfg_bits.dart' show RankRangeBadge;
 import '../../../skin_detail/skin_detail_sheet.dart';
 import '../../data/home_card.dart';
-import '../../home_strings.dart';
 import '../../providers/home_card_providers.dart';
 import '../home_card_frame.dart';
 
@@ -134,7 +134,7 @@ class _LfgRow extends ConsumerWidget {
     final left = post.expiresAt?.difference(now);
     final author = post.author.riotId ?? context.l10n.communityUnknownPlayer;
     final details = [
-      CommunityStrings.modeLabel(post.mode),
+      context.l10n.communityModeName(post.mode ?? ''),
       context.l10n.homeLfgNeeds(post.slots),
       if (left != null && !left.isNegative)
         context.l10n.homeLfgExpiresIn(context.fmt.durationCoarse(left)),
@@ -269,7 +269,7 @@ class _TrendingTile extends StatelessWidget {
     final votes = context.l10n.homeTrendingVotes(skin.vote.votes);
     return Semantics(
       button: true,
-      label: HomeStrings.trendingSkinSemantics(name, votes, wished),
+      label: context.l10n.homeTrendingLabel(name, votes, wished),
       excludeSemantics: true,
       child: Material(
         color: tint.withValues(alpha: 0.14),

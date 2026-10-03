@@ -11,7 +11,6 @@ import '../../../../core/ui/skeleton.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../data/rr_trend.dart';
-import '../../profile_strings.dart';
 import 'profile_widgets.dart';
 import 'rr_trend_chart.dart';
 
@@ -107,7 +106,7 @@ class _RankCardBody extends ConsumerWidget {
                           ? current.placementText
                           : current.isUnranked
                           ? null
-                          : formatRr(current.rr),
+                          : context.fmt.rr(current.rr),
                       progress: rankProgress(current)?.fraction,
                     ),
                   ),
@@ -128,7 +127,7 @@ class _RankCardBody extends ConsumerWidget {
                             rank: peak.rank,
                             detail: peak.truePeakRr == null
                                 ? null
-                                : formatRr(peak.truePeakRr!),
+                                : context.fmt.rr(peak.truePeakRr!),
                             caption: peak.truePeakFromLocalHistory
                                 ? context.l10n.profileTruePeakLocal
                                 : null,
@@ -167,9 +166,6 @@ class _RankCardBody extends ConsumerWidget {
     );
   }
 }
-
-/// "6 RR".
-String formatRr(int rr) => ProfileStrings.rrValue(formatNumber(rr));
 
 class _RankColumn extends StatelessWidget {
   const _RankColumn({

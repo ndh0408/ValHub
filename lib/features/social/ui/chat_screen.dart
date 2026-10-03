@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/view_labels.dart';
 import 'package:valvn/core/l10n/formats.dart';
 import 'package:valvn/features/social/ui/friend_status_labels.dart';
 
@@ -24,7 +25,6 @@ import '../../../core/xmpp/xmpp_models.dart';
 import '../../../core/xmpp/xmpp_providers.dart';
 import '../../profile/profile_routes.dart';
 import '../data/friend_status.dart';
-import '../social_strings.dart';
 import 'widgets/friend_tile.dart';
 import 'widgets/social_widgets.dart';
 
@@ -297,7 +297,7 @@ class _ConversationBody extends StatelessWidget {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  for (final s in SocialStrings.suggestions)
+                  for (final s in context.l10n.chatSuggestions)
                     ActionChip(
                       label: Text(s),
                       shape: const StadiumBorder(),

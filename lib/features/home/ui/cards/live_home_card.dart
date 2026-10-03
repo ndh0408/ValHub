@@ -19,7 +19,6 @@ import '../../../../core/xmpp/xmpp_providers.dart';
 import '../../../live_game/data/live_game_logic.dart';
 import '../../../live_game/data/live_game_models.dart';
 import '../../../live_game/live_game_sheet.dart';
-import '../../../live_game/live_game_strings.dart';
 import '../../../live_game/providers/live_game_providers.dart';
 import '../../../live_game/ui/live_widgets.dart';
 import '../../data/home_card.dart';
@@ -46,7 +45,7 @@ class LiveHomeCard extends ConsumerWidget {
       LivePhase.pregame => context.l10n.liveGameAgentSelect,
       _ => context.l10n.liveGameInMatch,
     };
-    final summary = LiveGameStrings.joinParts([
+    final summary = context.fmt.nonEmptyFacts([
       phaseText,
       ?snap.mapName,
       liveModeLabel(

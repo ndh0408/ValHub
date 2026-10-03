@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/account_labels.dart';
 import 'package:valvn/core/l10n/labels/content_labels.dart';
 
 import '../../../../core/ui/error_view.dart';
@@ -19,7 +20,6 @@ import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 import '../../../../core/xmpp/friends.dart';
 import '../../data/party_models.dart';
-import '../../social_strings.dart';
 import 'friend_tile.dart';
 import 'social_widgets.dart';
 
@@ -259,7 +259,7 @@ class _QueuePickerBody extends ConsumerWidget {
                   final max =
                       kQueuePartyLimits[c.queueId.replaceFirst('console_', '')];
                   final String? subtitle = !c.eligible
-                      ? SocialStrings.sentence(
+                      ? context.fmt.sentence(
                           queueBlockReason(context.l10n, c, party),
                         )
                       : max != null
@@ -359,7 +359,7 @@ class PartyMemberTile extends ConsumerWidget {
       isPartyMember: true,
     );
     final ready = member.isReady || member.isOwner;
-    final console = SocialStrings.consolePlatform(member.platformType);
+    final console = context.l10n.consolePlatformName(member.platformType);
     final ping = member.ping;
     final small = theme.textTheme.bodySmall?.copyWith(color: muted);
 

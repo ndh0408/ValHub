@@ -1,10 +1,11 @@
+import 'package:valvn/core/l10n/l10n.dart';
+import 'package:valvn/core/l10n/labels/view_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../core/util/format.dart';
 import '../community/data/community_models.dart';
 import 'providers/community_skin_stats.dart';
-import 'skin_detail_strings.dart';
 
 class CommunitySkinScore extends ConsumerWidget {
   const CommunitySkinScore({super.key, required this.skinUuid});
@@ -17,7 +18,7 @@ class CommunitySkinScore extends ConsumerWidget {
       return const SizedBox.shrink();
     }
     return Text(
-      SkinDetailStrings.communityScore(
+      context.l10n.skinCommunityLabel(
         stats.rating.hasRatings ? formatRating(stats.rating.average!) : null,
         formatNumber(stats.rating.count),
         formatNumber(stats.vote.votes),

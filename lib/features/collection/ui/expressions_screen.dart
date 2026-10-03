@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/view_labels.dart';
+
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -7,7 +9,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/domain/loadout/loadout.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/riot/riot_ids.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
@@ -17,7 +18,6 @@ import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
-import '../collection_strings.dart';
 import '../data/collection_items.dart';
 import '../data/collection_search.dart';
 import '../providers/collection_providers.dart';
@@ -29,19 +29,19 @@ import 'package:valvn/core/l10n/l10n.dart';
 /// What a wheel slot shows.
 typedef _SlotView = ({String? image, String name, bool isEmpty});
 
-_SlotView _slotView(Expression? e, ContentDb db) {
+_SlotView _slotView(AppLocalizations l10n, Expression? e, ContentDb db) {
   if (e == null || e.isEmpty) {
-    return (image: null, name: CollectionStrings.emptySlot, isEmpty: true);
+    return (image: null, name: l10n.collectionEmptySlot, isEmpty: true);
   }
   return switch (e.type) {
     ExpressionType.flex => (
       image: db.flex(e.assetId)?.displayIcon,
-      name: db.flex(e.assetId)?.displayName ?? CommonStrings.unknownItem,
+      name: db.flex(e.assetId)?.displayName ?? l10n.commonUnknownItem,
       isEmpty: false,
     ),
     _ => (
       image: db.spray(e.assetId)?.image,
-      name: db.spray(e.assetId)?.displayName ?? CommonStrings.unknownItem,
+      name: db.spray(e.assetId)?.displayName ?? l10n.commonUnknownItem,
       isEmpty: false,
     ),
   };
@@ -86,7 +86,7 @@ class ExpressionsScreen extends ConsumerWidget {
                       size: math.min(c.maxWidth - 32, 320),
                       slots: [
                         for (var i = 0; i < kExpressionSlots; i++)
-                          _slotView(loadout.expression(i), db),
+                          _slotView(context.l10n, loadout.expression(i), db),
                       ],
                       onTap: snapshot.isPending ? null : open,
                     ),
@@ -103,7 +103,7 @@ class ExpressionsScreen extends ConsumerWidget {
                   for (var i = 0; i < kExpressionSlots; i++)
                     _SlotRow(
                       slot: i,
-                      view: _slotView(loadout.expression(i), db),
+                      view: _slotView(context.l10n, loadout.expression(i), db),
                       onTap: snapshot.isPending ? null : () => open(i),
                     ),
                 ],
@@ -175,7 +175,8 @@ class _Wheel extends StatelessWidget {
               height: tile,
               child: Semantics(
                 button: true,
-                label: '${CollectionStrings.slotTitle(i)}: ${slots[i].name}',
+                label:
+                    '${context.l10n.slotCaption(context.fmt, i)}: ${slots[i].name}',
                 excludeSemantics: true,
                 child: Material(
                   color: scheme.surfaceContainerHigh,
@@ -233,7 +234,7 @@ class _SlotRow extends StatelessWidget {
             : NetImage(view.image, fit: BoxFit.contain),
       ),
       title: Text(
-        CollectionStrings.slotTitle(slot),
+        context.l10n.slotCaption(context.fmt, slot),
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
       subtitle: Text(
@@ -283,7 +284,7 @@ Future<void> showExpressionPicker(
   required int slot,
 }) => showValSheet<void>(
   context,
-  title: CollectionStrings.slotTitle(slot),
+  title: context.l10n.slotCaption(context.fmt, slot),
   subtitle: context.l10n.collectionExpressionsTitle,
   scrollable: true,
   initialSize: 0.85,

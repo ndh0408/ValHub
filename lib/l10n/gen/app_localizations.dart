@@ -2716,6 +2716,12 @@ abstract class AppLocalizations {
   /// **'{type, select, skin{Mọi skin bạn sở hữu, tính giá trị theo giá cửa hàng} buddy{Phụ kiện súng đã sở hữu và số bản sao} spray{Hình phun sơn bạn có thể gắn vào tổ hợp cảm xúc} card{Thẻ người chơi đã mở khóa, chạm để xem và trang bị} title{Danh hiệu bạn có thể hiển thị dưới tên} flex{Flex đã sở hữu} other{Duyệt bộ sưu tập}}'**
   String collectionBrowseDescription(String type);
 
+  /// Explicit render-time message, preserving existing VI behavior.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ô {position}'**
+  String collectionSlotCaption(String position);
+
   /// CollectionStrings.applyPreset — S38 presets
   ///
   /// In vi, this message translates to:
@@ -6196,6 +6202,12 @@ abstract class AppLocalizations {
   /// **'Đánh giá của bạn'**
   String get communityYourReview;
 
+  /// Explicit render-time message, preserving existing VI behavior.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}'**
+  String liveGamePlayerStatistics(String kda, String hasAcs, String acs);
+
   /// LiveGameStrings.acs — Ended (G11)
   ///
   /// In vi, this message translates to:
@@ -8770,6 +8782,17 @@ abstract class AppLocalizations {
   /// **'TRỢ THỦ VALORANT'**
   String get settingsWelcomeKicker;
 
+  /// Explicit render-time message, preserving existing VI behavior.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cộng đồng: {hasAverage, select, yes{★ {average} ({count} đánh giá) · } other{}}{votes} lượt thích'**
+  String skinDetailCommunitySummary(
+    String hasAverage,
+    String average,
+    String count,
+    String votes,
+  );
+
   /// SkinDetailStrings.addToWishlist —
   ///
   /// In vi, this message translates to:
@@ -10196,6 +10219,12 @@ abstract class AppLocalizations {
   /// **'{more, plural, =0 {{names} đang có trong cửa hàng của {account}.} other {{names} và {more} skin khác đang có trong cửa hàng của {account}.}}'**
   String wishlistNotifSummaryBody(String names, int more, String account);
 
+  /// Explicit render-time message, preserving existing VI behavior.
+  ///
+  /// In vi, this message translates to:
+  /// **'{name}, {price}{wished, select, yes{, đã có trong wishlist} other{}}'**
+  String wishlistItemAccessibility(String name, String price, String wished);
+
   /// WishlistStrings.addSkins — S3A wishlist
   ///
   /// In vi, this message translates to:
@@ -10525,6 +10554,40 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'VS'**
   String get homeLiveScoreSeparator;
+
+  /// Explicit render-time message, preserving existing VI behavior.
+  ///
+  /// In vi, this message translates to:
+  /// **'{name}, {price}, {tier}{wished, select, yes{, trong wishlist} other{}}'**
+  String homeOfferAccessibility(
+    String name,
+    String price,
+    String tier,
+    String wished,
+  );
+
+  /// Explicit render-time message, preserving existing VI behavior.
+  ///
+  /// In vi, this message translates to:
+  /// **'{name}, {votes}{wished, select, yes{, trong wishlist} other{}}'**
+  String homeTrendingAccessibility(String name, String votes, String wished);
+
+  /// Explicit render-time message, preserving existing VI behavior.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hôm nay {direction, select, gain{tăng} other{giảm}} {rr} RR, {wins} thắng, {losses} thua'**
+  String homeTodayRankAccessibility(
+    String direction,
+    int rr,
+    int wins,
+    int losses,
+  );
+
+  /// Explicit render-time message, preserving existing VI behavior.
+  ///
+  /// In vi, this message translates to:
+  /// **'{wins} thắng – {losses} thua{draws, plural, =0{} other{, {draws} hòa}}{unknown, plural, =0{} other{, {unknown} trận chưa rõ kết quả}}'**
+  String homeResultSummary(int wins, int losses, int draws, int unknown);
 
   /// HomeStrings.allHiddenBody —
   ///

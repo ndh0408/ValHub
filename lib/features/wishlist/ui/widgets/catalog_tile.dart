@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/view_labels.dart';
 import 'package:valvn/core/l10n/labels/economy_labels.dart';
 
 import 'dart:async';
@@ -13,7 +14,6 @@ import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
 import '../../data/skin_query.dart';
-import '../../wishlist_strings.dart';
 import 'skin_bits.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -67,7 +67,7 @@ class CatalogSkinTile extends ConsumerWidget {
 
     return Semantics(
       container: true,
-      label: WishlistStrings.tileSemantics(facts.name, priceText, inWishlist),
+      label: context.l10n.wishlistItemLabel(facts.name, priceText, inWishlist),
       child: TierGradientCard(
         tint: tint,
         borderColor: inWishlist

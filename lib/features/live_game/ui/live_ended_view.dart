@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/view_labels.dart';
 import 'package:valvn/core/l10n/labels/competitive_labels.dart';
 
 import 'dart:async';
@@ -22,7 +23,6 @@ import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../../profile/profile_routes.dart';
 import '../data/live_game_models.dart';
-import '../live_game_strings.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -253,7 +253,7 @@ class _Scoreboard extends ConsumerWidget {
     final mine = details.statsFor(puuid);
     final statsLine = mine == null
         ? null
-        : LiveGameStrings.yourStats(
+        : context.l10n.liveStatisticsLabel(
             '${formatNumber(mine.kills)}/${formatNumber(mine.deaths)}/'
             '${formatNumber(mine.assists)}',
             mine.acs == null ? null : formatNumber(mine.acs!.round()),

@@ -2565,6 +2565,16 @@
     },
     "x-manual": true
   },
+  "collectionSlotCaption": "Ô {position}",
+  "@collectionSlotCaption": {
+    "description": "Explicit render-time message, preserving existing VI behavior.",
+    "placeholders": {
+      "position": {
+        "type": "String"
+      }
+    },
+    "x-manual": true
+  },
   "collectionApplyPreset": "Áp dụng",
   "@collectionApplyPreset": {
     "description": "CollectionStrings.applyPreset — S38 presets",
@@ -5932,6 +5942,22 @@
     "description": "CommunityStrings.yourReview — skin reviews",
     "x-context": "lib/features/community/community_strings.dart"
   },
+  "liveGamePlayerStatistics": "Bạn: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
+  "@liveGamePlayerStatistics": {
+    "description": "Explicit render-time message, preserving existing VI behavior.",
+    "placeholders": {
+      "kda": {
+        "type": "String"
+      },
+      "hasAcs": {
+        "type": "String"
+      },
+      "acs": {
+        "type": "String"
+      }
+    },
+    "x-manual": true
+  },
   "liveGameAcs": "ACS",
   "@liveGameAcs": {
     "description": "LiveGameStrings.acs — Ended (G11)",
@@ -8555,6 +8581,25 @@
     "description": "SettingsStrings.welcomeKicker — Welcome hero (S01)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
+  "skinDetailCommunitySummary": "Cộng đồng: {hasAverage, select, yes{★ {average} ({count} đánh giá) · } other{}}{votes} lượt thích",
+  "@skinDetailCommunitySummary": {
+    "description": "Explicit render-time message, preserving existing VI behavior.",
+    "placeholders": {
+      "hasAverage": {
+        "type": "String"
+      },
+      "average": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      },
+      "votes": {
+        "type": "String"
+      }
+    },
+    "x-manual": true
+  },
   "skinDetailAddToWishlist": "Thêm vào wishlist",
   "@skinDetailAddToWishlist": {
     "description": "SkinDetailStrings.addToWishlist — ",
@@ -10111,6 +10156,22 @@
       }
     }
   },
+  "wishlistItemAccessibility": "{name}, {price}{wished, select, yes{, đã có trong wishlist} other{}}",
+  "@wishlistItemAccessibility": {
+    "description": "Explicit render-time message, preserving existing VI behavior.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      },
+      "wished": {
+        "type": "String"
+      }
+    },
+    "x-manual": true
+  },
   "wishlistAddSkins": "Thêm skin",
   "@wishlistAddSkins": {
     "description": "WishlistStrings.addSkins — S3A wishlist",
@@ -10439,6 +10500,79 @@
     "description": "Separator between the two live team scores. A game abbreviation.",
     "x-context": "lib/features/home/ui/cards/live_home_card.dart",
     "x-locked": true
+  },
+  "homeOfferAccessibility": "{name}, {price}, {tier}{wished, select, yes{, trong wishlist} other{}}",
+  "@homeOfferAccessibility": {
+    "description": "Explicit render-time message, preserving existing VI behavior.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      },
+      "tier": {
+        "type": "String"
+      },
+      "wished": {
+        "type": "String"
+      }
+    },
+    "x-manual": true
+  },
+  "homeTrendingAccessibility": "{name}, {votes}{wished, select, yes{, trong wishlist} other{}}",
+  "@homeTrendingAccessibility": {
+    "description": "Explicit render-time message, preserving existing VI behavior.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "votes": {
+        "type": "String"
+      },
+      "wished": {
+        "type": "String"
+      }
+    },
+    "x-manual": true
+  },
+  "homeTodayRankAccessibility": "Hôm nay {direction, select, gain{tăng} other{giảm}} {rr} RR, {wins} thắng, {losses} thua",
+  "@homeTodayRankAccessibility": {
+    "description": "Explicit render-time message, preserving existing VI behavior.",
+    "placeholders": {
+      "direction": {
+        "type": "String"
+      },
+      "rr": {
+        "type": "int"
+      },
+      "wins": {
+        "type": "int"
+      },
+      "losses": {
+        "type": "int"
+      }
+    },
+    "x-manual": true
+  },
+  "homeResultSummary": "{wins} thắng – {losses} thua{draws, plural, =0{} other{, {draws} hòa}}{unknown, plural, =0{} other{, {unknown} trận chưa rõ kết quả}}",
+  "@homeResultSummary": {
+    "description": "Explicit render-time message, preserving existing VI behavior.",
+    "placeholders": {
+      "wins": {
+        "type": "int"
+      },
+      "losses": {
+        "type": "int"
+      },
+      "draws": {
+        "type": "int"
+      },
+      "unknown": {
+        "type": "int"
+      }
+    },
+    "x-manual": true
   },
   "homeAllHiddenBody": "Mở Tùy chỉnh Trang chủ để hiện lại.",
   "@homeAllHiddenBody": {

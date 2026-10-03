@@ -7,7 +7,6 @@ import 'package:valvn/features/home/data/home_rank.dart';
 import 'package:valvn/features/home/home_strings.dart';
 import 'package:valvn/features/home/ui/cards/rank_home_card.dart';
 import 'package:valvn/features/home/ui/home_card_frame.dart';
-import 'package:valvn/features/profile/ui/widgets/rank_card.dart' show formatRr;
 
 import '../../profile/profile_test_env.dart'
     show competitiveFixtureMap, testContent, updateRow;
@@ -37,7 +36,7 @@ void main() {
     );
     expect(find.text(HomeStrings.cardRank), findsOneWidget);
     expect(find.text('Kim Cương 1'), findsOneWidget);
-    expect(find.text(formatRr(6)), findsOneWidget);
+    expect(find.text('6 RR'), findsOneWidget);
     // The bar says how far the next rank is (not only by its fill).
     expect(
       find.bySemanticsLabel(RegExp(RegExp.escape(HomeStrings.rankToNext(94)))),
@@ -208,7 +207,7 @@ void main() {
       ],
     );
     expect(find.textContaining('3'), findsWidgets);
-    expect(find.text(formatRr(0)), findsNothing);
+    expect(find.text('0 RR'), findsNothing);
     await homeUnmount(tester);
 
     await pumpHomeCard(

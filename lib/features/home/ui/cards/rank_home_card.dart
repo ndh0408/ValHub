@@ -3,6 +3,8 @@
 /// tier. A core card: it shows a skeleton while loading.
 library;
 
+import 'package:valvn/core/l10n/labels/view_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,10 +18,8 @@ import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 import '../../../profile/profile_routes.dart';
-import '../../../profile/ui/widgets/rank_card.dart' show formatRr;
 import '../../data/home_card.dart';
 import '../../data/home_rank.dart';
-import '../../home_strings.dart';
 import '../../providers/home_card_providers.dart';
 import '../home_card_frame.dart';
 
@@ -130,7 +130,7 @@ class _RankBody extends ConsumerWidget {
               ),
               if (ranked)
                 Text(
-                  formatRr(rank.rr),
+                  context.fmt.rr(rank.rr),
                   style: ValText.display(
                     22,
                     color: theme.colorScheme.onSurface,
@@ -240,7 +240,7 @@ class _FormRow extends StatelessWidget {
           : net < 0
           ? colors.loss
           : colors.draw;
-      final record = HomeStrings.winsLosses(
+      final record = context.l10n.homeResults(
         day.wins,
         day.losses,
         day.draws,
@@ -263,7 +263,7 @@ class _FormRow extends StatelessWidget {
               : Icons.remove_rounded,
           label: '$label${context.l10n.homeDot}$record',
           semanticsLabel: snap.today != null
-              ? HomeStrings.rrTodaySemantics(net, day.wins, day.losses)
+              ? context.l10n.homeTodayRankLabel(net, day.wins, day.losses)
               : null,
           onTap: () => unawaited(context.push<Object?>(ProfileRoutes.dailyRr)),
         ),

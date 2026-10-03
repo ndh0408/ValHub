@@ -102,6 +102,7 @@ final class AppFormats {
   String vp(num amount) => bidi('${number(amount)} ${l10n.contentCurrencyVp}');
   String kc(num amount) => bidi('${number(amount)} ${l10n.contentCurrencyKc}');
   String rp(num amount) => bidi('${number(amount)} ${l10n.contentCurrencyRp}');
+  String rr(int amount) => bidi(l10n.profileRrValue(number(amount)));
   String estimatedVp(num amount) => bidi(
     '${l10n.commonEstimatePrefix} ${number(amount)} ${l10n.contentCurrencyVp}',
   );
@@ -113,6 +114,18 @@ final class AppFormats {
 
   String inlineFacts(Iterable<String> items) =>
       items.join(l10n.profileSeparator);
+
+  String nonEmptyFacts(Iterable<String> items) =>
+      inlineFacts(items.where((item) => item.trim().isNotEmpty));
+
+  String unreadBadge(int count) =>
+      count > 99 ? '${number(99)}+' : number(count);
+
+  String sentence(String text) {
+    if (text.isEmpty) return text;
+    final first = String.fromCharCode(text.runes.first);
+    return upper(first) + text.substring(first.length);
+  }
 
   String durationCoarse(Duration duration) {
     if (duration.isNegative) duration = Duration.zero;

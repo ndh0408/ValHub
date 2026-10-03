@@ -11,7 +11,6 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/segmented_tabs.dart';
 import '../../../../core/util/format.dart';
 import '../../community_routes.dart';
-import '../../community_strings.dart';
 import '../../data/community_models.dart';
 import '../../providers/scope_providers.dart';
 import '../../providers/skin_vote_providers.dart';
@@ -366,7 +365,7 @@ class _ChampionCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    CommunityStrings.dotJoin([
+                    context.fmt.inlineFacts([
                       ?weapon?.displayName,
                       ?tier?.displayName,
                     ]),
@@ -479,7 +478,7 @@ class TopSkinRow extends StatelessWidget {
                         if (weapon != null || tier != null) ...[
                           const SizedBox(height: 2),
                           Text(
-                            CommunityStrings.dotJoin([
+                            context.fmt.inlineFacts([
                               ?weapon?.displayName,
                               ?tier?.displayName,
                             ]),

@@ -20,7 +20,6 @@ import '../../core/ui/val_widgets.dart';
 import '../../core/util/clock.dart';
 import '../../core/util/format.dart';
 import 'community_routes.dart';
-import 'community_strings.dart';
 import 'data/community_models.dart';
 import 'providers/community_providers.dart';
 import 'providers/consent_providers.dart';
@@ -124,7 +123,7 @@ class LfgPreviewCard extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          CommunityStrings.dotJoin([
+                          context.fmt.inlineFacts([
                             context.l10n.communityModeName(p.mode ?? ''),
                             context.l10n.communitySlotsWanted(p.slots),
                           ]),

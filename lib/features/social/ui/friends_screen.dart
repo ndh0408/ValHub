@@ -24,7 +24,6 @@ import '../../../core/xmpp/xmpp_providers.dart';
 import '../data/friend_sections.dart';
 import '../data/friend_status.dart';
 import '../social_routes.dart';
-import '../social_strings.dart';
 import 'widgets/friend_tile.dart';
 import 'widgets/social_widgets.dart';
 
@@ -167,7 +166,7 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                       FriendsFilter.unread =>
                         unread > 0
                             ? '${context.l10n.socialFilterUnread} '
-                                  '(${SocialStrings.unreadBadge(unread)})'
+                                  '(${context.fmt.unreadBadge(unread)})'
                             : context.l10n.socialFilterUnread,
                     },
                     dotColor: f == FriendsFilter.online

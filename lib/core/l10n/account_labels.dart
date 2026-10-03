@@ -4,6 +4,12 @@ import 'l10n.dart';
 
 /// Resolve metadata labels using the resource instance at render time.
 extension AccountLabels on AppLocalizations {
+  String? consolePlatformName(String? type) => switch (type?.toLowerCase()) {
+    'playstation' || 'ps5' || 'ps4' || 'ps' => accountPlatformPlayStation,
+    'xbox' || 'xbone' || 'xsx' => accountPlatformXbox,
+    _ => null,
+  };
+
   String accountActivityName(AccountActivity activity) => switch (activity) {
     AccountActivity.offline => accountStatusOffline,
     AccountActivity.online => accountStatusOnline,

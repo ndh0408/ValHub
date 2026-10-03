@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/view_labels.dart';
 import 'package:valvn/core/l10n/labels/economy_labels.dart';
 import 'package:valvn/core/l10n/labels/content_labels.dart';
 
@@ -25,7 +26,6 @@ import '../../core/ui/price_estimate.dart';
 import '../community/ui/skins/skin_vote_button.dart';
 import '../store/ui/widgets/store_ui_bits.dart';
 import 'providers/skin_availability.dart';
-import 'skin_detail_strings.dart';
 import 'skin_video_view.dart';
 import 'store_history_line.dart';
 
@@ -294,7 +294,7 @@ class _SkinBody extends ConsumerWidget {
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        SkinDetailStrings.rewardDetail(
+                        context.l10n.rewardFacts(
                           reward.contractName,
                           reward.level == null
                               ? null

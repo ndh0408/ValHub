@@ -7,7 +7,6 @@ import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/xmpp/xmpp_models.dart';
 import '../../data/friend_status.dart';
-import '../../social_strings.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -132,7 +131,7 @@ class UnreadBadge extends StatelessWidget {
           borderRadius: BorderRadius.circular(11),
         ),
         child: Text(
-          SocialStrings.unreadBadge(count),
+          context.fmt.unreadBadge(count),
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
             color: Theme.of(context).colorScheme.onPrimary,
             fontWeight: FontWeight.w700,
