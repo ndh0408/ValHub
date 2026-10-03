@@ -1,3 +1,5 @@
+import '../../../../core/l10n/labels/loadout_labels.dart';
+
 import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -45,7 +47,7 @@ void showLoadoutSaveError(
 }) {
   final cause = e.cause;
   final detail =
-      e.detail ??
+      e.detail(l10n) ??
       (cause == null || cause is LoadoutEditException
           ? null
           : describeError(l10n, cause).message);

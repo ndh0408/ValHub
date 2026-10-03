@@ -3,7 +3,6 @@ library;
 
 import '../../../core/content/content_db.dart';
 import '../../../core/domain/loadout/loadout.dart';
-import '../collection_strings.dart';
 
 /// The skin equipped on [gun] (by skin, level or chroma uuid).
 WeaponSkin? equippedSkin(GunLoadout? gun, ContentDb db) {
@@ -43,7 +42,3 @@ Buddy? equippedBuddy(GunLoadout? gun, ContentDb db) {
   }
   return gun.charmId == null ? null : db.buddy(gun.charmId!);
 }
-
-/// Name shown for a skin: "Mặc định" for the Standard skin.
-String skinLabel(WeaponSkin skin) =>
-    skin.isStandard ? CollectionStrings.defaultSkin : skin.displayName;

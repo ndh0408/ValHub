@@ -355,7 +355,9 @@ class _DailyRow extends StatelessWidget {
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        item.name,
+                        item.name.isEmpty
+                            ? context.l10n.commonUnknownItem
+                            : item.name,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -482,7 +484,7 @@ class _NightMarketTile extends StatelessWidget {
           Expanded(child: _render(imageFor, item.imageUrl)),
           const SizedBox(height: 6),
           Text(
-            item.name,
+            item.name.isEmpty ? context.l10n.commonUnknownItem : item.name,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(

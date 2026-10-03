@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -17,6 +19,7 @@ void main() {
         log,
         now: DateTime(2026, 9, 30),
         version: '1.2.3',
+        messages: tl,
       );
       expect(file.text, contains('http.get'));
       for (final value in [
@@ -30,6 +33,11 @@ void main() {
       }
       expect(utf8.decode(file.bytes), file.text);
       expect(file.fileName, 'valvn-bug-report-2026-09-30.txt');
+      expect(file.shareTitle, tl.settingsSessionLogTitle);
+      expect(
+        file.text,
+        contains(tl.settingsLogFileHeader(tl.commonAppName, '1.2.3')),
+      );
     },
   );
 }

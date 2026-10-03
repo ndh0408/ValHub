@@ -1,3 +1,5 @@
+import 'collection_labels.dart';
+
 import 'package:valvn/core/l10n/labels/content_labels.dart';
 
 import 'dart:async';
@@ -212,7 +214,7 @@ class WeaponTile extends ConsumerWidget {
     final color = hasTier
         ? skinTierColor(ref, context, skin!.contentTierUuid)
         : null;
-    final skinName = skin == null ? null : skinLabel(skin);
+    final skinName = skin?.equippedLabel(context.l10n);
     return Semantics(
       button: true,
       label: [weapon.displayName, ?skinName, ?buddy?.displayName].join(', '),

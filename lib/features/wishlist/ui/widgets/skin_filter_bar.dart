@@ -1,3 +1,5 @@
+import '../wishlist_labels.dart';
+
 import 'package:valvn/core/l10n/labels/content_labels.dart';
 
 import 'dart:async';
@@ -123,7 +125,8 @@ class SkinFilterChips extends StatelessWidget {
         children: [
           SortButton<SkinSort>(
             options: [
-              for (final s in SkinSort.values) (value: s, label: s.label),
+              for (final s in SkinSort.values)
+                (value: s, label: s.label(context.l10n)),
             ],
             selected: query.sort,
             onSelected: (s) => onChanged(query.copyWith(sort: s)),

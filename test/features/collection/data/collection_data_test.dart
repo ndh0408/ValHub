@@ -1,3 +1,7 @@
+import 'package:valvn/features/collection/ui/collection_labels.dart';
+
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/domain/economy/economy.dart';
@@ -212,7 +216,7 @@ void main() {
       final loadout = Loadout.fromJson(loadoutJson());
       final vandal = loadout.gun(Lx.vandal);
       expect(equippedSkin(vandal, db)!.uuid, Fx.vandalStandard);
-      expect(skinLabel(equippedSkin(vandal, db)!), 'Mặc định');
+      expect(equippedSkin(vandal, db)!.equippedLabel(tl), 'Mặc định');
       expect(gunRender(vandal, db), isNotNull);
       expect(equippedBuddy(vandal, db)!.uuid, Fx.neoFrontierBuddy);
       expect(equippedBuddy(loadout.gun(Lx.phantom), db), isNull);

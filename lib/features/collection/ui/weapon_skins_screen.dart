@@ -1,3 +1,5 @@
+import 'collection_labels.dart';
+
 import 'package:valvn/core/l10n/labels/economy_labels.dart';
 
 import 'dart:async';
@@ -86,7 +88,9 @@ class _WeaponSkinsScreenState extends ConsumerState<WeaponSkinsScreen> {
       title: title,
       subtitle: equipped == null
           ? null
-          : context.l10n.collectionEquippedLine(skinLabel(equipped)),
+          : context.l10n.collectionEquippedLine(
+              equipped.equippedLabel(context.l10n),
+            ),
       hero: GunHero(
         render: gunRender(gun, db, weapon: weapon),
         tint: tint,
@@ -324,7 +328,7 @@ class SkinRow extends ConsumerWidget {
                           const SizedBox(height: 4),
                         ],
                         Text(
-                          skinLabel(skin),
+                          skin.equippedLabel(context.l10n),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.titleSmall?.copyWith(

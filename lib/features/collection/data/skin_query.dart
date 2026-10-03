@@ -6,21 +6,11 @@ import 'package:flutter/foundation.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/domain/economy/economy.dart';
 import '../../../core/riot/riot_ids.dart';
-import '../collection_strings.dart';
 import 'collection_search.dart';
 import 'weapon_sections.dart';
 
 /// Sort orders of the skin lists (VF §8.6).
-enum SkinSort {
-  rarity(CollectionStrings.sortRarity),
-  name(CollectionStrings.sortName),
-  weapon(CollectionStrings.sortWeapon),
-  price(CollectionStrings.sortPrice);
-
-  const SkinSort(this.label);
-
-  final String label;
-}
+enum SkinSort { rarity, name, weapon, price }
 
 /// Content tiers in rarity order (filter chips).
 const kContentTierOrder = [

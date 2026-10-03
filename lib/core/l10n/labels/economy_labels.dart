@@ -1,6 +1,8 @@
 import '../../config/local_price.dart';
 import '../../domain/economy/prices.dart';
 import '../../domain/economy/reward_sources.dart';
+import '../../domain/economy/wishlist.dart';
+import '../../content/content_db.dart';
 import '../l10n.dart';
 import '../formats.dart';
 import 'content_labels.dart';
@@ -37,4 +39,22 @@ extension PriceQuoteDisplay on PriceQuote {
     PriceSource.notForSale => l10n.contentNotForSale,
     _ => null,
   };
+}
+
+extension WishlistPlaceDisplay on WishlistPlace {
+  String label(AppLocalizations l10n) => switch (this) {
+    WishlistPlace.daily => l10n.economyPlaceDaily,
+    WishlistPlace.nightMarket => l10n.economyPlaceNightMarket,
+    WishlistPlace.bundle => l10n.economyPlaceBundleGeneric,
+  };
+}
+
+extension WishlistHitDisplay on WishlistHit {
+  String placeLabel(ContentDb db, AppLocalizations l10n) {
+    if (place != WishlistPlace.bundle) return place.label(l10n);
+    final name = db.bundleByUuid(bundleDataAssetId ?? '')?.displayName;
+    return name == null || name.isEmpty
+        ? place.label(l10n)
+        : l10n.economyPlaceBundle(name);
+  }
 }

@@ -1,3 +1,5 @@
+import '../../../../core/l10n/labels/economy_labels.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -213,7 +215,9 @@ class _HitBar extends ConsumerWidget {
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final expiresAt = hit.expiresAt;
     final accent = theme.colorScheme.primary;
-    final text = context.l10n.economyAvailableNow(hit.placeLabel(db));
+    final text = context.l10n.economyAvailableNow(
+      hit.placeLabel(db, context.l10n),
+    );
     return Semantics(
       button: true,
       label: '$text ${context.l10n.wishlistViewInStore}',

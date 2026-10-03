@@ -9,6 +9,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/storage/secure_store.dart';
+import 'package:valvn/core/accounts/account_providers.dart';
+import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/util/format.dart';
 import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/data/community_api.dart';
@@ -296,6 +298,7 @@ void main() {
       expect(shared, hasLength(1));
       expect(shared.single.fileName, 'valvn-community-2026-01-05.json');
       expect(jsonDecode(shared.single.text), exportJson());
+      expect(shared.single.shareTitle, tl.communityExportSubject);
       // Read-only: nothing local changed.
       expect(
         container.read(communityConsentProvider(mePuuid)),
@@ -311,6 +314,98 @@ void main() {
         container.read(communityDataRightsProvider).exportAndShare(mePuuid),
         _isCode(CommunityException.serverError),
       );
+      expect(env.sharedExports, isEmpty);
+    });
+
+    test('account switch during export never opens the share sheet', () async {
+      final gate = Completer<void>();
+      env.server.json('GET /v1/me/export', exportJson());
+      env.server.hold('GET /v1/me/export', gate);
+      final pending = container
+          .read(communityDataRightsProvider)
+          .exportAndShare(mePuuid);
+      final rejected = expectLater(
+        pending,
+        _isCode(CommunityException.cancelled),
+      );
+      for (
+        var i = 0;
+        env.server.calls('GET /v1/me/export').isEmpty && i < 100;
+        i++
+      ) {
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
+      expect(env.server.calls('GET /v1/me/export'), hasLength(1));
+      container.read(activePuuidProvider.notifier).select(null);
+      gate.complete();
+      await rejected;
+      expect(env.sharedExports, isEmpty);
+    });
+
+    Future<void> cancelPendingExport(Future<void> Function() invalidate) async {
+      final gate = Completer<void>();
+      env.server.json('GET /v1/me/export', exportJson());
+      env.server.hold('GET /v1/me/export', gate);
+      final pending = container
+          .read(communityDataRightsProvider)
+          .exportAndShare(mePuuid);
+      final rejected = expectLater(
+        pending,
+        _isCode(CommunityException.cancelled),
+      );
+      for (
+        var i = 0;
+        env.server.calls('GET /v1/me/export').isEmpty && i < 100;
+        i++
+      ) {
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
+      expect(env.server.calls('GET /v1/me/export'), hasLength(1));
+      await invalidate();
+      gate.complete();
+      await rejected;
+      expect(env.sharedExports, isEmpty);
+    }
+
+    test('switching away and back still cancels the old export', () async {
+      await cancelPendingExport(() async {
+        final active = container.read(activePuuidProvider.notifier);
+        active.select(null);
+        active.select(mePuuid);
+      });
+    });
+
+    test('removed account cannot share its pending export', () async {
+      await cancelPendingExport(() async {
+        await env.prefs.setJson(PrefKeys.accounts, []);
+        container.read(accountsProvider.notifier).reload();
+      });
+    });
+
+    test('withdrawn consent cannot share its pending export', () async {
+      await cancelPendingExport(() async {
+        await container
+            .read(communityConsentProvider(mePuuid).notifier)
+            .revoke();
+      });
+    });
+
+    test(
+      'disposed provider cancels sharing without reading its dead ref',
+      () async {
+        await cancelPendingExport(() async {
+          container.dispose();
+        });
+      },
+    );
+
+    test('stale account cannot start an export or share', () async {
+      container.read(activePuuidProvider.notifier).select(null);
+      await expectLater(
+        container.read(communityDataRightsProvider).exportAndShare(mePuuid),
+        _isCode(CommunityException.cancelled),
+      );
+      expect(env.server.calls('GET /v1/me/export'), isEmpty);
       expect(env.sharedExports, isEmpty);
     });
 

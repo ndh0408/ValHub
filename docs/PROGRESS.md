@@ -1,6 +1,17 @@
 # Tiến độ ValHub (điểm dừng để làm tiếp)
 
-Checkpoint mới nhất 03/10: [LFG / phiên chờ / backend, build 4017](LFG_AND_SESSION_COMMIT_2026-10-03.md).
+Checkpoint mới nhất 04/10: [Model / export riêng tư / CI local, build 4018](I18N_MODELS_AND_EXPORT_2026-10-04.md).
+
+Đã chuyển nhãn model sang resources hiện tại, bảo toàn tên bộ trang bị cũ
+và chặn chia sẻ export khi đổi/gỡ tài khoản hoặc rút đồng ý lúc đang tải.
+Windows hai lượt/Mac đạt **4.332 tests**, analyzer 0; backend **900 tests**.
+APK 4018 qua 10 public flows; Mobile MCP/cache/log kiểm tra bốn tài khoản thật,
+giữ dữ liệu, khôi phục active ban đầu và đối chiếu bốn giá VP với Riot Cost.
+iOS build trên Mac, **chưa ký/chưa nghiệm thu iPhone**. Cutover còn
+**35 refs / 762 literals / 52 structural**, chỉ VI UI ships; toàn bộ sản phẩm
+chưa được nghiệm thu, backend chưa deploy production.
+
+Checkpoint trước 03/10: [LFG / phiên chờ / backend, build 4017](LFG_AND_SESSION_COMMIT_2026-10-03.md).
 
 Đã khóa thao tác vào tổ đội, giữ đúng tài khoản khi chờ và làm mới cache sau
 khi vào; số lượt yêu cầu không còn bị ghi thành người đã vào. Backend chặn ghi

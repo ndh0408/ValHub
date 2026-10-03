@@ -3,6 +3,8 @@
 /// A core card: it shows a skeleton while loading.
 library;
 
+import '../../../../core/l10n/labels/economy_labels.dart';
+
 import 'package:valvn/core/l10n/labels/view_labels.dart';
 
 import 'package:valvn/core/l10n/labels/content_labels.dart';
@@ -251,7 +253,7 @@ class _WishlistBanner extends StatelessWidget {
     final title = hits.length == 1
         ? context.l10n.homeStoreWishlistHit
         : context.l10n.homeStoreWishlistHits(hits.length);
-    final place = first.placeLabel(db);
+    final place = first.placeLabel(db, context.l10n);
     return Material(
       color: red.withValues(alpha: 0.12),
       borderRadius: BorderRadius.circular(ValRadius.small),

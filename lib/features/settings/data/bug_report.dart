@@ -5,19 +5,23 @@ import 'dart:ui' show Rect;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../core/l10n/common_strings.dart';
+import '../../../core/l10n/l10n.dart';
 import '../../../core/logging/session_log.dart';
-import '../settings_strings.dart';
 
 /// The file of "Gửi báo lỗi cho ValHub": a name and its UTF-8 text. The text is
 /// the scrubbed session log (`SessionLog`): request templates, results and
 /// times, never passwords, login data, account IDs or Riot IDs. It is only
 /// ever handed to the share sheet; the app shows no log lines on screen.
 class BugReportFile {
-  const BugReportFile({required this.fileName, required this.text});
+  const BugReportFile({
+    required this.fileName,
+    required this.text,
+    this.shareTitle,
+  });
 
   final String fileName;
   final String text;
+  final String? shareTitle;
 
   Uint8List get bytes => Uint8List.fromList(utf8.encode(text));
 }
@@ -33,14 +37,16 @@ String bugReportFileName(DateTime day) {
 BugReportFile buildBugReport(
   SessionLog log, {
   required DateTime now,
+  required AppLocalizations messages,
   String? version,
 }) => BugReportFile(
   fileName: bugReportFileName(now),
+  shareTitle: messages.settingsSessionLogTitle,
   text: _scrubReport(
     log.exportText(
-      header: SettingsStrings.logFileHeader(
-        CommonStrings.appName,
-        version ?? CommonStrings.dash,
+      header: messages.settingsLogFileHeader(
+        messages.commonAppName,
+        version ?? messages.commonDash,
       ),
     ),
   ),
@@ -76,12 +82,14 @@ typedef BugReportSharer = Future<void> Function(
 /// Overridden in tests. The file goes through the share sheet only.
 final bugReportSharerProvider = Provider<BugReportSharer>(
   (ref) => (file, {origin}) async {
+    final title =
+        file.shareTitle ?? ref.read(l10nProvider).settingsSessionLogTitle;
     await SharePlus.instance.share(
       ShareParams(
         files: [XFile.fromData(file.bytes, mimeType: 'text/plain')],
         fileNameOverrides: [file.fileName],
-        subject: SettingsStrings.sessionLogTitle,
-        title: SettingsStrings.sessionLogTitle,
+        subject: title,
+        title: title,
         sharePositionOrigin: origin,
       ),
     );

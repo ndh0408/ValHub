@@ -62,10 +62,8 @@ class _PresetsBody extends ConsumerWidget {
     Future<void> save() async {
       final messages = context.l10n;
       final messenger = ScaffoldMessenger.maybeOf(context);
-      final name = await showPresetNameDialog(
-        context,
-        initial: notifier.suggestedName,
-      );
+      final proposedName = notifier.suggestedName;
+      final name = await showPresetNameDialog(context, initial: proposedName);
       if (name == null) return;
       // Snapshot what is equipped right now (the game may have changed it).
       LoadoutSnapshot? current;
@@ -75,7 +73,12 @@ class _PresetsBody extends ConsumerWidget {
         current = ref.read(loadoutProvider(puuid)).value;
       }
       if (current == null) return;
-      final preset = await notifier.save(current.loadout, name: name);
+      final preset = await notifier.save(
+        current.loadout,
+        name: name,
+        proposedName: proposedName,
+        defaultName: messages.loadoutDefaultPresetName,
+      );
       showCollectionSnack(
         messenger,
         messages.collectionPresetSaved(preset.name),

@@ -10,7 +10,6 @@ import '../../util/clock.dart';
 import '../../util/json.dart';
 import 'loadout_changes.dart';
 import 'loadout_models.dart';
-import 'loadout_strings.dart';
 
 /// What went wrong while saving.
 enum LoadoutSaveFailure {
@@ -29,8 +28,7 @@ enum LoadoutSaveFailure {
   notPersisted,
 }
 
-/// A failed loadout save. The UI shows [message] ("Không thể lưu trang
-/// bị") plus the cause's description.
+/// A failed loadout save. The UI localizes [failure] and the cause.
 class LoadoutSaveException implements Exception {
   const LoadoutSaveException(this.failure, {this.cause});
 
@@ -39,17 +37,6 @@ class LoadoutSaveException implements Exception {
   /// `RiotException` for [LoadoutSaveFailure.request],
   /// [LoadoutEditException] for [LoadoutSaveFailure.invalidChange].
   final Object? cause;
-
-  String get message => LoadoutStrings.saveFailed;
-
-  /// Secondary line for the UI (null when the cause should be described by
-  /// the generic error mapper, i.e. a `RiotException`).
-  String? get detail => switch (failure) {
-    LoadoutSaveFailure.notPersisted => LoadoutStrings.notPersisted,
-    LoadoutSaveFailure.invalidChange ||
-    LoadoutSaveFailure.invalidLoadout => LoadoutStrings.invalidChange,
-    LoadoutSaveFailure.request => null,
-  };
 
   /// The session is dead: offer "Đăng nhập lại".
   bool get needsLogin => cause is NeedsLoginException;

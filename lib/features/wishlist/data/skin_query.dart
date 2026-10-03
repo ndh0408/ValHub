@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 
 import '../../../core/content/content_db.dart';
 import '../../../core/domain/economy/economy.dart';
-import '../wishlist_strings.dart';
 import '../../../core/util/search_text.dart';
 
 /// Sort orders (VF §8.6 "Độ hiếm / Tên / Vũ khí / Giá").
@@ -23,14 +22,7 @@ enum SkinSort {
   weapon,
 
   /// Most expensive first; skins without a price last.
-  price;
-
-  String get label => switch (this) {
-    rarity => WishlistStrings.sortRarity,
-    name => WishlistStrings.sortName,
-    weapon => WishlistStrings.sortWeapon,
-    price => WishlistStrings.sortPrice,
-  };
+  price,
 }
 
 /// What the user typed / picked in the filter bar.

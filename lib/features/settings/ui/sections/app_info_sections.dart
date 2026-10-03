@@ -167,6 +167,7 @@ class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
       log,
       now: ref.read(clockProvider).now(),
       version: version,
+      messages: l10n,
     );
     try {
       await ref.read(bugReportSharerProvider)(report, origin: origin);

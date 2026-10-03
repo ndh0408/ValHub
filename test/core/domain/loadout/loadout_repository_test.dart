@@ -1,3 +1,6 @@
+import '../../../helpers/l10n.dart';
+
+import 'package:valvn/core/l10n/labels/loadout_labels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/domain/loadout/loadout.dart';
@@ -93,7 +96,7 @@ void main() {
               'failure',
               LoadoutSaveFailure.notPersisted,
             )
-            .having((e) => e.message, 'message', 'Không thể lưu trang bị'),
+            .having((e) => e.message(tl), 'message', 'Không thể lưu trang bị'),
       ),
     );
   });
@@ -187,7 +190,7 @@ void main() {
               'failure',
               LoadoutSaveFailure.invalidChange,
             )
-            .having((e) => e.detail, 'detail', isNotNull),
+            .having((e) => e.detail(tl), 'detail', isNotNull),
       ),
     );
     verifyNever(() => api.putPlayerLoadout(any(), any()));

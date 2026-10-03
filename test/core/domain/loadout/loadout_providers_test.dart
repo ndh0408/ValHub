@@ -1,3 +1,7 @@
+import '../../../helpers/l10n.dart';
+
+import 'package:valvn/core/l10n/labels/loadout_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,12 +15,19 @@ import 'package:valvn/core/storage/json_file_cache.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/util/clock.dart';
 import 'package:valvn/core/util/json.dart';
+import 'package:valvn/core/l10n/l10n.dart';
+import 'package:valvn/l10n/gen/app_localizations_vi.dart';
 
 import '../../../helpers/test_prefs.dart';
 import '../economy/economy_fixtures.dart';
 import 'loadout_fixtures.dart';
 
 class MockPvpApi extends Mock implements PvpApi {}
+
+class PresetProbeMessages extends AppLocalizationsVi {
+  @override
+  String loadoutDefaultPresetName(int n) => 'Preset probe $n';
+}
 
 class MemoryJsonCache extends JsonFileCache {
   MemoryJsonCache() : super(() => throw UnimplementedError());
@@ -54,16 +65,18 @@ void main() {
     });
   });
 
-  ProviderContainer makeContainer() => ProviderContainer.test(
-    retry: (_, _) => null,
-    overrides: [
-      pvpApiProvider.overrideWithValue(api),
-      prefsProvider.overrideWithValue(prefs),
-      jsonFileCacheProvider.overrideWithValue(cache),
-      clockProvider.overrideWithValue(FixedClock(t0)),
-      accountProvider.overrideWith((ref, puuid) => null),
-    ],
-  );
+  ProviderContainer makeContainer({AppLocalizations? messages}) =>
+      ProviderContainer.test(
+        retry: (_, _) => null,
+        overrides: [
+          pvpApiProvider.overrideWithValue(api),
+          prefsProvider.overrideWithValue(prefs),
+          jsonFileCacheProvider.overrideWithValue(cache),
+          clockProvider.overrideWithValue(FixedClock(t0)),
+          accountProvider.overrideWith((ref, puuid) => null),
+          if (messages != null) l10nProvider.overrideWithValue(messages),
+        ],
+      );
 
   group('loadoutProvider', () {
     test('loads and keeps an offline copy', () async {
@@ -163,7 +176,7 @@ void main() {
         controller.apply(const SetPlayerCard(Lx.cardDefault)),
         throwsA(
           isA<LoadoutSaveException>().having(
-            (e) => e.message,
+            (e) => e.message(tl),
             'message',
             'Không thể lưu trang bị',
           ),
@@ -192,6 +205,77 @@ void main() {
   });
 
   group('presets', () {
+    test(
+      'new names use active resources while legacy names stay intact',
+      () async {
+        final loadout = Loadout.fromJson(loadoutJson());
+        final legacy = LoadoutPreset.fromLoadout(
+          loadout,
+          id: 'old',
+          name: 'Bộ trang bị 2',
+          createdAt: t0,
+        );
+        await LoadoutPresetStore(prefs).write(Lx.puuid, [legacy]);
+        final c = makeContainer(messages: PresetProbeMessages());
+        final notifier = c.read(loadoutPresetsProvider(Lx.puuid).notifier);
+        expect(notifier.suggestedName, 'Preset probe 3');
+        final saved = await notifier.save(loadout);
+        expect(saved.name, 'Preset probe 3');
+        expect(saved.defaultNumber, 3);
+        expect(
+          LoadoutPresetStore(prefs).read(Lx.puuid).last.name,
+          'Bộ trang bị 2',
+        );
+      },
+    );
+
+    test(
+      'unchanged dialog proposal gets a unique number after another save',
+      () async {
+        final c = makeContainer();
+        final notifier = c.read(loadoutPresetsProvider(Lx.puuid).notifier);
+        final loadout = Loadout.fromJson(loadoutJson());
+        final initial = notifier.suggestedName;
+        await notifier.save(loadout);
+        final saved = await notifier.save(
+          loadout,
+          name: initial,
+          proposedName: initial,
+        );
+        expect(saved.name, 'Bộ trang bị 2');
+        expect(saved.defaultNumber, 2);
+        expect(
+          c.read(loadoutPresetsProvider(Lx.puuid)).map((p) => p.name).toSet(),
+          hasLength(2),
+        );
+      },
+    );
+
+    test(
+      'save uses captured dialog resources while storing custom names verbatim',
+      () async {
+        final c = makeContainer();
+        final notifier = c.read(loadoutPresetsProvider(Lx.puuid).notifier);
+        final loadout = Loadout.fromJson(loadoutJson());
+        final captured = PresetProbeMessages();
+        final saved = await notifier.save(
+          loadout,
+          name: 'Preset probe 1',
+          proposedName: 'Preset probe 1',
+          defaultName: captured.loadoutDefaultPresetName,
+        );
+        expect(saved.name, 'Preset probe 1');
+        expect(saved.defaultNumber, 1);
+        final custom = await notifier.save(
+          loadout,
+          name: '私のセット',
+          defaultName: captured.loadoutDefaultPresetName,
+        );
+        expect(custom.name, '私のセット');
+        expect(custom.defaultNumber, isNull);
+      },
+    );
+
     test('save / rename / delete / restore persist per account', () async {
       final c = makeContainer();
       final notifier = c.read(loadoutPresetsProvider(Lx.puuid).notifier);

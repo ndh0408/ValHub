@@ -4,6 +4,7 @@ library;
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/widgets.dart' show Locale;
 
 import '../../accounts/account_providers.dart';
 import '../../network/riot_exception.dart';
@@ -18,7 +19,7 @@ import 'loadout_changes.dart';
 import 'loadout_models.dart';
 import 'loadout_presets.dart';
 import 'loadout_repository.dart';
-import 'loadout_strings.dart';
+import '../../l10n/l10n.dart';
 import 'match_loadouts.dart';
 
 /// How long a fetched loadout stays cached after the last listener leaves
@@ -43,7 +44,7 @@ final loadoutRepositoryProvider = Provider<LoadoutRepository>(
 ///     SetPlayerCard(cardId),                                // user tapped "Trang bị"
 ///   );
 /// } on LoadoutSaveException catch (e) {
-///   showAppSnackBar(context, e.message);                    // "Không thể lưu trang bị"
+///   showAppSnackBar(context, context.l10n.loadoutSaveFailed);
 /// }
 /// ```
 final loadoutProvider = AsyncNotifierProvider.autoDispose
@@ -227,29 +228,41 @@ class LoadoutPresetsNotifier extends Notifier<List<LoadoutPreset>> {
 
   int get _nextNumber => nextDefaultPresetNumber(
     state,
-    legacyName: LoadoutStrings.defaultPresetName,
+    // Old presets without `dn` were created in Vietnamese. This is a
+    // compatibility matcher for stored data, not the active UI language.
+    legacyName: lookupAppLocalizations(const Locale('vi'))
+        .loadoutDefaultPresetName,
   );
 
   /// Name proposed in the "Tên bộ trang bị" dialog. Its number is unique
   /// among the account's presets whatever language their names are in.
-  String get suggestedName => LoadoutStrings.defaultPresetName(_nextNumber);
+  String get suggestedName =>
+      ref.read(l10nProvider).loadoutDefaultPresetName(_nextNumber);
 
   bool get isFull => state.length >= kMaxLoadoutPresets;
 
   /// Saves [loadout] as a new preset (first in the list). The oldest preset
   /// is dropped beyond [kMaxLoadoutPresets].
-  Future<LoadoutPreset> save(Loadout loadout, {String? name}) async {
+  Future<LoadoutPreset> save(
+    Loadout loadout, {
+    String? name,
+    String? proposedName,
+    String Function(int)? defaultName,
+  }) async {
     final now = ref.read(clockProvider).now();
     final number = _nextNumber;
-    final proposed = LoadoutStrings.defaultPresetName(number);
+    final proposed =
+        (defaultName ?? ref.read(l10nProvider).loadoutDefaultPresetName)(
+          number,
+        );
     final typed = normalizePresetName(name);
     // The dialog is pre-filled with the proposal: keeping it means an
     // automatic name (its number is remembered), changing it a custom one.
-    final automatic = typed == null || typed == proposed;
+    final automatic = typed == null || typed == (proposedName ?? proposed);
     final preset = LoadoutPreset.fromLoadout(
       loadout,
       id: 'p${now.microsecondsSinceEpoch}_${_idCounter++}',
-      name: typed ?? proposed,
+      name: automatic ? proposed : typed,
       createdAt: now,
       defaultNumber: automatic ? number : null,
     );

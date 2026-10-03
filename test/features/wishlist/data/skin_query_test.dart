@@ -1,3 +1,7 @@
+import 'package:valvn/features/wishlist/ui/wishlist_labels.dart';
+
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/domain/economy/economy.dart';
@@ -196,7 +200,7 @@ void main() {
     });
 
     test('sort labels are Vietnamese', () {
-      expect(SkinSort.values.map((s) => s.label), [
+      expect(SkinSort.values.map((s) => s.label(tl)), [
         'Độ hiếm',
         'Tên',
         'Vũ khí',

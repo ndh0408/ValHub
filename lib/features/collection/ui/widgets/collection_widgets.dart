@@ -1,3 +1,5 @@
+import '../collection_labels.dart';
+
 import 'package:valvn/core/l10n/labels/content_labels.dart';
 
 import 'dart:math' as math;
@@ -317,7 +319,9 @@ class SkinFilterBar extends ConsumerWidget {
             : () => onChanged(query.copyWith(tiers: {})),
         children: [
           SortButton<SkinSort>(
-            options: [for (final s in sorts) (value: s, label: s.label)],
+            options: [
+              for (final s in sorts) (value: s, label: s.label(context.l10n)),
+            ],
             selected: query.sort,
             onSelected: (s) => onChanged(query.copyWith(sort: s)),
           ),

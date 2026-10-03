@@ -1,3 +1,5 @@
+import 'collection_labels.dart';
+
 import 'package:valvn/core/l10n/labels/content_labels.dart';
 
 import 'dart:async';
@@ -129,7 +131,7 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
     final skin = db.skinByAnyUuid(widget.skinId);
     final title = skin == null
         ? context.l10n.collectionSkinCustomizeTitle
-        : skinLabel(skin);
+        : skin.equippedLabel(context.l10n);
     final account = ref.watch(activeAccountProvider);
     if (account == null) return NoAccountPage(title: title);
     final puuid = account.puuid;
@@ -220,7 +222,7 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
                     chromaId: sel.chromaId!,
                   ),
                   successMessage: context.l10n.collectionEquippedItem(
-                    skinLabel(skin),
+                    skin.equippedLabel(context.l10n),
                   ),
                 );
                 if (ok) Haptics.medium();

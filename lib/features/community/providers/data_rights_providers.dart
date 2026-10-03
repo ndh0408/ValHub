@@ -6,7 +6,9 @@ import 'package:material_ui/material_ui.dart' show Rect;
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/util/clock.dart';
-import '../community_strings.dart';
+import '../../../core/accounts/account_providers.dart';
+import '../../../core/l10n/l10n.dart';
+import '../data/community_exception.dart';
 import 'community_providers.dart';
 import 'consent_providers.dart';
 import 'lfg_providers.dart';
@@ -14,10 +16,15 @@ import 'skin_vote_providers.dart';
 
 /// The file of "Tải dữ liệu của tôi": a name and its UTF-8 bytes.
 class CommunityExportFile {
-  const CommunityExportFile({required this.fileName, required this.bytes});
+  const CommunityExportFile({
+    required this.fileName,
+    required this.bytes,
+    this.shareTitle,
+  });
 
   final String fileName;
   final Uint8List bytes;
+  final String? shareTitle;
 
   /// The JSON text (for tests and previews).
   String get text => utf8.decode(bytes);
@@ -34,8 +41,10 @@ String communityExportFileName(DateTime day) {
 CommunityExportFile encodeCommunityExport(
   Map<String, Object?> document, {
   required DateTime now,
+  String? shareTitle,
 }) => CommunityExportFile(
   fileName: communityExportFileName(now),
+  shareTitle: shareTitle,
   bytes: Uint8List.fromList(
     utf8.encode(const JsonEncoder.withIndent('  ').convert(document)),
   ),
@@ -52,12 +61,14 @@ typedef CommunityExportSharer = Future<void> Function(
 /// never keeps a copy of the export on disk.
 final communityExportSharerProvider = Provider<CommunityExportSharer>(
   (ref) => (file, {origin}) async {
+    final title =
+        file.shareTitle ?? ref.read(l10nProvider).communityExportSubject;
     await SharePlus.instance.share(
       ShareParams(
         files: [XFile.fromData(file.bytes, mimeType: 'application/json')],
         fileNameOverrides: [file.fileName],
-        subject: CommunityStrings.exportSubject,
-        title: CommunityStrings.exportSubject,
+        subject: title,
+        title: title,
         sharePositionOrigin: origin,
       ),
     );
@@ -77,10 +88,11 @@ class CommunityDataRights {
 
   /// `GET /v1/me/export`, encoded as a `.json` file (not shared yet).
   Future<CommunityExportFile> export(String puuid) async {
-    final document = await _ref
-        .read(communityApiProvider)
-        .exportMyData(puuid.toLowerCase());
-    return encodeCommunityExport(document, now: _ref.read(clockProvider).now());
+    final api = _ref.read(communityApiProvider);
+    final clock = _ref.read(clockProvider);
+    final title = _ref.read(l10nProvider).communityExportSubject;
+    final document = await api.exportMyData(puuid.toLowerCase());
+    return encodeCommunityExport(document, now: clock.now(), shareTitle: title);
   }
 
   /// Downloads the export and opens the native share sheet with it.
@@ -88,9 +100,39 @@ class CommunityDataRights {
     String puuid, {
     Rect? origin,
   }) async {
-    final file = await export(puuid);
-    await _ref.read(communityExportSharerProvider)(file, origin: origin);
-    return file;
+    final id = puuid.toLowerCase();
+    bool current() =>
+        _ref.mounted &&
+        _ref.read(activePuuidProvider) == id &&
+        _ref.read(accountProvider(id)) != null &&
+        _ref.read(communityConsentProvider(id)) == CommunityConsent.granted;
+    if (!current()) {
+      throw const CommunityException(CommunityException.cancelled);
+    }
+    final sharer = _ref.read(communityExportSharerProvider);
+    var invalidated = false;
+    // Latch changes, including a switch away and back before the response.
+    final active = _ref.listen(activePuuidProvider, (_, next) {
+      if (next != id) invalidated = true;
+    });
+    final account = _ref.listen(accountProvider(id), (_, next) {
+      if (next == null) invalidated = true;
+    });
+    final consent = _ref.listen(communityConsentProvider(id), (_, next) {
+      if (next != CommunityConsent.granted) invalidated = true;
+    });
+    try {
+      final file = await export(id);
+      if (invalidated || !current()) {
+        throw const CommunityException(CommunityException.cancelled);
+      }
+      await sharer(file, origin: origin);
+      return file;
+    } finally {
+      active.close();
+      account.close();
+      consent.close();
+    }
   }
 
   /// `DELETE /v1/me`: the server erases everything of the account (posts,

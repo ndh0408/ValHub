@@ -18,6 +18,10 @@ import 'package:valvn/features/store/providers/store_share.dart';
 import 'package:valvn/features/store/store_strings.dart';
 import 'package:valvn/features/store/ui/share/store_share_card.dart';
 import 'package:valvn/features/store/ui/share/store_share_sheet.dart';
+import 'package:valvn/core/content/content_db.dart';
+import 'package:valvn/core/domain/economy/storefront.dart';
+
+import '../../helpers/l10n.dart';
 
 import '../../helpers/test_prefs.dart';
 
@@ -89,6 +93,53 @@ Future<List<Override>> _overrides({StoreImageSharer? sharer}) async {
 }
 
 void main() {
+  for (final kind in StoreShareKind.values) {
+    testWidgets(
+      'missing content remains unknown on the ${kind.name} share card',
+      (tester) async {
+        const offer = StoreOffer(offerId: 'unknown-level');
+        final db = ContentDb.empty();
+        final data = kind == StoreShareKind.daily
+            ? shareDataForDaily(
+                const DailyStore(
+                  offers: [
+                    DailyOffer(offer: offer, skinLevelUuid: 'unknown-level'),
+                  ],
+                ),
+                db,
+                _now,
+              )
+            : shareDataForNightMarket(
+                const NightMarket(
+                  offers: [
+                    NightMarketOffer(
+                      bonusOfferId: 'bonus',
+                      offer: offer,
+                      skinLevelUuid: 'unknown-level',
+                      discountPercent: 0,
+                    ),
+                  ],
+                ),
+                db,
+                _now,
+              );
+        expect(
+          data.items.single.name,
+          isEmpty,
+          reason: 'data must not cache a UI-language fallback',
+        );
+        expect(
+          data.items.single.price,
+          isNull,
+          reason: 'missing Riot price remains unknown',
+        );
+        await tester.pumpWidget(_app(StoreShareCard(data: data)));
+        expect(find.text(tl.commonUnknownItem), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
   testWidgets('the card shows the date, skins, prices and no account id', (
     tester,
   ) async {

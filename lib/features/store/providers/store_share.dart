@@ -13,7 +13,6 @@ import 'package:share_plus/share_plus.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_fallbacks.dart';
 import '../../../core/domain/economy/economy.dart';
-import '../../../core/l10n/common_strings.dart';
 import '../../../core/theme/tier_colors.dart';
 import '../../../core/ui/net_image.dart';
 
@@ -90,7 +89,7 @@ ShareOfferItem _item(
       ? null
       : db.contentTier(tierId) ?? ContentFallbacks.contentTier(tierId);
   return ShareOfferItem(
-    name: skin?.displayName ?? CommonStrings.unknownItem,
+    name: skin?.displayName ?? '',
     imageUrl: skin?.image,
     tierColor: opaqueRgba(tier?.highlightColor),
     price: price,

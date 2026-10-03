@@ -1,3 +1,7 @@
+import 'package:valvn/core/l10n/labels/economy_labels.dart';
+
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/content/content_db.dart';
@@ -60,13 +64,13 @@ void main() {
       expect(daily.basePrice, isNull);
       expect(daily.discountPercent, isNull);
       expect(daily.expiresAt, store.daily.expiresAt);
-      expect(daily.placeLabel(db), EconomyStrings.placeDaily);
+      expect(daily.placeLabel(db, tl), EconomyStrings.placeDaily);
 
       final nm = hits[1];
       expect(nm.place, WishlistPlace.nightMarket);
       expect((nm.price, nm.basePrice, nm.discountPercent), (1385, 1775, 22));
       expect(nm.expiresAt, store.nightMarket!.expiresAt);
-      expect(nm.placeLabel(db), 'Chợ Đêm');
+      expect(nm.placeLabel(db, tl), 'Chợ Đêm');
 
       final bundle = hits[2];
       expect(bundle.bundleId, Fx.bundleId);
@@ -77,7 +81,7 @@ void main() {
       );
       expect(bundle.expiresAt, store.bundles.first.expiresAt);
       expect(
-        bundle.placeLabel(db),
+        bundle.placeLabel(db, tl),
         EconomyStrings.placeBundle(
           db.bundleByUuid(Fx.neoFrontierAsset)!.displayName,
         ),
@@ -85,7 +89,11 @@ void main() {
 
       final bundle2 = hits[3];
       expect(bundle2.price, 700);
-      expect(bundle2.placeLabel(db), 'bundle', reason: 'bundle not in content');
+      expect(
+        bundle2.placeLabel(db, tl),
+        'bundle',
+        reason: 'bundle not in content',
+      );
     });
 
     test('same skin in two places yields two hits', () {

@@ -16,7 +16,6 @@ import '../../content/content_db.dart';
 import '../../content/content_repository.dart';
 import '../../wishlist/wishlist_store.dart';
 import 'economy_fetch.dart';
-import 'economy_strings.dart';
 import 'storefront.dart';
 
 export '../../wishlist/wishlist_store.dart';
@@ -83,19 +82,7 @@ extension WishlistNotifierX on WishlistNotifier {
 }
 
 /// Where a wishlisted skin is on sale.
-enum WishlistPlace {
-  daily,
-  nightMarket,
-  bundle;
-
-  /// "cửa hàng hằng ngày" / "Chợ Đêm" / "bundle" (use
-  /// [WishlistHit.placeLabel] to include the bundle name).
-  String get label => switch (this) {
-    daily => EconomyStrings.placeDaily,
-    nightMarket => EconomyStrings.placeNightMarket,
-    bundle => EconomyStrings.placeBundleGeneric,
-  };
-}
+enum WishlistPlace { daily, nightMarket, bundle }
 
 /// A wishlisted skin found in a storefront (W2, S3A "Đang có trong …!").
 @immutable
@@ -146,15 +133,6 @@ class WishlistHit {
   String get key => bundleId == null
       ? '${place.name}:$skinUuid'
       : '${place.name}:$skinUuid:$bundleId';
-
-  /// "cửa hàng hằng ngày" / "Chợ Đêm" / "bundle Neo Frontier".
-  String placeLabel(ContentDb db) {
-    if (place != WishlistPlace.bundle) return place.label;
-    final name = db.bundleByUuid(bundleDataAssetId ?? '')?.displayName;
-    return (name == null || name.isEmpty)
-        ? place.label
-        : EconomyStrings.placeBundle(name);
-  }
 
   @override
   bool operator ==(Object other) =>
