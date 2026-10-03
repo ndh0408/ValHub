@@ -2,17 +2,10 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/util/format.dart';
-import '../../battlepass_strings.dart';
 import '../../data/battlepass_models.dart';
 import 'bp_ui_bits.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
-
-/// "Phần kết thúc sau 16 ngày" while a day or more is left, then the
-/// ticking "Phần kết thúc sau 11:54:37".
-String formatActEnd(Duration remaining) => remaining.inDays >= 1
-    ? BattlePassStrings.actEndsInDays(remaining.inDays)
-    : BattlePassStrings.actEndsIn(formatCountdown(remaining));
 
 /// P1 pass card (S20), compact ValBuddy layout: pass name (bold) with
 /// "Cấp 46 / 55" on the right, one thin red level bar, the level XP under
@@ -24,8 +17,8 @@ class PassCard extends StatelessWidget {
     required this.progress,
     this.isPremium,
     this.endsAt,
-    this.endsAtFormatter = formatActEnd,
-    this.endsAtWall = BattlePassStrings.endsAtWall,
+    this.endsAtFormatter,
+    this.endsAtWall,
     this.kicker,
     this.onTap,
     this.onExpired,
@@ -38,11 +31,11 @@ class PassCard extends StatelessWidget {
   final DateTime? endsAt;
 
   /// Builds the whole end-of-pass sentence from the remaining time.
-  final String Function(Duration remaining) endsAtFormatter;
+  final String Function(Duration remaining)? endsAtFormatter;
 
   /// Wraps the local wall-clock time of the end ("Kết thúc lúc 23:59 thứ
   /// Hai 06/10") shown under the countdown.
-  final String Function(String wall) endsAtWall;
+  final String Function(String wall)? endsAtWall;
 
   /// Small caption above the name ("Vé sự kiện").
   final String? kicker;
@@ -183,7 +176,15 @@ class PassCard extends StatelessWidget {
                     child: BpCountdownLine(
                       expiresAt: end,
                       builder: (s) => s,
-                      format: endsAtFormatter,
+                      format:
+                          endsAtFormatter ??
+                          (remaining) => remaining.inDays >= 1
+                              ? context.l10n.battlePassActEndsInDays(
+                                  remaining.inDays,
+                                )
+                              : context.l10n.battlePassActEndsIn(
+                                  context.fmt.countdown(remaining),
+                                ),
                       icon: Icons.schedule,
                       onExpired: onExpired,
                     ),
@@ -195,7 +196,10 @@ class PassCard extends StatelessWidget {
             if (end != null)
               Padding(
                 padding: const EdgeInsets.only(top: 4, left: 21),
-                child: BpWallTimeText(at: end, builder: endsAtWall),
+                child: BpWallTimeText(
+                  at: end,
+                  builder: endsAtWall ?? context.l10n.battlePassEndsAtWall,
+                ),
               ),
           ],
         ],

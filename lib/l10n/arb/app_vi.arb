@@ -6358,6 +6358,82 @@
     },
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
+  "profileWinLossSummary": "{wins} thắng – {losses} thua{draws, plural, =0{} other{ – {draws} hòa}}{unknown, plural, =0{} other{ – {unknown} trận chưa rõ kết quả}}",
+  "@profileWinLossSummary": {
+    "description": "Explicit view-boundary statistics display; preserves verified VI text.",
+    "placeholders": {
+      "wins": {
+        "type": "int"
+      },
+      "losses": {
+        "type": "int"
+      },
+      "draws": {
+        "type": "int"
+      },
+      "unknown": {
+        "type": "int"
+      }
+    },
+    "x-manual": true
+  },
+  "profileDeviceTimeZone": "giờ thiết bị ({offset})",
+  "@profileDeviceTimeZone": {
+    "description": "Explicit view-boundary statistics display; preserves verified VI text.",
+    "placeholders": {
+      "offset": {
+        "type": "String"
+      }
+    },
+    "x-manual": true
+  },
+  "profileKillDescription": "{killer} hạ gục {victim}{hasWeapon, select, yes{ bằng {weapon}} other{}} ({time})",
+  "@profileKillDescription": {
+    "description": "Explicit view-boundary statistics display; preserves verified VI text.",
+    "placeholders": {
+      "killer": {
+        "type": "String"
+      },
+      "victim": {
+        "type": "String"
+      },
+      "hasWeapon": {
+        "type": "String"
+      },
+      "weapon": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    },
+    "x-manual": true
+  },
+  "profilePerformancePeriodLabel": "{period, select, days30{30 ngày} days7{7 ngày} other{Toàn bộ}}",
+  "@profilePerformancePeriodLabel": {
+    "description": "Explicit view-boundary statistics display; preserves verified VI text.",
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    },
+    "x-manual": true
+  },
+  "profilePerformanceSegmentLabel": "{segment, select, agents{Đặc vụ} maps{Bản đồ} queues{Chế độ} sides{Tấn công / Phòng thủ} trend{Xu hướng} other{Chế độ}}",
+  "@profilePerformanceSegmentLabel": {
+    "description": "Explicit view-boundary statistics display; preserves verified VI text.",
+    "placeholders": {
+      "segment": {
+        "type": "String"
+      }
+    },
+    "x-manual": true
+  },
+  "profileAllModes": "Mọi chế độ",
+  "@profileAllModes": {
+    "description": "Fallback scope caption, preserving VI.",
+    "x-manual": true
+  },
   "profileAbility": "Kỹ năng",
   "@profileAbility": {
     "description": "ProfileStrings.ability — Round timeline: kill feed per round",

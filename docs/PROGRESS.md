@@ -1,6 +1,16 @@
 # Tiến độ ValHub (điểm dừng để làm tiếp)
 
-Checkpoint mới nhất 03/10: [Nhãn hiển thị / xác nhận ngôn ngữ, build 4014](I18N_VIEW_CUTOVER_2026-10-03.md).
+Checkpoint mới nhất 03/10: [Ngày/giờ / giá / thống kê, build 4015](I18N_FORMAT_CUTOVER_2026-10-03.md).
+
+Đã chuyển ngày/giờ, hết hạn, giá và thống kê sang formatter/resources hiện tại,
+giữ hành vi VI. Windows hai lượt và Mac đạt **4.307 tests**, analyzer 0;
+backend **867 tests**. APK 4015 qua 10 public flows; Mobile MCP/cache/log kiểm
+tra đủ **bốn tài khoản thật**, giữ wishlist/cài đặt, trả active ban đầu và đối
+chiếu bốn giá VP với Riot Offer Cost. iOS 4015 build trên Mac, **chưa ký/chưa
+nghiệm thu iPhone**. Cutover còn **94 refs / 762 literals / 52 structural**;
+chỉ VI UI ships, chưa nghiệm thu toàn bộ.
+
+Checkpoint trước 03/10: [Nhãn hiển thị / xác nhận ngôn ngữ, build 4014](I18N_VIEW_CUTOVER_2026-10-03.md).
 
 Đã chuyển nhãn enum/widget/callback sang resources hiện tại và thêm xác nhận
 ngôn ngữ cho screen reader sau khi lưu. Windows hai lượt và Mac đạt **4.299

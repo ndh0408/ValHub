@@ -102,7 +102,7 @@ class BpCountdownLine extends StatelessWidget {
     super.key,
     required this.expiresAt,
     required this.builder,
-    this.format = formatCountdown,
+    this.format,
     this.onExpired,
     this.icon = Icons.schedule,
     this.color,
@@ -111,7 +111,7 @@ class BpCountdownLine extends StatelessWidget {
 
   final DateTime expiresAt;
   final String Function(String formatted) builder;
-  final CountdownFormatter format;
+  final CountdownFormatter? format;
   final VoidCallback? onExpired;
   final IconData icon;
   final Color? color;
@@ -166,7 +166,7 @@ class BpWallTimeText extends ConsumerWidget {
     final theme = Theme.of(context);
     final now = ref.watch(clockProvider).now();
     return Text(
-      builder(formatWallTime(at, now)),
+      builder(context.fmt.wallTime(at, now)),
       style: (style ?? theme.textTheme.bodySmall)?.copyWith(
         color: color ?? theme.colorScheme.onSurfaceVariant,
       ),

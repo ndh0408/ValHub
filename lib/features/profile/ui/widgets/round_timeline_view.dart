@@ -12,7 +12,6 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../data/round_timeline.dart';
-import '../../profile_strings.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -123,7 +122,7 @@ class _RoundStrip extends StatelessWidget {
       final color = _roundColor(context, r.won);
       items.add(
         Tooltip(
-          message: ProfileStrings.joined([
+          message: context.fmt.inlineFacts([
             context.l10n.profileRound(r.number),
             if (r.won != null)
               r.won!
@@ -340,7 +339,7 @@ class _RoundLineState extends ConsumerState<_RoundLine> {
               ),
               if (facts.isNotEmpty)
                 Text(
-                  ProfileStrings.joined(facts),
+                  context.fmt.inlineFacts(facts),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.labelSmall?.copyWith(color: muted),
@@ -617,7 +616,13 @@ class _KillRow extends StatelessWidget {
           ),
         );
     return Semantics(
-      label: ProfileStrings.killSemantics(killerName, victimName, how, time),
+      label: context.l10n.profileKillDescription(
+        killerName,
+        victimName,
+        how == null || how.isEmpty ? 'no' : 'yes',
+        how ?? '',
+        time,
+      ),
       excludeSemantics: true,
       child: Container(
         color: isMine

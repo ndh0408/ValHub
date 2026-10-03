@@ -11,7 +11,6 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/net_image.dart';
-import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
 import '../../data/skin_query.dart';
 import '../../wishlist_strings.dart';
@@ -63,8 +62,8 @@ class CatalogSkinTile extends ConsumerWidget {
         (quote.vp == null
             ? context.l10n.commonDash
             : (quote.isEstimate
-                  ? formatEstimatedVp(quote.vp!)
-                  : formatVp(quote.vp!)));
+                  ? context.fmt.estimatedVp(quote.vp!)
+                  : context.fmt.vp(quote.vp!)));
 
     return Semantics(
       container: true,

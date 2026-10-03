@@ -19,7 +19,6 @@ import '../../../../core/theme/tier_colors.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/rank_badge.dart';
 import '../../../../core/util/clock.dart';
-import '../../../../core/util/format.dart';
 import '../../../community/community_routes.dart';
 import '../../../community/providers/hidden_authors.dart';
 import '../../../community/community_strings.dart';
@@ -138,7 +137,7 @@ class _LfgRow extends ConsumerWidget {
       CommunityStrings.modeLabel(post.mode),
       context.l10n.homeLfgNeeds(post.slots),
       if (left != null && !left.isNegative)
-        context.l10n.homeLfgExpiresIn(formatDurationCoarse(left)),
+        context.l10n.homeLfgExpiresIn(context.fmt.durationCoarse(left)),
     ].join(context.l10n.homeDot);
     final tier = post.rankTier ?? post.author.rankTier;
     return InkWell(

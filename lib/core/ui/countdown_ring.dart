@@ -7,7 +7,6 @@ import 'package:material_ui/material_ui.dart';
 import '../theme/app_theme.dart';
 import '../util/clock.dart';
 import '../util/countdown.dart';
-import '../util/format.dart';
 import 'countdown_text.dart';
 
 /// Small circular ring showing the fraction of [period] still left before
@@ -127,7 +126,7 @@ class CountdownPill extends StatelessWidget {
     required this.expiresAt,
     required this.period,
     this.builder,
-    this.format = formatCountdown,
+    this.format,
     this.onExpired,
     this.color,
     this.dense = false,
@@ -136,7 +135,7 @@ class CountdownPill extends StatelessWidget {
   final DateTime expiresAt;
   final Duration period;
   final String Function(String formatted)? builder;
-  final CountdownFormatter format;
+  final CountdownFormatter? format;
   final VoidCallback? onExpired;
 
   /// Ring color (theme accent by default).

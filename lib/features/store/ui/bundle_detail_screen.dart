@@ -232,7 +232,9 @@ class _BundleBody extends ConsumerWidget {
           builder: context.l10n.storeBundleEndsIn,
           note: expiresAt == null
               ? null
-              : context.l10n.storeBundleEndsAt(formatWallTime(expiresAt, now)),
+              : context.l10n.storeBundleEndsAt(
+                  context.fmt.wallTime(expiresAt, now),
+                ),
           period: const Duration(days: 14),
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
           trailing: ownedCount > 0

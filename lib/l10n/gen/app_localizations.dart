@@ -6628,6 +6628,48 @@ abstract class AppLocalizations {
   /// **'Bạn đã khóa {agent}'**
   String liveGameYouLocked(String agent);
 
+  /// Explicit view-boundary statistics display; preserves verified VI text.
+  ///
+  /// In vi, this message translates to:
+  /// **'{wins} thắng – {losses} thua{draws, plural, =0{} other{ – {draws} hòa}}{unknown, plural, =0{} other{ – {unknown} trận chưa rõ kết quả}}'**
+  String profileWinLossSummary(int wins, int losses, int draws, int unknown);
+
+  /// Explicit view-boundary statistics display; preserves verified VI text.
+  ///
+  /// In vi, this message translates to:
+  /// **'giờ thiết bị ({offset})'**
+  String profileDeviceTimeZone(String offset);
+
+  /// Explicit view-boundary statistics display; preserves verified VI text.
+  ///
+  /// In vi, this message translates to:
+  /// **'{killer} hạ gục {victim}{hasWeapon, select, yes{ bằng {weapon}} other{}} ({time})'**
+  String profileKillDescription(
+    String killer,
+    String victim,
+    String hasWeapon,
+    String weapon,
+    String time,
+  );
+
+  /// Explicit view-boundary statistics display; preserves verified VI text.
+  ///
+  /// In vi, this message translates to:
+  /// **'{period, select, days30{30 ngày} days7{7 ngày} other{Toàn bộ}}'**
+  String profilePerformancePeriodLabel(String period);
+
+  /// Explicit view-boundary statistics display; preserves verified VI text.
+  ///
+  /// In vi, this message translates to:
+  /// **'{segment, select, agents{Đặc vụ} maps{Bản đồ} queues{Chế độ} sides{Tấn công / Phòng thủ} trend{Xu hướng} other{Chế độ}}'**
+  String profilePerformanceSegmentLabel(String segment);
+
+  /// Fallback scope caption, preserving VI.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mọi chế độ'**
+  String get profileAllModes;
+
   /// ProfileStrings.ability — Round timeline: kill feed per round
   ///
   /// In vi, this message translates to:

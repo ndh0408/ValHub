@@ -43,7 +43,9 @@ class WeeklyMissionsSection extends ConsumerWidget {
           );
     final reset = refill == null
         ? null
-        : context.l10n.battlePassResetsAtWall(formatWallTime(refill, now));
+        : context.l10n.battlePassResetsAtWall(
+            context.fmt.wallTime(refill, now),
+          );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

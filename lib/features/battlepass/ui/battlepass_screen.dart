@@ -12,7 +12,6 @@ import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
-import '../../../core/util/format.dart';
 import '../battlepass_routes.dart';
 import '../data/battlepass_models.dart';
 import '../data/xp_pace.dart';
@@ -150,7 +149,7 @@ class BattlePassOverviewView extends ConsumerWidget {
               isPremium: overview.isPremiumFor(e.progress.contract.uuid),
               endsAt: e.endsAt,
               endsAtFormatter: (d) =>
-                  context.l10n.battlePassEventEndsIn(formatCountdown(d)),
+                  context.l10n.battlePassEventEndsIn(context.fmt.countdown(d)),
               endsAtWall: context.l10n.battlePassEndsAtWall,
               onTap: () => context.push(
                 BattlePassRoutes.rewardsFor(e.progress.contract.uuid),

@@ -19,6 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../l10n/gen/app_localizations.dart';
+import '../util/format.dart' show calendarDayDifference, roundToMinute;
 import '../util/search_text.dart' show foldForSearch;
 import 'app_locale.dart';
 import 'intl_init.dart';
@@ -101,8 +102,17 @@ final class AppFormats {
   String vp(num amount) => bidi('${number(amount)} ${l10n.contentCurrencyVp}');
   String kc(num amount) => bidi('${number(amount)} ${l10n.contentCurrencyKc}');
   String rp(num amount) => bidi('${number(amount)} ${l10n.contentCurrencyRp}');
+  String estimatedVp(num amount) => bidi(
+    '${l10n.commonEstimatePrefix} ${number(amount)} ${l10n.contentCurrencyVp}',
+  );
+
+  String estimatedPrice(num amount, String iso) =>
+      bidi('${l10n.commonEstimatePrefix} ${currency(amount, iso)}');
   String listJoin(Iterable<String> items) =>
       items.join(l10n.commonListSeparator);
+
+  String inlineFacts(Iterable<String> items) =>
+      items.join(l10n.profileSeparator);
 
   String durationCoarse(Duration duration) {
     if (duration.isNegative) duration = Duration.zero;
@@ -206,6 +216,91 @@ final class AppFormats {
 
   /// The language's short weekday: `Mon` (en).
   String weekdayShort(DateTime d) => _weekdayShort.format(d.toLocal());
+
+  /// VI badges retain the compact T2–CN captions; other scripts use CLDR.
+  String dayBadge(DateTime d) => _vi
+      ? [
+          l10n.profileWeekdayShortItem0,
+          l10n.profileWeekdayShortItem1,
+          l10n.profileWeekdayShortItem2,
+          l10n.profileWeekdayShortItem3,
+          l10n.profileWeekdayShortItem4,
+          l10n.profileWeekdayShortItem5,
+          l10n.profileWeekdayShortItem6,
+        ][d.toLocal().weekday - 1]
+      : weekdayShort(d);
+
+  String deviceTimeZone(Duration offset) {
+    final sign = offset.isNegative ? '−' : '+';
+    final absolute = offset.abs();
+    final minutes = absolute.inMinutes.remainder(60);
+    final zone = minutes == 0
+        ? 'UTC$sign${absolute.inHours}'
+        : 'UTC$sign${absolute.inHours}:${_two(minutes)}';
+    return l10n.profileDeviceTimeZone(bidi(zone));
+  }
+
+  String weekdayLower(DateTime d) {
+    final word = weekday(d);
+    if (word.isEmpty || locale == AppLocale.de) return word;
+    final first = String.fromCharCode(word.runes.first);
+    return lower(first) + word.substring(first.length);
+  }
+
+  String weekdayDate(DateTime d) => '${weekday(d)}, ${dayMonth(d)}';
+
+  /// Calendar-day grouping, independent of DST and elapsed 24-hour periods.
+  String dayHeader(DateTime d, DateTime now) {
+    final days = calendarDayDifference(now.toLocal(), d.toLocal());
+    if (days == 0) return l10n.commonToday;
+    if (days == 1) return l10n.commonYesterdayTitle;
+    return weekdayDate(d);
+  }
+
+  String absoluteWall(DateTime at) {
+    final local = roundToMinute(at).toLocal();
+    return l10n.commonWallTime(
+      time(local),
+      '${weekdayLower(local)} ${dayMonth(local)}',
+    );
+  }
+
+  String wallTime(DateTime at, DateTime now) {
+    final local = roundToMinute(at).toLocal();
+    final days = calendarDayDifference(local, now.toLocal());
+    final day = switch (days) {
+      0 => l10n.commonTodayLower,
+      1 => l10n.commonTomorrow,
+      _ => '${weekdayLower(local)} ${dayMonth(local)}',
+    };
+    return l10n.commonWallTime(time(local), day);
+  }
+
+  /// Status events use the same device-local calendar boundary as list headers.
+  String statusTime(DateTime at, DateTime now) {
+    final local = at.toLocal();
+    final days = calendarDayDifference(local, now.toLocal());
+    if (days == -1) {
+      return l10n.commonWallTime(time(local), l10n.commonYesterday);
+    }
+    if (days.abs() < 7) return wallTime(local, now);
+    return dateTime(local);
+  }
+
+  String updatedAt(DateTime at, DateTime now) {
+    final sameDay = calendarDayDifference(at.toLocal(), now.toLocal()) == 0;
+    return l10n.commonUpdatedAt(
+      sameDay ? time(at) : '${time(at)}, ${dayMonth(at)}',
+    );
+  }
+
+  String countdown(Duration duration) {
+    if (duration.isNegative) duration = Duration.zero;
+    final clock = countdownClock(duration);
+    return duration.inDays > 0
+        ? '${l10n.commonDays(duration.inDays)} $clock'
+        : clock;
+  }
 
   /// `11:54:37`: the clock part of a countdown. Hours wrap at 24; the days
   /// belong to the caller. A negative [d] reads `00:00:00`.
@@ -322,10 +417,11 @@ final class AppFormats {
       other is AppFormats &&
       other.locale == locale &&
       other.tag == tag &&
-      other.h24 == h24;
+      other.h24 == h24 &&
+      other._messages == _messages;
 
   @override
-  int get hashCode => Object.hash(locale, tag, h24);
+  int get hashCode => Object.hash(locale, tag, h24, _messages);
 
   @override
   String toString() => 'AppFormats(${locale.name}, $tag, h24: $h24)';

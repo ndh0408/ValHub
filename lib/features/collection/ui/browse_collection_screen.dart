@@ -20,7 +20,6 @@ import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/skin_art_card.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
-import '../../../core/util/format.dart';
 import '../../skin_detail/skin_detail_sheet.dart';
 import '../data/buddy_options.dart';
 import '../data/collection_items.dart';
@@ -313,8 +312,8 @@ class _BrowseCollectionScreenState
     final skins = querySkins(all, _query, db: db, prices: prices);
     final value = valueOf(skins, prices);
     final amount = value.isEstimate
-        ? formatEstimatedVp(value.totalVp)
-        : formatVp(value.totalVp);
+        ? context.fmt.estimatedVp(value.totalVp)
+        : context.fmt.vp(value.totalVp);
     final imageFlex = skinCardImageFlex(context);
     return _list(
       summary: SummaryStrip(
@@ -511,7 +510,7 @@ class SkinGridTile extends ConsumerWidget {
       footer: footer,
       semanticsLabel:
           '${skin.displayName}, '
-          '${quote.vp == null ? (caption ?? context.l10n.commonDash) : formatVp(quote.vp!)}',
+          '${quote.vp == null ? (caption ?? context.l10n.commonDash) : context.fmt.vp(quote.vp!)}',
       onTap: () {
         Haptics.selection();
         unawaited(

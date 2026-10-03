@@ -11,7 +11,6 @@ import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
 import '../data/performance_view.dart';
-import '../profile_strings.dart';
 import 'widgets/profile_widgets.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -76,7 +75,11 @@ class _PerformanceScreenState extends ConsumerState<PerformanceScreen> {
                     children: [
                       for (final period in PerfPeriod.values)
                         ChoiceChip(
-                          label: Text(ProfileStrings.performancePeriod(period)),
+                          label: Text(
+                            context.l10n.profilePerformancePeriodLabel(
+                              period.name,
+                            ),
+                          ),
                           selected: _period == period,
                           onSelected: (_) => setState(() => _period = period),
                         ),
@@ -108,7 +111,9 @@ class _PerformanceScreenState extends ConsumerState<PerformanceScreen> {
                       for (final segment in PerfSegment.values)
                         ChoiceChip(
                           label: Text(
-                            ProfileStrings.performanceSegment(segment),
+                            context.l10n.profilePerformanceSegmentLabel(
+                              segment.name,
+                            ),
                           ),
                           selected: _segment == segment,
                           onSelected: (_) => setState(() => _segment = segment),

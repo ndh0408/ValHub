@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/competitive_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +20,6 @@ import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
 import '../profile_routes.dart';
-import '../profile_strings.dart';
 import 'widgets/profile_widgets.dart';
 import 'widgets/rr_trend_chart.dart';
 
@@ -37,7 +38,7 @@ class DailyRrScreen extends ConsumerWidget {
     final account = ref.watch(activeAccountProvider);
     final now = ref.watch(clockProvider).now();
     final zone = context.l10n.profileDayBoundary(
-      ProfileStrings.timeZoneLabel(now.timeZoneOffset),
+      context.fmt.deviceTimeZone(now.timeZoneOffset),
     );
     if (account == null) {
       return SubPageScaffold(
@@ -198,8 +199,8 @@ class _WeekCard extends StatelessWidget {
                       Text(
                         summary.isEmpty
                             ? context.l10n.profileTodayNone
-                            : ProfileStrings.joined([
-                                ProfileStrings.winsLosses(
+                            : context.fmt.inlineFacts([
+                                context.l10n.winLossSummary(
                                   summary.wins,
                                   summary.losses,
                                   summary.draws,
@@ -274,7 +275,7 @@ class _DayBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            ProfileStrings.weekdayShort[date.weekday - 1],
+            context.fmt.dayBadge(date),
             maxLines: 1,
             style: ValText.label.copyWith(
               fontSize: 10,
@@ -343,7 +344,7 @@ class _DayCard extends ConsumerWidget {
               children: [
                 Expanded(
                   child: Text(
-                    formatDayHeader(day.date, now),
+                    context.fmt.dayHeader(day.date, now),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.titleMedium,
@@ -358,8 +359,8 @@ class _DayCard extends ConsumerWidget {
               children: [
                 const SizedBox(height: 2),
                 Text(
-                  ProfileStrings.joined([
-                    ProfileStrings.winsLosses(
+                  context.fmt.inlineFacts([
+                    context.l10n.winLossSummary(
                       day.wins,
                       day.losses,
                       day.draws,
@@ -486,7 +487,7 @@ class _MatchRow extends ConsumerWidget {
                     ),
                   ),
                   Text(
-                    ProfileStrings.joined([
+                    context.fmt.inlineFacts([
                       if (start != null) formatTime(start),
                       context.l10n.profileRankWithRr(
                         after.tierName,

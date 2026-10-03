@@ -176,7 +176,7 @@ class _QueueBody extends ConsumerWidget {
                 label: waited == null
                     ? context.l10n.liveGameInQueue
                     : context.l10n.homeLiveQueueSemantics(
-                        formatDurationCoarse(waited),
+                        context.fmt.durationCoarse(waited),
                       ),
                 child: ExcludeSemantics(
                   child: entry == null

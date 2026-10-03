@@ -1,5 +1,5 @@
-import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:valvn/core/l10n/labels/competitive_labels.dart';
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 
 import 'dart:async';
 
@@ -22,7 +22,6 @@ import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
 import '../profile_routes.dart';
-import '../profile_strings.dart';
 import 'widgets/profile_widgets.dart';
 import '../data/hit_distribution.dart';
 import 'widgets/round_timeline_view.dart';
@@ -133,7 +132,7 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
         : null;
     return SubPageScaffold(
       // Bar title once the hero has collapsed: "Sunset · 4 – 13".
-      title: ProfileStrings.joined([
+      title: context.fmt.inlineFacts([
         map?.displayName ?? context.l10n.profileMatchDetailTitle,
         ?score,
       ]),
@@ -230,10 +229,13 @@ class _MatchHero extends ConsumerWidget {
     final queue = db.queueName(context.l10n, info.isCustom ? '' : info.queueId);
     final start = info.startTime;
     final length = info.gameLength;
-    final meta = ProfileStrings.joined([
+    final meta = context.fmt.inlineFacts([
       if (start != null)
-        ProfileStrings.playedAt(formatDayHeader(start, now), formatTime(start)),
-      if (length != null) formatDurationCoarse(length),
+        context.l10n.playedAt(
+          context.fmt.dayHeader(start, now),
+          formatTime(start),
+        ),
+      if (length != null) context.fmt.durationCoarse(length),
     ]);
     const dark = ValThemeColors.dark;
     final known = result.outcome != MatchOutcome.unknown;
@@ -249,7 +251,7 @@ class _MatchHero extends ConsumerWidget {
     final white70 = Colors.white.withValues(alpha: 0.78);
     return Semantics(
       container: true,
-      label: ProfileStrings.matchHeroSemantics(
+      label: context.l10n.matchFacts(
         mapName,
         context.l10n.matchOutcome(result.outcome),
         score,
@@ -620,7 +622,7 @@ class _PlayerSummary extends ConsumerWidget {
                         ),
                       ),
                       Text(
-                        ProfileStrings.joined([
+                        context.fmt.inlineFacts([
                           playerDisplayName(
                             context.l10n,
                             player.name,
@@ -753,7 +755,7 @@ class _HitDistribution extends StatelessWidget {
         ),
     ];
     return Semantics(
-      label: ProfileStrings.joined([
+      label: context.fmt.inlineFacts([
         context.l10n.profileHitDistribution,
         ...legend,
       ]),

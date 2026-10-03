@@ -10,7 +10,6 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/content_tier_badge.dart';
 import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/ui/price_estimate.dart';
-import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
 import '../../../skin_detail/community_skin_score.dart';
 import 'store_ui_bits.dart';
@@ -56,7 +55,7 @@ class DailyOfferCard extends ConsumerWidget {
       tint: tint,
       semanticsLabel: context.l10n.storeOfferSemantics(
         name,
-        price == null ? context.l10n.commonDash : formatVp(price),
+        price == null ? context.l10n.commonDash : context.fmt.vp(price),
       ),
       onTap: () => unawaited(
         showSkinDetailSheet(

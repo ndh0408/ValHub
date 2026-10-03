@@ -249,7 +249,10 @@ class _FormRow extends StatelessWidget {
       final value = formatSignedRr(net);
       final label = snap.today != null
           ? context.l10n.homeRrToday(value)
-          : context.l10n.homeRrOnDay(formatDayHeader(day.date, now), value);
+          : context.l10n.homeRrOnDay(
+              context.fmt.dayHeader(day.date, now),
+              value,
+            );
       children.add(
         _ChipButton(
           color: color,

@@ -388,7 +388,8 @@ class AuthorRow extends ConsumerWidget {
         ? null
         : ref.watch(countryNamesProvider).value?.name(author.country!) ??
               author.country;
-    final line = subtitle ?? (at == null ? null : formatRelative(at, now));
+    final line =
+        subtitle ?? (at == null ? null : context.fmt.relative(at, now));
     return Row(
       children: [
         CommunityAvatar(

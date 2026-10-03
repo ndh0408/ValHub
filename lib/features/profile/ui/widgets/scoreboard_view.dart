@@ -11,7 +11,6 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../data/scoreboard_order.dart';
-import '../../profile_strings.dart';
 import 'profile_widgets.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -82,7 +81,7 @@ class ScoreboardSliver extends StatelessWidget {
       final title = switch (side.relation) {
         SideRelation.yours => context.l10n.profileYourTeam,
         SideRelation.enemy => context.l10n.profileEnemyTeam,
-        SideRelation.neutral => _teamName(side.teamId ?? ''),
+        SideRelation.neutral => _teamName(context.l10n, side.teamId ?? ''),
       };
       slivers
         ..add(
@@ -119,11 +118,12 @@ class ScoreboardSliver extends StatelessWidget {
     return SliverMainAxisGroup(slivers: slivers);
   }
 
-  static String _teamName(String teamId) => switch (teamId.toLowerCase()) {
-    'blue' => ProfileStrings.teamBlue,
-    'red' => ProfileStrings.teamRed,
-    _ => teamId,
-  };
+  static String _teamName(AppLocalizations l10n, String teamId) =>
+      switch (teamId.toLowerCase()) {
+        'blue' => l10n.profileTeamBlue,
+        'red' => l10n.profileTeamRed,
+        _ => teamId,
+      };
 }
 
 /// Win / loss accent of a team header.

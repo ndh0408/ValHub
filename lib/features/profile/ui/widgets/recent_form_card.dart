@@ -13,7 +13,6 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../data/recent_form.dart';
-import '../../profile_strings.dart';
 import '../../providers/profile_providers.dart';
 import 'profile_widgets.dart';
 
@@ -82,7 +81,10 @@ class RecentFormCard extends ConsumerWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: _FormBody(
         form: form,
-        scope: ProfileStrings.formScope(queue: queue, map: map),
+        scope: context.fmt.inlineFacts([
+          queue ?? context.l10n.profileAllModes,
+          ?map,
+        ]),
         pending: filter.hasMap ? window.unresolved : 0,
       ),
     );
@@ -133,7 +135,7 @@ class _FormBody extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      ProfileStrings.joined([
+                      context.fmt.inlineFacts([
                         context.l10n.profileLastMatches(form.games),
                         context.l10n.profileRecordShort(
                           form.wins,

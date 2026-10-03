@@ -19,9 +19,7 @@ import '../../../../core/ui/segmented_tabs.dart';
 import '../../../../core/ui/sub_page.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
-import '../../../../core/util/format.dart';
 import '../../data/match_filter.dart';
-import '../../profile_strings.dart';
 import '../../providers/profile_providers.dart';
 import 'match_card.dart';
 import 'profile_widgets.dart';
@@ -39,11 +37,11 @@ class MatchHistorySliver extends ConsumerWidget {
     super.key,
     required this.puuid,
     required this.onOpenMatch,
-    this.title = ProfileStrings.matchHistory,
+    this.title,
   });
 
   final String puuid;
-  final String title;
+  final String? title;
   final void Function(String matchId) onOpenMatch;
 
   /// Refreshes the list shown for [puuid] (pull-to-refresh).
@@ -127,7 +125,7 @@ class MatchHistorySliver extends ConsumerWidget {
               if (filter.hasMap || day == null || day == prev) return card;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [_DayHeader(formatDayHeader(day, now)), card],
+                children: [_DayHeader(context.fmt.dayHeader(day, now)), card],
               );
             },
           ),
@@ -137,7 +135,9 @@ class MatchHistorySliver extends ConsumerWidget {
 
     return SliverMainAxisGroup(
       slivers: [
-        SliverToBoxAdapter(child: SectionHeader(title)),
+        SliverToBoxAdapter(
+          child: SectionHeader(title ?? context.l10n.profileMatchHistory),
+        ),
         SliverToBoxAdapter(
           child: _Filters(puuid: puuid, filter: filter),
         ),
@@ -279,7 +279,7 @@ Future<void> _pickMap(
       ),
       children: [
         _MapTile(
-          label: ProfileStrings.filterAll,
+          label: context.l10n.profileFilterAll,
           selected: selected == null,
           onTap: () => Navigator.pop(context, (url: null)),
         ),

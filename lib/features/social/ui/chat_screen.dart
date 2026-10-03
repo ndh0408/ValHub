@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/formats.dart';
 import 'package:valvn/features/social/ui/friend_status_labels.dart';
 
 import 'dart:async';
@@ -309,7 +310,7 @@ class _ConversationBody extends StatelessWidget {
         ),
       );
     }
-    final items = chatItems(c.messages, now);
+    final items = chatItems(c.messages, now, context.fmt);
     return Column(
       children: [
         if (error != null)
@@ -379,7 +380,11 @@ final class ChatMessageItem extends ChatItem {
 /// Oldest-first items: a day header before each new local day, and every
 /// message marked as the first / last of its group (same side, same day,
 /// less than [kChatGroupGap] apart).
-List<ChatItem> chatItems(List<ChatMessage> messages, DateTime now) {
+List<ChatItem> chatItems(
+  List<ChatMessage> messages,
+  DateTime now,
+  AppFormats formats,
+) {
   bool sameGroup(ChatMessage a, ChatMessage b) {
     final la = a.at.toLocal();
     final lb = b.at.toLocal();
@@ -398,7 +403,7 @@ List<ChatItem> chatItems(List<ChatMessage> messages, DateTime now) {
     final d = DateTime(local.year, local.month, local.day);
     if (day != d) {
       day = d;
-      out.add(ChatDayItem(formatDayHeader(m.at, now)));
+      out.add(ChatDayItem(formats.dayHeader(m.at, now)));
     }
     final previous = i > 0 ? messages[i - 1] : null;
     final next = i + 1 < messages.length ? messages[i + 1] : null;

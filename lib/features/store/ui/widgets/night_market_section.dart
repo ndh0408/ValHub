@@ -11,7 +11,6 @@ import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/empty_view.dart';
 import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/util/clock.dart';
-import '../../../../core/util/format.dart';
 import '../../../community/ui/share_to_community_button.dart';
 import '../../providers/store_share.dart';
 import '../share/store_share_sheet.dart';
@@ -64,7 +63,7 @@ class NightMarketSection extends ConsumerWidget {
           note: expiresAt == null
               ? null
               : context.l10n.storeNightMarketEndsAt(
-                  formatWallTime(expiresAt, now),
+                  context.fmt.wallTime(expiresAt, now),
                 ),
           period: const Duration(days: 14),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
@@ -140,7 +139,7 @@ class NightMarketSection extends ConsumerWidget {
                     children: [
                       Text(
                         context.l10n.storeNightMarketTotalSavings(
-                          formatVp(nm.totalSavings),
+                          context.fmt.vp(nm.totalSavings),
                         ),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: legibleAccent(context, win),

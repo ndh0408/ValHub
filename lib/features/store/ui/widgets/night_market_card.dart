@@ -55,7 +55,7 @@ class NightMarketCard extends ConsumerWidget {
       semanticsLabel: context.l10n.storeOfferSemantics(
         name,
         [
-          if (discounted != null) formatVp(discounted),
+          if (discounted != null) context.fmt.vp(discounted),
           if (offer.discountPercent > 0)
             formatDiscountPercent(offer.discountPercent),
         ].join(' '),

@@ -5,7 +5,6 @@ import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/ui/empty_view.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
-import '../../../../core/util/format.dart';
 import 'accessory_row.dart';
 import 'store_ui_bits.dart';
 
@@ -43,7 +42,10 @@ class AccessorySection extends ConsumerWidget {
           note: expiresAt == null
               ? null
               : context.l10n.storeAccessoryResetAt(
-                  formatWallTime(expiresAt, ref.watch(clockProvider).now()),
+                  context.fmt.wallTime(
+                    expiresAt,
+                    ref.watch(clockProvider).now(),
+                  ),
                 ),
           period: const Duration(days: 7),
         ),

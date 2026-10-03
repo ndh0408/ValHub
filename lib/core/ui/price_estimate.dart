@@ -1,3 +1,6 @@
+import 'package:valvn/core/l10n/formats.dart';
+import 'package:valvn/core/l10n/labels/economy_labels.dart';
+
 import 'dart:async';
 import 'dart:ui' show PlatformDispatcher;
 
@@ -21,7 +24,7 @@ import 'package:valvn/core/l10n/l10n.dart';
 /// `≈ 268.000 ₫` for [vp] in the user's currency, or `null` when estimates
 /// are hidden (turned off, or no verified / user-entered price).
 String? priceEstimateText(WidgetRef ref, num vp) =>
-    ref.watch(localPriceProvider)?.format(vp);
+    ref.watch(localPriceProvider)?.estimateText(ref.watch(formatsProvider), vp);
 
 /// Small muted "≈ 268.000 ₫" next to a VP price. Tapping it explains the
 /// estimate (source, date, packs, the user's own price). Renders nothing
@@ -119,7 +122,7 @@ class _InfoBody extends ConsumerWidget {
               for (final p in table.packs)
                 GroupedRow(
                   dense: true,
-                  title: price.formatPrice(p.price),
+                  title: price.packPriceText(context.fmt, p.price),
                   titleColor: p == best
                       ? legibleAccent(context, ValColors.green)
                       : null,
@@ -140,8 +143,8 @@ class _InfoBody extends ConsumerWidget {
               children: [
                 Text(
                   context.l10n.commonPriceBestPack(
-                    formatVp(best.vp),
-                    price.formatPrice(best.price),
+                    context.fmt.vp(best.vp),
+                    price.packPriceText(context.fmt, best.price),
                   ),
                   style: smallMuted,
                 ),
@@ -394,9 +397,9 @@ class _OverrideEditorState extends ConsumerState<_OverrideEditor> {
           const SizedBox(height: 12),
           Text(
             context.l10n.commonPriceOverrideExample(
-              formatVp(1775),
+              context.fmt.vp(1775),
               example
-                      .format(1775)
+                      .estimateText(context.fmt, 1775)
                       ?.replaceFirst(
                         '${context.l10n.commonEstimatePrefix} ',
                         '',

@@ -10,7 +10,6 @@ import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
-import '../../../core/util/format.dart';
 import '../data/server_status.dart';
 import '../providers/server_status_provider.dart';
 
@@ -68,7 +67,7 @@ class _ServerStatusScreenState extends ConsumerState<ServerStatusScreen> {
       title: context.l10n.settingsServerStatus,
       subtitle: report == null || report.region != region
           ? regionName
-          : '$regionName · ${formatUpdatedAt(report.fetchedAt, now)}',
+          : '$regionName · ${context.fmt.updatedAt(report.fetchedAt, now)}',
       onRefresh: () => _refresh(region),
       header: regions.length < 2
           ? null
@@ -296,9 +295,9 @@ class _NoticeCardState extends State<_NoticeCard> {
     }.join(' · ');
     final times = [
       if (n.createdAt case final at?)
-        context.l10n.settingsStatusStarted(formatStatusTime(at, now)),
+        context.l10n.settingsStatusStarted(context.fmt.statusTime(at, now)),
       if (n.lastChange case final at? when at != n.createdAt)
-        context.l10n.settingsStatusUpdated(formatStatusTime(at, now)),
+        context.l10n.settingsStatusUpdated(context.fmt.statusTime(at, now)),
     ];
     final updates = _expanded
         ? n.updates
@@ -444,7 +443,7 @@ class _UpdateRow extends StatelessWidget {
               children: [
                 if (at != null)
                   Text(
-                    formatStatusTime(at, now),
+                    context.fmt.statusTime(at, now),
                     style: theme.textTheme.labelMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,

@@ -127,7 +127,9 @@ class OffersGrid extends ConsumerWidget {
                 ),
                 if (payload.total > 0)
                   Text(
-                    context.l10n.communityOffersTotal(formatVp(payload.total)),
+                    context.l10n.communityOffersTotal(
+                      context.fmt.vp(payload.total),
+                    ),
                     style: theme.textTheme.labelMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
@@ -174,7 +176,7 @@ class _OfferTile extends StatelessWidget {
       button: interactive,
       label: price == null
           ? name
-          : context.l10n.communityOfferSemantics(name, formatVp(price)),
+          : context.l10n.communityOfferSemantics(name, context.fmt.vp(price)),
       excludeSemantics: true,
       child: Material(
         color: theme.colorScheme.surfaceContainer,
@@ -257,7 +259,7 @@ class _OfferTile extends StatelessWidget {
                         child: Text(
                           price == null
                               ? context.l10n.commonDash
-                              : formatVp(price),
+                              : context.fmt.vp(price),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.labelSmall?.copyWith(

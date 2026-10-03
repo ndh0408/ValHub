@@ -414,7 +414,9 @@ class _Header extends ConsumerWidget {
         quote.caption(context.l10n) ??
         (vp == null
             ? null
-            : (quote.isEstimate ? formatEstimatedVp(vp) : formatVp(vp)));
+            : (quote.isEstimate
+                  ? context.fmt.estimatedVp(vp)
+                  : context.fmt.vp(vp)));
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Column(

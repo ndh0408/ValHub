@@ -418,8 +418,8 @@ class _SummaryStrip extends StatelessWidget {
     final total = view.total;
     final filtered = view.visibleValue;
     final filteredText = filtered.isEstimate
-        ? formatEstimatedVp(filtered.totalVp)
-        : formatVp(filtered.totalVp);
+        ? context.fmt.estimatedVp(filtered.totalVp)
+        : context.fmt.vp(filtered.totalVp);
     return ValCard(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),

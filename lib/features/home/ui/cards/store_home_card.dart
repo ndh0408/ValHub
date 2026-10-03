@@ -114,14 +114,14 @@ class _StoreBody extends ConsumerWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
     final footer = <String>[
       if (summary.totalVp > 0)
-        context.l10n.homeStoreTotal(formatVp(summary.totalVp)),
+        context.l10n.homeStoreTotal(context.fmt.vp(summary.totalVp)),
       if (summary.walletVp != null)
         summary.affordableTogether > 0
             ? context.l10n.homeStoreWalletCanBuy(
-                formatVp(summary.walletVp!),
+                context.fmt.vp(summary.walletVp!),
                 summary.affordableTogether,
               )
-            : context.l10n.homeStoreWallet(formatVp(summary.walletVp!)),
+            : context.l10n.homeStoreWallet(context.fmt.vp(summary.walletVp!)),
     ];
     return HomeCardFrame(
       card: HomeCardId.store,
@@ -379,7 +379,9 @@ class HomeSkinTile extends ConsumerWidget {
     );
     final name = offer.skin?.displayName ?? context.l10n.commonUnknownItem;
     final price = offer.vp;
-    final priceText = price == null ? context.l10n.commonDash : formatVp(price);
+    final priceText = price == null
+        ? context.l10n.commonDash
+        : context.fmt.vp(price);
     void onTap() => unawaited(
       showSkinDetailSheet(
         context,
@@ -532,12 +534,12 @@ class _NightMarketRow extends ConsumerWidget {
               text: context.l10n.homeNightMarketBest(
                 formatDiscountPercent(best.discountPercent),
                 name,
-                price == null ? context.l10n.commonDash : formatVp(price),
+                price == null ? context.l10n.commonDash : context.fmt.vp(price),
               ),
             ),
             if (base != null && price != null && base > price)
               TextSpan(
-                text: ' ${formatVp(base)}',
+                text: ' ${context.fmt.vp(base)}',
                 style: TextStyle(
                   color: muted,
                   decoration: TextDecoration.lineThrough,

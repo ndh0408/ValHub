@@ -1,5 +1,5 @@
-import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:valvn/core/l10n/labels/competitive_labels.dart';
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -13,7 +13,6 @@ import '../../../../core/ui/rank_badge.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 import '../../data/match_filter.dart';
-import '../../profile_strings.dart';
 import 'profile_widgets.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -57,7 +56,7 @@ class MatchCard extends ConsumerWidget {
       value?.info.queueId ?? entry.queueId,
     );
     final started = value?.info.startTime ?? entry.startTime;
-    final when = started == null ? null : formatRelative(started, now);
+    final when = started == null ? null : context.fmt.relative(started, now);
 
     if (value == null) {
       final error = summary.hasError ? summary.error : null;
@@ -72,7 +71,7 @@ class MatchCard extends ConsumerWidget {
           title: error is NotFoundException
               ? context.l10n.competitiveMatchPending
               : context.l10n.profileMatchUnavailable,
-          subtitle: ProfileStrings.joined([queue, ?when]),
+          subtitle: context.fmt.inlineFacts([queue, ?when]),
           onRetry: () => ref.invalidate(matchDetailsProvider(entry.matchId)),
         ),
       );
@@ -102,7 +101,7 @@ class MatchCard extends ConsumerWidget {
                   db.agent(value.agentId!)?.displayIcon,
         rr: competitive ? rrRow?.rrEarned : null,
       ),
-      semanticsLabel: ProfileStrings.matchSemantics(
+      semanticsLabel: context.l10n.matchFacts(
         mapName,
         context.l10n.matchOutcome(result.outcome),
         result.hasScore
@@ -392,7 +391,7 @@ class _SummaryBody extends StatelessWidget {
                 Wrap(
                   children: [
                     Text(
-                      ProfileStrings.kda(s.kills, s.deaths, s.assists),
+                      '${context.l10n.profileKdaLabel} ${context.l10n.profileKdaValue(s.kills, s.deaths, s.assists)}',
                       maxLines: 1,
                       style: small,
                     ),

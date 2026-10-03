@@ -9,7 +9,6 @@ import '../../../../core/ui/error_view.dart';
 import '../../../../core/ui/skeleton.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
-import '../../../../core/util/format.dart';
 import '../../data/daily_ticket.dart';
 import '../../providers/battlepass_providers.dart';
 import 'bp_ui_bits.dart';
@@ -40,7 +39,7 @@ class DailyCheckpointsSection extends ConsumerWidget {
           subtitle: live && expiresAt != null
               ? context.l10n.battlePassDailyCaptionReset(
                   context.l10n.battlePassResetsAtWall(
-                    formatWallTime(expiresAt, now),
+                    context.fmt.wallTime(expiresAt, now),
                   ),
                 )
               : context.l10n.battlePassDailyCaption,

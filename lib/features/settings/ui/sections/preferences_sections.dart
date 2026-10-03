@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/economy_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -123,8 +125,8 @@ class SettingsOptionsSection extends ConsumerWidget {
           subtitle: price == null
               ? context.l10n.settingsOptionShowPriceUnavailable
               : context.l10n.settingsOptionShowPriceSubtitle(
-                  formatVp(1775),
-                  price.format(1775) ?? '',
+                  context.fmt.vp(1775),
+                  price.estimateText(context.fmt, 1775) ?? '',
                 ),
           value: hasPrices && settings.showPriceEstimate,
           onChanged: hasPrices
@@ -142,7 +144,7 @@ class SettingsOptionsSection extends ConsumerWidget {
             override == null
                 ? context.l10n.settingsOptionOwnPriceEmpty
                 : context.l10n.settingsOptionOwnPriceValue(
-                    formatVp(override.vp),
+                    context.fmt.vp(override.vp),
                     formatCurrency(override.price, override.currency),
                   ),
           ),

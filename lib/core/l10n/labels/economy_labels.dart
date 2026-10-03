@@ -1,7 +1,19 @@
+import '../../config/local_price.dart';
 import '../../domain/economy/prices.dart';
 import '../../domain/economy/reward_sources.dart';
 import '../l10n.dart';
+import '../formats.dart';
 import 'content_labels.dart';
+
+extension LocalPriceDisplay on LocalPrice {
+  String? estimateText(AppFormats formats, num vp) {
+    final amount = estimate(vp);
+    return amount == null ? null : formats.estimatedPrice(amount, currency);
+  }
+
+  String packPriceText(AppFormats formats, num amount) =>
+      formats.currency(amount, currency);
+}
 
 /// Price provenance stays data; captions use the current UI resources.
 extension PriceSourceDisplay on PriceSource {

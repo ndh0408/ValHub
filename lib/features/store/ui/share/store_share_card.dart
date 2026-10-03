@@ -1,12 +1,11 @@
+import 'package:valvn/core/l10n/labels/economy_labels.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/config/local_price.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../providers/store_share.dart';
-import '../../store_strings.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -51,13 +50,13 @@ class StoreShareCard extends StatelessWidget {
         data: _theme,
         child: DefaultTextStyle(
           style: _theme.textTheme.bodyMedium!.copyWith(color: _Ink.text),
-          child: SizedBox(width: width, child: _body()),
+          child: SizedBox(width: width, child: _body(context)),
         ),
       ),
     );
   }
 
-  Widget _body() {
+  Widget _body(BuildContext context) {
     final price = this.price;
     // A gradient replaces `BoxDecoration.color`, so the solid background is
     // its own layer (the picture must never be transparent).
@@ -74,11 +73,11 @@ class StoreShareCard extends StatelessWidget {
         child: Stack(
           children: [
             // Faint watermark in the bottom-right corner.
-            const Positioned(
+            Positioned(
               right: -6,
               bottom: 34,
               child: Text(
-                StoreStrings.shareCardWatermark,
+                context.l10n.storeShareCardWatermark,
                 style: TextStyle(
                   fontFamily: AppFonts.display,
                   fontSize: 88,
@@ -137,10 +136,6 @@ abstract final class _Ink {
 }
 
 /// `07:00 thứ Tư 08/10`: absolute, since the picture is read later.
-String _absoluteWall(DateTime at) {
-  final l = roundToMinute(at).toLocal();
-  return '${formatTime(l)} ${formatWeekdayLower(l)} ${formatDayMonth(l)}';
-}
 
 class _Header extends StatelessWidget {
   const _Header({required this.data, required this.riotId});
@@ -172,7 +167,7 @@ class _Header extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              formatWeekdayDate(data.createdAt),
+              context.fmt.weekdayDate(data.createdAt),
               style: const TextStyle(
                 fontFamily: AppFonts.body,
                 fontSize: 13,
@@ -201,7 +196,7 @@ class _Header extends StatelessWidget {
         if (data.isNightMarket && until != null) ...[
           const SizedBox(height: 4),
           Text(
-            context.l10n.storeShareCardUntil(_absoluteWall(until)),
+            context.l10n.storeShareCardUntil(context.fmt.absoluteWall(until)),
             style: const TextStyle(
               fontFamily: AppFonts.body,
               fontSize: 13,
@@ -302,8 +297,8 @@ Widget _render(ShareImageProviderFactory? imageFor, String? url) {
   );
 }
 
-String? _priceText(LocalPrice? price, int? vp) =>
-    vp == null ? null : price?.format(vp);
+String? _priceText(BuildContext context, LocalPrice? price, int? vp) =>
+    vp == null ? null : price?.estimateText(context.fmt, vp);
 
 const _priceStyle = TextStyle(
   fontFamily: AppFonts.body,
@@ -322,8 +317,8 @@ const _estimateStyle = TextStyle(
 );
 
 /// "1.775 VP".
-String _vp(int? amount) =>
-    amount == null ? CommonStrings.dash : formatVp(amount);
+String _vp(BuildContext context, int? amount) =>
+    amount == null ? context.l10n.commonDash : context.fmt.vp(amount);
 
 class _DailyRow extends StatelessWidget {
   const _DailyRow({
@@ -338,7 +333,7 @@ class _DailyRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final priceText = _priceText(price, item.price);
+    final priceText = _priceText(context, price, item.price);
     return Container(
       height: 96,
       decoration: _tile(item.tierColor),
@@ -375,7 +370,7 @@ class _DailyRow extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
-                Text(_vp(item.price), maxLines: 1, style: _priceStyle),
+                Text(_vp(context, item.price), maxLines: 1, style: _priceStyle),
                 if (priceText != null)
                   Text(priceText, maxLines: 1, style: _estimateStyle),
               ],
@@ -446,7 +441,7 @@ class _NightMarketTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final priceText = _priceText(price, item.price);
+    final priceText = _priceText(context, price, item.price);
     final base = item.basePrice;
     return Container(
       height: 200,
@@ -505,7 +500,7 @@ class _NightMarketTile extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  _vp(item.price),
+                  _vp(context, item.price),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: _priceStyle.copyWith(fontSize: 15, color: _Ink.green),
@@ -548,10 +543,10 @@ class _Totals extends StatelessWidget {
     final nm = data.isNightMarket;
     final amount = nm ? data.savingsVp : data.totalVp;
     if (amount <= 0) return const SizedBox.shrink();
-    final priceText = _priceText(price, amount);
+    final priceText = _priceText(context, price, amount);
     final label = nm
-        ? context.l10n.storeShareCardSaved(formatVp(amount))
-        : context.l10n.storeShareCardTotal(formatVp(amount));
+        ? context.l10n.storeShareCardSaved(context.fmt.vp(amount))
+        : context.l10n.storeShareCardTotal(context.fmt.vp(amount));
     return Row(
       children: [
         Icon(

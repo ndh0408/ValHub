@@ -3773,6 +3773,69 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String profileWinLossSummary(int wins, int losses, int draws, int unknown) {
+    String _temp0 = intl.Intl.pluralLogic(
+      draws,
+      locale: localeName,
+      other: ' – $draws hòa',
+      zero: '',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      unknown,
+      locale: localeName,
+      other: ' – $unknown trận chưa rõ kết quả',
+      zero: '',
+    );
+    return '$wins thắng – $losses thua$_temp0$_temp1';
+  }
+
+  @override
+  String profileDeviceTimeZone(String offset) {
+    return 'giờ thiết bị ($offset)';
+  }
+
+  @override
+  String profileKillDescription(
+    String killer,
+    String victim,
+    String hasWeapon,
+    String weapon,
+    String time,
+  ) {
+    String _temp0 = intl.Intl.selectLogic(hasWeapon, {
+      'yes': ' bằng $weapon',
+      'other': '',
+    });
+    return '$killer hạ gục $victim$_temp0 ($time)';
+  }
+
+  @override
+  String profilePerformancePeriodLabel(String period) {
+    String _temp0 = intl.Intl.selectLogic(period, {
+      'days30': '30 ngày',
+      'days7': '7 ngày',
+      'other': 'Toàn bộ',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceSegmentLabel(String segment) {
+    String _temp0 = intl.Intl.selectLogic(segment, {
+      'agents': 'Đặc vụ',
+      'maps': 'Bản đồ',
+      'queues': 'Chế độ',
+      'sides': 'Tấn công / Phòng thủ',
+      'trend': 'Xu hướng',
+      'other': 'Chế độ',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get profileAllModes => 'Mọi chế độ';
+
+  @override
   String get profileAbility => 'Kỹ năng';
 
   @override

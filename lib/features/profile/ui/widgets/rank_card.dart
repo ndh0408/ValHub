@@ -142,7 +142,7 @@ class _RankCardBody extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
               child: Text(
-                ProfileStrings.joined([
+                context.fmt.inlineFacts([
                   context.l10n.profileActRecord(
                     summary.wins,
                     summary.games,
@@ -289,7 +289,7 @@ class _TrendRow extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  ProfileStrings.joined([
+                  context.fmt.inlineFacts([
                     context.l10n.profileRrTrendTitle,
                     context.l10n.profileLastMatches(changes.length),
                   ]),

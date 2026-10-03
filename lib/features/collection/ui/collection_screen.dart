@@ -645,8 +645,8 @@ class _ValueCard extends ConsumerWidget {
     if (owned.value case final o?) {
       final value = ref.watch(priceServiceProvider).ownedCollectionValue(o);
       final amount = value.isEstimate
-          ? formatEstimatedVp(value.totalVp)
-          : formatVp(value.totalVp);
+          ? context.fmt.estimatedVp(value.totalVp)
+          : context.fmt.vp(value.totalVp);
       onTap = () => unawaited(
         context.push(CollectionRoutes.browse(CollectionBrowseType.skin)),
       );

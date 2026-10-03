@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/competitive_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +19,6 @@ import '../../live_game/current_game_card.dart';
 import '../../settings/ui/settings_gear_button.dart';
 import '../../social/social_routes.dart';
 import '../profile_routes.dart';
-import '../profile_strings.dart';
 import '../providers/profile_providers.dart';
 import 'widgets/identity_banner.dart';
 import 'widgets/match_history_sliver.dart';
@@ -156,7 +157,7 @@ class _DailyRrRow extends ConsumerWidget {
                 today == null
                     ? context.l10n.profileTodayNone
                     : context.l10n.profileToday(
-                        ProfileStrings.winsLosses(
+                        context.l10n.winLossSummary(
                           today.wins,
                           today.losses,
                           today.draws,

@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../util/clock.dart';
 import '../util/countdown.dart';
-import '../util/format.dart';
+import '../l10n/l10n.dart';
 
 /// Formats the remaining time of a countdown.
 typedef CountdownFormatter = String Function(Duration remaining);
@@ -24,7 +24,7 @@ class CountdownText extends ConsumerStatefulWidget {
   const CountdownText({
     super.key,
     required this.expiresAt,
-    this.format = formatCountdown,
+    this.format,
     this.builder,
     this.style,
     this.onExpired,
@@ -32,7 +32,7 @@ class CountdownText extends ConsumerStatefulWidget {
   });
 
   final DateTime expiresAt;
-  final CountdownFormatter format;
+  final CountdownFormatter? format;
 
   /// Wraps the formatted time in a sentence.
   final String Function(String formatted)? builder;
@@ -81,7 +81,9 @@ class _CountdownTextState extends ConsumerState<CountdownText> {
   @override
   Widget build(BuildContext context) {
     final now = ref.watch(clockProvider).now();
-    final formatted = widget.format(remainingUntil(widget.expiresAt, now));
+    final formatted = (widget.format ?? context.fmt.countdown)(
+      remainingUntil(widget.expiresAt, now),
+    );
     return Text(
       widget.builder?.call(formatted) ?? formatted,
       style:
