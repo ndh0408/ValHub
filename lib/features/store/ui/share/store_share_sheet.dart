@@ -13,7 +13,6 @@ import '../../../../core/ui/error_view.dart';
 import '../../../../core/ui/sub_page.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../providers/store_share.dart';
-import '../../store_strings.dart';
 import 'store_share_card.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -87,6 +86,7 @@ class _StoreShareSheetBodyState extends ConsumerState<StoreShareSheetBody> {
   }
 
   Future<void> _share() async {
+    final messages = context.l10n;
     if (_busy) return;
     setState(() => _busy = true);
     try {
@@ -108,15 +108,15 @@ class _StoreShareSheetBodyState extends ConsumerState<StoreShareSheetBody> {
       await ref.read(storeImageSharerProvider)(
         bytes.buffer.asUint8List(),
         fileName: nm
-            ? StoreStrings.shareFileNightMarket(stamp)
-            : StoreStrings.shareFileDaily(stamp),
+            ? messages.storeShareFileNightMarket(stamp)
+            : messages.storeShareFileDaily(stamp),
         subject: nm
-            ? StoreStrings.shareSubjectNightMarket
-            : StoreStrings.shareSubjectDaily,
+            ? messages.storeShareSubjectNightMarket
+            : messages.storeShareSubjectDaily,
         origin: origin,
       );
     } on Object {
-      if (mounted) showAppSnackBar(context, StoreStrings.shareFailed);
+      if (mounted) showAppSnackBar(context, messages.storeShareFailed);
     } finally {
       if (mounted) setState(() => _busy = false);
     }

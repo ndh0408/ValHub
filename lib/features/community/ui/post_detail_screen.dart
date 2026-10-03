@@ -10,7 +10,6 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
-import '../community_strings.dart';
 import '../data/community_api.dart';
 import '../data/community_exception.dart';
 import '../data/community_models.dart';
@@ -372,13 +371,14 @@ class _PostAccountScreenState extends ConsumerState<_PostAccountScreen> {
     ContentAction action,
     CommunityPost post,
   ) async {
+    final messages = context.l10n;
     switch (action) {
       case ContentAction.delete:
         final ok = await confirmCommunityAction(
           context,
-          title: CommunityStrings.deleteCommentTitle,
-          body: CommunityStrings.deleteCommentBody,
-          confirmLabel: CommunityStrings.delete,
+          title: messages.communityDeleteCommentTitle,
+          body: messages.communityDeleteCommentBody,
+          confirmLabel: messages.communityDelete,
         );
         if (!ok || !mounted) return;
         try {

@@ -34,10 +34,10 @@ enum RewardsFilter {
   unlocked,
   locked;
 
-  String get label => switch (this) {
-    all => BattlePassStrings.filterAll,
-    unlocked => BattlePassStrings.filterUnlocked,
-    locked => BattlePassStrings.filterLocked,
+  String label(AppLocalizations l10n) => switch (this) {
+    all => l10n.battlePassFilterAll,
+    unlocked => l10n.battlePassFilterUnlocked,
+    locked => l10n.battlePassFilterLocked,
   };
 
   bool keeps(RewardTier tier) => switch (this) {
@@ -143,7 +143,7 @@ class _BattlePassRewardsScreenState
           expand: true,
           tabs: [
             for (final f in RewardsFilter.values)
-              SegmentedTab(value: f, label: f.label),
+              SegmentedTab(value: f, label: f.label(context.l10n)),
           ],
           selected: _filter,
           onChanged: _setFilter,

@@ -12,7 +12,6 @@ import '../../core/ui/skeleton.dart';
 import '../../core/ui/sub_page.dart';
 import 'data/live_game_logic.dart';
 import 'data/live_game_models.dart';
-import 'live_game_strings.dart';
 import 'providers/live_game_providers.dart';
 import 'ui/agent_select_view.dart';
 import 'ui/live_ended_view.dart';
@@ -242,6 +241,7 @@ class _QuitBarState extends ConsumerState<_QuitBar> {
     // What the user is warned about (dodge vs. abandon) is what gets sent.
     final matchId = widget.match.matchId;
     final pregame = widget.match.isPregame;
+    final messages = context.l10n;
     final confirmed = await showQuitMatchDialog(context, pregame: pregame);
     if (!confirmed || !mounted) return;
     setState(() => _busy = true);
@@ -249,14 +249,14 @@ class _QuitBarState extends ConsumerState<_QuitBar> {
       await ref
           .read(liveGameProvider(widget.puuid).notifier)
           .quitMatch(matchId: matchId, pregame: pregame);
-      if (mounted) showAppSnackBar(context, LiveGameStrings.quitDone);
+      if (mounted) showAppSnackBar(context, messages.liveGameQuitDone);
     } on MatchChangedException {
-      if (mounted) showAppSnackBar(context, LiveGameStrings.quitMatchChanged);
+      if (mounted) showAppSnackBar(context, messages.liveGameQuitMatchChanged);
     } on Object catch (e) {
       if (mounted) {
         showAppSnackBar(
           context,
-          '${LiveGameStrings.quitFailed} ${describeError(context.l10n, e).message}',
+          '${messages.liveGameQuitFailed} ${describeError(messages, e).message}',
         );
       }
     } finally {

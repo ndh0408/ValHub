@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/community_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter/services.dart';
@@ -7,7 +9,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/util/format.dart';
-import '../../community_strings.dart';
 import '../../data/community_models.dart';
 import '../../providers/skin_review_providers.dart';
 import '../widgets/community_widgets.dart';
@@ -114,7 +115,7 @@ class _ReviewEditorSheetState extends ConsumerState<ReviewEditorSheet> {
                 child: Text(
                   _rating == 0
                       ? context.l10n.communityTapToRate
-                      : CommunityStrings.ratingWords[_rating - 1],
+                      : context.l10n.communityRatingWord(_rating),
                   key: ValueKey(_rating),
                   textAlign: TextAlign.center,
                   style: theme.textTheme.labelLarge?.copyWith(

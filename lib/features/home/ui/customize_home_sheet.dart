@@ -11,7 +11,6 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/sub_page.dart' show showValSheet;
 import '../data/home_card.dart';
-import '../home_strings.dart';
 import '../providers/home_layout_provider.dart';
 import 'home_card_frame.dart';
 
@@ -39,13 +38,14 @@ class CustomizeHomeList extends ConsumerWidget {
     final notifier = ref.read(homeLayoutProvider.notifier);
 
     Future<void> toggle(HomeCardId card, bool on) async {
+      final messages = context.l10n;
       if (card == HomeCardId.friends && on && consent != true) {
         // Connecting to chat makes the user look online to friends.
         final ok = await showConfirmDialog(
           context,
-          title: HomeStrings.friendsConsentTitle,
-          message: HomeStrings.friendsConsentBody,
-          confirmLabel: HomeStrings.friendsConsentAllow,
+          title: messages.homeFriendsConsentTitle,
+          message: messages.homeFriendsConsentBody,
+          confirmLabel: messages.homeFriendsConsentAllow,
           icon: Icons.group_outlined,
         );
         if (!ok) return;

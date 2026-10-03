@@ -1,10 +1,11 @@
+import 'package:valvn/core/l10n/labels/community_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/theme/app_theme.dart';
-import '../../community_strings.dart';
 import '../../data/community_api.dart';
 import '../../data/community_models.dart';
 import '../../providers/hidden_authors.dart';
@@ -26,14 +27,14 @@ class ContentMenuButton extends ConsumerWidget {
     super.key,
     required this.isMine,
     required this.onSelected,
-    this.deleteLabel = CommunityStrings.delete,
+    this.deleteLabel,
     this.author,
   });
 
   final bool isMine;
   final CommunityAuthor? author;
   final ValueChanged<ContentAction> onSelected;
-  final String deleteLabel;
+  final String? deleteLabel;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -72,7 +73,7 @@ class ContentMenuButton extends ConsumerWidget {
             value: _MenuAction.delete,
             child: _MenuRow(
               icon: Icons.delete_outline_rounded,
-              label: deleteLabel,
+              label: deleteLabel ?? context.l10n.communityDelete,
               color: ValColors.red,
             ),
           )
@@ -206,7 +207,7 @@ class _ReasonPicker extends StatelessWidget {
               ),
             ),
           ),
-          for (final e in CommunityStrings.reportReasons.entries)
+          for (final e in context.l10n.communityReportReasonLabels.entries)
             ListTile(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(ValRadius.small),

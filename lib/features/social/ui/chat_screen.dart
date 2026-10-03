@@ -63,6 +63,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   Future<void> _send() async {
+    final messages = context.l10n;
     final text = _input.text.trim();
     final service = ref.read(xmppServiceProvider);
     if (text.isEmpty || service == null || _sending) return;
@@ -71,7 +72,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       await service.sendMessage(_id, text);
       _input.clear();
     } on Object {
-      if (mounted) showAppSnackBar(context, SocialStrings.sendFailed);
+      if (mounted) showAppSnackBar(context, messages.socialSendFailed);
     } finally {
       if (mounted) setState(() => _sending = false);
     }

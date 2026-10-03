@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/community_labels.dart';
 import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:valvn/core/l10n/labels/economy_labels.dart';
 
@@ -23,7 +24,6 @@ import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart' show skinMedia;
 import '../../../skin_detail/skin_video_view.dart';
-import '../../community_strings.dart';
 import '../../data/community_api.dart';
 import '../../data/community_models.dart';
 import '../../providers/community_providers.dart';
@@ -670,7 +670,7 @@ class _MyReviewCard extends ConsumerWidget {
             children: [
               StarRow(value: mine.rating.toDouble(), size: 20),
               Text(
-                CommunityStrings.ratingWords[mine.rating - 1],
+                context.l10n.communityRatingWord(mine.rating),
                 style: theme.textTheme.labelLarge?.copyWith(
                   color: starColor(context),
                   fontWeight: FontWeight.w700,

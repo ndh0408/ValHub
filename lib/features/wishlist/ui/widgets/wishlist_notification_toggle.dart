@@ -10,7 +10,6 @@ import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../settings/ui/notification_priming_sheet.dart';
 import '../../../settings/providers/settings_providers.dart';
-import '../../wishlist_strings.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -30,6 +29,7 @@ class _WishlistNotificationToggleState
   bool _busy = false;
 
   Future<void> _set(bool on) async {
+    final messages = context.l10n;
     final account = ref.read(activeAccountProvider);
     if (account == null) return;
     final settings = ref.read(settingsControllerProvider);
@@ -48,9 +48,9 @@ class _WishlistNotificationToggleState
         final service = ref.read(notificationServiceProvider);
         messenger?.showSnackBar(
           SnackBar(
-            content: const Text(WishlistStrings.notifPermissionMissing),
+            content: Text(messages.wishlistNotifPermissionMissing),
             action: SnackBarAction(
-              label: WishlistStrings.openSettings,
+              label: messages.wishlistOpenSettings,
               onPressed: () => unawaited(service.openSystemSettings()),
             ),
           ),

@@ -22,7 +22,6 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/segmented_tabs.dart';
 import '../../../../core/ui/skeleton.dart';
 import '../../../../core/ui/sub_page.dart';
-import '../../collection_strings.dart';
 import '../../data/skin_query.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -549,9 +548,9 @@ class HubRow extends StatelessWidget {
 
 /// Small "Đang dùng" pill.
 class EquippedBadge extends StatelessWidget {
-  const EquippedBadge({super.key, this.label = CollectionStrings.equipped});
+  const EquippedBadge({super.key, this.label});
 
-  final String label;
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
@@ -568,7 +567,7 @@ class EquippedBadge extends StatelessWidget {
           const SizedBox(width: 3),
           Flexible(
             child: Text(
-              label,
+              label ?? context.l10n.collectionEquipped,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelSmall

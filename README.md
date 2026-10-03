@@ -1,6 +1,16 @@
 # ValHub
 
-Checkpoint mới nhất 03/10: [Nội dung / locale / RR loading, build 4013](docs/I18N_CONTENT_CUTOVER_2026-10-03.md).
+Checkpoint mới nhất 03/10: [Nhãn hiển thị / xác nhận ngôn ngữ, build 4014](docs/I18N_VIEW_CUTOVER_2026-10-03.md).
+
+Đã chuyển nhãn enum/widget/callback sang resources hiện tại và thêm xác nhận
+ngôn ngữ cho screen reader sau khi lưu. Windows hai lượt và Mac đạt **4.299
+tests**, analyzer 0; backend **867 tests**. APK 4014 qua 10 public flows;
+Mobile MCP/cache/log kiểm tra chuyển đủ **bốn tài khoản thật**, đúng dữ liệu
+cửa hàng từng tài khoản và trả active ban đầu. iOS 4014 build trên Mac,
+**chưa ký/chưa nghiệm thu iPhone**. Cutover còn **129 refs / 762 literals /
+52 structural**, chỉ VI UI ships; chưa nghiệm thu toàn bộ.
+
+Checkpoint trước 03/10: [Nội dung / locale / RR loading, build 4013](docs/I18N_CONTENT_CUTOVER_2026-10-03.md).
 
 Đã tách nhãn nội dung khỏi model, thêm lựa chọn tên vật phẩm theo app hoặc 18
 locale và giữ lựa chọn cũ; sửa thứ tự ghi cài đặt và race đọc RR. Windows hai

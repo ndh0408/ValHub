@@ -1,6 +1,16 @@
 # Hoàn thiện ValHub — nhật ký triển khai Codex
 
-Checkpoint mới nhất 03/10: [Nội dung / locale / RR loading, build 4013](I18N_CONTENT_CUTOVER_2026-10-03.md).
+Checkpoint mới nhất 03/10: [Nhãn hiển thị / xác nhận ngôn ngữ, build 4014](I18N_VIEW_CUTOVER_2026-10-03.md).
+
+Đã chuyển nhãn enum/widget/callback sang resources hiện tại và thêm xác nhận
+ngôn ngữ cho screen reader sau khi lưu. Windows hai lượt và Mac đạt **4.299
+tests**, analyzer 0; backend **867 tests**. APK 4014 qua 10 public flows;
+Mobile MCP/cache/log kiểm tra chuyển đủ **bốn tài khoản thật**, đúng dữ liệu
+cửa hàng từng tài khoản và trả active ban đầu. iOS 4014 build trên Mac,
+**chưa ký/chưa nghiệm thu iPhone**. Cutover còn **129 refs / 762 literals /
+52 structural**, chỉ VI UI ships; chưa nghiệm thu toàn bộ.
+
+Checkpoint trước 03/10: [Nội dung / locale / RR loading, build 4013](I18N_CONTENT_CUTOVER_2026-10-03.md).
 
 Đã tách nhãn nội dung khỏi model, thêm lựa chọn tên vật phẩm theo app hoặc 18
 locale và giữ lựa chọn cũ; sửa thứ tự ghi cài đặt và race đọc RR. Windows hai
@@ -106,7 +116,7 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 - [ ] RV-05 toàn bộ: privacy và Community disclosure đã đồng bộ, Markdown sinh từ Dart; vẫn cần rà lời toàn cầu khi cutover.
 - [x] I18N W1 nền công cụ: resolved extractor, ARB, manifest, parity, kiểm tra chạy lại; danh sách 52 member cần xử lý cấu trúc được giữ rõ.
 - [ ] I18N W2–W4: Migrate UI bằng công cụ có sẵn; global hiện còn **195 references / 52 structural members**. Chưa tách hết domain, chuyển hết async call site và cutover.
-- [ ] I18N W5 toàn bộ: runtime/device/upgrade pin, picker cho shipped locales, snapshot nền và channel/reminder resources đã nối và test; contentLocale 18 tag/legacy migration/headless đã nối; còn ui_locales/status, pruning và screen-reader announcement.
+- [ ] I18N W5 toàn bộ: runtime/device/upgrade pin, picker cho shipped locales, snapshot nền và channel/reminder resources đã nối và test; contentLocale 18 tag/legacy migration/headless đã nối; ui_locales đã nối; announcement sau lưu đã test qua platform channel; còn locale status, pruning và nghiệm thu TalkBack/VoiceOver thực tế.
 - [ ] I18N W6: đủ 18 bản dịch UI, plural/select, glossary và fallback/status gates.
 - [ ] I18N W7: RTL toàn ứng dụng, font CJK, pseudo locale và stale-string tests.
 - [ ] COUNTRIES P0–P3 toàn bộ: 250 mã, tên 18 locale, auto/manual/fail closed, chọn quốc gia/giá VP/picker chung đã nối. [Đợt kết nối](COUNTRY_CONNECTION_2026-10-01.md) thêm refresh 7 ngày, mismatch/ack, login geo outage, GET XP validation/retry và root sheet; còn onboarding, provenance/trạng thái đầy đủ, remote geo và nối quốc tế hóa.

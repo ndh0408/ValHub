@@ -10,7 +10,6 @@ import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/error_view.dart';
 import '../../../settings/ui/widgets/settings_widgets.dart';
-import '../../community_strings.dart';
 import '../../data/community_exception.dart';
 import '../../providers/community_providers.dart';
 import '../../providers/consent_providers.dart';
@@ -94,9 +93,7 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
         Haptics.heavy();
         messenger
           ?..hideCurrentSnackBar()
-          ..showSnackBar(
-            const SnackBar(content: Text(CommunityStrings.dataDeleted)),
-          );
+          ..showSnackBar(SnackBar(content: Text(l10n.communityDataDeleted)));
       } on Object catch (e) {
         messenger
           ?..hideCurrentSnackBar()
@@ -126,7 +123,7 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
       messenger
         ?..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(content: Text(CommunityStrings.consentWithdrawn)),
+          SnackBar(content: Text(l10nBeforeAwait2.communityConsentWithdrawn)),
         );
     });
   }

@@ -18,7 +18,6 @@ import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../data/live_game_logic.dart';
 import '../data/live_game_models.dart';
-import '../live_game_strings.dart';
 import '../providers/live_game_providers.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -45,6 +44,7 @@ class _AgentSelectViewState extends ConsumerState<AgentSelectView> {
       ref.read(liveGameProvider(widget.puuid).notifier);
 
   Future<void> _hover(Agent agent) async {
+    final messages = context.l10n;
     if (_busy) return;
     Haptics.selection();
     setState(() => _busy = true);
@@ -54,7 +54,7 @@ class _AgentSelectViewState extends ConsumerState<AgentSelectView> {
       if (mounted) {
         showAppSnackBar(
           context,
-          _failure(context.l10n, LiveGameStrings.selectFailed, e),
+          _failure(messages, messages.liveGameSelectFailed, e),
         );
       }
     } finally {
@@ -63,6 +63,7 @@ class _AgentSelectViewState extends ConsumerState<AgentSelectView> {
   }
 
   Future<void> _lock(Agent agent) async {
+    final messages = context.l10n;
     if (_busy) return;
     setState(() => _busy = true);
     Haptics.medium();
@@ -71,14 +72,14 @@ class _AgentSelectViewState extends ConsumerState<AgentSelectView> {
       if (mounted) {
         showAppSnackBar(
           context,
-          LiveGameStrings.lockedAgent(agent.displayName),
+          messages.liveGameLockedAgent(agent.displayName),
         );
       }
     } on Object catch (e) {
       if (mounted) {
         showAppSnackBar(
           context,
-          _failure(context.l10n, LiveGameStrings.lockFailed, e),
+          _failure(messages, messages.liveGameLockFailed, e),
         );
       }
     } finally {

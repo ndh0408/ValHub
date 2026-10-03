@@ -1,3 +1,5 @@
+import 'package:flutter/semantics.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,9 +35,21 @@ Future<void> pickUiLanguage(BuildContext context, WidgetRef ref) async {
         (LocaleChoice.fixed(locale), locale.nativeName),
     ],
   );
-  if (chosen == null || !context.mounted) return;
+  if (chosen == null || chosen == current || !context.mounted) return;
   try {
     await controller.set(chosen);
+    await WidgetsBinding.instance.endOfFrame;
+    if (!context.mounted) return;
+    // Speech failure cannot turn a persisted choice into a save-failure toast.
+    unawaited(
+      SemanticsService.sendAnnouncement(
+        View.of(context),
+        context.l10n.settingsLanguageChanged(
+          ref.read(appLocaleProvider).nativeName,
+        ),
+        Directionality.of(context),
+      ).catchError((Object _) {}),
+    );
   } on Object {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(

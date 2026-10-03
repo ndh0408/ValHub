@@ -20,7 +20,6 @@ import '../../../core/ui/net_image.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
-import '../collection_strings.dart';
 import '../providers/collection_providers.dart';
 import 'widgets/collection_widgets.dart';
 import 'widgets/loadout_actions.dart';
@@ -61,6 +60,7 @@ class _PresetsBody extends ConsumerWidget {
     final loading = snapshot == null && loadout.isLoading;
 
     Future<void> save() async {
+      final messages = context.l10n;
       final messenger = ScaffoldMessenger.maybeOf(context);
       final name = await showPresetNameDialog(
         context,
@@ -78,7 +78,7 @@ class _PresetsBody extends ConsumerWidget {
       final preset = await notifier.save(current.loadout, name: name);
       showCollectionSnack(
         messenger,
-        CollectionStrings.presetSaved(preset.name),
+        messages.collectionPresetSaved(preset.name),
       );
     }
 

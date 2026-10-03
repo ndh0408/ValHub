@@ -114,7 +114,11 @@ class LiveMapBanner extends StatelessWidget {
     final name = (mapName ?? context.l10n.liveGameSheetTitle).toUpperCase();
     return Semantics(
       container: true,
-      label: LiveGameStrings.joinParts([name, mode, status.label]),
+      label: LiveGameStrings.joinParts([
+        name,
+        mode,
+        status.label(context.l10n),
+      ]),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(ValRadius.card + 4),
         child: AspectRatio(

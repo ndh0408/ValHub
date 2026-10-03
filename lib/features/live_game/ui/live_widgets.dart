@@ -8,7 +8,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
-import '../live_game_strings.dart';
 import '../providers/live_game_providers.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -20,10 +19,10 @@ enum LiveStatus {
   inProgress,
   ended;
 
-  String get label => switch (this) {
-    agentSelect => LiveGameStrings.statusAgentSelect,
-    inProgress => LiveGameStrings.statusInProgress,
-    ended => LiveGameStrings.statusEnded,
+  String label(AppLocalizations l10n) => switch (this) {
+    agentSelect => l10n.liveGameStatusAgentSelect,
+    inProgress => l10n.liveGameStatusInProgress,
+    ended => l10n.liveGameStatusEnded,
   };
 
   Color color(BuildContext context) {
@@ -48,7 +47,10 @@ class LiveStatusPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!onImage) {
-      return StatusPill(label: status.label, color: status.color(context));
+      return StatusPill(
+        label: status.label(context.l10n),
+        color: status.color(context),
+      );
     }
     // The dark theme's accent colors read well on the dark capsule.
     final dot = switch (status) {
@@ -75,7 +77,7 @@ class LiveStatusPill extends StatelessWidget {
             const SizedBox(width: 6),
             Flexible(
               child: Text(
-                status.label,
+                status.label(context.l10n),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(

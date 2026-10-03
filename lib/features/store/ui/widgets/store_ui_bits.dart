@@ -12,7 +12,6 @@ import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
-import '../../store_strings.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -63,15 +62,15 @@ class StoreBadge extends StatelessWidget {
 
 /// "Đã sở hữu" badge in the win (teal) color.
 class OwnedBadge extends StatelessWidget {
-  const OwnedBadge({super.key, this.label = StoreStrings.ownedBadge});
+  const OwnedBadge({super.key, this.label});
 
-  final String label;
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
     final win = valColorsOf(context).win;
     return StoreBadge(
-      label,
+      label ?? context.l10n.storeOwnedBadge,
       color: win.withValues(alpha: 0.18),
       foreground: win,
       icon: Icons.check_circle,

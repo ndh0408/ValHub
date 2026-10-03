@@ -556,7 +556,7 @@ class _BrowseSection extends ConsumerWidget {
     }) => HubRow(
       icon: icon,
       image: image,
-      title: type.label,
+      title: type.label(context.l10n),
       value: value,
       onTap: () => unawaited(context.push(CollectionRoutes.browse(type))),
     );

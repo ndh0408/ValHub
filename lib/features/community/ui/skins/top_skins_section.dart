@@ -50,10 +50,10 @@ List<Weapon> leaderboardWeapons(ContentDb db) {
 }
 
 /// Label of a leaderboard sort.
-String topSortLabel(TopSort sort) => switch (sort) {
-  TopSort.votes => CommunityStrings.sortVotes,
-  TopSort.rating => CommunityStrings.sortRating,
-  TopSort.reviews => CommunityStrings.sortReviews,
+String topSortLabel(AppLocalizations l10n, TopSort sort) => switch (sort) {
+  TopSort.votes => l10n.communitySortVotes,
+  TopSort.rating => l10n.communitySortRating,
+  TopSort.reviews => l10n.communitySortReviews,
 };
 
 /// "Xếp hạng skin": the most-loved / best-rated / most-reviewed skins
@@ -228,7 +228,7 @@ class _Filters extends ConsumerWidget {
               for (final s in TopSort.values) ...[
                 if (s != TopSort.values.first) const SizedBox(width: 8),
                 CommunityChip(
-                  label: topSortLabel(s),
+                  label: topSortLabel(context.l10n, s),
                   icon: switch (s) {
                     TopSort.votes => Icons.favorite_rounded,
                     TopSort.rating => Icons.star_rounded,

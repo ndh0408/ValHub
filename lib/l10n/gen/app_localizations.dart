@@ -2710,6 +2710,12 @@ abstract class AppLocalizations {
   /// **'Không thể lưu trang bị. {detail}'**
   String collectionSaveFailedWith(String detail);
 
+  /// Render-time description for CollectionBrowseType; unknown IDs keep the existing browse-title fallback.
+  ///
+  /// In vi, this message translates to:
+  /// **'{type, select, skin{Mọi skin bạn sở hữu, tính giá trị theo giá cửa hàng} buddy{Phụ kiện súng đã sở hữu và số bản sao} spray{Hình phun sơn bạn có thể gắn vào tổ hợp cảm xúc} card{Thẻ người chơi đã mở khóa, chạm để xem và trang bị} title{Danh hiệu bạn có thể hiển thị dưới tên} flex{Flex đã sở hữu} other{Duyệt bộ sưu tập}}'**
+  String collectionBrowseDescription(String type);
+
   /// CollectionStrings.applyPreset — S38 presets
   ///
   /// In vi, this message translates to:
@@ -7929,6 +7935,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chọn ngôn ngữ tên vật phẩm. Lựa chọn này không đổi ngôn ngữ giao diện hoặc máy chủ Riot.'**
   String get settingsContentLanguageHint;
+
+  /// Screen-reader confirmation after a persisted UI language choice, with effective native language name.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngôn ngữ: {language}.'**
+  String settingsLanguageChanged(String language);
 
   /// SettingsStrings.aboutCreditContent — About screen (S72)
   ///

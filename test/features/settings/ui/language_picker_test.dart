@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -92,6 +93,95 @@ void main() {
       findsOneWidget,
     );
     expect(prefs.getString(PrefKeys.appLocale), isNull);
+    expect(tester.takeException(), isNull);
+  });
+
+  List<Map<Object?, Object?>> spyAnnouncements(
+    WidgetTester tester, {
+    bool reject = false,
+  }) {
+    final sent = <Map<Object?, Object?>>[];
+    final messenger = tester.binding.defaultBinaryMessenger;
+    messenger.setMockDecodedMessageHandler<dynamic>(
+      SystemChannels.accessibility,
+      (message) async {
+        final event = message as Map<Object?, Object?>;
+        if (event['type'] == 'announce') {
+          sent.add(event);
+          if (reject) throw PlatformException(code: 'speech_unavailable');
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => messenger.setMockDecodedMessageHandler<dynamic>(
+        SystemChannels.accessibility,
+        null,
+      ),
+    );
+    return sent;
+  }
+
+  testWidgets(
+    'saved choice announces effective language once; identical choice stays silent',
+    (tester) async {
+      final sent = spyAnnouncements(tester);
+      final prefs = await pumpPicker(tester);
+      Future<void> chooseVi() async {
+        await tester.tap(find.byType(TextButton));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(AppLocale.vi.nativeName));
+        await tester.pumpAndSettle();
+      }
+
+      await chooseVi();
+      expect(prefs.getString(PrefKeys.appLocale), 'vi-VN');
+      expect(sent, hasLength(1));
+      final data = sent.single['data'] as Map<Object?, Object?>;
+      expect(data['message'], 'Ngôn ngữ: Tiếng Việt.');
+      expect(data['textDirection'], TextDirection.ltr.index);
+      expect(data['viewId'], tester.view.viewId);
+      await chooseVi();
+      expect(sent, hasLength(1));
+    },
+  );
+  testWidgets('cancel/failure never announce a successful choice', (
+    tester,
+  ) async {
+    final sent = spyAnnouncements(tester);
+    await pumpPicker(tester);
+    await tester.tap(find.byType(TextButton));
+    await tester.pumpAndSettle();
+    Navigator.of(tester.element(find.text(AppLocale.vi.nativeName))).pop();
+    await tester.pumpAndSettle();
+    expect(sent, isEmpty);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await pumpPicker(tester, fail: true);
+    await tester.tap(find.byType(TextButton));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(AppLocale.vi.nativeName));
+    await tester.pumpAndSettle();
+    expect(sent, isEmpty);
+    expect(
+      find.text('Chưa lưu được ngôn ngữ. Vui lòng thử lại.'),
+      findsOneWidget,
+    );
+  });
+  testWidgets('speech channel failure preserves a successful saved choice', (
+    tester,
+  ) async {
+    final sent = spyAnnouncements(tester, reject: true);
+    final prefs = await pumpPicker(tester);
+    await tester.tap(find.byType(TextButton));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(AppLocale.vi.nativeName));
+    await tester.pumpAndSettle();
+    expect(prefs.getString(PrefKeys.appLocale), 'vi-VN');
+    expect(sent, hasLength(1));
+    expect(
+      find.text('Chưa lưu được ngôn ngữ. Vui lòng thử lại.'),
+      findsNothing,
+    );
     expect(tester.takeException(), isNull);
   });
 

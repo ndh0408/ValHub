@@ -10,7 +10,6 @@ import '../../../../core/ui/skeleton.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
-import '../../battlepass_strings.dart';
 import '../../data/daily_ticket.dart';
 import '../../providers/battlepass_providers.dart';
 import 'bp_ui_bits.dart';
@@ -327,12 +326,13 @@ class _DailyTicketNotReadyState extends ConsumerState<DailyTicketNotReady> {
   bool _busy = false;
 
   Future<void> _renew() async {
+    final messages = context.l10n;
     setState(() => _busy = true);
     try {
       await ref.read(dailyTicketRenewerProvider).renew(widget.puuid);
-      if (mounted) showAppSnackBar(context, BattlePassStrings.renewDone);
+      if (mounted) showAppSnackBar(context, messages.battlePassRenewDone);
     } on Object {
-      if (mounted) showAppSnackBar(context, BattlePassStrings.renewFailed);
+      if (mounted) showAppSnackBar(context, messages.battlePassRenewFailed);
     } finally {
       if (mounted) setState(() => _busy = false);
     }

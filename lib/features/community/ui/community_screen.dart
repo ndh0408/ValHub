@@ -8,7 +8,6 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
-import '../community_strings.dart';
 import '../providers/community_providers.dart';
 import '../providers/consent_providers.dart';
 import 'consent/anonymous_banner.dart';
@@ -47,10 +46,10 @@ enum CommunitySection {
     _ => null,
   };
 
-  String get label => switch (this) {
-    feed => CommunityStrings.sectionFeed,
-    lfg => CommunityStrings.sectionLfg,
-    skins => CommunityStrings.sectionSkins,
+  String label(AppLocalizations l10n) => switch (this) {
+    feed => l10n.communitySectionFeed,
+    lfg => l10n.communitySectionLfg,
+    skins => l10n.communitySectionSkins,
   };
 }
 
@@ -294,7 +293,7 @@ class _SectionTabs extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      section.label,
+                      section.label(context.l10n),
                       textAlign: TextAlign.center,
                       style: theme.textTheme.labelLarge?.copyWith(
                         fontWeight: selected == section

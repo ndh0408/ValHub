@@ -2555,6 +2555,16 @@
       }
     }
   },
+  "collectionBrowseDescription": "{type, select, skin{Mọi skin bạn sở hữu, tính giá trị theo giá cửa hàng} buddy{Phụ kiện súng đã sở hữu và số bản sao} spray{Hình phun sơn bạn có thể gắn vào tổ hợp cảm xúc} card{Thẻ người chơi đã mở khóa, chạm để xem và trang bị} title{Danh hiệu bạn có thể hiển thị dưới tên} flex{Flex đã sở hữu} other{Duyệt bộ sưu tập}}",
+  "@collectionBrowseDescription": {
+    "description": "Render-time description for CollectionBrowseType; unknown IDs keep the existing browse-title fallback.",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    },
+    "x-manual": true
+  },
   "collectionApplyPreset": "Áp dụng",
   "@collectionApplyPreset": {
     "description": "CollectionStrings.applyPreset — S38 presets",
@@ -7696,6 +7706,16 @@
   "settingsContentLanguageHint": "Chọn ngôn ngữ tên vật phẩm. Lựa chọn này không đổi ngôn ngữ giao diện hoặc máy chủ Riot.",
   "@settingsContentLanguageHint": {
     "description": "The content-language picker supports all 18 API locales even while UI translations are unshipped."
+  },
+  "settingsLanguageChanged": "Ngôn ngữ: {language}.",
+  "@settingsLanguageChanged": {
+    "description": "Screen-reader confirmation after a persisted UI language choice, with effective native language name.",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    },
+    "x-manual": true
   },
   "settingsAboutCreditContent": "valorant-api.com",
   "@settingsAboutCreditContent": {

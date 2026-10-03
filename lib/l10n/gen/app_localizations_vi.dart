@@ -1508,6 +1508,20 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String collectionBrowseDescription(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'skin': 'Mọi skin bạn sở hữu, tính giá trị theo giá cửa hàng',
+      'buddy': 'Phụ kiện súng đã sở hữu và số bản sao',
+      'spray': 'Hình phun sơn bạn có thể gắn vào tổ hợp cảm xúc',
+      'card': 'Thẻ người chơi đã mở khóa, chạm để xem và trang bị',
+      'title': 'Danh hiệu bạn có thể hiển thị dưới tên',
+      'flex': 'Flex đã sở hữu',
+      'other': 'Duyệt bộ sưu tập',
+    });
+    return '$_temp0';
+  }
+
+  @override
   String get collectionApplyPreset => 'Áp dụng';
 
   @override
@@ -4547,6 +4561,11 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get settingsContentLanguageHint =>
       'Chọn ngôn ngữ tên vật phẩm. Lựa chọn này không đổi ngôn ngữ giao diện hoặc máy chủ Riot.';
+
+  @override
+  String settingsLanguageChanged(String language) {
+    return 'Ngôn ngữ: $language.';
+  }
 
   @override
   String get settingsAboutCreditContent => 'valorant-api.com';

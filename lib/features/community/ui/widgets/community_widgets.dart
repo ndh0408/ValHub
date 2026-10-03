@@ -11,7 +11,6 @@ import 'package:material_ui/material_ui.dart' hide ErrorDescription;
 import '../../../../core/auth/auth_routes.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/geo/countries.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/filter_bar.dart';
 import '../../../../core/ui/net_image.dart';
@@ -19,7 +18,6 @@ import '../../../../core/ui/rank_badge.dart';
 import '../../../../core/ui/skeleton.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
-import '../../community_strings.dart';
 import '../../data/community_exception.dart';
 import '../../data/community_models.dart';
 import '../consent/consent_sheet.dart';
@@ -550,8 +548,8 @@ class HeartButton extends StatefulWidget {
     required this.onTap,
     this.count,
     this.size = 22,
-    this.semanticsOn = CommunityStrings.unlike,
-    this.semanticsOff = CommunityStrings.like,
+    this.semanticsOn,
+    this.semanticsOff,
     this.dense = false,
   });
 
@@ -559,8 +557,8 @@ class HeartButton extends StatefulWidget {
   final VoidCallback? onTap;
   final int? count;
   final double size;
-  final String semanticsOn;
-  final String semanticsOff;
+  final String? semanticsOn;
+  final String? semanticsOff;
   final bool dense;
 
   @override
@@ -643,7 +641,9 @@ class _HeartButtonState extends State<HeartButton>
       container: true,
       button: true,
       toggled: widget.active,
-      label: widget.active ? widget.semanticsOn : widget.semanticsOff,
+      label: widget.active
+          ? widget.semanticsOn ?? context.l10n.communityUnlike
+          : widget.semanticsOff ?? context.l10n.communityLike,
       value: count == null ? null : formatNumber(count),
       onTap: widget.onTap == null ? null : _tap,
       excludeSemantics: true,
@@ -888,7 +888,7 @@ Future<bool> confirmCommunityAction(
       actions: [
         adaptiveDialogAction(
           context,
-          label: CommonStrings.cancel,
+          label: context.l10n.commonCancel,
           onPressed: () => Navigator.of(context).pop(false),
         ),
         adaptiveDialogAction(

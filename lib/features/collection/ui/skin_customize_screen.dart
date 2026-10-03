@@ -20,7 +20,6 @@ import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../skin_detail/skin_video_view.dart';
-import '../collection_strings.dart';
 import '../data/loadout_view.dart';
 import '../providers/collection_providers.dart';
 import 'buddy_picker_sheet.dart';
@@ -220,7 +219,7 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
                     skinLevelId: sel.levelId!,
                     chromaId: sel.chromaId!,
                   ),
-                  successMessage: CollectionStrings.equippedItem(
+                  successMessage: context.l10n.collectionEquippedItem(
                     skinLabel(skin),
                   ),
                 );

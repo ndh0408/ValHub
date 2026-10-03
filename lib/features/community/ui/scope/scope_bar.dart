@@ -9,7 +9,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/geo/countries.dart';
 import '../../../../core/ui/filter_bar.dart';
-import '../../community_strings.dart';
 import '../../data/community_models.dart';
 import '../../providers/scope_providers.dart';
 import 'countries_sheet.dart';
@@ -17,10 +16,13 @@ import 'language_filter_sheet.dart';
 
 /// Label of the "country" segment: flag + name of the chosen country, else
 /// "Nước bạn".
-String countrySegmentLabel(String? country, {String? localizedName}) =>
-    country == null
-    ? CommunityStrings.scopeCountry
-    : '${flagEmoji(country)} ${localizedName ?? CommunityStrings.countryName(country)}';
+String countrySegmentLabel(
+  AppLocalizations l10n,
+  String? country, {
+  String? localizedName,
+}) => country == null
+    ? l10n.communityScopeCountry
+    : '${flagEmoji(country)} ${localizedName ?? l10n.communityCountryName(country)}';
 
 /// Summary of the language filter ("Mọi ngôn ngữ", "Tiếng Việt", "3 ngôn
 /// ngữ").
@@ -39,7 +41,7 @@ class ScopeBar extends ConsumerWidget {
     required this.section,
     required this.puuid,
     this.applied,
-    this.globalLabel = CommunityStrings.scopeGlobal,
+    this.globalLabel,
     this.trailing,
   });
 
@@ -53,13 +55,15 @@ class ScopeBar extends ConsumerWidget {
   final AppliedScope? applied;
 
   /// Label of the international segment ("Quốc tế" / "Toàn cầu").
-  final String globalLabel;
+  final String? globalLabel;
 
   /// Optional trailing widget aligned on the same row (e.g. period tabs).
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final globalText = globalLabel ?? l10n.communityScopeGlobal;
     final notifier = ref.read(communityScopeProvider(section).notifier);
     final chosen = ref.watch(communityScopeProvider(section));
     final myCountry = ref.watch(myCountryProvider(puuid)).value;
@@ -121,13 +125,14 @@ class ScopeBar extends ConsumerWidget {
         : country;
     final label = switch (selected) {
       CommunityScope.country => countrySegmentLabel(
+        l10n,
         displayedCountry,
         localizedName: displayedCountry == null
             ? null
             : names?.name(displayedCountry),
       ),
       CommunityScope.region => context.l10n.communityRegionName(region),
-      CommunityScope.global => globalLabel,
+      CommunityScope.global => globalText,
     };
 
     Future<void> pickScope() async {
@@ -145,7 +150,7 @@ class ScopeBar extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Text(
-                  CommunityStrings.title,
+                  sheetContext.l10n.communityTitle,
                   style: Theme.of(sheetContext).textTheme.titleLarge,
                 ),
               ),
@@ -155,13 +160,13 @@ class ScopeBar extends ConsumerWidget {
                   leading: Text(flagEmoji(myCountry)),
                   title: Text(
                     names?.name(myCountry) ??
-                        CommunityStrings.countryName(myCountry),
+                        sheetContext.l10n.communityCountryName(myCountry),
                   ),
                   subtitle: Text(
                     displayedCountry != myCountry &&
                             selected == CommunityScope.country
-                        ? CommunityStrings.backToMyCountry
-                        : CommunityStrings.yourCountry,
+                        ? sheetContext.l10n.communityBackToMyCountry
+                        : sheetContext.l10n.communityYourCountry,
                   ),
                   trailing:
                       selected == CommunityScope.country &&
@@ -173,7 +178,7 @@ class ScopeBar extends ConsumerWidget {
               ListTile(
                 key: ValueKey('scope-global-${section.name}'),
                 leading: const Icon(Icons.public_rounded),
-                title: Text(globalLabel),
+                title: Text(globalText),
                 trailing: selected == CommunityScope.global
                     ? const Icon(Icons.check_rounded)
                     : null,
@@ -182,20 +187,20 @@ class ScopeBar extends ConsumerWidget {
               ListTile(
                 key: ValueKey('scope-countries-${section.name}'),
                 leading: const Icon(Icons.travel_explore_rounded),
-                title: const Text(CommunityStrings.countriesTitle),
+                title: Text(sheetContext.l10n.communityCountriesTitle),
                 trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: () => Navigator.pop(sheetContext, 'countries'),
               ),
               const Divider(),
-              const Padding(
-                padding: EdgeInsets.all(16),
-                child: Text(CommunityStrings.scopeRegion),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(sheetContext.l10n.communityScopeRegion),
               ),
               for (final r in kCommunityRegions)
                 ListTile(
                   key: ValueKey('scope-region-$r-${section.name}'),
                   leading: const Icon(Icons.dns_rounded),
-                  title: Text(context.l10n.communityRegionName(r)),
+                  title: Text(sheetContext.l10n.communityRegionName(r)),
                   trailing: selected == CommunityScope.region && region == r
                       ? const Icon(Icons.check_rounded)
                       : null,

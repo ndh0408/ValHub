@@ -325,7 +325,7 @@ class _ExpressionPickerSheetState extends ConsumerState<ExpressionPickerSheet> {
       change: flex
           ? SetExpression.flex(widget.slot, id)
           : SetExpression.spray(widget.slot, id),
-      successMessage: CollectionStrings.equippedItem(name),
+      successMessage: context.l10n.collectionEquippedItem(name),
     );
     if (ok) Haptics.medium();
     if (ok && navigator.mounted) navigator.pop();

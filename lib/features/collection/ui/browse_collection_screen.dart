@@ -22,7 +22,6 @@ import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
 import '../../skin_detail/skin_detail_sheet.dart';
-import '../collection_strings.dart';
 import '../data/buddy_options.dart';
 import '../data/collection_items.dart';
 import '../data/collection_search.dart';
@@ -36,18 +35,25 @@ import 'package:valvn/core/l10n/l10n.dart';
 
 /// `:type` of `/collection/browse/:type` (S39).
 enum CollectionBrowseType {
-  skin('skin', CollectionStrings.browseSkins),
-  buddy('buddy', CollectionStrings.browseBuddies),
-  spray('spray', CollectionStrings.browseSprays),
-  card('card', CollectionStrings.browseCards),
-  title('title', CollectionStrings.browseTitles),
-  flex('flex', CollectionStrings.browseFlex);
+  skin('skin'),
+  buddy('buddy'),
+  spray('spray'),
+  card('card'),
+  title('title'),
+  flex('flex');
 
-  const CollectionBrowseType(this.path, this.label);
+  const CollectionBrowseType(this.path);
 
   /// Path segment.
   final String path;
-  final String label;
+  String label(AppLocalizations l10n) => switch (this) {
+    skin => l10n.collectionBrowseSkins,
+    buddy => l10n.collectionBrowseBuddies,
+    spray => l10n.collectionBrowseSprays,
+    card => l10n.collectionBrowseCards,
+    title => l10n.collectionBrowseTitles,
+    flex => l10n.collectionBrowseFlex,
+  };
 
   static CollectionBrowseType parse(String? value) =>
       values.firstWhere((t) => t.path == value, orElse: () => skin);
@@ -93,12 +99,12 @@ class _BrowseCollectionScreenState
   @override
   Widget build(BuildContext context) {
     final account = ref.watch(activeAccountProvider);
-    if (account == null) return NoAccountPage(title: _type.label);
+    if (account == null) return NoAccountPage(title: _type.label(context.l10n));
     final puuid = account.puuid;
     final isSkin = _type == CollectionBrowseType.skin;
     return SubPageScaffold(
-      title: _type.label,
-      subtitle: CollectionStrings.browseSubtitle(_type.path),
+      title: _type.label(context.l10n),
+      subtitle: context.l10n.collectionBrowseDescription(_type.path),
       onRefresh: () => refreshCollection(ref, puuid),
       header: SearchStrip(
         search: CollectionSearchField(

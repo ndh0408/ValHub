@@ -16,7 +16,6 @@ import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/format.dart';
-import '../collection_strings.dart';
 import '../data/collection_items.dart';
 import '../data/collection_search.dart';
 import '../providers/collection_providers.dart';
@@ -308,7 +307,7 @@ class _CardPreviewSheet extends ConsumerWidget {
                       ref,
                       puuid: puuid,
                       change: SetPlayerCard(card.uuid),
-                      successMessage: CollectionStrings.equippedItem(
+                      successMessage: context.l10n.collectionEquippedItem(
                         card.displayName,
                       ),
                     );

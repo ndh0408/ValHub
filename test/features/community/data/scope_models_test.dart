@@ -151,8 +151,8 @@ void main() {
     });
 
     test('labels', () {
-      expect(countrySegmentLabel('VN'), '🇻🇳 Việt Nam');
-      expect(countrySegmentLabel(null), CommunityStrings.scopeCountry);
+      expect(countrySegmentLabel(tl, 'VN'), '🇻🇳 Việt Nam');
+      expect(countrySegmentLabel(tl, null), CommunityStrings.scopeCountry);
       expect(languageFilterLabel(tl, {}), CommunityStrings.anyLanguage);
       expect(languageFilterLabel(tl, {'ja'}), '日本語');
       expect(languageFilterLabel(tl, {'ja', 'vi'}), '2 ngôn ngữ');
