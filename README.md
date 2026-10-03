@@ -1,6 +1,16 @@
 # ValHub
 
-Checkpoint mới nhất 03/10: [Cộng đồng / cách ly tài khoản, build 4012](docs/COMMUNITY_ACCOUNT_ISOLATION_2026-10-03.md).
+Checkpoint mới nhất 03/10: [Nội dung / locale / RR loading, build 4013](docs/I18N_CONTENT_CUTOVER_2026-10-03.md).
+
+Đã tách nhãn nội dung khỏi model, thêm lựa chọn tên vật phẩm theo app hoặc 18
+locale và giữ lựa chọn cũ; sửa thứ tự ghi cài đặt và race đọc RR. Windows hai
+lượt và Mac đạt **4.292 tests**, analyzer 0; backend **867 tests**. APK 4013 qua
+10 public flows, đã nâng cấp emulator và giữ bốn tài khoản/wishlist/cài đặt;
+Mobile MCP/cache/log thật được kiểm tra. iOS 4013 build trên Mac, **chưa ký/chưa
+nghiệm thu iPhone**. Cutover còn **195 refs / 762 literals / 52 structural**;
+chỉ VI ships, chưa nghiệm thu toàn bộ.
+
+Checkpoint trước 03/10: [Cộng đồng / cách ly tài khoản, build 4012](docs/COMMUNITY_ACCOUNT_ISOLATION_2026-10-03.md).
 
 Windows hai lượt và Mac đạt **4.265 tests**, analyzer 0; backend **867 tests**.
 APK 4012 qua 10 public-flow cases, đã nâng cấp emulator có cửa sổ, giữ đủ

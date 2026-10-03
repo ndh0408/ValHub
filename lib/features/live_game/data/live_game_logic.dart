@@ -2,6 +2,8 @@
 /// lines, live score freshness and agent-grid tile states.
 library;
 
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'package:flutter/foundation.dart';
 
 import '../../../core/content/content_db.dart';
@@ -125,12 +127,17 @@ LiveScore? liveScoreOf(FriendPresence? presence, {required DateTime now}) {
 // ----------------------------------------------------------- labels
 
 /// "Thi đấu xếp hạng" / "Chơi tự do" / the custom game's mode name (G9).
-String liveModeLabel(ContentDb db, {String? queueId, String? modeId}) {
+String liveModeLabel(
+  AppLocalizations l10n,
+  ContentDb db, {
+  String? queueId,
+  String? modeId,
+}) {
   final q = (queueId ?? '').trim();
-  if (q.isNotEmpty) return db.queueName(q);
+  if (q.isNotEmpty) return db.queueName(l10n, q);
   final mode = db.gameModeByPath(modeId)?.displayName;
   if (mode != null && mode.trim().isNotEmpty) return mode;
-  return db.queueName('');
+  return db.queueName(l10n, '');
 }
 
 /// Map display name, `null` when unknown.

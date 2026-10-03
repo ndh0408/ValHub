@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,7 +89,9 @@ class _PlayerCardPickerScreenState
                   heroTag: CollectionHeroTags.equippedCard,
                   cardArt: equipped?.wideArt,
                   name: account.gameName,
-                  title: title == null || title.isNoTitle ? null : title.text,
+                  title: title == null || title.isNoTitle
+                      ? null
+                      : title.localizedText(context.l10n),
                   badge: ArtPill(
                     label: context.l10n.collectionEquipped,
                     icon: Icons.check,

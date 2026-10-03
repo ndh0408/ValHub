@@ -172,7 +172,7 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
     final video = sel.video;
     final facts = [
       ?weapon?.displayName,
-      ?skinTierName(ref, hasTier ? skin.contentTierUuid : null),
+      ?skinTierName(ref, context, hasTier ? skin.contentTierUuid : null),
     ];
 
     return SubPageScaffold(

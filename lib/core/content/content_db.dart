@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-import '../l10n/content_strings.dart';
 import '../riot/riot_ids.dart';
 import '../util/json.dart';
 import 'content_fallbacks.dart';
@@ -51,7 +50,6 @@ class ContentItemRef {
     required this.itemTypeId,
     required this.uuid,
     required this.name,
-    required this.typeLabel,
     this.image,
     this.contentTierUuid,
   });
@@ -60,8 +58,6 @@ class ContentItemRef {
   final String uuid;
   final String name;
 
-  /// Vietnamese type label ("Phụ kiện súng"…).
-  final String typeLabel;
   final String? image;
   final String? contentTierUuid;
 }
@@ -74,9 +70,6 @@ class RewardSource {
   final Contract contract;
 
   ContractRelation get relation => contract.relation;
-
-  /// "Phần thưởng Battle Pass" / "Hợp đồng đặc vụ" / "Vé sự kiện".
-  String? get label => contract.relation.rewardSourceLabel;
 }
 
 /// Immutable, indexed valorant-api content (CA §17). Build it with
@@ -513,7 +506,6 @@ class ContentDb {
           itemTypeId: type,
           uuid: id,
           name: s.displayName,
-          typeLabel: ContentStrings.itemSkin,
           image: s.image,
           contentTierUuid: s.contentTierUuid,
         );
@@ -525,7 +517,6 @@ class ContentDb {
           itemTypeId: type,
           uuid: id,
           name: c.displayName.isEmpty ? s.displayName : c.displayName,
-          typeLabel: ContentStrings.itemChroma,
           image: c.fullRender ?? c.displayIcon ?? s.image,
           contentTierUuid: s.contentTierUuid,
         );
@@ -536,7 +527,6 @@ class ContentDb {
           itemTypeId: type,
           uuid: id,
           name: b.displayName,
-          typeLabel: ContentStrings.itemBuddy,
           image: b.image,
         );
       case ItemTypeIds.spray:
@@ -546,7 +536,6 @@ class ContentDb {
           itemTypeId: type,
           uuid: id,
           name: s.displayName,
-          typeLabel: ContentStrings.itemSpray,
           image: s.image,
         );
       case ItemTypeIds.playerCard:
@@ -556,18 +545,12 @@ class ContentDb {
           itemTypeId: type,
           uuid: id,
           name: c.displayName,
-          typeLabel: ContentStrings.itemCard,
           image: c.smallArt ?? c.displayIcon,
         );
       case ItemTypeIds.playerTitle:
         final t = title(id);
         if (t == null) return null;
-        return ContentItemRef(
-          itemTypeId: type,
-          uuid: id,
-          name: t.text,
-          typeLabel: ContentStrings.itemTitle,
-        );
+        return ContentItemRef(itemTypeId: type, uuid: id, name: t.text);
       case ItemTypeIds.flex:
         final f = flex(id);
         if (f == null) return null;
@@ -575,7 +558,6 @@ class ContentDb {
           itemTypeId: type,
           uuid: id,
           name: f.displayName,
-          typeLabel: ContentStrings.itemFlex,
           image: f.displayIcon,
         );
       case ItemTypeIds.agent:
@@ -585,7 +567,6 @@ class ContentDb {
           itemTypeId: type,
           uuid: id,
           name: a.displayName,
-          typeLabel: ContentStrings.itemAgent,
           image: a.displayIcon,
         );
       case ItemTypeIds.currency:
@@ -594,8 +575,7 @@ class ContentDb {
         return ContentItemRef(
           itemTypeId: type,
           uuid: id,
-          name: c.label,
-          typeLabel: ContentStrings.itemCurrency,
+          name: c.displayName,
           image: c.displayIcon,
         );
       case ItemTypeIds.premiumContract:
@@ -605,7 +585,6 @@ class ContentDb {
           itemTypeId: type,
           uuid: id,
           name: c.displayName,
-          typeLabel: ContentStrings.itemContract,
           image: c.displayIcon,
         );
     }
@@ -636,30 +615,6 @@ class ContentDb {
 
   GameQueue? queue(String? queueId) =>
       queueId == null ? null : _queues[queueId.trim().toLowerCase()];
-
-  /// Label for a Riot `QueueID` (SUMMARY §7.5): valorant-api `dropdownText`,
-  /// then the app fallback table (VF §8.9), then the raw id. `console_*`
-  /// ids use the PC label; `""` / `custom` = "Chơi tự do".
-  String queueName(String? queueId) {
-    final id = (queueId ?? '').trim().toLowerCase();
-    final q = queue(id);
-    if (q != null) return q.label;
-    final base = id.startsWith('console_')
-        ? id.substring('console_'.length)
-        : id;
-    final baseQueue = queue(base);
-    if (baseQueue != null) return baseQueue.label;
-    return ContentFallbacks.queueName(base) ?? queueId ?? '';
-  }
-
-  /// Short chip label ("Xếp hạng" for competitive).
-  String queueShortName(String? queueId) {
-    final id = (queueId ?? '').trim().toLowerCase();
-    final base = id.startsWith('console_')
-        ? id.substring('console_'.length)
-        : id;
-    return ContentStrings.queueShortNames[base] ?? queueName(queueId);
-  }
 
   /// Game mode from a Riot `ModeID` / `matchInfo.gameMode` path.
   GameMode? gameModeByPath(String? path) {

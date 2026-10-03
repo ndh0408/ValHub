@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/economy_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,7 +59,7 @@ class CatalogSkinTile extends ConsumerWidget {
     );
     final quote = facts.quote;
     final priceText =
-        quote.caption ??
+        quote.caption(context.l10n) ??
         (quote.vp == null
             ? context.l10n.commonDash
             : (quote.isEstimate

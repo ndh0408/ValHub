@@ -44,7 +44,7 @@ double _top(WidgetTester tester, HomeCardId id) =>
 
 const _liveIngame = HomeLiveSnapshot(
   phase: LivePhase.ingame,
-  modeLabel: 'Thi đấu xếp hạng',
+  queueId: 'competitive',
   mapName: 'Ascent',
 );
 

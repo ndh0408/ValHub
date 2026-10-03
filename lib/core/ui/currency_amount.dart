@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -86,7 +87,8 @@ class CurrencyAmount extends ConsumerWidget {
     final text = [
       if (estimate) context.l10n.commonEstimatePrefix,
       formatNumber(amount),
-      if (showLabel || currency?.displayIcon == null) ?currency?.label,
+      if (showLabel || currency?.displayIcon == null)
+        if (currency != null) currency.label(context.l10n),
     ].join(' ');
     return Row(
       mainAxisSize: MainAxisSize.min,

@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/economy_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -257,7 +259,7 @@ class SkinRow extends ConsumerWidget {
     final dark = theme.brightness == Brightness.dark;
     final muted = scheme.onSurfaceVariant;
     final color = skinTierColor(ref, context, skin.contentTierUuid);
-    final tierName = skinTierName(ref, skin.contentTierUuid);
+    final tierName = skinTierName(ref, context, skin.contentTierUuid);
     final levels = owned.ownedLevels(skin).length;
     final chromas = owned.ownedChromas(skin).length;
     final details = [
@@ -378,7 +380,7 @@ class _PriceLine extends StatelessWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
     final vp = quote.vp;
     if (vp == null) {
-      final caption = quote.caption;
+      final caption = quote.caption(context.l10n);
       if (caption == null) return const SizedBox.shrink();
       return Row(
         children: [

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart' show ThemeMode;
 
 import '../accounts/account.dart';
+import '../l10n/app_locale.dart';
 import '../storage/prefs.dart';
 import '../util/json.dart';
 
@@ -27,7 +28,8 @@ enum ItemLanguage {
 class AppSettings {
   const AppSettings({
     this.themeMode = ThemeMode.dark,
-    this.itemLanguage = ItemLanguage.vi,
+    ItemLanguage itemLanguage = ItemLanguage.vi,
+    String? contentLocale,
     this.autoOpenLiveGame = true,
     this.showPeakRankInGame = true,
     this.showLiveScore = true,
@@ -40,7 +42,8 @@ class AppSettings {
     this.communityNotifications = false,
     this.lfgNotifications = false,
     this.showPriceEstimate = true,
-  });
+  }) : _contentLocale =
+           contentLocale ?? (itemLanguage == ItemLanguage.en ? 'en-US' : 'app');
 
   factory AppSettings.fromJson(Object? json) {
     final m = asMap(json) ?? const <String, dynamic>{};
@@ -52,6 +55,9 @@ class AppSettings {
         _ => ThemeMode.dark,
       },
       itemLanguage: ItemLanguage.parse(m['itemLanguage']),
+      contentLocale: m.containsKey('contentLocale')
+          ? normalizeContentLocale(asString(m['contentLocale']))
+          : null,
       autoOpenLiveGame: asBool(m['autoOpenLiveGame']) ?? d.autoOpenLiveGame,
       showPeakRankInGame:
           asBool(m['showPeakRankInGame']) ?? d.showPeakRankInGame,
@@ -79,7 +85,21 @@ class AppSettings {
 
   /// Dark by default (Valorant style).
   final ThemeMode themeMode;
-  final ItemLanguage itemLanguage;
+  final String _contentLocale;
+
+  /// "app" follows UI language; an explicit tag selects independent API names.
+  String get contentLocale => normalizeContentLocale(_contentLocale);
+
+  /// Compatibility view for old callers and downgrade-safe settings JSON.
+  /// Runtime content consumers use [contentLocale], which supports all 18 tags.
+  ItemLanguage get itemLanguage =>
+      contentLocale == 'en-US' ? ItemLanguage.en : ItemLanguage.vi;
+
+  AppLocale contentLanguage(AppLocale app) =>
+      AppLocale.fromTag(contentLocale) ?? app;
+
+  static String normalizeContentLocale(String? value) =>
+      AppLocale.fromTag(value)?.tag ?? 'app';
 
   /// "Tự động mở chi tiết trận" (G2).
   final bool autoOpenLiveGame;
@@ -118,6 +138,7 @@ class AppSettings {
   JsonMap toJson() => {
     'themeMode': themeMode.name,
     'itemLanguage': itemLanguage.name,
+    'contentLocale': contentLocale,
     'autoOpenLiveGame': autoOpenLiveGame,
     'showPeakRankInGame': showPeakRankInGame,
     'showLiveScore': showLiveScore,
@@ -135,6 +156,7 @@ class AppSettings {
   AppSettings copyWith({
     ThemeMode? themeMode,
     ItemLanguage? itemLanguage,
+    String? contentLocale,
     bool? autoOpenLiveGame,
     bool? showPeakRankInGame,
     bool? showLiveScore,
@@ -149,7 +171,13 @@ class AppSettings {
     bool? showPriceEstimate,
   }) => AppSettings(
     themeMode: themeMode ?? this.themeMode,
-    itemLanguage: itemLanguage ?? this.itemLanguage,
+    contentLocale:
+        contentLocale ??
+        (itemLanguage == null
+            ? this.contentLocale
+            : itemLanguage == ItemLanguage.en
+            ? 'en-US'
+            : 'app'),
     autoOpenLiveGame: autoOpenLiveGame ?? this.autoOpenLiveGame,
     showPeakRankInGame: showPeakRankInGame ?? this.showPeakRankInGame,
     showLiveScore: showLiveScore ?? this.showLiveScore,
@@ -173,7 +201,7 @@ class AppSettings {
   bool operator ==(Object other) =>
       other is AppSettings &&
       other.themeMode == themeMode &&
-      other.itemLanguage == itemLanguage &&
+      other.contentLocale == contentLocale &&
       other.autoOpenLiveGame == autoOpenLiveGame &&
       other.showPeakRankInGame == showPeakRankInGame &&
       other.showLiveScore == showLiveScore &&
@@ -193,7 +221,7 @@ class AppSettings {
   @override
   int get hashCode => Object.hash(
     themeMode,
-    itemLanguage,
+    contentLocale,
     autoOpenLiveGame,
     showPeakRankInGame,
     showLiveScore,
@@ -252,15 +280,29 @@ final appSettingsProvider = NotifierProvider<AppSettingsNotifier, AppSettings>(
 );
 
 class AppSettingsNotifier extends Notifier<AppSettings> {
+  Future<void> _writes = Future.value();
+  late AppSettings _committed;
+
   @override
-  AppSettings build() => readAppSettings(ref.watch(prefsProvider));
+  AppSettings build() => _committed = readAppSettings(ref.watch(prefsProvider));
 
   /// Applies [update] and persists the result.
-  Future<void> update(AppSettings Function(AppSettings) update) async {
+  Future<void> update(AppSettings Function(AppSettings) update) {
     final next = update(state);
-    if (next == state) return;
+    if (next == state) return _writes;
+    final prefs = ref.read(prefsProvider);
     state = next;
-    await ref.read(prefsProvider).setJson(PrefKeys.appSettings, next.toJson());
+    final task = _writes.then((_) async {
+      try {
+        await prefs.setJson(PrefKeys.appSettings, next.toJson());
+        _committed = next;
+      } on Object {
+        if (ref.mounted && state == next) state = _committed;
+        rethrow;
+      }
+    });
+    _writes = task.catchError((Object _) {});
+    return task;
   }
 
   Future<void> setThemeMode(ThemeMode mode) =>
@@ -268,4 +310,9 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
 
   Future<void> setItemLanguage(ItemLanguage language) =>
       update((s) => s.copyWith(itemLanguage: language));
+
+  Future<void> setContentLocale(String choice) => update(
+    (s) =>
+        s.copyWith(contentLocale: AppSettings.normalizeContentLocale(choice)),
+  );
 }

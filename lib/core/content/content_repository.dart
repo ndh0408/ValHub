@@ -9,7 +9,7 @@ import '../config/client_version.dart';
 import '../logging/session_log.dart';
 import '../network/dio_factory.dart';
 import '../network/riot_exception.dart';
-import '../settings/app_settings.dart';
+import '../l10n/locale_controller.dart';
 import '../storage/json_file_cache.dart';
 import '../storage/prefs.dart';
 import '../util/clock.dart';
@@ -260,7 +260,7 @@ final contentRepositoryProvider = Provider<ContentRepository>((ref) {
 /// final db = ref.watch(contentProvider).value ?? ContentDb.empty();
 /// ```
 final contentProvider = FutureProvider<ContentDb>((ref) {
-  final language = ref.watch(appSettingsProvider.select((s) => s.itemLanguage));
+  final language = ref.watch(contentLocaleProvider);
   final repo = ref.watch(contentRepositoryProvider);
   final sub = repo.updates.listen((changed) {
     if (changed == language.apiCode && ref.mounted) ref.invalidateSelf();
@@ -294,11 +294,11 @@ class ContentMissReporter {
     if (_pending) return;
     _pending = true;
     try {
-      final language = _ref.read(appSettingsProvider).itemLanguage.apiCode;
+      final language = _ref.read(contentLocaleProvider).apiCode;
       final repo = _ref.read(contentRepositoryProvider);
       if (await repo.allowMissRefresh(language)) {
         await repo.load(language: language, force: true);
-        _ref.invalidate(contentProvider);
+        if (_ref.mounted) _ref.invalidate(contentProvider);
       }
     } on Object {
       // A miss refresh is best effort.

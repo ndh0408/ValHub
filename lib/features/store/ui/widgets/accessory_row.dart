@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -68,7 +69,8 @@ class AccessoryRow extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item?.name ?? context.l10n.commonUnknownItem,
+                  item?.localizedName(context.l10n, db) ??
+                      context.l10n.commonUnknownItem,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleSmall?.copyWith(
@@ -78,7 +80,7 @@ class AccessoryRow extends ConsumerWidget {
                 if (item != null) ...[
                   const SizedBox(height: 2),
                   Text(
-                    item.typeLabel,
+                    item.typeLabel(context.l10n),
                     style: theme.textTheme.bodySmall?.copyWith(color: muted),
                   ),
                 ],

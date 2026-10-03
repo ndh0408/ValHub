@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import '../../../helpers/l10n.dart';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -80,16 +82,17 @@ void main() {
 
   group('labels', () {
     test('mode label: queue, custom mode, fallback', () {
-      expect(liveModeLabel(db, queueId: 'competitive'), 'Thi đấu xếp hạng');
+      expect(liveModeLabel(tl, db, queueId: 'competitive'), 'Thi đấu xếp hạng');
       expect(
         liveModeLabel(
+          tl,
           db,
           queueId: '',
           modeId: '/Game/GameModes/Bomb/BombGameMode.BombGameMode_C',
         ),
         'Thông thường',
       );
-      expect(liveModeLabel(db), db.queueName(''));
+      expect(liveModeLabel(tl, db), db.queueName(tl, ''));
       expect(liveMapName(db, ascent), 'Ascent');
       expect(liveMapName(db, '/Game/Maps/Nope'), isNull);
     });

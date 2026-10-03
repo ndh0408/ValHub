@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/accounts/account.dart';
 import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/config/local_price.dart';
+import '../../../../core/l10n/app_locale.dart';
 import '../../../../core/settings/app_settings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
@@ -31,6 +32,10 @@ String itemLanguageLabel(ItemLanguage language, AppLocalizations l10n) =>
       ItemLanguage.vi => l10n.settingsItemLanguageVi,
       ItemLanguage.en => l10n.settingsItemLanguageEn,
     };
+
+String contentLocaleLabel(String choice, AppLocalizations l10n) =>
+    AppLocale.fromTag(choice)?.nativeName ??
+    l10n.settingsContentLanguageFollowApp;
 
 /// "TÙY CHỌN" (S70, X1): live-game switches, the platform of the active
 /// account, the local-currency estimate next to VP prices and the user's
@@ -211,26 +216,35 @@ class SettingsAppearanceSection extends ConsumerWidget {
 
   Future<void> _pickLanguage(BuildContext context, WidgetRef ref) async {
     final l10n = context.l10n;
-    final current = ref.read(appSettingsProvider).itemLanguage;
+    final current = ref.read(appSettingsProvider).contentLocale;
     final settings = ref.read(appSettingsProvider.notifier);
-    final chosen = await showSettingsChoiceSheet<ItemLanguage>(
+    final chosen = await showSettingsChoiceSheet<String>(
       context: context,
       title: l10n.settingsItemLanguagePickerTitle,
-      hint: l10n.settingsItemLanguageHint,
+      hint: l10n.settingsContentLanguageHint,
       selected: current,
       options: [
-        for (final l in ItemLanguage.values)
-          (l, itemLanguageLabel(l, context.l10n)),
+        ('app', l10n.settingsContentLanguageFollowApp),
+        for (final locale in AppLocale.values) (locale.tag, locale.nativeName),
       ],
     );
-    if (chosen != null) await settings.setItemLanguage(chosen);
+    if (chosen == null || !context.mounted) return;
+    try {
+      await settings.setContentLocale(chosen);
+    } on Object {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.settingsLanguageSaveFailed)),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(appSettingsProvider.select((s) => s.themeMode));
     final language = ref.watch(
-      appSettingsProvider.select((s) => s.itemLanguage),
+      appSettingsProvider.select((s) => s.contentLocale),
     );
     return SettingsGroup(
       title: context.l10n.settingsAppearanceHeader,
@@ -254,7 +268,7 @@ class SettingsAppearanceSection extends ConsumerWidget {
         ListTile(
           leading: const SettingsIcon(Icons.translate_outlined),
           title: Text(context.l10n.settingsItemLanguageLabel),
-          trailing: SettingsValue(itemLanguageLabel(language, context.l10n)),
+          trailing: SettingsValue(contentLocaleLabel(language, context.l10n)),
           onTap: () => unawaited(_pickLanguage(context, ref)),
         ),
       ],

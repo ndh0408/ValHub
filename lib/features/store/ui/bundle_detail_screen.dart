@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -410,7 +412,9 @@ class _BundleItemTile extends ConsumerWidget {
             .value
             ?.owns(item.item.itemTypeId, item.item.itemId) ??
         false;
-    final name = itemRef?.name ?? context.l10n.commonUnknownItem;
+    final name =
+        itemRef?.localizedName(context.l10n, db) ??
+        context.l10n.commonUnknownItem;
     final isSkin = item.item.isSkinLevel;
     final showVnd =
         item.currencyId == CurrencyIds.vp &&
@@ -456,7 +460,7 @@ class _BundleItemTile extends ConsumerWidget {
             const SizedBox(height: 2),
             Text(
               [
-                ?itemRef?.typeLabel,
+                ?itemRef?.typeLabel(context.l10n),
                 if (item.item.quantity > 1)
                   context.l10n.storeQuantity(item.item.quantity),
               ].join(' · '),

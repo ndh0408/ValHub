@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -59,7 +60,9 @@ class IdentityBanner extends ConsumerWidget {
     final db = ref.watch(contentProvider).value;
     final card = cardId == null ? null : db?.card(cardId!);
     final t = titleId == null ? null : db?.title(titleId!);
-    final title = t == null || t.isNoTitle ? null : t.text;
+    final title = t == null || t.isNoTitle
+        ? null
+        : t.localizedText(context.l10n);
     final lvl = xp?.level ?? level;
     final tag = tagLine?.trim() ?? '';
     final copy = copyText;

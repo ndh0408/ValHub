@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import '../../../core/l10n/l10n.dart';
 import '../../../core/l10n/formats.dart';
 import '../../../core/content/content_db.dart';
@@ -24,7 +26,7 @@ String? friendDetail(
           activity == FriendActivity.agentSelect) &&
       queue.isNotEmpty &&
       !v.isCustomGame) {
-    final name = db.queueName(queue).trim();
+    final name = db.queueName(l10n, queue).trim();
     if (name.isNotEmpty) parts.add(name);
   }
   final size = v.partySize;
@@ -76,7 +78,7 @@ FriendStatus presenceStatus(
   String? queueName() {
     final id = v?.queueId;
     if (id == null || id.isEmpty) return null;
-    final name = db.queueName(id).trim();
+    final name = db.queueName(l10n, id).trim();
     return name.isEmpty ? null : name;
   }
 

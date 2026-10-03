@@ -2,6 +2,7 @@ import 'dart:ui' show Locale;
 
 import '../settings/app_settings.dart';
 import '../storage/prefs.dart';
+import '../util/json.dart';
 import 'app_locale.dart';
 import 'formats.dart';
 import 'l10n.dart' show AppLocalizations, lookupAppLocalizations;
@@ -39,16 +40,21 @@ final class BackgroundLocale {
       }
     }
     final content = AppLocale.fromTag(snapshot?.content);
+    final settings = prefs == null ? null : readAppSettings(prefs);
+    final hasContentChoice =
+        asMap(prefs?.getJson(PrefKeys.appSettings))
+            ?.containsKey('contentLocale') ??
+        false;
     return BackgroundLocale._(
       EffectiveLocale(
         app: app,
         formatTag: format,
         h24: snapshot?.h24 ?? false,
-        content: content != null
+        content: hasContentChoice
+            ? settings!.contentLanguage(app).apiCode
+            : content != null
             ? content.apiCode
-            : prefs == null
-            ? app.apiCode
-            : readAppSettings(prefs).itemLanguage.apiCode,
+            : settings?.contentLanguage(app).apiCode ?? app.apiCode,
       ),
     );
   }

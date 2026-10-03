@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -96,7 +98,7 @@ class LiveIdleView extends ConsumerWidget {
               queueId.isNotEmpty) ...[
             const SizedBox(height: 4),
             Text(
-              db.queueName(queueId),
+              db.queueName(context.l10n, queueId),
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: colors.warning,

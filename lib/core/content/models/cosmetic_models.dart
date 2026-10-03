@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-import '../../l10n/content_strings.dart';
 import '../../riot/riot_ids.dart';
 import '../../util/format.dart';
 import '../../util/json.dart';
@@ -260,11 +259,8 @@ class PlayerTitle {
 
   bool get isNoTitle => uuid == SpecialIds.noTitle;
 
-  /// Text to show ("Không có danh hiệu" for the empty title).
-  String get text => isNoTitle
-      ? ContentStrings.noTitle
-      : (titleText ??
-            (displayName.isEmpty ? ContentStrings.noTitle : displayName));
+  /// Raw API title candidate; the UI supplies any empty-title fallback.
+  String get text => isNoTitle ? '' : (titleText ?? displayName);
 }
 
 /// `/v1/flex` (Riot "Totem"). Named `FlexItem` to avoid clashing with
@@ -372,16 +368,6 @@ class ContentTier {
   final String? highlightColor;
   final String? displayIcon;
 
-  /// Short vi badge name (SUMMARY §7.3): "Độc Quyền".
-  String get shortName => switch (devName) {
-    'Select' => ContentStrings.tierSelect,
-    'Deluxe' => ContentStrings.tierDeluxe,
-    'Premium' => ContentStrings.tierPremium,
-    'Exclusive' => ContentStrings.tierExclusive,
-    'Ultra' => ContentStrings.tierUltra,
-    _ => displayName,
-  };
-
   /// Official / community fallback VP price for a skin of this tier
   /// (SUMMARY §7.3; Exclusive / Ultra are estimates).
   int? get fallbackPrice => switch (devName) {
@@ -399,7 +385,7 @@ class ContentTier {
 }
 
 /// `/v1/currencies`. The vi API names are re-cased English, so labels come
-/// from [ContentStrings].
+/// from render-time resources.
 @immutable
 class Currency {
   const Currency({
@@ -425,22 +411,4 @@ class Currency {
   final String displayName;
   final String? displayIcon;
   final String? largeIcon;
-
-  /// Short label: VP / KC / RP / "Huy hiệu đặc vụ".
-  String get label => switch (uuid) {
-    CurrencyIds.vp => ContentStrings.currencyVp,
-    CurrencyIds.kc => ContentStrings.currencyKc,
-    CurrencyIds.rp => ContentStrings.currencyRp,
-    CurrencyIds.agentTokens => ContentStrings.currencyAgentTokens,
-    _ => displayName,
-  };
-
-  /// Full label for tooltips.
-  String get fullLabel => switch (uuid) {
-    CurrencyIds.vp => ContentStrings.currencyVpFull,
-    CurrencyIds.kc => ContentStrings.currencyKcFull,
-    CurrencyIds.rp => ContentStrings.currencyRpFull,
-    CurrencyIds.agentTokens => ContentStrings.currencyAgentTokens,
-    _ => displayName,
-  };
 }

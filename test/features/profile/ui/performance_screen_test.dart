@@ -1,3 +1,6 @@
+import '../../../helpers/l10n.dart';
+
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:material_ui/material_ui.dart';
@@ -39,7 +42,7 @@ void main() {
           cancelToken: any(named: 'cancelToken'),
         ),
       );
-      final ranked = testContent().queueName('competitive');
+      final ranked = testContent().queueName(tl, 'competitive');
       await tester.tap(find.text(ranked).first);
       await settle(tester);
       expect(find.text('100%'), findsNothing);

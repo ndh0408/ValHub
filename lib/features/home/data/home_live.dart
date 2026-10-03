@@ -12,7 +12,8 @@ import '../../live_game/data/live_game_models.dart';
 class HomeLiveSnapshot {
   const HomeLiveSnapshot({
     required this.phase,
-    required this.modeLabel,
+    this.queueId,
+    this.modeId,
     this.mapName,
     this.mapSplash,
     this.queueEntryTime,
@@ -24,7 +25,8 @@ class HomeLiveSnapshot {
 
   /// [LivePhase.queueing], [LivePhase.pregame] or [LivePhase.ingame].
   final LivePhase phase;
-  final String modeLabel;
+  final String? queueId;
+  final String? modeId;
   final String? mapName;
   final String? mapSplash;
 
@@ -43,7 +45,8 @@ class HomeLiveSnapshot {
   bool operator ==(Object other) =>
       other is HomeLiveSnapshot &&
       other.phase == phase &&
-      other.modeLabel == modeLabel &&
+      other.queueId == queueId &&
+      other.modeId == modeId &&
       other.mapName == mapName &&
       other.mapSplash == mapSplash &&
       other.queueEntryTime == queueEntryTime &&
@@ -55,7 +58,8 @@ class HomeLiveSnapshot {
   @override
   int get hashCode => Object.hash(
     phase,
-    modeLabel,
+    queueId,
+    modeId,
     mapName,
     mapSplash,
     queueEntryTime,
@@ -81,7 +85,7 @@ HomeLiveSnapshot? homeLiveSnapshotOf(
     case LivePhase.queueing:
       return HomeLiveSnapshot(
         phase: LivePhase.queueing,
-        modeLabel: liveModeLabel(db, queueId: state.party?.queueId),
+        queueId: state.party?.queueId,
         queueEntryTime: state.queueEntryTime,
       );
     case LivePhase.pregame || LivePhase.ingame:
@@ -90,11 +94,8 @@ HomeLiveSnapshot? homeLiveSnapshotOf(
       final pregame = state.phase == LivePhase.pregame;
       return HomeLiveSnapshot(
         phase: state.phase,
-        modeLabel: liveModeLabel(
-          db,
-          queueId: match.queueId,
-          modeId: match.modeId,
-        ),
+        queueId: match.queueId,
+        modeId: match.modeId,
         mapName: liveMapName(db, match.mapId),
         mapSplash: db.mapByUrl(match.mapId)?.splash,
         phaseEndsAt: pregame ? match.phaseEndsAt : null,

@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -245,7 +247,7 @@ class _LoadoutSection extends ConsumerWidget {
         : db.card(identity!.playerCardId!)?.displayName;
     final titleText = identity == null
         ? null
-        : db.title(identity.titleOrNone)?.text ??
+        : db.title(identity.titleOrNone)?.localizedText(context.l10n) ??
               context.l10n.collectionNoTitle;
     final cardArt = identity?.playerCardId == null
         ? null

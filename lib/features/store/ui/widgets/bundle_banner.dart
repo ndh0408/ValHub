@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -42,7 +43,7 @@ class BundleBanner extends ConsumerWidget {
       button: true,
       label: context.l10n.storeOfferSemantics(
         name,
-        '${formatNumber(bundle.price)} ${currencyOf(ref, bundle.currencyId)?.label ?? ''}'
+        '${formatNumber(bundle.price)} ${currencyOf(ref, bundle.currencyId)?.label(context.l10n) ?? ''}'
             .trim(),
       ),
       child: Material(

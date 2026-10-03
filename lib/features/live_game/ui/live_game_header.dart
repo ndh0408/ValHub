@@ -63,6 +63,7 @@ class LiveSheetHeader extends ConsumerWidget {
               mapName: liveMapName(db, mapId),
               splash: db.mapByUrl(mapId)?.splash,
               mode: liveModeLabel(
+                context.l10n,
                 db,
                 queueId: match?.queueId ?? ended?.queueId,
                 modeId: match?.modeId ?? ended?.modeId,

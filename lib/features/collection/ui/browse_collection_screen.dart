@@ -1,3 +1,6 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+import 'package:valvn/core/l10n/labels/economy_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -158,7 +161,11 @@ class _BrowseCollectionScreenState
         final all = ownedTitles(owned, db);
         final titles = [
           for (final t in all)
-            if (matchesSearch(_query.search, [t.text, t.displayName])) t,
+            if (matchesSearch(_query.search, [
+              t.localizedText(context.l10n),
+              t.displayName,
+            ]))
+              t,
         ];
         return _list(
           summary: _itemsSummary(titles.length, all.length),
@@ -167,7 +174,8 @@ class _BrowseCollectionScreenState
           sliver: SliverList.separated(
             itemCount: titles.length,
             separatorBuilder: (_, _) => const SizedBox(height: 8),
-            itemBuilder: (context, i) => _TitleRow(text: titles[i].text),
+            itemBuilder: (context, i) =>
+                _TitleRow(text: titles[i].localizedText(context.l10n)),
           ),
         );
       case CollectionBrowseType.card:
@@ -448,8 +456,8 @@ class SkinGridTile extends ConsumerWidget {
     final theme = Theme.of(context);
     final quote = prices.priceForSkin(skin.uuid);
     final color = skinTierColor(ref, context, skin.contentTierUuid);
-    final tierName = skinTierName(ref, skin.contentTierUuid);
-    final caption = quote.caption;
+    final tierName = skinTierName(ref, context, skin.contentTierUuid);
+    final caption = quote.caption(context.l10n);
     final Widget footer;
     if (quote.vp case final vp?) {
       footer = FittedBox(

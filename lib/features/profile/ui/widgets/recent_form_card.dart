@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -72,7 +74,7 @@ class RecentFormCard extends ConsumerWidget {
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final queue = filter.queue == null
         ? null
-        : db.queueShortName(filter.queue!);
+        : db.queueShortName(context.l10n, filter.queue!);
     final map = filter.mapUrl == null
         ? null
         : db.mapByUrl(filter.mapUrl)?.displayName;

@@ -1,3 +1,6 @@
+import '../../../helpers/l10n.dart';
+
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/domain/competitive/competitive.dart';
@@ -114,8 +117,8 @@ void main() {
     test('queue chips are PC ids with vi labels from content', () {
       final db = testContent();
       expect(kProfileQueueFilters.first, kCompetitiveQueue);
-      expect(db.queueShortName('competitive'), 'Xếp hạng');
-      expect(db.queueShortName('hurm'), 'Sinh Tử Đội');
+      expect(db.queueShortName(tl, 'competitive'), 'Xếp hạng');
+      expect(db.queueShortName(tl, 'hurm'), 'Sinh Tử Đội');
     });
   });
 

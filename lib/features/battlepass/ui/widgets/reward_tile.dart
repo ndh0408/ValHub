@@ -1,10 +1,9 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_db.dart';
-import '../../../../core/l10n/common_strings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/net_image.dart';
-import '../../battlepass_strings.dart';
 import '../../data/battlepass_models.dart';
 import 'bp_ui_bits.dart';
 
@@ -22,37 +21,44 @@ class ResolvedReward {
   });
 
   /// Resolves [tier] with [db] (unknown items get a placeholder name).
-  factory ResolvedReward.resolve(RewardTier tier, ContentDb db) {
+  factory ResolvedReward.resolve(
+    RewardTier tier,
+    ContentDb db,
+    AppLocalizations l10n,
+  ) {
     final reward = tier.reward;
     if (reward == null) {
       return ResolvedReward(
         tier: tier,
-        name: CommonStrings.unknownItem,
-        typeLabel: BattlePassStrings.unknownReward,
+        name: l10n.commonUnknownItem,
+        typeLabel: l10n.battlePassUnknownReward,
         isKnown: false,
       );
     }
     final type = reward.type;
-    final typeLabel = type.label.isEmpty
-        ? BattlePassStrings.unknownReward
-        : type.label;
+    final typeLabel = type.label(l10n).isEmpty
+        ? l10n.battlePassUnknownReward
+        : type.label(l10n);
     final item = type == ContractRewardType.unknown
         ? null
         : db.item(type.itemTypeId, reward.uuid);
     if (item == null) {
       return ResolvedReward(
         tier: tier,
-        name: CommonStrings.unknownItem,
+        name: l10n.commonUnknownItem,
         typeLabel: typeLabel,
         isKnown: false,
       );
     }
     final name = type == ContractRewardType.currency
-        ? (db.currency(reward.uuid)?.fullLabel ?? item.name)
-        : item.name;
+        ? (db
+                  .currency(reward.uuid)
+                  ?.fullLabel(l10n, contentLanguage: db.language) ??
+              item.localizedName(l10n, db))
+        : item.localizedName(l10n, db);
     return ResolvedReward(
       tier: tier,
-      name: name.isEmpty ? CommonStrings.unknownItem : name,
+      name: name.isEmpty ? l10n.commonUnknownItem : name,
       typeLabel: typeLabel,
       image: item.image,
     );

@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -168,7 +170,7 @@ class _Filters extends ConsumerWidget {
           tabs: [
             SegmentedTab(value: null, label: context.l10n.profileFilterAll),
             for (final q in kProfileQueueFilters)
-              SegmentedTab(value: q, label: db.queueShortName(q)),
+              SegmentedTab(value: q, label: db.queueShortName(context.l10n, q)),
           ],
           selected: filter.queue,
           onChanged: notifier.setQueue,

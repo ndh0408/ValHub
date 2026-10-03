@@ -1,3 +1,7 @@
+import 'package:valvn/core/l10n/labels/economy_labels.dart';
+
+import '../../../helpers/l10n.dart';
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -129,7 +133,7 @@ void main() {
         final q = s.priceForSkin(id);
         expect(q.source, PriceSource.notForSale);
         expect(q.vp, isNull);
-        expect(q.caption, ContentStrings.notForSale);
+        expect(q.caption(tl), ContentStrings.notForSale);
       }
     });
 
@@ -149,7 +153,7 @@ void main() {
       final melee = s.priceForSkin(Fx.daoReaver);
       expect(melee.vp, 4350);
       expect(melee.isEstimate, isTrue);
-      expect(melee.caption, isNull);
+      expect(melee.caption(tl), isNull);
     });
 
     test('reward skins have a source label instead of a price', () {
@@ -157,14 +161,14 @@ void main() {
       final bp = s.priceForSkin(Fx.vandalCafe);
       expect(bp.isReward, isTrue);
       expect(bp.vp, isNull);
-      expect(bp.caption, ContentStrings.rewardSourceBattlePass);
+      expect(bp.caption(tl), ContentStrings.rewardSourceBattlePass);
       expect(bp.reward?.level, 25);
       expect(
-        s.priceForSkin(Fx.knifeCafeL1).caption,
+        s.priceForSkin(Fx.knifeCafeL1).caption(tl),
         ContentStrings.rewardSourceBattlePass,
       );
       expect(
-        s.priceForSkin(Fx.ghostThinhLang).caption,
+        s.priceForSkin(Fx.ghostThinhLang).caption(tl),
         ContentStrings.rewardSourceAgent,
       );
     });
@@ -215,7 +219,7 @@ void main() {
       expect(s.priceForSkin('nope').source, PriceSource.unknown);
       final bare = PriceService(db: ContentDb.empty());
       expect(bare.priceForSkin(Fx.reaverVandal).source, PriceSource.unknown);
-      expect(bare.priceForSkin(Fx.reaverVandal).caption, isNull);
+      expect(bare.priceForSkin(Fx.reaverVandal).caption(tl), isNull);
     });
   });
 

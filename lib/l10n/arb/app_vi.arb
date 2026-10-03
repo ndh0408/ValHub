@@ -7689,6 +7689,14 @@
   "@settingsPlatformOther": {
     "description": "Generic metadata label resolved at render time: settingsPlatformOther"
   },
+  "settingsContentLanguageFollowApp": "Theo ngôn ngữ ứng dụng",
+  "@settingsContentLanguageFollowApp": {
+    "description": "Independent item-name language: follow current UI language, not device country or Riot shard."
+  },
+  "settingsContentLanguageHint": "Chọn ngôn ngữ tên vật phẩm. Lựa chọn này không đổi ngôn ngữ giao diện hoặc máy chủ Riot.",
+  "@settingsContentLanguageHint": {
+    "description": "The content-language picker supports all 18 API locales even while UI translations are unshipped."
+  },
   "settingsAboutCreditContent": "valorant-api.com",
   "@settingsAboutCreditContent": {
     "description": "SettingsStrings.aboutCreditContent — About screen (S72)",

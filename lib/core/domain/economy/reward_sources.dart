@@ -45,10 +45,6 @@ class RewardSourceEntry {
   /// "Mùa 2026 // Phần V", "Trang Bị Cypher", "Champions 2026: Shanghai".
   String get contractName => contract.displayName;
 
-  /// "Phần thưởng Battle Pass" / "Hợp đồng đặc vụ" / "Vé sự kiện"; `null`
-  /// for contracts without a relation type.
-  String? get label => relation.rewardSourceLabel;
-
   @override
   String toString() =>
       'RewardSourceEntry(${contract.uuid}, $itemUuid, level: $level)';
@@ -175,7 +171,7 @@ class RewardSourceIndex {
 ///
 /// ```dart
 /// final source = ref.watch(rewardSourceIndexProvider).forSkin(skin);
-/// Text(source?.label ?? priceText);   // "Phần thưởng Battle Pass"
+/// Text(source?.label(l10n) ?? priceText);   // "Phần thưởng Battle Pass"
 /// ```
 final rewardSourceIndexProvider = Provider<RewardSourceIndex>((ref) {
   final db = ref.watch(contentProvider).value;

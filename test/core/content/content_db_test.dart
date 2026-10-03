@@ -78,7 +78,7 @@ void main() {
     test('content tier of a skin', () {
       final tier = db.contentTier(db.skin(_reaver)!.contentTierUuid)!;
       expect(tier.devName, 'Premium');
-      expect(tier.shortName, 'Cao Cấp');
+      expect(tier.shortName(tl), 'Cao Cấp');
       expect(tier.fallbackPrice, 1775);
       expect(db.contentTiers.map((t) => t.rank), [0, 1, 2, 3, 4]);
     });
@@ -88,15 +88,20 @@ void main() {
     test('item() resolves Riot ItemTypeID pairs', () {
       final skin = db.item(ItemTypeIds.skinLevel, _reaverLevel1)!;
       expect(skin.name, 'Vandal Reaver');
-      expect(skin.typeLabel, 'Skin');
+      expect(skin.typeLabel(tl), 'Skin');
       final buddy = db.item(
         ItemTypeIds.buddyLevel,
         '6c3b1a9e-4067-7ed6-fc6c-fea61e0a057c',
       )!;
-      expect(buddy.typeLabel, 'Phụ kiện súng');
-      expect(db.item(ItemTypeIds.currency, CurrencyIds.vp)!.name, 'VP');
+      expect(buddy.typeLabel(tl), 'Phụ kiện súng');
       expect(
-        db.item(ItemTypeIds.playerTitle, SpecialIds.noTitle)!.name,
+        db.item(ItemTypeIds.currency, CurrencyIds.vp)!.localizedName(tl, db),
+        'VP',
+      );
+      expect(
+        db
+            .item(ItemTypeIds.playerTitle, SpecialIds.noTitle)!
+            .localizedName(tl, db),
         'Không có danh hiệu',
       );
       expect(db.item('bogus', _reaverLevel1), isNull);
@@ -129,8 +134,8 @@ void main() {
     });
 
     test('currencies use app labels', () {
-      expect(db.currency(CurrencyIds.kc)!.label, 'KC');
-      expect(db.currency(CurrencyIds.rp)!.fullLabel, 'Radianite');
+      expect(db.currency(CurrencyIds.kc)!.label(tl), 'KC');
+      expect(db.currency(CurrencyIds.rp)!.fullLabel(tl), 'Radianite');
       expect(db.currency(CurrencyIds.vp)!.displayIcon, isNotNull);
     });
 
@@ -146,7 +151,7 @@ void main() {
       final jett = db.agent('ADD6443A-41BD-E414-F6AD-E58D267F4E95')!;
       expect(jett.displayName, 'Jett');
       expect(jett.isStarter, isTrue);
-      expect(jett.role!.label, 'Đối đầu');
+      expect(jett.role!.label(tl), 'Đối đầu');
     });
 
     test('mapByUrl is exact and case-insensitive', () {
@@ -158,14 +163,14 @@ void main() {
     });
 
     test('queueName: API label, console prefix, fallback table, raw id', () {
-      expect(db.queueName('competitive'), 'Thi đấu xếp hạng');
-      expect(db.queueName('console_unrated'), 'Đấu thường');
-      expect(db.queueName('hurm'), 'Sinh Tử Đội');
-      expect(db.queueName(''), 'Chơi tự do');
-      expect(db.queueName('custom'), 'Chơi tự do');
-      expect(db.queueName('brandnewqueue'), 'brandnewqueue');
-      expect(db.queueShortName('competitive'), 'Xếp hạng');
-      expect(ContentDb.empty().queueName('swiftplay'), 'Siêu Tốc');
+      expect(db.queueName(tl, 'competitive'), 'Thi đấu xếp hạng');
+      expect(db.queueName(tl, 'console_unrated'), 'Đấu thường');
+      expect(db.queueName(tl, 'hurm'), 'Sinh Tử Đội');
+      expect(db.queueName(tl, ''), 'Chơi tự do');
+      expect(db.queueName(tl, 'custom'), 'Chơi tự do');
+      expect(db.queueName(tl, 'brandnewqueue'), 'brandnewqueue');
+      expect(db.queueShortName(tl, 'competitive'), 'Xếp hạng');
+      expect(ContentDb.empty().queueName(tl, 'swiftplay'), 'Siêu Tốc');
     });
 
     test('game mode by Riot path directory key', () {
@@ -256,7 +261,7 @@ void main() {
     test('reward source labels (C9)', () {
       final source = db.rewardSource('d538eac0-4990-f84d-93bf-4d9ce09bf75a')!;
       expect(source.relation, ContractRelation.season);
-      expect(source.label, 'Phần thưởng Battle Pass');
+      expect(source.label(tl), 'Phần thưởng Battle Pass');
       expect(db.rewardSource(_reaverLevel1), isNull);
     });
   });

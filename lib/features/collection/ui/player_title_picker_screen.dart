@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,7 +75,11 @@ class _PlayerTitlePickerScreenState
           final all = ownedTitles(owned, db);
           final titles = [
             for (final t in all)
-              if (matchesSearch(_search, [t.text, t.displayName])) t,
+              if (matchesSearch(_search, [
+                t.localizedText(context.l10n),
+                t.displayName,
+              ]))
+                t,
           ];
           final saving = snapshot.isPending;
           final filtering = _search.trim().isNotEmpty;
@@ -102,7 +108,7 @@ class _PlayerTitlePickerScreenState
                   name: account.gameName,
                   title: equippedTitle == null || equippedTitle.isNoTitle
                       ? null
-                      : equippedTitle.text,
+                      : equippedTitle.localizedText(context.l10n),
                   badge: ArtPill(
                     label: context.l10n.collectionPreview,
                     icon: Icons.visibility_outlined,
@@ -158,10 +164,12 @@ class _PlayerTitlePickerScreenState
                     for (final t in titles)
                       _TitleRow(
                         key: ValueKey(t.uuid),
-                        label: t.text,
+                        label: t.localizedText(context.l10n),
                         selected: t.uuid == equipped,
                         enabled: !saving,
-                        onTap: () => unawaited(pick(t.uuid, t.text)),
+                        onTap: () => unawaited(
+                          pick(t.uuid, t.localizedText(context.l10n)),
+                        ),
                       ),
                   ],
                 ),

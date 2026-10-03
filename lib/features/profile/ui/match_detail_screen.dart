@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:valvn/core/l10n/labels/competitive_labels.dart';
 
 import 'dart:async';
@@ -226,7 +227,7 @@ class _MatchHero extends ConsumerWidget {
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final now = ref.watch(clockProvider).now();
     final info = details.info;
-    final queue = db.queueName(info.isCustom ? '' : info.queueId);
+    final queue = db.queueName(context.l10n, info.isCustom ? '' : info.queueId);
     final start = info.startTime;
     final length = info.gameLength;
     final meta = ProfileStrings.joined([

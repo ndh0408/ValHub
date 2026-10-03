@@ -305,11 +305,11 @@ class _RewardsBody extends StatelessWidget {
     for (final c in chapters) {
       final premium = [
         for (final t in c.premium)
-          if (filter.keeps(t)) ResolvedReward.resolve(t, db),
+          if (filter.keeps(t)) ResolvedReward.resolve(t, db, context.l10n),
       ];
       final free = [
         for (final t in c.free)
-          if (filter.keeps(t)) ResolvedReward.resolve(t, db),
+          if (filter.keeps(t)) ResolvedReward.resolve(t, db, context.l10n),
       ];
       if (premium.isEmpty && free.isEmpty) continue;
       sections.add(

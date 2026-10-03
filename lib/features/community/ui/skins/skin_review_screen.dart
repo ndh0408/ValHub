@@ -1,3 +1,6 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+import 'package:valvn/core/l10n/labels/economy_labels.dart';
+
 import '../../providers/hidden_authors.dart';
 
 import 'dart:async';
@@ -408,7 +411,7 @@ class _Header extends ConsumerWidget {
     final quote = ref.watch(priceServiceProvider).priceForSkin(skin.uuid);
     final vp = quote.vp;
     final price =
-        quote.caption ??
+        quote.caption(context.l10n) ??
         (vp == null
             ? null
             : (quote.isEstimate ? formatEstimatedVp(vp) : formatVp(vp)));
@@ -442,7 +445,10 @@ class _Header extends ConsumerWidget {
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
-                        tier.displayName,
+                        tier.fullName(
+                          context.l10n,
+                          contentLanguage: db.language,
+                        ),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: legibleAccent(context, tint),
                           fontWeight: FontWeight.w600,

@@ -61,15 +61,37 @@ final mmrProvider = FutureProvider.autoDispose.family<PlayerMmr, String>((
 final rrHistoryProvider = FutureProvider.autoDispose.family<RrHistory, String>((
   ref,
   puuid,
-) {
+) async {
   final id = puuid.trim().toLowerCase();
   final store = ref.watch(rrHistoryStoreProvider);
   final own = ref.watch(accountProvider(id)) != null;
-  final sub = store.changes
-      .where((changed) => changed == id)
-      .listen((_) => ref.invalidateSelf());
+  final loading = ref.keepAlive();
+  var reading = true;
+  var refreshAfterRead = false;
+  Timer? refresh;
+  final sub = store.changes.where((changed) => changed == id).listen((_) {
+    if (reading) {
+      // An MMR/history write can finish while a queued disk read is pending.
+      // Invalidating now would reject the caller's current .future.
+      refreshAfterRead = true;
+    } else if (ref.mounted) {
+      ref.invalidateSelf();
+    }
+  });
   ref.onDispose(sub.cancel);
-  return own ? store.read(id) : store.readVisitor(id);
+  ref.onDispose(() => refresh?.cancel());
+  try {
+    return own ? await store.read(id) : store.readVisitor(id);
+  } finally {
+    reading = false;
+    if (refreshAfterRead && ref.mounted) {
+      // Deliver the result/error before refreshing existing observers.
+      refresh = Timer(Duration.zero, () {
+        if (ref.mounted) ref.invalidateSelf();
+      });
+    }
+    loading.close();
+  }
 });
 
 /// Rank card of any player (R2, R3, R11, R13, G5, G6): current rank,

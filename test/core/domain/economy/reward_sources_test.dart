@@ -1,3 +1,7 @@
+import 'package:valvn/core/l10n/labels/economy_labels.dart';
+
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/content/content_db.dart';
@@ -43,7 +47,7 @@ void main() {
     expect(e.relation, ContractRelation.season);
     expect(e.contract.uuid, Fx.battlePass);
     expect(e.contractName, 'Mùa 2026 // Phần V');
-    expect(e.label, ContentStrings.rewardSourceBattlePass);
+    expect(e.label(tl), ContentStrings.rewardSourceBattlePass);
     expect(e.rewardType, ContractRewardType.skinLevel);
     expect(e.level, 25);
     expect(e.isFreeReward, isFalse);
@@ -54,19 +58,19 @@ void main() {
     final e = index.forItem(Fx.bpFreeClassicL1)!;
     expect(e.isFreeReward, isTrue);
     expect(e.level, isNull);
-    expect(e.label, ContentStrings.rewardSourceBattlePass);
+    expect(e.label(tl), ContentStrings.rewardSourceBattlePass);
   });
 
   test('agent contract and event pass labels', () {
     final agent = index.forItem(Fx.ghostThinhLangL1.toUpperCase())!;
     expect(agent.relation, ContractRelation.agent);
-    expect(agent.label, ContentStrings.rewardSourceAgent);
+    expect(agent.label(tl), ContentStrings.rewardSourceAgent);
     expect(agent.contractName, 'Trang Bị Cypher');
     expect(agent.level, 10);
 
     final event = index.forItem(Fx.eventCard)!;
     expect(event.relation, ContractRelation.event);
-    expect(event.label, ContentStrings.rewardSourceEvent);
+    expect(event.label(tl), ContentStrings.rewardSourceEvent);
     expect(event.rewardType, ContractRewardType.playerCard);
   });
 
@@ -105,7 +109,7 @@ void main() {
     final onlyOther = RewardSourceIndex.fromContracts([
       _contract('a', null, ['z']),
     ]);
-    expect(onlyOther.forItem('z')?.label, isNull);
+    expect(onlyOther.forItem('z')?.label(tl), isNull);
     expect(onlyOther.forSkinUuid('z')?.contract.uuid, 'a');
   });
 

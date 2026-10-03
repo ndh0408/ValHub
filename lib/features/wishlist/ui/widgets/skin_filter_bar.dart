@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -135,7 +137,7 @@ class SkinFilterChips extends StatelessWidget {
             ),
           for (final tier in tiers)
             ValFilterChip(
-              label: tier.shortName,
+              label: tier.shortName(context.l10n, contentLanguage: null),
               dotColor: opaqueRgba(tier.highlightColor),
               selected: query.tiers.contains(tier.uuid),
               onSelected: (_) => onChanged(query.toggleTier(tier.uuid)),

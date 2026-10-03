@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter/services.dart'
@@ -326,7 +328,7 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
               Text(
                 p.queueId == null
                     ? context.l10n.socialQueueLabel
-                    : db.queueName(p.queueId),
+                    : db.queueName(context.l10n, p.queueId),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: ValText.sectionTitle.copyWith(
@@ -445,7 +447,7 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
               icon: Icons.block,
               color: theme.colorScheme.error,
               text: context.l10n.socialCantQueue(
-                db.queueName(choice.queueId),
+                db.queueName(context.l10n, choice.queueId),
                 queueBlockReason(context.l10n, choice, p),
               ),
             ),

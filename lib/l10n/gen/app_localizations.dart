@@ -7918,6 +7918,18 @@ abstract class AppLocalizations {
   /// **'Nền tảng khác'**
   String get settingsPlatformOther;
 
+  /// Independent item-name language: follow current UI language, not device country or Riot shard.
+  ///
+  /// In vi, this message translates to:
+  /// **'Theo ngôn ngữ ứng dụng'**
+  String get settingsContentLanguageFollowApp;
+
+  /// The content-language picker supports all 18 API locales even while UI translations are unshipped.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn ngôn ngữ tên vật phẩm. Lựa chọn này không đổi ngôn ngữ giao diện hoặc máy chủ Riot.'**
+  String get settingsContentLanguageHint;
+
   /// SettingsStrings.aboutCreditContent — About screen (S72)
   ///
   /// In vi, this message translates to:

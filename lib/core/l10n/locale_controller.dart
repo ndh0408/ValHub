@@ -144,6 +144,12 @@ final formatTagProvider = Provider<String>(
   ),
 );
 
+/// Independent item-name language, including unshipped UI languages.
+final contentLocaleProvider = Provider<AppLocale>((ref) {
+  final choice = ref.watch(appSettingsProvider.select((s) => s.contentLocale));
+  return AppLocale.fromTag(choice) ?? ref.watch(appLocaleProvider);
+});
+
 /// Everything a background isolate needs to speak the user's language
 /// (I18N.md 6.2, 10).
 ///
@@ -173,8 +179,7 @@ final class EffectiveLocale {
 
   final String? _content;
 
-  /// valorant-api `language=` code of the item names. Until the content
-  /// language is separately selectable (W5) it is the UI language's.
+  /// valorant-api `language=` code, independently selected or following UI.
   String get content => _content ?? app.apiCode;
 
   Map<String, Object?> toJson() => {
@@ -231,10 +236,6 @@ final effectiveLocaleProvider = Provider<EffectiveLocale>(
     app: ref.watch(appLocaleProvider),
     formatTag: ref.watch(formatTagProvider),
     h24: ref.watch(use24hProvider),
-    // Keep the existing item-name choice independent of UI language. W5's
-    // eventual contentLocale picker must migrate this preference explicitly.
-    content: ref.watch(
-      appSettingsProvider.select((settings) => settings.itemLanguage.apiCode),
-    ),
+    content: ref.watch(contentLocaleProvider).apiCode,
   ),
 );

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,6 +25,27 @@ import '../../../helpers/test_prefs.dart';
 import 'competitive_test_utils.dart';
 
 class MockSessions extends Mock implements SessionManager {}
+
+class DelayedHistoryStore extends RrHistoryStore {
+  DelayedHistoryStore(super.files);
+  final reads = <Completer<RrHistory>>[];
+  final updates = StreamController<String>.broadcast();
+  @override
+  Stream<String> get changes => updates.stream;
+
+  @override
+  Future<RrHistory> read(String puuid) {
+    final request = Completer<RrHistory>();
+    reads.add(request);
+    return request.future;
+  }
+
+  @override
+  void dispose() {
+    unawaited(updates.close());
+    super.dispose();
+  }
+}
 
 JsonMap _updatesPage(int start, int count) => {
   'Subject': me,
@@ -138,6 +160,87 @@ void main() {
       );
 
   group('MMR and rank', () {
+    test(
+      'RR change during loading refreshes observers after the first result',
+      () async {
+        store.dispose();
+        final delayed = DelayedHistoryStore(
+          JsonFileCache(() async => Directory('${tmp.path}/h')),
+        );
+        store = delayed;
+        final c = await container();
+        final subscription = c.listen(rrHistoryProvider(me), (_, _) {});
+        final future = c.read(rrHistoryProvider(me).future);
+        delayed.updates.add(me);
+        await c.pump();
+        final first = RrHistory(puuid: me);
+        delayed.reads.single.complete(first);
+        expect(await future, same(first));
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        expect(delayed.reads, hasLength(2));
+        final second = RrHistory(
+          puuid: me,
+          rows: [
+            CompetitiveUpdate.fromJson(
+              asMapList(_updatesPage(0, 1)['Matches']).single,
+            )!,
+          ],
+        );
+        delayed.reads.last.complete(second);
+        expect(await c.read(rrHistoryProvider(me).future), same(second));
+        expect(c.read(rrHistoryProvider(me)).value!.rows, hasLength(1));
+        subscription.close();
+        await c.pump();
+        expect(c.exists(rrHistoryProvider(me)), isFalse);
+      },
+    );
+
+    test(
+      'direct RR future survives a slow disk read and releases afterward',
+      () async {
+        store.dispose();
+        final delayed = DelayedHistoryStore(
+          JsonFileCache(() async => Directory('${tmp.path}/h')),
+        );
+        store = delayed;
+        final c = await container();
+        final history = RrHistory(puuid: me);
+        final future = c.read(rrHistoryProvider(me).future);
+        final result = expectLater(future, completion(same(history)));
+        delayed.updates.add(me);
+        await c.pump();
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        delayed.reads.single.complete(history);
+        await result;
+        await c.pump();
+        expect(c.exists(rrHistoryProvider(me)), isFalse);
+      },
+    );
+
+    test('slow RR read failure is preserved and loading retention releases for retry', () async {
+      store.dispose();
+      final delayed = DelayedHistoryStore(
+        JsonFileCache(() async => Directory('${tmp.path}/h')),
+      );
+      store = delayed;
+      final c = await container();
+      final future = c.read(rrHistoryProvider(me).future);
+      final result = expectLater(future, throwsA(isA<FileSystemException>()));
+      delayed.updates.add(me);
+      await c.pump();
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      delayed.reads.single.completeError(
+        const FileSystemException('read failure'),
+      );
+      await result;
+      await c.pump();
+      expect(c.exists(rrHistoryProvider(me)), isFalse);
+      final retry = c.read(rrHistoryProvider(me).future);
+      final history = RrHistory(puuid: me);
+      delayed.reads.last.complete(history);
+      expect(await retry, same(history));
+    });
+
     test('own MMR; latest update lands in the RR history', () async {
       stubMmr();
       final c = await container();

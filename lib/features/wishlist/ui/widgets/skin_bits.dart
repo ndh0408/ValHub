@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/economy_labels.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/domain/economy/economy.dart';
@@ -26,7 +27,7 @@ class SkinPriceText extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final base = style ?? theme.textTheme.labelLarge;
-    final caption = quote.caption;
+    final caption = quote.caption(context.l10n);
     if (caption != null) {
       return Text(
         caption,

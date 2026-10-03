@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import '../../../../core/ui/error_view.dart';
 
 import 'dart:async';
@@ -266,7 +268,7 @@ class _QueuePickerBody extends ConsumerWidget {
                   final enabled = !current && c.selectable;
                   return GroupedRow(
                     key: ValueKey('queue-${c.queueId}'),
-                    title: db.queueName(c.queueId),
+                    title: db.queueName(context.l10n, c.queueId),
                     subtitle: subtitle,
                     titleColor: enabled || current
                         ? null

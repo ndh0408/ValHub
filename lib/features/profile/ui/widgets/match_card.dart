@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:valvn/core/l10n/labels/competitive_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -51,7 +52,10 @@ class MatchCard extends ConsumerWidget {
       return const MatchCardSkeleton();
     }
 
-    final queue = db.queueShortName(value?.info.queueId ?? entry.queueId);
+    final queue = db.queueShortName(
+      context.l10n,
+      value?.info.queueId ?? entry.queueId,
+    );
     final started = value?.info.startTime ?? entry.startTime;
     final when = started == null ? null : formatRelative(started, now);
 

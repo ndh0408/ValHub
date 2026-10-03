@@ -22,14 +22,12 @@ import '../../accounts/account_providers.dart';
 import '../../config/remote_config.dart';
 import '../../content/content_db.dart';
 import '../../content/content_repository.dart';
-import '../../l10n/content_strings.dart';
 import '../../network/riot_exception.dart';
 import '../../riot/pvp_api.dart';
 import '../../riot/riot_ids.dart';
 import '../../storage/prefs.dart';
 import '../../util/clock.dart';
 import '../../util/json.dart';
-import 'economy_strings.dart';
 import 'owned_items.dart';
 import 'reward_sources.dart';
 
@@ -55,18 +53,7 @@ enum PriceSource {
   notForSale,
 
   /// Unknown skin, or no tier to estimate from.
-  unknown;
-
-  /// Short Vietnamese caption for tooltips.
-  String get label => switch (this) {
-    table => EconomyStrings.priceFromTable,
-    observed => EconomyStrings.priceFromStore,
-    offers => EconomyStrings.priceFromOffers,
-    tierFallback => EconomyStrings.priceEstimated,
-    reward => ContentStrings.notForSale,
-    notForSale => ContentStrings.notForSale,
-    unknown => EconomyStrings.priceUnknown,
-  };
+  unknown,
 }
 
 /// The price of one skin.
@@ -108,14 +95,6 @@ class PriceQuote {
 
   bool get hasPrice => vp != null;
   bool get isReward => source == PriceSource.reward;
-
-  /// Text to show instead of a price: the reward label ("Phần thưởng Battle
-  /// Pass"), "Không bán", or `null` when there is a price (or it is unknown).
-  String? get caption => switch (source) {
-    PriceSource.reward => reward?.label ?? ContentStrings.notForSale,
-    PriceSource.notForSale => ContentStrings.notForSale,
-    _ => null,
-  };
 
   @override
   bool operator ==(Object other) =>
@@ -542,7 +521,7 @@ class PriceService {
 ///
 /// ```dart
 /// final quote = ref.watch(priceServiceProvider).priceForSkin(offer.skinLevelUuid);
-/// quote.caption ?? (quote.isEstimate ? formatEstimatedVp(quote.vp!) : formatVp(quote.vp!))
+/// quote.caption(context.l10n) ?? (quote.isEstimate ? formatEstimatedVp(quote.vp!) : formatVp(quote.vp!))
 /// ```
 final priceServiceProvider = Provider<PriceService>((ref) {
   final db = ref.watch(contentProvider).value ?? ContentDb.empty();

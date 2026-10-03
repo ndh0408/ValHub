@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -91,7 +92,7 @@ class _PerformanceScreenState extends ConsumerState<PerformanceScreen> {
                       ),
                       for (final queue in view.queues)
                         ChoiceChip(
-                          label: Text(db.queueName(queue)),
+                          label: Text(db.queueName(context.l10n, queue)),
                           selected: _queue == queue,
                           onSelected: (_) => setState(() => _queue = queue),
                         ),
@@ -155,7 +156,7 @@ class _PerformanceScreenState extends ConsumerState<PerformanceScreen> {
                         PerfSegment.maps =>
                           db.mapByUrl(group.key)?.displayName ??
                               context.l10n.commonUnknownItem,
-                        _ => db.queueName(group.key),
+                        _ => db.queueName(context.l10n, group.key),
                       }, style: Theme.of(context).textTheme.titleMedium),
                       _Summary(stats: group.aggregate),
                       const SizedBox(height: 12),

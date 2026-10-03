@@ -4542,6 +4542,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsPlatformOther => 'Nền tảng khác';
 
   @override
+  String get settingsContentLanguageFollowApp => 'Theo ngôn ngữ ứng dụng';
+
+  @override
+  String get settingsContentLanguageHint =>
+      'Chọn ngôn ngữ tên vật phẩm. Lựa chọn này không đổi ngôn ngữ giao diện hoặc máy chủ Riot.';
+
+  @override
   String get settingsAboutCreditContent => 'valorant-api.com';
 
   @override

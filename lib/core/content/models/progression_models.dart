@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-import '../../l10n/content_strings.dart';
 import '../../riot/riot_ids.dart';
 import '../../util/json.dart';
 import 'weapon_models.dart' show cleanText, enumSuffix;
@@ -31,19 +30,6 @@ enum ContractRewardType {
     }
     return unknown;
   }
-
-  /// Vietnamese type label (VF S21).
-  String get label => switch (this) {
-    skinLevel => ContentStrings.itemSkin,
-    buddyLevel => ContentStrings.itemBuddy,
-    currency => ContentStrings.itemCurrency,
-    playerCard => ContentStrings.itemCard,
-    spray => ContentStrings.itemSpray,
-    title => ContentStrings.itemTitle,
-    flex => ContentStrings.itemFlex,
-    agent => ContentStrings.itemAgent,
-    unknown => '',
-  };
 }
 
 @immutable
@@ -127,14 +113,6 @@ enum ContractRelation {
     'Agent' => agent,
     'Event' => event,
     _ => other,
-  };
-
-  /// C9 reward-source label.
-  String? get rewardSourceLabel => switch (this) {
-    season => ContentStrings.rewardSourceBattlePass,
-    agent => ContentStrings.rewardSourceAgent,
-    event => ContentStrings.rewardSourceEvent,
-    other => null,
   };
 }
 

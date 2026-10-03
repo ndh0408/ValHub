@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -93,7 +94,7 @@ class BattlePassOverviewView extends ConsumerWidget {
     final dailyDone =
         ticket != null && !ticket.isExpired(now) && ticket.isAllComplete;
     final bp = overview.battlePass;
-    final unrated = db.queueName(kUnratedQueueId);
+    final unrated = db.queueName(context.l10n, kUnratedQueueId);
     final queueName = unrated.isEmpty || unrated == kUnratedQueueId
         ? context.l10n.battlePassUnratedFallback
         : unrated;

@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -620,7 +621,20 @@ class TierLabel extends ConsumerWidget {
         const SizedBox(width: 6),
         Flexible(
           child: Text(
-            fullName ? tier.displayName : tier.shortName.toUpperCase(),
+            fullName
+                ? tier.fullName(
+                    context.l10n,
+                    contentLanguage: ref.watch(contentProvider).value?.language,
+                  )
+                : tier
+                      .shortName(
+                        context.l10n,
+                        contentLanguage: ref
+                            .watch(contentProvider)
+                            .value
+                            ?.language,
+                      )
+                      .toUpperCase(),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: (style ?? ValText.label).copyWith(

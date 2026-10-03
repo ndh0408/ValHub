@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -322,7 +324,12 @@ class SkinFilterBar extends ConsumerWidget {
           ),
           for (final id in kContentTierOrder)
             ValFilterChip(
-              label: _tier(db, id)?.shortName ?? '',
+              label:
+                  _tier(
+                    db,
+                    id,
+                  )?.shortName(context.l10n, contentLanguage: db?.language) ??
+                  '',
               dotColor: opaqueRgba(_tier(db, id)?.highlightColor),
               selected: query.tiers.contains(id),
               onSelected: (_) => onChanged(query.toggleTier(id)),
@@ -342,9 +349,13 @@ Color skinTierColor(WidgetRef ref, BuildContext context, String? tierUuid) {
 }
 
 /// Short rarity name ("Độc Quyền") of a skin, or `null`.
-String? skinTierName(WidgetRef ref, String? tierUuid) {
+String? skinTierName(WidgetRef ref, BuildContext context, String? tierUuid) {
   if (tierUuid == null) return null;
-  return _tier(ref.watch(contentProvider).value, tierUuid)?.shortName;
+  final db = ref.watch(contentProvider).value;
+  return _tier(
+    db,
+    tierUuid,
+  )?.shortName(context.l10n, contentLanguage: db?.language);
 }
 
 /// Plain bold section title ("Trang bị", "Biến thể") of the collection tab

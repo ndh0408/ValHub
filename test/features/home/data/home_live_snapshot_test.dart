@@ -1,3 +1,8 @@
+import 'package:valvn/features/live_game/data/live_game_logic.dart';
+
+import '../../../helpers/l10n.dart';
+
+import 'package:valvn/core/l10n/labels/content_labels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/features/home/data/home_live.dart';
@@ -39,7 +44,10 @@ void main() {
     )!;
     expect(snap.phase, LivePhase.queueing);
     expect(snap.queueEntryTime, DateTime.utc(2026, 9, 28, 11, 58, 28));
-    expect(snap.modeLabel, db.queueName('competitive'));
+    expect(
+      liveModeLabel(tl, db, queueId: snap.queueId, modeId: snap.modeId),
+      db.queueName(tl, 'competitive'),
+    );
     expect(snap.mapName, isNull);
     expect(snap.phaseEndsAt, isNull);
   });
@@ -91,7 +99,10 @@ void main() {
     )!;
     expect(snap.phase, LivePhase.ingame);
     expect(snap.mapName, db.mapByUrl(ascent)?.displayName);
-    expect(snap.modeLabel, db.queueName('competitive'));
+    expect(
+      liveModeLabel(tl, db, queueId: snap.queueId, modeId: snap.modeId),
+      db.queueName(tl, 'competitive'),
+    );
     expect(snap.matchId, liveMatchId);
     expect(snap.phaseEndsAt, isNull);
     expect(snap.myAgentId, isNull);
@@ -112,7 +123,10 @@ void main() {
       db,
       self: me,
     )!;
-    expect(snap.modeLabel, isNotEmpty);
+    expect(
+      liveModeLabel(tl, db, queueId: snap.queueId, modeId: snap.modeId),
+      isNotEmpty,
+    );
   });
 
   test('an unknown map or agent does not crash', () {

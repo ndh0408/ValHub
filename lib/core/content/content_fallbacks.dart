@@ -1,8 +1,7 @@
-import '../l10n/content_strings.dart';
 import '../riot/riot_ids.dart';
 import 'models/cosmetic_models.dart';
 
-/// Small bundled tables so names, colors and icons render before the first
+/// Locale-neutral bundled tables so colors and icons render before the first
 /// content download or during a valorant-api outage (CA §2.2 step 7).
 abstract final class ContentFallbacks {
   static String _currencyIcon(String uuid) =>
@@ -14,22 +13,22 @@ abstract final class ContentFallbacks {
   static final List<Currency> currencies = [
     Currency(
       uuid: CurrencyIds.vp,
-      displayName: ContentStrings.currencyVpFull,
+      displayName: '',
       displayIcon: _currencyIcon(CurrencyIds.vp),
     ),
     Currency(
       uuid: CurrencyIds.rp,
-      displayName: ContentStrings.currencyRpFull,
+      displayName: '',
       displayIcon: _currencyIcon(CurrencyIds.rp),
     ),
     Currency(
       uuid: CurrencyIds.kc,
-      displayName: ContentStrings.currencyKcFull,
+      displayName: '',
       displayIcon: _currencyIcon(CurrencyIds.kc),
     ),
     Currency(
       uuid: CurrencyIds.agentTokens,
-      displayName: ContentStrings.currencyAgentTokens,
+      displayName: '',
       displayIcon: _currencyIcon(CurrencyIds.agentTokens),
     ),
   ];
@@ -40,7 +39,7 @@ abstract final class ContentFallbacks {
       uuid: ContentTierIds.select,
       devName: 'Select',
       rank: 0,
-      displayName: ContentStrings.tierFull(ContentStrings.tierSelect),
+      displayName: '',
       highlightColor: '5a9fe233',
       displayIcon: _tierIcon(ContentTierIds.select),
     ),
@@ -48,7 +47,7 @@ abstract final class ContentFallbacks {
       uuid: ContentTierIds.deluxe,
       devName: 'Deluxe',
       rank: 1,
-      displayName: ContentStrings.tierFull(ContentStrings.tierDeluxe),
+      displayName: '',
       highlightColor: '00958733',
       displayIcon: _tierIcon(ContentTierIds.deluxe),
     ),
@@ -56,7 +55,7 @@ abstract final class ContentFallbacks {
       uuid: ContentTierIds.premium,
       devName: 'Premium',
       rank: 2,
-      displayName: ContentStrings.tierFull(ContentStrings.tierPremium),
+      displayName: '',
       highlightColor: 'd1548d33',
       displayIcon: _tierIcon(ContentTierIds.premium),
     ),
@@ -64,7 +63,7 @@ abstract final class ContentFallbacks {
       uuid: ContentTierIds.exclusive,
       devName: 'Exclusive',
       rank: 3,
-      displayName: ContentStrings.tierFull(ContentStrings.tierExclusive),
+      displayName: '',
       highlightColor: 'f5955b33',
       displayIcon: _tierIcon(ContentTierIds.exclusive),
     ),
@@ -72,7 +71,7 @@ abstract final class ContentFallbacks {
       uuid: ContentTierIds.ultra,
       devName: 'Ultra',
       rank: 4,
-      displayName: ContentStrings.tierFull(ContentStrings.tierUltra),
+      displayName: '',
       highlightColor: 'fad66333',
       displayIcon: _tierIcon(ContentTierIds.ultra),
     ),
@@ -93,8 +92,4 @@ abstract final class ContentFallbacks {
     }
     return null;
   }
-
-  /// VF §8.9 queue names (`console_` prefix already stripped by callers).
-  static String? queueName(String queueId) =>
-      ContentStrings.queueNames[queueId.toLowerCase()];
 }

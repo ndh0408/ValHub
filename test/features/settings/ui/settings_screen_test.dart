@@ -1,4 +1,7 @@
 import 'package:valvn/core/l10n/l10n.dart';
+
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:workmanager/workmanager.dart';
@@ -360,14 +363,14 @@ void main() {
     testWidgets('picking the item language persists it', (tester) async {
       await pumpSettings(tester, accounts: [testAccount(1)]);
 
-      expect(find.text(SettingsStrings.itemLanguageVi), findsOneWidget);
+      expect(find.text(tl.settingsContentLanguageFollowApp), findsOneWidget);
       await tester.tap(find.text(SettingsStrings.itemLanguageLabel));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(SettingsStrings.itemLanguageEn).last);
+      await tester.tap(find.text('English').last);
       await tester.pumpAndSettle();
 
       expect(container.read(appSettingsProvider).itemLanguage, ItemLanguage.en);
-      expect(find.text(SettingsStrings.itemLanguageEn), findsOneWidget);
+      expect(find.text('English'), findsOneWidget);
     });
   });
 

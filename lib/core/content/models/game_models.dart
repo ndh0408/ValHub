@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-import '../../l10n/content_strings.dart';
 import '../../riot/riot_ids.dart';
 import '../../util/format.dart';
 import '../../util/json.dart';
@@ -18,9 +17,6 @@ class AgentRole {
   final String uuid;
   final String displayName;
   final String? displayIcon;
-
-  /// App-owned vi name when known ("Đối đầu"…), else the API name.
-  String get label => ContentStrings.roleNames[uuid] ?? displayName;
 }
 
 /// Agent ability (`slot`: Ability1, Ability2, Grenade, Ultimate, Passive).

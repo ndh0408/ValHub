@@ -3,6 +3,8 @@
 /// A core card: it shows a skeleton while loading.
 library;
 
+import 'package:valvn/core/l10n/labels/content_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -82,6 +84,7 @@ class _StoreHomeCardState extends ConsumerState<StoreHomeCard> {
 }
 
 ({Color color, String? name}) _tierOf(
+  AppLocalizations l10n,
   ContentDb db,
   String? uuid,
   Color fallback,
@@ -91,7 +94,7 @@ class _StoreHomeCardState extends ConsumerState<StoreHomeCard> {
   if (tier == null) return (color: fallback, name: null);
   return (
     color: opaqueRgba(tier.highlightColor, fallback: fallback),
-    name: tier.shortName,
+    name: tier.shortName(l10n, contentLanguage: db.language),
   );
 }
 
@@ -368,7 +371,12 @@ class HomeSkinTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final tier = _tierOf(db, offer.tierUuid, valColorsOf(context).muted);
+    final tier = _tierOf(
+      context.l10n,
+      db,
+      offer.tierUuid,
+      valColorsOf(context).muted,
+    );
     final name = offer.skin?.displayName ?? context.l10n.commonUnknownItem;
     final price = offer.vp;
     final priceText = price == null ? context.l10n.commonDash : formatVp(price);

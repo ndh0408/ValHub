@@ -49,7 +49,12 @@ class LiveHomeCard extends ConsumerWidget {
     final summary = LiveGameStrings.joinParts([
       phaseText,
       ?snap.mapName,
-      snap.modeLabel,
+      liveModeLabel(
+        context.l10n,
+        db,
+        queueId: snap.queueId,
+        modeId: snap.modeId,
+      ),
     ]);
     return HomeCardFrame(
       card: HomeCardId.live,
@@ -100,14 +105,15 @@ class LiveHomeCard extends ConsumerWidget {
 }
 
 /// The map / mode lines under the header.
-class _MatchTitle extends StatelessWidget {
+class _MatchTitle extends ConsumerWidget {
   const _MatchTitle({required this.snap});
 
   final HomeLiveSnapshot snap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final map = snap.mapName;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,7 +126,12 @@ class _MatchTitle extends StatelessWidget {
             style: ValText.display(24, color: theme.colorScheme.onSurface),
           ),
         Text(
-          snap.modeLabel,
+          liveModeLabel(
+            context.l10n,
+            db,
+            queueId: snap.queueId,
+            modeId: snap.modeId,
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: theme.textTheme.bodyMedium?.copyWith(
@@ -141,6 +152,7 @@ class _QueueBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final warning = valColorsOf(context).warning;
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final entry = snap.queueEntryTime;
     final style = theme.textTheme.titleMedium?.copyWith(
       color: legibleAccent(context, warning, min: 4.5),
@@ -188,7 +200,12 @@ class _QueueBody extends ConsumerWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          snap.modeLabel,
+          liveModeLabel(
+            context.l10n,
+            db,
+            queueId: snap.queueId,
+            modeId: snap.modeId,
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: theme.textTheme.bodyMedium?.copyWith(

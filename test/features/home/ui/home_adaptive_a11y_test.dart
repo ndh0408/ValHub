@@ -25,7 +25,7 @@ import '../home_test_env.dart';
 
 const _live = HomeLiveSnapshot(
   phase: LivePhase.ingame,
-  modeLabel: 'Thi đấu xếp hạng',
+  queueId: 'competitive',
   mapName: 'Ascent',
 );
 

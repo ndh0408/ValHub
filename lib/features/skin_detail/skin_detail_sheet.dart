@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/economy_labels.dart';
 import 'package:valvn/core/l10n/labels/content_labels.dart';
 
 import 'dart:async';
@@ -140,7 +141,7 @@ class _SkinDetailSheetState extends ConsumerState<SkinDetailSheet> {
         children: [
           SheetHeader(
             title: skin?.displayName ?? context.l10n.skinDetailTitle,
-            subtitle: skin == null ? null : _subtitle(db!, skin),
+            subtitle: skin == null ? null : _subtitle(context.l10n, db!, skin),
           ),
           Expanded(child: body),
         ],
@@ -149,11 +150,16 @@ class _SkinDetailSheetState extends ConsumerState<SkinDetailSheet> {
   }
 
   /// "Vandal · Cao Cấp" under the name.
-  static String? _subtitle(ContentDb db, WeaponSkin skin) {
+  static String? _subtitle(
+    AppLocalizations l10n,
+    ContentDb db,
+    WeaponSkin skin,
+  ) {
     final tierId = skin.contentTierUuid;
     final parts = [
       ?db.weapon(skin.weaponUuid)?.displayName,
-      if (tierId != null) ?db.contentTier(tierId)?.shortName,
+      if (tierId != null)
+        ?db.contentTier(tierId)?.shortName(l10n, contentLanguage: db.language),
     ].where((p) => p.trim().isNotEmpty).toList();
     return parts.isEmpty ? null : parts.join(' · ');
   }
@@ -304,7 +310,7 @@ class _SkinBody extends ConsumerWidget {
               ] else if (quote.isEstimate) ...[
                 const SizedBox(height: 6),
                 Text(
-                  quote.source.label,
+                  quote.source.label(context.l10n),
                   style: theme.textTheme.bodySmall?.copyWith(color: muted),
                 ),
               ],
@@ -522,7 +528,7 @@ class _PriceLabel extends StatelessWidget {
     final style = theme.textTheme.titleMedium?.copyWith(
       fontWeight: FontWeight.w700,
     );
-    final caption = quote.caption;
+    final caption = quote.caption(context.l10n);
     if (caption != null) {
       return Text(
         caption,
