@@ -125,7 +125,7 @@ class LfgPreviewCard extends ConsumerWidget {
                         ),
                         Text(
                           CommunityStrings.dotJoin([
-                            CommunityStrings.modeLabel(p.mode),
+                            context.l10n.communityModeName(p.mode ?? ''),
                             context.l10n.communitySlotsWanted(p.slots),
                           ]),
                           maxLines: 1,

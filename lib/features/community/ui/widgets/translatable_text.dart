@@ -1,10 +1,11 @@
+import 'package:valvn/core/l10n/labels/community_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/ui/adaptive.dart';
-import '../../community_strings.dart';
 import '../../data/community_translator.dart';
 import '../../providers/community_providers.dart';
 import '../../providers/translation_providers.dart';
@@ -38,18 +39,20 @@ class TranslatableText extends ConsumerStatefulWidget {
   ConsumerState<TranslatableText> createState() => _TranslatableTextState();
 }
 
-enum _Phase { idle, downloading, translating }
+enum _Phase { idle, checking, downloading, translating }
 
 class _TranslatableTextState extends ConsumerState<TranslatableText> {
   _Phase _phase = _Phase.idle;
   String? _translated;
   bool _showTranslated = true;
+  int _revision = 0;
 
   @override
   void didUpdateWidget(TranslatableText oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.text != widget.text ||
         oldWidget.language != widget.language) {
+      _revision++;
       _translated = null;
       _phase = _Phase.idle;
       _showTranslated = true;
@@ -58,6 +61,15 @@ class _TranslatableTextState extends ConsumerState<TranslatableText> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(communityAppLanguageProvider, (previous, next) {
+      if (previous == next) return;
+      setState(() {
+        _revision++;
+        _translated = null;
+        _phase = _Phase.idle;
+        _showTranslated = true;
+      });
+    });
     final appLanguage = ref.watch(communityAppLanguageProvider);
     final translator = ref.watch(communityTranslatorProvider);
     final source = widget.language;
@@ -114,7 +126,8 @@ class _TranslatableTextState extends ConsumerState<TranslatableText> {
                 label: Text(switch (_phase) {
                   _Phase.downloading => context.l10n.communityDownloadingModels,
                   _Phase.translating => context.l10n.communityTranslating,
-                  _Phase.idle => context.l10n.communityTranslate,
+                  _Phase.idle ||
+                  _Phase.checking => context.l10n.communityTranslate,
                 }),
               )
             else ...[
@@ -159,55 +172,62 @@ class _TranslatableTextState extends ConsumerState<TranslatableText> {
   );
 
   Future<void> _translate(String source, String target) async {
+    if (!mounted || _phase != _Phase.idle) return;
+    final l10n = context.l10n;
+    final text = widget.text;
+    final revision = ++_revision;
+    bool isCurrent() =>
+        mounted &&
+        revision == _revision &&
+        ref.read(communityAppLanguageProvider) == target;
+    setState(() => _phase = _Phase.checking);
     final translator = ref.read(communityTranslatorProvider);
     try {
       final missing = <String>[
         for (final code in {source, target})
           if (!await translator.isDownloaded(code)) code,
       ];
-      if (!mounted) return;
+      if (!mounted || !isCurrent()) return;
       if (missing.isNotEmpty) {
         final ok = await showConfirmDialog(
           context,
-          title: CommunityStrings.translateDownloadTitle,
-          message: CommunityStrings.translateDownloadBody(
-            CommunityStrings.languageLabel(source),
-            CommunityStrings.languageLabel(target),
-            CommunityStrings.modelSize(kTranslationModelMb * missing.length),
+          title: l10n.communityTranslateDownloadTitle,
+          message: l10n.communityTranslateDownloadBody(
+            l10n.communityLanguageName(source),
+            l10n.communityLanguageName(target),
+            l10n.communityModelSize(kTranslationModelMb * missing.length),
           ),
-          confirmLabel: CommunityStrings.download,
+          confirmLabel: l10n.communityDownload,
           icon: Icons.download_rounded,
         );
-        if (!ok || !mounted) return;
+        if (!mounted || !isCurrent()) return;
+        if (!ok) {
+          setState(() => _phase = _Phase.idle);
+          return;
+        }
         setState(() => _phase = _Phase.downloading);
         for (final code in missing) {
           await translator.download(code);
+          if (!mounted || !isCurrent()) return;
         }
-        if (!mounted) return;
       }
       setState(() => _phase = _Phase.translating);
-      final result = await translator.translate(
-        widget.text,
-        from: source,
-        to: target,
-      );
-      if (!mounted) return;
+      final result = await translator.translate(text, from: source, to: target);
+      if (!mounted || !isCurrent()) return;
       ref
           .read(translationCacheProvider.notifier)
-          .put(translationKey(source, target, widget.text), result);
+          .put(translationKey(source, target, text), result);
       setState(() {
         _translated = result;
         _showTranslated = true;
         _phase = _Phase.idle;
       });
     } on Object {
-      if (!mounted) return;
+      if (!mounted || !isCurrent()) return;
       setState(() => _phase = _Phase.idle);
       ScaffoldMessenger.maybeOf(context)
         ?..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(content: Text(CommunityStrings.translateFailed)),
-        );
+        ..showSnackBar(SnackBar(content: Text(l10n.communityTranslateFailed)));
     }
   }
 

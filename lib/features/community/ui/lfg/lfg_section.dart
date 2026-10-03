@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/community_labels.dart';
+
 import '../../providers/hidden_authors.dart';
 
 import 'dart:async';
@@ -11,7 +13,6 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/error_view.dart' show describeError;
 import '../../../../core/util/clock.dart';
-import '../../community_strings.dart';
 import '../../data/community_api.dart';
 import '../../data/community_models.dart';
 import '../../providers/community_providers.dart';
@@ -207,12 +208,14 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
   }
 
   Future<void> _join(LfgPost post, LfgQuery query) async {
-    final name = post.author.riotId ?? context.l10n.communityUnknownPlayer;
+    if (!mounted) return;
+    final l10n = context.l10n;
+    final name = post.author.riotId ?? l10n.communityUnknownPlayer;
     final ok = await showConfirmDialog(
       context,
-      title: CommunityStrings.joinConfirmTitle,
-      message: CommunityStrings.joinConfirmBody(name),
-      confirmLabel: CommunityStrings.join,
+      title: l10n.communityJoinConfirmTitle,
+      message: l10n.communityJoinConfirmBody(name),
+      confirmLabel: l10n.communityJoin,
     );
     if (!ok || !mounted) return;
     setState(() => _joining = post.id);
@@ -220,14 +223,15 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
       await joinLfgPost(ref, widget.account.puuid, post);
       if (!mounted) return;
       Haptics.medium();
-      _snack(CommunityStrings.joinedHint);
+      _snack(l10n.communityJoinedHint);
     } on Object catch (e) {
       if (!mounted) return;
       _snack(
-        joinErrorMessage(context.l10n, e),
+        joinErrorMessage(l10n, e),
         action: SnackBarAction(
-          label: CommunityStrings.refreshList,
+          label: l10n.communityRefreshList,
           onPressed: () {
+            if (!mounted) return;
             if (ref.exists(lfgProvider(query))) {
               unawaited(ref.read(lfgProvider(query).notifier).silentRefresh());
             }
@@ -240,24 +244,28 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
   }
 
   Future<void> _extend() async {
+    if (!mounted) return;
+    final l10n = context.l10n;
     try {
       await ref
           .read(myLfgProvider(widget.account.puuid).notifier)
           .extend(ref.read(clockProvider).now());
-      if (mounted) _snack(CommunityStrings.extended);
+      if (mounted) _snack(l10n.communityExtended);
     } on LfgPostExpired {
-      if (mounted) _snack(CommunityStrings.lfgExpiredRepost);
+      if (mounted) _snack(l10n.communityLfgExpiredRepost);
     } on Object catch (e) {
       if (mounted) showCommunityError(context, e);
     }
   }
 
   Future<void> _remove(LfgPost post, LfgQuery query) async {
+    if (!mounted) return;
+    final l10n = context.l10n;
     final ok = await showConfirmDialog(
       context,
-      title: CommunityStrings.removeLfgTitle,
-      message: CommunityStrings.removeLfgBody,
-      confirmLabel: CommunityStrings.removeLfg,
+      title: l10n.communityRemoveLfgTitle,
+      message: l10n.communityRemoveLfgBody,
+      confirmLabel: l10n.communityRemoveLfg,
       destructive: true,
     );
     if (!ok || !mounted) return;
@@ -268,7 +276,7 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
         post: post,
         shownIn: query,
       );
-      if (mounted) _snack(CommunityStrings.lfgRemoved);
+      if (mounted) _snack(l10n.communityLfgRemoved);
     } on Object catch (e) {
       if (mounted) showCommunityError(context, e);
     }
@@ -418,12 +426,12 @@ class _Filters extends ConsumerWidget {
               menuChip<String>(
                 key: const ValueKey('lfg-region'),
                 icon: Icons.public_rounded,
-                label: CommunityStrings.regionLabel(region),
+                label: context.l10n.communityRegionName(region),
                 tooltip: context.l10n.communityRegion,
                 active: region != myRegion,
                 items: [
                   for (final r in kCommunityRegions)
-                    (r, CommunityStrings.regionLabel(r)),
+                    (r, context.l10n.communityRegionName(r)),
                 ],
                 onSelected: n.setRegion,
               ),
@@ -463,7 +471,7 @@ class _Filters extends ConsumerWidget {
               menuChip<String>(
                 key: const ValueKey('lfg-language-filter'),
                 icon: Icons.translate_rounded,
-                label: CommunityStrings.languageLabel(
+                label: context.l10n.communityLanguageName(
                   filter.language ?? kLfgAnyLanguage,
                 ),
                 tooltip: context.l10n.communityLanguage,
@@ -471,7 +479,7 @@ class _Filters extends ConsumerWidget {
                 items: [
                   (kLfgAnyLanguage, context.l10n.communityAnyLanguage),
                   for (final l in kLfgLanguages)
-                    (l, CommunityStrings.languageLabel(l)),
+                    (l, context.l10n.communityLanguageName(l)),
                 ],
                 onSelected: (l) =>
                     n.setLanguage(l == kLfgAnyLanguage ? null : l),
@@ -494,7 +502,7 @@ class _Filters extends ConsumerWidget {
               for (final m in kLfgModes) ...[
                 const SizedBox(width: 8),
                 CommunityChip(
-                  label: CommunityStrings.modeLabel(m),
+                  label: context.l10n.communityModeName(m),
                   selected: filter.mode == m,
                   onSelected: () => n.setMode(m),
                 ),
@@ -531,7 +539,7 @@ class _Filters extends ConsumerWidget {
                   region == myRegion
                       ? context.l10n.communityLfgSameShardNote
                       : context.l10n.communityLfgOtherShardNote(
-                          CommunityStrings.regionLabel(region),
+                          context.l10n.communityRegionName(region),
                         ),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: region == myRegion ? muted : theme.colorScheme.error,

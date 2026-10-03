@@ -1,6 +1,6 @@
 # Build & phát hành ValHub
 
-Trạng thái kiểm chứng mới nhất: [Callback / cách ly tài khoản / CI local 03/10, build 4011](I18N_CALLBACK_ISOLATION_2026-10-03.md).
+Trạng thái kiểm chứng mới nhất: [Cộng đồng / cách ly tài khoản / CI local 03/10, build 4012](COMMUNITY_ACCOUNT_ISOLATION_2026-10-03.md).
 Checkpoint render-time: [Build 4010](I18N_RENDER_CUTOVER_2026-10-03.md).
 Checkpoint tích hợp: [Tích hợp ValHub / CI local 03/10](VALHUB_INTEGRATION_2026-10-03.md).
 Checkpoint trước: [Locale nền / CI local 02/10](I18N_BACKGROUND_2026-10-02.md),

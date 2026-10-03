@@ -188,6 +188,7 @@ mixin PagedLoader<T> on AsyncNotifier<PagedState<T>> {
 
   /// Replaces the item with the same id (no-op when absent).
   void replace(T item) {
+    if (!ref.mounted) return;
     final s = state.value;
     if (s == null) return;
     final id = idOf(item);
@@ -208,6 +209,7 @@ mixin PagedLoader<T> on AsyncNotifier<PagedState<T>> {
 
   /// Drops the item with [id] locally.
   void removeLocal(String id) {
+    if (!ref.mounted) return;
     final s = state.value;
     if (s == null) return;
     state = AsyncData(

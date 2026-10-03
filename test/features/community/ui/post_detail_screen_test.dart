@@ -1,5 +1,11 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:valvn/core/accounts/account.dart';
+import 'package:valvn/core/accounts/account_providers.dart';
+import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/data/community_models.dart';
 import 'package:valvn/features/community/ui/feed/media_grid.dart';
@@ -10,6 +16,72 @@ import '../community_test_env.dart';
 void main() {
   late CommunityTestEnv env;
   setUp(() async => env = await CommunityTestEnv.create());
+
+  Future<void> switchAccount(WidgetTester tester) async {
+    final second = Account.fromJson({
+      ...meAccount.toJson(),
+      'puuid': 'bbbbbbbb-0000-0000-0000-00000000000b',
+      'gameName': 'Second',
+    })!;
+    await env.prefs.setJson(PrefKeys.accounts, [
+      meAccount.toJson(),
+      second.toJson(),
+    ]);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(PostDetailScreen)),
+    );
+    container.read(accountsProvider.notifier).reload();
+    container.read(activePuuidProvider.notifier).select(second.puuid);
+    await settle(tester);
+  }
+
+  testWidgets('comment draft is isolated when the account changes', (
+    tester,
+  ) async {
+    env.server
+      ..json('GET /v1/posts/p1', postJson('p1'))
+      ..json('GET /v1/posts/p1/comments', page([]));
+    await pumpCommunity(tester, env, const PostDetailScreen(postId: 'p1'));
+    await settle(tester);
+    await tester.enterText(find.byType(TextField), 'Private comment A');
+    await tester.pump();
+    await switchAccount(tester);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      isEmpty,
+    );
+    expect(env.server.calls('POST /v1/posts/p1/comments'), isEmpty);
+    await unmount(tester);
+  });
+
+  testWidgets('old comment response cannot clear the next account draft', (
+    tester,
+  ) async {
+    final gate = Completer<void>();
+    env.server
+      ..json('GET /v1/posts/p1', postJson('p1'))
+      ..json('GET /v1/posts/p1/comments', page([]))
+      ..json('POST /v1/posts/p1/comments', commentJson('new'))
+      ..hold('POST /v1/posts/p1/comments', gate);
+    await pumpCommunity(tester, env, const PostDetailScreen(postId: 'p1'));
+    await settle(tester);
+    await tester.enterText(find.byType(TextField), 'Private comment A');
+    await tester.pump();
+    await tester.tap(find.byTooltip(CommunityStrings.sendComment));
+    await settle(tester);
+    expect(env.server.calls('POST /v1/posts/p1/comments'), hasLength(1));
+    await switchAccount(tester);
+    await tester.enterText(find.byType(TextField), 'Private comment B');
+    await tester.pump();
+    gate.complete();
+    await settle(tester);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      'Private comment B',
+    );
+    expect(tester.takeException(), isNull);
+    await unmount(tester);
+  });
 
   testWidgets('shows the post and comments; sending appends and counts', (
     tester,

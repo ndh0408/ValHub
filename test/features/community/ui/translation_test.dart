@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -6,10 +8,37 @@ import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/data/community_models.dart';
 import 'package:valvn/features/community/data/community_translator.dart';
 import 'package:valvn/features/community/providers/translation_providers.dart';
+import 'package:valvn/features/community/providers/community_providers.dart';
 import 'package:valvn/features/community/ui/skins/skin_review_screen.dart';
+import 'package:valvn/features/community/ui/widgets/translatable_text.dart';
 
 import '../community_test_env.dart';
 import '../data/skin_review_test.dart' show reviewJson, summaryJson;
+
+class _DelayedTranslator extends FakeCommunityTranslator {
+  final response = Completer<String>();
+
+  @override
+  Future<String> translate(
+    String text, {
+    required String from,
+    required String to,
+  }) {
+    translations.add((text, from, to));
+    return response.future;
+  }
+}
+
+final _testLanguage = NotifierProvider<_TestLanguage, String>(
+  _TestLanguage.new,
+);
+
+class _TestLanguage extends Notifier<String> {
+  @override
+  String build() => 'vi';
+
+  void select(String code) => state = code;
+}
 
 Future<void> _openFeed(WidgetTester tester, CommunityTestEnv env) async {
   await pumpCommunityRouter(
@@ -33,6 +62,109 @@ void _servePosts(CommunityTestEnv env, {String? language = 'ja'}) {
 void main() {
   late CommunityTestEnv env;
   setUp(() async => env = await CommunityTestEnv.create());
+
+  for (final pending in [false, true]) {
+    testWidgets(
+      'target language change clears the old translation (pending=$pending)',
+      (tester) async {
+        final translator = _DelayedTranslator()..downloaded.add('ja');
+        await pumpCommunity(
+          tester,
+          env,
+          ProviderScope(
+            overrides: [
+              communityTranslatorProvider.overrideWithValue(translator),
+              communityAppLanguageProvider.overrideWith(
+                (ref) => ref.watch(_testLanguage),
+              ),
+            ],
+            child: const Scaffold(
+              body: TranslatableText('original', language: 'ja'),
+            ),
+          ),
+        );
+        await settle(tester);
+        await tester.tap(find.byKey(const ValueKey('translate-button')));
+        await settle(tester);
+        expect(translator.translations, [('original', 'ja', 'vi')]);
+        if (!pending) {
+          translator.response.complete('VI translation');
+          await settle(tester);
+          expect(find.text('VI translation'), findsOneWidget);
+        }
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(TranslatableText)),
+        );
+        container.read(_testLanguage.notifier).select('en');
+        await settle(tester);
+        if (pending) {
+          translator.response.complete('VI translation');
+          await settle(tester);
+        }
+        expect(find.text('original'), findsOneWidget);
+        expect(find.text('VI translation'), findsNothing);
+        expect(
+          container
+              .read(translationCacheProvider)
+              .containsKey(translationKey('ja', 'en', 'original')),
+          isFalse,
+        );
+        final button = tester.widget<TextButton>(
+          find.byKey(const ValueKey('translate-button')),
+        );
+        expect(button.onPressed, isNotNull);
+        expect(tester.takeException(), isNull);
+        await unmount(tester);
+      },
+    );
+  }
+
+  for (final restoreOriginal in [false, true]) {
+    testWidgets(
+      'pending translation cannot overwrite changed text (restore=$restoreOriginal)',
+      (tester) async {
+        final translator = _DelayedTranslator()..downloaded.add('ja');
+        final text = ValueNotifier('original');
+        addTearDown(text.dispose);
+        await pumpCommunity(
+          tester,
+          env,
+          ProviderScope(
+            overrides: [
+              communityTranslatorProvider.overrideWithValue(translator),
+            ],
+            child: Scaffold(
+              body: ValueListenableBuilder<String>(
+                valueListenable: text,
+                builder: (_, value, _) =>
+                    TranslatableText(value, language: 'ja'),
+              ),
+            ),
+          ),
+        );
+        await settle(tester);
+        await tester.tap(find.byKey(const ValueKey('translate-button')));
+        await settle(tester);
+        expect(translator.translations, [('original', 'ja', 'vi')]);
+        text.value = 'updated';
+        await settle(tester);
+        if (restoreOriginal) {
+          text.value = 'original';
+          await settle(tester);
+        }
+        translator.response.complete('old translation');
+        await settle(tester);
+        expect(find.text(text.value), findsOneWidget);
+        expect(find.text('old translation'), findsNothing);
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(TranslatableText)),
+        );
+        expect(container.read(translationCacheProvider), isEmpty);
+        expect(tester.takeException(), isNull);
+        await unmount(tester);
+      },
+    );
+  }
 
   group('pure helpers', () {
     test('shouldOfferTranslation', () {

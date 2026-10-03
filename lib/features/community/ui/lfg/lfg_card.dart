@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/community_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -88,8 +89,8 @@ class LfgCard extends ConsumerWidget {
             isMe: isMine,
             avatarSize: 44,
             subtitle: CommunityStrings.dotJoin([
-              CommunityStrings.regionLabel(post.region),
-              CommunityStrings.languageLabel(post.language),
+              context.l10n.communityRegionName(post.region),
+              context.l10n.communityLanguageName(post.language),
             ]),
             trailing: isMine
                 ? const SizedBox(width: 8)
@@ -118,7 +119,7 @@ class LfgCard extends ConsumerWidget {
                 if (isMine || post.status != LfgStatus.open)
                   LfgStatusChip(status: post.status),
                 ValBadge(
-                  CommunityStrings.modeLabel(post.mode),
+                  context.l10n.communityModeName(post.mode ?? ''),
                   color: ValColors.red,
                   soft: true,
                 ),
@@ -130,7 +131,7 @@ class LfgCard extends ConsumerWidget {
                   ),
                 if (langTag.isNotEmpty)
                   Tooltip(
-                    message: CommunityStrings.languageLabel(post.language),
+                    message: context.l10n.communityLanguageName(post.language),
                     child: ValBadge(langTag, color: colors.draw, soft: true),
                   ),
                 if (outOfRange)

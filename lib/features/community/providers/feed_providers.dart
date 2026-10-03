@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/accounts/account_providers.dart';
 import '../data/community_api.dart';
+import '../data/community_exception.dart';
 import '../data/community_models.dart';
 import 'community_providers.dart';
 import 'consent_providers.dart';
@@ -97,7 +98,8 @@ class PostDetailNotifier extends AsyncNotifier<CommunityPost> {
 
   /// Pushes [post] to this screen and to the feed (when it is alive).
   void apply(CommunityPost post) {
-    if (ref.mounted) state = AsyncData(post);
+    if (!ref.mounted) return;
+    state = AsyncData(post);
     syncFeed(ref, key.puuid, post);
   }
 
@@ -108,6 +110,13 @@ class PostDetailNotifier extends AsyncNotifier<CommunityPost> {
     if (_liking) return;
     _liking = true;
     final optimistic = post.toggledLike();
+    final feed = feedProvider(key.puuid);
+    final feedNotifier = ref.exists(feed) ? ref.read(feed.notifier) : null;
+    void applyResponse(CommunityPost updated) {
+      if (ref.mounted) state = AsyncData(updated);
+      feedNotifier?.replace(updated);
+    }
+
     apply(optimistic);
     try {
       final r = await _api.setLiked(
@@ -115,9 +124,9 @@ class PostDetailNotifier extends AsyncNotifier<CommunityPost> {
         post.id,
         liked: optimistic.liked,
       );
-      apply(optimistic.copyWith(likes: r.likes, liked: r.liked));
+      applyResponse(optimistic.copyWith(likes: r.likes, liked: r.liked));
     } on Object {
-      apply(post);
+      applyResponse(post);
       rethrow;
     } finally {
       _liking = false;
@@ -133,14 +142,16 @@ class PostDetailNotifier extends AsyncNotifier<CommunityPost> {
 
   /// Deletes this (own) post and drops it from the feed.
   Future<void> delete() async {
-    await _api.deletePost(key.puuid, key.postId);
     final feed = feedProvider(key.puuid);
-    if (ref.exists(feed)) ref.read(feed.notifier).removeLocal(key.postId);
+    final feedNotifier = ref.exists(feed) ? ref.read(feed.notifier) : null;
+    await _api.deletePost(key.puuid, key.postId);
+    feedNotifier?.removeLocal(key.postId);
   }
 }
 
 /// Updates [post] in the feed of [puuid] if the feed is alive.
 void syncFeed(Ref ref, String puuid, CommunityPost post) {
+  if (!ref.mounted) return;
   final feed = feedProvider(puuid);
   if (ref.exists(feed)) ref.read(feed.notifier).replace(post);
 }
@@ -182,8 +193,9 @@ class CommentsNotifier extends AsyncNotifier<PagedState<CommunityComment>>
       body,
       language: ref.read(communityAppLanguageProvider),
     );
+    if (!ref.mounted) return comment;
     final s = state.value;
-    if (ref.mounted && s != null) {
+    if (s != null) {
       state = AsyncData(
         s.copyWith(
           items: [...s.items.where((c) => c.id != comment.id), comment],
@@ -209,11 +221,20 @@ Future<CommunityPost> publishPost(
   List<Future<PostMedia> Function()> uploads = const [],
   PostPayload? payload,
   String? language,
+  bool Function()? canContinue,
 }) async {
+  void checkCurrentAction() {
+    if (canContinue != null && !canContinue()) {
+      throw const CommunityException(CommunityException.cancelled);
+    }
+  }
+
   final media = <String>[];
   for (final upload in uploads) {
+    checkCurrentAction();
     media.add((await upload()).key);
   }
+  checkCurrentAction();
   return api.createPost(
     puuid,
     kind: kind,

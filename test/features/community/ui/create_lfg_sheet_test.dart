@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
@@ -89,9 +91,9 @@ void main() {
   setUp(() async => env = await CommunityTestEnv.create());
 
   test('typed party code validation', () {
-    expect(validatePartyCode(''), CommunityStrings.codeRequired);
-    expect(validatePartyCode('abc12'), CommunityStrings.codeInvalid);
-    expect(validatePartyCode('abc123'), isNull);
+    expect(validatePartyCode(tl, ''), CommunityStrings.codeRequired);
+    expect(validatePartyCode(tl, 'abc12'), CommunityStrings.codeInvalid);
+    expect(validatePartyCode(tl, 'abc123'), isNull);
   });
 
   testWidgets('empty code: generated from the party on "Đăng tin"', (

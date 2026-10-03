@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/community_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter/services.dart';
@@ -10,7 +12,6 @@ import '../../../../core/content/content_repository.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/rank_badge.dart';
 import '../../../../core/util/clock.dart';
-import '../../community_strings.dart';
 import '../../data/community_models.dart';
 import '../../data/lfg_sync.dart';
 import '../../providers/lfg_providers.dart';
@@ -20,10 +21,10 @@ import 'lfg_bits.dart';
 import 'package:valvn/core/l10n/l10n.dart';
 
 /// Validates a typed party code: `null` when valid, else the message.
-String? validatePartyCode(String code) {
+String? validatePartyCode(AppLocalizations l10n, String code) {
   final c = code.trim().toUpperCase();
-  if (c.isEmpty) return CommunityStrings.codeRequired;
-  if (!partyCodePattern.hasMatch(c)) return CommunityStrings.codeInvalid;
+  if (c.isEmpty) return l10n.communityCodeRequired;
+  if (!partyCodePattern.hasMatch(c)) return l10n.communityCodeInvalid;
   return null;
 }
 
@@ -130,7 +131,7 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
             const SizedBox(height: 4),
             Text(
               context.l10n.communityLfgSheetSubtitle(
-                CommunityStrings.regionLabel(widget.region),
+                context.l10n.communityRegionName(widget.region),
               ),
               style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),
@@ -142,7 +143,7 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
               children: [
                 for (final m in kLfgModes)
                   CommunityChip(
-                    label: CommunityStrings.modeLabel(m),
+                    label: context.l10n.communityModeName(m),
                     selected: _mode == m,
                     onSelected: () => setState(() => _mode = m),
                   ),
@@ -238,7 +239,7 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
                   borderRadius: BorderRadius.circular(ValRadius.small),
                 ),
                 leading: const Icon(Icons.translate_rounded),
-                title: Text(CommunityStrings.languageLabel(_language)),
+                title: Text(context.l10n.communityLanguageName(_language)),
                 trailing: const Icon(Icons.expand_more_rounded),
                 onTap: () => unawaited(_pickLanguage()),
               ),
@@ -372,7 +373,7 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
             for (final code in [kLfgAnyLanguage, ...kLfgLanguages])
               ListTile(
                 key: ValueKey('lang-$code'),
-                title: Text(CommunityStrings.languageLabel(code)),
+                title: Text(context.l10n.communityLanguageName(code)),
                 trailing: code == _language
                     ? const Icon(Icons.check_rounded)
                     : null,
@@ -404,7 +405,7 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
           children: [
             ListTile(
               leading: const Icon(Icons.all_inclusive_rounded),
-              title: const Text(CommunityStrings.anyRank),
+              title: Text(context.l10n.communityAnyRank),
               onTap: () => Navigator.of(context).pop(0),
             ),
             for (final t in tiers)
@@ -430,6 +431,8 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
   }
 
   Future<void> _submit() async {
+    if (!mounted || _posting) return;
+    final l10n = context.l10n;
     final problem = validateLfgForm(
       rankMin: _rankMin,
       rankMax: _rankMax,
@@ -483,7 +486,7 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
       if (mounted) {
         setState(() {
           _posting = false;
-          _codeError = CommunityStrings.codeAutoFailed;
+          _codeError = l10n.communityCodeAutoFailed;
         });
       }
     } on Object catch (e) {

@@ -6,11 +6,13 @@ import 'package:material_ui/material_ui.dart';
 import 'package:valvn/app/shell.dart';
 import 'package:valvn/core/domain/competitive/match_models.dart';
 import 'package:valvn/core/l10n/l10n.dart';
+import 'package:valvn/core/l10n/labels/community_labels.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/core/ui/error_view.dart';
 import 'package:valvn/features/home/data/home_card.dart';
+import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/home/ui/home_card_frame.dart';
 import 'package:valvn/features/profile/ui/widgets/profile_widgets.dart';
 import 'package:valvn/features/social/social_strings.dart';
@@ -44,6 +46,56 @@ class _MessagesDelegate extends LocalizationsDelegate<AppLocalizations> {
 }
 
 void main() {
+  test(
+    'community mode and shard selects preserve known and unknown labels',
+    () {
+      final messages = AppLocalizationsVi();
+      for (final mode in [
+        null,
+        '',
+        'competitive',
+        'unrated',
+        'swiftplay',
+        'spikerush',
+        'deathmatch',
+        'teamdeathmatch',
+        'premier',
+        'custom',
+        'unknown',
+      ]) {
+        expect(
+          messages.communityModeName(mode ?? ''),
+          CommunityStrings.modeLabel(mode),
+        );
+      }
+      for (final region in [
+        '',
+        'ap',
+        'na',
+        'eu',
+        'kr',
+        'latam',
+        'br',
+        'unknown',
+      ]) {
+        expect(
+          messages.communityRegionName(region),
+          CommunityStrings.regionLabel(region),
+        );
+      }
+      for (final language in [
+        ...CommunityStrings.languageNames.keys,
+        'any',
+        '',
+        'unknown',
+      ]) {
+        expect(
+          messages.communityLanguageName(language),
+          CommunityStrings.languageLabel(language),
+        );
+      }
+    },
+  );
   test('party summary select preserves open and invite-only summaries', () {
     final messages = AppLocalizationsVi();
     for (final size in [0, 1, 2, 5]) {

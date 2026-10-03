@@ -1,5 +1,11 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:valvn/core/accounts/account.dart';
+import 'package:valvn/core/accounts/account_providers.dart';
+import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/data/community_models.dart';
 import 'package:valvn/features/community/data/compose_draft.dart';
@@ -38,6 +44,112 @@ class _Launcher extends StatelessWidget {
 void main() {
   late CommunityTestEnv env;
   setUp(() async => env = await CommunityTestEnv.create());
+
+  Future<ProviderContainer> addSecondAccount(WidgetTester tester) async {
+    final second = Account.fromJson({
+      ...meAccount.toJson(),
+      'puuid': 'bbbbbbbb-0000-0000-0000-00000000000b',
+      'gameName': 'Second',
+    })!;
+    await env.prefs.setJson(PrefKeys.accounts, [
+      meAccount.toJson(),
+      second.toJson(),
+    ]);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(ComposeScreen)),
+    );
+    container.read(accountsProvider.notifier).reload();
+    container.read(activePuuidProvider.notifier).select(second.puuid);
+    await settle(tester);
+    return container;
+  }
+
+  testWidgets(
+    'account switch clears private text, photos and store attachment',
+    (tester) async {
+      const draft = ComposeDraft(
+        kind: PostKind.store,
+        body: 'Private draft A',
+        payload: PostPayload(
+          offers: [PayloadOffer(skinUuid: reaverSkin, cost: 1775)],
+        ),
+      );
+      env.picker.next = [PickedImage(bytes: jpegBytes(), name: 'a.jpg')];
+      await pumpCommunity(tester, env, const ComposeScreen(draft: draft));
+      await settle(tester);
+      await tester.tap(find.text(CommunityStrings.addPhotos));
+      await settle(tester);
+      expect(find.byTooltip(CommunityStrings.removeAttachment), findsOneWidget);
+      expect(find.byTooltip(CommunityStrings.removePhoto), findsOneWidget);
+
+      await addSecondAccount(tester);
+      expect(find.text('Private draft A'), findsNothing);
+      expect(find.byTooltip(CommunityStrings.removeAttachment), findsNothing);
+      expect(find.byTooltip(CommunityStrings.removePhoto), findsNothing);
+      expect(_publishButton(tester).onPressed, isNull);
+      expect(env.server.calls('POST /v1/posts'), isEmpty);
+      await unmount(tester);
+    },
+  );
+
+  testWidgets(
+    'old publish response cannot close or clear the next account draft',
+    (tester) async {
+      final gate = Completer<void>();
+      env.server
+        ..json('POST /v1/posts', postJson('new'))
+        ..hold('POST /v1/posts', gate);
+      await pumpCommunity(tester, env, const _Launcher());
+      await tester.tap(find.text('mở'));
+      await settle(tester);
+      await tester.enterText(find.byType(TextField), 'Draft A');
+      await tester.pump();
+      await tester.tap(find.text(CommunityStrings.publish));
+      await settle(tester);
+      expect(env.server.calls('POST /v1/posts'), hasLength(1));
+
+      await addSecondAccount(tester);
+      await tester.enterText(find.byType(TextField), 'Draft B');
+      gate.complete();
+      await settle(tester, frames: 25);
+      expect(find.byType(ComposeScreen), findsOneWidget);
+      expect(find.text('Draft B'), findsOneWidget);
+      expect(find.text(CommunityStrings.posted), findsNothing);
+      expect(tester.takeException(), isNull);
+      await unmount(tester);
+    },
+  );
+
+  testWidgets('closing during an upload stops subsequent uploads and posting', (
+    tester,
+  ) async {
+    final gate = Completer<void>();
+    env.picker.next = [
+      PickedImage(bytes: jpegBytes(), name: 'a.jpg'),
+      PickedImage(bytes: jpegBytes(), name: 'b.jpg'),
+    ];
+    env.server
+      ..json('POST /v1/media', {'key': 'm1', 'url': 'https://val.test/m1.jpg'})
+      ..hold('POST /v1/media', gate)
+      ..json('POST /v1/posts', postJson('new'));
+    await pumpCommunity(tester, env, const _Launcher());
+    await tester.tap(find.text('mở'));
+    await settle(tester);
+    await tester.tap(find.text(CommunityStrings.addPhotos));
+    await settle(tester);
+    await tester.tap(find.text(CommunityStrings.publish));
+    await settle(tester);
+    expect(env.server.calls('POST /v1/media'), hasLength(1));
+    Navigator.of(tester.element(find.byType(ComposeScreen))).pop();
+    await settle(tester, frames: 30);
+    expect(find.byType(ComposeScreen), findsNothing);
+    gate.complete();
+    await settle(tester);
+    expect(env.server.calls('POST /v1/media'), hasLength(1));
+    expect(env.server.calls('POST /v1/posts'), isEmpty);
+    expect(tester.takeException(), isNull);
+    await unmount(tester);
+  });
 
   test('validation rules', () {
     expect(

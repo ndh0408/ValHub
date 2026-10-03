@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/accounts/account_providers.dart';
 import '../../community_routes.dart';
 import '../../data/community_api.dart';
 import '../../data/community_models.dart';
@@ -209,7 +210,10 @@ class FeedSliver extends ConsumerWidget {
 /// Opens the composer; writing needs a session, so the consent sheet comes
 /// first for a reader who has not joined (declined = nothing opens).
 Future<void> openComposer(BuildContext context, {Object? draft}) async {
+  final container = ProviderScope.containerOf(context);
+  final puuid = container.read(activePuuidProvider);
   if (!await promptConsentFromContext(context) || !context.mounted) return;
+  if (container.read(activePuuidProvider) != puuid) return;
   await context.push<void>(CommunityRoutes.compose, extra: draft);
 }
 

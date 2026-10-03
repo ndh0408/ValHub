@@ -2082,6 +2082,36 @@ class AppLocalizationsVi extends AppLocalizations {
       'Tài khoản này đang bị hạn chế đăng bài, bình luận, tìm đồng đội và bình chọn. Hãy thử lại sau hoặc liên hệ ValHub trong Giới thiệu & pháp lý.';
 
   @override
+  String communityModeName(String mode) {
+    String _temp0 = intl.Intl.selectLogic(mode, {
+      'competitive': 'Xếp hạng',
+      'unrated': 'Đấu thường',
+      'swiftplay': 'Siêu Tốc',
+      'spikerush': 'Đặt Spike Nhanh',
+      'deathmatch': 'Sinh Tử',
+      'teamdeathmatch': 'Sinh Tử Đội',
+      'premier': 'Premier',
+      'custom': 'Chơi tự do',
+      'other': 'Khác',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String communityRegionName(String region) {
+    String _temp0 = intl.Intl.selectLogic(region, {
+      'ap': 'Châu Á - Thái Bình Dương',
+      'na': 'Bắc Mỹ',
+      'eu': 'Châu Âu',
+      'kr': 'Hàn Quốc',
+      'latam': 'Mỹ Latinh',
+      'br': 'Brazil',
+      'other': 'Chưa rõ máy chủ',
+    });
+    return '$_temp0';
+  }
+
+  @override
   String get communityAddPhotos => 'Thêm ảnh';
 
   @override

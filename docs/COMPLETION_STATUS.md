@@ -1,6 +1,14 @@
 # Hoàn thiện ValHub — nhật ký triển khai Codex
 
-Checkpoint mới nhất 03/10: [Callback / cách ly tài khoản, build 4011](I18N_CALLBACK_ISOLATION_2026-10-03.md).
+Checkpoint mới nhất 03/10: [Cộng đồng / cách ly tài khoản, build 4012](COMMUNITY_ACCOUNT_ISOLATION_2026-10-03.md).
+
+Windows hai lượt và Mac đạt **4.265 tests**, analyzer 0; backend **867 tests**.
+APK 4012 qua 10 public-flow cases, đã nâng cấp emulator có cửa sổ, giữ đủ
+bốn tài khoản, wishlist và cài đặt. iOS 4012 đã build trên Mac, **chưa ký/chưa
+nghiệm thu iPhone**. Cutover còn **262 refs / 762 literal hits / 52 structural
+members**, chỉ VI ships; chưa nghiệm thu toàn bộ.
+
+Checkpoint trước 03/10: [Callback / cách ly tài khoản, build 4011](I18N_CALLBACK_ISOLATION_2026-10-03.md).
 Đã sửa lỗi phản hồi tổ đội đến muộn và xóa mã của tài khoản khác khi chuyển;
 Windows hai lượt và Mac đạt **4.246 tests**, analyzer 0. APK **4011** đã cài
 trên emulator, 10 public flows đạt; bốn tài khoản/active/wishlist/cài đặt giữ
@@ -87,7 +95,7 @@ Các trạng thái dưới đây tách triển khai/kiểm thử khỏi nghiệm
 - [ ] RV-03 toàn bộ: recorder nền, RR/cache tên, cancellation, deferred links, release errors, LFG join, logout/consent và ẩn/chặn cục bộ đã nối; còn nghiệm thu rộng cùng quốc tế hóa/thiết bị.
 - [ ] RV-05 toàn bộ: privacy và Community disclosure đã đồng bộ, Markdown sinh từ Dart; vẫn cần rà lời toàn cầu khi cutover.
 - [x] I18N W1 nền công cụ: resolved extractor, ARB, manifest, parity, kiểm tra chạy lại; danh sách 52 member cần xử lý cấu trúc được giữ rõ.
-- [ ] I18N W2–W4: Migrate UI bằng công cụ có sẵn; global hiện còn **307 references / 52 structural members**. Chưa tách hết domain, chuyển hết async call site và cutover.
+- [ ] I18N W2–W4: Migrate UI bằng công cụ có sẵn; global hiện còn **262 references / 52 structural members**. Chưa tách hết domain, chuyển hết async call site và cutover.
 - [ ] I18N W5 toàn bộ: runtime/device/upgrade pin, picker cho shipped locales, snapshot nền và channel/reminder resources đã nối và test; còn contentLocale/ui_locales/status, pruning và screen-reader announcement.
 - [ ] I18N W6: đủ 18 bản dịch UI, plural/select, glossary và fallback/status gates.
 - [ ] I18N W7: RTL toàn ứng dụng, font CJK, pseudo locale và stale-string tests.

@@ -262,8 +262,14 @@ class MyLfgNotifier extends AsyncNotifier<LfgPost?> {
   }
 
   void set(LfgPost? post, {DateTime? patchedAt}) {
+    if (!ref.mounted) return;
     state = AsyncData(post);
     lastPatchAt = post == null ? null : (patchedAt ?? lastPatchAt);
+  }
+
+  void removeLocal(String postId) {
+    if (!ref.mounted) return;
+    if (state.value?.id == postId) set(null);
   }
 
   /// "Gia hạn": PATCH without changes (extends the post by 30 minutes).
@@ -341,8 +347,19 @@ Future<LfgPost> createLfgPost(
   var code = partyCode.trim().toUpperCase();
   if (code.isEmpty) {
     code = await currentPartyCode(ref, puuid, openParty: true) ?? '';
+    if (!ref.context.mounted) {
+      throw const CommunityException(CommunityException.cancelled);
+    }
     if (code.isEmpty) throw const LfgCodeUnavailable();
   }
+  // Keep references to already loaded account data, rather than a WidgetRef
+  // that may be disposed before the server responds.
+  final own = myLfgProvider(puuid);
+  final ownNotifier = ref.exists(own) ? ref.read(own.notifier) : null;
+  final list = shownIn == null ? null : lfgProvider(shownIn);
+  final listNotifier = list != null && ref.exists(list)
+      ? ref.read(list.notifier)
+      : null;
   final post = await ref
       .read(communityApiProvider)
       .createLfg(
@@ -360,11 +377,12 @@ Future<LfgPost> createLfgPost(
         language: language,
         partySize: partySize,
       );
-  ref.read(myLfgProvider(puuid).notifier).set(post, patchedAt: now);
-  if (shownIn != null) {
-    final list = lfgProvider(shownIn);
-    if (ref.exists(list)) ref.read(list.notifier).removeLocal(post.id);
+  if (ownNotifier != null) {
+    ownNotifier.set(post, patchedAt: now);
+  } else if (ref.context.mounted) {
+    ref.read(own.notifier).set(post, patchedAt: now);
   }
+  listNotifier?.removeLocal(post.id);
   return post;
 }
 
@@ -375,13 +393,15 @@ Future<void> removeLfgPost(
   required LfgPost post,
   LfgQuery? shownIn,
 }) async {
+  final own = myLfgProvider(puuid);
+  final ownNotifier = ref.exists(own) ? ref.read(own.notifier) : null;
+  final list = shownIn == null ? null : lfgProvider(shownIn);
+  final listNotifier = list != null && ref.exists(list)
+      ? ref.read(list.notifier)
+      : null;
   await ref.read(communityApiProvider).deleteLfg(puuid, post.id);
-  final mine = ref.read(myLfgProvider(puuid)).value;
-  if (mine?.id == post.id) ref.read(myLfgProvider(puuid).notifier).set(null);
-  if (shownIn != null) {
-    final list = lfgProvider(shownIn);
-    if (ref.exists(list)) ref.read(list.notifier).removeLocal(post.id);
-  }
+  ownNotifier?.removeLocal(post.id);
+  listNotifier?.removeLocal(post.id);
 }
 
 /// Joins the party of [post] by code with the active account (G-19), then
@@ -424,6 +444,7 @@ Future<String?> _partyCode(
   required bool openParty,
 }) async {
   final view = await ref.read(party.future);
+  if (!ref.context.mounted) return null;
   final current = view.party;
   if (current == null) return null;
   if (openParty && !current.isOpen) {
@@ -432,10 +453,12 @@ Future<String?> _partyCode(
     } on Object {
       // Joining by code works for closed parties too.
     }
+    if (!ref.context.mounted) return null;
   }
   final existing = asNonEmptyString(current.inviteCode)?.toUpperCase();
   if (existing != null && partyCodePattern.hasMatch(existing)) return existing;
   await ref.read(party.notifier).generateCode();
+  if (!ref.context.mounted) return null;
   final code = ref.read(party).value?.party?.inviteCode;
   final upper = asNonEmptyString(code)?.toUpperCase();
   return upper != null && partyCodePattern.hasMatch(upper) ? upper : null;

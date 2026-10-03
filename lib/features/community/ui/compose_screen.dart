@@ -10,7 +10,6 @@ import '../../../core/accounts/account_widgets.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/util/format.dart';
-import '../community_strings.dart';
 import '../data/community_api.dart';
 import '../data/community_exception.dart';
 import '../data/community_models.dart';
@@ -57,6 +56,32 @@ class ComposeScreen extends ConsumerStatefulWidget {
 }
 
 class _ComposeScreenState extends ConsumerState<ComposeScreen> {
+  late final String? _draftOwner = ref.read(activePuuidProvider);
+
+  @override
+  Widget build(BuildContext context) {
+    final puuid = ref.watch(activePuuidProvider);
+    return _ComposerAccountScreen(
+      key: ValueKey(puuid),
+      draft: puuid == _draftOwner ? widget.draft : null,
+    );
+  }
+}
+
+/// Dispose pending UI callbacks and private edits when the account changes.
+/// A store attachment passed by the launcher belongs only to its account.
+class _ComposerAccountScreen extends ConsumerStatefulWidget {
+  const _ComposerAccountScreen({super.key, this.draft});
+
+  final ComposeDraft? draft;
+
+  @override
+  ConsumerState<_ComposerAccountScreen> createState() =>
+      _ComposerAccountScreenState();
+}
+
+class _ComposerAccountScreenState
+    extends ConsumerState<_ComposerAccountScreen> {
   late final _text = TextEditingController(text: widget.draft?.body ?? '');
   final List<PickedImage> _images = [];
   late ComposeDraft? _draft = widget.draft;
@@ -295,6 +320,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
   }
 
   Future<void> _pick() async {
+    if (!mounted) return;
+    final l10n = context.l10n;
     final remaining = kMaxPostImages - _images.length;
     if (remaining <= 0) return;
     try {
@@ -319,18 +346,18 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
       if (mounted) {
         ScaffoldMessenger.maybeOf(context)
           ?..hideCurrentSnackBar()
-          ..showSnackBar(
-            const SnackBar(content: Text(CommunityStrings.errorPickImage)),
-          );
+          ..showSnackBar(SnackBar(content: Text(l10n.communityErrorPickImage)));
       }
     }
   }
 
   Future<void> _publish(Account account) async {
+    if (!mounted || _busy) return;
+    final l10n = context.l10n;
     FocusScope.of(context).unfocus();
     // Posting needs a community session: ask (once) before any network call.
     if (!await ensureCommunityConsent(context, account, askAgain: true)) return;
-    if (!mounted) return;
+    if (!mounted || ref.read(activePuuidProvider) != account.puuid) return;
     setState(() => _busy = true);
     final api = ref.read(communityApiProvider);
     final draft = _draft;
@@ -346,8 +373,10 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
           for (final img in _images)
             () => api.uploadMedia(account.puuid, img.bytes),
         ],
+        canContinue: () =>
+            mounted && ref.read(activePuuidProvider) == account.puuid,
       );
-      if (!mounted) return;
+      if (!mounted || ref.read(activePuuidProvider) != account.puuid) return;
       prependToFeed(ref, account.puuid, post);
       final messenger = ScaffoldMessenger.maybeOf(context);
       setState(() {
@@ -359,20 +388,22 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
       Navigator.of(context).pop(post);
       messenger
         ?..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text(CommunityStrings.posted)));
+        ..showSnackBar(SnackBar(content: Text(l10n.communityPosted)));
     } on Object catch (e) {
-      if (!mounted) return;
+      if (!mounted || ref.read(activePuuidProvider) != account.puuid) return;
       setState(() => _busy = false);
       showCommunityError(context, e);
     }
   }
 
   Future<void> _confirmDiscard() async {
+    if (!mounted) return;
+    final l10n = context.l10n;
     final discard = await confirmCommunityAction(
       context,
-      title: CommunityStrings.discardTitle,
-      body: CommunityStrings.discardBody,
-      confirmLabel: CommunityStrings.discard,
+      title: l10n.communityDiscardTitle,
+      body: l10n.communityDiscardBody,
+      confirmLabel: l10n.communityDiscard,
     );
     if (!discard || !mounted) return;
     setState(() {

@@ -1,5 +1,13 @@
 # ValVN Community API (v1)
 
+Client lifecycle checkpoint: [build 4012](COMMUNITY_ACCOUNT_ISOLATION_2026-10-03.md).
+Composer/comment drafts are account-scoped; pending upload chains stop subsequent
+steps after closing/switching, while a request already sent may still commit.
+Existing loaded LFG/feed data can accept authoritative responses through their own
+mounted notifiers. Translation revisions reject stale text/target results. API
+protocols, ownership verification, consent keys and local block scope are unchanged.
+This is client regression evidence, not production-writing or whole-release acceptance.
+
 Backend for the "Cộng đồng" tab: looking-for-group (LFG) posts that join a Riot
 party by code, skin voting (one vote per account per skin → most-loved
 leaderboard), a feed of posts with images / likes / comments / reports, and

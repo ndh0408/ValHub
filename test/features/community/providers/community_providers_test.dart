@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/config/app_constants.dart';
@@ -18,6 +20,100 @@ void main() {
   setUp(() async {
     env = await CommunityTestEnv.create();
     container = env.container();
+  });
+
+  group('disposed post actions', () {
+    const key = (puuid: mePuuid, postId: 'p1');
+    Future<void> waitForRequest(String route) async {
+      for (var i = 0; i < 200 && env.server.calls(route).isEmpty; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 5));
+      }
+      expect(env.server.calls(route), hasLength(1));
+    }
+
+    for (final fail in [false, true]) {
+      test(
+        'delayed like preserves its result after disposal (fail=$fail)',
+        () async {
+          final gate = Completer<void>();
+          env.server
+            ..json('GET /v1/posts', page([postJson('p1')]))
+            ..json('GET /v1/posts/p1', postJson('p1'))
+            ..json(
+              'PUT /v1/posts/p1/like',
+              fail
+                  ? {
+                      'error': {'code': 'server_error'},
+                    }
+                  : {'likes': 10, 'liked': true},
+              status: fail ? 500 : 200,
+            )
+            ..hold('PUT /v1/posts/p1/like', gate);
+          final provider = postDetailProvider(key);
+          final feed = feedProvider(mePuuid);
+          final feedSub = container.listen(feed, (_, _) {});
+          addTearDown(feedSub.close);
+          await container.read(feed.future);
+          final sub = container.listen(provider, (_, _) {});
+          addTearDown(sub.close);
+          final post = await container.read(provider.future);
+          final pending = container.read(provider.notifier).toggleLike(post);
+          await waitForRequest('PUT /v1/posts/p1/like');
+          sub.close();
+          await container.pump();
+          final result = expectLater(
+            pending,
+            fail ? throwsA(isA<CommunityException>()) : completes,
+          );
+          gate.complete();
+          await result;
+          final shown = container.read(feed).requireValue.items.single;
+          expect(shown.liked, !fail);
+          expect(shown.likes, fail ? 3 : 10);
+        },
+      );
+    }
+
+    test('delayed post deletion completes after disposal', () async {
+      final gate = Completer<void>();
+      env.server
+        ..json('GET /v1/posts/p1', postJson('p1'))
+        ..json('DELETE /v1/posts/p1', null, status: 204)
+        ..hold('DELETE /v1/posts/p1', gate);
+      final provider = postDetailProvider(key);
+      final sub = container.listen(provider, (_, _) {});
+      addTearDown(sub.close);
+      await container.read(provider.future);
+      final pending = container.read(provider.notifier).delete();
+      await waitForRequest('DELETE /v1/posts/p1');
+      sub.close();
+      await container.pump();
+      final result = expectLater(pending, completes);
+      gate.complete();
+      await result;
+    });
+
+    test('delayed comment is returned after disposal', () async {
+      final gate = Completer<void>();
+      env.server
+        ..json('GET /v1/posts/p1/comments', page([]))
+        ..json('POST /v1/posts/p1/comments', commentJson('new'))
+        ..hold('POST /v1/posts/p1/comments', gate);
+      final provider = commentsProvider(key);
+      final sub = container.listen(provider, (_, _) {});
+      addTearDown(sub.close);
+      await container.read(provider.future);
+      final pending = container.read(provider.notifier).add('comment');
+      await waitForRequest('POST /v1/posts/p1/comments');
+      sub.close();
+      await container.pump();
+      final result = expectLater(
+        pending,
+        completion(isA<CommunityComment>().having((c) => c.id, 'id', 'new')),
+      );
+      gate.complete();
+      await result;
+    });
   });
 
   group('base URL', () {

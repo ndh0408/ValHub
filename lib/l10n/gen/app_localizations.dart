@@ -3652,6 +3652,18 @@ abstract class AppLocalizations {
   /// **'Tài khoản này đang bị hạn chế đăng bài, bình luận, tìm đồng đội và bình chọn. Hãy thử lại sau hoặc liên hệ ValHub trong Giới thiệu & pháp lý.'**
   String get communityModerationAccountRestricted;
 
+  /// Community mode label. Unknown codes use the other branch; does not alter API identifiers.
+  ///
+  /// In vi, this message translates to:
+  /// **'{mode, select, competitive{Xếp hạng} unrated{Đấu thường} swiftplay{Siêu Tốc} spikerush{Đặt Spike Nhanh} deathmatch{Sinh Tử} teamdeathmatch{Sinh Tử Đội} premier{Premier} custom{Chơi tự do} other{Khác}}'**
+  String communityModeName(String mode);
+
+  /// Community shard label. Unknown regions stay unknown; this does not infer region from country.
+  ///
+  /// In vi, this message translates to:
+  /// **'{region, select, ap{Châu Á - Thái Bình Dương} na{Bắc Mỹ} eu{Châu Âu} kr{Hàn Quốc} latam{Mỹ Latinh} br{Brazil} other{Chưa rõ máy chủ}}'**
+  String communityRegionName(String region);
+
   /// CommunityStrings.addPhotos — feed
   ///
   /// In vi, this message translates to:

@@ -3533,6 +3533,24 @@
   "@communityModerationAccountRestricted": {
     "description": "Player-safe copy for Community moderation reason account_restricted. Never render arbitrary server text."
   },
+  "communityModeName": "{mode, select, competitive{Xếp hạng} unrated{Đấu thường} swiftplay{Siêu Tốc} spikerush{Đặt Spike Nhanh} deathmatch{Sinh Tử} teamdeathmatch{Sinh Tử Đội} premier{Premier} custom{Chơi tự do} other{Khác}}",
+  "@communityModeName": {
+    "description": "Community mode label. Unknown codes use the other branch; does not alter API identifiers.",
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "communityRegionName": "{region, select, ap{Châu Á - Thái Bình Dương} na{Bắc Mỹ} eu{Châu Âu} kr{Hàn Quốc} latam{Mỹ Latinh} br{Brazil} other{Chưa rõ máy chủ}}",
+  "@communityRegionName": {
+    "description": "Community shard label. Unknown regions stay unknown; this does not infer region from country.",
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
   "communityAddPhotos": "Thêm ảnh",
   "@communityAddPhotos": {
     "description": "CommunityStrings.addPhotos — feed",

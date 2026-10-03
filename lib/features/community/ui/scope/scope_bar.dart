@@ -126,7 +126,7 @@ class ScopeBar extends ConsumerWidget {
             ? null
             : names?.name(displayedCountry),
       ),
-      CommunityScope.region => CommunityStrings.regionLabel(region),
+      CommunityScope.region => context.l10n.communityRegionName(region),
       CommunityScope.global => globalLabel,
     };
 
@@ -195,7 +195,7 @@ class ScopeBar extends ConsumerWidget {
                 ListTile(
                   key: ValueKey('scope-region-$r-${section.name}'),
                   leading: const Icon(Icons.dns_rounded),
-                  title: Text(CommunityStrings.regionLabel(r)),
+                  title: Text(context.l10n.communityRegionName(r)),
                   trailing: selected == CommunityScope.region && region == r
                       ? const Icon(Icons.check_rounded)
                       : null,

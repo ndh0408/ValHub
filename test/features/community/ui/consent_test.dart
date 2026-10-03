@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/accounts/account_providers.dart';
+import 'package:valvn/core/accounts/account.dart';
 import 'package:valvn/core/geo/countries.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/storage/secure_store.dart';
@@ -484,6 +485,38 @@ void main() {
       expect(find.text(CommunityStrings.composerTitle), findsOneWidget);
       await unmount(tester);
     });
+
+    testWidgets(
+      'changing account during consent does not open its predecessor composer',
+      (tester) async {
+        final second = Account.fromJson({
+          ...meAccount.toJson(),
+          'puuid': 'bbbbbbbb-0000-0000-0000-00000000000b',
+          'gameName': 'Second',
+        })!;
+        await env.prefs.setJson(PrefKeys.accounts, [
+          meAccount.toJson(),
+          second.toJson(),
+        ]);
+        await _openTab(tester, env);
+        await tester.tap(find.text(CommunityStrings.newPost));
+        await settle(tester);
+        expect(find.text(CommunityStrings.consentTitle), findsOneWidget);
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(CommunityConsentSheet)),
+        );
+        container.read(activePuuidProvider.notifier).select(second.puuid);
+        await settle(tester);
+        await _agree(tester);
+        expect(find.text(CommunityStrings.composerTitle), findsNothing);
+        expect(
+          container.read(communityConsentProvider(second.puuid)),
+          CommunityConsent.unknown,
+        );
+        expect(env.server.calls('POST /v1/posts'), isEmpty);
+        await unmount(tester);
+      },
+    );
 
     testWidgets('report: the sheet comes before the reason picker', (
       tester,

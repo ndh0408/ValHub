@@ -40,6 +40,30 @@ class PostDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
+  late final String? _initialOwner = ref.read(activePuuidProvider);
+
+  @override
+  Widget build(BuildContext context) {
+    final puuid = ref.watch(activePuuidProvider);
+    return _PostAccountScreen(
+      key: ValueKey((puuid, widget.postId)),
+      postId: widget.postId,
+      initial: puuid == _initialOwner ? widget.initial : null,
+    );
+  }
+}
+
+class _PostAccountScreen extends ConsumerStatefulWidget {
+  const _PostAccountScreen({super.key, required this.postId, this.initial});
+
+  final String postId;
+  final CommunityPost? initial;
+
+  @override
+  ConsumerState<_PostAccountScreen> createState() => _PostAccountScreenState();
+}
+
+class _PostAccountScreenState extends ConsumerState<_PostAccountScreen> {
   final _comment = TextEditingController();
   final _focus = FocusNode();
   bool _sending = false;
@@ -298,8 +322,10 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   }
 
   Future<void> _send(PostKey key, CommunityPost post) async {
+    if (!mounted || _sending) return;
     // Commenting needs a session: ask to join first, then continue.
     if (!await promptConsentFromContext(context) || !mounted) return;
+    if (ref.read(activePuuidProvider) != key.puuid) return;
     setState(() => _sending = true);
     try {
       await ref.read(commentsProvider(key).notifier).add(_comment.text);

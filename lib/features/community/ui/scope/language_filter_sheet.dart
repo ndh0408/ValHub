@@ -1,6 +1,6 @@
+import 'package:valvn/core/l10n/labels/community_labels.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../community_strings.dart';
 import '../../data/community_models.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -62,7 +62,7 @@ class _LanguageFilterSheetState extends State<LanguageFilterSheet> {
                   CheckboxListTile(
                     key: ValueKey('filter-lang-$code'),
                     value: _selected.contains(code),
-                    title: Text(CommunityStrings.languageLabel(code)),
+                    title: Text(context.l10n.communityLanguageName(code)),
                     onChanged: (v) => setState(() {
                       if (v ?? false) {
                         _selected.add(code);
