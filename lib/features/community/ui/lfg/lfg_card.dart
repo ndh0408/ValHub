@@ -32,6 +32,7 @@ class LfgCard extends ConsumerWidget {
     required this.onReport,
     this.onExtend,
     this.joining = false,
+    this.joinDisabled = false,
     this.onExpired,
     this.outOfRange = false,
     this.live,
@@ -44,6 +45,7 @@ class LfgCard extends ConsumerWidget {
   final VoidCallback onReport;
   final VoidCallback? onExtend;
   final bool joining;
+  final bool joinDisabled;
   final VoidCallback? onExpired;
 
   /// Dimmed with "Ngoài khoảng rank" (the viewer's rank is outside).
@@ -227,7 +229,10 @@ class LfgCard extends ConsumerWidget {
                     height: 50,
                     child: FilledButton.icon(
                       onPressed:
-                          expired || joining || post.status != LfgStatus.open
+                          expired ||
+                              joining ||
+                              joinDisabled ||
+                              post.status != LfgStatus.open
                           ? null
                           : onJoin,
                       icon: joining

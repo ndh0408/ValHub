@@ -255,6 +255,7 @@ export function registerPosts(app: Hono, x: Ctx): void {
     if (text === '') throw invalid('body không được để trống.', 'field_empty', { field: 'body' });
     const id = crypto.randomUUID();
     return commitCreate(c, x, () => {
+      visiblePost(p.id, user.id);
       x.repo.insertComment({
         id,
         post_id: p.id,
@@ -288,6 +289,7 @@ export function registerPosts(app: Hono, x: Ctx): void {
     const type = parseEnum(body.targetType, REPORT_TARGETS, 'targetType');
     const targetId = parseUuid(body.targetId, 'targetId');
     const reason = parseString(body.reason, 'reason', { min: 1, max: 200 });
+    x.assertCurrentUser(c);
     x.rateLimit('reports', user.id);
     const owner = x.repo.reportTargetOwner(type, targetId);
     if (owner === null) throw notFound('Không tìm thấy nội dung cần báo cáo.');

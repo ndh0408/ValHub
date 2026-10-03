@@ -2846,7 +2846,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String communityJoinsCount(String n) {
-    return '$n người đã vào';
+    return '$n người đã yêu cầu vào';
   }
 
   @override

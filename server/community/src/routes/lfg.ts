@@ -173,6 +173,7 @@ export function registerLfg(app: Hono, x: Ctx): void {
       updated_at: now,
       country: user.country,
     };
+    x.assertCurrentUser(c);
     x.repo.replaceLfg(row);
     return x.json(c, serialize(x.repo.getLfg(row.id)!, user.id));
   });
@@ -197,6 +198,7 @@ export function registerLfg(app: Hono, x: Ctx): void {
     const note = cleanNote(noteRaw, post.language === 'any' ? user.language : post.language, user.country);
     if (note !== undefined) patch.note = note;
     const now = x.now();
+    x.assertCurrentUser(c);
     if (!x.repo.updateLfg(post.id, patch, now, now + LFG_TTL_MS, user.id)) throw notFound('Không tìm thấy bài tìm đồng đội.');
     return x.json(c, serialize(x.repo.getLfg(post.id)!, user.id));
   });
@@ -204,6 +206,7 @@ export function registerLfg(app: Hono, x: Ctx): void {
   app.post('/v1/lfg/:id/join', async (c) => {
     const user = x.user(c, true);
     await x.readJson(c); // body is `{}`; must still be valid JSON if present
+    x.assertCurrentUser(c);
     const id = c.req.param('id').toLowerCase();
     const post = isUuid(id) ? x.repo.getLfg(id) : null;
     if (!post || post.hidden || post.status !== 'open' || post.expires_at <= x.now()) throw notFound('Không tìm thấy bài tìm đồng đội.');

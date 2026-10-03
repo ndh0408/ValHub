@@ -4755,7 +4755,7 @@
     "description": "CommunityStrings.joinedHint — LFG v2",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityJoinsCount": "{n} người đã vào",
+  "communityJoinsCount": "{n} người đã yêu cầu vào",
   "@communityJoinsCount": {
     "description": "CommunityStrings.joinsCount — LFG v2",
     "placeholders": {

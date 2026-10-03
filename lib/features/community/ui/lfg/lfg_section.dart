@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account.dart';
+import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/network/riot_exception.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
@@ -180,6 +181,7 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
                     post: p,
                     isMine: false,
                     joining: _joining == p.id,
+                    joinDisabled: _joining != null,
                     outOfRange:
                         !filter.matchRank &&
                         viewerRank != null &&
@@ -208,24 +210,25 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
   }
 
   Future<void> _join(LfgPost post, LfgQuery query) async {
-    if (!mounted) return;
+    if (!mounted || _joining != null) return;
+    final puuid = widget.account.puuid;
     final l10n = context.l10n;
     final name = post.author.riotId ?? l10n.communityUnknownPlayer;
-    final ok = await showConfirmDialog(
-      context,
-      title: l10n.communityJoinConfirmTitle,
-      message: l10n.communityJoinConfirmBody(name),
-      confirmLabel: l10n.communityJoin,
-    );
-    if (!ok || !mounted) return;
     setState(() => _joining = post.id);
     try {
-      await joinLfgPost(ref, widget.account.puuid, post);
-      if (!mounted) return;
+      final ok = await showConfirmDialog(
+        context,
+        title: l10n.communityJoinConfirmTitle,
+        message: l10n.communityJoinConfirmBody(name),
+        confirmLabel: l10n.communityJoin,
+      );
+      if (!ok || !mounted || ref.read(activePuuidProvider) != puuid) return;
+      final joined = await joinLfgPost(ref, puuid, post);
+      if (!mounted || !joined || ref.read(activePuuidProvider) != puuid) return;
       Haptics.medium();
       _snack(l10n.communityJoinedHint);
     } on Object catch (e) {
-      if (!mounted) return;
+      if (!mounted || ref.read(activePuuidProvider) != puuid) return;
       _snack(
         joinErrorMessage(l10n, e),
         action: SnackBarAction(

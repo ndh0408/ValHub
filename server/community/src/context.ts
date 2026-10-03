@@ -221,6 +221,32 @@ export class Ctx {
   user(c: Context, required: boolean): UserRow | null {
     const prior = this.requestUsers.get(c);
     if (prior) return prior;
+    const user = this.resolveUser(c, required);
+    if (!user) return null;
+    // Coarse valve above the per-action limits: every request of a signed-in user, any route and method
+    // (reads, deletes and profile calls have no other limit). In memory: no database write per request.
+    const bucket = this.userLimiter.hit(user.id, this.tuning.userRequestLimitPerMin, 60_000, this.now());
+    if (!bucket.ok) {
+      throw reasonError(
+        'rate_limited',
+        'rate_limited',
+        { bucket: 'requests', limit: this.tuning.userRequestLimitPerMin, windowSeconds: 60 },
+        bucket.retryAfterSeconds,
+      );
+    }
+    this.requestUsers.set(c, user);
+    return user;
+  }
+
+  /** Re-check expiry, deletion/recreation, epoch and sanctions immediately
+   * before a synchronous write/replay after async validation or file IO.
+   * Does not charge the coarse request bucket a second time.
+   */
+  assertCurrentUser(c: Context): UserRow {
+    return this.resolveUser(c, true)!;
+  }
+
+  private resolveUser(c: Context, required: boolean): UserRow | null {
     const header = c.req.header('authorization');
     if (!header) {
       if (required) throw unauthorized('Cần đăng nhập.');
@@ -244,18 +270,6 @@ export class Ctx {
       this.stats.inc(`suspended:${sanction.kind}`);
       throw suspendedError(sanction);
     }
-    // Coarse valve above the per-action limits: every request of a signed-in user, any route and method
-    // (reads, deletes and profile calls have no other limit). In memory: no database write per request.
-    const bucket = this.userLimiter.hit(user.id, this.tuning.userRequestLimitPerMin, 60_000, this.now());
-    if (!bucket.ok) {
-      throw reasonError(
-        'rate_limited',
-        'rate_limited',
-        { bucket: 'requests', limit: this.tuning.userRequestLimitPerMin, windowSeconds: 60 },
-        bucket.retryAfterSeconds,
-      );
-    }
-    this.requestUsers.set(c, user);
     return user;
   }
 

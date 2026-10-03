@@ -13,6 +13,7 @@ const createKeys = new WeakMap<Context, CreateKey>();
  */
 export function commitCreate(c: Context, x: Ctx, create: () => unknown): Response {
   return x.repo.atomic(() => {
+    x.assertCurrentUser(c);
     const key = createKeys.get(c);
     // Another process can finish while this request is awaiting validation.
     const saved = key ? x.repo.getRequestKey(key.id, x.now()) : null;
@@ -49,6 +50,7 @@ export function registerIdempotency(app: Hono, x: Ctx): void {
     }
     const fingerprint = hash.digest('hex');
     const replay = (row: StoredResponse) => {
+      x.assertCurrentUser(c);
       if (row.fingerprint !== fingerprint) throw reasonError('conflict', 'idempotency_conflict');
       c.res = new Response(row.body, { status: row.status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'idempotency-replayed': 'true' } });
     };
@@ -63,6 +65,7 @@ export function registerIdempotency(app: Hono, x: Ctx): void {
     }
     // Bound the wait map. Normal per-user/action rate limits still apply to first attempts.
     if (pending.size >= 1000) throw reasonError('server_busy', 'server_busy', {}, 2);
+    x.assertCurrentUser(c);
     let finish!: (row: StoredResponse | null) => void;
     pending.set(id, { fingerprint, result: new Promise((resolve) => { finish = resolve; }) });
     let result: StoredResponse | null = null;

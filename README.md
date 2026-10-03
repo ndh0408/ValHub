@@ -1,6 +1,17 @@
 # ValHub
 
-Checkpoint mới nhất 03/10: [Nhãn có điều kiện / semantics, build 4016](docs/I18N_CONDITIONAL_VIEWS_2026-10-03.md).
+Checkpoint mới nhất 03/10: [LFG / phiên chờ / backend, build 4017](docs/LFG_AND_SESSION_COMMIT_2026-10-03.md).
+
+Đã khóa thao tác vào tổ đội, giữ đúng tài khoản khi chờ và làm mới cache sau
+khi vào; số lượt yêu cầu không còn bị ghi thành người đã vào. Backend chặn ghi
+muộn bằng phiên đã thu hồi; có bản rà soát 40 endpoint. Windows hai lượt/Mac
+đạt **4.319 tests**, analyzer 0; backend **900 tests**. APK 4017 qua 10 public
+flows và kiểm tra Mobile MCP/cache/log với **bốn tài khoản thật**, giữ dữ liệu
+và đối chiếu giá VP. iOS build trên Mac, **chưa ký/chưa nghiệm thu iPhone**.
+Cutover còn **62 refs / 762 literals / 52 structural**, chỉ VI UI ships.
+Backend chưa deploy production; toàn bộ sản phẩm chưa được nghiệm thu.
+
+Checkpoint trước 03/10: [Nhãn có điều kiện / semantics, build 4016](docs/I18N_CONDITIONAL_VIEWS_2026-10-03.md).
 
 Đã chuyển nhãn có điều kiện và semantics sang resources hiện tại,
 giữ hành vi VI. Windows hai lượt và Mac đạt **4.312 tests**, analyzer 0;

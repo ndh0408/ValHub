@@ -229,6 +229,15 @@ confirmation. New clients call `POST /v1/lfg/{id}/join` first to obtain `partyCo
 legacy clients can still use the list code while `LFG_CODE_IN_LIST=true` (default).
 When false, other authors' list codes are empty strings; the owner still receives their own code.
 
+`joins` counts unique authorized **join requests**, including requests whose later
+Riot join fails or is cancelled. It does not prove party membership, fill a seat,
+or decrement `slots`. Riot G-19 remains authoritative for capacity and membership;
+the poster's live Riot party supplies `partySize`/`slots`. Simultaneous final-seat
+acceptance needs live Riot/PC verification, not a Community-counter simulation.
+The client serializes joins across cards through confirmation and completion,
+abandons the next Riot step after an account switch/view disposal, and invalidates
+an observed party cache after a successful current-account join.
+
 ### Skin votes (xếp hạng skin được yêu thích)
 
 | Method | Path | Body / query | Response |

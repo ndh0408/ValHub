@@ -137,6 +137,7 @@ export function registerAuth(app: Hono, x: Ctx): void {
     const region: Region | undefined = regionRaw;
     const languageRaw = parseOptional(body, 'language', (v) => parseLanguage(v, 'language'));
     if (languageRaw === null) throw invalid('language không được để trống.', 'field_empty', { field: 'language' });
+    x.assertCurrentUser(c);
     const updated = x.repo.updateUser(user.id, { cardId, rankTier, region, language: languageRaw }, x.now());
     if (!updated) throw new ApiError('unauthorized', 'Tài khoản không tồn tại.');
     return x.json(c, authorFromUser(updated));

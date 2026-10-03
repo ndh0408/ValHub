@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../../helpers/l10n.dart';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -170,6 +172,70 @@ void main() {
     await tester.tap(find.text(CommunityStrings.refreshList));
     await settle(tester);
     expect(env.server.calls('GET /v1/lfg').length, greaterThan(before));
+    await unmount(tester);
+  });
+
+  testWidgets('only one party join can be pending across different posts', (
+    tester,
+  ) async {
+    final gate = Completer<void>();
+    env.server
+      ..json('GET /v1/lfg', page([lfgJson('l1'), lfgJson('l2')]))
+      ..json('POST /v1/lfg/l1/join', {'joins': 1, 'partyCode': 'ABC123'})
+      ..json('POST /v1/lfg/l2/join', {'joins': 1, 'partyCode': 'DEF456'})
+      ..hold('POST /v1/lfg/l1/join', gate);
+    when(() => env.pvp.partyJoinByCode(any(), any()))
+        .thenAnswer((_) async => {});
+    await _open(tester, env);
+    await tester.ensureVisible(find.text(CommunityStrings.joinParty).first);
+    await tester.tap(find.text(CommunityStrings.joinParty).first);
+    await settle(tester);
+    await tester.tap(find.text(CommunityStrings.join));
+    await settle(tester);
+    expect(env.server.calls('POST /v1/lfg/l1/join'), hasLength(1));
+
+    final otherJoin = find.text(CommunityStrings.joinParty).last;
+    await tester.ensureVisible(otherJoin);
+    await tester.tap(otherJoin);
+    await settle(tester);
+    expect(find.text(CommunityStrings.joinConfirmTitle), findsNothing);
+    expect(env.server.calls('POST /v1/lfg/l2/join'), isEmpty);
+
+    gate.complete();
+    await settle(tester);
+    verify(() => env.pvp.partyJoinByCode(mePuuid, 'ABC123')).called(1);
+    verifyNever(() => env.pvp.partyJoinByCode(mePuuid, 'DEF456'));
+    await tester.ensureVisible(otherJoin);
+    await tester.tap(otherJoin);
+    await settle(tester);
+    expect(find.text(CommunityStrings.joinConfirmTitle), findsOneWidget);
+    await tester.tap(find.text(CommunityStrings.join));
+    await settle(tester);
+    verify(() => env.pvp.partyJoinByCode(mePuuid, 'DEF456')).called(1);
+    await unmount(tester);
+  });
+
+  testWidgets('cancelling confirmation releases the party join controls', (
+    tester,
+  ) async {
+    env.server
+      ..json('GET /v1/lfg', page([lfgJson('l1')]))
+      ..json('POST /v1/lfg/l1/join', {'joins': 1, 'partyCode': 'ABC123'});
+    when(() => env.pvp.partyJoinByCode(any(), any()))
+        .thenAnswer((_) async => {});
+    await _open(tester, env);
+    await tester.tap(find.text(CommunityStrings.joinParty));
+    await settle(tester);
+    await tester.tap(find.text(tl.commonCancel));
+    await settle(tester);
+    expect(env.server.calls('POST /v1/lfg/l1/join'), isEmpty);
+    verifyNever(() => env.pvp.partyJoinByCode(any(), any()));
+    await tester.tap(find.text(CommunityStrings.joinParty));
+    await settle(tester);
+    await tester.tap(find.text(CommunityStrings.join));
+    await settle(tester);
+    verify(() => env.pvp.partyJoinByCode(mePuuid, 'ABC123')).called(1);
+    expect(find.text(CommunityStrings.joinedHint), findsOneWidget);
     await unmount(tester);
   });
 

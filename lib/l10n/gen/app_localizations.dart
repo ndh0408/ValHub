@@ -5017,7 +5017,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.joinsCount — LFG v2
   ///
   /// In vi, this message translates to:
-  /// **'{n} người đã vào'**
+  /// **'{n} người đã yêu cầu vào'**
   String communityJoinsCount(String n);
 
   /// CommunityStrings.keepEditing — feed

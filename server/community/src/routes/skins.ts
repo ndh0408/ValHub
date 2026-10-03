@@ -33,9 +33,10 @@ export function registerSkins(app: Hono, x: Ctx): void {
     const skinUuid = parseUuid(c.req.param('skinUuid'), 'skinUuid');
     const body = await x.readJson(c);
     const weaponUuid = parseUuid(body.weaponUuid, 'weaponUuid');
+    x.rateLimit('votes', user.id);
     await x.assertContent('skin', skinUuid, 'skinUuid');
     await x.assertContent('weapon', weaponUuid, 'weaponUuid');
-    x.rateLimit('votes', user.id);
+    x.assertCurrentUser(c);
     // One vote per account per skin, whatever uuid the client uses (skin, level or chroma): stored under the base
     // skin uuid with the weapon the catalog says it belongs to (the client's weapon is only used when the catalog
     // cannot answer, and the sweeper re-canonicalises such rows once it can).

@@ -51,6 +51,7 @@ export function registerReviews(app: Hono, x: Ctx): void {
     // One review per account per skin, whatever uuid the client uses: stored under the base skin uuid with the
     // catalog's weapon (see PUT vote).
     const canon = x.canonSkin(skinUuid);
+    x.assertCurrentUser(c);
     const id = x.repo.upsertReview({
       userId: user.id,
       skinUuid: canon?.skinUuid ?? skinUuid,

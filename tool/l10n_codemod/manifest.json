@@ -8042,10 +8042,10 @@
       "params": {
         "n": "String"
       },
-      "icu": "{n} người đã vào",
+      "icu": "{n} người đã yêu cầu vào",
       "doc": null,
       "section": "LFG v2",
-      "source": "static String joinsCount(String n) => '$n người đã vào';"
+      "source": "static String joinsCount(String n) => '$n người đã yêu cầu vào';"
     },
     {
       "file": "lib/features/community/community_strings.dart",

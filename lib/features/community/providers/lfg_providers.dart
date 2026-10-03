@@ -404,15 +404,25 @@ Future<void> removeLfgPost(
   listNotifier?.removeLocal(post.id);
 }
 
-/// Joins the party of [post] by code with the active account (G-19), then
-/// records the join (best effort). User-initiated only, after a
-/// confirmation.
-Future<void> joinLfgPost(WidgetRef ref, String puuid, LfgPost post) async {
+/// Authorizes and records a unique join intent on the Community server,
+/// then asks Riot to join the authoritative party code (G-19). The intent
+/// count is not confirmed membership or a seat reservation. Returns false
+/// when the initiating UI/account is no longer current.
+Future<bool> joinLfgPost(WidgetRef ref, String puuid, LfgPost post) async {
+  bool current() =>
+      ref.context.mounted &&
+      ref.read(activePuuidProvider) == puuid &&
+      ref.read(accountProvider(puuid)) != null;
+  if (!current()) return false;
   final join = await ref
       .read(communityApiProvider)
       .requestLfgJoin(puuid, post.id);
-  if (!ref.context.mounted || ref.read(accountProvider(puuid)) == null) return;
+  if (!current()) return false;
   await ref.read(pvpApiProvider).partyJoinByCode(puuid, join.partyCode);
+  if (!current()) return false;
+  // A successful join changes the real party; retire an already loaded view.
+  ref.invalidate(partyProvider(puuid));
+  return true;
 }
 
 /// Joins a party by code with the active account (G-19).

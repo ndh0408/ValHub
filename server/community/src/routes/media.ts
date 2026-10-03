@@ -70,6 +70,7 @@ export function registerMedia(app: Hono, x: Ctx): void {
     }
 
     // Storage limits: per user (their problem: 400) and total (ours: 507).
+    x.assertCurrentUser(c);
     const { mediaUserQuotaBytes: userQuota, mediaMaxTotalBytes: totalCap } = x.tuning;
     if (x.repo.mediaBytes(user.id) + clean.bytes.length > userQuota) {
       throw invalid(

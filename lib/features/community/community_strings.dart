@@ -333,7 +333,7 @@ abstract final class CommunityStrings {
   static const statusOpen = 'Đang tìm';
   static const statusFull = 'Đã đủ người';
   static const statusInGame = 'Đang trong trận';
-  static String joinsCount(String n) => '$n người đã vào';
+  static String joinsCount(String n) => '$n người đã yêu cầu vào';
   static const extend = 'Gia hạn';
   static const extended = 'Đã gia hạn tin thêm 30 phút.';
   static const lfgExpiredRepost =
