@@ -1,5 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:valvn/core/accounts/account.dart';
+import 'package:valvn/core/accounts/account_providers.dart';
+import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/xmpp/xmpp.dart';
 import 'package:valvn/features/social/ui/chat_screen.dart';
@@ -106,6 +110,102 @@ void main() {
       isEmpty,
     );
   });
+
+  testWidgets(
+    'unsent private draft cannot follow an account switch or logout',
+    (tester) async {
+      await env.prefs.setJson(PrefKeys.accounts, [
+        myAccount.toJson(),
+        const Account(
+          puuid: friendOffline,
+          gameName: 'Account B',
+          tagLine: 'TEST',
+          region: 'ap',
+          shard: 'ap',
+        ).toJson(),
+      ]);
+      await pumpSocial(
+        tester,
+        env,
+        const ChatScreen(friendPuuid: friendOnline),
+      );
+      await settle(tester);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(ChatScreen)),
+      );
+      await tester.enterText(
+        find.byType(TextField),
+        'private draft for account A',
+      );
+      container.read(activePuuidProvider.notifier).select(friendOffline);
+      await settle(tester);
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        isEmpty,
+      );
+      await tester.enterText(
+        find.byType(TextField),
+        'private draft for account B',
+      );
+      container.read(activePuuidProvider.notifier).select(null);
+      await settle(tester);
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        isEmpty,
+      );
+      expect(env.xmpp.sent, isEmpty);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('unsent draft cannot follow a change of conversation recipient', (
+    tester,
+  ) async {
+    await pumpSocial(tester, env, const ChatScreen(friendPuuid: friendOnline));
+    await settle(tester);
+    await tester.enterText(
+      find.byType(TextField),
+      'private draft for one friend',
+    );
+    await pumpSocial(tester, env, const ChatScreen(friendPuuid: friendOffline));
+    await settle(tester);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      isEmpty,
+    );
+    expect(env.xmpp.sent, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'a queued send cannot use a draft after the sender changes before rebuild',
+    (tester) async {
+      await pumpSocial(
+        tester,
+        env,
+        const ChatScreen(friendPuuid: friendOnline),
+      );
+      await settle(tester);
+      await tester.enterText(find.byType(TextField), 'private account A text');
+      await settle(tester);
+      final send = tester
+          .widget<IconButton>(
+            find.ancestor(
+              of: find.byIcon(Icons.send_rounded),
+              matching: find.byType(IconButton),
+            ),
+          )
+          .onPressed!;
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(ChatScreen)),
+      );
+      container.read(activePuuidProvider.notifier).select(friendOffline);
+      send();
+      await settle(tester);
+      expect(env.xmpp.sent, isEmpty);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('input is disabled while the chat is not connected', (
     tester,

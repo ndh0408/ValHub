@@ -40,16 +40,39 @@ const kChatGroupGap = Duration(minutes: 5);
 /// status; tapping it opens the profile (S44). Messages are grouped by day
 /// ("Hôm nay", "Hôm qua", "Thứ Hai, 22/09") and by sender, newest at the
 /// bottom; history comes from Riot's chat archive, new messages live.
-class ChatScreen extends ConsumerStatefulWidget {
+class ChatScreen extends ConsumerWidget {
   const ChatScreen({super.key, required this.friendPuuid});
 
   final String friendPuuid;
 
   @override
-  ConsumerState<ChatScreen> createState() => _ChatScreenState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final owner = ref.watch(activePuuidProvider);
+    final recipient = friendPuuid.trim().toLowerCase();
+    return _ScopedChatScreen(
+      key: ValueKey((owner, recipient)),
+      ownerPuuid: owner,
+      friendPuuid: recipient,
+    );
+  }
 }
 
-class _ChatScreenState extends ConsumerState<ChatScreen> {
+/// Draft, focus and pending UI work belong to one sender/recipient pair.
+class _ScopedChatScreen extends ConsumerStatefulWidget {
+  const _ScopedChatScreen({
+    super.key,
+    required this.ownerPuuid,
+    required this.friendPuuid,
+  });
+
+  final String? ownerPuuid;
+  final String friendPuuid;
+
+  @override
+  ConsumerState<_ScopedChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends ConsumerState<_ScopedChatScreen> {
   final _input = TextEditingController();
   final _focus = FocusNode();
   bool _sending = false;
@@ -67,13 +90,24 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final messages = context.l10n;
     final text = _input.text.trim();
     final service = ref.read(xmppServiceProvider);
-    if (text.isEmpty || service == null || _sending) return;
+    final owner = widget.ownerPuuid;
+    if (text.isEmpty ||
+        service == null ||
+        _sending ||
+        owner == null ||
+        ref.read(activePuuidProvider) != owner ||
+        service.puuid != owner) {
+      return;
+    }
     setState(() => _sending = true);
     try {
       await service.sendMessage(_id, text);
-      _input.clear();
+      if (!mounted || ref.read(activePuuidProvider) != owner) return;
+      if (_input.text.trim() == text) _input.clear();
     } on Object {
-      if (mounted) showAppSnackBar(context, messages.socialSendFailed);
+      if (mounted && ref.read(activePuuidProvider) == owner) {
+        showAppSnackBar(context, messages.socialSendFailed);
+      }
     } finally {
       if (mounted) setState(() => _sending = false);
     }
