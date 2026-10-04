@@ -96,4 +96,22 @@ describe('bounded Riot inventory adapter', () => {
     expect(fetcher).toHaveBeenCalledTimes(1);
     expect(fetcher.mock.calls[0]![1]?.redirect).toBe('manual');
   });
+  it('diagnostics contain only fixed operations/statuses, never secrets or inventory', async () => {
+    const log = vi.fn();
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(json({entitlements_token:'secret-entitlement'}))
+      .mockResolvedValueOnce(new Response('private response body', {status:403}));
+    expect(await createRiotOwnership(fetcher, log)(request)).toBe('unavailable');
+    expect(log.mock.calls).toEqual([[{operation:'entitlements',status:200}], [{operation:'inventory',status:403}]]);
+    expect(JSON.stringify(log.mock.calls)).not.toMatch(/fixture-token|secret-entitlement|verified-subject|private response/);
+  });
+  it('a failed diagnostic sink cannot authorize or disrupt a valid ownership decision', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(json({entitlements_token:'ent'}))
+      .mockResolvedValueOnce(json({Entitlements:[]}));
+    expect(await createRiotOwnership(fetcher, () => { throw new Error('sink failed'); })(request)).toBe('not_owned');
+  });
+  it('network diagnostics never expose exception contents', async () => {
+    const log = vi.fn(); const fetcher = vi.fn<typeof fetch>().mockRejectedValue(new Error('fixture-token'));
+    expect(await createRiotOwnership(fetcher, log)(request)).toBe('unavailable');
+    expect(log.mock.calls).toEqual([[{operation:'network'}]]);
+  });
 });

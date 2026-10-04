@@ -11,6 +11,11 @@ export interface OwnershipRequest {
   resolveSkin: (uuid: string) => SkinRef | null;
 }
 export type RiotOwnershipFn = (request: OwnershipRequest) => Promise<OwnershipResult>;
+/** Fixed operation names/statuses only: never tokens, subjects, URLs or bodies. */
+export interface OwnershipDiagnostic {
+  operation: 'entitlements' | 'inventory' | 'network';
+  status?: number;
+}
 const SKIN_LEVEL = 'e7c63390-eda7-46e0-bb7a-a6abdacd2433';
 const SHARDS: Record<string, string> = { ap: 'ap', na: 'na', br: 'na', latam: 'na', eu: 'eu', kr: 'kr' };
 
@@ -37,8 +42,12 @@ async function readJson(response: Response, maxBytes: number): Promise<Record<st
 
 /** Inventory is read only while saving a rating/review. Nothing is persisted or
  * cached as an ownership assertion; an outage can never authorize a review. */
-export function createRiotOwnership(fetchFn: typeof fetch = fetch): RiotOwnershipFn {
+export function createRiotOwnership(fetchFn: typeof fetch = fetch, diagnostic?: (event: OwnershipDiagnostic) => void): RiotOwnershipFn {
   let active = 0;
+  const report = (event: OwnershipDiagnostic) => {
+    // Observability must never change authorization or turn an outage into a grant.
+    try { diagnostic?.(event); } catch { /* a broken log sink cannot authorize */ }
+  };
   return async (request) => {
     const shard = Object.hasOwn(SHARDS, request.region) ? SHARDS[request.region] : undefined;
     if (!shard || active >= 20) return 'unavailable';
@@ -51,6 +60,7 @@ export function createRiotOwnership(fetchFn: typeof fetch = fetch): RiotOwnershi
         method: 'POST', redirect: 'manual', signal,
         headers: {Authorization: `Bearer ${request.accessToken}`, 'Content-Type': 'application/json'}, body: '{}',
       });
+      report({operation: 'entitlements', status: entitlement.status});
       if (entitlement.status === 401) { await entitlement.body?.cancel(); return 'rejected'; }
       const auth = await readJson(entitlement, 65536);
       const token = auth?.entitlements_token;
@@ -59,6 +69,7 @@ export function createRiotOwnership(fetchFn: typeof fetch = fetch): RiotOwnershi
         method: 'GET', redirect: 'manual', signal,
         headers: { Authorization: `Bearer ${request.accessToken}`, 'X-Riot-Entitlements-JWT': token, Accept: 'application/json' },
       });
+      report({operation: 'inventory', status: inventory.status});
       if (inventory.status === 401) { await inventory.body?.cancel(); return 'rejected'; }
       const data = await readJson(inventory, 2 * 1024 * 1024);
       if (!data || !Array.isArray(data.Entitlements) ||
@@ -71,7 +82,7 @@ export function createRiotOwnership(fetchFn: typeof fetch = fetch): RiotOwnershi
         if (request.resolveSkin(row.ItemID.toLowerCase())?.skinUuid === request.skinUuid) return 'owned';
       }
       return 'not_owned';
-    } catch { return 'unavailable'; }
+    } catch { report({operation: 'network'}); return 'unavailable'; }
     finally { active--; }
   };
 }
