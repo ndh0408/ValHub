@@ -39,6 +39,7 @@ class CommunityHttp {
     Object? json,
     List<int>? bytes,
     String? contentType,
+    String? idempotencyKey,
   }) async {
     if (!isEnabled) throw const CommunityException(CommunityException.disabled);
     final q = <String, String>{
@@ -50,6 +51,7 @@ class CommunityHttp {
     final uri = q.isEmpty ? base : base.replace(queryParameters: q);
     final headers = <String, Object>{
       'Accept': 'application/json',
+      'Idempotency-Key': ?idempotencyKey,
       if (token != null) 'Authorization': 'Bearer $token',
       if (bytes != null) Headers.contentLengthHeader: bytes.length,
     };

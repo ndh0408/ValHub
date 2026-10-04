@@ -33,7 +33,7 @@ export function registerIdempotency(app: Hono, x: Ctx): void {
   app.use('/v1/*', async (c, next) => {
     const route = c.req.path;
     const key = c.req.header('idempotency-key');
-    if (!key || c.req.method !== 'POST' || !(route === '/v1/posts' || route === '/v1/media' || /^\/v1\/posts\/[^/]+\/comments$/.test(route))) return next();
+    if (!key || c.req.method !== 'POST' || !(route === '/v1/posts' || route === '/v1/media' || /^\/v1\/(?:posts|skins)\/[^/]+\/comments$/.test(route))) return next();
     const user = x.user(c, true);
     if (!/^[\x21-\x7e]{1,128}$/.test(key)) throw reasonError('invalid_input', 'idempotency_key_invalid');
     const id = createHash('sha256').update(`${user.id}:${route}:${key}`).digest('hex');

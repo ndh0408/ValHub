@@ -3719,7 +3719,7 @@
     "description": "Fixed ranking scope and time; product ranking always uses global all-time data.",
     "x-manual": true
   },
-  "communityRankingCatalogTitle": "Khám phá skin và đánh giá",
+  "communityRankingCatalogTitle": "Tất cả skin",
   "@communityRankingCatalogTitle": {
     "description": "Heading for the real searchable skin catalog below leaderboard results.",
     "x-manual": true
@@ -3743,6 +3743,10 @@
   "@communityReviewVerifiedOwner": {
     "description": "Review inventory proof applies at the time it was saved, not a claim of current ownership.",
     "x-manual": true
+  },
+  "communitySkinDiscussionHint": "Mọi người đều có thể bình luận. Chỉ chủ sở hữu skin được chấm sao và viết đánh giá.",
+  "@communitySkinDiscussionHint": {
+    "description": "Explains plain public skin discussion versus inventory-verified star reviews."
   },
   "communityAddPhotos": "Thêm ảnh",
   "@communityAddPhotos": {

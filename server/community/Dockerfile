@@ -11,7 +11,13 @@ RUN npm run build && npm prune --omit=dev --no-audit --no-fund
 
 # ---- runtime: same base (glibc) as the build stage so the native module matches
 FROM node:22-bookworm-slim@sha256:43ac6c60b8f89723f746e8a92ce91abd5017e627ce1ddfe4238355d3a30b772c
-RUN apt-get update && apt-get install -y --no-install-recommends age && rm -rf /var/lib/apt/lists/*
+# Refresh the runtime PCRE package too: a cached base may precede its security fix.
+# Only the build stage needs package managers; the API/operator tools run with node.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends age libpcre2-8-0 \
+    && rm -rf /var/lib/apt/lists/* /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack \
+    && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack \
+       /usr/local/bin/yarn /usr/local/bin/yarnpkg /usr/local/bin/pnpm /usr/local/bin/pnpx
 ENV NODE_ENV=production \
     PORT=8080 \
     DATA_DIR=/data

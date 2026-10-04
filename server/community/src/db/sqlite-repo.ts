@@ -10,6 +10,7 @@ import type {
   AuthorCols,
   CanonicalizeResult,
   CommentRow,
+  SkinCommentRow,
   CommunityActivity,
   HiddenItem,
   LfgPatch,
@@ -326,6 +327,7 @@ export class SqliteRepo implements Repo {
       AND NOT EXISTS (SELECT 1 FROM sanctions s WHERE s.user_id = trust.id AND s.lifted_at IS NULL AND (s.until IS NULL OR s.until > ${Math.floor(this.now())}))
       AND (EXISTS (SELECT 1 FROM posts a WHERE a.user_id = trust.id AND a.hidden = 0)
         OR EXISTS (SELECT 1 FROM comments a WHERE a.user_id = trust.id AND a.hidden = 0)
+        OR EXISTS (SELECT 1 FROM skin_comments a WHERE a.user_id = trust.id AND a.hidden = 0)
         OR EXISTS (SELECT 1 FROM skin_votes a WHERE a.user_id = trust.id)
         OR EXISTS (SELECT 1 FROM skin_reviews a WHERE a.user_id = trust.id AND a.hidden = 0)
         OR EXISTS (SELECT 1 FROM post_likes a WHERE a.user_id = trust.id)
@@ -421,7 +423,7 @@ export class SqliteRepo implements Repo {
     const out: CanonicalizeResult = { votesRewritten: 0, votesMerged: 0, reviewsRewritten: 0, reviewsMerged: 0, weaponsFixed: 0 };
     this.db.transaction(() => {
       const uuids = this.db
-        .prepare('SELECT skin_uuid FROM skin_votes UNION SELECT skin_uuid FROM skin_reviews')
+        .prepare('SELECT skin_uuid FROM skin_votes UNION SELECT skin_uuid FROM skin_reviews UNION SELECT skin_uuid FROM skin_comments')
         .all() as { skin_uuid: string }[];
       for (const { skin_uuid: uuid } of uuids) {
         const fresh = resolve(uuid);
@@ -430,6 +432,7 @@ export class SqliteRepo implements Repo {
         const ref = fresh ?? saved;
         if (!ref) continue;
         if (ref.skinUuid !== uuid) {
+          this.db.prepare('UPDATE skin_comments SET skin_uuid = ? WHERE skin_uuid = ?').run(ref.skinUuid, uuid);
           // Votes: rows that would collide with the user's canonical vote stay behind and are dropped.
           this.db.prepare(`UPDATE skin_votes AS base SET
             country = CASE WHEN (SELECT created_at FROM skin_votes WHERE skin_uuid = @alias AND user_id = base.user_id) < base.created_at
@@ -855,6 +858,39 @@ export class SqliteRepo implements Repo {
       .all(params) as (CommentRow & AuthorCols)[];
   }
 
+  insertSkinComment(c: Omit<SkinCommentRow, 'hidden_reason'>): void {
+    this.db
+      .prepare(
+        `INSERT INTO skin_comments (id, skin_uuid, user_id, body, hidden, created_at, country, region, language)
+         VALUES (@id, @skin_uuid, @user_id, @body, @hidden, @created_at, @country, @region, @language)`,
+      )
+      .run(c);
+  }
+
+  getSkinComment(id: string) {
+    return (
+      (this.db
+        .prepare(`SELECT c.*, ${AUTHOR_SELECT} FROM skin_comments c JOIN users u ON u.id = c.user_id WHERE c.id = ?`)
+        .get(id) as (SkinCommentRow & AuthorCols) | undefined) ?? null
+    );
+  }
+
+  listSkinComments(q: { skinUuid: string; cursor?: Cursor; limit: number }) {
+    const where = ['c.skin_uuid = @skinUuid', 'c.hidden = 0'];
+    const params: Record<string, unknown> = { skinUuid: q.skinUuid, limit: q.limit + 1 };
+    if (q.cursor) {
+      where.push('(c.created_at > @cAt OR (c.created_at = @cAt AND c.id > @cId))');
+      params.cAt = q.cursor.createdAt;
+      params.cId = q.cursor.id;
+    }
+    return this.db
+      .prepare(
+        `SELECT c.*, ${AUTHOR_SELECT} FROM skin_comments c JOIN users u ON u.id = c.user_id
+         WHERE ${where.join(' AND ')} ORDER BY c.created_at ASC, c.id ASC LIMIT @limit`,
+      )
+      .all(params) as (SkinCommentRow & AuthorCols)[];
+  }
+
   deleteComment(id: string): void {
     this.db.prepare('DELETE FROM comments WHERE id = ?').run(id);
   }
@@ -887,6 +923,7 @@ export class SqliteRepo implements Repo {
   private static readonly TARGET_TABLE: Record<ReportTarget, string> = {
     post: 'posts',
     comment: 'comments',
+    skin_comment: 'skin_comments',
     lfg: 'lfg_posts',
     review: 'skin_reviews',
   };
@@ -911,6 +948,7 @@ export class SqliteRepo implements Repo {
            WHERE r.target_type = @type AND r.target_id = @id AND u.created_at <= @cutoff AND (
              EXISTS (SELECT 1 FROM posts x WHERE x.user_id = u.id) OR
              EXISTS (SELECT 1 FROM comments x WHERE x.user_id = u.id) OR
+             EXISTS (SELECT 1 FROM skin_comments x WHERE x.user_id = u.id) OR
              EXISTS (SELECT 1 FROM skin_reviews x WHERE x.user_id = u.id) OR
              EXISTS (SELECT 1 FROM skin_votes x WHERE x.user_id = u.id) OR
              EXISTS (SELECT 1 FROM post_likes x WHERE x.user_id = u.id) OR
@@ -1071,6 +1109,7 @@ export class SqliteRepo implements Repo {
       user,
       posts: all<PostRow>('SELECT * FROM posts WHERE user_id = ? ORDER BY created_at, id'),
       comments: all<CommentRow>('SELECT * FROM comments WHERE user_id = ? ORDER BY created_at, id'),
+      skinComments: all<SkinCommentRow>('SELECT * FROM skin_comments WHERE user_id = ? ORDER BY created_at, id'),
       reviews: all<ReviewRow>('SELECT * FROM skin_reviews WHERE user_id = ? ORDER BY created_at, id'),
       postLikes: all('SELECT post_id, created_at FROM post_likes WHERE user_id = ? ORDER BY created_at, post_id'),
       reviewLikes: all(
@@ -1099,6 +1138,7 @@ export class SqliteRepo implements Repo {
       const owned: [string, string][] = [
         ['post', 'posts'],
         ['comment', 'comments'],
+        ['skin_comment', 'skin_comments'],
         ['review', 'skin_reviews'],
         ['lfg', 'lfg_posts'],
       ];
@@ -1227,6 +1267,8 @@ export class SqliteRepo implements Repo {
              UNION ALL
              SELECT 'comment', id, user_id, hidden_reason, created_at, substr(body, 1, 80) FROM comments WHERE hidden = 1
              UNION ALL
+             SELECT 'skin_comment', id, user_id, hidden_reason, created_at, substr(body, 1, 80) FROM skin_comments WHERE hidden = 1
+             UNION ALL
              SELECT 'lfg', id, user_id, hidden_reason, created_at, substr(COALESCE(note, ''), 1, 80) FROM lfg_posts WHERE hidden = 1
              UNION ALL
              SELECT 'review', id, user_id, hidden_reason, created_at, substr(body, 1, 80) FROM skin_reviews WHERE hidden = 1
@@ -1298,7 +1340,7 @@ export class SqliteRepo implements Repo {
 
   stats(): Record<string, number> {
     const out: Record<string, number> = {};
-    for (const t of ['users', 'posts', 'comments', 'skin_reviews', 'skin_votes', 'lfg_posts', 'media', 'reports', 'sanctions']) {
+    for (const t of ['users', 'posts', 'comments', 'skin_comments', 'skin_reviews', 'skin_votes', 'lfg_posts', 'media', 'reports', 'sanctions']) {
       out[t] = (this.db.prepare(`SELECT COUNT(*) AS n FROM ${t}`).get() as { n: number }).n;
     }
     out.media_bytes = this.mediaBytes();

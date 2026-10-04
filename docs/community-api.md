@@ -38,6 +38,40 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
 - Pagination: `?cursor=<opaque>&limit=<1..50, default 20>` →
   `{"items": [...], "nextCursor": "…" | null}`.
 
+## Skin catalog and discussion — build 4021
+
+The app exposes every collectible skin from the existing content database as a
+lazy list. Standard/random-favorite entries retain their existing exclusion.
+Search operates on the complete local catalog; aggregate requests are limited to
+30 skin IDs per visible catalog page. A skin needs no vote or review to appear.
+Product rankings remain global and all-time; catalog order is not a rating.
+
+Plain skin comments are separate from inventory-verified star reviews:
+
+| Route | Policy |
+|---|---|
+| `GET /v1/skins/:skinUuid/comments` | Public, optional authenticated session; invalid supplied sessions return 401. Oldest-first cursor pagination, default 20, maximum 50. Hidden comments are excluded. |
+| `POST /v1/skins/:skinUuid/comments` | Authenticated author from server context; skin ownership is not required. JSON `{body, language?}`, 1–500 Unicode code points. Shared post/skin comment limit of 30 creates per ten minutes; existing CPU text filter and sanctions apply. Optional durable `Idempotency-Key`, bound to author, route and payload. |
+| `DELETE /v1/skin-comments/:id` | Only the authenticated comment author may delete it; associated reports are removed transactionally. Repeated deletion may return 404. |
+
+The paged response is `{items, nextCursor}`. Each item contains
+`{id, skinUuid, author, body, createdAt, country, region, language}`. No star rating,
+client ownership flag or client author ID is accepted as authorization. Comments
+never change star totals or create a review. The existing review PUT still checks
+fresh Riot identity and inventory before accepting stars/review text.
+
+Migration `0013_skin_comments.sql` adds a separate table with indexed visible
+skin/cursor queries and account erasure cascades. Skin comments participate in
+own data export (`skinComments`), erasure, reports (`targetType: "skin_comment"`),
+operator hide/restore/delete and canonical skin-alias maintenance. Existing post
+comment foreign keys and APIs remain intact. Text is plain JSON/Flutter text;
+any future HTML renderer must escape it.
+
+The composer is keyed by account and skin, retains failed drafts and retry keys,
+and cannot submit the old account's draft through a newly selected account.
+Device-local hidden authors remain device-local. These source/API policies do
+not claim that the new routes have been deployed or tested through production.
+
 ## Privacy and identity
 
 - After explicit per-account, versioned consent, Riot access tokens are sent only

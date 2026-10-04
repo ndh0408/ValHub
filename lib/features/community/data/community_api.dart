@@ -603,6 +603,47 @@ class CommunityApi {
   Future<void> deleteComment(String puuid, String id) =>
       _send('DELETE', '/v1/comments/${Uri.encodeComponent(id)}', puuid: puuid);
 
+  /// Public global discussion, paged oldest first, independent of ownership.
+  Future<CommunityPage<CommunityComment>> skinComments(
+    String? puuid,
+    String skinUuid, {
+    String? cursor,
+    int limit = 30,
+  }) async => CommunityPage.fromJson(
+    await _send(
+      'GET',
+      '/v1/skins/${Uri.encodeComponent(skinUuid)}/comments',
+      puuid: puuid,
+      auth: _Auth.optional,
+      query: {'cursor': cursor, 'limit': limit.clamp(1, 50)},
+    ),
+    CommunityComment.fromJson,
+  );
+
+  Future<CommunityComment> addSkinComment(
+    String puuid,
+    String skinUuid,
+    String body, {
+    String? language,
+    String? idempotencyKey,
+  }) async =>
+      CommunityComment.fromJson(
+        await _send(
+          'POST',
+          '/v1/skins/${Uri.encodeComponent(skinUuid)}/comments',
+          puuid: puuid,
+          idempotencyKey: idempotencyKey,
+          json: {'body': body.trim(), 'language': ?language},
+        ),
+      ) ??
+      (throw const CommunityException(CommunityException.badResponse));
+
+  Future<void> deleteSkinComment(String puuid, String id) => _send(
+    'DELETE',
+    '/v1/skin-comments/${Uri.encodeComponent(id)}',
+    puuid: puuid,
+  );
+
   /// `POST /v1/reports`.
   Future<void> report(
     String puuid, {
@@ -614,7 +655,9 @@ class CommunityApi {
     '/v1/reports',
     puuid: puuid,
     json: {
-      'targetType': targetType.name,
+      'targetType': targetType == ReportTarget.skinComment
+          ? 'skin_comment'
+          : targetType.name,
       'targetId': targetId,
       'reason': reason,
     },
@@ -656,6 +699,7 @@ class CommunityApi {
     Object? json,
     List<int>? bytes,
     String? contentType,
+    String? idempotencyKey,
   }) async {
     if (!_http.isEnabled) {
       throw const CommunityException(CommunityException.disabled);
@@ -684,6 +728,7 @@ class CommunityApi {
         json: json,
         bytes: bytes,
         contentType: contentType,
+        idempotencyKey: idempotencyKey,
       );
     } on CommunityException catch (e) {
       if (puuid == null ||
@@ -702,13 +747,14 @@ class CommunityApi {
         json: json,
         bytes: bytes,
         contentType: contentType,
+        idempotencyKey: idempotencyKey,
       );
     }
   }
 }
 
 /// `targetType` of a report.
-enum ReportTarget { post, comment, lfg, review }
+enum ReportTarget { post, comment, lfg, review, skinComment }
 
 /// MIME type from the file signature (JPEG, PNG, WebP), else `null`.
 String? imageMimeType(List<int> bytes) {

@@ -3841,7 +3841,7 @@ abstract class AppLocalizations {
   /// Heading for the real searchable skin catalog below leaderboard results.
   ///
   /// In vi, this message translates to:
-  /// **'Khám phá skin và đánh giá'**
+  /// **'Tất cả skin'**
   String get communityRankingCatalogTitle;
 
   /// A skin non-owner can read ratings but cannot submit a star rating or review.
@@ -3867,6 +3867,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Đã xác minh sở hữu khi đánh giá'**
   String get communityReviewVerifiedOwner;
+
+  /// Explains plain public skin discussion versus inventory-verified star reviews.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mọi người đều có thể bình luận. Chỉ chủ sở hữu skin được chấm sao và viết đánh giá.'**
+  String get communitySkinDiscussionHint;
 
   /// CommunityStrings.addPhotos — feed
   ///

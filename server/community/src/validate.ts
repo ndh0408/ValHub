@@ -18,7 +18,7 @@ export type LfgMode = (typeof LFG_MODES)[number];
 export const POST_KINDS = ['text', 'store', 'nightmarket'] as const;
 export type PostKind = (typeof POST_KINDS)[number];
 
-export const REPORT_TARGETS = ['post', 'comment', 'lfg', 'review'] as const;
+export const REPORT_TARGETS = ['post', 'comment', 'lfg', 'review', 'skin_comment'] as const;
 export type ReportTarget = (typeof REPORT_TARGETS)[number];
 
 export const LFG_ROLES = ['duelist', 'initiator', 'controller', 'sentinel', 'flex'] as const;

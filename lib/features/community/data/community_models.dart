@@ -603,12 +603,13 @@ int _count(Object? v) {
   return n < 0 ? 0 : n;
 }
 
-/// A comment on a post.
+/// A plain comment on a post or skin; never a star review.
 @immutable
 class CommunityComment {
   const CommunityComment({
     required this.id,
-    required this.postId,
+    this.postId = '',
+    this.skinUuid,
     required this.author,
     this.body = '',
     this.createdAt,
@@ -622,6 +623,7 @@ class CommunityComment {
     return CommunityComment(
       id: id,
       postId: asNonEmptyString(m['postId']) ?? '',
+      skinUuid: asNonEmptyString(m['skinUuid']),
       author: CommunityAuthor.fromJson(m['author']) ?? CommunityAuthor.unknown,
       body: asString(m['body'])?.trim() ?? '',
       createdAt: asDateTime(m['createdAt']),
@@ -631,6 +633,7 @@ class CommunityComment {
 
   final String id;
   final String postId;
+  final String? skinUuid;
   final CommunityAuthor author;
   final String body;
   final DateTime? createdAt;

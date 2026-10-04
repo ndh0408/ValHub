@@ -2225,7 +2225,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityRankingGlobalAllTime => 'Toàn cầu · Từ trước tới giờ';
 
   @override
-  String get communityRankingCatalogTitle => 'Khám phá skin và đánh giá';
+  String get communityRankingCatalogTitle => 'Tất cả skin';
 
   @override
   String get communityReviewOwnershipRequired =>
@@ -2241,6 +2241,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityReviewVerifiedOwner => 'Đã xác minh sở hữu khi đánh giá';
+
+  @override
+  String get communitySkinDiscussionHint =>
+      'Mọi người đều có thể bình luận. Chỉ chủ sở hữu skin được chấm sao và viết đánh giá.';
 
   @override
   String get communityAddPhotos => 'Thêm ảnh';

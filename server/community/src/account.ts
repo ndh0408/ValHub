@@ -4,7 +4,7 @@ import { deleteMedia, postMediaKeys, type MediaDeps } from './media-service.js';
 
 /** Schema coverage reviewed by tests: new account-related tables need an export/erasure policy. */
 export const ACCOUNT_TABLE_POLICIES = {
-  users: 'erase', posts: 'erase', comments: 'erase', post_likes: 'erase', skin_votes: 'erase',
+  users: 'erase', posts: 'erase', comments: 'erase', skin_comments: 'erase', post_likes: 'erase', skin_votes: 'erase',
   skin_reviews: 'erase', review_likes: 'erase', lfg_posts: 'erase', lfg_joins: 'erase', media: 'erase',
   // Derived quota bytes are reproduced by summing the exported media sizes; cascade removes the counter.
   request_keys: 'erase', user_media_bytes: 'erase', reports: 'anonymize', sanctions: 'security-retention',
@@ -78,6 +78,10 @@ export function buildExport(data: AccountData, baseUrl: string, now: number) {
       region: c.region,
       language: c.language,
       createdAt: iso(c.created_at),
+    })),
+    skinComments: data.skinComments.map((c) => ({
+      id: c.id, skinUuid: c.skin_uuid, body: c.body, hidden: c.hidden === 1,
+      country: c.country, region: c.region, language: c.language, createdAt: iso(c.created_at),
     })),
     reviews: data.reviews.map((r) => ({
       id: r.id,

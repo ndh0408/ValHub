@@ -1,8 +1,10 @@
 # Tiến độ ValHub (điểm dừng để làm tiếp)
 
+Checkpoint mới nhất 04/10 build 4021: [danh mục skin / bình luận / CI local](SKIN_CATALOG_AND_DISCUSSION_2026-10-04.md). Windows 4.386 tests mỗi cấu hình, analyzer 0; backend 931; Mac Community 361 và unsigned iOS build; Android public 10/native 6. Docker build/restore/Trivy đã qua sau sửa 11 HIGH. Emulator giữ 6 tài khoản, hiển thị 1.373 skin sưu tầm thật. API bình luận production còn 404; i18n cutover còn 1 ref / 768 literals / 52 structural, chưa nghiệm thu toàn bộ.
+
 Checkpoint 04/10 build 4020: [account/ownership verification](ACCOUNT_AND_OWNERSHIP_CHECKPOINT_2026-10-04.md). Windows/Mac 4,369 tests; analyzer 0; backend 917; Android public 10/native 6; unsigned iOS build succeeds. Whole-product acceptance, localization cutover and new full-catalog/comment requirements remain open.
 
-Checkpoint mới nhất 04/10: [Model / export riêng tư / CI local, build 4018](I18N_MODELS_AND_EXPORT_2026-10-04.md).
+Checkpoint trước 04/10: [Model / export riêng tư / CI local, build 4018](I18N_MODELS_AND_EXPORT_2026-10-04.md).
 
 Đã chuyển nhãn model sang resources hiện tại, bảo toàn tên bộ trang bị cũ
 và chặn chia sẻ export khi đổi/gỡ tài khoản hoặc rút đồng ý lúc đang tải.

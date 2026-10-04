@@ -10,6 +10,7 @@ import { registerMedia } from './routes/media.js';
 import { registerPosts } from './routes/posts.js';
 import { registerPublicGuard } from './routes/public-guard.js';
 import { registerReviews } from './routes/reviews.js';
+import { registerSkinComments } from './routes/skin-comments.js';
 import { registerSkins } from './routes/skins.js';
 import { registerIdempotency } from './idempotency.js';
 
@@ -95,6 +96,7 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
   registerLfg(app, x);
   registerSkins(app, x);
   registerReviews(app, x);
+  registerSkinComments(app, x);
   registerCommunities(app, x);
   registerPosts(app, x);
   registerMedia(app, x);

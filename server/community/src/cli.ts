@@ -47,7 +47,7 @@ const HELP = `valvn-community operator CLI
   quarantine list                         files hidden by reports (kept 30 days)
   quarantine restore <key>                put a file back in public serving
   quarantine purge <key>                  delete a quarantined file now
-  unhide (post|comment|lfg|review) <uuid> un-hide content and forget its reports (false report)
+  unhide (post|comment|skin_comment|lfg|review) <uuid> un-hide content and forget its reports (false report)
   sweep                                   run the housekeeping sweep once
 
   Moderation (every action is logged in the audit table; --reason is one of: ${SANCTION_REASONS.join(' ')})
@@ -57,8 +57,8 @@ const HELP = `valvn-community operator CLI
                                           temporary restriction: read-only (no posting, commenting, LFG, voting)
   unban (--id <id> | --riot "Name#Tag")   lift every active sanction of the account
   sanctions list [--active] [--id <id> | --riot "Name#Tag"] [--limit N]
-  hide (post|comment|lfg|review) <uuid>   hide one item now (its images are quarantined)
-  delete-content (post|comment|lfg|review) <uuid> --yes
+  hide (post|comment|skin_comment|lfg|review) <uuid>   hide one item now (its images are quarantined)
+  delete-content (post|comment|skin_comment|lfg|review) <uuid> --yes
                                           delete one item for good (comments / likes / images go with it); dry run without --yes
   reports list [--limit N]                reported items: reporters, eligible reporters, hidden state, excerpt
   hidden list [--limit N]                 everything that is hidden (by reports or by a moderator)
@@ -200,7 +200,7 @@ export async function runCli(argv: string[], d: CliDeps): Promise<number> {
       }
       const u = users[0]!;
       const data = d.repo.accountData(u.id)!;
-      const summary = `${u.id} (${u.game_name}#${u.tag_line}): ${data.posts.length} posts, ${data.comments.length} comments, ${data.reviews.length} reviews, ${data.votes.length} votes, ${data.lfgPosts.length} LFG posts, ${data.media.length} files`;
+      const summary = `${u.id} (${u.game_name}#${u.tag_line}): ${data.posts.length} posts, ${data.comments.length} post comments, ${data.skinComments.length} skin comments, ${data.reviews.length} reviews, ${data.votes.length} votes, ${data.lfgPosts.length} LFG posts, ${data.media.length} files`;
       if (!args.includes('--yes')) {
         d.out(`DRY RUN, would erase ${summary}. Re-run with --yes.`);
         return 2;

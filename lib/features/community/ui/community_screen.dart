@@ -219,6 +219,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
             sort: f.sort,
             scope: ScopeFilter.global,
           );
+          ref.invalidate(catalogStatsProvider);
           ref.invalidate(topSkinsProvider(q));
           await ref.read(topSkinsProvider(q).future);
       }

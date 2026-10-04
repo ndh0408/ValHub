@@ -36,6 +36,8 @@ import 'review_editor_sheet.dart';
 import 'skin_vote_button.dart';
 import '../widgets/translatable_text.dart';
 import 'star_rating.dart';
+import 'skin_discussion.dart';
+import '../../providers/skin_comment_providers.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -84,6 +86,7 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
       body: AdaptiveRefresh(
         onRefresh: () async {
           ref.invalidate(skinReviewsProvider(reviewsKey));
+          ref.invalidate(skinCommentsProvider(key));
           await ref.read(skinSummaryProvider(key).notifier).refresh();
         },
         child: CustomScrollView(
@@ -145,6 +148,7 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
               ),
             ),
             ..._reviewSlivers(reviews, reviewsKey, meId),
+            SkinDiscussionSliver(key: ValueKey((puuid, skinId)), skinKey: key),
             const SliverToBoxAdapter(child: SizedBox(height: 48)),
           ],
         ),
@@ -179,10 +183,15 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
     if (state.items.isEmpty) {
       return [
         SliverToBoxAdapter(
-          child: CommunityEmptyState(
-            icon: Icons.rate_review_outlined,
-            title: context.l10n.communityReviewsEmptyTitle,
-            message: context.l10n.communityReviewsEmptyBody,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(context.l10n.communityReviewsEmptyTitle),
+                Text(context.l10n.communityReviewsEmptyBody),
+              ],
+            ),
           ),
         ),
       ];

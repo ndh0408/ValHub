@@ -452,6 +452,7 @@ class CommunityTestEnv {
   }
 
   final Prefs prefs;
+  ContentDb content = fixtureContent;
   final secure = MemorySecureStore();
   final sessions = MockSessionManager();
   final pvp = MockPvpApi();
@@ -487,7 +488,7 @@ class CommunityTestEnv {
       ref.onDispose(store.dispose);
       return store;
     }),
-    contentProvider.overrideWith((ref) async => fixtureContent),
+    contentProvider.overrideWith((ref) async => content),
     ownedItemsProvider.overrideWith(
       (ref, puuid) async => OwnedItems.resolve(
         Entitlements.fromRows([

@@ -48,7 +48,7 @@ describe('transactional media usage', () => {
       }
       db.exec("INSERT INTO users(id,created_at,updated_at) VALUES('a',0,0)");
       db.exec("INSERT INTO media(key,user_id,content_type,size,created_at,status) VALUES('one','a','image/png',20,0,'active'),('two','a','image/png',30,0,'quarantined')");
-      expect(migrate(db)).toEqual(['0011_media_usage.sql', '0012_review_ownership.sql']);
+      expect(migrate(db)).toEqual(['0011_media_usage.sql', '0012_review_ownership.sql', '0013_skin_comments.sql']);
       expect(migrate(db)).toEqual([]);
       check(db);
       expect(new SqliteRepo(db).mediaBytes()).toBe(50);

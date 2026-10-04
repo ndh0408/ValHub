@@ -15,7 +15,7 @@ import 'star_rating.dart';
 
 /// One bounded read per visible catalog page. Missing statistics stay unknown;
 /// the real content catalog is still available during a Community outage.
-final _catalogStatsProvider = FutureProvider.autoDispose
+final catalogStatsProvider = FutureProvider.autoDispose
     .family<Map<String, SkinStats>, ({String puuid, String ids})>((ref, key) {
       return ref
           .watch(communityApiProvider)
@@ -31,19 +31,13 @@ class SkinCatalogSliver extends ConsumerStatefulWidget {
 
 class _SkinCatalogSliverState extends ConsumerState<SkinCatalogSliver> {
   String _query = '';
-  int _limit = 30;
   ContentDb? _indexed;
-  String? _weapon;
   List<({WeaponSkin skin, String weapon, String search})> _items = [];
 
   @override
   Widget build(BuildContext context) {
     final db = ref.watch(contentProvider).value;
     final weapon = ref.watch(topSkinsFilterProvider.select((f) => f.weapon));
-    if (weapon != _weapon) {
-      _weapon = weapon;
-      _limit = 30;
-    }
     if (!identical(db, _indexed)) {
       _indexed = db;
       _items = [
@@ -65,20 +59,6 @@ class _SkinCatalogSliverState extends ConsumerState<SkinCatalogSliver> {
             terms.every(item.search.contains))
           item,
     ];
-    final visible = matches.take(_limit).toList();
-    final stats = <String, SkinStats>{};
-    for (var start = 0; start < visible.length; start += 30) {
-      final page = visible.skip(start).take(30);
-      final loaded = ref
-          .watch(
-            _catalogStatsProvider((
-              puuid: widget.puuid,
-              ids: page.map((i) => i.skin.uuid).join(','),
-            )),
-          )
-          .value;
-      if (loaded != null) stats.addAll(loaded);
-    }
     return SliverMainAxisGroup(
       slivers: [
         SliverToBoxAdapter(
@@ -100,10 +80,9 @@ class _SkinCatalogSliverState extends ConsumerState<SkinCatalogSliver> {
                   ),
                   onChanged: (value) => setState(() {
                     _query = value;
-                    _limit = 30;
                   }),
                 ),
-                if (visible.isEmpty)
+                if (matches.isEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 12),
                     child: Text(
@@ -117,42 +96,47 @@ class _SkinCatalogSliverState extends ConsumerState<SkinCatalogSliver> {
           ),
         ),
         SliverList.builder(
-          itemCount: visible.length,
+          itemCount: matches.length,
           itemBuilder: (context, index) {
-            final item = visible[index];
-            final rating = stats[item.skin.uuid]?.rating;
-            return ListTile(
-              key: ValueKey('inline-catalog-${item.skin.uuid}'),
-              leading: SizedBox(
-                width: 64,
-                height: 48,
-                child: NetImage(item.skin.image, fit: BoxFit.contain),
-              ),
-              title: Text(item.skin.displayName),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(item.weapon),
-                  if (rating != null && rating.count > 0)
-                    RatingBadge(rating: rating),
-                ],
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => openSkinReview(context, item.skin.uuid),
+            final item = matches[index];
+            // Only the page containing a laid-out row requests statistics.
+            final start = (index ~/ 30) * 30;
+            final ids = matches
+                .skip(start)
+                .take(30)
+                .map((i) => i.skin.uuid)
+                .join(',');
+            return Consumer(
+              builder: (context, ref, _) {
+                final rating = ref
+                    .watch(
+                      catalogStatsProvider((puuid: widget.puuid, ids: ids)),
+                    )
+                    .value?[item.skin.uuid]
+                    ?.rating;
+                return ListTile(
+                  key: ValueKey('inline-catalog-${item.skin.uuid}'),
+                  leading: SizedBox(
+                    width: 64,
+                    height: 48,
+                    child: NetImage(item.skin.image, fit: BoxFit.contain),
+                  ),
+                  title: Text(item.skin.displayName),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(item.weapon),
+                      if (rating != null && rating.count > 0)
+                        RatingBadge(rating: rating),
+                    ],
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => openSkinReview(context, item.skin.uuid),
+                );
+              },
             );
           },
         ),
-        if (matches.length > visible.length)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: OutlinedButton(
-                key: const ValueKey('skins-catalog-more'),
-                onPressed: () => setState(() => _limit += 30),
-                child: Text(context.l10n.commonLoadMore),
-              ),
-            ),
-          ),
       ],
     );
   }

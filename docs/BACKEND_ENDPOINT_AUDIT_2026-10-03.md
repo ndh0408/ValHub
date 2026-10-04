@@ -75,7 +75,27 @@ SQLite is the actual database. Its FK/cascade/migration/unique/transaction prote
 
 Public Community does not implement private-post or friends-only ACLs. Device-local hide/block is not server peer blocking. Request IDs/alert delivery, production restore/RPO/RTO, actual domain associations, edge deletion TTL and production penetration/load testing remain unfinished or external. No legal/privacy certification is asserted.
 
-## Final classification
+## Addendum — build 4021 skin comments
+
+The original 40-route matrix above is historical. Three additive registrations
+bring the current inventory to 43. Build 4020 also strengthened row 30: fresh
+Riot identity must match the authenticated author, and Riot inventory must prove
+skin ownership; legacy unverified reviews do not contribute star aggregates.
+
+| # | Method / resource | Authentication / owner | Other-user access and server guard | Rate | Validation | Idempotency / race | Privacy |
+|---|---|---|---|---|---|---|---|
+| 41 | GET `/v1/skins/:skinUuid/comments` | O / public authors | visible comments of canonical catalog skin; invalid supplied session rejected | P/R | V, UUID/catalog, cursor and limit <=50 | read only; indexed chronological query | public plain text; no individual comment response cache |
+| 42 | POST `/v1/skins/:skinUuid/comments` | S / self | author/origin from S; nonowners may comment, never supply stars | R + shared comments before catalog/filter | V, 1..500 code points, content language, known skin | C + A + T; revocation checked after catalog await | no Riot proof/token needed; plain comments do not alter reviews |
+| 43 | DELETE `/v1/skin-comments/:id` | S / comment owner | server author comparison; other author refused | R | UUID/existence | D + T; associated reports removed atomically | self deletion only |
+
+Fourteen new adversarial/control tests exercise ownership separation, invalid
+sessions, author-only deletion, cursor ties, shared rate limits, retry conflicts,
+late revocation, sanctions, moderation/reporting, export/erasure and query indexes.
+They use isolated local SQLite and controlled catalog/Riot responses. Production
+deployment, edge limits, multilingual linguistic review and load acceptance are
+not established by these tests.
+
+## Final classification (historical checkpoint 4017)
 
 * 🟢 VERIFIED COMPLETE: the exercised late-authorization fix and 900-test local backend suite; explicit endpoint inventory reviewed.
 * 🟡 PARTIAL: production security, multilingual moderation, private/friends visibility, server peer blocking, profiling and observability acceptance.

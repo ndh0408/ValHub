@@ -220,6 +220,8 @@ export interface CommentRow {
   language: string | null;
 }
 
+export type SkinCommentRow = Omit<CommentRow, 'post_id'> & { skin_uuid: string };
+
 export interface MediaRow {
   key: string;
   user_id: string;
@@ -249,6 +251,7 @@ export interface AccountData {
   user: UserRow;
   posts: PostRow[];
   comments: CommentRow[];
+  skinComments: SkinCommentRow[];
   reviews: ReviewRow[];
   postLikes: { post_id: string; created_at: number }[];
   reviewLikes: { review_id: string; created_at: number }[];
@@ -450,6 +453,9 @@ export interface Repo {
   getComment(id: string): (CommentRow & AuthorCols) | null;
   listComments(q: { postId: string; cursor?: Cursor; limit: number }): (CommentRow & AuthorCols)[];
   deleteComment(id: string): void;
+  insertSkinComment(c: Omit<SkinCommentRow, 'hidden_reason'>): void;
+  getSkinComment(id: string): (SkinCommentRow & AuthorCols) | null;
+  listSkinComments(q: { skinUuid: string; cursor?: Cursor; limit: number }): (SkinCommentRow & AuthorCols)[];
 
   /** Countries with visible posts or LFG posts since `since` (rows without a country are skipped). */
   communities(since: number): CommunityActivity[];

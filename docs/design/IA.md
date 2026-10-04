@@ -1,5 +1,13 @@
 # ValVN — Kiến trúc thông tin (quyết định chốt, 29/09/2026)
 
+Override verified in [build 4021](../SKIN_CATALOG_AND_DISCUSSION_2026-10-04.md):
+skin rankings are global and all-time. The Community skin section also exposes
+the complete collectible catalog through a lazy searchable list. Nonowners may
+read and write separate plain comments; stars/reviews require verified inventory.
+Normal browsing has no anonymous join banner after explicit account consent.
+Production comment deployment remains unverified. Older scoped/weekly design
+notes below are historical where they conflict with these owner requirements.
+
 Mục tiêu: gọn hơn ValBuddy, đủ hơn Daily Val, "thông minh" — màn đầu tiên đã trả lời
 được câu hỏi người chơi hay hỏi nhất mà không cần bấm.
 

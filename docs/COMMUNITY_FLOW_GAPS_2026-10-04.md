@@ -30,3 +30,14 @@ Country repair was observed for all six saved accounts on the owner emulator.
 | --- | --- | --- |
 | Full skin catalog as main content | 🟡 PARTIAL | Inline discovery exists but a large empty state and a 30-item manual limit obscure the full catalog. Use a lazy complete list, compact ranking notice and visible-page statistics. |
 | Plain skin comments without ownership | 🔴 MISSING | Review bodies require a star rating/ownership. Add separate comments using existing pagination, moderation, rate limit, reporting, export and erasure systems; never count them as ratings. |
+
+## Checkpoint 4021 verification
+
+See [catalog/discussion evidence and remaining blockers](SKIN_CATALOG_AND_DISCUSSION_2026-10-04.md).
+Both new gaps above are implemented and locally verified. The main list is lazy
+and complete for the existing collectible catalog policy; nonowners have a
+separate discussion route, with no star side effects. Android owner MCP observes
+1,373 real cached collectible items and the new UI. The new production comment
+GET returns 404; deployment and a real write/read/delete roundtrip remain blocked.
+The local container's initially failing HIGH vulnerability scan was corrected
+and rerun successfully, with the same CI thresholds. Whole acceptance stays open.

@@ -1,7 +1,7 @@
 # ValVN Community server
 
 Backend for the app's "Cộng đồng" tab: LFG (tìm đồng đội, v2 with rank range / roles / live party
-status / joins), skin votes, skin reviews (Daily Val-style stars + text), feed posts with images /
+status / joins), skin votes, inventory-verified skin reviews (stars + text), separate plain skin comments, feed posts with images /
 likes / comments / reports, country / region / global community scopes (v3), and a multi-language content
 filter. API contract: [`docs/community-api.md`](../../docs/community-api.md).
 
@@ -28,7 +28,7 @@ src/
   media-service.ts   delete / quarantine helpers shared by routes, sweeper and CLI
   content.ts         valorant-api catalog (real skin / weapon / agent uuids), 24 h cache
   cache.ts           in-memory TTL cache and fixed-window limiter (anonymous traffic)
-  routes/            auth, account, lfg, skins, reviews, communities, posts (+ likes, comments, reports),
+  routes/            auth, account, lfg, skins, reviews, skin-comments, communities, posts (+ likes, comments, reports),
                      media, public-guard (anonymous rate limit + cache)
   geo/               countries.ts (ISO 3166-1 alpha-3 -> alpha-2, 249 entries), languages.ts (the 17 app languages),
                      scope.ts (country / region / global resolution + SQL condition)
@@ -38,7 +38,7 @@ src/
   load.ts            event-loop lag monitor (load shedding)      metrics.ts   aggregate counters (no user data)
   reasons.ts         stable error reason codes + Vietnamese / English texts
   config.ts crypto.ts cursor.ts errors.ts riot.ts validate.ts
-migrations/          0001_init.sql ... 0010_idempotency.sql — additive; never edit an applied migration
+migrations/          0001_init.sql ... 0013_skin_comments.sql — additive; never edit an applied migration
 ops/backup-loop.sh   the valvn-backup service's loop        scripts/restore.sh   restore from a backup archive
 test/                vitest (in-memory SQLite + temp dirs, stubbed Riot /userinfo, fake clock)
 ```
@@ -47,6 +47,18 @@ Everything external is injected into `createApp({ repo, media, config, riotUseri
 never touch the network or the real clock.
 
 ## Configuration (env)
+
+Build 4021 local evidence: [catalog/discussion checkpoint](../../docs/SKIN_CATALOG_AND_DISCUSSION_2026-10-04.md).
+Plain comments require a Community session but no skin ownership. Star reviews
+require Riot identity/inventory proof; client ownership flags never authorize a
+review. `skin_comment` reports, own export and erasure use the existing systems.
+The production service must be updated before the new comment routes are usable.
+
+The runtime image contains Node, native production dependencies and age, with
+npm/corepack removed after the build. Use the existing `node dist/cli.js` operator
+commands; package installation remains in the build stage. Runtime PCRE is
+explicitly refreshed along with age. Image scanning retains the existing
+CRITICAL/HIGH and ignore-unfixed policy; no vulnerability suppression was added.
 
 | Var | Required | Meaning |
 |---|---|---|

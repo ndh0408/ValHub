@@ -87,15 +87,15 @@ class TopSkinsSliver extends ConsumerWidget {
             header,
             if (async.hasError && !async.isLoading)
               CommunityErrorState(
+                compact: true,
                 error: async.error!,
                 puuid: puuid,
                 onRetry: () => ref.invalidate(topSkinsProvider(query)),
               )
             else
-              SkeletonColumn(
-                item: (_) => const TopSkinSkeleton(),
-                count: 5,
-                spacing: 10,
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: LinearProgressIndicator(),
               ),
           ],
         ),
@@ -110,6 +110,7 @@ class TopSkinsSliver extends ConsumerWidget {
           children: [
             header,
             CommunityErrorState(
+              compact: true,
               error: const CommunityException(CommunityException.badResponse),
               puuid: puuid,
               onRetry: () => ref.invalidate(topSkinsProvider(query)),
@@ -126,28 +127,35 @@ class TopSkinsSliver extends ConsumerWidget {
         child: Column(
           children: [
             header,
-            CommunityEmptyState(
-              icon: Icons.favorite_border_rounded,
-              title: context.l10n.communityRankingEmptyTitle,
-              message: switch (filter.sort) {
-                TopSort.votes => context.l10n.communityRankingEmptyVotes,
-                TopSort.rating => context.l10n.communityRankingEmptyRatings,
-                TopSort.reviews => context.l10n.communityRankingEmptyReviews,
-              },
-              action: filter.weapon != null || filter.period != TopPeriod.all
-                  ? OutlinedButton(
-                      key: const ValueKey('skins-clear-filters'),
-                      onPressed: () => ref
-                          .read(topSkinsFilterProvider.notifier)
-                          .setFilters(
-                            filter.copyWith(
-                              weapon: () => null,
-                              period: TopPeriod.all,
-                            ),
-                          ),
-                      child: Text(context.l10n.communityRankingClear),
-                    )
-                  : null,
+            Padding(
+              key: const ValueKey('skins-ranking-empty-notice'),
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    context.l10n.communityRankingEmptyTitle,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  Text(switch (filter.sort) {
+                    TopSort.votes => context.l10n.communityRankingEmptyVotes,
+                    TopSort.rating => context.l10n.communityRankingEmptyRatings,
+                    TopSort.reviews =>
+                      context.l10n.communityRankingEmptyReviews,
+                  }, style: Theme.of(context).textTheme.bodySmall),
+                  if (filter.weapon != null)
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: TextButton(
+                        key: const ValueKey('skins-clear-filters'),
+                        onPressed: () => ref
+                            .read(topSkinsFilterProvider.notifier)
+                            .setWeapon(null),
+                        child: Text(context.l10n.communityRankingClear),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ],
         ),
