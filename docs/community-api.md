@@ -336,6 +336,13 @@ from averages.
 - Rate limits: reviews (create/update) 30 / hour, review likes share the likes
   limit. Inventory work is bounded to 20 concurrent requests, 15 seconds, fixed
   hosts, no redirects and a 2 MiB inventory response limit.
+  Game headers use validated public `/v1/version` metadata (six-hour cache,
+  deduplicated bounded fetch, no credentials sent to the content host). A metadata
+  fetch has its own ten-second timeout; missing/invalid metadata cannot grant a
+  review. Both single-type and `EntitlementsByTypes` responses are supported.
+  Bucket `ItemTypeID` is the skin-level item type; row `TypeID` is an entitlement
+  kind, such as permanent, and is not the item type. Fixed operation/status logs
+  never contain Riot tokens, subjects or response bodies.
 
 ### Feed (bảng tin)
 

@@ -41,3 +41,14 @@ separate discussion route, with no star side effects. Android owner MCP observes
 GET returns 404; deployment and a real write/read/delete roundtrip remain blocked.
 The local container's initially failing HIGH vulnerability scan was corrected
 and rerun successfully, with the same CI thresholds. Whole acceptance stays open.
+
+## Production checkpoint 05/10
+
+See [deployment and actual owner verification](PRODUCTION_DEPLOYMENT_2026-10-05.md).
+The previously blocked production comment route now returns 200, and a real
+create/read/delete lifecycle passed. A real owned-skin review initially failed
+because game headers were missing and entitlement kind was confused with item
+type. Both were fixed; live Riot verification, save, global aggregation and
+delete now pass. Current API/backup/watchdog are healthy, original data preserved,
+and actual production backup clones restored/drilled. P0 translation cutover,
+whole-product acceptance and signed store release remain open.
