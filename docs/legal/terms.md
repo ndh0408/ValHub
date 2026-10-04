@@ -2,7 +2,7 @@
 
 # Điều khoản sử dụng
 
-**ValHub** · Phiên bản 1.0 · Hiệu lực từ: 29/09/2026
+**ValHub** · Phiên bản 1.0 · Hiệu lực từ: 04/10/2026
 
 Chào mừng bạn đến với ValHub. Điều khoản sử dụng này ("Điều khoản") là thỏa thuận ràng buộc giữa bạn và Nguyễn Đức Huy ("chúng tôi") về việc tải, cài đặt và sử dụng ứng dụng ValHub trên iOS và Android, bao gồm cả các tính năng Cộng đồng (gọi chung là "Ứng dụng").
 

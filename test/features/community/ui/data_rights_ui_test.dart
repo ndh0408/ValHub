@@ -1,3 +1,4 @@
+import 'package:valvn/features/community/ui/consent/consent_sheet.dart';
 import 'package:valvn/core/l10n/l10n.dart';
 
 import 'dart:async';
@@ -338,8 +339,8 @@ void main() {
         // Back on the Community tab: anonymous browsing with the banner.
         router.pop();
         await settle(tester, frames: 30);
-        expect(find.text(CommunityStrings.anonymousBanner), findsOneWidget);
-        expect(find.text(CommunityStrings.consentGateAction), findsOneWidget);
+        expect(find.text(CommunityStrings.anonymousBanner), findsNothing);
+        expect(find.text(CommunityStrings.consentGateAction), findsNothing);
         expect(find.text('Bài công khai'), findsOneWidget);
         final feed = env.server.calls('GET /v1/posts').last;
         expect(feed.authorization, isNull);
@@ -440,9 +441,11 @@ void main() {
       await settle(tester, frames: 30);
       router.pop();
       await settle(tester, frames: 30);
-      expect(find.text(CommunityStrings.anonymousBanner), findsOneWidget);
+      expect(find.text(CommunityStrings.anonymousBanner), findsNothing);
 
-      await tester.tap(find.text(CommunityStrings.consentGateAction));
+      unawaited(
+        promptConsentFromContext(tester.element(find.text('Bài công khai'))),
+      );
       await settle(tester, frames: 20);
       await tester.tap(find.byKey(const ValueKey('consent-agree')));
       await settle(tester, frames: 30);

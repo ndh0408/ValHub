@@ -138,6 +138,8 @@ extension CommunityLabels on AppLocalizations {
   };
 
   String? communityModerationReason(String? reason) => switch (reason) {
+    'skin_not_owned' => communityReviewOwnershipRequired,
+    'ownership_unavailable' => communityReviewOwnershipUnavailable,
     'content_inappropriate' => communityModerationContentInappropriate,
     'content_scam' => communityModerationContentScam,
     'content_too_complex' => communityModerationContentTooComplex,

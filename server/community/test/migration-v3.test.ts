@@ -178,15 +178,19 @@ describe('migration 0004 on a database with 0001-0003 data', () => {
     expect(await posts('scope=region&region=eu')).toEqual([]);
     expect(await posts('scope=country&country=VN')).toEqual([]);
 
-    // Votes and reviews: old ones count globally and by shard, not by country.
+    // Votes retain their original behavior. Legacy reviews are preserved but
+    // cannot contribute to owner-verified ratings without a new Riot proof.
     const top = async (qs: string) => (await req('GET', `/v1/skins/top?${qs}`)).json.items.map((i: any) => [i.skinUuid, i.votes]);
     expect(await top('')).toEqual([[SKIN_A, 2], [SKIN_B, 1]]);
     expect(await top('scope=region&region=eu')).toEqual([[SKIN_A, 1], [SKIN_B, 1]]);
     expect(await top('scope=region&region=ap')).toEqual([[SKIN_A, 1]]);
     expect(await top('scope=country&country=VN')).toEqual([]);
     const summary = async (qs: string) => (await req('GET', `/v1/skins/${SKIN_A}/summary?${qs}`)).json;
-    expect(await summary('')).toMatchObject({ votes: 2, ratingCount: 1, ratingAvg: 4 });
-    expect(await summary('region=ap')).toMatchObject({ votes: 1, ratingCount: 1 });
+    expect(await summary('')).toMatchObject({ votes: 2, ratingCount: 0, ratingAvg: null });
+    expect(await summary('region=ap')).toMatchObject({ votes: 1, ratingCount: 0 });
+    const legacyReviews = (await req('GET', `/v1/skins/${SKIN_A}/reviews`)).json.items;
+    expect(legacyReviews).toHaveLength(1);
+    expect(legacyReviews[0]).toMatchObject({rating:4, ownershipVerifiedAt:null});
     expect(await summary('country=VN')).toMatchObject({ votes: 0, ratingCount: 0 });
 
     // LFG: the old post is found by its own region, not by country.

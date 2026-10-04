@@ -12,6 +12,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/accounts/account.dart';
 import 'package:valvn/core/domain/competitive/match_stats_store.dart';
 import 'package:valvn/core/domain/economy/store_history.dart';
+import 'package:valvn/core/domain/economy/owned_items.dart';
+import 'package:valvn/core/riot/riot_ids.dart';
 import 'package:valvn/core/accounts/local_data.dart';
 import 'package:valvn/core/domain/competitive/rr_history.dart';
 import 'package:valvn/core/auth/auth_providers.dart';
@@ -486,6 +488,19 @@ class CommunityTestEnv {
       return store;
     }),
     contentProvider.overrideWith((ref) async => fixtureContent),
+    ownedItemsProvider.overrideWith(
+      (ref, puuid) async => OwnedItems.resolve(
+        Entitlements.fromRows([
+          for (final skin in fixtureContent.collectibleSkins)
+            for (final level in skin.levels)
+              EntitlementRow(
+                itemTypeId: ItemTypeIds.skinLevel,
+                itemId: level.uuid,
+              ),
+        ], receivedAt: now),
+        fixtureContent,
+      ),
+    ),
     clockProvider.overrideWithValue(clock),
     communityBaseUrlProvider.overrideWithValue(baseUrl),
     communityHttpProvider.overrideWithValue(

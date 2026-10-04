@@ -1,6 +1,6 @@
 # Hoàn thiện ValHub — nhật ký triển khai Codex
 
-Checkpoint 04/10 build 4019: [resource/ranking verification](RANKING_AND_RESOURCE_CHECKPOINT_2026-10-04.md). Windows/Mac 4,354 tests; analyzer 0; backend 900. Global cutover and latest product requirements remain open.
+Checkpoint 04/10 build 4020: [account/ownership verification](ACCOUNT_AND_OWNERSHIP_CHECKPOINT_2026-10-04.md). Windows/Mac 4,369 tests; analyzer 0; backend 917; Android public 10/native 6; unsigned iOS build succeeds. Whole-product acceptance, localization cutover and new full-catalog/comment requirements remain open.
 
 Checkpoint mới nhất 04/10: [Model / export riêng tư / CI local, build 4018](I18N_MODELS_AND_EXPORT_2026-10-04.md).
 

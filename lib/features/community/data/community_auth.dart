@@ -53,6 +53,31 @@ class CommunityAuth {
   /// the client only reads public data, anonymously.
   bool hasConsent(String puuid) => _hasConsent(puuid);
 
+  /// Fresh proof for an explicit owner-only review. Sent transiently with that
+  /// write; server derives identity from Riot and never trusts a client PUUID.
+  Future<String> reviewOwnershipToken(
+    String puuid, {
+    String? failedAccessToken,
+  }) async {
+    final id = puuid.toLowerCase();
+    final epoch = _forgotten[id] ?? 0;
+    if (!_hasConsent(id) || _account(id) == null) {
+      throw const CommunityException(CommunityException.consentRequired);
+    }
+    final session = failedAccessToken == null
+        ? await _sessions.session(id)
+        : await _sessions.refreshAfterAuthFailure(
+            id,
+            failedAccessToken: failedAccessToken,
+          );
+    if ((_forgotten[id] ?? 0) != epoch ||
+        !_hasConsent(id) ||
+        _account(id) == null) {
+      throw const CommunityException(CommunityException.consentRequired);
+    }
+    return session.accessToken;
+  }
+
   /// A valid community token for [puuid]. With [signIn] false only a cached
   /// token is returned (`null` when there is none), so read-only screens can
   /// call the "auth optional" endpoints without talking to Riot.

@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show ValueListenable;
+import 'package:flutter/foundation.dart' show ValueListenable, Listenable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -10,6 +10,8 @@ import '../core/ui/empty_view.dart';
 import '../features/battlepass/battlepass_routes.dart';
 import '../features/collection/collection_routes.dart';
 import '../features/community/community_routes.dart';
+import '../features/community/providers/consent_providers.dart';
+import '../features/community/ui/consent/account_consent_screen.dart';
 import '../features/home/home_routes.dart';
 import '../features/profile/profile_routes.dart';
 import '../features/settings/settings_routes.dart';
@@ -33,10 +35,40 @@ const _publicPaths = {SettingsRoutes.welcome, AuthRoutes.login};
 /// - accounts → `/welcome` and `/` (the "default tab", which core code such
 ///   as the login screen and the error page can name without knowing feature
 ///   paths) go to `/home`.
-String? appRedirect({required bool hasAccounts, required Uri location}) {
+String? appRedirect({
+  required bool hasAccounts,
+  required Uri location,
+  bool requiresConsent = false,
+}) {
   final path = location.path.isEmpty ? '/' : location.path;
   if (!hasAccounts) {
     return _publicPaths.contains(path) ? null : SettingsRoutes.welcome;
+  }
+  if (requiresConsent) {
+    // Legal documents and account management remain accessible. The gate
+    // never grants consent automatically and preserves internal deep links.
+    if (path == '/consent' ||
+        path == AuthRoutes.login ||
+        path == SettingsRoutes.root ||
+        path.startsWith('${SettingsRoutes.about}/')) {
+      return null;
+    }
+    return Uri(
+      path: '/consent',
+      queryParameters: {'from': location.toString()},
+    ).toString();
+  }
+  if (path == '/consent') {
+    final from = Uri.tryParse(location.queryParameters['from'] ?? '');
+    if (from != null &&
+        !from.hasScheme &&
+        !from.hasAuthority &&
+        from.path.startsWith('/') &&
+        from.path != '/consent' &&
+        from.path != '/login') {
+      return from.toString();
+    }
+    return HomeRoutes.root;
   }
   if (path == SettingsRoutes.welcome || path == '/') return HomeRoutes.root;
   return null;
@@ -45,6 +77,10 @@ String? appRedirect({required bool hasAccounts, required Uri location}) {
 /// Every route of the app. Feature route lists are composed here; features
 /// only edit their own `*_routes.dart`.
 List<RouteBase> buildAppRoutes() => [
+  GoRoute(
+    path: '/consent',
+    builder: (context, state) => const AccountConsentScreen(),
+  ),
   ...settingsTopLevelRoutes,
   GoRoute(
     path: AuthRoutes.login,
@@ -84,12 +120,16 @@ GoRouter createAppRouter({
   required ValueListenable<bool> hasAccounts,
   String initialLocation = HomeRoutes.root,
   GlobalKey<NavigatorState>? navigatorKey,
+  ValueListenable<bool>? requiresConsent,
 }) => GoRouter(
   navigatorKey: navigatorKey ?? rootNavigatorKey,
   initialLocation: initialLocation,
-  refreshListenable: hasAccounts,
-  redirect: (context, state) =>
-      appRedirect(hasAccounts: hasAccounts.value, location: state.uri),
+  refreshListenable: Listenable.merge([hasAccounts, ?requiresConsent]),
+  redirect: (context, state) => appRedirect(
+    hasAccounts: hasAccounts.value,
+    location: state.uri,
+    requiresConsent: requiresConsent?.value ?? false,
+  ),
   routes: buildAppRoutes(),
   errorBuilder: (context, state) => Scaffold(
     appBar: AppBar(),
@@ -108,11 +148,22 @@ GoRouter createAppRouter({
 /// account list becomes empty / non-empty).
 final routerProvider = Provider<GoRouter>((ref) {
   final hasAccounts = ValueNotifier<bool>(ref.read(hasAccountsProvider));
+  final requiresConsent = ValueNotifier<bool>(
+    ref.read(accountRequiresConsentProvider),
+  );
   ref.listen(hasAccountsProvider, (_, next) => hasAccounts.value = next);
-  final router = createAppRouter(hasAccounts: hasAccounts);
+  ref.listen(
+    accountRequiresConsentProvider,
+    (_, next) => requiresConsent.value = next,
+  );
+  final router = createAppRouter(
+    hasAccounts: hasAccounts,
+    requiresConsent: requiresConsent,
+  );
   ref.onDispose(() {
     router.dispose();
     hasAccounts.dispose();
+    requiresConsent.dispose();
   });
   return router;
 });

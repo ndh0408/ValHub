@@ -9,17 +9,17 @@ import '../../../core/storage/ui_memory.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../providers/community_providers.dart';
+import '../data/community_models.dart';
 import '../providers/consent_providers.dart';
-import 'consent/anonymous_banner.dart';
 import 'consent/consent_sheet.dart';
 import '../providers/feed_providers.dart';
 import '../providers/lfg_providers.dart';
-import '../providers/scope_providers.dart';
 import '../providers/skin_vote_providers.dart';
 import 'feed/feed_section.dart';
 import 'lfg/lfg_poster_sync.dart';
 import 'lfg/lfg_section.dart';
 import 'skins/top_skins_section.dart';
+import 'skins/skin_catalog_sheet.dart';
 import 'widgets/community_widgets.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -140,8 +140,6 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
       onRefresh: () => _refresh(account, joined: joined),
       floatingActionButton: _fab(account, joined: joined),
       slivers: [
-        if (!joined && _section == CommunitySection.feed)
-          SliverToBoxAdapter(child: AnonymousBanner(account: account)),
         switch (_section) {
           CommunitySection.feed => FeedSliver(
             key: ValueKey('feed-${account.puuid}'),
@@ -159,8 +157,11 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
             puuid: account.puuid,
           ),
         },
-        if (!joined && _section == CommunitySection.skins)
-          SliverToBoxAdapter(child: AnonymousBanner(account: account)),
+        if (_section == CommunitySection.skins)
+          SkinCatalogSliver(
+            key: ValueKey('catalog-${account.puuid}'),
+            puuid: account.puuid,
+          ),
         const SliverToBoxAdapter(child: SizedBox(height: 96)),
       ],
     );
@@ -211,16 +212,12 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
           await ref.read(lfgProvider(q).notifier).refresh();
         case CommunitySection.skins:
           final f = ref.read(topSkinsFilterProvider);
-          final scope = await ref.read(
-            resolvedScopeProvider((puuid: puuid, section: ScopedSection.skins))
-                .future,
-          );
           final q = (
             puuid: puuid,
             weapon: f.weapon,
-            period: f.period,
+            period: TopPeriod.all,
             sort: f.sort,
-            scope: scope,
+            scope: ScopeFilter.global,
           );
           ref.invalidate(topSkinsProvider(q));
           await ref.read(topSkinsProvider(q).future);

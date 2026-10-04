@@ -1082,6 +1082,7 @@ class SkinReview {
     this.createdAt,
     this.updatedAt,
     this.language,
+    this.ownershipVerifiedAt,
   });
 
   static SkinReview? fromJson(Object? json) {
@@ -1101,6 +1102,7 @@ class SkinReview {
       createdAt: asDateTime(m['createdAt']),
       updatedAt: asDateTime(m['updatedAt']),
       language: lfgLanguageCode(m['language']),
+      ownershipVerifiedAt: asDateTime(m['ownershipVerifiedAt']),
     );
   }
 
@@ -1120,6 +1122,10 @@ class SkinReview {
   /// Language of [body] (for on-device translation).
   final String? language;
 
+  /// Only a server-verified inventory proof at the time of review; legacy
+  /// reviews remain unverified. This does not promise current ownership.
+  final DateTime? ownershipVerifiedAt;
+
   bool get edited =>
       updatedAt != null &&
       createdAt != null &&
@@ -1137,6 +1143,7 @@ class SkinReview {
     createdAt: createdAt,
     updatedAt: updatedAt,
     language: language,
+    ownershipVerifiedAt: ownershipVerifiedAt,
   );
 
   SkinReview toggledLike() => copyWith(

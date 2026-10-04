@@ -106,6 +106,7 @@ void main() {
     final info = await client.fetchUserInfo('T');
     expect(info.puuid, '41c322a1-b328-495b-a004-5ccd3e45eae8');
     expect(info.gameName, 'Tên');
+    expect(info.country, 'vnm');
     expect(await client.fetchRegion('T', 'ID'), 'ap');
     expect(adapter.requests.map((r) => r.uri.host), [
       'entitlements.auth.riotgames.com',

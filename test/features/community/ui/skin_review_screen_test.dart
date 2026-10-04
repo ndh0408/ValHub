@@ -89,6 +89,25 @@ void _serve(
 }
 
 void main() {
+  testWidgets('a non-owner can read reviews but cannot start a rating', (
+    tester,
+  ) async {
+    final env = await CommunityTestEnv.create();
+    env.extraOverrides = [
+      ownedItemsProvider(mePuuid).overrideWith(
+        (ref) async => OwnedItems.resolve(
+          Entitlements.fromRows([], receivedAt: now),
+          fixtureContent,
+        ),
+      ),
+    ];
+    _serve(env);
+    await _pump(tester, env);
+    expect(find.textContaining('Tài khoản phải sở hữu skin'), findsOneWidget);
+    expect(env.server.calls('PUT /v1/skins/*/review'), isEmpty);
+    expect(find.text('4,6'), findsOneWidget);
+    await unmount(tester);
+  });
   late CommunityTestEnv env;
   setUp(() async => env = await CommunityTestEnv.create());
 
@@ -144,6 +163,7 @@ void main() {
 
     expect(env.server.calls('PUT /v1/skins/*/review').single.json, {
       'weaponUuid': vandal,
+      'accessToken': 'riot-access-1',
       'rating': 4,
       'body': 'Rất đẹp',
       'language': 'vi',

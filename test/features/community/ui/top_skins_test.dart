@@ -95,7 +95,13 @@ void main() {
     expect(find.textContaining(CommunityStrings.periodAllTime), findsOneWidget);
     final q = env.server.calls('GET /v1/skins/top').single.query;
     expect((q['period'], q['sort']), ('all', 'votes'));
-    expect(find.text('Vandal Reaver'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey(reaverSkin)),
+        matching: find.text('Vandal Reaver'),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('4,6'), findsOneWidget);
     expect(find.text(CommunityStrings.ratingCount('128')), findsOneWidget);
     expect(find.text(CommunityStrings.noRatings), findsOneWidget);
@@ -119,11 +125,8 @@ void main() {
     await _apply(tester);
     await settle(tester);
     expect(env.server.calls('GET /v1/skins/top').last.query['sort'], 'reviews');
-    await _options(tester);
-    await tester.tap(find.byKey(const ValueKey('skins-period-week')));
-    await _apply(tester);
-    await settle(tester);
-    expect(env.server.calls('GET /v1/skins/top').last.query['period'], 'week');
+    expect(env.server.calls('GET /v1/skins/top').last.query['period'], 'all');
+    expect(find.byKey(const ValueKey('skins-period-week')), findsNothing);
     await tester.tap(find.byKey(const ValueKey('skins-weapon-selector')));
     await settle(tester);
     await tester.tap(find.byKey(const ValueKey('weapon-$vandal')));
@@ -133,7 +136,7 @@ void main() {
     expect(find.text(tl.communityRankingEmptyReviews), findsOneWidget);
 
     expect(env.prefs.getString(PrefKeys.ui('community.skins.sort')), 'reviews');
-    expect(env.prefs.getString(PrefKeys.ui('community.skins.period')), 'week');
+    expect(env.prefs.getString(PrefKeys.ui('community.skins.period')), 'all');
     expect(env.prefs.getString(PrefKeys.ui('community.skins.weapon')), vandal);
     await unmount(tester);
   });
@@ -146,7 +149,7 @@ void main() {
     final count = env.server.calls('GET /v1/skins/top').length;
     await _options(tester);
     await tester.tap(find.byKey(const ValueKey('skins-sort-rating')));
-    await tester.tap(find.byKey(const ValueKey('skins-period-week')));
+    expect(find.byKey(const ValueKey('skins-period-week')), findsNothing);
     await settle(tester);
     expect(env.server.calls('GET /v1/skins/top').length, count);
     Navigator.of(
@@ -221,7 +224,7 @@ void main() {
         ..json('GET /v1/skins/*/summary', summaryJson())
         ..json('GET /v1/skins/*/reviews', page([]));
       await _open(tester, env);
-      expect(find.byKey(const ValueKey('consent-gate-action')), findsOneWidget);
+      expect(find.byKey(const ValueKey('consent-gate-action')), findsNothing);
       await tester.tap(find.byKey(const ValueKey('skins-explore')));
       await settle(tester);
       await tester.enterText(
@@ -268,7 +271,7 @@ void main() {
       ..json('GET /v1/skins/*/reviews', page([]));
     await _open(tester, env);
 
-    await tester.tap(find.text('Dao Đặc Nhiệm 809'));
+    await tester.tap(find.byKey(const ValueKey(knifeSkin)));
     await settle(tester, frames: 30);
 
     expect(find.byType(SkinReviewScreen), findsOneWidget);
@@ -339,7 +342,13 @@ void main() {
         light: light,
       );
       expect(tester.takeException(), isNull);
-      expect(find.text('Vandal Reaver'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey(reaverSkin)),
+          matching: find.text('Vandal Reaver'),
+        ),
+        findsOneWidget,
+      );
       await unmount(tester);
     });
   }

@@ -2,7 +2,7 @@
 
 # Tiêu chuẩn cộng đồng
 
-**ValHub** · Phiên bản 1.0 · Hiệu lực từ: 29/09/2026
+**ValHub** · Phiên bản 1.0 · Hiệu lực từ: 04/10/2026
 
 Cộng đồng ValHub là nơi người chơi VALORANT khoe cửa hàng, bàn chuyện skin, tìm đồng đội và giúp nhau leo rank. Để nơi này luôn vui và an toàn, hãy cùng nhau giữ những quy tắc dưới đây. Tiêu chuẩn này là một phần của Điều khoản sử dụng.
 

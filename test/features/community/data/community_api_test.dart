@@ -45,7 +45,7 @@ void main() {
       expect(auth, hasLength(1));
       expect(auth.single.json, {
         'accessToken': 'riot-access-1',
-        'consentVersion': '2026-10-01',
+        'consentVersion': '2026-10-04',
         'region': 'ap',
         'cardId': cardId,
         'rankTier': 18,

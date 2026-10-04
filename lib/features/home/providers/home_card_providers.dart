@@ -167,7 +167,7 @@ final homeCommunitySnapshotProvider = Provider.autoDispose
         return const AsyncData<HomeCommunitySnapshot?>(null);
       }
       final lfg = ref.watch(homeLfgPreviewProvider(puuid));
-      final trending = ref.watch(homeTrendingPreviewProvider(TopPeriod.week));
+      final trending = ref.watch(homeTrendingPreviewProvider(TopPeriod.all));
       final wishlist = ref.watch(wishlistProvider(puuid));
       if (!lfg.hasValue && !trending.hasValue) {
         return lfg.hasError && trending.hasError

@@ -142,31 +142,38 @@ void main() {
       'appliedScope': appliedScope,
     };
 
-    testWidgets('highlights the applied scope', (tester) async {
+    testWidgets('global ranking has no geographic selector', (tester) async {
       env.server.json('GET /v1/skins/top', top(_applied('global')));
       await _open(tester, env, location: '/community?section=skins');
 
-      // Asked: the viewer's country (spec default); the server used the world.
       expect(
         env.server.calls('GET /v1/skins/top').last.query['scope'],
-        'country',
+        'global',
       );
-      expect(_selected(tester), CommunityScope.global);
-      expect(find.text('Vandal Reaver'), findsOneWidget);
+      expect(find.byKey(const ValueKey('scope-selected-global')), findsNothing);
+      expect(find.text(tl.communityRankingGlobalAllTime), findsOneWidget);
+      expect(find.byKey(const ValueKey(reaverSkin)), findsOneWidget);
       await unmount(tester);
     });
 
-    testWidgets('country as asked', (tester) async {
+    testWidgets('rejects country results instead of calling them global', (
+      tester,
+    ) async {
       env.server.json(
         'GET /v1/skins/top',
         top(_applied('country', country: 'VN')),
       );
       await _open(tester, env, location: '/community?section=skins');
-      expect(_selected(tester), CommunityScope.country);
+      expect(find.byKey(const ValueKey(reaverSkin)), findsNothing);
+      expect(find.text(tl.communityRankingGlobalAllTime), findsOneWidget);
+      expect(
+        env.server.calls('GET /v1/skins/top').last.query['scope'],
+        'global',
+      );
       await unmount(tester);
     });
 
-    testWidgets('an empty leaderboard still shows the applied scope', (
+    testWidgets('an empty regional response is not presented as global', (
       tester,
     ) async {
       env.server.json('GET /v1/skins/top', {
@@ -174,8 +181,12 @@ void main() {
         'appliedScope': _applied('region', region: 'ap'),
       });
       await _open(tester, env, location: '/community?section=skins');
-      expect(find.text(tl.communityRankingEmptyTitle), findsOneWidget);
-      expect(_selected(tester), CommunityScope.region);
+      expect(find.text(tl.communityRankingEmptyTitle), findsNothing);
+      expect(find.text(tl.communityRankingGlobalAllTime), findsOneWidget);
+      expect(
+        env.server.calls('GET /v1/skins/top').last.query['scope'],
+        'global',
+      );
       await unmount(tester);
     });
   });

@@ -401,21 +401,34 @@ class CommunityApi {
     String? weaponUuid,
     String body = '',
     String? language,
-  }) async =>
-      SkinReview.fromJson(
-        await _send(
-          'PUT',
-          _skinPath(skinUuid, 'review'),
-          puuid: puuid,
-          json: {
-            'weaponUuid': ?weaponUuid,
-            'rating': rating.clamp(1, 5),
-            if (body.trim().isNotEmpty) 'body': body.trim(),
-            if (body.trim().isNotEmpty) 'language': ?language,
-          },
-        ),
-      ) ??
-      (throw const CommunityException(CommunityException.badResponse));
+  }) async {
+    var accessToken = await _auth.reviewOwnershipToken(puuid);
+    Future<Object?> save() => _send(
+      'PUT',
+      _skinPath(skinUuid, 'review'),
+      puuid: puuid,
+      json: {
+        'weaponUuid': ?weaponUuid,
+        'accessToken': accessToken,
+        'rating': rating.clamp(1, 5),
+        if (body.trim().isNotEmpty) 'body': body.trim(),
+        if (body.trim().isNotEmpty) 'language': ?language,
+      },
+    );
+    Object? result;
+    try {
+      result = await save();
+    } on CommunityException catch (e) {
+      if (e.code != CommunityException.riotRejected) rethrow;
+      accessToken = await _auth.reviewOwnershipToken(
+        puuid,
+        failedAccessToken: accessToken,
+      );
+      result = await save();
+    }
+    return SkinReview.fromJson(result) ??
+        (throw const CommunityException(CommunityException.badResponse));
+  }
 
   /// `DELETE /v1/skins/{uuid}/review` (the own review of that skin).
   Future<void> deleteMyReview(String puuid, String skinUuid) =>
@@ -673,7 +686,12 @@ class CommunityApi {
         contentType: contentType,
       );
     } on CommunityException catch (e) {
-      if (puuid == null || token == null || !e.isAuthFailure) rethrow;
+      if (puuid == null ||
+          token == null ||
+          !e.isAuthFailure ||
+          e.code == CommunityException.riotRejected) {
+        rethrow;
+      }
       // Expired / revoked community session: sign in again, retry once.
       await _auth.invalidate(puuid, token);
       return _http.send(

@@ -6859,7 +6859,7 @@
       "member": "consentTitle",
       "key": "communityConsentTitle",
       "kind": "string",
-      "value": "Tham gia Cộng đồng ValHub",
+      "value": "Quyền riêng tư và Cộng đồng ValHub",
       "doc": null,
       "section": "consent",
       "aliasOf": null
@@ -6870,7 +6870,7 @@
       "member": "consentVerify",
       "key": "communityConsentVerify",
       "kind": "string",
-      "value": "Khi cần xác minh Riot ID, ValHub gửi quyền truy cập Riot của bạn cho Cộng đồng ValHub. Cộng đồng dùng xong là bỏ ngay, không lưu.",
+      "value": "ValHub gửi quyền truy cập Riot cho máy chủ Cộng đồng để xác minh Riot ID khi kết nối và kiểm tra quyền sở hữu skin khi bạn lưu đánh giá. Máy chủ chỉ đọc dữ liệu cần thiết, dùng xong bỏ ngay quyền truy cập, không lưu.",
       "doc": null,
       "section": "consent",
       "aliasOf": null
@@ -6881,7 +6881,7 @@
       "member": "consentWithdrawn",
       "key": "communityConsentWithdrawn",
       "kind": "string",
-      "value": "Đã rút lại đồng ý. Bạn đang xem Cộng đồng ẩn danh.",
+      "value": "Đã rút lại đồng ý. Cần đồng ý lại để tiếp tục sử dụng app.",
       "doc": null,
       "section": "data rights (Settings)",
       "aliasOf": null
@@ -8887,7 +8887,7 @@
       "member": "privacyNote",
       "key": "communityPrivacyNote",
       "kind": "string",
-      "value": "ValHub xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.",
+      "value": "ValHub xác minh Riot ID khi kết nối Cộng đồng và quyền sở hữu skin khi bạn đánh giá. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.",
       "doc": null,
       "section": "general states",
       "aliasOf": null
@@ -9913,7 +9913,7 @@
       "member": "trendingTitle",
       "key": "communityTrendingTitle",
       "kind": "string",
-      "value": "Skin được yêu thích trong tuần",
+      "value": "Skin được yêu thích toàn cầu",
       "doc": null,
       "section": "previews",
       "aliasOf": null
@@ -19136,7 +19136,7 @@
       "member": "trendingTitle",
       "key": "homeTrendingTitle",
       "kind": "string",
-      "value": "Skin được yêu thích tuần này",
+      "value": "Skin được yêu thích toàn cầu",
       "doc": null,
       "section": "Community card",
       "aliasOf": null

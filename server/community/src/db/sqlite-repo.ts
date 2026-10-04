@@ -509,7 +509,7 @@ export class SqliteRepo implements Repo {
     q: { weaponUuid?: string; since?: number; geo?: GeoScope },
     params: Record<string, unknown>,
   ): string {
-    const where = ['r.hidden = 0', geoCondition('r', q.geo, params), this.trustedUser('r.user_id')];
+    const where = ['r.hidden = 0', 'r.ownership_verified_at IS NOT NULL', geoCondition('r', q.geo, params), this.trustedUser('r.user_id')];
     if (q.weaponUuid) {
       where.push('r.weapon_uuid = @weapon');
       params.weapon = q.weaponUuid;
@@ -566,6 +566,7 @@ export class SqliteRepo implements Repo {
   // ---- skin reviews ----------------------------------------------------------
 
   upsertReview(r: {
+    ownershipVerifiedAt?: number;
     userId: string;
     skinUuid: string;
     weaponUuid: string;
@@ -586,11 +587,12 @@ export class SqliteRepo implements Repo {
         // creation-time origin; the text language changes only when the client sends one.
         this.db
           .prepare(
-            `UPDATE skin_reviews SET rating = @rating, body = @body, updated_at = @now
+            `UPDATE skin_reviews SET rating = @rating, body = @body, updated_at = @now, ownership_verified_at = @ownership
              ${r.updateLanguage ? ', language = @language' : ''} WHERE id = @id`,
           )
           .run({
             rating: r.rating,
+            ownership: r.ownershipVerifiedAt ?? null,
             body: r.body,
             now: r.now,
             id: existing.id,
@@ -602,8 +604,8 @@ export class SqliteRepo implements Repo {
       this.db
         .prepare(
           `INSERT INTO skin_reviews (id, user_id, skin_uuid, weapon_uuid, rating, body, created_at, updated_at,
-             country, region, language)
-           VALUES (@id, @userId, @skinUuid, @weaponUuid, @rating, @body, @now, @now, @country, @region, @language)`,
+             country, region, language, ownership_verified_at)
+           VALUES (@id, @userId, @skinUuid, @weaponUuid, @rating, @body, @now, @now, @country, @region, @language, @ownership)`,
         )
         .run({
           id,
@@ -611,6 +613,7 @@ export class SqliteRepo implements Repo {
           skinUuid: r.skinUuid,
           weaponUuid: r.authoritativeWeapon ? r.weaponUuid : (this.skinWeapon(r.skinUuid) ?? r.weaponUuid),
           rating: r.rating,
+          ownership: r.ownershipVerifiedAt ?? null,
           body: r.body,
           now: r.now,
           country: r.origin.country,

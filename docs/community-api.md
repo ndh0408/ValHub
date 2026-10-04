@@ -40,10 +40,14 @@ leaderboard), a feed of posts with images / likes / comments / reports, and
 
 ## Privacy and identity
 
-- The app sends a Riot **access token only** to `POST /v1/auth/riot`. The server
-  calls `GET https://auth.riotgames.com/userinfo` with it, reads `sub` (PUUID),
-  `acct.game_name`, `acct.tag_line`, then **drops the token** (never stored, never
-  logged). This is the only place a Riot token leaves the device.
+- After explicit per-account, versioned consent, Riot access tokens are sent only
+  to `POST /v1/auth/riot` (Community identity) and `PUT /v1/skins/{skinUuid}/review`
+  (user-initiated owner verification). The server asks Riot `/userinfo` for the
+  identity; the review route also obtains a transient entitlement token and reads
+  inventory on a fixed Riot shard host. Tokens and raw PUUID are never stored or
+  logged. The submitted Riot identity must hash to the authenticated Community
+  session's user ID before any inventory lookup. Client PUUID/ownership flags
+  never authorize a write.
 - The PUUID is never stored or returned: the user id is
   `hex(sha256(PEPPER + puuid))[0..32]` (`PEPPER` = server secret).
 - The server issues its own session token: HS256 JWT signed with the server secret
@@ -259,7 +263,7 @@ from averages.
 
 | Method | Path | Body / query | Response |
 |---|---|---|---|
-| PUT | `/v1/skins/{skinUuid}/review` | `{"weaponUuid", "rating": 1..5, "body"?: ≤ 500 chars}` | `Review` (create or replace own) |
+| PUT | `/v1/skins/{skinUuid}/review` | `{"weaponUuid", "rating": 1..5, "body"?: ≤ 500 chars, "accessToken"}` | `Review` (create or replace own) |
 | DELETE | `/v1/skins/{skinUuid}/review` | — | `204` |
 | GET | `/v1/skins/{skinUuid}/reviews` | `?sort=new\|top&cursor&limit` (auth optional) | page of `Review` (`top` = most liked, then newest) |
 | GET | `/v1/skins/{skinUuid}/summary` | auth optional | `SkinSummary` |
@@ -267,7 +271,7 @@ from averages.
 | DELETE | `/v1/reviews/{id}` | own only | `204` |
 
 - `Review`: `{"id", "skinUuid", "author": Author, "rating", "body", "likes", "liked",
-  "createdAt", "updatedAt", "mine"}`.
+  "createdAt", "updatedAt", "ownershipVerifiedAt": ISO timestamp | null, "mine"}`.
 - `SkinSummary`: `{"skinUuid", "weaponUuid", "votes", "voted", "ratingAvg" (1 decimal,
   null when no ratings), "ratingCount", "distribution": [n1, n2, n3, n4, n5],
   "reviewCount" (reviews with non-empty body), "myReview": Review | null}`.
@@ -282,8 +286,22 @@ from averages.
   vote/review `createdAt`; editing a review does not bring it back into the weekly ranking.
 - `GET /v1/skins/votes?ids=` items gain `"ratingAvg", "ratingCount"` (for badges in
   lists and the skin detail sheet).
+- Review writes require ownership of the canonical skin in authenticated Riot
+  inventory, including edits. `403 skin_not_owned` rejects non-owners;
+  `503 ownership_unavailable` rejects an unavailable/malformed inventory;
+  `401 riot_rejected` permits one Riot refresh, not a Community re-sign-in loop.
+  Session revocation/sanctions are checked again after the asynchronous lookup.
+  The migration retains historical reviews with `ownershipVerifiedAt: null`;
+  their text remains readable with an unverified label, but only verified reviews
+  contribute to rating averages, distributions and ranking counts. Heart votes
+  retain their existing semantics. Own-review deletion needs no Riot proof.
+- Product ranking and Home discovery always request `scope=global&period=all`.
+  Legacy backend country/region/weekly queries remain supported for compatibility.
+  The real catalog remains discoverable without inventing ratings when no ranking
+  entries exist.
 - Rate limits: reviews (create/update) 30 / hour, review likes share the likes
-  limit.
+  limit. Inventory work is bounded to 20 concurrent requests, 15 seconds, fixed
+  hosts, no redirects and a 2 MiB inventory response limit.
 
 ### Feed (bảng tin)
 
@@ -501,12 +519,21 @@ proxy or CDN may keep them.
 
 - Every account-changing Riot action (joining a party by code) stays user-initiated
   with a confirmation; the community server never touches Riot on the user's
-  behalf beyond `/userinfo` during `/v1/auth/riot`.
+  behalf: it only reads identity and inventory during the consented checks above.
 - Public reads (feed, posts, comments, skin top / votes / summary / reviews, communities) are made
   without a session and without an `Authorization` header until the user joins.
-- The Riot access token is sent to `/v1/auth/riot` only after the user agreed, once per account
-  (consent sheet: what is sent, what others see, links to the privacy policy and community
-  guidelines; stored under `acct.<puuid>.community.consent`). Declining sends nothing.
+- Login, account switching to an unapproved account, policy upgrades and withdrawal
+  require explicit approval before account routes resume. Legal documents, login
+  and account management remain accessible. The decision/version/time use existing
+  `acct.<puuid>.community.consent*` keys; there is no duplicate onboarding state.
+  Consent itself sends nothing. Explicit decline signs out only that account and
+  preserves existing retained local-data behavior. No normal anonymous/join banner
+  remains in the protected Community screen. Anonymous backend reads are retained.
+- Country comes from authenticated Riot identity, normalized to ISO alpha-2.
+  Community uses the server identity or verified login metadata during outages;
+  device/manual country preferences never become server identity. Country, shard,
+  timezone, currency and UI language remain distinct. UI language follows its
+  existing device/manual locale architecture; only shipped translations are used.
 - Translation of posts / comments / reviews happens on the device (ML Kit); no text is sent
   to any server.
 - The community session token is stored in secure storage under

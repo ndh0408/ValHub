@@ -48,7 +48,7 @@ void main() {
       for (final doc in LegalDocuments.all) {
         expect(doc.id, matches(RegExp(r'^[a-z]+$')));
         expect(doc.version, isNotEmpty);
-        expect(doc.effectiveDate, '29/09/2026');
+        expect(doc.effectiveDate, '04/10/2026');
         expect(doc.sections, isNotEmpty);
         for (final s in doc.sections) {
           expect(s.heading.trim(), isNotEmpty);
@@ -74,6 +74,10 @@ void main() {
       final privacy = legalDocumentToMarkdown(LegalDocuments.privacy);
       expect(privacy, contains('Nghị định 13/2023/NĐ-CP'));
       expect(privacy, contains('không lưu PUUID'));
+      expect(privacy, contains('kiểm tra quyền sở hữu skin'));
+      expect(privacy, contains('chọn đồng ý rõ ràng'));
+      expect(privacy, contains('không được lưu hoặc ghi vào nhật ký'));
+      expect(privacy, isNot(contains('trường hợp duy nhất')));
       expect(privacy, contains('30 phút'));
       expect(privacy, contains('Cloudflare'));
       expect(privacy, contains('gói từ Google'));

@@ -616,6 +616,23 @@ class _MyReviewCard extends ConsumerWidget {
       return;
     }
     if (!context.mounted) return;
+    final container = ProviderScope.containerOf(context);
+    try {
+      final owned = await container.read(ownedItemsProvider(p).future);
+      if (!context.mounted ||
+          container.read(activeAccountProvider)?.puuid != p) {
+        return;
+      }
+      if (!owned.isSkinOwned(skinUuid)) {
+        _snack(context, context.l10n.communityReviewOwnershipRequired);
+        return;
+      }
+    } on Object {
+      if (context.mounted) {
+        _snack(context, context.l10n.communityReviewOwnershipUnavailable);
+      }
+      return;
+    }
     final mine = summary?.myReview;
     final saved = await showReviewEditor(
       context,
@@ -636,14 +653,21 @@ class _MyReviewCard extends ConsumerWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
     final p = puuid;
     final mine = summary?.myReview;
+    final owned = p == null ? null : ref.watch(ownedItemsProvider(p));
     Widget body;
     if (p == null) {
       body = Text(
         context.l10n.communitySignInToReview,
         style: theme.textTheme.bodyMedium?.copyWith(color: muted),
       );
-    } else if (loading) {
+    } else if (loading || (mine == null && (owned?.isLoading ?? false))) {
       body = const Skeleton(height: 44);
+    } else if (mine == null && owned?.value?.isSkinOwned(skinUuid) != true) {
+      body = Text(
+        owned?.hasError == true
+            ? context.l10n.communityReviewOwnershipUnavailable
+            : context.l10n.communityReviewOwnershipRequired,
+      );
     } else if (mine == null) {
       body = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -762,6 +786,12 @@ class ReviewTile extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 8),
+          Text(
+            review.ownershipVerifiedAt == null
+                ? context.l10n.communityReviewLegacyOwnership
+                : context.l10n.communityReviewVerifiedOwner,
+            style: theme.textTheme.bodySmall?.copyWith(color: muted),
+          ),
           Wrap(
             spacing: 8,
             crossAxisAlignment: WrapCrossAlignment.center,

@@ -15,7 +15,7 @@ abstract final class LegalInfo {
   static const copyrightYear = '2026';
 
   /// Ngày hiệu lực chung của bộ văn bản (dd/MM/yyyy).
-  static const effectiveDate = '29/09/2026';
+  static const effectiveDate = '04/10/2026';
 
   /// Tên sản phẩm dùng trong văn bản pháp lý.
   static const productName = 'ValHub';

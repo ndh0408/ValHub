@@ -27,6 +27,7 @@ import 'package:valvn/features/battlepass/ui/battlepass_screen.dart';
 import 'package:valvn/features/collection/ui/collection_screen.dart';
 import 'package:valvn/features/community/data/community_http.dart';
 import 'package:valvn/features/community/providers/community_providers.dart';
+import 'package:valvn/features/community/providers/consent_providers.dart';
 import 'package:valvn/features/community/ui/community_screen.dart';
 import 'package:valvn/features/home/ui/home_screen.dart';
 import 'package:valvn/features/profile/profile_routes.dart';
@@ -108,6 +109,7 @@ const _first = Account(
   tagLine: 'VN1',
   region: 'ap',
   shard: 'ap',
+  country: 'VN',
 );
 
 const _second = Account(
@@ -116,6 +118,7 @@ const _second = Account(
   tagLine: 'VN2',
   region: 'ap',
   shard: 'ap',
+  country: 'VN',
 );
 
 /// Pumps frames without waiting for shimmers / countdowns to settle.
@@ -161,6 +164,15 @@ void main() {
     prefs = await createTestPrefs();
     await prefs.setJson(PrefKeys.accounts, [_first.toJson(), _second.toJson()]);
     await prefs.setString(PrefKeys.activePuuid, _first.puuid);
+    // These route tests start with onboarded accounts; separate gate tests
+    // verify refusal, upgrade, switching and explicit approval.
+    for (final account in [_first, _second]) {
+      await prefs.setString(communityConsentKey(account.puuid), 'granted');
+      await prefs.setString(
+        communityConsentVersionKey(account.puuid),
+        communityConsentVersion,
+      );
+    }
   });
 
   Future<ProviderContainer> pumpApp(WidgetTester tester) async {

@@ -51,6 +51,13 @@ Future<bool> ensureCommunityConsent(
     builder: (_) =>
         CommunityConsentSheet(account: account, onOpenDocument: onOpenDocument),
   );
+  // A decision belongs to the account shown in the sheet. Closing, switching
+  // or removing it while reading the terms must not grant another account.
+  if (!context.mounted ||
+      container.read(activeAccountProvider)?.puuid != account.puuid ||
+      container.read(accountProvider(account.puuid)) == null) {
+    return false;
+  }
   final notifier = container.read(
     communityConsentProvider(account.puuid).notifier,
   );
@@ -71,17 +78,24 @@ Future<bool> promptConsentFromContext(BuildContext context) {
   return ensureCommunityConsent(context, account, askAgain: true);
 }
 
-/// The one-time explanation: what is sent, what others see, what never
-/// leaves the device.
+/// The versioned explanation reused by login and explicit consent prompts.
 class CommunityConsentSheet extends StatelessWidget {
   const CommunityConsentSheet({
     super.key,
     required this.account,
     required this.onOpenDocument,
+    this.onAgree,
+    this.onDecline,
+    this.declineLabel,
+    this.busy = false,
   });
 
   final Account account;
   final OpenLegalDocument onOpenDocument;
+  final VoidCallback? onAgree;
+  final VoidCallback? onDecline;
+  final String? declineLabel;
+  final bool busy;
 
   @override
   Widget build(BuildContext context) {
@@ -141,6 +155,12 @@ class CommunityConsentSheet extends StatelessWidget {
             spacing: 4,
             children: [
               TextButton(
+                key: const ValueKey('consent-terms'),
+                onPressed: () =>
+                    onOpenDocument(context, LegalDocuments.terms.id),
+                child: Text(context.l10n.legalConsentTerms),
+              ),
+              TextButton(
                 key: const ValueKey('consent-privacy'),
                 onPressed: () =>
                     onOpenDocument(context, LegalDocuments.privacy.id),
@@ -159,15 +179,19 @@ class CommunityConsentSheet extends StatelessWidget {
             height: 52,
             child: FilledButton(
               key: const ValueKey('consent-agree'),
-              onPressed: () => Navigator.of(context).pop(true),
+              onPressed: busy
+                  ? null
+                  : onAgree ?? () => Navigator.of(context).pop(true),
               child: Text(context.l10n.communityConsentAgree),
             ),
           ),
           const SizedBox(height: 4),
           TextButton(
             key: const ValueKey('consent-later'),
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(context.l10n.communityConsentLater),
+            onPressed: busy
+                ? null
+                : onDecline ?? () => Navigator.of(context).pop(false),
+            child: Text(declineLabel ?? context.l10n.communityConsentLater),
           ),
         ],
       ),

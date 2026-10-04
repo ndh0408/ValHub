@@ -674,6 +674,15 @@ class AppLocalizationsVi extends AppLocalizations {
   String get accountRegionUnknown => 'Chưa rõ máy chủ';
 
   @override
+  String accountRiotCountry(String country) {
+    return 'Quốc gia tài khoản Riot: $country';
+  }
+
+  @override
+  String get accountRiotCountryUnknown =>
+      'Quốc gia tài khoản Riot: Chưa xác định';
+
+  @override
   String accountAccountCount(int count, int max) {
     return '$count/$max tài khoản';
   }
@@ -2209,6 +2218,31 @@ class AppLocalizationsVi extends AppLocalizations {
       'Chưa tải được danh mục skin. Đóng bảng và thử lại sau khi dữ liệu được đồng bộ.';
 
   @override
+  String get communityConsentExitAccount =>
+      'Không đồng ý · Đăng xuất tài khoản này';
+
+  @override
+  String get communityRankingGlobalAllTime => 'Toàn cầu · Từ trước tới giờ';
+
+  @override
+  String get communityRankingCatalogTitle => 'Khám phá skin và đánh giá';
+
+  @override
+  String get communityReviewOwnershipRequired =>
+      'Tài khoản phải sở hữu skin này để đánh giá. Bạn vẫn có thể xem đánh giá và bình luận của cộng đồng.';
+
+  @override
+  String get communityReviewOwnershipUnavailable =>
+      'Chưa xác minh được quyền sở hữu skin. Hãy tải lại Bộ sưu tập hoặc thử lại khi có mạng.';
+
+  @override
+  String get communityReviewLegacyOwnership =>
+      'Đánh giá cũ · Chưa xác minh sở hữu';
+
+  @override
+  String get communityReviewVerifiedOwner => 'Đã xác minh sở hữu khi đánh giá';
+
+  @override
   String get communityAddPhotos => 'Thêm ảnh';
 
   @override
@@ -2337,15 +2371,15 @@ class AppLocalizationsVi extends AppLocalizations {
       'Người khác sẽ thấy Riot ID, thẻ người chơi, rank và quốc gia của bạn.';
 
   @override
-  String get communityConsentTitle => 'Tham gia Cộng đồng ValHub';
+  String get communityConsentTitle => 'Quyền riêng tư và Cộng đồng ValHub';
 
   @override
   String get communityConsentVerify =>
-      'Khi cần xác minh Riot ID, ValHub gửi quyền truy cập Riot của bạn cho Cộng đồng ValHub. Cộng đồng dùng xong là bỏ ngay, không lưu.';
+      'ValHub gửi quyền truy cập Riot cho máy chủ Cộng đồng để xác minh Riot ID khi kết nối và kiểm tra quyền sở hữu skin khi bạn lưu đánh giá. Máy chủ chỉ đọc dữ liệu cần thiết, dùng xong bỏ ngay quyền truy cập, không lưu.';
 
   @override
   String get communityConsentWithdrawn =>
-      'Đã rút lại đồng ý. Bạn đang xem Cộng đồng ẩn danh.';
+      'Đã rút lại đồng ý. Cần đồng ý lại để tiếp tục sử dụng app.';
 
   @override
   String get communityCountriesEmpty => 'Không tìm thấy quốc gia phù hợp.';
@@ -3214,7 +3248,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityPrivacyNote =>
-      'ValHub xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.';
+      'ValHub xác minh Riot ID khi kết nối Cộng đồng và quyền sở hữu skin khi bạn đánh giá. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.';
 
   @override
   String get communityPublish => 'Đăng';
@@ -3535,7 +3569,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityTranslating => 'Đang dịch…';
 
   @override
-  String get communityTrendingTitle => 'Skin được yêu thích trong tuần';
+  String get communityTrendingTitle => 'Skin được yêu thích toàn cầu';
 
   @override
   String get communityUnavailableBody =>
@@ -6659,7 +6693,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homeTitle => 'Trang chủ';
 
   @override
-  String get homeTrendingTitle => 'Skin được yêu thích tuần này';
+  String get homeTrendingTitle => 'Skin được yêu thích toàn cầu';
 
   @override
   String homeTrendingVotes(int n) {

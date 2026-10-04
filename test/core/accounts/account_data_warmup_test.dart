@@ -10,9 +10,13 @@ import 'package:valvn/core/accounts/account_providers.dart';
 import 'package:valvn/core/accounts/local_data.dart';
 import 'package:valvn/core/auth/auth_providers.dart';
 import 'package:valvn/core/auth/session_manager.dart';
+import 'package:valvn/core/auth/bootstrap_client.dart';
+import 'package:valvn/core/auth/riot_session.dart';
 import 'package:valvn/core/content/content_repository.dart';
 import 'package:valvn/core/domain/competitive/account_xp.dart';
 import 'package:valvn/core/domain/competitive/rank.dart';
+import 'package:valvn/core/domain/competitive/matches.dart';
+import 'package:valvn/core/domain/competitive/match_stats_store.dart';
 import 'package:valvn/core/domain/economy/storefront.dart';
 import 'package:valvn/core/domain/loadout/loadout_providers.dart';
 import 'package:valvn/core/network/riot_exception.dart';
@@ -30,6 +34,10 @@ import '../domain/economy/economy_fixtures.dart';
 import '../domain/loadout/loadout_fixtures.dart';
 
 class _Sessions extends Mock implements SessionManager {}
+
+class _Bootstrap extends Mock implements RiotBootstrapClient {}
+
+class _Session extends Mock implements RiotSession {}
 
 class _Cache extends JsonFileCache {
   _Cache() : super(() => throw UnimplementedError());
@@ -50,6 +58,7 @@ class _Cache extends JsonFileCache {
 /// Records every call: unexpected mutations and cross-account calls fail the
 /// assertions rather than being silently accepted by a broad mock.
 class _Api implements PvpApi {
+  JsonMap history = {'History': <Object>[]};
   final calls = <(Symbol, String)>[];
   final gates = <Symbol, Completer<JsonMap>>{};
   final failures = <Symbol>{};
@@ -69,6 +78,14 @@ class _Api implements PvpApi {
       #playerLoadout => {...loadoutJson(), 'Subject': id},
       #mmr => competitiveFixtureMap('mmr'),
       #wallet => {'Balances': <String, int>{}},
+      #matchHistory => history,
+      #matchDetails => competitiveFixtureMap(
+        switch (invocation.positionalArguments[1]) {
+          dmMatch => 'match_deathmatch',
+          customMatch => 'match_custom',
+          _ => 'match_competitive',
+        },
+      ),
       #storefront || #contracts || #entitlements => <String, Object?>{},
       _ => throw StateError('Unexpected call: $name'),
     });
@@ -81,6 +98,7 @@ Account _account(String id) => Account(
   tagLine: 'QA',
   region: 'ap',
   shard: 'ap',
+  country: 'VN',
 );
 
 void main() {
@@ -89,6 +107,7 @@ void main() {
   late _Cache cache;
   late FixedClock clock;
   late _Sessions sessions;
+  late _Bootstrap bootstrap;
 
   setUp(() async {
     prefs = await createTestPrefs();
@@ -101,6 +120,7 @@ void main() {
     cache = _Cache();
     clock = FixedClock(DateTime.utc(2026, 9, 28, 12));
     sessions = _Sessions();
+    bootstrap = _Bootstrap();
     when(() => sessions.events).thenAnswer((_) => const Stream.empty());
   });
 
@@ -110,12 +130,79 @@ void main() {
       prefsProvider.overrideWithValue(prefs),
       secureStoreProvider.overrideWithValue(MemorySecureStore()),
       sessionManagerProvider.overrideWithValue(sessions),
+      bootstrapClientProvider.overrideWithValue(bootstrap),
       pvpApiProvider.overrideWithValue(api),
       jsonFileCacheProvider.overrideWithValue(cache),
       retainedHistoryFilesProvider.overrideWithValue(cache),
+      matchStatsStoreProvider.overrideWith((ref) {
+        final store = MatchStatsStore(cache);
+        ref.onDispose(store.dispose);
+        return store;
+      }),
       contentProvider.overrideWith((ref) async => testContent()),
       clockProvider.overrideWithValue(clock),
     ],
+  );
+
+  Future<void> missingCountry() async {
+    final rows = prefs.getJson(PrefKeys.accounts) as List;
+    await prefs.setJson(PrefKeys.accounts, [
+      for (final row in rows) {...row as Map, 'country': null},
+    ]);
+    final session = _Session();
+    when(() => session.accessToken).thenReturn('fixture-token');
+    when(() => sessions.session(me)).thenAnswer((_) async => session);
+  }
+
+  test('old accounts gain country from matching Riot identity without changing connection', () async {
+    await missingCountry();
+    when(() => bootstrap.fetchUserInfo('fixture-token'))
+        .thenAnswer((_) async => RiotUserInfo(puuid: me, country: 'jpn'));
+    final c = container();
+    await c.read(accountDataWarmupProvider).identity(me);
+    expect(c.read(accountProvider(me))!.country, 'JP');
+    expect(c.read(accountProvider(me))!.region, 'ap');
+    expect(c.read(accountProvider(mate))!.country, isNull);
+    expect(c.read(accountRepositoryProvider).find(me)!.country, 'JP');
+    await c.read(accountDataWarmupProvider).identity(me);
+    verify(() => bootstrap.fetchUserInfo('fixture-token')).called(1);
+  });
+
+  test(
+    'mismatched identity cannot set country and missing metadata is not polled',
+    () async {
+      await missingCountry();
+      when(() => bootstrap.fetchUserInfo('fixture-token'))
+          .thenAnswer((_) async => RiotUserInfo(puuid: mate, country: 'jpn'));
+      final c = container();
+      final warm = c.read(accountDataWarmupProvider);
+      await warm.identity(me);
+      clock.advance(const Duration(minutes: 4));
+      await warm.identity(me);
+      expect(c.read(accountProvider(me))!.country, isNull);
+      expect(c.read(accountProvider(mate))!.country, isNull);
+      verify(() => bootstrap.fetchUserInfo('fixture-token')).called(1);
+    },
+  );
+
+  test(
+    'a late country response after logout cannot restore account metadata',
+    () async {
+      await missingCountry();
+      final gate = Completer<RiotUserInfo>();
+      when(() => bootstrap.fetchUserInfo('fixture-token'))
+          .thenAnswer((_) => gate.future);
+      final c = container();
+      final pending = c.read(accountDataWarmupProvider).identity(me);
+      await pumpEventQueue();
+      await c.read(accountRepositoryProvider).removeMetadata(me);
+      c.read(accountsProvider.notifier).reload();
+      gate.complete(RiotUserInfo(puuid: me, country: 'jpn'));
+      await pending;
+      expect(c.read(accountProvider(me)), isNull);
+      expect(c.read(accountRepositoryProvider).find(me), isNull);
+      expect(c.read(accountProvider(mate))!.country, isNull);
+    },
   );
 
   test(
@@ -169,6 +256,38 @@ void main() {
       );
     },
   );
+
+  test(
+    'recent matches populate the existing ledger before visiting Profile',
+    () async {
+      api.history = competitiveFixtureMap('match_history');
+      final c = container();
+      await c.read(accountDataWarmupProvider).pages(me);
+      await pumpEventQueue();
+      final history = await c.read(
+        matchHistoryProvider((puuid: me, queue: null)).future,
+      );
+      expect(history.items.length, 3);
+      expect(api.calls.where((v) => v == (#matchHistory, me)), hasLength(1));
+      expect(api.calls.where((v) => v == (#matchDetails, me)), hasLength(3));
+      expect((await c.read(matchStatsStoreProvider).read(me)).length, 3);
+      await c.read(accountDataWarmupProvider).pages(me);
+      expect(api.calls.where((v) => v == (#matchDetails, me)), hasLength(3));
+    },
+  );
+
+  test('switching during history loading stops detail prefetch for the old account', () async {
+    final gate = Completer<JsonMap>();
+    api.gates[#matchHistory] = gate;
+    final c = container();
+    final pending = c.read(accountDataWarmupProvider).pages(me);
+    await pumpEventQueue();
+    expect(api.calls, contains((#matchHistory, me)));
+    c.read(activePuuidProvider.notifier).select(mate);
+    gate.complete(competitiveFixtureMap('match_history'));
+    await pending;
+    expect(api.calls.where((v) => v.$1 == #matchDetails), isEmpty);
+  });
 
   test(
     'one failed request preserves metadata and the other pages still load',

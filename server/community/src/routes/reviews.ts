@@ -8,6 +8,7 @@ import { appliedScope, resolveScope } from '../geo/scope.js';
 import { cleanUserText } from '../moderation/filter.js';
 import { isUuid, parseEnum, parseInt, parseLimit, parseString, parseUuid } from '../validate.js';
 import { ratingAvg } from './skins.js';
+import { hashUserId } from '../crypto.js';
 
 export function registerReviews(app: Hono, x: Ctx): void {
   const serialize = (r: ReviewView, viewerId: string) => ({
@@ -21,6 +22,7 @@ export function registerReviews(app: Hono, x: Ctx): void {
     createdAt: iso(r.created_at),
     updatedAt: iso(r.updated_at),
     mine: r.user_id === viewerId,
+    ownershipVerifiedAt: r.ownership_verified_at === null ? null : iso(r.ownership_verified_at),
     ...origin(r),
     // Only the author is told whether (and why) their review is hidden.
     ...(r.user_id === viewerId ? ownHidden(r) : {}),
@@ -51,6 +53,23 @@ export function registerReviews(app: Hono, x: Ctx): void {
     // One review per account per skin, whatever uuid the client uses: stored under the base skin uuid with the
     // catalog's weapon (see PUT vote).
     const canon = x.canonSkin(skinUuid);
+    const accessToken = parseString(body.accessToken, 'accessToken', { min: 1, max: 8192 });
+    // The Community bearer identifies the author. The fresh Riot token must
+    // resolve to the SAME author, then inventory is queried with that subject.
+    // Client PUUID/owned flags have no authority.
+    let identity;
+    try { identity = await x.deps.riotUserinfo(accessToken); }
+    catch { throw reasonError('riot_unavailable', 'riot_unavailable'); }
+    if (!identity.ok) throw reasonError(identity.reason === 'unavailable' ? 'riot_unavailable' : 'riot_rejected', identity.reason === 'unavailable' ? 'riot_unavailable' : 'riot_rejected');
+    if (hashUserId(x.deps.config.pepper, identity.puuid) !== user.id) throw forbidden();
+    let ownership;
+    try {
+      ownership = await x.deps.riotOwnership?.({accessToken, puuid: identity.puuid, region: user.region,
+        skinUuid: canon?.skinUuid ?? skinUuid, resolveSkin: (id) => x.canonSkin(id)});
+    } catch { ownership = 'unavailable'; }
+    if (ownership === 'rejected') throw reasonError('riot_rejected', 'riot_rejected');
+    if (ownership === 'not_owned') throw reasonError('forbidden', 'skin_not_owned');
+    if (ownership !== 'owned') throw reasonError('riot_unavailable', 'ownership_unavailable');
     x.assertCurrentUser(c);
     const id = x.repo.upsertReview({
       userId: user.id,
@@ -60,6 +79,7 @@ export function registerReviews(app: Hono, x: Ctx): void {
       rating,
       body: text,
       now: x.now(),
+      ownershipVerifiedAt: x.now(),
       // The reviewer's country / region at review time (kept when the review is edited).
       origin: { country: user.country, region: user.region },
       language,

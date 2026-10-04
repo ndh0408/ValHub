@@ -1116,6 +1116,21 @@
   "@accountRegionUnknown": {
     "description": "Generic metadata label resolved at render time: accountRegionUnknown"
   },
+  "accountRiotCountry": "Quốc gia tài khoản Riot: {country}",
+  "@accountRiotCountry": {
+    "description": "Profile caption for the country returned by authenticated Riot identity; not the manual device country.",
+    "placeholders": {
+      "country": {
+        "type": "String"
+      }
+    },
+    "x-manual": true
+  },
+  "accountRiotCountryUnknown": "Quốc gia tài khoản Riot: Chưa xác định",
+  "@accountRiotCountryUnknown": {
+    "description": "Profile country unavailable; never infer it from region, device location or language.",
+    "x-manual": true
+  },
   "accountAccountCount": "{count}/{max} tài khoản",
   "@accountAccountCount": {
     "description": "AccountStrings.accountCount — Switcher sheet (S05)",
@@ -3694,6 +3709,41 @@
     "description": "Skin ranking discovery and compact filters; actual community data only.",
     "x-manual": true
   },
+  "communityConsentExitAccount": "Không đồng ý · Đăng xuất tài khoản này",
+  "@communityConsentExitAccount": {
+    "description": "Explicit decline alternative in mandatory account onboarding; signs out only the displayed account.",
+    "x-manual": true
+  },
+  "communityRankingGlobalAllTime": "Toàn cầu · Từ trước tới giờ",
+  "@communityRankingGlobalAllTime": {
+    "description": "Fixed ranking scope and time; product ranking always uses global all-time data.",
+    "x-manual": true
+  },
+  "communityRankingCatalogTitle": "Khám phá skin và đánh giá",
+  "@communityRankingCatalogTitle": {
+    "description": "Heading for the real searchable skin catalog below leaderboard results.",
+    "x-manual": true
+  },
+  "communityReviewOwnershipRequired": "Tài khoản phải sở hữu skin này để đánh giá. Bạn vẫn có thể xem đánh giá và bình luận của cộng đồng.",
+  "@communityReviewOwnershipRequired": {
+    "description": "A skin non-owner can read ratings but cannot submit a star rating or review.",
+    "x-manual": true
+  },
+  "communityReviewOwnershipUnavailable": "Chưa xác minh được quyền sở hữu skin. Hãy tải lại Bộ sưu tập hoặc thử lại khi có mạng.",
+  "@communityReviewOwnershipUnavailable": {
+    "description": "Ownership lookup failed; refuse rating submission and allow retry.",
+    "x-manual": true
+  },
+  "communityReviewLegacyOwnership": "Đánh giá cũ · Chưa xác minh sở hữu",
+  "@communityReviewLegacyOwnership": {
+    "description": "Legacy review retained without a successful server inventory check; excluded from rating aggregates.",
+    "x-manual": true
+  },
+  "communityReviewVerifiedOwner": "Đã xác minh sở hữu khi đánh giá",
+  "@communityReviewVerifiedOwner": {
+    "description": "Review inventory proof applies at the time it was saved, not a claim of current ownership.",
+    "x-manual": true
+  },
   "communityAddPhotos": "Thêm ảnh",
   "@communityAddPhotos": {
     "description": "CommunityStrings.addPhotos — feed",
@@ -3915,17 +3965,17 @@
     "description": "CommunityStrings.consentPublic — consent",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityConsentTitle": "Tham gia Cộng đồng ValHub",
+  "communityConsentTitle": "Quyền riêng tư và Cộng đồng ValHub",
   "@communityConsentTitle": {
     "description": "CommunityStrings.consentTitle — consent",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityConsentVerify": "Khi cần xác minh Riot ID, ValHub gửi quyền truy cập Riot của bạn cho Cộng đồng ValHub. Cộng đồng dùng xong là bỏ ngay, không lưu.",
+  "communityConsentVerify": "ValHub gửi quyền truy cập Riot cho máy chủ Cộng đồng để xác minh Riot ID khi kết nối và kiểm tra quyền sở hữu skin khi bạn lưu đánh giá. Máy chủ chỉ đọc dữ liệu cần thiết, dùng xong bỏ ngay quyền truy cập, không lưu.",
   "@communityConsentVerify": {
     "description": "CommunityStrings.consentVerify — consent",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityConsentWithdrawn": "Đã rút lại đồng ý. Bạn đang xem Cộng đồng ẩn danh.",
+  "communityConsentWithdrawn": "Đã rút lại đồng ý. Cần đồng ý lại để tiếp tục sử dụng app.",
   "@communityConsentWithdrawn": {
     "description": "CommunityStrings.consentWithdrawn — data rights (Settings)",
     "x-context": "lib/features/community/community_strings.dart"
@@ -5382,7 +5432,7 @@
     "description": "CommunityStrings.posted — feed",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityPrivacyNote": "ValHub xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.",
+  "communityPrivacyNote": "ValHub xác minh Riot ID khi kết nối Cộng đồng và quyền sở hữu skin khi bạn đánh giá. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.",
   "@communityPrivacyNote": {
     "description": "CommunityStrings.privacyNote — general states",
     "x-context": "lib/features/community/community_strings.dart"
@@ -5950,7 +6000,7 @@
     "description": "CommunityStrings.translating — translation",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityTrendingTitle": "Skin được yêu thích trong tuần",
+  "communityTrendingTitle": "Skin được yêu thích toàn cầu",
   "@communityTrendingTitle": {
     "description": "CommunityStrings.trendingTitle — previews",
     "x-context": "lib/features/community/community_strings.dart"
@@ -11266,7 +11316,7 @@
     "description": "HomeStrings.title — ",
     "x-context": "lib/features/home/home_strings.dart"
   },
-  "homeTrendingTitle": "Skin được yêu thích tuần này",
+  "homeTrendingTitle": "Skin được yêu thích toàn cầu",
   "@homeTrendingTitle": {
     "description": "HomeStrings.trendingTitle — Community card",
     "x-context": "lib/features/home/home_strings.dart"

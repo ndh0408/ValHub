@@ -16,7 +16,7 @@ abstract final class CommunityStrings {
   static const noAccountBody =
       'Thêm tài khoản Riot để đăng bài, tìm đồng đội và bình chọn skin.';
   static const privacyNote =
-      'ValHub xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng '
+      'ValHub xác minh Riot ID khi kết nối Cộng đồng và quyền sở hữu skin khi bạn đánh giá. Cộng đồng '
       'không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.';
   static const you = 'Bạn';
   static const unknownPlayer = 'Người chơi';
@@ -352,7 +352,7 @@ abstract final class CommunityStrings {
 
   // ------------------------------------------------------------ previews
   static const lfgPreviewTitle = 'Tìm đồng đội hợp rank';
-  static const trendingTitle = 'Skin được yêu thích trong tuần';
+  static const trendingTitle = 'Skin được yêu thích toàn cầu';
 
   // --------------------------------------------------------- scopes (v3)
   static const scopeCountry = 'Nước bạn';
@@ -569,14 +569,15 @@ abstract final class CommunityStrings {
       'lại bất cứ lúc nào.';
   static const withdrawConfirm = 'Rút lại';
   static const consentWithdrawn =
-      'Đã rút lại đồng ý. Bạn đang xem Cộng đồng ẩn danh.';
+      'Đã rút lại đồng ý. Cần đồng ý lại để tiếp tục sử dụng app.';
 
   // -------------------------------------------------------------- consent
-  static const consentTitle = 'Tham gia Cộng đồng ValHub';
+  static const consentTitle = 'Quyền riêng tư và Cộng đồng ValHub';
   static String consentAccount(String riotId) => 'Tài khoản: $riotId';
   static const consentVerify =
-      'Khi cần xác minh Riot ID, ValHub gửi quyền truy cập Riot của bạn cho '
-      'Cộng đồng ValHub. Cộng đồng dùng xong là bỏ ngay, không lưu.';
+      'ValHub gửi quyền truy cập Riot cho máy chủ Cộng đồng để xác minh Riot ID khi kết nối và '
+      'kiểm tra quyền sở hữu skin khi bạn lưu đánh giá. Máy chủ chỉ đọc dữ liệu cần thiết, '
+      'dùng xong bỏ ngay quyền truy cập, không lưu.';
   static const consentPublic =
       'Người khác sẽ thấy Riot ID, thẻ người chơi, rank và quốc gia của bạn.';
   static const consentLocal =

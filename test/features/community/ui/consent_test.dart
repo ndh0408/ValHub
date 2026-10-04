@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -296,12 +297,7 @@ void main() {
       expect(find.text(CommunityStrings.feedEmptyBody), findsNothing);
       expect(find.text(CommunityStrings.feedEmptyScopeBody), findsNothing);
       expect(find.text(CommunityStrings.privacyNote), findsNothing);
-      expect(
-        tester.getSize(find.byKey(const ValueKey('anonymous-banner'))).height,
-        lessThanOrEqualTo(90),
-        reason:
-            'Banner ${tester.getSize(find.byKey(const ValueKey("anonymous-banner")))}; scaler ${MediaQuery.textScalerOf(tester.element(find.byKey(const ValueKey("anonymous-banner")))).scale(14)}',
-      );
+      expect(find.byKey(const ValueKey('anonymous-banner')), findsNothing);
       _expectAnonymous(env);
       await unmount(tester);
     });
@@ -314,8 +310,8 @@ void main() {
       // No sheet by itself; the feed is there.
       expect(find.text(CommunityStrings.consentTitle), findsNothing);
       expect(find.text('Bài công khai'), findsOneWidget);
-      expect(find.text(CommunityStrings.anonymousBanner), findsOneWidget);
-      expect(find.text(CommunityStrings.consentGateAction), findsOneWidget);
+      expect(find.text(CommunityStrings.anonymousBanner), findsNothing);
+      expect(find.text(CommunityStrings.consentGateAction), findsNothing);
       // Server default when unauthenticated: the whole world.
       final q = env.server.calls('GET /v1/posts').single.query;
       expect(q['scope'], 'global');
@@ -326,12 +322,18 @@ void main() {
 
     testWidgets('Xếp hạng skin is anonymous too', (tester) async {
       await _openTab(tester, env, location: '/community?section=skins');
-      expect(find.text('Vandal Reaver'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey(reaverSkin)),
+          matching: find.text('Vandal Reaver'),
+        ),
+        findsOneWidget,
+      );
       expect(
         env.server.calls('GET /v1/skins/top').single.query['scope'],
         'global',
       );
-      expect(find.text(CommunityStrings.anonymousBanner), findsOneWidget);
+      expect(find.text(CommunityStrings.anonymousBanner), findsNothing);
       _expectAnonymous(env);
       await unmount(tester);
     });
@@ -369,14 +371,16 @@ void main() {
 
     testWidgets('"Để sau" never hides browsing', (tester) async {
       await _openTab(tester, env);
-      await tester.tap(find.text(CommunityStrings.consentGateAction));
+      unawaited(
+        promptConsentFromContext(tester.element(find.text('Bài công khai'))),
+      );
       await settle(tester);
       expect(find.text(CommunityStrings.consentTitle), findsOneWidget);
       await _later(tester);
 
       expect(env.prefs.getString(communityConsentKey(mePuuid)), 'declined');
       expect(find.text('Bài công khai'), findsOneWidget);
-      expect(find.text(CommunityStrings.anonymousBanner), findsOneWidget);
+      expect(find.text(CommunityStrings.anonymousBanner), findsNothing);
       _expectAnonymous(env);
       await unmount(tester);
 
@@ -391,7 +395,9 @@ void main() {
       tester,
     ) async {
       await _openTab(tester, env);
-      await tester.tap(find.text(CommunityStrings.consentGateAction));
+      unawaited(
+        promptConsentFromContext(tester.element(find.text('Bài công khai'))),
+      );
       await settle(tester);
       // The sheet explains what is sent and what others see.
       expect(find.text(CommunityStrings.consentVerify), findsOneWidget);
@@ -712,8 +718,10 @@ void main() {
 
   testWidgets('no overflow at 360 dp × 2.0 (banner and sheet)', (tester) async {
     await _openTab(tester, env, size: const Size(360, 2400), textScale: 2);
-    expect(find.text(CommunityStrings.anonymousBanner), findsOneWidget);
-    await tester.tap(find.text(CommunityStrings.consentGateAction));
+    expect(find.text(CommunityStrings.anonymousBanner), findsNothing);
+    unawaited(
+      promptConsentFromContext(tester.element(find.text('Bài công khai'))),
+    );
     await settle(tester);
     expect(find.text(CommunityStrings.consentTitle), findsOneWidget);
     expect(tester.takeException(), isNull);

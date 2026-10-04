@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account.dart';
+import '../../../../core/geo/countries.dart';
+import '../../../../core/geo/country_preference.dart' show countryFlag;
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/domain/competitive/competitive.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -265,15 +267,36 @@ class ProfileHeader extends ConsumerWidget {
     final identity = ref.watch(playerIdentityProvider(account.puuid)).value;
     final xp = ref.watch(accountXpProvider(account.puuid));
     final name = RiotName.of(account.gameName, account.tagLine);
-    return IdentityBanner(
-      name: playerDisplayName(context.l10n, name, withTag: false),
-      tagLine: account.tagLine,
-      cardId: identity?.cardId ?? account.cardId,
-      titleId: identity?.titleId,
-      level: account.level,
-      xp: xp.value,
-      xpLoading: xp.isLoading,
-      copyText: name?.riotId,
+    final country = normalizeCountry(account.country);
+    final names = ref.watch(countryNamesProvider).value;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        IdentityBanner(
+          name: playerDisplayName(context.l10n, name, withTag: false),
+          tagLine: account.tagLine,
+          cardId: identity?.cardId ?? account.cardId,
+          titleId: identity?.titleId,
+          level: account.level,
+          xp: xp.value,
+          xpLoading: xp.isLoading,
+          copyText: name?.riotId,
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          child: Text(
+            country == null
+                ? context.l10n.accountRiotCountryUnknown
+                : context.l10n.accountRiotCountry(
+                    '${countryFlag(country)} ${names?.name(country) ?? country}',
+                  ),
+            key: const ValueKey('profile-riot-country'),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -10,6 +10,7 @@ import { startLoadMonitor } from './load.js';
 import { SqliteRepo } from './db/sqlite-repo.js';
 import { DiskMediaStore } from './media.js';
 import { fetchRiotUserinfo, guardRiotUserinfo } from './riot.js';
+import { fetchRiotOwnership } from './riot-ownership.js';
 import { sweep } from './sweeper.js';
 import { ErasureLedger } from './erasures.js';
 
@@ -50,6 +51,7 @@ const { app, ctx } = createAppWithCtx({
   },
   content,
   riotUserinfo: guardRiotUserinfo(fetchRiotUserinfo),
+  riotOwnership: fetchRiotOwnership,
   loadProbe: load.lagMs,
   logError: (m) => console.error(m),
   logAccess: (entry) => console.log(JSON.stringify(entry)),

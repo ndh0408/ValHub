@@ -5,8 +5,11 @@ import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 import 'package:material_ui/material_ui.dart';
 
 import '../../features/battlepass/providers/battlepass_providers.dart';
+import '../auth/auth_providers.dart';
+import '../geo/countries.dart';
 import '../domain/competitive/account_xp.dart';
 import '../domain/competitive/rank.dart' show mmrProvider;
+import '../domain/competitive/matches.dart';
 import '../domain/economy/owned_items.dart';
 import '../domain/economy/storefront.dart';
 import '../domain/loadout/loadout_providers.dart';
@@ -31,6 +34,7 @@ class AccountDataWarmup {
   final _pages = <_SessionKey, Future<void>>{};
   final _identityUntil = <_SessionKey, DateTime>{};
   final _pagesUntil = <_SessionKey, DateTime>{};
+  final _countryUntil = <_SessionKey, DateTime>{};
 
   _SessionKey? _key(String puuid) {
     if (!_ref.mounted) return null;
@@ -48,8 +52,49 @@ class AccountDataWarmup {
       _fetch(loadoutProvider(puuid).future),
       _fetch(accountXpProvider(puuid).future),
       _fetch(accountRankRefreshProvider(puuid).future),
+      _country(puuid),
     ]),
   );
+
+  /// Repair missing metadata for accounts saved before country was captured.
+  /// Riot identity is the only source. The shared auth client enforces its host
+  /// throttle; a missing field/outage is retried only after a user-driven warmup
+  /// and at least 15 minutes. This does not change language or connection region.
+  Future<bool> _country(String puuid) async {
+    final key = _key(puuid);
+    if (key == null) return false;
+    final account = _ref.read(accountProvider(puuid))!;
+    if (normalizeCountry(account.country) != null) return true;
+    final now = _ref.read(clockProvider).now();
+    if (_countryUntil[key]?.isAfter(now) ?? false) return true;
+    _countryUntil[key] = now.add(const Duration(minutes: 15));
+    try {
+      final session = await _ref.read(sessionManagerProvider).session(puuid);
+      if (!_ref.mounted || _key(puuid) != key) return false;
+      final info = await _ref
+          .read(bootstrapClientProvider)
+          .fetchUserInfo(session.accessToken);
+      if (!_ref.mounted ||
+          _key(puuid) != key ||
+          info.puuid.toLowerCase() != puuid.toLowerCase()) {
+        return false;
+      }
+      final country = normalizeCountry(info.country);
+      if (country == null) return true;
+      await _ref.read(accountsProvider.notifier).updateAccount(puuid, (
+        current,
+      ) {
+        // Removal/re-addition or a newer login must win over this old response.
+        if (current.addedAt != account.addedAt || current.country != null) {
+          return current;
+        }
+        return current.copyWith(country: country);
+      });
+      return true;
+    } on Object {
+      return false;
+    }
+  }
 
   /// The active account gets store, wallet, missions and collection too.
   /// Identity finishes first; the collection's pooled requests run last.
@@ -64,8 +109,45 @@ class AccountDataWarmup {
         ]);
         if (_key(puuid) == null) return results;
         results.add(await _fetch(entitlementsProvider(puuid).future));
+        results.add(await _recentMatches(puuid));
         return results;
       });
+
+  /// Populate the existing ledger without requiring visits to every match.
+  /// One history page (20), at most two details at a time, no paging/polling.
+  /// Explicit viewer keys prevent a switch from requesting another account.
+  Future<bool> _recentMatches(String puuid) async {
+    bool current() =>
+        _ref.mounted &&
+        _key(puuid) != null &&
+        _ref.read(activePuuidProvider) == puuid;
+    if (!current()) return false;
+    final history = matchHistoryProvider((puuid: puuid, queue: null));
+    final sub = _ref.listen(history, (_, _) {});
+    try {
+      final page = await _ref.read(history.future);
+      final entries = page.items.take(20).toList();
+      var complete = true;
+      for (var offset = 0; offset < entries.length; offset += 2) {
+        if (!current()) return false;
+        final results = await Future.wait([
+          for (final entry in entries.skip(offset).take(2))
+            _fetch(
+              viewerMatchDetailsProvider((
+                viewer: puuid,
+                matchId: entry.matchId,
+              )).future,
+            ),
+        ]);
+        complete = complete && results.every((ok) => ok);
+      }
+      return complete;
+    } on Object {
+      return false;
+    } finally {
+      sub.close();
+    }
+  }
 
   Future<void> _run(
     String id,
@@ -133,6 +215,7 @@ class AccountDataWarmup {
         ..invalidate(walletProvider(puuid))
         ..invalidate(entitlementsProvider(puuid))
         ..invalidate(playerContractsProvider(puuid));
+      _ref.invalidate(matchHistoryProvider((puuid: puuid, queue: null)));
     }
     unawaited(pages(puuid));
     await identity(puuid).timeout(const Duration(seconds: 2), onTimeout: () {});

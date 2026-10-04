@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:valvn/features/community/data/community_api.dart';
 import 'package:valvn/features/community/data/community_models.dart';
 import 'package:valvn/features/community/providers/community_providers.dart';
@@ -172,11 +173,13 @@ void main() {
       expect(r.rating, 5);
       expect(env.server.calls('PUT /v1/skins/*/review').single.json, {
         'weaponUuid': vandal,
+        'accessToken': 'riot-access-1',
         'rating': 5,
         'body': 'Tuyệt',
       });
       await api.putReview(mePuuid, reaverSkin, rating: 2);
       expect(env.server.calls('PUT /v1/skins/*/review').last.json, {
+        'accessToken': 'riot-access-1',
         'rating': 2,
       }, reason: 'empty text is not sent');
       await api.deleteMyReview(mePuuid, reaverSkin);
@@ -187,6 +190,31 @@ void main() {
         env.server.calls('DELETE /v1/reviews/*').single.path,
         '/v1/reviews/r9',
       );
+    });
+
+    test('owner proof uses a fresh Riot token and retries one real rejection, never sends PUUID', () async {
+      when(
+        () => env.sessions.refreshAfterAuthFailure(
+          mePuuid,
+          failedAccessToken: 'riot-access-1',
+        ),
+      ).thenAnswer((_) async => riotSession(token: 'riot-access-2'));
+      var calls = 0;
+      env.server.on(
+        'PUT /v1/skins/*/review',
+        (r) => ++calls == 1
+            ? const FakeResponse(401, {
+                'error': {'code': 'riot_rejected'},
+              })
+            : FakeResponse(200, reviewJson('mine')),
+      );
+      await api.putReview(mePuuid, reaverSkin, rating: 5, weaponUuid: vandal);
+      final requests = env.server.calls('PUT /v1/skins/*/review');
+      expect(requests, hasLength(2));
+      expect((requests.first.json as Map)['accessToken'], 'riot-access-1');
+      expect((requests.last.json as Map)['accessToken'], 'riot-access-2');
+      expect((requests.last.json as Map).containsKey('puuid'), isFalse);
+      expect(env.server.calls('POST /v1/auth/riot'), hasLength(1));
     });
 
     test('top skins by rating; votes endpoint carries ratings', () async {
@@ -298,7 +326,7 @@ void main() {
       final f = fresh.read(topSkinsFilterProvider);
       expect(
         (f.sort, f.period, f.weapon),
-        (TopSort.reviews, TopPeriod.week, vandal),
+        (TopSort.reviews, TopPeriod.all, vandal),
       );
     });
   });

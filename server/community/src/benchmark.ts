@@ -27,7 +27,7 @@ export async function benchmark(rows = 100_000, iterations = 31): Promise<Record
     const insertUser = db.prepare('INSERT INTO users(id, created_at, updated_at) VALUES(?,0,0)');
     const insertMedia = db.prepare('INSERT INTO media(key,user_id,content_type,size,created_at) VALUES(?,?,\'image/png\',1024,0)');
     const insertVote = db.prepare('INSERT INTO skin_votes(user_id,skin_uuid,weapon_uuid,created_at) VALUES(?,?,?,0)');
-    const insertReview = db.prepare('INSERT INTO skin_reviews(id,user_id,skin_uuid,weapon_uuid,rating,created_at,updated_at) VALUES(?,?,?,?,?,0,0)');
+    const insertReview = db.prepare('INSERT INTO skin_reviews(id,user_id,skin_uuid,weapon_uuid,rating,created_at,updated_at,ownership_verified_at) VALUES(?,?,?,?,?,0,0,0)');
     db.transaction(() => {
       for (let i = 0; i < users; i++) insertUser.run(user(i));
       for (let i = 0; i < rows; i++) {

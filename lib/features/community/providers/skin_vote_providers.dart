@@ -63,11 +63,9 @@ class TopSkinsFilterNotifier extends Notifier<TopSkinsFilter> {
     final weapon = memory.read(TopSkinsMemoryKeys.weapon);
     return TopSkinsFilter(
       weapon: weapon == null || weapon.isEmpty ? null : weapon,
-      period: memory.readEnum(
-        TopSkinsMemoryKeys.period,
-        TopPeriod.values,
-        TopPeriod.all,
-      ),
+      // Previous weekly preferences remain compatible on disk, but the product
+      // leaderboard is now always global/all-time.
+      period: TopPeriod.all,
       sort: memory.readEnum(
         TopSkinsMemoryKeys.sort,
         TopSort.values,
@@ -82,8 +80,8 @@ class TopSkinsFilterNotifier extends Notifier<TopSkinsFilter> {
   }
 
   void setPeriod(TopPeriod period) {
-    state = state.copyWith(period: period);
-    _memory.writeEnum(TopSkinsMemoryKeys.period, period);
+    state = state.copyWith(period: TopPeriod.all);
+    _memory.writeEnum(TopSkinsMemoryKeys.period, TopPeriod.all);
   }
 
   void setSort(TopSort sort) {
@@ -93,9 +91,9 @@ class TopSkinsFilterNotifier extends Notifier<TopSkinsFilter> {
 
   /// Apply a confirmed sheet selection once; dismissing the sheet changes nothing.
   void setFilters(TopSkinsFilter filter) {
-    state = filter;
+    state = filter.copyWith(period: TopPeriod.all);
     _memory.write(TopSkinsMemoryKeys.weapon, filter.weapon);
-    _memory.writeEnum(TopSkinsMemoryKeys.period, filter.period);
+    _memory.writeEnum(TopSkinsMemoryKeys.period, TopPeriod.all);
     _memory.writeEnum(TopSkinsMemoryKeys.sort, filter.sort);
   }
 }

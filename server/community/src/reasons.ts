@@ -9,6 +9,8 @@
  * `docs/community-api.md` ("Error reasons"). Never rename or reuse one: clients map them to translations.
  */
 export const REASONS = {
+  skin_not_owned: { vi: 'Tài khoản phải sở hữu skin này để đánh giá.', en: 'Your account must own this skin to rate or review it.' },
+  ownership_unavailable: { vi: 'Chưa xác minh được quyền sở hữu skin với Riot. Hãy thử lại.', en: 'Skin ownership could not be verified with Riot. Please try again.' },
   invalid_input: { vi: 'Thông tin không hợp lệ. Hãy kiểm tra rồi thử lại.', en: 'Some information is invalid. Please check it and try again.' },
   unauthorized: { vi: 'Phiên đăng nhập không hợp lệ hoặc đã hết hạn.', en: 'Please sign in again.' },
   suspended: { vi: 'Quyền sử dụng Cộng đồng đang bị hạn chế.', en: 'Your Community access is restricted.' },

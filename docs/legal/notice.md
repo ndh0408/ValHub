@@ -2,7 +2,7 @@
 
 # Thông báo pháp lý
 
-**ValHub** · Phiên bản 1.0 · Hiệu lực từ: 29/09/2026
+**ValHub** · Phiên bản 1.0 · Hiệu lực từ: 04/10/2026
 
 > ValHub không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games và mọi tài sản liên quan là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc.
 

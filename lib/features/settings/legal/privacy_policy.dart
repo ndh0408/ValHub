@@ -7,8 +7,8 @@ const _email = LegalInfo.contactEmail;
 /// Chính sách quyền riêng tư ValHub.
 ///
 /// Facts must match the code: Riot secrets only in secure storage
-/// (`SecureStore`), the only Riot token that leaves the device goes to
-/// `POST /v1/auth/riot` (docs/community-api.md) after a one-time consent,
+/// (`SecureStore`), transient access tokens go only to Community sign-in and
+/// review ownership verification after explicit versioned consent,
 /// no analytics / ads / crash SDK, local notifications only, scrubbed error
 /// report (the session log; it leaves the device only when the user picks
 /// "Gửi báo lỗi cho ValHub"). The community server is a self-hosted Docker
@@ -26,7 +26,7 @@ const privacyPolicy = LegalDocument(
   id: 'privacy',
   title: 'Chính sách quyền riêng tư',
   summary: 'Dữ liệu nào được xử lý, ở đâu và quyền của bạn',
-  version: '1.1',
+  version: '1.2',
   preamble: [
     LegalParagraph(
       'Chính sách này giải thích cách ValHub thu thập, sử dụng, lưu trữ và bảo '
@@ -40,10 +40,10 @@ const privacyPolicy = LegalDocument(
     LegalCallout(
       'Tóm tắt: Phần lớn dữ liệu của bạn chỉ nằm trên thiết bị. Dữ liệu đăng '
       'nhập Riot của bạn được lưu trong vùng lưu trữ bảo mật của hệ điều hành '
-      'và không gửi cho chúng tôi, trừ một trường hợp duy nhất: khi bạn lần '
-      'đầu mở Cộng đồng và xác nhận đồng ý trong hộp thoại hiện ra một lần, '
-      'mã truy cập Riot (access token) được gửi tới máy chủ ValHub để xác minh '
-      'Riot ID, rồi bị hủy ngay. Máy chủ không lưu PUUID (mã định danh người '
+      'và chỉ được dùng trên máy chủ ValHub sau khi bạn đồng ý rõ ràng: '
+      'để xác minh Riot ID khi kết nối Cộng đồng và kiểm tra quyền sở hữu '
+      'skin khi bạn lưu đánh giá. Mã truy cập được hủy sau mỗi lần xác minh. '
+      'Máy chủ không lưu PUUID (mã định danh người '
       'chơi của bạn). ValHub không có quảng cáo, không dùng công cụ phân tích '
       'hay theo dõi và không bán dữ liệu của bạn.',
     ),
@@ -157,7 +157,9 @@ const privacyPolicy = LegalDocument(
         LegalItem(
           'số sao, nội dung nhận xét và lượt "hữu ích" bạn dành cho đánh giá '
           'của người khác. Những thông tin này hiển thị công khai cùng Riot '
-          'ID của bạn.',
+          'ID của bạn. Máy chủ lưu thời điểm kiểm tra quyền sở hữu skin; '
+          'đánh giá cũ chưa được xác minh sẽ được ghi rõ và không tính vào '
+          'điểm xếp hạng.',
           lead: 'Đánh giá skin:',
         ),
         LegalItem(
@@ -204,23 +206,25 @@ const privacyPolicy = LegalDocument(
     LegalSection('Mã truy cập Riot và xác minh Riot ID', [
       LegalParagraph(
         'Dữ liệu đăng nhập Riot của bạn (mã truy cập, mã quyền sở hữu và '
-        'cookie) không bao giờ được gửi cho chúng tôi, trừ một ngoại lệ duy '
-        'nhất phục vụ tính năng Cộng đồng:',
+        'cookie) chỉ được dùng trên máy chủ ValHub trong các trường hợp '
+        'xác minh được nêu dưới đây. Cookie đăng nhập và mật khẩu không '
+        'được gửi tới máy chủ Cộng đồng:',
       ),
       LegalList([
         LegalItem(
-          'Ứng dụng chỉ gửi mã truy cập Riot (access token) khi bạn lần đầu '
-          'mở tính năng Cộng đồng và xác nhận đồng ý trong hộp thoại hiện ra '
-          'một lần, hoặc khi bạn kết nối lại sau khi lần đăng nhập Cộng đồng '
-          'của bạn hết hạn. Nếu bạn không đồng ý, Cộng đồng không hoạt động '
-          'và không có mã nào được gửi đi. Mã được gửi tới máy chủ ValHub qua '
-          'kết nối mã hóa (HTTPS).',
+          'Sau khi đăng nhập Riot, bạn phải đọc và chọn đồng ý trước khi '
+          'tiếp tục dùng các tính năng tài khoản. Quyết định được lưu riêng '
+          'cho từng tài khoản và phiên bản chính sách. Nếu không đồng ý, '
+          'bạn có thể đăng xuất tài khoản đó. Việc chọn đồng ý không tự gửi '
+          'mã Riot; ứng dụng chỉ gửi mã truy cập qua HTTPS khi kết nối lại '
+          'Cộng đồng hoặc khi bạn chủ động lưu đánh giá skin.',
         ),
         LegalItem(
-          'Máy chủ dùng mã này đúng một lần để hỏi máy chủ của Riot Games về '
-          'thông tin định danh của bạn (PUUID và Riot ID), rồi hủy mã ngay '
-          'lập tức. Mã không được lưu, không được ghi vào nhật ký của máy '
-          'chủ và không được dùng cho bất kỳ mục đích nào khác.',
+          'Máy chủ hỏi Riot về định danh của bạn (PUUID và Riot ID). Khi '
+          'bạn lưu đánh giá, máy chủ còn đọc quyền sở hữu skin từ Riot và '
+          'kiểm tra tài khoản đó khớp với người đang đăng nhập Cộng đồng. '
+          'Mã truy cập và mã quyền sở hữu tạm thời không được lưu hoặc ghi '
+          'vào nhật ký; máy chủ hủy chúng sau khi xử lý yêu cầu.',
         ),
         LegalItem(
           'Máy chủ cấp cho Ứng dụng một mã đăng nhập Cộng đồng riêng, có hiệu '
@@ -228,8 +232,9 @@ const privacyPolicy = LegalDocument(
           'bị và bị xóa khi bạn đăng xuất tài khoản.',
         ),
         LegalItem(
-          'Máy chủ Cộng đồng không bao giờ thay mặt bạn thực hiện thao tác nào '
-          'trên Tài khoản Riot.',
+          'Máy chủ Cộng đồng chỉ đọc thông tin định danh và quyền sở hữu '
+          'skin cho các lần xác minh này; không mua vật phẩm, đổi trang bị '
+          'hay thay đổi Tài khoản Riot của bạn.',
         ),
       ]),
     ]),
@@ -263,10 +268,11 @@ const privacyPolicy = LegalDocument(
     LegalSection('Cơ sở pháp lý', [
       LegalList([
         LegalItem(
-          'bạn đồng ý khi tiếp tục sử dụng Ứng dụng sau khi được thông báo về '
-          'Chính sách này, và đồng ý riêng khi bạn xác nhận hộp thoại kết nối '
-          'Cộng đồng, bật thông báo hay lưu thông tin đăng nhập. Bạn có thể '
-          'rút lại sự đồng ý bất cứ lúc nào.',
+          'bạn chọn đồng ý rõ ràng với Chính sách này sau khi đăng nhập, '
+          'và đồng ý riêng khi bật thông báo hay lưu thông tin đăng nhập. '
+          'Bạn có thể rút lại sự đồng ý bất cứ lúc nào trong Cài đặt; khi '
+          'đó bạn phải đồng ý lại hoặc đăng xuất để tiếp tục dùng các tính '
+          'năng tài khoản.',
           lead: 'Sự đồng ý của bạn:',
         ),
         LegalItem(

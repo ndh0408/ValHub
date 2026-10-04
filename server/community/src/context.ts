@@ -12,6 +12,7 @@ import type { ErasureLedger } from './erasures.js';
 import { Counters } from './metrics.js';
 import { deleteMedia, quarantineMedia, type MediaDeps } from './media-service.js';
 import type { RiotUserinfoFn } from './riot.js';
+import type { RiotOwnershipFn } from './riot-ownership.js';
 import { parseJsonObject, type Json } from './validate.js';
 
 /** Tunable limits. Anything left out gets the default below (tests run with the cache off). */
@@ -77,6 +78,8 @@ export interface AppDeps {
   content?: ContentCatalog;
   /** Injectable Riot /userinfo call (stubbed in tests). */
   riotUserinfo: RiotUserinfoFn;
+  /** Injectable inventory proof. Omitted fails closed on review writes. */
+  riotOwnership?: RiotOwnershipFn;
   /** Injectable clock (ms since epoch). */
   now?: () => number;
   /** Current event-loop lag in ms (see load.ts); omitted -> the server never sheds load (tests). */

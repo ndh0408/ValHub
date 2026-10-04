@@ -309,30 +309,33 @@ void main() {
 
   group('Xếp hạng skin', () {
     testWidgets(
-      'toggle Nước bạn / Khu vực / Toàn cầu, remembered per section',
+      'legacy country and region preferences never narrow the global ranking',
       (tester) async {
-        await _open(tester, env, location: '/community?section=skins');
-        var q = _lastQuery(env, 'GET /v1/skins/top');
-        expect((q['scope'], q['country']), ('country', 'VN'));
-
-        await chooseCommunityScope(tester, 'region-ap', section: 'skins');
-        await settle(tester);
-        q = _lastQuery(env, 'GET /v1/skins/top');
-        expect((q['scope'], q['region']), ('region', 'ap'));
-
-        await chooseCommunityScope(tester, 'global', section: 'skins');
-        await settle(tester);
-        expect(_lastQuery(env, 'GET /v1/skins/top')['scope'], 'global');
-        expect(
-          env.prefs.getString(PrefKeys.ui('community.skins.scope')),
-          'global',
-        );
-        // The feed keeps its own choice.
-        expect(
-          env.prefs.getString(PrefKeys.ui('community.feed.scope')),
-          isNull,
-        );
-        await unmount(tester);
+        for (final oldScope in ['country', 'region', 'global']) {
+          await env.prefs.setString(
+            PrefKeys.ui('community.skins.scope'),
+            oldScope,
+          );
+          await env.prefs.setString(
+            PrefKeys.ui('community.skins.period'),
+            'week',
+          );
+          await _open(tester, env, location: '/community?section=skins');
+          final q = _lastQuery(env, 'GET /v1/skins/top');
+          expect(q['scope'], 'global');
+          expect(q['period'], 'all');
+          expect(q['country'], isNull);
+          expect(q['region'], isNull);
+          expect(
+            env.prefs.getString(PrefKeys.ui('community.skins.scope')),
+            oldScope,
+          );
+          expect(
+            env.prefs.getString(PrefKeys.ui('community.feed.scope')),
+            isNull,
+          );
+          await unmount(tester);
+        }
       },
     );
   });

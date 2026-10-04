@@ -8,6 +8,155 @@ import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/sub_page.dart';
 import '../../../../core/util/search_text.dart';
 import '../../community_routes.dart';
+import '../../providers/community_providers.dart';
+import '../../providers/skin_vote_providers.dart';
+import '../../data/community_models.dart';
+import 'star_rating.dart';
+
+/// One bounded read per visible catalog page. Missing statistics stay unknown;
+/// the real content catalog is still available during a Community outage.
+final _catalogStatsProvider = FutureProvider.autoDispose
+    .family<Map<String, SkinStats>, ({String puuid, String ids})>((ref, key) {
+      return ref
+          .watch(communityApiProvider)
+          .skinVotes(key.ids.split(','), puuid: key.puuid);
+    });
+
+class SkinCatalogSliver extends ConsumerStatefulWidget {
+  const SkinCatalogSliver({super.key, required this.puuid});
+  final String puuid;
+  @override
+  ConsumerState<SkinCatalogSliver> createState() => _SkinCatalogSliverState();
+}
+
+class _SkinCatalogSliverState extends ConsumerState<SkinCatalogSliver> {
+  String _query = '';
+  int _limit = 30;
+  ContentDb? _indexed;
+  String? _weapon;
+  List<({WeaponSkin skin, String weapon, String search})> _items = [];
+
+  @override
+  Widget build(BuildContext context) {
+    final db = ref.watch(contentProvider).value;
+    final weapon = ref.watch(topSkinsFilterProvider.select((f) => f.weapon));
+    if (weapon != _weapon) {
+      _weapon = weapon;
+      _limit = 30;
+    }
+    if (!identical(db, _indexed)) {
+      _indexed = db;
+      _items = [
+        if (db != null)
+          for (final w in db.weapons)
+            for (final s in w.skins)
+              if (s.isCollectible)
+                (
+                  skin: s,
+                  weapon: w.displayName,
+                  search: foldForSearch('${s.displayName} ${w.displayName}'),
+                ),
+      ]..sort((a, b) => compareNames(a.skin.displayName, b.skin.displayName));
+    }
+    final terms = foldForSearch(_query.trim()).split(RegExp(r'\s+'));
+    final matches = [
+      for (final item in _items)
+        if ((weapon == null || item.skin.weaponUuid == weapon) &&
+            terms.every(item.search.contains))
+          item,
+    ];
+    final visible = matches.take(_limit).toList();
+    final stats = <String, SkinStats>{};
+    for (var start = 0; start < visible.length; start += 30) {
+      final page = visible.skip(start).take(30);
+      final loaded = ref
+          .watch(
+            _catalogStatsProvider((
+              puuid: widget.puuid,
+              ids: page.map((i) => i.skin.uuid).join(','),
+            )),
+          )
+          .value;
+      if (loaded != null) stats.addAll(loaded);
+    }
+    return SliverMainAxisGroup(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  context.l10n.communityRankingCatalogTitle,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  key: const ValueKey('skins-inline-search'),
+                  decoration: InputDecoration(
+                    labelText: context.l10n.collectionSearchSkins,
+                    prefixIcon: const Icon(Icons.search),
+                  ),
+                  onChanged: (value) => setState(() {
+                    _query = value;
+                    _limit = 30;
+                  }),
+                ),
+                if (visible.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Text(
+                      db == null
+                          ? context.l10n.communityRankingCatalogUnavailable
+                          : context.l10n.communityRankingNoSearch,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        SliverList.builder(
+          itemCount: visible.length,
+          itemBuilder: (context, index) {
+            final item = visible[index];
+            final rating = stats[item.skin.uuid]?.rating;
+            return ListTile(
+              key: ValueKey('inline-catalog-${item.skin.uuid}'),
+              leading: SizedBox(
+                width: 64,
+                height: 48,
+                child: NetImage(item.skin.image, fit: BoxFit.contain),
+              ),
+              title: Text(item.skin.displayName),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item.weapon),
+                  if (rating != null && rating.count > 0)
+                    RatingBadge(rating: rating),
+                ],
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => openSkinReview(context, item.skin.uuid),
+            );
+          },
+        ),
+        if (matches.length > visible.length)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: OutlinedButton(
+                key: const ValueKey('skins-catalog-more'),
+                onPressed: () => setState(() => _limit += 30),
+                child: Text(context.l10n.commonLoadMore),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
 
 /// Search actual content, independently of the presence of leaderboard votes.
 /// Selection opens the existing review page; it never casts a vote or joins.

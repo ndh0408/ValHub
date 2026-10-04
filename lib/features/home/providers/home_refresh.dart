@@ -73,7 +73,7 @@ Future<void> refreshHome(
       case HomeCardId.community:
         ref
           ..invalidate(matchingLfgPreviewProvider(puuid))
-          ..invalidate(trendingSkinsProvider(TopPeriod.week));
+          ..invalidate(trendingSkinsProvider(TopPeriod.all));
       case HomeCardId.otherAccounts:
         final rows =
             ref.read(homeOtherAccountsProvider)?.rows ??

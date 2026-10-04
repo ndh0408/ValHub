@@ -154,6 +154,7 @@ export interface LfgQuery {
 }
 
 export interface ReviewRow {
+  ownership_verified_at: number | null;
   id: string;
   user_id: string;
   skin_uuid: string;
@@ -394,6 +395,8 @@ export interface Repo {
    * creation only; `language` is stored on creation and, on edits, only when `updateLanguage`.
    */
   upsertReview(r: {
+    /** Written only after the server verified Riot identity and inventory. */
+    ownershipVerifiedAt?: number;
     userId: string;
     skinUuid: string;
     weaponUuid: string;

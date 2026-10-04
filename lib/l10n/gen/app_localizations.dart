@@ -1318,6 +1318,18 @@ abstract class AppLocalizations {
   /// **'Chưa rõ máy chủ'**
   String get accountRegionUnknown;
 
+  /// Profile caption for the country returned by authenticated Riot identity; not the manual device country.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quốc gia tài khoản Riot: {country}'**
+  String accountRiotCountry(String country);
+
+  /// Profile country unavailable; never infer it from region, device location or language.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quốc gia tài khoản Riot: Chưa xác định'**
+  String get accountRiotCountryUnknown;
+
   /// AccountStrings.accountCount — Switcher sheet (S05)
   ///
   /// In vi, this message translates to:
@@ -3814,6 +3826,48 @@ abstract class AppLocalizations {
   /// **'Chưa tải được danh mục skin. Đóng bảng và thử lại sau khi dữ liệu được đồng bộ.'**
   String get communityRankingCatalogUnavailable;
 
+  /// Explicit decline alternative in mandatory account onboarding; signs out only the displayed account.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không đồng ý · Đăng xuất tài khoản này'**
+  String get communityConsentExitAccount;
+
+  /// Fixed ranking scope and time; product ranking always uses global all-time data.
+  ///
+  /// In vi, this message translates to:
+  /// **'Toàn cầu · Từ trước tới giờ'**
+  String get communityRankingGlobalAllTime;
+
+  /// Heading for the real searchable skin catalog below leaderboard results.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khám phá skin và đánh giá'**
+  String get communityRankingCatalogTitle;
+
+  /// A skin non-owner can read ratings but cannot submit a star rating or review.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài khoản phải sở hữu skin này để đánh giá. Bạn vẫn có thể xem đánh giá và bình luận của cộng đồng.'**
+  String get communityReviewOwnershipRequired;
+
+  /// Ownership lookup failed; refuse rating submission and allow retry.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa xác minh được quyền sở hữu skin. Hãy tải lại Bộ sưu tập hoặc thử lại khi có mạng.'**
+  String get communityReviewOwnershipUnavailable;
+
+  /// Legacy review retained without a successful server inventory check; excluded from rating aggregates.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đánh giá cũ · Chưa xác minh sở hữu'**
+  String get communityReviewLegacyOwnership;
+
+  /// Review inventory proof applies at the time it was saved, not a claim of current ownership.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã xác minh sở hữu khi đánh giá'**
+  String get communityReviewVerifiedOwner;
+
   /// CommunityStrings.addPhotos — feed
   ///
   /// In vi, this message translates to:
@@ -4039,19 +4093,19 @@ abstract class AppLocalizations {
   /// CommunityStrings.consentTitle — consent
   ///
   /// In vi, this message translates to:
-  /// **'Tham gia Cộng đồng ValHub'**
+  /// **'Quyền riêng tư và Cộng đồng ValHub'**
   String get communityConsentTitle;
 
   /// CommunityStrings.consentVerify — consent
   ///
   /// In vi, this message translates to:
-  /// **'Khi cần xác minh Riot ID, ValHub gửi quyền truy cập Riot của bạn cho Cộng đồng ValHub. Cộng đồng dùng xong là bỏ ngay, không lưu.'**
+  /// **'ValHub gửi quyền truy cập Riot cho máy chủ Cộng đồng để xác minh Riot ID khi kết nối và kiểm tra quyền sở hữu skin khi bạn lưu đánh giá. Máy chủ chỉ đọc dữ liệu cần thiết, dùng xong bỏ ngay quyền truy cập, không lưu.'**
   String get communityConsentVerify;
 
   /// CommunityStrings.consentWithdrawn — data rights (Settings)
   ///
   /// In vi, this message translates to:
-  /// **'Đã rút lại đồng ý. Bạn đang xem Cộng đồng ẩn danh.'**
+  /// **'Đã rút lại đồng ý. Cần đồng ý lại để tiếp tục sử dụng app.'**
   String get communityConsentWithdrawn;
 
   /// CommunityStrings.countriesEmpty — scopes (v3)
@@ -5653,7 +5707,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.privacyNote — general states
   ///
   /// In vi, this message translates to:
-  /// **'ValHub xác minh Riot ID của bạn một lần khi bạn tham gia. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.'**
+  /// **'ValHub xác minh Riot ID khi kết nối Cộng đồng và quyền sở hữu skin khi bạn đánh giá. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.'**
   String get communityPrivacyNote;
 
   /// CommunityStrings.publish — feed
@@ -6217,7 +6271,7 @@ abstract class AppLocalizations {
   /// CommunityStrings.trendingTitle — previews
   ///
   /// In vi, this message translates to:
-  /// **'Skin được yêu thích trong tuần'**
+  /// **'Skin được yêu thích toàn cầu'**
   String get communityTrendingTitle;
 
   /// CommunityStrings.unavailableBody — general states
@@ -11186,7 +11240,7 @@ abstract class AppLocalizations {
   /// HomeStrings.trendingTitle — Community card
   ///
   /// In vi, this message translates to:
-  /// **'Skin được yêu thích tuần này'**
+  /// **'Skin được yêu thích toàn cầu'**
   String get homeTrendingTitle;
 
   /// HomeStrings.trendingVotes — Community card

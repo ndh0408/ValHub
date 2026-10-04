@@ -10,6 +10,7 @@ import { countryFromAlpha3 } from '../src/geo/countries.js';
 import { SqliteRepo } from '../src/db/sqlite-repo.js';
 import { DiskMediaStore } from '../src/media.js';
 import type { RiotUserinfoFn } from '../src/riot.js';
+import type { RiotOwnershipFn } from '../src/riot-ownership.js';
 
 
 /** Names of every migration file, in order (tests must not hard-code the list: each work package adds some). */
@@ -41,6 +42,7 @@ export interface SetupOptions {
   tuning?: Partial<Tuning>;
   content?: ContentCatalog;
   riot?: RiotUserinfoFn;
+  ownership?: RiotOwnershipFn;
   /** Event-loop lag probe for load shedding (ms). */
   loadProbe?: () => number;
   /** Overrides of the non-tuning config (rotation secret, proxy trust, public base URL). */
@@ -59,6 +61,8 @@ export interface ReqOpts {
   raw?: Uint8Array | string;
   token?: string;
   headers?: Record<string, string>;
+  /** Explicitly test absence of the proof normally sent by the client. */
+  omitOwnershipProof?: boolean;
 }
 
 export function setup(opts: SetupOptions = {}) {
@@ -73,6 +77,7 @@ export function setup(opts: SetupOptions = {}) {
   const errors: string[] = [];
   /** Riot `country` (alpha-3, as returned by /userinfo) per test user name; unset → Riot sends none. */
   const riotCountries: Record<string, string | undefined> = {};
+  const riotProofs = new Map<string, string>();
 
   /** Tokens: good-<name> → accepted (puuid derived from name), down → network error, else rejected. */
   const riot: RiotUserinfoFn = async (token) => {
@@ -97,6 +102,9 @@ export function setup(opts: SetupOptions = {}) {
     config: { sessionSecret: SECRET, pepper: PEPPER, publicBaseUrl: '', trustProxy: true, ...opts.tuning, ...opts.config },
     content: opts.content,
     riotUserinfo: opts.riot ?? riot,
+    // Old behavior tests still exercise authenticated ownership, using a
+    // deterministic Riot inventory fixture. Adversarial tests override it.
+    riotOwnership: opts.ownership ?? (async () => 'owned'),
     now: () => clock.t,
     loadProbe: opts.loadProbe,
     logError: (m) => errors.push(m),
@@ -106,7 +114,13 @@ export function setup(opts: SetupOptions = {}) {
     const headers: Record<string, string> = { ...(o.headers ?? {}) };
     let body: Uint8Array | string | undefined = o.raw;
     if (o.body !== undefined) {
-      body = typeof o.body === 'string' ? o.body : JSON.stringify(o.body);
+      let json = o.body;
+      if (method === 'PUT' && /^\/v1\/skins\/[^/]+\/review$/.test(p) && !o.omitOwnershipProof &&
+          json !== null && typeof json === 'object' && !Array.isArray(json) && o.token &&
+          riotProofs.has(o.token) && !Object.hasOwn(json, 'accessToken')) {
+        json = { ...json, accessToken: riotProofs.get(o.token) };
+      }
+      body = typeof json === 'string' ? json : JSON.stringify(json);
       headers['content-type'] ??= 'application/json';
     }
     if (o.token) headers.authorization = `Bearer ${o.token}`;
@@ -124,6 +138,7 @@ export function setup(opts: SetupOptions = {}) {
       body: { accessToken: `good-${name}`, region: 'ap', ...extra },
     });
     expect(res.status).toBe(200);
+    riotProofs.set(res.json.token, `good-${name}`);
     if (opts.established) db.prepare('UPDATE users SET created_at = ? WHERE id = ?').run(clock.t - 2 * 86400_000, res.json.user.id);
     return { token: res.json.token as string, user: res.json.user, res };
   }

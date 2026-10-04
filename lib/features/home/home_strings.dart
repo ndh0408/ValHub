@@ -122,7 +122,7 @@ abstract final class HomeStrings {
   // Community card
   static const lfgTitle = 'Tìm đồng đội hợp rank bạn';
   static String lfgNeeds(int n) => 'Cần $n người';
-  static const trendingTitle = 'Skin được yêu thích tuần này';
+  static const trendingTitle = 'Skin được yêu thích toàn cầu';
   static String trendingVotes(int n) => '$n lượt thích';
 
   /// Screen-reader label of a trending skin: "Reaver Vandal, 120 lượt thích,

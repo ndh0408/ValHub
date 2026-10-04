@@ -35,6 +35,7 @@ describe('PUT /v1/skins/{skin}/review', () => {
       liked: false,
       createdAt: new Date(e.clock.t).toISOString(),
       updatedAt: new Date(e.clock.t).toISOString(),
+      ownershipVerifiedAt: new Date(e.clock.t).toISOString(),
       mine: true,
       country: null,
       region: 'ap',

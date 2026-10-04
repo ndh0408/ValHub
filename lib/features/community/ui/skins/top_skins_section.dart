@@ -13,9 +13,8 @@ import 'skin_catalog_sheet.dart';
 import '../../../../core/util/format.dart';
 import '../../community_routes.dart';
 import '../../data/community_models.dart';
-import '../../providers/scope_providers.dart';
+import '../../data/community_exception.dart';
 import '../../providers/skin_vote_providers.dart';
-import '../scope/scope_bar.dart';
 import '../widgets/community_widgets.dart';
 import 'skin_vote_button.dart';
 import 'star_rating.dart';
@@ -57,7 +56,7 @@ String topSortLabel(AppLocalizations l10n, TopSort sort) => switch (sort) {
 };
 
 /// "Xếp hạng skin": the most-loved / best-rated / most-reviewed skins
-/// (all time or this week, per weapon), with a heart per skin and ★ ratings.
+/// (global, all time, per weapon), with a heart per skin and ★ ratings.
 /// Tapping a skin opens its review page. Filters are remembered.
 class TopSkinsSliver extends ConsumerWidget {
   const TopSkinsSliver({super.key, required this.puuid});
@@ -67,36 +66,17 @@ class TopSkinsSliver extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filter = ref.watch(topSkinsFilterProvider);
-    final scope = ref
-        .watch(
-          resolvedScopeProvider((puuid: puuid, section: ScopedSection.skins)),
-        )
-        .value;
     final overrides = ref.watch(skinVoteOverridesProvider(puuid));
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     Widget headerFor([AppliedScope? applied]) =>
         _Filters(filter: filter, db: db, puuid: puuid, applied: applied);
     var header = headerFor();
-    if (scope == null) {
-      return SliverToBoxAdapter(
-        child: Column(
-          children: [
-            header,
-            SkeletonColumn(
-              item: (_) => const TopSkinSkeleton(),
-              count: 5,
-              spacing: 10,
-            ),
-          ],
-        ),
-      );
-    }
     final query = (
       puuid: puuid,
       weapon: filter.weapon,
-      period: filter.period,
+      period: TopPeriod.all,
       sort: filter.sort,
-      scope: scope,
+      scope: ScopeFilter.global,
     );
     final async = ref.watch(topSkinsProvider(query));
 
@@ -122,6 +102,22 @@ class TopSkinsSliver extends ConsumerWidget {
       );
     }
     final result = async.requireValue;
+    if (result.applied != null &&
+        result.applied!.scope != CommunityScope.global) {
+      // Never label a regional result as a global ranking.
+      return SliverToBoxAdapter(
+        child: Column(
+          children: [
+            header,
+            CommunityErrorState(
+              error: const CommunityException(CommunityException.badResponse),
+              puuid: puuid,
+              onRetry: () => ref.invalidate(topSkinsProvider(query)),
+            ),
+          ],
+        ),
+      );
+    }
     final rows = result.rows;
     // Highlight the scope the server really applied.
     header = headerFor(result.applied);
@@ -208,9 +204,6 @@ class _Filters extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final weapon = filter.weapon == null ? null : db.weapon(filter.weapon!);
-    final period = filter.period == TopPeriod.all
-        ? context.l10n.communityPeriodAllTime
-        : context.l10n.communityPeriodWeek;
     Future<void> editFilters() async {
       final selected = await showValSheet<TopSkinsFilter>(
         context,
@@ -261,11 +254,9 @@ class _Filters extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ScopeBar(
-          section: ScopedSection.skins,
-          puuid: puuid,
-          applied: applied,
-          globalLabel: context.l10n.communityScopeWorldwide,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          child: Text(context.l10n.communityRankingGlobalAllTime),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -291,12 +282,7 @@ class _Filters extends ConsumerWidget {
                 ),
                 onPressed: () => unawaited(editFilters()),
                 icon: const Icon(Icons.tune_rounded, size: 18),
-                label: Text(
-                  context.fmt.inlineFacts([
-                    topSortLabel(context.l10n, filter.sort),
-                    period,
-                  ]),
-                ),
+                label: Text(topSortLabel(context.l10n, filter.sort)),
               );
               if (box.maxWidth < 350 ||
                   MediaQuery.textScalerOf(context).scale(14) > 20) {
@@ -375,24 +361,6 @@ class _RankingOptionsState extends State<_RankingOptions> {
             title: Text(topSortLabel(context.l10n, sort)),
             trailing: _draft.sort == sort ? const Icon(Icons.check) : null,
             onTap: () => setState(() => _draft = _draft.copyWith(sort: sort)),
-          ),
-        const Divider(),
-        Text(
-          context.l10n.communityRankingPeriod,
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
-        for (final period in TopPeriod.values)
-          ListTile(
-            key: ValueKey('skins-period-${period.name}'),
-            selected: _draft.period == period,
-            title: Text(
-              period == TopPeriod.all
-                  ? context.l10n.communityPeriodAllTime
-                  : context.l10n.communityPeriodWeek,
-            ),
-            trailing: _draft.period == period ? const Icon(Icons.check) : null,
-            onTap: () =>
-                setState(() => _draft = _draft.copyWith(period: period)),
           ),
         const SizedBox(height: 8),
         FilledButton(

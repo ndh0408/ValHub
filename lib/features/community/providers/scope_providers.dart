@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/accounts/account_providers.dart';
+import '../../../core/geo/countries.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../data/community_models.dart';
 import 'community_providers.dart';
@@ -110,8 +111,8 @@ ScopeFilter resolveScope(
 typedef ResolvedScopeKey = ({String puuid, ScopedSection section});
 
 /// The section's scope with the viewer's country / region filled in. The
-/// country comes from the community profile (Riot account); when it cannot
-/// be read the viewer's region is used.
+/// country comes from the authenticated Community profile or login metadata.
+/// Only when both are unknown does it fall back to the account's region.
 final resolvedScopeProvider = FutureProvider.autoDispose
     .family<ScopeFilter, ResolvedScopeKey>((ref, key) async {
       final chosen = ref.watch(communityScopeProvider(key.section));
@@ -129,13 +130,18 @@ final resolvedScopeProvider = FutureProvider.autoDispose
           anonymous: true,
         );
       }
-      String? myCountry;
+      String? myCountry = normalizeCountry(account?.country);
       if (chosen.scope == CommunityScope.country && chosen.country == null) {
         try {
-          myCountry = (await ref.watch(communityMeProvider(key.puuid).future))
-              .country;
+          myCountry =
+              normalizeCountry(
+                (await ref.watch(communityMeProvider(key.puuid).future))
+                    .country,
+              ) ??
+              myCountry;
         } on Object {
-          myCountry = null;
+          // Login's authenticated Riot country remains useful when the
+          // Community server is offline. Device/manual hints are never identity.
         }
       }
       return resolveScope(chosen, myCountry: myCountry, myRegion: myRegion);
@@ -150,10 +156,16 @@ final myCountryProvider = FutureProvider.autoDispose.family<String?, String>((
   if (ref.watch(communityConsentProvider(puuid)) != CommunityConsent.granted) {
     return null;
   }
+  final accountCountry = normalizeCountry(
+    ref.watch(accountProvider(puuid))?.country,
+  );
   try {
-    return (await ref.watch(communityMeProvider(puuid).future)).country;
+    return normalizeCountry(
+          (await ref.watch(communityMeProvider(puuid).future)).country,
+        ) ??
+        accountCountry;
   } on Object {
-    return null;
+    return accountCountry;
   }
 });
 

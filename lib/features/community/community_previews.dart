@@ -148,7 +148,7 @@ class LfgPreviewCard extends ConsumerWidget {
 
 /// Compact "Skin hot trong tuần" strip; tap a skin → its review page.
 class TrendingSkinsCard extends ConsumerWidget {
-  const TrendingSkinsCard({super.key, this.period = TopPeriod.week});
+  const TrendingSkinsCard({super.key, this.period = TopPeriod.all});
 
   final TopPeriod period;
 
