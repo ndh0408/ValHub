@@ -114,16 +114,39 @@ export function createRiotOwnership(fetchFn: typeof fetch = fetch, diagnostic?: 
       report({operation: 'inventory', status: inventory.status});
       if (inventory.status === 401) { await inventory.body?.cancel(); return 'rejected'; }
       const data = await readJson(inventory, 2 * 1024 * 1024);
-      if (!data || !Array.isArray(data.Entitlements) ||
-          (data.Subject !== undefined && (typeof data.Subject !== 'string' || data.Subject.toLowerCase() !== request.puuid)) ||
-          (data.ItemTypeID !== undefined && data.ItemTypeID !== SKIN_LEVEL)) return 'unavailable';
-      for (const value of data.Entitlements) {
+      if (!data || (data.Subject !== undefined &&
+          (typeof data.Subject !== 'string' || data.Subject.toLowerCase() !== request.puuid))) return 'unavailable';
+      // SUMMARY P-3: Riot returns either a single-type object or type buckets.
+      // ItemTypeID identifies skin levels. Row TypeID identifies the entitlement
+      // kind (e.g. permanent), and must never be compared to the item type.
+      let rows: unknown[];
+      if (data.EntitlementsByTypes !== undefined) {
+        if (!Array.isArray(data.EntitlementsByTypes) || data.Entitlements !== undefined) return 'unavailable';
+        rows = [];
+        let found = false;
+        for (const value of data.EntitlementsByTypes) {
+          if (!value || typeof value !== 'object' || Array.isArray(value)) return 'unavailable';
+          const bucket = value as Record<string, unknown>;
+          if (typeof bucket.ItemTypeID !== 'string' || !Array.isArray(bucket.Entitlements)) return 'unavailable';
+          if (bucket.ItemTypeID.toLowerCase() !== SKIN_LEVEL) continue;
+          if (found) return 'unavailable';
+          found = true; rows = bucket.Entitlements;
+        }
+      } else {
+        if (!Array.isArray(data.Entitlements) || (data.ItemTypeID !== undefined &&
+            (typeof data.ItemTypeID !== 'string' || data.ItemTypeID.toLowerCase() !== SKIN_LEVEL))) return 'unavailable';
+        rows = data.Entitlements;
+      }
+      const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      let owned = false;
+      for (const value of rows) {
         if (!value || typeof value !== 'object' || Array.isArray(value)) return 'unavailable';
         const row = value as Record<string, unknown>;
-        if (typeof row.ItemID !== 'string' || (row.TypeID !== undefined && row.TypeID !== SKIN_LEVEL)) return 'unavailable';
-        if (request.resolveSkin(row.ItemID.toLowerCase())?.skinUuid === request.skinUuid) return 'owned';
+        if (typeof row.ItemID !== 'string' || !uuid.test(row.ItemID) || (row.TypeID !== undefined &&
+            (typeof row.TypeID !== 'string' || !uuid.test(row.TypeID)))) return 'unavailable';
+        if (request.resolveSkin(row.ItemID.toLowerCase())?.skinUuid === request.skinUuid) owned = true;
       }
-      return 'not_owned';
+      return owned ? 'owned' : 'not_owned';
     } catch { report({operation: 'network'}); return 'unavailable'; }
     finally { active--; }
   };

@@ -53,13 +53,14 @@ describe('server identity-bound owner-only reviews', () => {
 describe('bounded Riot inventory adapter', () => {
   const level = '99999999-9999-4999-8999-999999999999';
   const type = 'e7c63390-eda7-46e0-bb7a-a6abdacd2433';
+  const permanent = '4e60e748-bce6-4faa-9327-ebbe6089d5fe';
   const request = {accessToken: 'fixture-token', puuid: 'verified-subject', region: 'br', skinUuid: SKIN_A,
     resolveSkin: (id: string) => id === SKIN_A || id === level ? {skinUuid: SKIN_A, weaponUuid: WEAPON_1} : null};
   const gameHeaders = async () => ({'X-Riot-ClientVersion':'release-13.06-shipping-13-5435758', 'X-Riot-ClientPlatform':'fixture-platform'});
   const json = (value: unknown) => new Response(JSON.stringify(value), {status: 200});
   it('queries a fixed shard host with the verified subject and canonicalizes levels', async () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(json({entitlements_token:'ent'}))
-      .mockResolvedValueOnce(json({Subject: request.puuid, ItemTypeID: type, Entitlements:[{TypeID:type, ItemID:level}]}));
+      .mockResolvedValueOnce(json({Subject: request.puuid, ItemTypeID: type, Entitlements:[{TypeID:permanent, ItemID:level}]}));
     expect(await createRiotOwnership(fetcher, undefined, gameHeaders)(request)).toBe('owned');
     expect(fetcher.mock.calls[1]![0]).toBe(`https://pd.na.a.pvp.net/store/v1/entitlements/verified-subject/${type}`);
     expect(fetcher.mock.calls[1]![1]?.redirect).toBe('manual');
@@ -123,6 +124,31 @@ describe('bounded Riot inventory adapter', () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(json({entitlements_token:'ent'}));
     expect(await createRiotOwnership(fetcher, undefined, async () => null)(request)).toBe('unavailable');
     expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+  it('accepts grouped Riot inventory and the distinct permanent entitlement kind', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(json({entitlements_token:'ent'}))
+      .mockResolvedValueOnce(json({Subject:request.puuid,EntitlementsByTypes:[
+        {ItemTypeID:type,Entitlements:[{TypeID:permanent,ItemID:level}]},
+        {ItemTypeID:'dd3bf334-87f3-40bd-b043-682a57a8dc3a',Entitlements:[]},
+      ]}));
+    expect(await createRiotOwnership(fetcher, undefined, gameHeaders)(request)).toBe('owned');
+  });
+  it('a skin-like identifier in another item type cannot authorize a review', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(json({entitlements_token:'ent'}))
+      .mockResolvedValueOnce(json({EntitlementsByTypes:[{ItemTypeID:'dd3bf334-87f3-40bd-b043-682a57a8dc3a',
+        Entitlements:[{TypeID:permanent,ItemID:level}]}]}));
+    expect(await createRiotOwnership(fetcher, undefined, gameHeaders)(request)).toBe('not_owned');
+  });
+  it.each([
+    {EntitlementsByTypes:[{ItemTypeID:type,Entitlements:[{TypeID:42,ItemID:level}]}]},
+    {EntitlementsByTypes:[{ItemTypeID:type,Entitlements:[]},{ItemTypeID:type,Entitlements:[{ItemID:level}]}]},
+    {EntitlementsByTypes:[],Entitlements:[{ItemID:level}]},
+    {EntitlementsByTypes:'bad'},
+    {EntitlementsByTypes:[null]},
+    {ItemTypeID:type,Entitlements:[{ItemID:level},{ItemID:42}]},
+  ])('fails closed on ambiguous or malformed inventory even after an owned row: %j', async (inventory) => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(json({entitlements_token:'ent'})).mockResolvedValueOnce(json(inventory));
+    expect(await createRiotOwnership(fetcher, undefined, gameHeaders)(request)).toBe('unavailable');
   });
 });
 
