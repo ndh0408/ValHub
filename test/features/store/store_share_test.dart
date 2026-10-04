@@ -80,11 +80,14 @@ Widget _app(
   ),
 );
 
-Future<List<Override>> _overrides({StoreImageSharer? sharer}) async {
+Future<List<Override>> _overrides({
+  StoreImageSharer? sharer,
+  Account account = _account,
+}) async {
   final prefs = await createTestPrefs();
   return [
     prefsProvider.overrideWithValue(prefs),
-    activeAccountProvider.overrideWithValue(_account),
+    activeAccountProvider.overrideWithValue(account),
     remoteConfigProvider.overrideWithValue(_remote),
     deviceCountryProvider.overrideWithValue('US'),
     shareImageProviderFactoryProvider.overrideWithValue((_) => null),
@@ -93,6 +96,29 @@ Future<List<Override>> _overrides({StoreImageSharer? sharer}) async {
 }
 
 void main() {
+  testWidgets(
+    'share sheet cannot include a Riot ID that has not synchronized',
+    (tester) async {
+      tester.view.physicalSize = const Size(360, 1400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final overrides = await _overrides(
+        account: _account.copyWith(gameName: '', tagLine: ''),
+      );
+      await tester.pumpWidget(
+        _app(
+          StoreShareSheetBody(data: _daily()),
+          overrides: overrides,
+          scroll: false,
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(tl.storeShareShowRiotId), findsNothing);
+      expect(find.text(tl.accountUnknownPlayer), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   for (final kind in StoreShareKind.values) {
     testWidgets(
       'missing content remains unknown on the ${kind.name} share card',

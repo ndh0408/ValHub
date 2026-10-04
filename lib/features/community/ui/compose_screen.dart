@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/account_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter/services.dart';
@@ -179,7 +181,7 @@ class _ComposerAccountScreenState
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                account.riotId,
+                account.displayRiotId(context.l10n),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodyLarge?.copyWith(

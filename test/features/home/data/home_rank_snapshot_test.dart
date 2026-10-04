@@ -1,3 +1,6 @@
+import '../../../helpers/l10n.dart';
+
+import 'package:valvn/core/l10n/labels/rank_labels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/domain/competitive/competitive.dart';
 import 'package:valvn/core/util/json.dart';
@@ -107,13 +110,13 @@ void main() {
     test('a ranked player: RR, progress, RR to the next tier and its name', () {
       final s = _snapshot(_mmr(tier: 18, rr: 6))!;
       expect(
-        s.current.tierName,
+        s.current.displayLabel(tf),
         testContent().tier(18, seasonUuid: actV)?.displayName,
       );
       expect(s.current.rr, 6);
       expect(s.progress, closeTo(0.06, 1e-9));
       expect(s.rrToNext, 94);
-      expect(s.nextTierName, 'Kim Cương 2');
+      expect(s.nextRank!.displayLabel(tf), 'Kim Cương 2');
       expect(s.leaderboard, isNull);
       expect(s.previousAct, isNull);
     });
@@ -166,7 +169,7 @@ void main() {
     test('placements: the placement text instead of RR and progress', () {
       final s = _snapshot(_mmr(tier: 0, rr: 0, gamesNeeded: 3))!;
       expect(s.current.isPlacement, isTrue);
-      expect(s.current.placementText, isNotNull);
+      expect(s.current.placementLabel(tf), isNotNull);
       expect(s.progress, isNull);
       expect(s.rrToNext, isNull);
     });

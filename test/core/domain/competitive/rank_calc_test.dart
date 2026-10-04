@@ -1,3 +1,6 @@
+import '../../../helpers/l10n.dart';
+
+import 'package:valvn/core/l10n/labels/rank_labels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/domain/competitive/competitive_strings.dart';
@@ -92,7 +95,7 @@ void main() {
   group('RankInfo', () {
     test('resolves name, icon and color in the act table', () {
       final r = RankInfo.resolve(db, tier: 18, rr: 6, actUuid: actV);
-      expect(r.tierName, 'Kim Cương 1');
+      expect(r.displayLabel(tf), 'Kim Cương 1');
       expect(r.rr, 6);
       expect(r.icon, endsWith('/18/smallicon.png'));
       expect(r.largeIcon, endsWith('/18/largeicon.png'));
@@ -100,18 +103,18 @@ void main() {
       expect(r.color.toARGB32(), 0xFFB489C4);
       expect(r.isUnranked, isFalse);
       final old = RankInfo.resolve(db, tier: 21, actUuid: e1a1.toUpperCase());
-      expect(old.tierName, 'Bất Tử 1');
+      expect(old.displayLabel(tf), 'Bất Tử 1');
       expect(old.actUuid, e1a1);
       expect(old.normalizedTier, 24);
       expect(
-        RankInfo.resolve(db, tier: 21, actUuid: actV).tierName,
+        RankInfo.resolve(db, tier: 21, actUuid: actV).displayLabel(tf),
         'Thượng Nhân 1',
       );
     });
 
     test('unranked, unused tiers and placements', () {
       final u = RankInfo.resolve(db, tier: 1, rr: 40, actUuid: actV);
-      expect(u.tierName, 'Chưa xếp hạng');
+      expect(u.displayLabel(tf), 'Chưa xếp hạng');
       expect(u.rr, 0);
       expect(u.isUnranked, isTrue);
       expect(u.colorHex, isNull);
@@ -119,15 +122,15 @@ void main() {
       expect(u.isPlacement, isFalse);
       final p = RankInfo.resolve(db, tier: 0, gamesNeeded: 3);
       expect(p.isPlacement, isTrue);
-      expect(p.placementText, 'Còn 3 trận phân hạng');
+      expect(p.placementLabel(tf), 'Còn 3 trận phân hạng');
     });
 
     test('works before content is downloaded', () {
       final empty = ContentDb.empty();
       final r = RankInfo.resolve(empty, tier: 16, rr: 20, actUuid: actV);
-      expect(r.tierName, 'Bạch Kim 2');
+      expect(r.displayLabel(tf), 'Bạch Kim 2');
       expect(r.icon, isNull);
-      expect(RankInfo.resolve(empty, tier: 27).tierName, 'Radiant');
+      expect(RankInfo.resolve(empty, tier: 27).displayLabel(tf), 'Radiant');
       expect(CompetitiveStrings.fallbackTierName(3), 'Sắt 1');
       expect(CompetitiveStrings.fallbackTierName(26), 'Bất Tử 3');
       expect(CompetitiveStrings.fallbackTierName(2), isNull);
@@ -145,10 +148,10 @@ void main() {
     test('current act entry', () {
       final r = currentRankOf(db, mmr, now: _now);
       expect((r.tier, r.rr, r.actUuid), (18, 6, actV));
-      expect(r.tierName, 'Kim Cương 1');
+      expect(r.displayLabel(tf), 'Kim Cương 1');
       final console = currentRankOf(db, mmr, now: _now, console: true);
       expect((console.tier, console.rr), (9, 44));
-      expect(console.tierName, 'Bạc 1');
+      expect(console.displayLabel(tf), 'Bạc 1');
     });
 
     test('falls back to the latest update of the current act', () {
@@ -181,7 +184,7 @@ void main() {
       // A different act than the current one is not "current".
       final other = currentRankOf(db, mmr, now: DateTime.utc(2020, 6, 10));
       expect(other.actUuid, e1a1);
-      expect(other.tierName, 'Bất Tử 1');
+      expect(other.displayLabel(tf), 'Bất Tử 1');
     });
   });
 
@@ -191,7 +194,7 @@ void main() {
       // Unknown act: raw 23 (Thượng Nhân 3) < E1 21 (Bất Tử 1 → 24).
       expect(peak.actUuid, e1a1);
       expect(peak.rank.tier, 21);
-      expect(peak.rank.tierName, 'Bất Tử 1');
+      expect(peak.rank.displayLabel(tf), 'Bất Tử 1');
       expect(peak.rank.normalizedTier, 24);
       expect(peak.truePeakRr, 40); // RankedRating of that act
       expect(peak.truePeakFromLocalHistory, isFalse);
@@ -214,7 +217,7 @@ void main() {
     test('ties go to the most recent act; higher tiers win', () {
       final tie = peakRankOf(db, mmr, history: [_row('h', tier: 24, rr: 10)])!;
       expect(tie.actUuid, actV);
-      expect(tie.rank.tierName, 'Bất Tử 1');
+      expect(tie.rank.displayLabel(tf), 'Bất Tử 1');
       expect(tie.truePeakRr, 40);
       final radiant = peakRankOf(
         db,
@@ -238,7 +241,7 @@ void main() {
 
     test('summary', () {
       final s = buildRankSummary(db, mmr, now: _now);
-      expect(s.current.tierName, 'Kim Cương 1');
+      expect(s.current.displayLabel(tf), 'Kim Cương 1');
       expect(s.peak!.actUuid, e1a1);
       expect(s.currentAct!.uuid, actV);
       expect((s.wins, s.games), (20, 38));

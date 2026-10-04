@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/account_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -114,7 +116,9 @@ class CommunityConsentSheet extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            context.l10n.communityConsentAccount(account.riotId),
+            context.l10n.communityConsentAccount(
+              account.displayRiotId(context.l10n),
+            ),
             textAlign: TextAlign.center,
             style: theme.textTheme.bodySmall?.copyWith(color: muted),
           ),

@@ -1760,6 +1760,69 @@
     "description": "NotificationStrings.storeResetBody — ",
     "x-context": "lib/core/l10n/notification_strings.dart"
   },
+  "competitiveDivisionIron": "Sắt",
+  "@competitiveDivisionIron": {
+    "description": "Rank division fallback for verified numeric tiers; existing Vietnamese label.",
+    "x-manual": true
+  },
+  "competitiveDivisionBronze": "Đồng",
+  "@competitiveDivisionBronze": {
+    "description": "Rank division fallback for verified numeric tiers; existing Vietnamese label.",
+    "x-manual": true
+  },
+  "competitiveDivisionSilver": "Bạc",
+  "@competitiveDivisionSilver": {
+    "description": "Rank division fallback for verified numeric tiers; existing Vietnamese label.",
+    "x-manual": true
+  },
+  "competitiveDivisionGold": "Vàng",
+  "@competitiveDivisionGold": {
+    "description": "Rank division fallback for verified numeric tiers; existing Vietnamese label.",
+    "x-manual": true
+  },
+  "competitiveDivisionPlatinum": "Bạch Kim",
+  "@competitiveDivisionPlatinum": {
+    "description": "Rank division fallback for verified numeric tiers; existing Vietnamese label.",
+    "x-manual": true
+  },
+  "competitiveDivisionDiamond": "Kim Cương",
+  "@competitiveDivisionDiamond": {
+    "description": "Rank division fallback for verified numeric tiers; existing Vietnamese label.",
+    "x-manual": true
+  },
+  "competitiveDivisionAscendant": "Thượng Nhân",
+  "@competitiveDivisionAscendant": {
+    "description": "Rank division fallback for verified numeric tiers; existing Vietnamese label.",
+    "x-manual": true
+  },
+  "competitiveDivisionImmortal": "Bất Tử",
+  "@competitiveDivisionImmortal": {
+    "description": "Rank division fallback for verified numeric tiers; existing Vietnamese label.",
+    "x-manual": true
+  },
+  "competitiveRankTierCaption": "{division} {number}",
+  "@competitiveRankTierCaption": {
+    "description": "Rank fallback division and within-division tier; excludes unranked and unknown tier IDs.",
+    "placeholders": {
+      "division": {
+        "type": "String"
+      },
+      "number": {
+        "type": "int"
+      }
+    },
+    "x-manual": true
+  },
+  "competitiveDivisionRadiant": "Radiant",
+  "@competitiveDivisionRadiant": {
+    "description": "Rank display fallback; unknown data is distinct from actual unranked.",
+    "x-manual": true
+  },
+  "competitiveRankUnknown": "Chưa rõ xếp hạng",
+  "@competitiveRankUnknown": {
+    "description": "Rank display fallback; unknown data is distinct from actual unranked.",
+    "x-manual": true
+  },
   "competitiveAttack": "Tấn công",
   "@competitiveAttack": {
     "description": "CompetitiveStrings.attack — Sides (VF §8.8)",
@@ -3570,6 +3633,66 @@
         "type": "String"
       }
     }
+  },
+  "communityRankingEmptyTitle": "Chưa có skin trong bảng xếp hạng này",
+  "@communityRankingEmptyTitle": {
+    "description": "Skin ranking discovery and compact filters; actual community data only.",
+    "x-manual": true
+  },
+  "communityRankingEmptyVotes": "Chưa có lượt yêu thích phù hợp với phạm vi và bộ lọc đang chọn.",
+  "@communityRankingEmptyVotes": {
+    "description": "Skin ranking discovery and compact filters; actual community data only.",
+    "x-manual": true
+  },
+  "communityRankingEmptyRatings": "Chưa có đánh giá sao phù hợp với phạm vi và bộ lọc đang chọn.",
+  "@communityRankingEmptyRatings": {
+    "description": "Skin ranking discovery and compact filters; actual community data only.",
+    "x-manual": true
+  },
+  "communityRankingEmptyReviews": "Chưa có nhận xét phù hợp với phạm vi và bộ lọc đang chọn.",
+  "@communityRankingEmptyReviews": {
+    "description": "Skin ranking discovery and compact filters; actual community data only.",
+    "x-manual": true
+  },
+  "communityRankingExplore": "Tìm skin để xem và đánh giá",
+  "@communityRankingExplore": {
+    "description": "Skin ranking discovery and compact filters; actual community data only.",
+    "x-manual": true
+  },
+  "communityRankingExploreHint": "Tìm theo tên skin hoặc vũ khí. Chỉ đánh giá thực tế của cộng đồng mới xuất hiện trong bảng xếp hạng.",
+  "@communityRankingExploreHint": {
+    "description": "Skin ranking discovery and compact filters; actual community data only.",
+    "x-manual": true
+  },
+  "communityRankingClear": "Bỏ lọc vũ khí và thời gian",
+  "@communityRankingClear": {
+    "description": "Skin ranking discovery and compact filters; actual community data only.",
+    "x-manual": true
+  },
+  "communityRankingPeriod": "Thời gian",
+  "@communityRankingPeriod": {
+    "description": "Skin ranking discovery and compact filters; actual community data only.",
+    "x-manual": true
+  },
+  "communityRankingSort": "Xếp hạng theo",
+  "@communityRankingSort": {
+    "description": "Skin ranking discovery and compact filters; actual community data only.",
+    "x-manual": true
+  },
+  "communityRankingWeapon": "Vũ khí",
+  "@communityRankingWeapon": {
+    "description": "Skin ranking discovery and compact filters; actual community data only.",
+    "x-manual": true
+  },
+  "communityRankingNoSearch": "Không tìm thấy skin phù hợp. Thử tên khác hoặc bỏ lọc vũ khí.",
+  "@communityRankingNoSearch": {
+    "description": "Skin ranking discovery and compact filters; actual community data only.",
+    "x-manual": true
+  },
+  "communityRankingCatalogUnavailable": "Chưa tải được danh mục skin. Đóng bảng và thử lại sau khi dữ liệu được đồng bộ.",
+  "@communityRankingCatalogUnavailable": {
+    "description": "Skin ranking discovery and compact filters; actual community data only.",
+    "x-manual": true
   },
   "communityAddPhotos": "Thêm ảnh",
   "@communityAddPhotos": {

@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -362,7 +364,7 @@ void main() {
       ),
     );
     await homePastGate(tester);
-    expect(find.textContaining(formatVp(2440)), findsOneWidget);
+    expect(find.textContaining(formatVp(2440, messages: tl)), findsOneWidget);
 
     // Scroll down, then switch.
     final scrollable = find.byType(Scrollable).first;
@@ -379,8 +381,8 @@ void main() {
     container.read(activePuuidProvider.notifier).select(homeAlt1.puuid);
     await homeSettle(tester);
 
-    expect(find.textContaining(formatVp(777)), findsOneWidget);
-    expect(find.textContaining(formatVp(2440)), findsNothing);
+    expect(find.textContaining(formatVp(777, messages: tl)), findsOneWidget);
+    expect(find.textContaining(formatVp(2440, messages: tl)), findsNothing);
     expect(tester.state<ScrollableState>(scrollable).position.pixels, 0);
     await homeUnmount(tester);
   });

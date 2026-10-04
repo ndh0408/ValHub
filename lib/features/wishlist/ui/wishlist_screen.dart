@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/account_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter/semantics.dart' show CustomSemanticsAction;
@@ -321,7 +323,9 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
 
     return SubPageScaffold(
       title: context.l10n.wishlistTitle,
-      subtitle: context.l10n.wishlistOfAccount(account.riotId),
+      subtitle: context.l10n.wishlistOfAccount(
+        account.displayRiotId(context.l10n),
+      ),
       actions: [
         IconButton(
           tooltip: context.l10n.wishlistAddSkins,

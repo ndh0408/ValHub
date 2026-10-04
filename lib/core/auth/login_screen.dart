@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/account_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter/foundation.dart'
@@ -266,7 +268,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         context.go('/');
       }
     } on MaxAccountsException catch (e) {
-      _fail(e.message, logDetail: 'max_accounts');
+      _fail(e.message(l10n), logDetail: 'max_accounts');
     } on RiotException catch (e) {
       if (!mounted) return;
       _fail(
@@ -366,7 +368,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               children: [
                 for (final (account, _) in saved)
                   GroupedRow(
-                    title: account.riotId,
+                    title: account.displayRiotId(context.l10n),
                     subtitle: context.l10n.accountLoginNote,
                     leading: AccountAvatar(
                       account: account,

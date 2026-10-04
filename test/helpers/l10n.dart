@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/l10n/app_locale.dart';
 import 'package:valvn/core/l10n/l10n.dart';
+import 'package:valvn/core/l10n/formats.dart';
 
 import 'test_locale.dart';
 
@@ -23,6 +24,13 @@ final Locale testUiLocale =
 /// The literal `find.text('...')` assertions of older tests stay valid: they
 /// run under `vi` (docs/design/I18N.md 12.1).
 final AppLocalizations tl = lookupAppLocalizations(testUiLocale);
+
+/// Display formats for the same generated test resources; no global app locale.
+final AppFormats tf = AppFormats.create(
+  AppLocale.fromLocale(testUiLocale) ?? AppLocale.vi,
+  testUiLocale.toString(),
+  messages: tl,
+);
 
 /// A `MaterialApp` with the app's localization delegates, for new tests.
 ///

@@ -140,7 +140,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
       onRefresh: () => _refresh(account, joined: joined),
       floatingActionButton: _fab(account, joined: joined),
       slivers: [
-        if (!joined && _section != CommunitySection.lfg)
+        if (!joined && _section == CommunitySection.feed)
           SliverToBoxAdapter(child: AnonymousBanner(account: account)),
         switch (_section) {
           CommunitySection.feed => FeedSliver(
@@ -159,6 +159,8 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
             puuid: account.puuid,
           ),
         },
+        if (!joined && _section == CommunitySection.skins)
+          SliverToBoxAdapter(child: AnonymousBanner(account: account)),
         const SliverToBoxAdapter(child: SizedBox(height: 96)),
       ],
     );

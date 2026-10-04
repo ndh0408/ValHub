@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/rank_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -229,7 +230,7 @@ class _CurrentRankCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  rank.tierName,
+                  rank.displayLabel(context.fmt),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleLarge?.copyWith(
@@ -298,7 +299,7 @@ class _TargetPicker extends ConsumerWidget {
                     child: Semantics(
                       selected: isSelected,
                       button: true,
-                      label: rank.tierName,
+                      label: rank.displayLabel(context.fmt),
                       excludeSemantics: true,
                       child: Material(
                         color: isSelected
@@ -329,7 +330,7 @@ class _TargetPicker extends ConsumerWidget {
                                 NetImage(rank.icon, width: 36, height: 36),
                                 const SizedBox(height: 4),
                                 Text(
-                                  rank.tierName,
+                                  rank.displayLabel(context.fmt),
                                   maxLines: 2,
                                   textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
@@ -449,7 +450,9 @@ class _ResultCards extends ConsumerWidget {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        context.l10n.profileProgressTo(target.tierName),
+                        context.l10n.profileProgressTo(
+                          target.displayLabel(context.fmt),
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.labelLarge?.copyWith(

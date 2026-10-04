@@ -8,7 +8,8 @@ import '../../../../core/content/content_repository.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tier_colors.dart';
 import '../../../../core/ui/net_image.dart';
-import '../../../../core/ui/segmented_tabs.dart';
+import '../../../../core/ui/sub_page.dart';
+import 'skin_catalog_sheet.dart';
 import '../../../../core/util/format.dart';
 import '../../community_routes.dart';
 import '../../data/community_models.dart';
@@ -131,8 +132,26 @@ class TopSkinsSliver extends ConsumerWidget {
             header,
             CommunityEmptyState(
               icon: Icons.favorite_border_rounded,
-              title: context.l10n.communitySkinsEmptyTitle,
-              message: context.l10n.communitySkinsEmptyBody,
+              title: context.l10n.communityRankingEmptyTitle,
+              message: switch (filter.sort) {
+                TopSort.votes => context.l10n.communityRankingEmptyVotes,
+                TopSort.rating => context.l10n.communityRankingEmptyRatings,
+                TopSort.reviews => context.l10n.communityRankingEmptyReviews,
+              },
+              action: filter.weapon != null || filter.period != TopPeriod.all
+                  ? OutlinedButton(
+                      key: const ValueKey('skins-clear-filters'),
+                      onPressed: () => ref
+                          .read(topSkinsFilterProvider.notifier)
+                          .setFilters(
+                            filter.copyWith(
+                              weapon: () => null,
+                              period: TopPeriod.all,
+                            ),
+                          ),
+                      child: Text(context.l10n.communityRankingClear),
+                    )
+                  : null,
             ),
           ],
         ),
@@ -188,10 +207,57 @@ class _Filters extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.read(topSkinsFilterProvider.notifier);
-    final weapons = leaderboardWeapons(db);
-    final filterHeight = (MediaQuery.textScalerOf(context).scale(14) * 1.5 + 28)
-        .clamp(52.0, double.infinity);
+    final weapon = filter.weapon == null ? null : db.weapon(filter.weapon!);
+    final period = filter.period == TopPeriod.all
+        ? context.l10n.communityPeriodAllTime
+        : context.l10n.communityPeriodWeek;
+    Future<void> editFilters() async {
+      final selected = await showValSheet<TopSkinsFilter>(
+        context,
+        title: context.l10n.communityFilters,
+        useRootNavigator: true,
+        builder: (_, _) => _RankingOptions(initial: filter),
+      );
+      if (!context.mounted || selected == null) return;
+      ref.read(topSkinsFilterProvider.notifier).setFilters(selected);
+    }
+
+    Future<void> pickWeapon() async {
+      final selected = await showValSheet<String>(
+        context,
+        title: context.l10n.communityRankingWeapon,
+        scrollable: true,
+        useRootNavigator: true,
+        builder: (sheetContext, controller) => ListView(
+          key: const ValueKey('skins-weapons'),
+          controller: controller,
+          children: [
+            ListTile(
+              key: const ValueKey('weapon-all'),
+              title: Text(sheetContext.l10n.communityAllWeapons),
+              selected: filter.weapon == null,
+              trailing: filter.weapon == null ? const Icon(Icons.check) : null,
+              onTap: () => Navigator.pop(sheetContext, ''),
+            ),
+            for (final w in leaderboardWeapons(db))
+              ListTile(
+                key: ValueKey('weapon-${w.uuid}'),
+                title: Text(w.displayName),
+                selected: filter.weapon == w.uuid,
+                trailing: filter.weapon == w.uuid
+                    ? const Icon(Icons.check)
+                    : null,
+                onTap: () => Navigator.pop(sheetContext, w.uuid),
+              ),
+          ],
+        ),
+      );
+      if (!context.mounted || selected == null) return;
+      ref
+          .read(topSkinsFilterProvider.notifier)
+          .setWeapon(selected.isEmpty ? null : selected);
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -201,73 +267,142 @@ class _Filters extends ConsumerWidget {
           applied: applied,
           globalLabel: context.l10n.communityScopeWorldwide,
         ),
-        SegmentedTabs<TopPeriod>(
-          expand: true,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
-          tabs: [
-            SegmentedTab(
-              value: TopPeriod.all,
-              label: context.l10n.communityPeriodAllTime,
-            ),
-            SegmentedTab(
-              value: TopPeriod.week,
-              label: context.l10n.communityPeriodWeek,
-            ),
-          ],
-          selected: filter.period,
-          onChanged: notifier.setPeriod,
-        ),
-        SizedBox(
-          height: filterHeight,
-          child: ListView(
-            key: const ValueKey('skins-sort'),
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-            children: [
-              for (final s in TopSort.values) ...[
-                if (s != TopSort.values.first) const SizedBox(width: 8),
-                CommunityChip(
-                  label: topSortLabel(context.l10n, s),
-                  icon: switch (s) {
-                    TopSort.votes => Icons.favorite_rounded,
-                    TopSort.rating => Icons.star_rounded,
-                    TopSort.reviews => Icons.rate_review_rounded,
-                  },
-                  selected: filter.sort == s,
-                  onSelected: () => notifier.setSort(s),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: LayoutBuilder(
+            builder: (context, box) {
+              final weaponButton = OutlinedButton.icon(
+                key: const ValueKey('skins-weapon-selector'),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(48, 48),
                 ),
-              ],
-            ],
+                onPressed: () => unawaited(pickWeapon()),
+                icon: const Icon(Icons.expand_more_rounded, size: 18),
+                label: Text(
+                  filter.weapon == null
+                      ? context.l10n.communityAllWeapons
+                      : weapon?.displayName ?? context.l10n.commonUnknownItem,
+                ),
+              );
+              final sortButton = OutlinedButton.icon(
+                key: const ValueKey('skins-filter-selector'),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(48, 48),
+                ),
+                onPressed: () => unawaited(editFilters()),
+                icon: const Icon(Icons.tune_rounded, size: 18),
+                label: Text(
+                  context.fmt.inlineFacts([
+                    topSortLabel(context.l10n, filter.sort),
+                    period,
+                  ]),
+                ),
+              );
+              if (box.maxWidth < 350 ||
+                  MediaQuery.textScalerOf(context).scale(14) > 20) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    weaponButton,
+                    const SizedBox(height: 4),
+                    sortButton,
+                  ],
+                );
+              }
+              return Row(
+                children: [
+                  Flexible(child: weaponButton),
+                  const SizedBox(width: 8),
+                  Expanded(flex: 2, child: sortButton),
+                ],
+              );
+            },
           ),
         ),
-        SizedBox(
-          height: filterHeight,
-          child: ListView(
-            key: const ValueKey('skins-weapons'),
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-            children: [
-              CommunityChip(
-                label: context.l10n.communityAllWeapons,
-                selected: filter.weapon == null,
-                onSelected: () => notifier.setWeapon(null),
-              ),
-              for (final w in weapons) ...[
-                const SizedBox(width: 8),
-                CommunityChip(
-                  key: ValueKey('weapon-${w.uuid}'),
-                  label: w.displayName,
-                  selected: filter.weapon == w.uuid,
-                  onSelected: () => notifier.setWeapon(w.uuid),
-                ),
-              ],
-            ],
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+          child: TextButton.icon(
+            key: const ValueKey('skins-explore'),
+            style: TextButton.styleFrom(
+              minimumSize: const Size(48, 48),
+              alignment: AlignmentDirectional.centerStart,
+              foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+              backgroundColor: Theme.of(context)
+                  .colorScheme
+                  .surfaceContainerLow,
+            ),
+            onPressed: () =>
+                unawaited(showSkinCatalog(context, weapon: filter.weapon)),
+            icon: const Icon(Icons.search_rounded),
+            label: Text(context.l10n.communityRankingExplore),
           ),
         ),
-        const SizedBox(height: 6),
       ],
     );
   }
+}
+
+/// Edits a draft, with one explicit commit; backing out does not send queries.
+class _RankingOptions extends StatefulWidget {
+  const _RankingOptions({required this.initial});
+  final TopSkinsFilter initial;
+  @override
+  State<_RankingOptions> createState() => _RankingOptionsState();
+}
+
+class _RankingOptionsState extends State<_RankingOptions> {
+  late TopSkinsFilter _draft = widget.initial;
+  @override
+  Widget build(BuildContext context) => SingleChildScrollView(
+    key: const ValueKey('skins-sort'),
+    padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          context.l10n.communityRankingSort,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        for (final sort in TopSort.values)
+          ListTile(
+            key: ValueKey('skins-sort-${sort.name}'),
+            selected: _draft.sort == sort,
+            leading: Icon(switch (sort) {
+              TopSort.votes => Icons.favorite_rounded,
+              TopSort.rating => Icons.star_rounded,
+              TopSort.reviews => Icons.rate_review_rounded,
+            }),
+            title: Text(topSortLabel(context.l10n, sort)),
+            trailing: _draft.sort == sort ? const Icon(Icons.check) : null,
+            onTap: () => setState(() => _draft = _draft.copyWith(sort: sort)),
+          ),
+        const Divider(),
+        Text(
+          context.l10n.communityRankingPeriod,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        for (final period in TopPeriod.values)
+          ListTile(
+            key: ValueKey('skins-period-${period.name}'),
+            selected: _draft.period == period,
+            title: Text(
+              period == TopPeriod.all
+                  ? context.l10n.communityPeriodAllTime
+                  : context.l10n.communityPeriodWeek,
+            ),
+            trailing: _draft.period == period ? const Icon(Icons.check) : null,
+            onTap: () =>
+                setState(() => _draft = _draft.copyWith(period: period)),
+          ),
+        const SizedBox(height: 8),
+        FilledButton(
+          key: const ValueKey('skins-apply-filters'),
+          onPressed: () => Navigator.pop(context, _draft),
+          child: Text(context.l10n.communityApply),
+        ),
+      ],
+    ),
+  );
 }
 
 /// Rank number colors of the podium.

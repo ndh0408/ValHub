@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/rank_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -369,7 +371,7 @@ class _RankColumn extends ConsumerWidget {
           NetImage(rank.icon, width: 30, height: 30, showSkeleton: false),
           const SizedBox(height: 2),
           Text(
-            rank.tierName,
+            rank.displayLabel(context.fmt),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
@@ -380,7 +382,7 @@ class _RankColumn extends ConsumerWidget {
           ),
           if (showPeak && peak != null && !peak.isUnranked)
             Text(
-              context.l10n.liveGamePeak(peak.tierName),
+              context.l10n.liveGamePeak(peak.displayLabel(context.fmt)),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,

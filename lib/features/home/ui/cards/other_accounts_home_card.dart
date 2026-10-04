@@ -133,7 +133,9 @@ class _AccountRow extends ConsumerWidget {
         Expanded(
           child: Semantics(
             button: true,
-            label: context.l10n.accountSwitchTo(account.riotId),
+            label: context.l10n.accountSwitchTo(
+              account.displayRiotId(context.l10n),
+            ),
             excludeSemantics: true,
             child: InkWell(
               borderRadius: BorderRadius.circular(ValRadius.small),
@@ -171,7 +173,7 @@ class _AccountRow extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              account.riotId,
+                              account.displayRiotId(context.l10n),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.bodyMedium?.copyWith(

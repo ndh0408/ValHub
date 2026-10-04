@@ -7,6 +7,7 @@ import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/data/community_models.dart';
 
 import '../community_test_env.dart';
+import '../../../helpers/l10n.dart';
 
 Future<void> _open(
   WidgetTester tester,
@@ -173,7 +174,7 @@ void main() {
         'appliedScope': _applied('region', region: 'ap'),
       });
       await _open(tester, env, location: '/community?section=skins');
-      expect(find.text(CommunityStrings.skinsEmptyTitle), findsOneWidget);
+      expect(find.text(tl.communityRankingEmptyTitle), findsOneWidget);
       expect(_selected(tester), CommunityScope.region);
       await unmount(tester);
     });

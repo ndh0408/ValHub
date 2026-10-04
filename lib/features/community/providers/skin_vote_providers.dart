@@ -90,6 +90,14 @@ class TopSkinsFilterNotifier extends Notifier<TopSkinsFilter> {
     state = state.copyWith(sort: sort);
     _memory.writeEnum(TopSkinsMemoryKeys.sort, sort);
   }
+
+  /// Apply a confirmed sheet selection once; dismissing the sheet changes nothing.
+  void setFilters(TopSkinsFilter filter) {
+    state = filter;
+    _memory.write(TopSkinsMemoryKeys.weapon, filter.weapon);
+    _memory.writeEnum(TopSkinsMemoryKeys.period, filter.period);
+    _memory.writeEnum(TopSkinsMemoryKeys.sort, filter.sort);
+  }
 }
 
 /// Key of [topSkinsProvider] (`puuid` = whose votes are marked).

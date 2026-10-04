@@ -1,3 +1,7 @@
+import 'package:valvn/core/l10n/account_labels.dart';
+
+import '../../helpers/l10n.dart';
+
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -149,7 +153,7 @@ void main() {
           ),
       throwsA(
         isA<MaxAccountsException>().having(
-          (e) => e.message,
+          (e) => e.message(tl),
           'message',
           'Đã đạt tối đa 10 tài khoản.',
         ),
@@ -253,7 +257,7 @@ void main() {
         .copyWith(platform: GamePlatform.playstation, level: 222, rankTier: 18);
     expect(Account.fromJson(a.toJson()), a);
     expect(a.riotId, 'P7#VN');
-    expect(a.platform.label, 'PlayStation');
+    expect(a.platform.label(tl), 'PlayStation');
     expect(a.toString(), isNot(contains(a.puuid)));
     expect(Account.fromJson({'puuid': 'X', 'region': 'latam'})!.shard, 'na');
   });

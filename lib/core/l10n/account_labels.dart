@@ -50,3 +50,16 @@ extension AccountLabels on AppLocalizations {
     _ => settingsPlatformOther,
   };
 }
+
+extension AccountDisplay on Account {
+  String displayRiotId(AppLocalizations l10n) =>
+      riotId.isEmpty ? l10n.accountUnknownPlayer : riotId;
+}
+
+extension GamePlatformDisplay on GamePlatform {
+  String label(AppLocalizations l10n) => l10n.gamePlatformName(this);
+}
+
+extension AccountLimitDisplay on MaxAccountsException {
+  String message(AppLocalizations l10n) => l10n.accountMaxAccounts(max);
+}

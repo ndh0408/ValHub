@@ -57,7 +57,7 @@ class SettingsOptionsSection extends ConsumerWidget {
       title: l10n.settingsPlatformPickerTitle,
       hint:
           '${l10n.settingsPlatformHint}\n'
-          '${l10n.settingsPlatformAppliesTo(account.riotId)}',
+          '${l10n.settingsPlatformAppliesTo(account.displayRiotId(l10n))}',
       selected: account.platform,
       options: [
         for (final p in GamePlatform.values) (p, l10n.gamePlatformName(p)),

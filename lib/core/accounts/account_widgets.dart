@@ -88,7 +88,9 @@ class AccountChip extends ConsumerWidget {
     final account = ref.watch(activeAccountProvider);
     if (account == null) return const SizedBox.shrink();
     final theme = Theme.of(context);
-    final name = account.gameName.isEmpty ? account.riotId : account.gameName;
+    final name = account.gameName.isEmpty
+        ? account.displayRiotId(context.l10n)
+        : account.gameName;
     // The pill is 38 dp tall; the tap target (and its semantics node) is
     // 48 dp: a 5 dp band above and below belongs to the button.
     return Semantics(
@@ -515,7 +517,7 @@ class AccountTile extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      account.riotId,
+                      account.displayRiotId(context.l10n),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0,

@@ -6,6 +6,7 @@ export '../geo/country_preference.dart' show deviceCountryProvider;
 import '../settings/app_settings.dart';
 import '../storage/prefs.dart';
 import '../util/format.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'remote_config.dart';
 import 'vp_prices.dart';
 
@@ -41,11 +42,16 @@ class LocalPrice {
   }
 
   /// `≈ 268.000 ₫` for [vp], or `null`.
-  String? format(num vp, {String? locale}) {
+  String? format(num vp, {required AppLocalizations messages, String? locale}) {
     final value = estimate(vp);
     return value == null
         ? null
-        : formatEstimatedPrice(value, currency, locale: locale);
+        : formatEstimatedPrice(
+            value,
+            currency,
+            locale: locale,
+            messages: messages,
+          );
   }
 
   /// A pack price in this currency: `100.000 ₫`.

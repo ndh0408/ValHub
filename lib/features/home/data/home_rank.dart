@@ -53,6 +53,7 @@ class HomeRankSnapshot {
     this.streak,
     this.matchesToNext,
     this.nextTierName,
+    this.nextRank,
     this.leaderboard,
     this.previousAct,
   });
@@ -73,6 +74,7 @@ class HomeRankSnapshot {
   /// Games to the next tier at the recent form ("≈ 9 trận").
   final int? matchesToNext;
   final String? nextTierName;
+  final RankInfo? nextRank;
 
   /// Leaderboard position (Immortal and above).
   final int? leaderboard;
@@ -159,6 +161,7 @@ HomeRankSnapshot? buildHomeRankSnapshot(
         ? matches
         : null,
     nextTierName: next?.tierName,
+    nextRank: next,
     leaderboard: ranked && !belowImmortal ? summary.leaderboardRank : null,
     previousAct: previous,
   );

@@ -44,13 +44,19 @@ void main() {
         final at = now.add(Duration(days: delta, seconds: 29));
         expect(
           vi.dayHeader(at, now),
-          old.formatDayHeader(at, now, locale: 'vi'),
+          old.formatDayHeader(at, now, locale: 'vi', messages: tl),
         );
-        expect(vi.wallTime(at, now), old.formatWallTime(at, now, locale: 'vi'));
-        expect(vi.weekdayDate(at), old.formatWeekdayDate(at, locale: 'vi'));
+        expect(
+          vi.wallTime(at, now),
+          old.formatWallTime(at, now, locale: 'vi', messages: tl),
+        );
+        expect(
+          vi.weekdayDate(at),
+          old.formatWeekdayDate(at, locale: 'vi', messages: tl),
+        );
         expect(
           vi.updatedAt(at, now),
-          old.formatUpdatedAt(at, now, locale: 'vi'),
+          old.formatUpdatedAt(at, now, locale: 'vi', messages: tl),
         );
       }
       // Expiry rounding can change the calendar day; headers do not round.
@@ -69,8 +75,14 @@ void main() {
       const Duration(days: 1),
       const Duration(days: 12, hours: 3, minutes: 4, seconds: 5),
     ]) {
-      expect(vi.countdown(duration), old.formatCountdown(duration));
-      expect(vi.durationCoarse(duration), old.formatDurationCoarse(duration));
+      expect(
+        vi.countdown(duration),
+        old.formatCountdown(duration, messages: tl),
+      );
+      expect(
+        vi.durationCoarse(duration),
+        old.formatDurationCoarse(duration, messages: tl),
+      );
     }
     for (final amount in <num>[
       0,
@@ -80,10 +92,13 @@ void main() {
       double.nan,
       double.infinity,
     ]) {
-      expect(vi.estimatedVp(amount), old.formatEstimatedVp(amount));
+      expect(
+        vi.estimatedVp(amount),
+        old.formatEstimatedVp(amount, messages: tl),
+      );
       expect(
         vi.estimatedPrice(amount, 'VND'),
-        old.formatEstimatedPrice(amount, 'VND', locale: 'vi'),
+        old.formatEstimatedPrice(amount, 'VND', locale: 'vi', messages: tl),
       );
     }
   });

@@ -2002,6 +2002,72 @@ abstract class AppLocalizations {
   /// **'Skin mới đang chờ bạn trong cửa hàng.'**
   String get notificationStoreResetBody;
 
+  /// Rank division fallback for verified numeric tiers; existing Vietnamese label.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sắt'**
+  String get competitiveDivisionIron;
+
+  /// Rank division fallback for verified numeric tiers; existing Vietnamese label.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đồng'**
+  String get competitiveDivisionBronze;
+
+  /// Rank division fallback for verified numeric tiers; existing Vietnamese label.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạc'**
+  String get competitiveDivisionSilver;
+
+  /// Rank division fallback for verified numeric tiers; existing Vietnamese label.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vàng'**
+  String get competitiveDivisionGold;
+
+  /// Rank division fallback for verified numeric tiers; existing Vietnamese label.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạch Kim'**
+  String get competitiveDivisionPlatinum;
+
+  /// Rank division fallback for verified numeric tiers; existing Vietnamese label.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kim Cương'**
+  String get competitiveDivisionDiamond;
+
+  /// Rank division fallback for verified numeric tiers; existing Vietnamese label.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thượng Nhân'**
+  String get competitiveDivisionAscendant;
+
+  /// Rank division fallback for verified numeric tiers; existing Vietnamese label.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bất Tử'**
+  String get competitiveDivisionImmortal;
+
+  /// Rank fallback division and within-division tier; excludes unranked and unknown tier IDs.
+  ///
+  /// In vi, this message translates to:
+  /// **'{division} {number}'**
+  String competitiveRankTierCaption(String division, int number);
+
+  /// Rank display fallback; unknown data is distinct from actual unranked.
+  ///
+  /// In vi, this message translates to:
+  /// **'Radiant'**
+  String get competitiveDivisionRadiant;
+
+  /// Rank display fallback; unknown data is distinct from actual unranked.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa rõ xếp hạng'**
+  String get competitiveRankUnknown;
+
   /// CompetitiveStrings.attack — Sides (VF §8.8)
   ///
   /// In vi, this message translates to:
@@ -3675,6 +3741,78 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'{region, select, ap{Châu Á - Thái Bình Dương} na{Bắc Mỹ} eu{Châu Âu} kr{Hàn Quốc} latam{Mỹ Latinh} br{Brazil} other{Chưa rõ máy chủ}}'**
   String communityRegionName(String region);
+
+  /// Skin ranking discovery and compact filters; actual community data only.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có skin trong bảng xếp hạng này'**
+  String get communityRankingEmptyTitle;
+
+  /// Skin ranking discovery and compact filters; actual community data only.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có lượt yêu thích phù hợp với phạm vi và bộ lọc đang chọn.'**
+  String get communityRankingEmptyVotes;
+
+  /// Skin ranking discovery and compact filters; actual community data only.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có đánh giá sao phù hợp với phạm vi và bộ lọc đang chọn.'**
+  String get communityRankingEmptyRatings;
+
+  /// Skin ranking discovery and compact filters; actual community data only.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có nhận xét phù hợp với phạm vi và bộ lọc đang chọn.'**
+  String get communityRankingEmptyReviews;
+
+  /// Skin ranking discovery and compact filters; actual community data only.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm skin để xem và đánh giá'**
+  String get communityRankingExplore;
+
+  /// Skin ranking discovery and compact filters; actual community data only.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm theo tên skin hoặc vũ khí. Chỉ đánh giá thực tế của cộng đồng mới xuất hiện trong bảng xếp hạng.'**
+  String get communityRankingExploreHint;
+
+  /// Skin ranking discovery and compact filters; actual community data only.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bỏ lọc vũ khí và thời gian'**
+  String get communityRankingClear;
+
+  /// Skin ranking discovery and compact filters; actual community data only.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thời gian'**
+  String get communityRankingPeriod;
+
+  /// Skin ranking discovery and compact filters; actual community data only.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xếp hạng theo'**
+  String get communityRankingSort;
+
+  /// Skin ranking discovery and compact filters; actual community data only.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vũ khí'**
+  String get communityRankingWeapon;
+
+  /// Skin ranking discovery and compact filters; actual community data only.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tìm thấy skin phù hợp. Thử tên khác hoặc bỏ lọc vũ khí.'**
+  String get communityRankingNoSearch;
+
+  /// Skin ranking discovery and compact filters; actual community data only.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa tải được danh mục skin. Đóng bảng và thử lại sau khi dữ liệu được đồng bộ.'**
+  String get communityRankingCatalogUnavailable;
 
   /// CommunityStrings.addPhotos — feed
   ///

@@ -1,3 +1,5 @@
+import '../helpers/l10n.dart';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/l10n/app_locale.dart';
@@ -31,7 +33,7 @@ void main() {
         final then = _tue.subtract(duration);
         expect(
           vi.relative(then, _tue),
-          legacy.formatRelative(then, _tue, locale: 'vi'),
+          legacy.formatRelative(then, _tue, locale: 'vi', messages: tl),
           reason: '$duration',
         );
       }
@@ -129,7 +131,10 @@ void main() {
         expect(vi.dayMonth(d), legacy.formatDayMonth(d, locale: 'vi'));
         expect(vi.time(d), legacy.formatTime(d, locale: 'vi'));
         expect(vi.dateTime(d), legacy.formatDateTime(d, locale: 'vi'));
-        expect(vi.weekday(d), legacy.formatWeekday(d, locale: 'vi'));
+        expect(
+          vi.weekday(d),
+          legacy.formatWeekday(d, locale: 'vi', messages: tl),
+        );
       }
     });
 
@@ -166,7 +171,10 @@ void main() {
           legacy.formatMinutesSeconds(d, padMinutes: false),
         );
         // The legacy countdown prefixes the days; the clock part is ours.
-        expect(legacy.formatCountdown(d), endsWith(vi.countdownClock(d)));
+        expect(
+          legacy.formatCountdown(d, messages: tl),
+          endsWith(vi.countdownClock(d)),
+        );
       }
       expect(
         vi.countdownClock(const Duration(hours: 11, minutes: 54, seconds: 37)),

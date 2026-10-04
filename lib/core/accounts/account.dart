@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-import '../l10n/account_strings.dart';
 import '../geo/regions.dart';
 import '../geo/countries.dart' show normalizeCountry;
 import '../riot/riot_hosts.dart';
@@ -16,12 +15,6 @@ enum GamePlatform {
     'playstation' => GamePlatform.playstation,
     'xbox' => GamePlatform.xbox,
     _ => GamePlatform.pc,
-  };
-
-  String get label => switch (this) {
-    GamePlatform.pc => AccountStrings.platformPc,
-    GamePlatform.playstation => AccountStrings.platformPlayStation,
-    GamePlatform.xbox => AccountStrings.platformXbox,
   };
 
   bool get isConsole => this != GamePlatform.pc;
@@ -137,9 +130,9 @@ class Account {
   final String? rankSeasonId;
   final DateTime? addedAt;
 
-  /// `Name#TAG`, or a generic label when the Riot ID is unknown.
+  /// Raw `Name#TAG`, or empty when Riot has not supplied the name.
   String get riotId => gameName.isEmpty
-      ? AccountStrings.unknownPlayer
+      ? ''
       : (tagLine.isEmpty ? gameName : '$gameName#$tagLine');
 
   RiotHosts get hosts => RiotHosts(region: region, shard: shard);
@@ -266,8 +259,6 @@ class Account {
 class MaxAccountsException implements Exception {
   const MaxAccountsException(this.max);
   final int max;
-
-  String get message => AccountStrings.maxAccounts(max);
 
   @override
   String toString() => 'MaxAccountsException($max)';

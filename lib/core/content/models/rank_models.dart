@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-import '../../l10n/content_strings.dart';
 import '../../util/format.dart';
 import '../../util/json.dart';
 import 'weapon_models.dart' show cleanText, enumSuffix;
@@ -60,9 +59,8 @@ class CompetitiveTier {
   bool get isUnranked =>
       tier <= 2 || division == 'INVALID' || division == 'UNRANKED';
 
-  /// Sentence-case name for the UI: `Kim Cương 1`, `Chưa xếp hạng`.
-  String get displayName =>
-      isUnranked ? ContentStrings.unranked : viTitleCase(tierName);
+  /// Compatibility casing of the raw content name; no app-owned fallback.
+  String get displayName => viTitleCase(tierName);
 }
 
 /// `/v1/competitivetiers` table (5 exist; the act decides which applies).

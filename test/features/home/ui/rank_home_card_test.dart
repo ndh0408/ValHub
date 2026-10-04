@@ -1,3 +1,6 @@
+import '../../../helpers/l10n.dart';
+
+import 'package:valvn/core/l10n/labels/rank_labels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/domain/competitive/competitive.dart';
@@ -219,7 +222,10 @@ void main() {
       ],
     );
     expect(find.text('Chưa xếp hạng'), findsOneWidget);
-    expect(find.text(HomeStrings.previousAct(past.tierName)), findsOneWidget);
+    expect(
+      find.text(HomeStrings.previousAct(past.displayLabel(tf))),
+      findsOneWidget,
+    );
     await homeUnmount(tester);
 
     await pumpHomeCard(

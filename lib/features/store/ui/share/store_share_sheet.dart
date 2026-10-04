@@ -132,7 +132,8 @@ class _StoreShareSheetBodyState extends ConsumerState<StoreShareSheetBody> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final riotId = ref.watch(activeAccountProvider.select((a) => a?.riotId));
+    final rawRiotId = ref.watch(activeAccountProvider.select((a) => a?.riotId));
+    final riotId = rawRiotId == null || rawRiotId.isEmpty ? null : rawRiotId;
     final price = ref.watch(localPriceProvider);
     final factory = ref.watch(shareImageProviderFactoryProvider);
     final busy = _busy || !_ready;

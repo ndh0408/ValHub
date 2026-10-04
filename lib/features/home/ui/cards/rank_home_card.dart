@@ -3,6 +3,8 @@
 /// tier. A core card: it shows a skeleton while loading.
 library;
 
+import 'package:valvn/core/l10n/labels/rank_labels.dart';
+
 import 'package:valvn/core/l10n/labels/view_labels.dart';
 
 import 'dart:async';
@@ -120,7 +122,7 @@ class _RankBody extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                rank.tierName,
+                rank.displayLabel(context.fmt),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -136,9 +138,9 @@ class _RankBody extends ConsumerWidget {
                     color: theme.colorScheme.onSurface,
                   ),
                 )
-              else if (rank.placementText != null)
+              else if (rank.placementLabel(context.fmt) != null)
                 Text(
-                  rank.placementText!,
+                  rank.placementLabel(context.fmt)!,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -147,7 +149,9 @@ class _RankBody extends ConsumerWidget {
                 )
               else if (snap.previousAct != null)
                 Text(
-                  context.l10n.homePreviousAct(snap.previousAct!.tierName),
+                  context.l10n.homePreviousAct(
+                    snap.previousAct!.displayLabel(context.fmt),
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -184,11 +188,12 @@ class _RankBody extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         _FormRow(snap: snap, now: now),
-        if (snap.matchesToNext != null && snap.nextTierName != null)
+        if (snap.matchesToNext != null &&
+            (snap.nextRank != null || snap.nextTierName != null))
           _EstimateRow(
             text: context.l10n.homeMatchesToRankUp(
               snap.matchesToNext!,
-              snap.nextTierName!,
+              snap.nextRank?.displayLabel(context.fmt) ?? snap.nextTierName!,
             ),
           ),
       ],

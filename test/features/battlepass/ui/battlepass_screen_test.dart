@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -61,7 +63,7 @@ void main() {
     expect(
       find.text(
         BattlePassStrings.endsAtWall(
-          formatWallTime(DateTime.utc(2026, 10, 14), t0),
+          formatWallTime(DateTime.utc(2026, 10, 14), t0, messages: tl),
         ),
       ),
       findsWidgets,
@@ -93,7 +95,7 @@ void main() {
     expect(find.text(BattlePassStrings.weeklyMissions), findsOneWidget);
     // Weekly reset (2026-09-30 00:00 UTC) also as local wall time.
     final weeklyReset = BattlePassStrings.resetsAtWall(
-      formatWallTime(DateTime.utc(2026, 9, 30), t0),
+      formatWallTime(DateTime.utc(2026, 9, 30), t0, messages: tl),
     );
     expect(find.text('1/3 hoàn thành · $weeklyReset'), findsOneWidget);
     expect(find.text('1 ngày 12:00:00'), findsOneWidget);
@@ -126,7 +128,7 @@ void main() {
     expect(
       find.text(
         BattlePassStrings.newMissionsAtWall(
-          formatWallTime(DateTime.utc(2026, 9, 30), t0),
+          formatWallTime(DateTime.utc(2026, 9, 30), t0, messages: tl),
         ),
       ),
       findsOneWidget,

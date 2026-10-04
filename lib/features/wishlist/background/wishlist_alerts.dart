@@ -3,6 +3,8 @@
 /// WHAT the notification says and where tapping it leads.
 library;
 
+import 'package:valvn/core/l10n/account_labels.dart';
+
 import 'package:flutter/foundation.dart';
 
 import '../../../core/accounts/account.dart';
@@ -89,7 +91,7 @@ WishlistAlert wishlistHitAlert(
 }) {
   final l10n = formats.l10n;
   final name = _skinName(hit, db, formats);
-  final riotId = formats.bidi(account.riotId);
+  final riotId = formats.bidi(account.displayRiotId(formats.l10n));
   final left = _timeLeft(hit.expiresAt, now, formats);
   final percent = hit.discountPercent;
   final (title, body) = switch (hit.place) {
@@ -162,7 +164,7 @@ WishlistAlert wishlistSummaryAlert(
     body: formats.l10n.wishlistNotifSummaryBody(
       formats.listJoin(names),
       hits.length - names.length,
-      formats.bidi(account.riotId),
+      formats.bidi(account.displayRiotId(formats.l10n)),
     ),
     payload: withAccountParam(WishlistRoutes.wishlist, account.puuid),
   );

@@ -1,3 +1,5 @@
+import '../../helpers/l10n.dart';
+
 import 'package:valvn/core/l10n/l10n.dart';
 
 import 'dart:convert';
@@ -173,7 +175,9 @@ void main() {
     );
     // 390 + 1456 + 485 saved.
     expect(
-      find.text(StoreStrings.nightMarketTotalSavings(formatVp(2331))),
+      find.text(
+        StoreStrings.nightMarketTotalSavings(formatVp(2331, messages: tl)),
+      ),
       findsOneWidget,
     );
     expect(find.text(StoreStrings.nightMarketNote), findsOneWidget);

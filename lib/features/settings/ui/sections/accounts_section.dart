@@ -36,7 +36,7 @@ class SettingsAccountsSection extends ConsumerWidget {
     }
     if (a.puuid == ref.read(activePuuidProvider)) return;
     ref.read(activePuuidProvider.notifier).select(a.puuid);
-    showAppSnackBar(context, l10n.settingsSwitchedTo(a.riotId));
+    showAppSnackBar(context, l10n.settingsSwitchedTo(a.displayRiotId(l10n)));
   }
 
   Future<void> _remove(BuildContext context, WidgetRef ref, Account a) async {
@@ -44,7 +44,7 @@ class SettingsAccountsSection extends ConsumerWidget {
     final keep = await chooseSignOutRetention(
       context,
       title: l10n.accountRemoveAccount,
-      message: l10n.accountRemoveAccountConfirm(a.riotId),
+      message: l10n.accountRemoveAccountConfirm(a.displayRiotId(l10n)),
       confirmLabel: l10n.commonDelete,
     );
     if (keep == null || !context.mounted) return;
@@ -57,7 +57,9 @@ class SettingsAccountsSection extends ConsumerWidget {
     messenger
       ?..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(content: Text(l10n.settingsRemovedAccount(a.riotId))),
+        SnackBar(
+          content: Text(l10n.settingsRemovedAccount(a.displayRiotId(l10n))),
+        ),
       );
   }
 

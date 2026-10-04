@@ -1,3 +1,5 @@
+import '../../helpers/l10n.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/config/local_price.dart';
@@ -94,7 +96,7 @@ void main() {
       );
       // 1775 × 2.000.000 / 13.250 = 267.924,5 → 268.000
       expect(vnd.estimate(1775), 268000);
-      expect(vnd.format(1775, locale: 'vi'), '≈ 268.000\u00A0₫');
+      expect(vnd.format(1775, locale: 'vi', messages: tl), '≈ 268.000\u00A0₫');
       expect(vnd.estimate(0), isNull);
       expect(vnd.estimate(-5), isNull);
 
@@ -104,7 +106,7 @@ void main() {
       );
       // 1775 × 99.99 / 11000 = 16.134… → 16.1
       expect(usd.estimate(1775), 16.1);
-      expect(usd.format(1775, locale: 'en_US'), r'≈ $16.10');
+      expect(usd.format(1775, locale: 'en_US', messages: tl), r'≈ $16.10');
     });
 
     test('roundEstimate respects the minor unit', () {

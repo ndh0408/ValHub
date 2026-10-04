@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/rank_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -103,7 +104,7 @@ class _RankCardBody extends ConsumerWidget {
                       label: context.l10n.profileCurrentRank,
                       rank: current,
                       detail: current.isPlacement
-                          ? current.placementText
+                          ? current.placementLabel(context.fmt)
                           : current.isUnranked
                           ? null
                           : context.fmt.rr(current.rr),
@@ -223,7 +224,7 @@ class _RankColumn extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            r?.tierName ?? context.l10n.contentUnranked,
+            r?.displayLabel(context.fmt) ?? context.l10n.contentUnranked,
             maxLines: 2,
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
@@ -332,7 +333,10 @@ class _RankUpHint extends ConsumerWidget {
       actUuid: current.actUuid,
     );
     final text = estimate != null && matches != null && matches > 0
-        ? context.l10n.profileRankUpHint(matches, target.tierName)
+        ? context.l10n.profileRankUpHint(
+            matches,
+            target.displayLabel(context.fmt),
+          )
         : context.l10n.profileRankUpTitle;
     return Material(
       color: Colors.transparent,

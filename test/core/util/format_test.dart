@@ -1,3 +1,5 @@
+import '../../helpers/l10n.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:valvn/core/util/format.dart';
 
@@ -11,10 +13,10 @@ void main() {
     });
 
     test('currency labels follow the number', () {
-      expect(formatVp(2175), '2.175 VP');
-      expect(formatKc(2113), '2.113 KC');
-      expect(formatRp(40), '40 RP');
-      expect(formatEstimatedVp(2475), '≈ 2.475 VP');
+      expect(formatVp(2175, messages: tl), '2.175 VP');
+      expect(formatKc(2113, messages: tl), '2.113 KC');
+      expect(formatRp(40, messages: tl), '40 RP');
+      expect(formatEstimatedVp(2475, messages: tl), '≈ 2.475 VP');
     });
 
     test('signed RR uses the U+2212 minus', () {
@@ -34,23 +36,33 @@ void main() {
   group('countdowns', () {
     test('under a day: HH:MM:SS', () {
       expect(
-        formatCountdown(const Duration(hours: 11, minutes: 54, seconds: 37)),
+        formatCountdown(
+          const Duration(hours: 11, minutes: 54, seconds: 37),
+          messages: tl,
+        ),
         '11:54:37',
       );
-      expect(formatCountdown(const Duration(seconds: 5)), '00:00:05');
+      expect(
+        formatCountdown(const Duration(seconds: 5), messages: tl),
+        '00:00:05',
+      );
     });
 
     test('a day or more: "N ngày HH:MM:SS"', () {
       expect(
         formatCountdown(
           const Duration(days: 2, hours: 15, minutes: 9, seconds: 24),
+          messages: tl,
         ),
         '2 ngày 15:09:24',
       );
     });
 
     test('negative clamps to zero', () {
-      expect(formatCountdown(const Duration(seconds: -3)), '00:00:00');
+      expect(
+        formatCountdown(const Duration(seconds: -3), messages: tl),
+        '00:00:00',
+      );
     });
 
     test('short timers', () {
@@ -65,12 +77,21 @@ void main() {
     });
 
     test('coarse durations', () {
-      expect(formatDurationCoarse(const Duration(minutes: 38)), '38 phút');
       expect(
-        formatDurationCoarse(const Duration(hours: 5, minutes: 2)),
+        formatDurationCoarse(const Duration(minutes: 38), messages: tl),
+        '38 phút',
+      );
+      expect(
+        formatDurationCoarse(
+          const Duration(hours: 5, minutes: 2),
+          messages: tl,
+        ),
         '5 giờ',
       );
-      expect(formatDurationCoarse(const Duration(days: 16)), '16 ngày');
+      expect(
+        formatDurationCoarse(const Duration(days: 16), messages: tl),
+        '16 ngày',
+      );
     });
   });
 
@@ -79,28 +100,49 @@ void main() {
 
     test('recent', () {
       expect(
-        formatRelative(now.subtract(const Duration(seconds: 20)), now),
+        formatRelative(
+          now.subtract(const Duration(seconds: 20)),
+          now,
+          messages: tl,
+        ),
         'vừa xong',
       );
       expect(
-        formatRelative(now.subtract(const Duration(minutes: 5)), now),
+        formatRelative(
+          now.subtract(const Duration(minutes: 5)),
+          now,
+          messages: tl,
+        ),
         '5 phút trước',
       );
       expect(
-        formatRelative(now.subtract(const Duration(hours: 18)), now),
+        formatRelative(
+          now.subtract(const Duration(hours: 18)),
+          now,
+          messages: tl,
+        ),
         '18 giờ trước',
       );
     });
 
     test('days', () {
-      expect(formatRelative(DateTime(2026, 9, 27, 1), now), 'hôm qua');
-      expect(formatRelative(DateTime(2026, 9, 25, 9), now), '3 ngày trước');
-      expect(formatRelative(DateTime(2026, 9, 1, 9), now), '01/09/2026');
+      expect(
+        formatRelative(DateTime(2026, 9, 27, 1), now, messages: tl),
+        'hôm qua',
+      );
+      expect(
+        formatRelative(DateTime(2026, 9, 25, 9), now, messages: tl),
+        '3 ngày trước',
+      );
+      expect(
+        formatRelative(DateTime(2026, 9, 1, 9), now, messages: tl),
+        '01/09/2026',
+      );
     });
 
     test('future instants read as just now', () {
       expect(
-        formatRelative(now.add(const Duration(minutes: 3)), now),
+        formatRelative(now.add(const Duration(minutes: 3)), now, messages: tl),
         'vừa xong',
       );
     });
@@ -108,16 +150,31 @@ void main() {
 
   group('dates', () {
     test('weekday dates', () {
-      expect(formatWeekdayDate(DateTime(2026, 9, 22)), 'Thứ Ba, 22/09');
-      expect(formatWeekdayDate(DateTime(2026, 9, 28)), 'Thứ Hai, 28/09');
-      expect(formatWeekday(DateTime(2026, 9, 27)), 'Chủ Nhật');
+      expect(
+        formatWeekdayDate(DateTime(2026, 9, 22), messages: tl),
+        'Thứ Ba, 22/09',
+      );
+      expect(
+        formatWeekdayDate(DateTime(2026, 9, 28), messages: tl),
+        'Thứ Hai, 28/09',
+      );
+      expect(formatWeekday(DateTime(2026, 9, 27), messages: tl), 'Chủ Nhật');
     });
 
     test('day headers', () {
       final now = DateTime(2026, 9, 28, 10);
-      expect(formatDayHeader(DateTime(2026, 9, 28, 1), now), 'Hôm nay');
-      expect(formatDayHeader(DateTime(2026, 9, 27, 23), now), 'Hôm qua');
-      expect(formatDayHeader(DateTime(2026, 9, 22, 8), now), 'Thứ Ba, 22/09');
+      expect(
+        formatDayHeader(DateTime(2026, 9, 28, 1), now, messages: tl),
+        'Hôm nay',
+      );
+      expect(
+        formatDayHeader(DateTime(2026, 9, 27, 23), now, messages: tl),
+        'Hôm qua',
+      );
+      expect(
+        formatDayHeader(DateTime(2026, 9, 22, 8), now, messages: tl),
+        'Thứ Ba, 22/09',
+      );
     });
 
     test('date / time', () {
@@ -130,11 +187,11 @@ void main() {
     test('updated at', () {
       final now = DateTime(2026, 9, 28, 16);
       expect(
-        formatUpdatedAt(DateTime(2026, 9, 28, 14, 5), now),
+        formatUpdatedAt(DateTime(2026, 9, 28, 14, 5), now, messages: tl),
         'Cập nhật lúc 14:05',
       );
       expect(
-        formatUpdatedAt(DateTime(2026, 9, 27, 14, 5), now),
+        formatUpdatedAt(DateTime(2026, 9, 27, 14, 5), now, messages: tl),
         'Cập nhật lúc 14:05, 27/09',
       );
     });
@@ -175,7 +232,7 @@ void main() {
       expect(formatCurrency(1290000, 'VND', locale: 'vi'), '1.290.000\u00A0₫');
       expect(formatCurrency(16.1, 'USD', locale: 'en_US'), r'$16.10');
       expect(
-        formatEstimatedPrice(268000, 'VND', locale: 'vi'),
+        formatEstimatedPrice(268000, 'VND', locale: 'vi', messages: tl),
         '≈ 268.000\u00A0₫',
       );
       expect(currencyDecimalDigits('VND'), 0);
@@ -188,8 +245,8 @@ void main() {
       expect(formatNumber(1162500, locale: 'en_US'), '1,162,500');
       expect(formatDate(d, locale: 'en_US'), '9/22/2026');
       expect(formatTime(d, locale: 'en_US'), '2:05\u202FPM');
-      expect(formatWeekday(d, locale: 'en_US'), 'Tuesday');
-      expect(formatWeekday(d, locale: 'ja'), '火曜日');
+      expect(formatWeekday(d, locale: 'en_US', messages: tl), 'Tuesday');
+      expect(formatWeekday(d, locale: 'ja', messages: tl), '火曜日');
       expect(formatPercent(0.256, decimals: 1, locale: 'en_US'), '25.6%');
       // The default is the current UI locale (Vietnamese today).
       expect(formatDate(d), '22/09/2026');
@@ -207,12 +264,12 @@ void main() {
         DateTime(2026, 9, 29, 7),
       );
       expect(
-        formatWallTime(DateTime(2026, 9, 29, 6, 59, 41), now),
+        formatWallTime(DateTime(2026, 9, 29, 6, 59, 41), now, messages: tl),
         '07:00 hôm nay',
       );
       // 23:59:50 rolls over to the next day.
       expect(
-        formatWallTime(DateTime(2026, 9, 29, 23, 59, 50), now),
+        formatWallTime(DateTime(2026, 9, 29, 23, 59, 50), now, messages: tl),
         '00:00 ngày mai',
       );
     });
@@ -220,16 +277,19 @@ void main() {
     test('formatWallTime uses today / tomorrow / weekday, 24 h', () {
       final now = DateTime(2026, 9, 29, 18, 30); // Tuesday
       expect(
-        formatWallTime(DateTime(2026, 9, 29, 23, 5), now),
+        formatWallTime(DateTime(2026, 9, 29, 23, 5), now, messages: tl),
         '23:05 hôm nay',
       );
-      expect(formatWallTime(DateTime(2026, 9, 30, 7), now), '07:00 ngày mai');
       expect(
-        formatWallTime(DateTime(2026, 10, 5, 23, 59), now),
+        formatWallTime(DateTime(2026, 9, 30, 7), now, messages: tl),
+        '07:00 ngày mai',
+      );
+      expect(
+        formatWallTime(DateTime(2026, 10, 5, 23, 59), now, messages: tl),
         '23:59 thứ Hai 05/10',
       );
       expect(
-        formatWallTime(DateTime(2026, 10, 4, 7), now),
+        formatWallTime(DateTime(2026, 10, 4, 7), now, messages: tl),
         '07:00 chủ Nhật 04/10',
       );
     });

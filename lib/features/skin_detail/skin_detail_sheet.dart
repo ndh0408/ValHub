@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/account_labels.dart';
 import 'package:valvn/core/l10n/labels/view_labels.dart';
 import 'package:valvn/core/l10n/labels/economy_labels.dart';
 import 'package:valvn/core/l10n/labels/content_labels.dart';
@@ -334,7 +335,9 @@ class _SkinBody extends ConsumerWidget {
               Expanded(
                 child: Text(
                   context.l10n.skinDetailAvailableInStoreOf(
-                    elsewhere.map((a) => a.riotId).join(', '),
+                    elsewhere
+                        .map((a) => a.displayRiotId(context.l10n))
+                        .join(', '),
                   ),
                   style: theme.textTheme.bodySmall?.copyWith(color: muted),
                 ),

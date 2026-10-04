@@ -1073,6 +1073,41 @@ class AppLocalizationsVi extends AppLocalizations {
       'Skin mới đang chờ bạn trong cửa hàng.';
 
   @override
+  String get competitiveDivisionIron => 'Sắt';
+
+  @override
+  String get competitiveDivisionBronze => 'Đồng';
+
+  @override
+  String get competitiveDivisionSilver => 'Bạc';
+
+  @override
+  String get competitiveDivisionGold => 'Vàng';
+
+  @override
+  String get competitiveDivisionPlatinum => 'Bạch Kim';
+
+  @override
+  String get competitiveDivisionDiamond => 'Kim Cương';
+
+  @override
+  String get competitiveDivisionAscendant => 'Thượng Nhân';
+
+  @override
+  String get competitiveDivisionImmortal => 'Bất Tử';
+
+  @override
+  String competitiveRankTierCaption(String division, int number) {
+    return '$division $number';
+  }
+
+  @override
+  String get competitiveDivisionRadiant => 'Radiant';
+
+  @override
+  String get competitiveRankUnknown => 'Chưa rõ xếp hạng';
+
+  @override
   String get competitiveAttack => 'Tấn công';
 
   @override
@@ -2129,6 +2164,49 @@ class AppLocalizationsVi extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get communityRankingEmptyTitle =>
+      'Chưa có skin trong bảng xếp hạng này';
+
+  @override
+  String get communityRankingEmptyVotes =>
+      'Chưa có lượt yêu thích phù hợp với phạm vi và bộ lọc đang chọn.';
+
+  @override
+  String get communityRankingEmptyRatings =>
+      'Chưa có đánh giá sao phù hợp với phạm vi và bộ lọc đang chọn.';
+
+  @override
+  String get communityRankingEmptyReviews =>
+      'Chưa có nhận xét phù hợp với phạm vi và bộ lọc đang chọn.';
+
+  @override
+  String get communityRankingExplore => 'Tìm skin để xem và đánh giá';
+
+  @override
+  String get communityRankingExploreHint =>
+      'Tìm theo tên skin hoặc vũ khí. Chỉ đánh giá thực tế của cộng đồng mới xuất hiện trong bảng xếp hạng.';
+
+  @override
+  String get communityRankingClear => 'Bỏ lọc vũ khí và thời gian';
+
+  @override
+  String get communityRankingPeriod => 'Thời gian';
+
+  @override
+  String get communityRankingSort => 'Xếp hạng theo';
+
+  @override
+  String get communityRankingWeapon => 'Vũ khí';
+
+  @override
+  String get communityRankingNoSearch =>
+      'Không tìm thấy skin phù hợp. Thử tên khác hoặc bỏ lọc vũ khí.';
+
+  @override
+  String get communityRankingCatalogUnavailable =>
+      'Chưa tải được danh mục skin. Đóng bảng và thử lại sau khi dữ liệu được đồng bộ.';
 
   @override
   String get communityAddPhotos => 'Thêm ảnh';

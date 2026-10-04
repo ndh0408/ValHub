@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../core/l10n/common_strings.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../core/riot/platform_status.dart';
 import '../../../core/util/format.dart';
 import '../../../core/util/json.dart';
@@ -185,7 +185,11 @@ class ServerStatusReport {
 /// Local wall time of a status event (device time zone, 24 h):
 /// `08:20 hôm nay`, `23:00 ngày mai`, `21:05 hôm qua`, `08:20 thứ Hai 02/03`
 /// within a week, else `02/03/2026 08:20`.
-String formatStatusTime(DateTime at, DateTime now) {
+String formatStatusTime(
+  DateTime at,
+  DateTime now, {
+  required AppLocalizations messages,
+}) {
   final l = at.toLocal();
   final n = now.toLocal();
   final dayDiff = DateTime(
@@ -194,8 +198,8 @@ String formatStatusTime(DateTime at, DateTime now) {
     l.day,
   ).difference(DateTime(n.year, n.month, n.day)).inDays;
   if (dayDiff == -1) {
-    return CommonStrings.wallTime(formatTime(l), CommonStrings.yesterday);
+    return messages.commonWallTime(formatTime(l), messages.commonYesterday);
   }
-  if (dayDiff.abs() < 7) return formatWallTime(l, n);
+  if (dayDiff.abs() < 7) return formatWallTime(l, n, messages: messages);
   return formatDateTime(l);
 }

@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/account_labels.dart';
+
 import 'dart:async';
 
 import 'secret_access.dart';
@@ -21,7 +23,7 @@ Future<void> showLoginNoteSheet(BuildContext context, Account account) =>
     showValSheet<void>(
       context,
       title: context.l10n.accountLoginNote,
-      subtitle: account.riotId,
+      subtitle: account.displayRiotId(context.l10n),
       leading: AccountAvatar(account: account, size: 40, circle: true),
       builder: (context, _) => LoginNoteSheet(account: account),
     );

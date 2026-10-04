@@ -12,6 +12,8 @@
 /// nhập lại" once. Never throws.
 library;
 
+import 'package:valvn/core/l10n/account_labels.dart';
+
 import 'dart:async';
 
 import '../../../core/accounts/account.dart';
@@ -311,7 +313,7 @@ class WishlistChecker {
         title: _locale.l10n.notificationNightMarketOpenTitle,
         body: _locale.l10n.notificationNightMarketOpenBody(
           _locale.formats.number(market.offers.length),
-          _locale.formats.bidi(account.riotId),
+          _locale.formats.bidi(account.displayRiotId(_locale.l10n)),
         ),
         channel: NotificationChannel.nightMarket,
         payload: withAccountParam(

@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/labels/rank_labels.dart';
+
 import '../../helpers/l10n.dart';
 
 import 'package:valvn/core/l10n/labels/content_labels.dart';
@@ -207,18 +209,18 @@ void main() {
     });
 
     test('same tier number means different ranks across episodes', () {
-      expect(db.tier(21, seasonUuid: _actV)!.displayName, 'Thượng Nhân 1');
-      expect(db.tier(21, seasonUuid: _e1a1)!.displayName, 'Bất Tử 1');
-      expect(db.tier(24, seasonUuid: _actV)!.displayName, 'Bất Tử 1');
-      expect(db.tier(24, seasonUuid: _e1a1)!.displayName, 'Radiant');
-      expect(db.tier(27)!.displayName, 'Radiant');
+      expect(db.tier(21, seasonUuid: _actV)!.displayLabel(tf), 'Thượng Nhân 1');
+      expect(db.tier(21, seasonUuid: _e1a1)!.displayLabel(tf), 'Bất Tử 1');
+      expect(db.tier(24, seasonUuid: _actV)!.displayLabel(tf), 'Bất Tử 1');
+      expect(db.tier(24, seasonUuid: _e1a1)!.displayLabel(tf), 'Radiant');
+      expect(db.tier(27)!.displayLabel(tf), 'Radiant');
     });
 
     test('unused tiers 1–2 read as unranked', () {
-      expect(db.tier(0)!.displayName, 'Chưa xếp hạng');
+      expect(db.tier(0)!.displayLabel(tf), 'Chưa xếp hạng');
       expect(db.tier(1)!.isUnranked, isTrue);
-      expect(db.tier(1)!.displayName, 'Chưa xếp hạng');
-      expect(db.tier(3)!.displayName, 'Sắt 1');
+      expect(db.tier(1)!.displayLabel(tf), 'Chưa xếp hạng');
+      expect(db.tier(3)!.displayLabel(tf), 'Sắt 1');
     });
 
     test('current act is computed from dates', () {

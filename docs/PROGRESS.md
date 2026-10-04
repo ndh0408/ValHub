@@ -1,5 +1,7 @@
 # Tiến độ ValHub (điểm dừng để làm tiếp)
 
+Checkpoint 04/10 build 4019: [resource/ranking verification](RANKING_AND_RESOURCE_CHECKPOINT_2026-10-04.md). Windows/Mac 4,354 tests; analyzer 0; backend 900. Global cutover and latest product requirements remain open.
+
 Checkpoint mới nhất 04/10: [Model / export riêng tư / CI local, build 4018](I18N_MODELS_AND_EXPORT_2026-10-04.md).
 
 Đã chuyển nhãn model sang resources hiện tại, bảo toàn tên bộ trang bị cũ

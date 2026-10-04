@@ -416,8 +416,10 @@ class _NeedsLoginBanner extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final warning = valColorsOf(context).warning;
-    final riotId =
-        ref.watch(activeAccountProvider.select((a) => a?.riotId)) ?? '';
+    final rawRiotId = ref.watch(activeAccountProvider.select((a) => a?.riotId));
+    final riotId = rawRiotId == null || rawRiotId.isEmpty
+        ? context.l10n.accountUnknownPlayer
+        : rawRiotId;
     return Material(
       color: warning.withValues(alpha: 0.14),
       borderRadius: BorderRadius.circular(ValRadius.card),

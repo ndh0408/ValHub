@@ -4,15 +4,15 @@
 /// are testable. Numbers, dates and times take an optional `locale` (an
 /// `intl` locale id such as `vi`, `en_US`, `ja`); it defaults to the current
 /// UI locale ([currentIntlLocale]). Instants are always shown in the device
-/// time zone (`toLocal()`). Relative words ("hôm nay", "3 ngày trước") still
-/// come from the Vietnamese string tables until the i18n phase.
+/// time zone (`toLocal()`). Captions require explicit generated messages;
+/// render-time code uses AppFormats instead. These compatibility algorithms
+/// remain independently exercised against AppFormats in tests.
 library;
 
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
-import '../l10n/common_strings.dart';
-import '../l10n/content_strings.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../l10n/locale.dart';
 
 final Map<String, NumberFormat> _decimals = {};
@@ -81,25 +81,30 @@ int currencyDecimalDigits(String currency) {
 }
 
 /// A price that is only an estimate: `≈ 268.000 ₫`.
-String formatEstimatedPrice(num amount, String currency, {String? locale}) =>
-    '${CommonStrings.estimatePrefix} '
+String formatEstimatedPrice(
+  num amount,
+  String currency, {
+  required AppLocalizations messages,
+  String? locale,
+}) =>
+    '${messages.commonEstimatePrefix} '
     '${formatCurrency(amount, currency, locale: locale)}';
 
 /// `2175` → `2.175 VP`.
-String formatVp(num amount) =>
-    '${formatNumber(amount)} ${ContentStrings.currencyVp}';
+String formatVp(num amount, {required AppLocalizations messages}) =>
+    '${formatNumber(amount)} ${messages.contentCurrencyVp}';
 
 /// `2113` → `2.113 KC`.
-String formatKc(num amount) =>
-    '${formatNumber(amount)} ${ContentStrings.currencyKc}';
+String formatKc(num amount, {required AppLocalizations messages}) =>
+    '${formatNumber(amount)} ${messages.contentCurrencyKc}';
 
 /// `40` → `40 RP`.
-String formatRp(num amount) =>
-    '${formatNumber(amount)} ${ContentStrings.currencyRp}';
+String formatRp(num amount, {required AppLocalizations messages}) =>
+    '${formatNumber(amount)} ${messages.contentCurrencyRp}';
 
 /// Price that is only an estimate: `≈ 2.175 VP`.
-String formatEstimatedVp(num amount) =>
-    '${CommonStrings.estimatePrefix} ${formatVp(amount)}';
+String formatEstimatedVp(num amount, {required AppLocalizations messages}) =>
+    '${messages.commonEstimatePrefix} ${formatVp(amount, messages: messages)}';
 
 /// `+24 RR`, `−17 RR` (U+2212 minus), `0 RR`.
 String formatSignedRr(int rr) => '${formatSigned(rr)} RR';
@@ -135,14 +140,14 @@ String _two(int n) => n.toString().padLeft(2, '0');
 /// - under a day: `11:54:37`
 /// - a day or more: `2 ngày 15:09:24`
 /// Negative durations render as `00:00:00`.
-String formatCountdown(Duration d) {
+String formatCountdown(Duration d, {required AppLocalizations messages}) {
   if (d.isNegative) d = Duration.zero;
   final days = d.inDays;
   final h = d.inHours.remainder(24);
   final m = d.inMinutes.remainder(60);
   final s = d.inSeconds.remainder(60);
   final clock = '${_two(h)}:${_two(m)}:${_two(s)}';
-  return days > 0 ? '${CommonStrings.days(days)} $clock' : clock;
+  return days > 0 ? '${messages.commonDays(days)} $clock' : clock;
 }
 
 /// Short timer: `01:32` (minutes:seconds, minutes padded) or `0:42` when
@@ -155,26 +160,31 @@ String formatMinutesSeconds(Duration d, {bool padMinutes = true}) {
 }
 
 /// Coarse duration: `38 phút`, `2 giờ`, `5 ngày`.
-String formatDurationCoarse(Duration d) {
+String formatDurationCoarse(Duration d, {required AppLocalizations messages}) {
   if (d.isNegative) d = Duration.zero;
-  if (d.inDays >= 1) return CommonStrings.days(d.inDays);
-  if (d.inHours >= 1) return CommonStrings.hours(d.inHours);
-  if (d.inMinutes >= 1) return CommonStrings.minutes(d.inMinutes);
-  return CommonStrings.seconds(d.inSeconds);
+  if (d.inDays >= 1) return messages.commonDays(d.inDays);
+  if (d.inHours >= 1) return messages.commonHours(d.inHours);
+  if (d.inMinutes >= 1) return messages.commonMinutes(d.inMinutes);
+  return messages.commonSeconds(d.inSeconds);
 }
 
 /// Relative past time: `vừa xong`, `5 phút trước`, `18 giờ trước`, `hôm qua`,
 /// `3 ngày trước`, then `22/09/2026`. Future instants read as `vừa xong`.
-String formatRelative(DateTime then, DateTime now, {String? locale}) {
+String formatRelative(
+  DateTime then,
+  DateTime now, {
+  required AppLocalizations messages,
+  String? locale,
+}) {
   final localThen = then.toLocal();
   final localNow = now.toLocal();
   final diff = localNow.difference(localThen);
-  if (diff.inMinutes < 1) return CommonStrings.justNow;
-  if (diff.inMinutes < 60) return CommonStrings.minutesAgo(diff.inMinutes);
-  if (diff.inHours < 24) return CommonStrings.hoursAgo(diff.inHours);
+  if (diff.inMinutes < 1) return messages.commonJustNow;
+  if (diff.inMinutes < 60) return messages.commonMinutesAgo(diff.inMinutes);
+  if (diff.inHours < 24) return messages.commonHoursAgo(diff.inHours);
   final dayDiff = _dateOnly(localNow).difference(_dateOnly(localThen)).inDays;
-  if (dayDiff <= 1) return CommonStrings.yesterday;
-  if (dayDiff < 7) return CommonStrings.daysAgo(dayDiff);
+  if (dayDiff <= 1) return messages.commonYesterday;
+  if (dayDiff < 7) return messages.commonDaysAgo(dayDiff);
   return formatDate(localThen, locale: locale);
 }
 
@@ -214,16 +224,34 @@ String formatDateTime(DateTime d, {String? locale}) =>
     '${formatDate(d, locale: locale)} ${formatTime(d, locale: locale)}';
 
 /// `Thứ Hai` (vi), `Monday` (en) for the local weekday of [d].
-String formatWeekday(DateTime d, {String? locale}) {
+String formatWeekday(
+  DateTime d, {
+  required AppLocalizations messages,
+  String? locale,
+}) {
   final t = d.toLocal();
   final l = _loc(locale);
-  if (_isVi(l)) return CommonStrings.weekdays[t.weekday - 1];
+  if (_isVi(l)) {
+    return switch (t.weekday) {
+      1 => messages.commonWeekdaysItem0,
+      2 => messages.commonWeekdaysItem1,
+      3 => messages.commonWeekdaysItem2,
+      4 => messages.commonWeekdaysItem3,
+      5 => messages.commonWeekdaysItem4,
+      6 => messages.commonWeekdaysItem5,
+      _ => messages.commonWeekdaysItem6,
+    };
+  }
   return _dateFormat(l, DateFormat.EEEE).format(t);
 }
 
 /// `Thứ Hai, 22/09` (device time zone).
-String formatWeekdayDate(DateTime d, {String? locale}) =>
-    '${formatWeekday(d, locale: locale)}, '
+String formatWeekdayDate(
+  DateTime d, {
+  required AppLocalizations messages,
+  String? locale,
+}) =>
+    '${formatWeekday(d, locale: locale, messages: messages)}, '
     '${formatDayMonth(d, locale: locale)}';
 
 /// [d] rounded to the nearest minute (half up). Countdowns count down to
@@ -237,26 +265,35 @@ DateTime roundToMinute(DateTime d) {
 /// Wall-clock moment of a reset or expiry in the device time zone, with the
 /// locale's clock: `07:00 hôm nay`, `07:00 ngày mai`, else
 /// `23:59 thứ Hai 06/10`.
-String formatWallTime(DateTime at, DateTime now, {String? locale}) {
+String formatWallTime(
+  DateTime at,
+  DateTime now, {
+  required AppLocalizations messages,
+  String? locale,
+}) {
   final t = roundToMinute(at).toLocal();
   final dayDiff = _dateOnly(t).difference(_dateOnly(now.toLocal())).inDays;
   final String day;
   if (dayDiff == 0) {
-    day = CommonStrings.todayLower;
+    day = messages.commonTodayLower;
   } else if (dayDiff == 1) {
-    day = CommonStrings.tomorrow;
+    day = messages.commonTomorrow;
   } else {
     day =
-        '${formatWeekdayLower(t, locale: locale)} '
+        '${formatWeekdayLower(t, locale: locale, messages: messages)} '
         '${formatDayMonth(t, locale: locale)}';
   }
-  return CommonStrings.wallTime(formatTime(t, locale: locale), day);
+  return messages.commonWallTime(formatTime(t, locale: locale), day);
 }
 
 /// `thứ Hai`, `chủ Nhật` — the weekday written mid-sentence (the first
 /// letter lower-cased where the language capitalises weekdays).
-String formatWeekdayLower(DateTime d, {String? locale}) {
-  final w = formatWeekday(d, locale: locale);
+String formatWeekdayLower(
+  DateTime d, {
+  required AppLocalizations messages,
+  String? locale,
+}) {
+  final w = formatWeekday(d, locale: locale, messages: messages);
   if (w.isEmpty) return w;
   final l = _loc(locale);
   // German capitalises nouns, weekdays included.
@@ -266,23 +303,33 @@ String formatWeekdayLower(DateTime d, {String? locale}) {
 
 /// Day header for grouped lists: `Hôm nay`, `Hôm qua`, else
 /// `Thứ Hai, 22/09` (VF S42).
-String formatDayHeader(DateTime d, DateTime now, {String? locale}) {
+String formatDayHeader(
+  DateTime d,
+  DateTime now, {
+  required AppLocalizations messages,
+  String? locale,
+}) {
   final dayDiff = _dateOnly(now.toLocal())
       .difference(_dateOnly(d.toLocal()))
       .inDays;
-  if (dayDiff == 0) return CommonStrings.today;
-  if (dayDiff == 1) return CommonStrings.yesterdayTitle;
-  return formatWeekdayDate(d, locale: locale);
+  if (dayDiff == 0) return messages.commonToday;
+  if (dayDiff == 1) return messages.commonYesterdayTitle;
+  return formatWeekdayDate(d, locale: locale, messages: messages);
 }
 
 /// `Cập nhật lúc 14:05` today, `Cập nhật lúc 14:05, 22/09` otherwise.
-String formatUpdatedAt(DateTime at, DateTime now, {String? locale}) {
+String formatUpdatedAt(
+  DateTime at,
+  DateTime now, {
+  required AppLocalizations messages,
+  String? locale,
+}) {
   final sameDay = _dateOnly(at.toLocal()) == _dateOnly(now.toLocal());
   final time = sameDay
       ? formatTime(at, locale: locale)
       : '${formatTime(at, locale: locale)}, '
             '${formatDayMonth(at, locale: locale)}';
-  return CommonStrings.updatedAt(time);
+  return messages.commonUpdatedAt(time);
 }
 
 /// Vietnamese-aware title case for ALL-CAPS game data:

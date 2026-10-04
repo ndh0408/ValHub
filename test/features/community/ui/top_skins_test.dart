@@ -11,6 +11,7 @@ import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/ui/skins/skin_review_screen.dart';
 
 import '../community_test_env.dart';
+import '../../../helpers/l10n.dart';
 import '../data/skin_review_test.dart' show summaryJson;
 
 Future<void> _open(
@@ -19,6 +20,7 @@ Future<void> _open(
   Size size = const Size(360, 1600),
   double textScale = 1,
   bool light = false,
+  bool rtl = false,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -43,7 +45,10 @@ Future<void> _open(
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context)
               .copyWith(textScaler: TextScaler.linear(textScale)),
-          child: child!,
+          child: Directionality(
+            textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
+            child: child!,
+          ),
         ),
       ),
     ),
@@ -51,22 +56,16 @@ Future<void> _open(
   await settle(tester);
 }
 
-Future<void> _chip(WidgetTester tester, String label, String list) async {
-  final chip = find.widgetWithText(FilterChip, label);
-  await tester.scrollUntilVisible(
-    chip,
-    120,
-    scrollable: find.descendant(
-      of: find.byKey(ValueKey(list)),
-      matching: find.byType(Scrollable),
-    ),
-  );
-  // Bring the whole chip on screen (Ahem test glyphs are wide).
-  for (var i = 0; i < 10 && tester.getRect(chip).right > 350; i++) {
-    await tester.drag(find.byKey(ValueKey(list)), const Offset(-80, 0));
-    await tester.pump();
-  }
-  await tester.tap(chip);
+Future<void> _options(WidgetTester tester) async {
+  await tester.tap(find.byKey(const ValueKey('skins-filter-selector')));
+  await settle(tester);
+}
+
+Future<void> _apply(WidgetTester tester) async {
+  final button = find.byKey(const ValueKey('skins-apply-filters'));
+  await tester.ensureVisible(button);
+  await tester.tap(button);
+  await settle(tester);
 }
 
 final _rows = {
@@ -93,7 +92,7 @@ void main() {
     env.server.json('GET /v1/skins/top', _rows);
     await _open(tester, env);
 
-    expect(find.text(CommunityStrings.periodAllTime), findsOneWidget);
+    expect(find.textContaining(CommunityStrings.periodAllTime), findsOneWidget);
     final q = env.server.calls('GET /v1/skins/top').single.query;
     expect((q['period'], q['sort']), ('all', 'votes'));
     expect(find.text('Vandal Reaver'), findsOneWidget);
@@ -104,28 +103,160 @@ void main() {
     await unmount(tester);
   });
 
-  testWidgets('sort chips, period and weapon refetch and are remembered', (
+  testWidgets('confirmed sort, period and weapon refetch and are remembered', (
     tester,
   ) async {
     env.server.json('GET /v1/skins/top', {'items': <Object>[]});
     await _open(tester, env);
 
-    await _chip(tester, CommunityStrings.sortRating, 'skins-sort');
+    await _options(tester);
+    await tester.tap(find.byKey(const ValueKey('skins-sort-rating')));
+    await _apply(tester);
     await settle(tester);
     expect(env.server.calls('GET /v1/skins/top').last.query['sort'], 'rating');
-    await _chip(tester, CommunityStrings.sortReviews, 'skins-sort');
+    await _options(tester);
+    await tester.tap(find.byKey(const ValueKey('skins-sort-reviews')));
+    await _apply(tester);
     await settle(tester);
     expect(env.server.calls('GET /v1/skins/top').last.query['sort'], 'reviews');
-    await tester.tap(find.text(CommunityStrings.periodWeek));
+    await _options(tester);
+    await tester.tap(find.byKey(const ValueKey('skins-period-week')));
+    await _apply(tester);
     await settle(tester);
     expect(env.server.calls('GET /v1/skins/top').last.query['period'], 'week');
-    await _chip(tester, 'Vandal', 'skins-weapons');
+    await tester.tap(find.byKey(const ValueKey('skins-weapon-selector')));
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('weapon-$vandal')));
     await settle(tester);
     expect(env.server.calls('GET /v1/skins/top').last.query['weapon'], vandal);
-    expect(find.text(CommunityStrings.skinsEmptyTitle), findsOneWidget);
+    expect(find.text(tl.communityRankingEmptyTitle), findsOneWidget);
+    expect(find.text(tl.communityRankingEmptyReviews), findsOneWidget);
 
     expect(env.prefs.getString(PrefKeys.ui('community.skins.sort')), 'reviews');
     expect(env.prefs.getString(PrefKeys.ui('community.skins.period')), 'week');
+    expect(env.prefs.getString(PrefKeys.ui('community.skins.weapon')), vandal);
+    await unmount(tester);
+  });
+
+  testWidgets('dismissed filter draft makes no request or preference change', (
+    tester,
+  ) async {
+    env.server.json('GET /v1/skins/top', {'items': <Object>[]});
+    await _open(tester, env);
+    final count = env.server.calls('GET /v1/skins/top').length;
+    await _options(tester);
+    await tester.tap(find.byKey(const ValueKey('skins-sort-rating')));
+    await tester.tap(find.byKey(const ValueKey('skins-period-week')));
+    await settle(tester);
+    expect(env.server.calls('GET /v1/skins/top').length, count);
+    Navigator.of(
+      tester.element(find.byKey(const ValueKey('skins-apply-filters'))),
+    ).pop();
+    await settle(tester);
+    expect(env.server.calls('GET /v1/skins/top').length, count);
+    expect(env.prefs.getString(PrefKeys.ui('community.skins.sort')), isNull);
+    expect(env.prefs.getString(PrefKeys.ui('community.skins.period')), isNull);
+    expect(find.text(tl.communityRankingEmptyVotes), findsOneWidget);
+    await unmount(tester);
+  });
+
+  testWidgets('empty reset widens weapon/time but retains sort and scope', (
+    tester,
+  ) async {
+    env.server.json('GET /v1/skins/top', {'items': <Object>[]});
+    await env.prefs.setString(PrefKeys.ui('community.skins.weapon'), vandal);
+    await env.prefs.setString(PrefKeys.ui('community.skins.period'), 'week');
+    await env.prefs.setString(PrefKeys.ui('community.skins.sort'), 'rating');
+    await _open(tester, env);
+    final before = env.server.calls('GET /v1/skins/top').last.query;
+    expect(find.text(tl.communityRankingEmptyRatings), findsOneWidget);
+    expect(find.text(CommunityStrings.skinsEmptyBody), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('skins-clear-filters')));
+    await settle(tester);
+    final after = env.server.calls('GET /v1/skins/top').last.query;
+    expect(after['weapon'], isNull);
+    expect(after['period'], 'all');
+    expect(after['sort'], 'rating');
+    expect(after['scope'], before['scope']);
+    expect(after['region'], before['region']);
+    expect(after['country'], before['country']);
+    expect(find.byKey(const ValueKey('skins-clear-filters')), findsNothing);
+    await unmount(tester);
+  });
+
+  testWidgets('catalog search finds accents and opens reviews without voting', (
+    tester,
+  ) async {
+    env.server
+      ..json('GET /v1/skins/top', {'items': <Object>[]})
+      ..json('GET /v1/skins/*/summary', summaryJson())
+      ..json('GET /v1/skins/*/reviews', page([]));
+    await _open(tester, env);
+    await tester.tap(find.byKey(const ValueKey('skins-explore')));
+    await settle(tester);
+    await tester.enterText(
+      find.byKey(const ValueKey('skins-catalog-search')),
+      'dao dac nhiem',
+    );
+    await settle(tester);
+    expect(find.byKey(const ValueKey('catalog-$knifeSkin')), findsOneWidget);
+    expect(find.byKey(const ValueKey('catalog-$reaverSkin')), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('catalog-$knifeSkin')));
+    await settle(tester, frames: 30);
+    expect(find.byType(SkinReviewScreen), findsOneWidget);
+    expect(
+      env.server.calls('GET /v1/skins/*/summary').single.path,
+      '/v1/skins/$knifeSkin/summary',
+    );
+    expect(env.server.calls('POST /v1/skins/*/vote'), isEmpty);
+    await unmount(tester);
+  });
+
+  testWidgets(
+    'anonymous discovery keeps read-only access and an explicit consent action',
+    (tester) async {
+      env = await CommunityTestEnv.create(consent: false);
+      env.server
+        ..json('GET /v1/skins/top', {'items': <Object>[]})
+        ..json('GET /v1/skins/*/summary', summaryJson())
+        ..json('GET /v1/skins/*/reviews', page([]));
+      await _open(tester, env);
+      expect(find.byKey(const ValueKey('consent-gate-action')), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('skins-explore')));
+      await settle(tester);
+      await tester.enterText(
+        find.byKey(const ValueKey('skins-catalog-search')),
+        'reaver',
+      );
+      await settle(tester);
+      await tester.tap(find.byKey(const ValueKey('catalog-$reaverSkin')));
+      await settle(tester, frames: 30);
+      expect(find.byType(SkinReviewScreen), findsOneWidget);
+      expect(env.server.calls('POST /v1/auth/riot'), isEmpty);
+      expect(env.server.calls('POST /v1/skins/*/vote'), isEmpty);
+      await unmount(tester);
+    },
+  );
+
+  testWidgets('catalog may widen weapon locally without changing leaderboard', (
+    tester,
+  ) async {
+    env.server.json('GET /v1/skins/top', {'items': <Object>[]});
+    await env.prefs.setString(PrefKeys.ui('community.skins.weapon'), vandal);
+    await _open(tester, env);
+    final count = env.server.calls('GET /v1/skins/top').length;
+    await tester.tap(find.byKey(const ValueKey('skins-explore')));
+    await settle(tester);
+    await tester.enterText(
+      find.byKey(const ValueKey('skins-catalog-search')),
+      'dao dac nhiem',
+    );
+    await settle(tester);
+    expect(find.text(tl.communityRankingNoSearch), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('skins-catalog-all-weapons')));
+    await settle(tester);
+    expect(find.byKey(const ValueKey('catalog-$knifeSkin')), findsOneWidget);
+    expect(env.server.calls('GET /v1/skins/top').length, count);
     expect(env.prefs.getString(PrefKeys.ui('community.skins.weapon')), vandal);
     await unmount(tester);
   });
@@ -147,6 +278,53 @@ void main() {
     );
     await unmount(tester);
   });
+
+  for (final width in [320.0, 360.0, 393.0, 600.0]) {
+    for (final scale in [1.0, 2.0]) {
+      testWidgets('ranking pickers at $width dp, text $scale, RTL/light', (
+        tester,
+      ) async {
+        env.server.json('GET /v1/skins/top', {'items': <Object>[]});
+        await _open(
+          tester,
+          env,
+          size: Size(width, 1000),
+          textScale: scale,
+          light: true,
+          rtl: true,
+        );
+        expect(tester.takeException(), isNull);
+        final options = find.byKey(const ValueKey('skins-filter-selector'));
+        await tester.ensureVisible(options);
+        expect(tester.getSize(options).height, greaterThanOrEqualTo(48));
+        await _options(tester);
+        await tester.ensureVisible(
+          find.byKey(const ValueKey('skins-sort-rating')),
+        );
+        await tester.tap(find.byKey(const ValueKey('skins-sort-rating')));
+        await _apply(tester);
+        expect(
+          env.server.calls('GET /v1/skins/top').last.query['sort'],
+          'rating',
+        );
+        final explore = find.byKey(const ValueKey('skins-explore'));
+        await tester.ensureVisible(explore);
+        await tester.tap(explore);
+        await settle(tester);
+        await tester.enterText(
+          find.byKey(const ValueKey('skins-catalog-search')),
+          'reaver',
+        );
+        await settle(tester);
+        expect(
+          find.byKey(const ValueKey('catalog-$reaverSkin')),
+          findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
+        await unmount(tester);
+      });
+    }
+  }
 
   for (final light in [false, true]) {
     testWidgets('no overflow at 360 dp × 2.0 (${light ? 'light' : 'dark'})', (

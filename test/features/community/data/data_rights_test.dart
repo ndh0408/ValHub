@@ -89,7 +89,7 @@ void main() {
       expect(
         describeCommunityError(tl, e).message,
         CommunityStrings.errorRiotUnavailableIn(
-          formatDurationCoarse(const Duration(minutes: 2)),
+          formatDurationCoarse(const Duration(minutes: 2), messages: tl),
         ),
       );
     });

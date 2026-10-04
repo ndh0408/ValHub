@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/account_labels.dart';
 import 'package:valvn/features/community/ui/community_error.dart';
 
 import 'dart:async';
@@ -79,7 +80,9 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
     final ok = await confirmSettingsAction(
       context,
       title: l10nBeforeAwait.communityDeleteDataConfirmTitle,
-      message: l10nBeforeAwait.communityDeleteDataConfirmBody(account.riotId),
+      message: l10nBeforeAwait.communityDeleteDataConfirmBody(
+        account.displayRiotId(l10nBeforeAwait),
+      ),
       confirmLabel: l10nBeforeAwait.communityDeleteDataConfirm,
       destructive: true,
       icon: Icons.delete_forever_outlined,
@@ -110,7 +113,9 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
     final ok = await confirmSettingsAction(
       context,
       title: l10nBeforeAwait2.communityWithdrawConfirmTitle,
-      message: l10nBeforeAwait2.communityWithdrawConfirmBody(account.riotId),
+      message: l10nBeforeAwait2.communityWithdrawConfirmBody(
+        account.displayRiotId(l10nBeforeAwait2),
+      ),
       confirmLabel: l10nBeforeAwait2.communityWithdrawConfirm,
       icon: Icons.logout_rounded,
     );
@@ -151,7 +156,7 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
     return SettingsGroup(
       title: context.l10n.communityDataTitle,
       footer: Text(
-        context.l10n.communityDataFooter(account.riotId),
+        context.l10n.communityDataFooter(account.displayRiotId(context.l10n)),
         style: theme.textTheme.bodySmall?.copyWith(
           color: scheme.onSurfaceVariant,
         ),

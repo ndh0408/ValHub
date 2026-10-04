@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,13 +42,15 @@ void main() {
     expect(find.text(HomeStrings.storeResetsIn('04:50:01')), findsOneWidget);
     expect(find.byType(CountdownRing), findsOneWidget);
     expect(
-      find.textContaining(HomeStrings.storeTotal(formatVp(6500))),
+      find.textContaining(HomeStrings.storeTotal(formatVp(6500, messages: tl))),
       findsOneWidget,
     );
     // 2.440 VP buys ONE of the offers (1.275 + 1.275 = 2.550 > 2.440), never
     // "4 skin" (PR-04).
     expect(
-      find.textContaining(HomeStrings.storeWalletCanBuy(formatVp(2440), 1)),
+      find.textContaining(
+        HomeStrings.storeWalletCanBuy(formatVp(2440, messages: tl), 1),
+      ),
       findsOneWidget,
     );
     expect(find.textContaining('đủ mua tối đa 4'), findsNothing);
@@ -64,7 +68,7 @@ void main() {
       overrides: [vmStore(AsyncData(homeStoreSummary(wallet: null)))],
     );
     expect(
-      find.textContaining(HomeStrings.storeTotal(formatVp(6500))),
+      find.textContaining(HomeStrings.storeTotal(formatVp(6500, messages: tl))),
       findsOneWidget,
     );
     expect(find.textContaining('Ví'), findsNothing);
@@ -174,8 +178,8 @@ void main() {
       );
       expect(find.text(HomeStrings.nightMarketNew), findsNothing);
       expect(find.textContaining('-41%'), findsOneWidget);
-      expect(find.textContaining(formatVp(2094)), findsOneWidget);
-      expect(find.textContaining(formatVp(3550)), findsOneWidget);
+      expect(find.textContaining(formatVp(2094, messages: tl)), findsOneWidget);
+      expect(find.textContaining(formatVp(3550, messages: tl)), findsOneWidget);
       await homeUnmount(tester);
     });
 

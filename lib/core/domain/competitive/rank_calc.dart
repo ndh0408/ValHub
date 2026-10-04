@@ -4,9 +4,7 @@ import 'dart:ui' show Color;
 import 'package:flutter/foundation.dart';
 
 import '../../content/content_db.dart';
-import '../../l10n/content_strings.dart';
 import '../../theme/tier_colors.dart';
-import 'competitive_strings.dart';
 import 'match_models.dart' show MatchOutcome;
 import 'rank_models.dart';
 
@@ -115,11 +113,7 @@ class RankInfo {
     final normalized = unranked ? 0 : normalizeTier(tier, table);
     return RankInfo(
       tier: math.max(tier, 0),
-      tierName: unranked
-          ? ContentStrings.unranked
-          : data?.displayName ??
-                CompetitiveStrings.fallbackTierName(normalized) ??
-                ContentStrings.unranked,
+      tierName: unranked ? '' : data?.tierName ?? '',
       normalizedTier: normalized,
       rr: unranked ? 0 : rr,
       actUuid: act,
@@ -135,7 +129,8 @@ class RankInfo {
   /// Tier number in the table of [actUuid].
   final int tier;
 
-  /// Vietnamese name: `Kim Cương 1`, `Radiant`, `Chưa xếp hạng`.
+  /// Raw API content name; empty when unknown or unranked. Display adapters
+  /// resolve captions from the current resources without caching UI strings.
   final String tierName;
 
   /// Episode-5-equivalent tier (see [normalizeTier]); 0 when unranked.
@@ -163,10 +158,6 @@ class RankInfo {
 
   /// Solid tier color (muted when unranked).
   Color get color => opaqueRgba(colorHex);
-
-  /// "Còn 3 trận phân hạng" during placements, else `null`.
-  String? get placementText =>
-      isPlacement ? CompetitiveStrings.placementsLeft(gamesNeeded) : null;
 
   /// Orders by normalized tier, then RR.
   int compareTo(RankInfo other) {

@@ -1,3 +1,4 @@
+import 'package:valvn/core/l10n/labels/rank_labels.dart';
 import 'package:valvn/core/l10n/labels/competitive_labels.dart';
 
 import 'dart:async';
@@ -375,8 +376,8 @@ class _DayCard extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Semantics(
                   label: context.l10n.profileRankChange(
-                    start.tierName,
-                    end.tierName,
+                    start.displayLabel(context.fmt),
+                    end.displayLabel(context.fmt),
                   ),
                   excludeSemantics: true,
                   child: Row(
@@ -385,7 +386,7 @@ class _DayCard extends ConsumerWidget {
                       const SizedBox(width: 4),
                       Flexible(
                         child: Text(
-                          start.tierName,
+                          start.displayLabel(context.fmt),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.bodySmall,
@@ -403,7 +404,7 @@ class _DayCard extends ConsumerWidget {
                       const SizedBox(width: 4),
                       Flexible(
                         child: Text(
-                          end.tierName,
+                          end.displayLabel(context.fmt),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.bodySmall?.copyWith(
@@ -490,7 +491,7 @@ class _MatchRow extends ConsumerWidget {
                     context.fmt.inlineFacts([
                       if (start != null) formatTime(start),
                       context.l10n.profileRankWithRr(
-                        after.tierName,
+                        after.displayLabel(context.fmt),
                         formatNumber(after.rr),
                       ),
                     ]),

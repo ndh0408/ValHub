@@ -10,6 +10,7 @@ import 'package:valvn/features/community/ui/community_screen.dart';
 import 'package:valvn/features/community/ui/post_detail_screen.dart';
 
 import '../community_test_env.dart';
+import '../../../helpers/l10n.dart';
 
 Future<void> _open(
   WidgetTester tester,
@@ -236,7 +237,7 @@ void main() {
     expect(find.text(CommunityStrings.lfgEmptyTitle), findsOneWidget);
     await tester.tap(find.text(CommunityStrings.sectionSkins));
     await settle(tester);
-    expect(find.text(CommunityStrings.skinsEmptyTitle), findsOneWidget);
+    expect(find.text(tl.communityRankingEmptyTitle), findsOneWidget);
     expect(tester.takeException(), isNull);
     await unmount(tester);
   });

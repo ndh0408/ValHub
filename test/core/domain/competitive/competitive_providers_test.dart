@@ -1,3 +1,7 @@
+import 'package:valvn/core/l10n/labels/rank_labels.dart';
+
+import '../../../helpers/l10n.dart';
+
 import 'dart:async';
 import 'dart:io';
 
@@ -289,9 +293,9 @@ void main() {
       await c.read(contentProvider.future);
       final sub = c.listen(rankSummaryProvider(me), (_, _) {});
       final summary = await c.read(rankSummaryProvider(me).future);
-      expect(summary.current.tierName, 'Kim Cương 1');
+      expect(summary.current.displayLabel(tf), 'Kim Cương 1');
       expect(summary.current.rr, 6);
-      expect(summary.peak!.rank.tierName, 'Bất Tử 1');
+      expect(summary.peak!.rank.displayLabel(tf), 'Bất Tử 1');
       expect(summary.peak!.actUuid, e1a1);
       await pumpEventQueue();
       final account = c.read(accountProvider(me))!;
@@ -310,7 +314,7 @@ void main() {
       );
       await c.read(contentProvider.future);
       final summary = await c.read(rankSummaryProvider(me).future);
-      expect(summary.current.tierName, 'Bạc 1');
+      expect(summary.current.displayLabel(tf), 'Bạc 1');
       await c.read(competitiveUpdatesProvider(me).future);
       verify(
         () => api.competitiveUpdates(
@@ -326,7 +330,8 @@ void main() {
       final off = await container(accounts: [console]);
       await off.read(contentProvider.future);
       expect(
-        (await off.read(rankSummaryProvider(me).future)).current.tierName,
+        (await off.read(rankSummaryProvider(me).future)).current
+            .displayLabel(tf),
         'Kim Cương 1',
       );
     });

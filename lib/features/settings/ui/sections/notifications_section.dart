@@ -1,3 +1,5 @@
+import 'package:valvn/core/l10n/account_labels.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -166,7 +168,7 @@ class _SettingsNotificationsSectionState
             icon: Icons.favorite_border,
             title: context.l10n.settingsNotifWishlist,
             subtitle:
-                '${account.riotId} · ${context.l10n.settingsNotifWishlistSubtitle}',
+                '${account.displayRiotId(context.l10n)} · ${context.l10n.settingsNotifWishlistSubtitle}',
             value: settings.wishlistNotificationsFor(account.puuid),
             onChanged: (v) => unawaited(_toggleWishlist(account.puuid, v)),
           ),
