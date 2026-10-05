@@ -5,7 +5,10 @@ skin rankings are global and all-time. The Community skin section also exposes
 the complete collectible catalog through a lazy searchable list. Nonowners may
 read and write separate plain comments; stars/reviews require verified inventory.
 Normal browsing has no anonymous join banner after explicit account consent.
-Production comment deployment remains unverified. Older scoped/weekly design
+Production comments and owned-skin reviews were verified through actual
+create/read/delete flows in the [05/10 deployment](../PRODUCTION_DEPLOYMENT_2026-10-05.md).
+Latest QA/release limitations: [build 4023](../DEEP_REVIEW_CHECKPOINT_2026-10-05.md).
+Older scoped/weekly design
 notes below are historical where they conflict with these owner requirements.
 
 Mục tiêu: gọn hơn ValBuddy, đủ hơn Daily Val, "thông minh" — màn đầu tiên đã trả lời

@@ -572,7 +572,15 @@ class PvpApi {
     );
     try {
       final res = await _publicDio.get<Object?>(url);
-      return asMap(res.data) ?? asMap(tryDecodeJson(asString(res.data))) ?? {};
+      final data = asMap(res.data) ?? asMap(tryDecodeJson(asString(res.data)));
+      // An invalid response is unavailable, not evidence of a healthy region.
+      // Empty arrays are valid; preserve additive fields from Riot unchanged.
+      if (data == null ||
+          data['maintenances'] is! List ||
+          data['incidents'] is! List) {
+        throw const TransientException(reason: 'content_unavailable');
+      }
+      return data;
     } on Object catch (e) {
       throw classifyError(e);
     }

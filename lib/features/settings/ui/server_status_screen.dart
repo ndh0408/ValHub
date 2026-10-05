@@ -80,6 +80,14 @@ class _ServerStatusScreenState extends ConsumerState<ServerStatusScreen> {
               onChanged: (r) => setState(() => _picked = r),
             ),
       slivers: [
+        if (async.hasError && report?.region == region)
+          SliverToBoxAdapter(
+            child: ErrorView(
+              error: async.error!,
+              compact: true,
+              onRetry: () => ref.invalidate(serverStatusProvider(region)),
+            ),
+          ),
         switch (async) {
           AsyncValue(:final value?) when value.region == region =>
             _ReportSliver(report: value, now: now),

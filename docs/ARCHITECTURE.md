@@ -1,5 +1,12 @@
 # ValVN architecture and internal API
 
+Latest bounded verification: [status/coverage build 4023](DEEP_REVIEW_CHECKPOINT_2026-10-05.md).
+Public status reads validate the required array shape; Settings retains cached
+status/time with an error/retry row after a failed refresh. Community public
+session fallback is existing behavior, now additionally tested against private
+read/write downgrade. See [release gates](RELEASE_GATES.md) for policy, signing,
+contract and device limits; no approved RSO/capability layer is claimed.
+
 Current verification/cutover status: [background locale 02/10](I18N_BACKGROUND_2026-10-02.md),
 following [runtime locale](I18N_RUNTIME_2026-10-02.md) and the
 [final gap audit](FINAL_GAP_AUDIT_2026-10-02.md).

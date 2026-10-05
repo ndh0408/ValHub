@@ -106,6 +106,90 @@ void main() {
     );
   });
 
+  test(
+    'a revoked cached public session retries anonymously without Riot',
+    () async {
+      env.secure.values[SecureKeys.community(mePuuid)] = jsonEncode(
+        sessionJson(token: 'revoked-public'),
+      );
+      env.server.on(
+        'GET /v1/skins/votes',
+        (r) => r.authorization == null
+            ? FakeResponse(200, {
+                'items': [
+                  {'skinUuid': reaverSkin, 'votes': 42, 'voted': false},
+                ],
+              })
+            : const FakeResponse(401, {
+                'error': {'code': 'unauthorized'},
+              }),
+      );
+
+      final result = await api.skinVotes([reaverSkin], puuid: mePuuid);
+
+      expect(result[reaverSkin]?.vote.votes, 42);
+      expect(
+        env.server.calls('GET /v1/skins/votes').map((r) => r.authorization),
+        ['Bearer revoked-public', null],
+      );
+      expect(env.server.calls('POST /v1/auth/riot'), isEmpty);
+      expect(env.secure.values[SecureKeys.community(mePuuid)], isNull);
+      verifyNever(() => env.sessions.session(any()));
+    },
+  );
+
+  test(
+    'public 401 with unavailable Riot falls back once without auth',
+    () async {
+      env.secure.values[SecureKeys.community(mePuuid)] = jsonEncode(
+        sessionJson(token: 'revoked-public'),
+      );
+      when(() => env.sessions.session(any()))
+          .thenThrow(const NeedsLoginException(puuid: mePuuid));
+      env.server.on(
+        'GET /v1/posts',
+        (r) => r.authorization == null
+            ? FakeResponse(200, page([postJson('public')]))
+            : const FakeResponse(401, {
+                'error': {'code': 'unauthorized'},
+              }),
+      );
+
+      expect((await api.posts(mePuuid)).items.single.id, 'public');
+      expect(env.server.calls('GET /v1/posts'), hasLength(2));
+      expect(env.server.calls('GET /v1/posts').last.authorization, isNull);
+      expect(env.server.calls('POST /v1/auth/riot'), isEmpty);
+    },
+  );
+
+  test(
+    'private profile and writes never retry anonymously after 401',
+    () async {
+      when(() => env.sessions.session(any()))
+          .thenThrow(const NeedsLoginException(puuid: mePuuid));
+      for (final operation in ['profile', 'write']) {
+        env.secure.values[SecureKeys.community(mePuuid)] = jsonEncode(
+          sessionJson(token: 'revoked-$operation'),
+        );
+        final route = operation == 'profile' ? 'GET /v1/me' : 'POST /v1/posts';
+        env.server.json(route, {
+          'error': {'code': 'unauthorized'},
+        }, status: 401);
+
+        await expectLater(
+          operation == 'profile'
+              ? api.me(mePuuid)
+              : api.createPost(mePuuid, kind: PostKind.text, body: 'private'),
+          throwsA(isA<NeedsLoginException>()),
+        );
+        final calls = env.server.calls(route);
+        expect(calls, hasLength(1));
+        expect(calls.single.authorization, 'Bearer revoked-$operation');
+      }
+      expect(env.server.calls('POST /v1/auth/riot'), isEmpty);
+    },
+  );
+
   test('a second 401 surfaces as unauthorized (no loop)', () async {
     env.server.json('GET /v1/posts', {
       'error': {'code': 'unauthorized'},

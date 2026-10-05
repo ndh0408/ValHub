@@ -1,6 +1,9 @@
 # Build & phát hành ValHub
 
-Trạng thái kiểm chứng mới nhất: [Model / export riêng tư / CI local, build 4018](I18N_MODELS_AND_EXPORT_2026-10-04.md).
+Trạng thái kiểm chứng mới nhất: [Status / coverage / release gates, build 4023](DEEP_REVIEW_CHECKPOINT_2026-10-05.md).
+Điều kiện phát hành còn mở: [Release gates](RELEASE_GATES.md).
+
+Checkpoint trước: [Model / export riêng tư / CI local, build 4018](I18N_MODELS_AND_EXPORT_2026-10-04.md).
 
 Checkpoint trước: [LFG / phiên chờ / backend / CI local, build 4017](LFG_AND_SESSION_COMMIT_2026-10-03.md).
 Checkpoint nhãn có điều kiện: [Nhãn có điều kiện / CI local, build 4016](I18N_CONDITIONAL_VIEWS_2026-10-03.md).
@@ -15,7 +18,8 @@ tiếp sau [Runtime locale](I18N_RUNTIME_2026-10-02.md) và
 [Final gap audit](FINAL_GAP_AUDIT_2026-10-02.md).
 APK/IPA mang tên ValVN trong pipeline để giữ tương thích artifact; thương hiệu
 sản phẩm là ValHub. Bản debug-signed/unsigned dùng kiểm tra, chưa là bản store.
-GitHub Actions hiện không khởi động vì billing; kiểm tra local không mở khóa GitHub.
+Checkpoint trước ghi GitHub Actions không khởi động vì billing. Lượt này chưa
+xác minh một cloud run mới; kiểm tra local không chứng minh cloud CI đã hoạt động.
 
 Tài liệu này hướng dẫn: build APK ở máy local, lấy APK/IPA từ GitHub Actions, cài IPA chưa ký
 lên iPhone (AltStore/Sideloadly), và cấu hình secret để CI ký release bằng key thật.
@@ -34,6 +38,17 @@ flutter test        # phải pass hết
 flutter build apk --release                # 1 file APK universal (mọi kiến trúc CPU)
 flutter build apk --release --split-per-abi  # 3 file APK nhỏ hơn, mỗi file 1 kiến trúc CPU
 ```
+
+Coverage có thể chạy local bằng `flutter test --coverage`, sau đó
+`python3 tool/qa/flutter_coverage.py` (Windows dùng `python -X utf8`). Báo cáo nằm
+trong `coverage/summary.json`, `summary.md` và `lcov.info`; chỉ đo dòng được
+instrument, liệt kê file chưa xuất hiện, không phải điểm hoàn chỉnh sản phẩm.
+Android workflow giữ các artifact này. Bộ fallback `TEST_LOCALE=en` là gate
+bắt buộc; nó không chứng minh UI đã được dịch tiếng Anh.
+
+Máy Windows đang chạy emulator/VM đã hoàn tất hai bộ test với
+`--concurrency=2`, giữ nguyên mọi test/assertion/timeout sau một lỗi timing ở
+lượt mặc định. Chi tiết lượt lỗi và kiểm tra lại nằm trong checkpoint 4023.
 
 Kết quả nằm ở:
 

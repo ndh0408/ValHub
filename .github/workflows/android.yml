@@ -57,7 +57,24 @@ jobs:
 
       - run: flutter pub get
       - run: flutter analyze
-      - run: flutter test
+      - run: python3 -m unittest discover -s tool/qa -p test_flutter_coverage.py
+      - run: flutter test --coverage
+      - name: Summarize instrumented line coverage
+        run: |
+          python3 tool/qa/flutter_coverage.py
+          cat coverage/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Coverage evidence
+        if: always() && hashFiles('coverage/lcov.info') != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: flutter-line-coverage
+          path: |
+            coverage/lcov.info
+            coverage/summary.json
+            coverage/summary.md
+          if-no-files-found: error
+          retention-days: 30
 
       # android/app/build.gradle.kts reads android/key.properties when present
       # (storeFile is resolved relative to android/app/) and otherwise falls

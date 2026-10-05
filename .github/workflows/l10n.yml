@@ -66,13 +66,11 @@ jobs:
         run: flutter test
 
   english-pass:
-    name: Tests, device locale en (metric)
+    name: Tests, device locale en (fallback gate)
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    # A metric, not a gate: the failures are tests that assert literal
-    # Vietnamese or vi date formats and are migrated to symbolic asserts over
-    # time (I18N.md 12.1).
-    continue-on-error: true
+    # Both local configurations pass at checkpoint 4022. Keep English-device
+    # fallback regression checks required; this does not certify English UI.
     steps:
       - uses: actions/checkout@v7
 

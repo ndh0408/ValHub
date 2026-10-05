@@ -82,6 +82,67 @@ void main() {
     );
   });
 
+  test(
+    'malformed public status cannot be reported as an empty healthy report',
+    () async {
+      final public = Dio()..httpClientAdapter = adapter;
+      final statusApi = PvpApi(
+        sessions: sessions,
+        dio: Dio(),
+        publicDio: public,
+      );
+      for (final body in [
+        '<html>maintenance proxy</html>',
+        null,
+        <String, Object?>{},
+        {'error': 'upstream unavailable'},
+        {'maintenances': <Object?>[], 'incidents': null},
+        {'maintenances': 'unknown', 'incidents': <Object?>[]},
+      ]) {
+        adapter.reply(200, body);
+        await expectLater(
+          statusApi.platformStatus('ap'),
+          throwsA(
+            isA<TransientException>().having(
+              (e) => e.reason,
+              'reason',
+              'content_unavailable',
+            ),
+          ),
+          reason: 'Invalid HTTP-200 data must remain unavailable',
+        );
+      }
+      expect(adapter.requests, hasLength(6));
+      verifyNever(() => sessions.session(any()));
+    },
+  );
+
+  test(
+    'valid empty public status and additive fields remain supported',
+    () async {
+      final public = Dio()..httpClientAdapter = adapter;
+      final statusApi = PvpApi(
+        sessions: sessions,
+        dio: Dio(),
+        publicDio: public,
+      );
+      final payload = {
+        'maintenances': <Object?>[],
+        'incidents': <Object?>[],
+        'futureField': true,
+      };
+      adapter.reply(200, payload);
+      expect(await statusApi.platformStatus('eu'), payload);
+      adapter.reply(200, jsonEncode(payload));
+      expect(await statusApi.platformStatus('eu'), payload);
+      expect(
+        adapter.requests.every((r) => !r.headers.containsKey('Authorization')),
+        isTrue,
+      );
+      verifyNever(() => sessions.session(any()));
+    },
+  );
+
   test('refresh player identity uses own party, authenticated GLZ POST', () async {
     const party = '00000000-0000-0000-0000-000000000099';
     adapter.reply(200, {'ID': party});

@@ -1,16 +1,16 @@
-<!-- Tệp tạo tự động từ lib/features/settings/legal/. Không sửa tay: sửa nội dung Dart rồi chạy `dart run tool/export_legal_docs.dart`. -->
+<!-- Giấy phép độc quyền được duy trì thủ công cùng LICENSE; tool/export_legal_docs.dart không xuất lại tệp này. -->
 
 # Giấy phép phần mềm
 
-**VanHub** · Phiên bản 1.0 · Hiệu lực từ: 29/09/2026
+**ValHub** · Phiên bản 1.0 · Hiệu lực từ: 29/09/2026
 
 > © 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền.
 
-Giấy phép sử dụng phần mềm dành cho người dùng cuối ("Giấy phép") này là thỏa thuận giữa bạn và Nguyễn Đức Huy về việc sử dụng ứng dụng VanHub ("Phần mềm"). VanHub là phần mềm độc quyền, không phải phần mềm mã nguồn mở.
+Giấy phép sử dụng phần mềm dành cho người dùng cuối ("Giấy phép") này là thỏa thuận giữa bạn và Nguyễn Đức Huy về việc sử dụng ứng dụng ValHub ("Phần mềm"). ValHub là phần mềm độc quyền, không phải phần mềm mã nguồn mở.
 
 ## 1. Quyền sở hữu
 
-Phần mềm, bao gồm mã nguồn, mã máy, cấu trúc, thiết kế giao diện, biểu tượng, tên và logo VanHub, văn bản và tài liệu đi kèm, thuộc quyền sở hữu của Nguyễn Đức Huy và được bảo hộ bởi pháp luật Việt Nam về sở hữu trí tuệ và các điều ước quốc tế có liên quan. Phần mềm được cấp phép cho bạn sử dụng, không phải được bán.
+Phần mềm, bao gồm mã nguồn, mã máy, cấu trúc, thiết kế giao diện, biểu tượng, tên và logo ValHub, văn bản và tài liệu đi kèm, thuộc quyền sở hữu của Nguyễn Đức Huy và được bảo hộ bởi pháp luật Việt Nam về sở hữu trí tuệ và các điều ước quốc tế có liên quan. Phần mềm được cấp phép cho bạn sử dụng, không phải được bán.
 
 ## 2. Phạm vi cấp phép
 
@@ -28,11 +28,11 @@ Trừ khi được pháp luật bắt buộc cho phép hoặc được chúng t�
 
 ## 4. Thành phần mã nguồn mở của bên thứ ba
 
-Phần mềm có sử dụng một số thư viện mã nguồn mở của bên thứ ba (ví dụ Flutter và các gói Dart). Mỗi thư viện được cấp phép theo giấy phép riêng của tác giả, và danh sách đầy đủ kèm nội dung giấy phép có tại mục "Giấy phép thư viện bên thứ ba" trong Ứng dụng. Giấy phép của các thư viện đó chỉ áp dụng cho chính các thư viện, không biến VanHub thành phần mềm mã nguồn mở.
+Phần mềm có sử dụng một số thư viện mã nguồn mở của bên thứ ba (ví dụ Flutter và các gói Dart). Mỗi thư viện được cấp phép theo giấy phép riêng của tác giả, và danh sách đầy đủ kèm nội dung giấy phép có tại mục "Giấy phép thư viện bên thứ ba" trong Ứng dụng. Giấy phép của các thư viện đó chỉ áp dụng cho chính các thư viện, không biến ValHub thành phần mềm mã nguồn mở.
 
 ## 5. Nhãn hiệu của bên thứ ba
 
-VALORANT, Riot Games và mọi tài sản liên quan là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc. Giấy phép này không cấp cho bạn bất kỳ quyền nào đối với nhãn hiệu của Riot Games hay của VanHub.
+VALORANT, Riot Games và mọi tài sản liên quan là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc. Giấy phép này không cấp cho bạn bất kỳ quyền nào đối với nhãn hiệu của Riot Games hay của ValHub.
 
 ## 6. Cập nhật
 
