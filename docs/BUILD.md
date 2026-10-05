@@ -1,11 +1,16 @@
 # Build & phát hành ValHub
 
-Hotfix kiểm chứng mới nhất: [Ảnh Guardian / CDN placeholder, build 4025](SKIN_IMAGE_FALLBACK_2026-10-05.md).
+Kiểm chứng mới nhất: [Trận đấu & tổ đội theo trạng thái, build 4030](CONTEXTUAL_MATCH_AND_PARTY_2026-10-05.md).
+Windows 4.442 tests mỗi cấu hình/analyzer 0, Mac 162 tests/analyzer 0 và unsigned
+iOS build; Android release-mode/debug-signed APK cùng 10 public flows đạt.
+Nâng cấp emulator tài khoản thật giữ dữ liệu; chưa là signed store release.
+
+Hotfix kiểm chứng trước: [Ảnh Guardian / CDN placeholder, build 4025](SKIN_IMAGE_FALLBACK_2026-10-05.md).
 APK đã nâng cấp emulator tài khoản thật; iOS đã build trên Mac không ký. Có
 377 test liên quan, 10 Android public flows và 4 Mac regression tests đạt;
 không nhận là đã chạy lại full suite hay signed store release.
 
-Trạng thái kiểm chứng mới nhất: [Legal assets / fallback / CI local, build 4024](LEGAL_ASSETS_AND_FALLBACK_2026-10-05.md).
+Trạng thái kiểm chứng trước: [Legal assets / fallback / CI local, build 4024](LEGAL_ASSETS_AND_FALLBACK_2026-10-05.md).
 APK 4024 vẫn debug-signed; IPA 4024 build trên Mac không ký. JSON pháp lý đã
 được kiểm tra trong cả hai artifact; không nhận là signed store release.
 Chạy `dart run tool/export_legal_docs.dart --check` để kiểm tra Markdown pháp lý,

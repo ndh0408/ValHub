@@ -46,11 +46,14 @@ Future<void> showLiveGameSheet(BuildContext context) async {
 /// S50 body: header, agent select / rosters, live score, "Rời trận", or the
 /// final scoreboard / idle state outside a match.
 class LiveGameSheet extends ConsumerWidget {
-  const LiveGameSheet({super.key});
+  const LiveGameSheet({super.key, this.fullPage = false, this.onOpenParty});
+
+  final bool fullPage;
+  final VoidCallback? onOpenParty;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final height = MediaQuery.sizeOf(context).height * 0.92;
+    final height = fullPage ? null : MediaQuery.sizeOf(context).height * 0.92;
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
       return SizedBox(
@@ -132,7 +135,11 @@ class LiveGameSheet extends ConsumerWidget {
             backgroundColor: Colors.transparent,
             body: Column(
               children: [
-                LiveSheetHeader(puuid: puuid, state: state),
+                LiveSheetHeader(
+                  puuid: puuid,
+                  state: state,
+                  onOpenParty: onOpenParty,
+                ),
                 Expanded(child: body),
               ],
             ),
@@ -208,7 +215,12 @@ class _InGameTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     final teams = splitTeams(match, puuid);
     if (teams.isFreeForAll) {
-      return LiveRosterList(puuid: puuid, match: match, players: teams.ally);
+      return LiveRosterList(
+        puuid: puuid,
+        match: match,
+        players: teams.ally,
+        header: const _LiveStatsNotice(),
+      );
     }
     return LiveTabs(
       labels: [
@@ -216,11 +228,82 @@ class _InGameTabs extends StatelessWidget {
         context.l10n.liveGameTabEnemyTeam,
       ],
       children: [
-        LiveRosterList(puuid: puuid, match: match, players: teams.ally),
-        LiveRosterList(puuid: puuid, match: match, players: teams.enemy),
+        LiveRosterList(
+          puuid: puuid,
+          match: match,
+          players: teams.ally,
+          header: const _LiveStatsNotice(),
+        ),
+        LiveRosterList(
+          puuid: puuid,
+          match: match,
+          players: teams.enemy,
+          header: const _LiveStatsNotice(),
+        ),
       ],
     );
   }
+}
+
+/// Reuses the match presentation as a full page at the combined party route.
+/// Fast polling is balanced on mount/unmount; account switching replaces this
+/// page before displaying the next account's match.
+class LiveGamePage extends ConsumerStatefulWidget {
+  const LiveGamePage({super.key, this.onOpenParty});
+  final VoidCallback? onOpenParty;
+
+  @override
+  ConsumerState<LiveGamePage> createState() => _LiveGamePageState();
+}
+
+class _LiveGamePageState extends ConsumerState<LiveGamePage> {
+  LiveGameSheetOpenNotifier? _open;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final open = ref.read(liveGameSheetOpenProvider.notifier);
+      open.open();
+      _open = open;
+    });
+  }
+
+  @override
+  void dispose() {
+    final open = _open;
+    if (open != null) {
+      // Avoid a provider mutation while the old route is being torn down.
+      scheduleMicrotask(() {
+        try {
+          open.close();
+        } on StateError {
+          /* Provider scope disposed. */
+        }
+      });
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => SafeArea(
+    child: LiveGameSheet(fullPage: true, onOpenParty: widget.onOpenParty),
+  );
+}
+
+class _LiveStatsNotice extends StatelessWidget {
+  const _LiveStatsNotice();
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(4, 4, 4, 12),
+    child: Text(
+      context.l10n.liveGameLiveStatsUnavailable,
+      style: Theme.of(context).textTheme.bodySmall
+          ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+    ),
+  );
 }
 
 /// Red "Rời trận" button (G10) behind a penalty warning.

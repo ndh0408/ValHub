@@ -7,7 +7,7 @@ read and write separate plain comments; stars/reviews require verified inventory
 Normal browsing has no anonymous join banner after explicit account consent.
 Production comments and owned-skin reviews were verified through actual
 create/read/delete flows in the [05/10 deployment](../PRODUCTION_DEPLOYMENT_2026-10-05.md).
-Latest QA/release limitations: [build 4023](../DEEP_REVIEW_CHECKPOINT_2026-10-05.md).
+Latest QA/release limitations: [build 4030](../CONTEXTUAL_MATCH_AND_PARTY_2026-10-05.md).
 Older scoped/weekly design
 notes below are historical where they conflict with these owner requirements.
 
@@ -22,7 +22,7 @@ Mục tiêu: gọn hơn ValBuddy, đủ hơn Daily Val, "thông minh" — màn �
 | 1 | **Cửa hàng** | Hằng ngày · Chợ Đêm · Phụ kiện · Bundle; Wishlist + Danh mục (icon trái tim ở header) |
 | 2 | **Cộng đồng** (giữa, nhấn mạnh) | Bảng tin · Tìm đồng đội · Xếp hạng skin (đánh giá kiểu Daily Val) |
 | 3 | **Bộ sưu tập** | Trang bị (thẻ, danh hiệu, vũ khí, cảm xúc, bộ trang bị), duyệt bộ sưu tập, giá trị |
-| 4 | **Hồ sơ** | Rank, phong độ, lịch sử đấu, RR theo ngày, máy tính lên rank, **Battle Pass**, Tổ đội & hàng chờ, Bạn bè & trò chuyện; ⚙ **Cài đặt** ở góc phải header |
+| 4 | **Hồ sơ** | Rank, phong độ, lịch sử đấu, RR theo ngày, máy tính lên rank, **Battle Pass**, một điểm vào Trận đấu & tổ đội theo trạng thái, Bạn bè & trò chuyện; ⚙ **Cài đặt** ở góc phải header |
 
 - **Battle Pass** không còn là tab: thẻ tiến độ trên Trang chủ + mục trong Hồ sơ, mở
   trang đầy đủ (route `/battlepass` giữ nguyên, deep link cũ vẫn chạy).
@@ -30,6 +30,33 @@ Mục tiêu: gọn hơn ValBuddy, đủ hơn Daily Val, "thông minh" — màn �
   `/settings` giữ nguyên; thông báo đẩy trỏ vào settings vẫn chạy.
 - Chip tài khoản ở mọi header giữ nguyên (chuyển tài khoản nhanh, thấy trạng thái
   trực tuyến).
+
+## Hồ sơ — trận đấu và tổ đội theo trạng thái
+
+Một thẻ dùng dữ liệu live hiện có, thay cho thẻ trận và hàng tổ đội riêng biệt.
+Đường dẫn `/profile/party` giữ nguyên và tự đổi nội dung khi trạng thái thay đổi:
+
+| Trạng thái đã xác minh | Nội dung ưu tiên |
+|---|---|
+| Game chưa chạy / chưa có trận | Hướng dẫn mở game, trạng thái và làm mới; không bịa một tổ đội |
+| Ở sảnh | Thành viên, sẵn sàng, chế độ chơi, mời/mã tổ đội theo quyền hiện có |
+| Phiên game còn chạy nhưng tổ đội chưa có | Giữ trạng thái phiên thật; báo tổ đội chưa đồng bộ và cho thử lại, không bảo mở game lại |
+| Đang tìm trận | Thời gian chờ, hủy tìm trận; không hiển thị bảng điểm cũ thay hàng chờ mới |
+| Đã tìm thấy trận, phiên game chưa đổi | Báo tìm thấy trận; khóa sẵn sàng/hàng chờ, không hiện kết quả trận trước |
+| Chọn đặc vụ | Màn chọn/khóa đặc vụ và đội mình hiện có; giữ ẩn đội địch trong pregame |
+| Đang đấu | Mở thẳng chi tiết trận từ Hồ sơ; đội mình/đội địch, map, chế độ và tỉ số khi có dữ liệu còn mới |
+| Vừa kết thúc | Kết quả/bảng điểm khi Riot công bố; trạng thái chờ dữ liệu nếu chưa có |
+| Lỗi / trạng thái game chưa rõ | Hiển thị lỗi/làm mới; khóa sẵn sàng và thao tác hàng chờ |
+
+Trong trận, tiện ích tổ đội còn ở menu phụ của trang chi tiết thay vì chiếm màn
+chính; không hiện nút sẵn sàng/tìm trận. Mọi mutation vẫn cần người dùng bấm và
+các cảnh báo rời trận/chuyển tổ đội hiện có vẫn được giữ. Đổi tài khoản thay state
+của trang trước khi hiển thị trận/tổ đội mới. Polling dùng provider hiện có, dừng
+khi app ở nền; không tạo thêm vòng polling độc lập.
+
+Nguồn roster trực tiếp hiện tại không cung cấp K/D/A từng người. App ghi rõ giới
+hạn đó, không gán số 0 hay lấy stats trận trước làm stats trực tiếp. Bảng điểm sau
+trận dùng luồng match details hiện có. Thẻ Battle Pass và Bạn bè vẫn giữ riêng.
 
 ## Trang chủ — bảng điều khiển thông minh
 

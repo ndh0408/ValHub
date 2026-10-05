@@ -20,7 +20,10 @@ void main() {
   setUp(() async {
     env = await SocialTestEnv.create();
     addTearDown(env.xmpp.dispose);
-    container = ProviderContainer.test(overrides: env.overrides);
+    container = ProviderContainer.test(
+      overrides: env.overrides,
+      retry: (_, _) => null, // Assert errors directly, without backoff retries.
+    );
   });
 
   Future<PartyView> read() {
@@ -28,12 +31,36 @@ void main() {
     return container.read(partyProvider(me).future);
   }
 
-  test('404 on G-12 means the game is not running', () async {
+  test('404 on both party and session means the game is not running', () async {
     when(() => env.api.partyPlayer(any()))
+        .thenAnswer((_) async => throw const NotFoundException());
+    when(() => env.api.gameSession(any()))
         .thenAnswer((_) async => throw const NotFoundException());
     final v = await read();
     expect(v.gameRunning, isFalse);
     expect(v.party, isNull);
+    verifyNever(() => env.api.party(any(), any()));
+  });
+
+  test('missing party does not override a verified running session', () async {
+    when(() => env.api.gameSession(any()))
+        .thenAnswer((_) async => {'loopState': 'MENUS'});
+    when(() => env.api.partyPlayer(any()))
+        .thenAnswer((_) async => throw const NotFoundException());
+    final v = await read();
+    expect(v.gameRunning, isTrue);
+    expect(v.loopState, LoopState.menus);
+    expect(v.party, isNull);
+    expect(v.invites, isEmpty);
+    verifyNever(() => env.api.party(any(), any()));
+  });
+
+  test('missing party with failed session preserves the real error', () async {
+    when(() => env.api.partyPlayer(any()))
+        .thenAnswer((_) async => throw const NotFoundException());
+    when(() => env.api.gameSession(any()))
+        .thenAnswer((_) async => throw const TransientException());
+    await expectLater(read(), throwsA(isA<TransientException>()));
     verifyNever(() => env.api.party(any(), any()));
   });
 

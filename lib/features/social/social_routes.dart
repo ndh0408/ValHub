@@ -14,7 +14,10 @@ abstract final class SocialRoutes {
 
 /// Relative sub-routes nested by the app router under `/profile`.
 List<RouteBase> get socialRoutes => [
-  GoRoute(path: 'party', builder: (context, state) => const PartyScreen()),
+  GoRoute(
+    path: 'party',
+    builder: (context, state) => const PartyScreen(includeCurrentGame: true),
+  ),
   GoRoute(
     path: 'friends',
     builder: (context, state) => const FriendsScreen(),

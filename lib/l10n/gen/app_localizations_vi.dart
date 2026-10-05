@@ -3690,6 +3690,10 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get liveGameLiveStatsUnavailable =>
+      'Nguồn trận trực tiếp này chưa cung cấp Kill/Death/Assist. Bảng điểm hiện khi Riot công bố dữ liệu sau trận.';
+
+  @override
   String get liveGameFinalScoreboard => 'Bảng điểm cuối trận';
 
   @override
@@ -4240,6 +4244,9 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get profileOvertime => 'Hiệp phụ';
+
+  @override
+  String get profilePlayHubTitle => 'Trận đấu & tổ đội';
 
   @override
   String get profilePartyRow => 'Tổ đội & hàng chờ';
@@ -5694,6 +5701,10 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get socialQueueStatusUnavailable =>
+      'Chưa xác minh được trạng thái game. Làm mới để sử dụng sẵn sàng và hàng chờ.';
+
+  @override
   String get socialReady => 'Sẵn sàng';
 
   @override
@@ -5815,6 +5826,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get socialYou => 'Bạn';
+
+  @override
+  String get socialPartyUnavailable =>
+      'Chưa đồng bộ được tổ đội. Làm mới để thử lại.';
 
   @override
   String get storeAccessoryEmpty => 'Cửa hàng phụ kiện hiện không có gì.';

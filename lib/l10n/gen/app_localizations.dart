@@ -6478,6 +6478,12 @@ abstract class AppLocalizations {
   /// **'Đội địch đã khóa {locked}/{size}'**
   String liveGameEnemyLocked(int locked, int size);
 
+  /// Honest availability notice for current live roster data, which has no per-player KDA. Final published match details contain the scoreboard.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nguồn trận trực tiếp này chưa cung cấp Kill/Death/Assist. Bảng điểm hiện khi Riot công bố dữ liệu sau trận.'**
+  String get liveGameLiveStatsUnavailable;
+
   /// LiveGameStrings.finalScoreboard — Ended (G11)
   ///
   /// In vi, this message translates to:
@@ -7335,6 +7341,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Hiệp phụ'**
   String get profileOvertime;
+
+  /// Combined entry and page title for current match, party and matchmaking.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trận đấu & tổ đội'**
+  String get profilePlayHubTitle;
 
   /// ProfileStrings.partyRow — Social rows (S40.5)
   ///
@@ -9747,6 +9759,12 @@ abstract class AppLocalizations {
   /// **'{max, plural, =1{Chỉ chơi một mình} other{Tối đa {max} người}}'**
   String socialQueueMaxParty(int max);
 
+  /// Fail-closed party controls when game session state is unavailable; the user can refresh the existing screen.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa xác minh được trạng thái game. Làm mới để sử dụng sẵn sàng và hàng chờ.'**
+  String get socialQueueStatusUnavailable;
+
   /// SocialStrings.ready — party
   ///
   /// In vi, this message translates to:
@@ -9950,6 +9968,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Bạn'**
   String get socialYou;
+
+  /// A running game session is verified, but its party is not available yet.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa đồng bộ được tổ đội. Làm mới để thử lại.'**
+  String get socialPartyUnavailable;
 
   /// StoreStrings.accessoryEmpty — Accessories (S12).
   ///

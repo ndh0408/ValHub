@@ -256,7 +256,7 @@ class PartyView {
     this.loopState = LoopState.unknown,
   });
 
-  /// G-12 answered 404: VALORANT is not running on PC/console.
+  /// Both party and game-session reads answered 404.
   const PartyView.notRunning({required this.fetchedAt})
     : gameRunning = false,
       party = null,
@@ -272,6 +272,11 @@ class PartyView {
   /// Game session state (G-1): queue changes are locked in a match.
   final LoopState loopState;
   final DateTime fetchedAt;
+
+  bool get canManageQueue =>
+      gameRunning &&
+      loopState == LoopState.menus &&
+      !(party?.isMatchFound ?? false);
 
   bool get inMatch =>
       loopState == LoopState.pregame || loopState == LoopState.ingame;

@@ -88,7 +88,11 @@ void _serveParty(CommunityTestEnv env, {List<String>? members}) {
 
 void main() {
   late CommunityTestEnv env;
-  setUp(() async => env = await CommunityTestEnv.create());
+  setUp(() async {
+    env = await CommunityTestEnv.create();
+    when(() => env.pvp.gameSession(any()))
+        .thenAnswer((_) async => throw const NotFoundException());
+  });
 
   test('typed party code validation', () {
     expect(validatePartyCode(tl, ''), CommunityStrings.codeRequired);

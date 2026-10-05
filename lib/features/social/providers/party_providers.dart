@@ -20,8 +20,8 @@ final partyShareProvider = Provider<Future<void> Function(String text)>(
 );
 
 /// Party & remote queue of one signed-in account (S55, SUMMARY §6.4):
-/// G-12 → G-13 (+ G-1 for the in-match lock). `404` on G-12 means the game
-/// is not running ([PartyView.notRunning]).
+/// G-12 → G-13 (+ G-1 for the in-match lock). A missing party alone does
+/// not establish that the game stopped; confirm a missing session as well.
 ///
 /// Every mutation is a method called from a button (never automated); each
 /// applies the party object Riot returns, or refetches.
@@ -43,7 +43,15 @@ class PartyNotifier extends AsyncNotifier<PartyView> {
     final api = ref.watch(pvpApiProvider);
     final now = ref.read(clockProvider).now();
     final player = await api.partyPlayer(puuid).orNullIfNotFound();
-    if (player == null) return PartyView.notRunning(fetchedAt: now);
+    if (player == null) {
+      final session = await api.gameSession(puuid).orNullIfNotFound();
+      if (session == null) return PartyView.notRunning(fetchedAt: now);
+      return PartyView(
+        gameRunning: true,
+        fetchedAt: now,
+        loopState: LoopState.parse(asString(session['loopState'])),
+      );
+    }
     final partyId = lowerUuid(player['CurrentPartyID']);
     final invites = [
       for (final i in asList(player['Invites'])) ?PartyInvite.fromJson(i),

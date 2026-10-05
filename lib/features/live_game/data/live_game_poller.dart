@@ -54,7 +54,7 @@ class LiveGamePoller {
     return _resolve(
       previous: previous,
       now: now,
-      phase: (party?.isMatchmaking ?? false)
+      phase: ((party?.isMatchmaking ?? false) || (party?.isMatchFound ?? false))
           ? LivePhase.queueing
           : LivePhase.lobby,
       party: party,

@@ -19,7 +19,12 @@ import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/xmpp/friends.dart';
+import '../../../core/xmpp/xmpp_models.dart' show LoopState;
 import '../../../core/xmpp/xmpp_providers.dart';
+import '../../live_game/current_game_card.dart';
+import '../../live_game/live_game_sheet.dart';
+import '../../live_game/data/live_game_models.dart';
+import '../../live_game/providers/live_game_providers.dart';
 import '../data/party_models.dart';
 import '../data/riot_id_input.dart';
 import '../providers/party_providers.dart';
@@ -42,23 +47,55 @@ class PartyScreen extends ConsumerWidget {
   const PartyScreen({
     super.key,
     this.pollInterval = const Duration(seconds: 5),
+    this.includeCurrentGame = false,
   });
 
   final Duration pollInterval;
 
+  /// Combined entry at the existing party route. Standalone party consumers
+  /// retain their presentation and mutation behavior.
+  final bool includeCurrentGame;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) => _PartyAccountScreen(
-    key: ValueKey(ref.watch(activePuuidProvider)),
-    pollInterval: pollInterval,
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final puuid = ref.watch(activePuuidProvider);
+    if (includeCurrentGame && puuid != null) {
+      final live = ref.watch(liveGameProvider(puuid)).value;
+      // Match state takes priority over party reads, including when the party
+      // endpoint fails. Ended state keeps the final scoreboard reachable.
+      if ((live?.phase.inMatch ?? false) ||
+          (live?.ended != null && live?.phase != LivePhase.queueing)) {
+        return LiveGamePage(
+          key: ValueKey(puuid),
+          onOpenParty: () => unawaited(
+            Navigator.of(context).push<void>(
+              MaterialPageRoute(
+                builder: (_) => PartyScreen(pollInterval: pollInterval),
+              ),
+            ),
+          ),
+        );
+      }
+    }
+    return _PartyAccountScreen(
+      key: ValueKey(puuid),
+      pollInterval: pollInterval,
+      includeCurrentGame: includeCurrentGame,
+    );
+  }
 }
 
 /// Pending actions, invite ticks and the code field belong to one account.
 /// Switching accounts disposes that state before displaying the next party.
 class _PartyAccountScreen extends ConsumerStatefulWidget {
-  const _PartyAccountScreen({super.key, required this.pollInterval});
+  const _PartyAccountScreen({
+    super.key,
+    required this.pollInterval,
+    required this.includeCurrentGame,
+  });
 
   final Duration pollInterval;
+  final bool includeCurrentGame;
 
   @override
   ConsumerState<_PartyAccountScreen> createState() => _PartyScreenState();
@@ -113,7 +150,9 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
     final account = ref.watch(activeAccountProvider);
     if (account == null) {
       return SubPageScaffold(
-        title: context.l10n.socialPartyTitle,
+        title: widget.includeCurrentGame
+            ? context.l10n.profilePlayHubTitle
+            : context.l10n.socialPartyTitle,
         body: EmptyView(message: context.l10n.commonErrorNoAccount),
       );
     }
@@ -159,7 +198,9 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
     }
 
     return SubPageScaffold(
-      title: context.l10n.socialPartyTitle,
+      title: widget.includeCurrentGame
+          ? context.l10n.profilePlayHubTitle
+          : context.l10n.socialPartyTitle,
       subtitle: party == null || !(view?.gameRunning ?? false)
           ? null
           : context.l10n.socialPartySummary(
@@ -182,9 +223,28 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
                 _run('open', () => _notifier(puuid).setOpen(!party.isOpen)),
           ),
       ],
-      onRefresh: () => _notifier(puuid).refresh(),
-      slivers: slivers,
-      bottomBar: party != null && view!.gameRunning
+      onRefresh: () async {
+        await Future.wait([
+          _notifier(puuid).refresh(),
+          if (widget.includeCurrentGame)
+            ref.read(liveGameProvider(puuid).notifier).refresh(),
+        ]);
+      },
+      slivers: [
+        if (widget.includeCurrentGame)
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16, 4, 16, 12),
+              child: CurrentGameCard(matchOnly: true),
+            ),
+          ),
+        ...slivers,
+      ],
+      bottomBar:
+          party != null &&
+              view!.gameRunning &&
+              !view.inMatch &&
+              !party.isMatchFound
           ? _queueActions(view, party, puuid)
           : null,
     );
@@ -193,6 +253,15 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
   List<Widget> _content(PartyView v, String me) {
     final p = v.party;
     return [
+      if (v.gameRunning && !v.inMatch && v.loopState == LoopState.unknown)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+          child: _Banner(
+            icon: Icons.sync_problem_outlined,
+            text: context.l10n.socialQueueStatusUnavailable,
+            color: valColorsOf(context).warning,
+          ),
+        ),
       if (v.inMatch)
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
@@ -255,14 +324,23 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
         _inviteSection(v, p, me),
         SectionLabel(context.l10n.socialPartyCode),
         _codeSection(p, me),
-      ] else
+      ] else ...[
         Padding(
-          padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: _Banner(
             icon: Icons.group_off_outlined,
-            text: context.l10n.commonErrorNotFound,
+            text: context.l10n.socialPartyUnavailable,
           ),
         ),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: TextButton.icon(
+            onPressed: () => unawaited(_notifier(me).refresh()),
+            icon: const Icon(Icons.refresh),
+            label: Text(context.l10n.commonRetry),
+          ),
+        ),
+      ],
       SectionLabel(context.l10n.socialJoinSection),
       _joinSection(p, me),
       const _RemoteNote(),
@@ -285,7 +363,7 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
     final isOwner = p.isOwner(me);
     final canChange =
         isOwner &&
-        !v.inMatch &&
+        v.canManageQueue &&
         !p.isMatchmaking &&
         !p.isCustomGame &&
         !_isBusy('queue');
@@ -362,20 +440,20 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 8,
             children: [
-              Flexible(
-                child: StatusPill(
-                  label: p.isMatchFound
-                      ? context.l10n.socialMatchFound
-                      : p.isMatchmaking
-                      ? context.l10n.socialPresenceQueue
-                      : context.l10n.socialIdleQueue,
-                  color: accent,
-                ),
+              StatusPill(
+                label: p.isMatchFound
+                    ? context.l10n.socialMatchFound
+                    : p.isMatchmaking
+                    ? context.l10n.socialPresenceQueue
+                    : context.l10n.socialIdleQueue,
+                color: accent,
               ),
-              const SizedBox(width: 8),
-              const Spacer(),
               Text(
                 context.l10n.socialReadyCount(
                   p.members.where((m) => m.isReady || m.isOwner).length,
@@ -481,7 +559,7 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
     final blocked = choice != null && !choice.eligible;
     final canStart =
         isOwner &&
-        !v.inMatch &&
+        v.canManageQueue &&
         !p.isMatchFound &&
         !p.isCustomGame &&
         !blocked &&
@@ -497,7 +575,7 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
           backgroundColor: valColorsOf(context).warning,
           foregroundColor: readableOn(valColorsOf(context).warning),
         ),
-        onPressed: _isBusy('mm')
+        onPressed: !v.canManageQueue || _isBusy('mm')
             ? null
             : () {
                 Haptics.medium();
@@ -529,7 +607,11 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
       );
     }
     final readyButton = OutlinedButton.icon(
-      onPressed: self == null || _isBusy('ready') || p.isMatchmaking
+      onPressed:
+          !v.canManageQueue ||
+              self == null ||
+              _isBusy('ready') ||
+              p.isMatchmaking
           ? null
           : () {
               Haptics.light();

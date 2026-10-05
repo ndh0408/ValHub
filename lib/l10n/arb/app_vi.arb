@@ -6203,6 +6203,10 @@
     },
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
+  "liveGameLiveStatsUnavailable": "Nguồn trận trực tiếp này chưa cung cấp Kill/Death/Assist. Bảng điểm hiện khi Riot công bố dữ liệu sau trận.",
+  "@liveGameLiveStatsUnavailable": {
+    "description": "Honest availability notice for current live roster data, which has no per-player KDA. Final published match details contain the scoreboard."
+  },
   "liveGameFinalScoreboard": "Bảng điểm cuối trận",
   "@liveGameFinalScoreboard": {
     "description": "LiveGameStrings.finalScoreboard — Ended (G11)",
@@ -7148,6 +7152,10 @@
   "@profileOvertime": {
     "description": "ProfileStrings.overtime — Match detail (S43)",
     "x-context": "lib/features/profile/profile_strings.dart"
+  },
+  "profilePlayHubTitle": "Trận đấu & tổ đội",
+  "@profilePlayHubTitle": {
+    "description": "Combined entry and page title for current match, party and matchmaking."
   },
   "profilePartyRow": "Tổ đội & hàng chờ",
   "@profilePartyRow": {
@@ -9563,6 +9571,10 @@
     },
     "x-context": "lib/features/social/social_strings.dart"
   },
+  "socialQueueStatusUnavailable": "Chưa xác minh được trạng thái game. Làm mới để sử dụng sẵn sàng và hàng chờ.",
+  "@socialQueueStatusUnavailable": {
+    "description": "Fail-closed party controls when game session state is unavailable; the user can refresh the existing screen."
+  },
   "socialReady": "Sẵn sàng",
   "@socialReady": {
     "description": "SocialStrings.ready — party",
@@ -9775,6 +9787,10 @@
   "@socialYou": {
     "description": "SocialStrings.you — party",
     "x-context": "lib/features/social/social_strings.dart"
+  },
+  "socialPartyUnavailable": "Chưa đồng bộ được tổ đội. Làm mới để thử lại.",
+  "@socialPartyUnavailable": {
+    "description": "A running game session is verified, but its party is not available yet."
   },
   "storeAccessoryEmpty": "Cửa hàng phụ kiện hiện không có gì.",
   "@storeAccessoryEmpty": {

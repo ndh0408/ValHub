@@ -24,7 +24,13 @@ import 'package:valvn/core/l10n/l10n.dart';
 const kCompactLiveHeaderHeight = 720.0;
 
 class LiveSheetHeader extends ConsumerWidget {
-  const LiveSheetHeader({super.key, required this.puuid, this.state});
+  const LiveSheetHeader({
+    super.key,
+    required this.puuid,
+    this.state,
+    this.onOpenParty,
+  });
+  final VoidCallback? onOpenParty;
 
   final String puuid;
   final LiveGameState? state;
@@ -48,6 +54,18 @@ class LiveSheetHeader extends ConsumerWidget {
           title: context.l10n.liveGameSheetTitle,
           // Outside a match there is no hero: keep the ring here.
           actions: [
+            if (onOpenParty != null)
+              PopupMenuButton<int>(
+                tooltip: context.l10n.socialMoreActions,
+                icon: const Icon(Icons.more_horiz),
+                onSelected: (_) => onOpenParty!(),
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: 0,
+                    child: Text(context.l10n.socialPartyTitle),
+                  ),
+                ],
+              ),
             if (status == null) ...[
               LiveRefreshRing(puuid: puuid, size: 36),
               const SizedBox(width: 8),

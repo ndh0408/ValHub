@@ -9,6 +9,7 @@ import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/util/json.dart';
 import 'package:valvn/core/ui/error_view.dart';
 import 'package:valvn/core/ui/segmented_tabs.dart';
+import 'package:valvn/features/live_game/current_game_card.dart';
 import 'package:valvn/features/profile/profile_strings.dart';
 import 'package:valvn/features/profile/ui/profile_screen.dart';
 import 'package:valvn/features/profile/ui/widgets/match_card.dart';
@@ -24,9 +25,11 @@ void main() {
 
   setUp(() async {
     env = await ProfileTestEnv.create();
+    when(() => env.api.gameSession(any()))
+        .thenAnswer((_) async => throw const NotFoundException());
   });
 
-  const screen = ProfileScreen(currentGameCard: SizedBox(key: Key('game')));
+  const screen = ProfileScreen();
 
   List<RouteBase> routes() => [
     GoRoute(
@@ -75,9 +78,10 @@ void main() {
     expect(find.text(ProfileStrings.dailyRrTitle), findsOneWidget);
     expect(find.text('+24 RR'), findsWidgets);
 
-    // Current game slot and social rows.
-    expect(find.byKey(const Key('game')), findsOneWidget);
-    expect(find.text(ProfileStrings.partyRow), findsOneWidget);
+    // A single combined match/party entry, plus the friends row.
+    expect(find.byType(CurrentGameCard), findsOneWidget);
+    expect(find.text('TRẬN ĐẤU & TỔ ĐỘI'), findsOneWidget);
+    expect(find.text(ProfileStrings.partyRow), findsNothing);
     expect(find.text(ProfileStrings.friendsRow), findsOneWidget);
 
     // Match history: filter chips and three resolved cards.
@@ -198,7 +202,7 @@ void main() {
     router.pop();
     await settle(tester, frames: 20);
 
-    await tester.tap(find.text(ProfileStrings.partyRow));
+    await tester.tap(find.text('TRẬN ĐẤU & TỔ ĐỘI'));
     await settle(tester);
     expect(find.text('party-page'), findsOneWidget);
     router.pop();

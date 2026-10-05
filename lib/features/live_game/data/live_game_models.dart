@@ -427,6 +427,8 @@ class LiveParty {
 
   bool get isMatchmaking => state == 'MATCHMAKING';
 
+  bool get isMatchFound => state == 'MATCHMADE_GAME_STARTING';
+
   @override
   bool operator ==(Object other) =>
       other is LiveParty &&

@@ -156,6 +156,10 @@ String currentGameStatusText(
   required DateTime now,
   LiveScore? score,
 }) {
+  if (state.phase == LivePhase.queueing &&
+      (state.party?.isMatchFound ?? false)) {
+    return l10n.socialMatchFound;
+  }
   final map = liveMapName(db, state.match?.mapId);
   return switch (state.phase) {
     LivePhase.notRunning => l10n.liveGameNotInGame,

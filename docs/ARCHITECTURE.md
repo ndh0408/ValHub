@@ -236,6 +236,28 @@ Notification payloads are route locations, optionally with `account=<puuid>`
 
 ---
 
+### Contextual match / party entry
+
+Profile uses one `CurrentGameCard` opening `/profile/party` in every phase.
+The contextual route opens the existing match presentation directly during
+agent select/play/results, preserving its secondary party menu and automatic
+phase transitions. The legacy party route sets `includeCurrentGame`; it switches
+to `LiveGamePage` for a match/result and back to party controls for a new queue.
+The page reuses `LiveGameSheet` with a bounded fast-poll lease on the existing
+account-scoped controller; it does not add an API client or polling scheduler.
+An optional menu opens the original party presentation. In-match ready/queue
+controls are absent; unknown session state disables them (`canManageQueue`).
+`MATCHMADE_GAME_STARTING` also locks them while the session endpoint still says
+MENUS. The existing queueing phase shows match-found status during this lag, so
+a retained result cannot hide a newly found match.
+A party 404 is confirmed against the game session: a running session keeps its
+real phase and shows party-unavailable/retry; two missing reads show not-running.
+A failed confirmation remains an error, not a fabricated stopped-game state.
+Account changes replace the page/form state before applying pending replies.
+Live roster data has no player K/D/A; the UI states that limitation and retains
+the existing final match-details scoreboard instead of manufacturing metrics.
+
+
 ## 5. Core API reference
 
 ### 5.1 Accounts — `core/accounts/`

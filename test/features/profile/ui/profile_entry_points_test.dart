@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:valvn/features/live_game/live_game_sheet.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/theme/app_theme.dart';
@@ -14,8 +16,13 @@ import 'package:valvn/features/battlepass/data/player_contracts.dart';
 import 'package:valvn/features/battlepass/providers/battlepass_providers.dart';
 import 'package:valvn/features/profile/ui/profile_screen.dart';
 
+import 'package:valvn/features/live_game/current_game_card.dart';
+import 'package:valvn/features/social/social_routes.dart';
+import 'package:valvn/features/social/ui/party_screen.dart';
+
 import '../../battlepass/bp_fixtures.dart';
 import '../profile_test_env.dart';
+import '../../live_game/live_game_test_env.dart' as live;
 
 /// The Hồ sơ tab now hosts Battle Pass and Cài đặt: a "Battle Pass" row with
 /// its progress and a ⚙ button in the header.
@@ -36,6 +43,7 @@ void main() {
   Future<void> pumpProfile(
     WidgetTester tester, {
     List<Override> extra = const [],
+    bool combinedEntry = false,
   }) async {
     tester.view.physicalSize = const Size(360, 1400);
     tester.view.devicePixelRatio = 1;
@@ -45,8 +53,10 @@ void main() {
       routes: [
         GoRoute(
           path: '/profile',
-          builder: (context, state) =>
-              const ProfileScreen(currentGameCard: SizedBox()),
+          builder: (context, state) => ProfileScreen(
+            currentGameCard: combinedEntry ? null : const SizedBox(),
+          ),
+          routes: socialRoutes,
         ),
         for (final path in const ['/settings', '/battlepass'])
           GoRoute(
@@ -72,6 +82,56 @@ void main() {
       ),
     );
     await settle(tester);
+  }
+
+  testWidgets('one profile entry opens the combined hub at the legacy route', (
+    tester,
+  ) async {
+    await pumpProfile(tester, combinedEntry: true);
+    await tester.ensureVisible(find.byType(CurrentGameCard));
+    expect(find.text('TRẬN ĐẤU & TỔ ĐỘI'), findsOneWidget);
+    expect(find.text('Tổ đội & hàng chờ'), findsNothing);
+    await tester.tap(find.byType(CurrentGameCard));
+    await settle(tester, frames: 16);
+    expect(find.byType(PartyScreen), findsOneWidget);
+    expect(
+      tester.widget<PartyScreen>(find.byType(PartyScreen)).includeCurrentGame,
+      isTrue,
+    );
+    expect(find.byType(CurrentGameCard), findsWidgets);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  for (final phase in ['PREGAME', 'INGAME']) {
+    testWidgets(
+      'profile opens the contextual route and utility menu in $phase',
+      (tester) async {
+        when(() => env.api.gameSession(any()))
+            .thenAnswer((_) async => {'subject': me, 'loopState': phase});
+        when(() => env.api.pregamePlayer(any())).thenAnswer(
+          (_) async => {'Subject': me, 'MatchID': live.pregameMatchId},
+        );
+        when(() => env.api.pregameMatch(any(), any()))
+            .thenAnswer((_) async => live.pregameMatchJson());
+        when(
+          () => env.api.coreGamePlayer(any()),
+        ).thenAnswer((_) async => {'Subject': me, 'MatchID': live.liveMatchId});
+        when(() => env.api.coreGameMatch(any(), any()))
+            .thenAnswer((_) async => live.coreMatchJson());
+        await pumpProfile(tester, combinedEntry: true);
+        await tester.ensureVisible(find.byType(CurrentGameCard));
+        await tester.tap(find.byType(CurrentGameCard));
+        await settle(tester, frames: 16);
+        expect(find.byType(PartyScreen), findsOneWidget);
+        expect(find.byType(LiveGamePage), findsOneWidget);
+        expect(find.byTooltip('Tùy chọn khác'), findsOneWidget);
+        expect(find.text('Bắt đầu tìm trận'), findsNothing);
+        expect(find.text('Sẵn sàng'), findsNothing);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+      },
+    );
   }
 
   testWidgets('⚙ pushes Cài đặt on top of Hồ sơ', (tester) async {

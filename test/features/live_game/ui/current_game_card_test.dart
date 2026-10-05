@@ -97,6 +97,34 @@ void main() {
     expect(find.text('Bạn không ở trong trận nào'), findsOneWidget);
   });
 
+  for (final phase in [null, 'PREGAME', 'INGAME']) {
+    testWidgets('custom hub entry remains reachable in state $phase', (
+      tester,
+    ) async {
+      var partyOpens = 0;
+      env
+        ..loop = phase
+        ..pregame = pregameMatchJson()
+        ..core = coreMatchJson();
+      await pumpLive(
+        tester,
+        env,
+        CurrentGameCard(
+          title: 'Trận đấu & tổ đội',
+          includeRecentResult: true,
+          onOpen: () => partyOpens++,
+        ),
+      );
+      await settle(tester);
+      await tester.tap(find.byType(CurrentGameCard));
+      await settle(tester);
+      expect(partyOpens, 1);
+      expect(find.byType(LiveGameSheet), findsNothing);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    });
+  }
+
   testWidgets('no overflow at 320 dp with 130 % text', (tester) async {
     env
       ..loop = 'INGAME'

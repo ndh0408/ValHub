@@ -42,8 +42,10 @@ void main() {
     );
   });
 
-  testWidgets('game not running (G-12 404)', (tester) async {
+  testWidgets('game not running (party and session 404)', (tester) async {
     when(() => env.api.partyPlayer(any()))
+        .thenAnswer((_) async => throw const NotFoundException());
+    when(() => env.api.gameSession(any()))
         .thenAnswer((_) async => throw const NotFoundException());
     await _pump(tester, env);
     expect(find.text(SocialStrings.gameNotRunningTitle), findsOneWidget);
@@ -151,6 +153,60 @@ void main() {
     await unmount(tester);
   });
 
+  testWidgets('match found locks queue changes while the session catches up', (
+    tester,
+  ) async {
+    env.serveParty(
+      partyJson(
+        state: 'MATCHMADE_GAME_STARTING',
+        members: [memberJson(me, owner: true)],
+      ),
+    );
+    await _pump(tester, env);
+    expect(find.text('Đã tìm thấy trận!'), findsNWidgets(2));
+    expect(find.text('Sẵn sàng'), findsNothing);
+    expect(find.text('Bắt đầu tìm trận'), findsNothing);
+    expect(find.text('Hủy tìm trận'), findsNothing);
+    expect(
+      find.textContaining('Chưa xác minh được trạng thái game'),
+      findsNothing,
+    );
+    verifyNever(() => env.api.partyJoinMatchmaking(any(), any()));
+    verifyNever(() => env.api.partyChangeQueue(any(), any(), any()));
+    verifyNever(
+      () => env.api.partySetReady(any(), any(), ready: any(named: 'ready')),
+    );
+    await unmount(tester);
+  });
+
+  testWidgets(
+    'unknown game state disables ready and queue actions until refreshed',
+    (tester) async {
+      env.serveParty(partyJson(members: [memberJson(me, owner: true)]));
+      when(() => env.api.gameSession(any()))
+          .thenThrow(const TransientException(reason: 'network'));
+      await _pump(tester, env);
+      expect(
+        find.textContaining('Chưa xác minh được trạng thái game'),
+        findsOneWidget,
+      );
+      for (final label in ['Sẵn sàng', 'Bắt đầu tìm trận']) {
+        final button = tester.widget<ButtonStyleButton>(
+          find.ancestor(
+            of: find.text(label),
+            matching: find.bySubtype<ButtonStyleButton>(),
+          ),
+        );
+        expect(button.onPressed, isNull);
+      }
+      verifyNever(() => env.api.partyJoinMatchmaking(any(), any()));
+      verifyNever(
+        () => env.api.partySetReady(any(), any(), ready: any(named: 'ready')),
+      );
+      await unmount(tester);
+    },
+  );
+
   testWidgets('in a match: queue locked', (tester) async {
     env.serveParty(partyJson(), loopState: 'INGAME');
     await _pump(tester, env);
@@ -162,6 +218,8 @@ void main() {
       find.text('Không thể đổi hàng chờ khi đang trong trận.'),
       findsOneWidget,
     );
+    expect(find.text('Bắt đầu tìm trận'), findsNothing);
+    expect(find.text('Sẵn sàng'), findsNothing);
     await unmount(tester);
   });
 

@@ -25,7 +25,26 @@ import 'package:valvn/core/l10n/l10n.dart';
 /// ("Không trong trận", "Đang chọn đặc vụ · Ascent", "Đang đấu · Lotus · 8 – 4")
 /// with a refresh ring. Tap opens [showLiveGameSheet].
 class CurrentGameCard extends ConsumerWidget {
-  const CurrentGameCard({super.key});
+  const CurrentGameCard({
+    super.key,
+    this.title,
+    this.onOpen,
+    this.matchOnly = false,
+    this.includeRecentResult = false,
+  });
+
+  /// Alternate entry label/action; the live state still comes from the same
+  /// account-scoped provider. The default action opens the live sheet.
+  final String? title;
+  final VoidCallback? onOpen;
+
+  /// Inside the party hub, an idle status is informational, not another
+  /// entry into an empty match sheet. Refresh remains available.
+  final bool matchOnly;
+
+  /// Include the retained post-match status in the combined profile entry.
+  /// Its [onOpen] route selects the main view from the current game phase.
+  final bool includeRecentResult;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,7 +58,15 @@ class CurrentGameCard extends ConsumerWidget {
     final match = state?.match;
 
     final Widget subtitle;
-    if (state != null) {
+    if (includeRecentResult &&
+        state?.ended != null &&
+        state?.match == null &&
+        state?.phase != LivePhase.queueing) {
+      subtitle = Text(
+        context.l10n.liveGameStatusEnded,
+        style: theme.textTheme.bodyMedium,
+      );
+    } else if (state != null) {
       subtitle = _StatusLine(state: state, db: db);
     } else if (value.hasError && !value.isLoading) {
       subtitle = Text(
@@ -66,9 +93,12 @@ class CurrentGameCard extends ConsumerWidget {
       _ => null,
     };
     final surface = theme.colorScheme.surfaceContainer;
+    final canOpen = !matchOnly || (state?.phase.inMatch ?? false);
     return ValCard(
       padding: EdgeInsets.zero,
-      onTap: () => unawaited(showLiveGameSheet(context)),
+      onTap: canOpen
+          ? onOpen ?? () => unawaited(showLiveGameSheet(context))
+          : null,
       child: Stack(
         children: [
           // In a match the map splash shows through on the right; a surface
@@ -120,8 +150,9 @@ class CurrentGameCard extends ConsumerWidget {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Text(
-                            context.l10n.liveGameCurrentGame.toUpperCase(),
-                            maxLines: 1,
+                            (title ?? context.l10n.liveGameCurrentGame)
+                                .toUpperCase(),
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: ValText.label.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
@@ -137,10 +168,11 @@ class CurrentGameCard extends ConsumerWidget {
                   ),
                 ),
                 LiveRefreshRing(puuid: puuid, size: 36),
-                Icon(
-                  Icons.chevron_right,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+                if (canOpen)
+                  Icon(
+                    Icons.chevron_right,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
               ],
             ),
           ),

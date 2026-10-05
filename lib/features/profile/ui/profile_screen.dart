@@ -28,14 +28,14 @@ import 'widgets/recent_form_card.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
-/// TAB 4 "Hồ sơ" (S40). Route `/profile`. Hosts the live-game
+/// TAB 4 "Hồ sơ" (S40). Route `/profile`. Hosts one match/party entry using
 /// [CurrentGameCard] (owned by the live_game feature). Battle Pass and Cài
 /// đặt are not tabs: this screen has a "Battle Pass" row and a ⚙ button in
 /// the header that push their pages on top of it.
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key, this.currentGameCard});
 
-  /// Slot for the "Trận hiện tại" card; defaults to [CurrentGameCard]
+  /// Slot for the combined match/party entry; defaults to [CurrentGameCard]
   /// (tests pass a placeholder).
   final Widget? currentGameCard;
 
@@ -81,7 +81,12 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              currentGameCard ?? const CurrentGameCard(),
+              currentGameCard ??
+                  CurrentGameCard(
+                    title: context.l10n.profilePlayHubTitle,
+                    includeRecentResult: true,
+                    onOpen: () => unawaited(context.push(SocialRoutes.party)),
+                  ),
               const SizedBox(height: 12),
               ValCard(
                 padding: EdgeInsets.zero,
@@ -93,12 +98,6 @@ class ProfileScreen extends ConsumerWidget {
                       subtitle: BattlePassProgressSubtitle(puuid: puuid),
                       onTap: () =>
                           unawaited(context.push(BattlePassRoutes.root)),
-                    ),
-                    const Divider(indent: 66, height: 1),
-                    ProfileNavRow(
-                      icon: Icons.groups_outlined,
-                      title: context.l10n.profilePartyRow,
-                      onTap: () => unawaited(context.push(SocialRoutes.party)),
                     ),
                     const Divider(indent: 66, height: 1),
                     ProfileNavRow(

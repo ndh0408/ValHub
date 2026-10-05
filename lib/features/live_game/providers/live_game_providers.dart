@@ -36,6 +36,8 @@ class LiveGameSheetOpenNotifier extends Notifier<int> {
   void open() => state = state + 1;
 
   void close() {
+    // Modal/page teardown may finish after the root ProviderScope is disposed.
+    if (!ref.mounted) return;
     if (state > 0) state = state - 1;
   }
 }
