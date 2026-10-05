@@ -13,11 +13,45 @@ import 'dart:io';
 
 import 'package:valvn/features/settings/legal/legal_documents.dart';
 
-void main() {
-  for (final doc in LegalDocuments.all) {
-    final file = File(LegalDocuments.markdownPath(doc));
-    file.parent.createSync(recursive: true);
-    file.writeAsStringSync(legalDocumentToMarkdown(doc));
-    stdout.writeln('Đã ghi ${file.path}');
+Future<void> main(List<String> args) async {
+  if (args.any((arg) => arg != '--check')) {
+    throw ArgumentError(
+      'Usage: dart run tool/export_legal_docs.dart [--check]',
+    );
+  }
+  final check = args.contains('--check');
+  final repository = LegalRepository((path) async {
+    final file = File(path);
+    return file.existsSync() ? file.readAsString() : null;
+  });
+  final locales =
+      Directory('assets/legal')
+          .listSync()
+          .whereType<Directory>()
+          .map((d) => d.path.split(Platform.pathSeparator).last)
+          .toList()
+        ..sort();
+  for (final locale in locales) {
+    for (final document in LegalDocuments.all) {
+      if (!File('assets/legal/$locale/${document.id}.json').existsSync()) {
+        if (locale == 'vi') {
+          throw StateError('Missing authoritative legal document');
+        }
+        continue;
+      }
+      final doc = await repository.load(document.id, locale: locale);
+      final file = File(LegalDocuments.markdownPath(doc));
+      final text = legalDocumentToMarkdown(doc);
+      if (check) {
+        if (!file.existsSync() ||
+            file.readAsStringSync().replaceAll('\r\n', '\n') != text) {
+          throw StateError('Legal Markdown is out of date: ${file.path}');
+        }
+      } else {
+        file.parent.createSync(recursive: true);
+        file.writeAsStringSync(text);
+      }
+      stdout.writeln('${check ? 'Verified' : 'Wrote'} ${file.path}');
+    }
   }
 }

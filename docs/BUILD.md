@@ -1,6 +1,12 @@
 # Build & phát hành ValHub
 
-Trạng thái kiểm chứng mới nhất: [Status / coverage / release gates, build 4023](DEEP_REVIEW_CHECKPOINT_2026-10-05.md).
+Trạng thái kiểm chứng mới nhất: [Legal assets / fallback / CI local, build 4024](LEGAL_ASSETS_AND_FALLBACK_2026-10-05.md).
+APK 4024 vẫn debug-signed; IPA 4024 build trên Mac không ký. JSON pháp lý đã
+được kiểm tra trong cả hai artifact; không nhận là signed store release.
+Chạy `dart run tool/export_legal_docs.dart --check` để kiểm tra Markdown pháp lý,
+ngoài các lệnh analyze/test/gen-l10n/ARB hiện có.
+
+Checkpoint trước: [Status / coverage / release gates, build 4023](DEEP_REVIEW_CHECKPOINT_2026-10-05.md).
 Điều kiện phát hành còn mở: [Release gates](RELEASE_GATES.md).
 
 Checkpoint trước: [Model / export riêng tư / CI local, build 4018](I18N_MODELS_AND_EXPORT_2026-10-04.md).

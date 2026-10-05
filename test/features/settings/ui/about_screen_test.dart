@@ -18,6 +18,7 @@ import 'package:valvn/features/settings/ui/legal_document_screen.dart';
 
 import '../../../helpers/test_prefs.dart';
 import '../settings_fakes.dart';
+import '../legal/legal_test_documents.dart';
 
 void main() {
   late SettingsTestEnv env;
@@ -75,7 +76,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(LegalStrings.aboutIntro), findsOneWidget);
-      for (final doc in LegalDocuments.all) {
+      for (final doc in LegalDocuments.all.map(legalTestDocument)) {
         expect(find.text(doc.title), findsOneWidget);
         expect(find.text(doc.summary), findsOneWidget);
       }
@@ -97,7 +98,7 @@ void main() {
     await tester.pumpAndSettle();
 
     for (final doc in LegalDocuments.all) {
-      await tester.tap(find.text(doc.summary));
+      await tester.tap(find.text(legalTestDocument(doc).summary));
       await tester.pumpAndSettle();
       final screen = tester.widget<LegalDocumentScreen>(
         find.byType(LegalDocumentScreen),

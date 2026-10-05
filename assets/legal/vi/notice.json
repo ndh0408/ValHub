@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "locale": "vi",
+  "id": "notice",
+  "title": "Thông báo pháp lý",
+  "summary": "Tuyên bố miễn trừ Riot Games, nhãn hiệu và ghi công",
+  "version": "1.0",
+  "effectiveDate": "04/10/2026",
+  "copyright": "© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền.",
+  "export": {
+    "header": "<!-- Tệp tạo tự động từ assets/legal/vi/. Không sửa tay: sửa nội dung JSON rồi chạy `dart run tool/export_legal_docs.dart`. -->",
+    "metadata": "**ValHub** · Phiên bản 1.0 · Hiệu lực từ: 04/10/2026"
+  },
+  "preamble": [
+    {
+      "type": "callout",
+      "text": "ValHub không được Riot Games xác nhận và không phản ánh quan điểm của Riot Games hay bất kỳ ai tham gia sản xuất hoặc quản lý các sản phẩm của Riot Games. Riot Games và mọi tài sản liên quan là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc."
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Tuyên bố miễn trừ Riot Games",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "ValHub được làm theo chính sách \"Legal Jibber Jabber\" của Riot Games và có dùng tài sản thuộc sở hữu của Riot Games. Riot Games không xác nhận hay tài trợ cho dự án này."
+        },
+        {
+          "type": "p",
+          "text": "ValHub là ứng dụng độc lập, không phải sản phẩm chính thức của Riot Games và không liên kết với Riot Games dưới bất kỳ hình thức nào. Mọi hỗ trợ về ValHub do chúng tôi cung cấp, không phải Riot Games."
+        }
+      ]
+    },
+    {
+      "heading": "Nhãn hiệu",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Riot Games, VALORANT và mọi tài sản liên quan là thương hiệu hoặc thương hiệu đã đăng ký của Riot Games, Inc. Các tên, logo và nhãn hiệu khác được nhắc đến trong Ứng dụng thuộc về chủ sở hữu của chúng và chỉ được dùng để nhận diện."
+        }
+      ]
+    },
+    {
+      "heading": "Nội dung trò chơi",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Tên, hình ảnh, video và thông tin về skin, đặc vụ, bản đồ, rank, thẻ người chơi và các nội dung khác của VALORANT thuộc quyền sở hữu của Riot Games, Inc. Dữ liệu tài khoản của bạn (cửa hàng, ví, bộ sưu tập, trận đấu, xếp hạng) được lấy trực tiếp từ máy chủ của Riot Games."
+        }
+      ]
+    },
+    {
+      "heading": "Nguồn dữ liệu và ghi công",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "dữ liệu và hình ảnh công khai về vật phẩm, đặc vụ, bản đồ và rank. valorant-api.com là dự án cộng đồng độc lập, không liên kết với ValHub hay Riot Games.",
+              "lead": "valorant-api.com:"
+            },
+            {
+              "text": "tài liệu kỹ thuật do cộng đồng nhà phát triển VALORANT biên soạn.",
+              "lead": "techchrism/valorant-api-docs:"
+            },
+            {
+              "text": "ValHub được xây dựng bằng Flutter cùng nhiều phần mềm mã nguồn mở khác. Danh sách và giấy phép của từng phần mềm có ở mục \"Phần mềm bên thứ ba\" trong trang Giới thiệu & pháp lý.",
+              "lead": "Phần mềm mã nguồn mở:"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Bản quyền ValHub",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền. ValHub là phần mềm độc quyền; việc sử dụng tuân theo Điều khoản sử dụng."
+        }
+      ]
+    },
+    {
+      "heading": "Báo cáo vi phạm quyền sở hữu trí tuệ",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Nếu bạn cho rằng nội dung trong ValHub, kể cả nội dung do người dùng đăng trong Cộng đồng, vi phạm quyền sở hữu trí tuệ của bạn, hãy gửi email tới ndh0408@gmail.com. Vui lòng nêu rõ: thông tin liên hệ của bạn, tác phẩm nào của bạn được bảo hộ, nội dung vi phạm nằm ở đâu trong Ứng dụng, và cam kết rằng thông tin bạn cung cấp là chính xác. Chúng tôi sẽ xem xét và xử lý kịp thời."
+        }
+      ]
+    }
+  ]
+}

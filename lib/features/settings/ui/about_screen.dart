@@ -9,6 +9,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../legal/legal_documents.dart';
+import '../legal/legal_providers.dart';
 import '../providers/settings_providers.dart';
 import '../settings_routes.dart';
 import '../settings_strings.dart';
@@ -27,7 +28,7 @@ import 'package:valvn/core/l10n/l10n.dart';
 class AboutScreen extends ConsumerWidget {
   const AboutScreen({super.key});
 
-  static IconData _iconOf(LegalDocument doc) => switch (doc.id) {
+  static IconData _iconOf(LegalDocumentRef doc) => switch (doc.id) {
     'privacy' => Icons.privacy_tip_outlined,
     'terms' => Icons.gavel_outlined,
     'community' => Icons.diversity_3_outlined,
@@ -50,14 +51,7 @@ class AboutScreen extends ConsumerWidget {
               title: context.l10n.legalLegalHeader,
               children: [
                 for (final doc in LegalDocuments.all)
-                  ListTile(
-                    leading: SettingsIcon(_iconOf(doc)),
-                    title: Text(doc.title),
-                    subtitle: Text(doc.summary),
-                    trailing: const SettingsChevron(),
-                    onTap: () =>
-                        unawaited(context.push(SettingsRoutes.legal(doc))),
-                  ),
+                  _LegalRow(document: doc, icon: _iconOf(doc)),
                 ListTile(
                   leading: const SettingsIcon(Icons.library_books_outlined),
                   title: Text(context.l10n.legalThirdPartyLicenses),
@@ -101,7 +95,7 @@ class AboutScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    LegalInfo.copyrightNotice,
+                    context.l10n.legalLicensePageLegalese,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface,
@@ -123,6 +117,43 @@ class AboutScreen extends ConsumerWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+class _LegalRow extends ConsumerWidget {
+  const _LegalRow({required this.document, required this.icon});
+
+  final LegalDocumentRef document;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final request = (document: document, locale: context.l10n.localeName);
+    final value = ref.watch(legalDocumentProvider(request));
+    if (value.hasError) {
+      return ListTile(
+        leading: SettingsIcon(icon),
+        title: Text(context.l10n.legalContentUnavailable),
+        subtitle: TextButton(
+          onPressed: () => ref.invalidate(legalDocumentProvider(request)),
+          child: Text(context.l10n.commonRetry),
+        ),
+      );
+    }
+    final doc = value.value;
+    return ListTile(
+      leading: SettingsIcon(icon),
+      title: doc == null
+          ? const Skeleton(width: 180, height: 16)
+          : Text(doc.title),
+      subtitle: doc == null
+          ? const Skeleton(width: 240, height: 12)
+          : Text(doc.summary),
+      trailing: const SettingsChevron(),
+      onTap: doc == null
+          ? null
+          : () => unawaited(context.push(SettingsRoutes.legal(document))),
     );
   }
 }

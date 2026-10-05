@@ -23,7 +23,7 @@ abstract final class SettingsRoutes {
 
   /// `/settings/about/<id>` of a legal document: `privacy`, `terms`,
   /// `community`, `notice`.
-  static String legal(LegalDocument doc) => '$about/${doc.id}';
+  static String legal(LegalDocumentRef doc) => '$about/${doc.id}';
 }
 
 /// Branch 4 of the tab shell.

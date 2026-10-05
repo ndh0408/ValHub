@@ -1,4 +1,4 @@
-<!-- Tệp tạo tự động từ lib/features/settings/legal/. Không sửa tay: sửa nội dung Dart rồi chạy `dart run tool/export_legal_docs.dart`. -->
+<!-- Tệp tạo tự động từ assets/legal/vi/. Không sửa tay: sửa nội dung JSON rồi chạy `dart run tool/export_legal_docs.dart`. -->
 
 # Tiêu chuẩn cộng đồng
 

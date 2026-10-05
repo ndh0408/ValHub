@@ -29,6 +29,7 @@ import 'package:valvn/features/settings/ui/legal_document_screen.dart';
 
 import '../../../helpers/test_prefs.dart';
 import '../settings_fakes.dart';
+import '../legal/legal_test_documents.dart';
 
 /// A 360dp-wide (small phone), very tall surface so every section renders
 /// without scrolling; overflows fail the test.
@@ -636,7 +637,9 @@ void main() {
 
       await tester.tap(find.text(SettingsStrings.aboutTitle));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(LegalDocuments.privacy.title));
+      await tester.tap(
+        find.text(legalTestDocument(LegalDocuments.privacy).title),
+      );
       await tester.pumpAndSettle();
       expect(
         tester
@@ -647,7 +650,9 @@ void main() {
 
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(LegalDocuments.terms.title));
+      await tester.tap(
+        find.text(legalTestDocument(LegalDocuments.terms).title),
+      );
       await tester.pumpAndSettle();
       expect(
         tester

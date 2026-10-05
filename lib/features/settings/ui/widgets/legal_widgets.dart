@@ -10,7 +10,7 @@ import 'package:valvn/core/l10n/l10n.dart';
 
 /// Opens Flutter's licence page for the third-party open-source libraries
 /// bundled in the app (attribution required by their licences). ValHub
-/// itself is proprietary — see [LegalDocuments.license].
+/// itself is proprietary — see the repository LICENSE.
 void showThirdPartyLicenses(BuildContext context, {String? version}) =>
     showLicensePage(
       context: context,
@@ -24,7 +24,7 @@ void showThirdPartyLicenses(BuildContext context, {String? version}) =>
 /// Pushes [doc] as a pageless route on the nearest navigator. Used where the
 /// settings routes are not reachable (e.g. `/welcome` before sign-in, which
 /// the router redirect keeps outside the tab shell).
-Future<void> pushLegalDocument(BuildContext context, LegalDocument doc) =>
+Future<void> pushLegalDocument(BuildContext context, LegalDocumentRef doc) =>
     Navigator.of(context).push<void>(
       MaterialPageRoute(builder: (_) => LegalDocumentScreen(document: doc)),
     );

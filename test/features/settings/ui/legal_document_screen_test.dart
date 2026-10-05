@@ -1,33 +1,55 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/features/settings/legal/legal_documents.dart';
 import 'package:valvn/features/settings/legal/legal_strings.dart';
+import 'package:valvn/features/settings/legal/legal_providers.dart';
 import 'package:valvn/features/settings/ui/legal_document_screen.dart';
+
+import '../legal/legal_test_documents.dart';
 
 void main() {
   Future<void> pumpDoc(
     WidgetTester tester,
-    LegalDocument doc, {
+    LegalDocumentRef doc, {
     Size size = const Size(360, 780),
     double textScale = 1,
     ThemeData? theme,
+    LegalRepository? repository,
+    LegalDocument? documentOverride,
+    TextDirection direction = TextDirection.ltr,
   }) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
-      MaterialApp(
-        localizationsDelegates: appLocalizationsDelegates,
-        supportedLocales: const [Locale('vi')],
-        theme: theme ?? buildDarkTheme(),
-        builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context)
-              .copyWith(textScaler: TextScaler.linear(textScale)),
-          child: child!,
+      ProviderScope(
+        overrides: [
+          if (repository != null)
+            legalRepositoryProvider.overrideWithValue(repository),
+          if (documentOverride != null)
+            legalDocumentProvider((document: doc, locale: 'vi'))
+                .overrideWith((ref) async => documentOverride),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: const [Locale('vi')],
+          theme: theme ?? buildDarkTheme(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(textScale)),
+            child: child!,
+          ),
+          home: Directionality(
+            textDirection: direction,
+            child: LegalDocumentScreen(document: doc),
+          ),
         ),
-        home: LegalDocumentScreen(document: doc),
       ),
     );
     await tester.pumpAndSettle();
@@ -36,8 +58,8 @@ void main() {
   testWidgets('shows title, version, effective date and every section', (
     tester,
   ) async {
-    const doc = LegalDocuments.terms;
-    await pumpDoc(tester, doc);
+    final doc = legalTestDocument(LegalDocuments.terms);
+    await pumpDoc(tester, LegalDocuments.terms);
 
     // Large title (the bar title only appears once scrolled).
     expect(find.text(doc.title), findsOneWidget);
@@ -62,8 +84,8 @@ void main() {
   testWidgets('tapping a table-of-contents entry scrolls to that section', (
     tester,
   ) async {
-    const doc = LegalDocuments.privacy;
-    await pumpDoc(tester, doc);
+    final doc = legalTestDocument(LegalDocuments.privacy);
+    await pumpDoc(tester, LegalDocuments.privacy);
     final last = doc.sections.length - 1;
     final heading = find.text(numberedHeading(last, doc.sections[last]));
     final viewportHeight = tester.view.physicalSize.height;
@@ -101,9 +123,90 @@ void main() {
     });
   }
 
+  testWidgets(
+    'invalid bundled content shows retry and never an empty legal page',
+    (tester) async {
+      var failed = true;
+      final repository = LegalRepository((path) async {
+        if (failed) return '{invalid';
+        return File(path).readAsStringSync();
+      });
+      await pumpDoc(tester, LegalDocuments.terms, repository: repository);
+      expect(find.byType(SelectionArea), findsNothing);
+      expect(
+        find.text(
+          lookupAppLocalizations(const Locale('vi')).legalContentUnavailable,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(lookupAppLocalizations(const Locale('vi')).commonRetry),
+        findsOneWidget,
+      );
+      failed = false;
+      await tester.tap(
+        find.text(lookupAppLocalizations(const Locale('vi')).commonRetry),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(SelectionArea), findsOneWidget);
+      expect(
+        find.text(legalTestDocument(LegalDocuments.terms).title),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'fallback displays actual source language without claiming approval',
+    (tester) async {
+      final json = jsonDecode(
+        File('assets/legal/vi/notice.json').readAsStringSync(),
+      ) as Map<String, dynamic>;
+      json['locale'] =
+          'en'; // Fixture tests the banner, not translation quality.
+      await pumpDoc(
+        tester,
+        LegalDocuments.notice,
+        documentOverride: LegalDocument.fromJson(json),
+      );
+      expect(
+        find.text(
+          lookupAppLocalizations(const Locale('vi'))
+              .legalDocumentLanguage('English'),
+        ),
+        findsOneWidget,
+      );
+    },
+  );
+
+  for (final width in [320.0, 393.0, 600.0]) {
+    for (final direction in TextDirection.values) {
+      testWidgets(
+        'privacy $width dp / 200% / $direction fits and preserves all sections',
+        (tester) async {
+          await pumpDoc(
+            tester,
+            LegalDocuments.privacy,
+            size: Size(width, 780),
+            textScale: 2,
+            direction: direction,
+          );
+          final doc = legalTestDocument(LegalDocuments.privacy);
+          for (var i = 0; i < doc.sections.length; i++) {
+            expect(find.byKey(ValueKey('toc-$i')), findsOneWidget);
+          }
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+  }
+
   testWidgets('renders in the light theme', (tester) async {
     await pumpDoc(tester, LegalDocuments.community, theme: buildLightTheme());
-    expect(find.text(LegalDocuments.community.title), findsWidgets);
+    expect(
+      find.text(legalTestDocument(LegalDocuments.community).title),
+      findsWidgets,
+    );
     expect(tester.takeException(), isNull);
   });
 }

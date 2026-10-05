@@ -23,7 +23,8 @@ flutter build apk --release
 
 ## Quy ước
 
-- Mọi chuỗi hiển thị nằm trong file chuỗi của từng tính năng (`lib/features/<f>/<f>_strings.dart`) hoặc `lib/core/l10n/` — không hard-code chuỗi trong widget. Tiếng Việt là ngôn ngữ gốc (theo bảng thuật ngữ `valbuddy-features.md` §8); trong đợt i18n các file này được chuyển sang hệ thống đa ngôn ngữ theo `docs/design/I18N.md`.
+- Chuỗi UI đang dùng generated resources từ `lib/l10n/arb/app_vi.arb`, lấy qua `context.l10n` hoặc truyền resources rõ ràng cho helper/isolate; không hard-code chuỗi trong widget. Các lớp `*Strings` cũ còn làm oracle/parity và chờ hoàn tất cutover; không tạo hệ thống localization thứ hai. Tiếng Việt vẫn là ngôn ngữ UI duy nhất đã phát hành; xem `docs/design/I18N.md`.
+- Văn bản pháp lý dài nằm trong `assets/legal/<locale>/<doc>.json`, đọc qua `LegalRepository`/provider với fallback locale → en → vi. Chỉ VI assets đã có; không tự nhận bản dịch hay quyền pháp lý đã được duyệt. Sau sửa nội dung chạy `dart run tool/export_legal_docs.dart`, kiểm tra bằng `--check`; giữ nguyên điều khoản/phiên bản nếu chỉ di chuyển kiến trúc. `LICENSE` và `docs/legal/license.md` vẫn quản lý riêng.
 - Không giả định người dùng ở Việt Nam: múi giờ, định dạng số/ngày, tiền tệ, quốc gia, máy chủ đều lấy theo thiết bị / tài khoản / lựa chọn của người dùng.
 - Thuật ngữ game người chơi Việt quen dùng giữ nguyên tiếng Anh (VP, RR, K/D/A, ACS, HS%, Battle Pass, skin, bundle, wishlist...).
 - Dữ liệu nội dung (tên skin, agent, map, rank...) lấy từ `https://valorant-api.com` với `language` theo ngôn ngữ app (hiện tại `vi-VN`).

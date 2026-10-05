@@ -1,11 +1,17 @@
 import 'dart:async';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:flutter/rendering.dart' show RenderAbstractViewport;
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/sub_page.dart';
+import '../../../core/ui/empty_view.dart';
+import '../../../core/ui/skeleton.dart';
+import '../../../core/l10n/app_locale.dart';
 import '../legal/legal_documents.dart';
+import '../legal/legal_providers.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -17,16 +23,53 @@ import 'package:valvn/core/l10n/l10n.dart';
 ///
 /// Everything is laid out eagerly (documents are a few screens long) so the
 /// table of contents can jump to any section with [Scrollable.ensureVisible].
-class LegalDocumentScreen extends StatefulWidget {
+class LegalDocumentScreen extends ConsumerWidget {
   const LegalDocumentScreen({super.key, required this.document});
+
+  final LegalDocumentRef document;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final request = (document: document, locale: context.l10n.localeName);
+    final value = ref.watch(legalDocumentProvider(request));
+    if (value.hasValue && !value.hasError) {
+      return _LegalDocumentReader(
+        key: ValueKey(request),
+        document: value.requireValue,
+      );
+    }
+    return SubPageScaffold(
+      title: context.l10n.legalLegalHeader,
+      slivers: [
+        SliverToBoxAdapter(
+          child: value.hasError
+              ? EmptyView(
+                  message: context.l10n.legalContentUnavailable,
+                  icon: Icons.article_outlined,
+                  action: OutlinedButton.icon(
+                    onPressed: () =>
+                        ref.invalidate(legalDocumentProvider(request)),
+                    icon: const Icon(Icons.refresh),
+                    label: Text(context.l10n.commonRetry),
+                  ),
+                )
+              : const SkeletonList(),
+        ),
+      ],
+    );
+  }
+}
+
+class _LegalDocumentReader extends StatefulWidget {
+  const _LegalDocumentReader({super.key, required this.document});
 
   final LegalDocument document;
 
   @override
-  State<LegalDocumentScreen> createState() => _LegalDocumentScreenState();
+  State<_LegalDocumentReader> createState() => _LegalDocumentScreenState();
 }
 
-class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
+class _LegalDocumentScreenState extends State<_LegalDocumentReader> {
   final _scroll = ScrollController();
   final _scrolled = ValueNotifier<bool>(false);
   late List<GlobalKey> _sectionKeys = _keysFor(widget.document);
@@ -43,7 +86,7 @@ class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
   }
 
   @override
-  void didUpdateWidget(LegalDocumentScreen oldWidget) {
+  void didUpdateWidget(_LegalDocumentReader oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.document != widget.document) {
       _sectionKeys = _keysFor(widget.document);
@@ -119,6 +162,18 @@ class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      if (doc.locale != context.l10n.localeName)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Text(
+                            context.l10n.legalDocumentLanguage(
+                              AppLocale.values
+                                  .where((l) => l.arbCode == doc.locale)
+                                  .first
+                                  .nativeName,
+                            ),
+                          ),
+                        ),
                       _Header(document: doc),
                       for (final block in doc.preamble) _Block(block: block),
                       const SizedBox(height: 8),
@@ -130,7 +185,7 @@ class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
                           index: i,
                           section: doc.sections[i],
                         ),
-                      const _Footer(),
+                      _Footer(copyright: doc.copyright),
                     ],
                   ),
                 ),
@@ -414,7 +469,9 @@ class _Block extends StatelessWidget {
 }
 
 class _Footer extends StatelessWidget {
-  const _Footer();
+  const _Footer({required this.copyright});
+
+  final String copyright;
 
   @override
   Widget build(BuildContext context) {
@@ -427,7 +484,7 @@ class _Footer extends StatelessWidget {
           Divider(color: valColorsOf(context).hairline),
           const SizedBox(height: 12),
           Text(
-            '${context.l10n.commonAppName} · ${LegalInfo.copyrightNotice}',
+            '${context.l10n.commonAppName} · $copyright',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

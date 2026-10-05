@@ -54,6 +54,9 @@ jobs:
       - name: ARB validation
         run: dart run tool/l10n_check.dart --ci
 
+      - name: Legal assets and published text stay in sync
+        run: dart run tool/export_legal_docs.dart --check
+
       # After wave W4 (cutover): fail on any remaining *Strings reference.
       # - run: dart run tool/l10n_codemod/bin/l10n.dart verify --ci
 

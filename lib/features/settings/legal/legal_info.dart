@@ -1,8 +1,9 @@
 /// Publisher / contact details used by every legal document, the About hub
 /// and the exported Markdown in `docs/legal/`.
 ///
-/// **Chủ dự án điền MỘT LẦN tại đây** (thay các giá trị trong ngoặc vuông),
-/// rồi chạy `dart run tool/export_legal_docs.dart` để cập nhật `docs/legal/`.
+/// Publisher metadata remains stable across locales. Legal prose lives in
+/// `assets/legal/<locale>/`; update those assets and export their Markdown
+/// when contact details or policy versions change. Tests check consistency.
 /// Pure Dart (no Flutter import) so the export tool can run it.
 abstract final class LegalInfo {
   /// Tên cá nhân / tổ chức phát hành ValHub (bên kiểm soát dữ liệu).

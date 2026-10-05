@@ -7771,6 +7771,19 @@
     },
     "x-context": "lib/features/settings/legal/legal_strings.dart"
   },
+  "legalDocumentLanguage": "Văn bản này hiện được hiển thị bằng {language}.",
+  "@legalDocumentLanguage": {
+    "description": "Actual source language when a legal translation is unavailable; does not imply legal review or binding status.",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "legalContentUnavailable": "Không đọc được văn bản pháp lý. Hãy thử lại hoặc liên hệ hỗ trợ.",
+  "@legalContentUnavailable": {
+    "description": "Bundled legal asset read or validation failed; this is not a Riot server failure."
+  },
   "settingsUiLanguageTitle": "Ngôn ngữ giao diện",
   "@settingsUiLanguageTitle": {
     "description": "UI language setting and welcome-screen picker; separate from game item names."

@@ -1,7 +1,7 @@
 name: valvn
 description: "ValHub - VALORANT companion app"
 publish_to: 'none'
-version: 1.0.0+4023
+version: 1.0.0+4024
 
 environment:
   sdk: ^3.13.4
@@ -84,6 +84,7 @@ flutter:
     - assets/l10n/countries/
     - assets/l10n/languages/
     - assets/l10n/UNICODE-LICENSE.txt
+    - assets/legal/vi/
   fonts:
     - family: BeVietnamPro
       fonts:

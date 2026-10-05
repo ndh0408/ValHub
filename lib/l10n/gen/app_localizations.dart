@@ -7906,6 +7906,18 @@ abstract class AppLocalizations {
   /// **'Phiên bản {version}'**
   String legalVersion(String version);
 
+  /// Actual source language when a legal translation is unavailable; does not imply legal review or binding status.
+  ///
+  /// In vi, this message translates to:
+  /// **'Văn bản này hiện được hiển thị bằng {language}.'**
+  String legalDocumentLanguage(String language);
+
+  /// Bundled legal asset read or validation failed; this is not a Riot server failure.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không đọc được văn bản pháp lý. Hãy thử lại hoặc liên hệ hỗ trợ.'**
+  String get legalContentUnavailable;
+
   /// UI language setting and welcome-screen picker; separate from game item names.
   ///
   /// In vi, this message translates to:

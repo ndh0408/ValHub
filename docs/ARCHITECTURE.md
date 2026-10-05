@@ -1,6 +1,14 @@
 # ValVN architecture and internal API
 
-Latest bounded verification: [status/coverage build 4023](DEEP_REVIEW_CHECKPOINT_2026-10-05.md).
+Latest bounded verification: [legal assets build 4024](LEGAL_ASSETS_AND_FALLBACK_2026-10-05.md).
+Long legal prose uses `assets/legal/<locale>/<id>.json`, pure-Dart
+`LegalRepository.load(id, locale: ...)`, stable `LegalDocumentRef` routes and the
+existing Riverpod reader/provider. Missing translations fall back locale -> en ->
+vi; present corruption/version/structure mismatch throws with native retry. Only
+VI assets ship. `tool/export_legal_docs.dart --check` verifies published Markdown
+and runs in the l10n workflow. Existing consent and legal clauses are preserved.
+
+Previous bounded verification: [status/coverage build 4023](DEEP_REVIEW_CHECKPOINT_2026-10-05.md).
 Public status reads validate the required array shape; Settings retains cached
 status/time with an error/retry row after a failed refresh. Community public
 session fallback is existing behavior, now additionally tested against private

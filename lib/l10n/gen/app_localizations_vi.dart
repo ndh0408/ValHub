@@ -4592,6 +4592,15 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String legalDocumentLanguage(String language) {
+    return 'Văn bản này hiện được hiển thị bằng $language.';
+  }
+
+  @override
+  String get legalContentUnavailable =>
+      'Không đọc được văn bản pháp lý. Hãy thử lại hoặc liên hệ hỗ trợ.';
+
+  @override
   String get settingsUiLanguageTitle => 'Ngôn ngữ giao diện';
 
   @override
