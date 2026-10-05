@@ -213,11 +213,12 @@ class WeaponSkin {
   bool get isLimitedEdition =>
       contentEditionUuid == ContentTierIds.limitedEdition;
 
-  /// Best image for cards: skin icon → first level icon → base chroma render
-  /// (CA §3.2 icon fallback).
+  /// Prefer base-level artwork for cards. A skin-level parent icon can return
+  /// HTTP 200 containing the CDN's missing-texture X (Prime Guardian).
+  /// Retain parent/chroma fallbacks when base-level artwork is absent.
   String? get image =>
-      displayIcon ??
       levels.firstOrNull?.displayIcon ??
+      displayIcon ??
       chromas.firstOrNull?.fullRender ??
       chromas.firstOrNull?.displayIcon;
 

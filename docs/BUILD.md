@@ -1,5 +1,10 @@
 # Build & phát hành ValHub
 
+Hotfix kiểm chứng mới nhất: [Ảnh Guardian / CDN placeholder, build 4025](SKIN_IMAGE_FALLBACK_2026-10-05.md).
+APK đã nâng cấp emulator tài khoản thật; iOS đã build trên Mac không ký. Có
+377 test liên quan, 10 Android public flows và 4 Mac regression tests đạt;
+không nhận là đã chạy lại full suite hay signed store release.
+
 Trạng thái kiểm chứng mới nhất: [Legal assets / fallback / CI local, build 4024](LEGAL_ASSETS_AND_FALLBACK_2026-10-05.md).
 APK 4024 vẫn debug-signed; IPA 4024 build trên Mac không ký. JSON pháp lý đã
 được kiểm tra trong cả hai artifact; không nhận là signed store release.

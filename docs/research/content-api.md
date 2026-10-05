@@ -287,7 +287,16 @@ Key facts:
     These are always owned and never listed in entitlements.
   - "Random Favorite Skin" (vi "Skin Yêu Thích Ngẫu Nhiên"): `themeUuid = 0d7a5bfb-4850-098e-1821-d989bbfd58a8`.
     **Filter these out** of collection and wishlist views.
-- **Icon fallback:** 47 skins have `displayIcon == null`. Use `skin.displayIcon ?? levels.first.displayIcon ?? chromas.first.fullRender`.
+- **Icon fallback:** the original sample had 47 skins with `displayIcon == null`.
+  Update verified 2026-10-05: Prime Guardian / Guardian Hoàng Gia's parent
+  `displayIcon` is non-null and returns HTTP 200 with a 512×512 missing-texture X;
+  its base-level icon returns the actual 512×104 weapon artwork. Client card art
+  now uses `levels.first.displayIcon ?? skin.displayIcon ??
+  chromas.first.fullRender ?? chromas.first.displayIcon` (null-safe first lookup).
+  Existing large-render selection still prefers the base chroma. HTTP success
+  does not establish that an image depicts the item; this URL precedence fix
+  does not validate every future CDN image. See
+  [build 4025 evidence](../SKIN_IMAGE_FALLBACK_2026-10-05.md).
   [SP] uses `chromas[0].fullRender` for default skins and the first non-null level icon otherwise.
 - `wallpaper` is non-null for 437 skins (a phone-style wallpaper PNG). This could become a "download wallpaper"
   feature (**UNVERIFIED** that ValBuddy has it).

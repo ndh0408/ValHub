@@ -1,5 +1,10 @@
 # ValVN architecture and internal API
 
+Skin media correction: [Guardian card art, build 4025](SKIN_IMAGE_FALLBACK_2026-10-05.md).
+`WeaponSkin.image` now prefers the base-level display icon before the parent;
+the observed parent URL returns HTTP 200 with a missing-texture X. Parent/chroma
+fallbacks and large-render priority remain. Consumers reuse this shared getter.
+
 Latest bounded verification: [legal assets build 4024](LEGAL_ASSETS_AND_FALLBACK_2026-10-05.md).
 Long legal prose uses `assets/legal/<locale>/<id>.json`, pure-Dart
 `LegalRepository.load(id, locale: ...)`, stable `LegalDocumentRef` routes and the
