@@ -15,6 +15,13 @@ import '../../../helpers/test_prefs.dart';
 /// language's name too, and the sheet is the later (top-most) match.
 Finder option(String text) => find.text(text).last;
 
+/// Scrolls the 19-row sheet to [text] and picks it.
+Future<void> tapOption(WidgetTester tester, String text) async {
+  await tester.ensureVisible(option(text));
+  await tester.pumpAndSettle();
+  await tester.tap(option(text));
+}
+
 void main() {
   Future<Prefs> pumpPicker(
     WidgetTester tester, {
@@ -53,7 +60,7 @@ void main() {
   }
 
   testWidgets(
-    'picker saves fixed and follow-device choices, offers only shipped locales',
+    'picker saves fixed and follow-device choices, offers all 18 languages',
     (tester) async {
       final prefs = await pumpPicker(tester);
       await tester.tap(find.byType(TextButton));
@@ -61,13 +68,20 @@ void main() {
       expect(find.text('Theo thiết bị'), findsOneWidget);
       // The button and the sheet's option.
       expect(find.text(AppLocale.vi.nativeName), findsNWidgets(2));
-      expect(find.text(AppLocale.en.nativeName), findsNothing);
-      await tester.tap(option(AppLocale.vi.nativeName));
+      for (final locale in AppLocale.values) {
+        if (locale == AppLocale.vi) continue;
+        expect(
+          find.text(locale.nativeName),
+          findsOneWidget,
+          reason: locale.tag,
+        );
+      }
+      await tapOption(tester, AppLocale.vi.nativeName);
       await tester.pumpAndSettle();
       expect(prefs.getString(PrefKeys.appLocale), 'vi-VN');
       await tester.tap(find.byType(TextButton));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Theo thiết bị'));
+      await tapOption(tester, 'Theo thiết bị');
       await tester.pumpAndSettle();
       expect(prefs.getString(PrefKeys.appLocale), 'system');
       expect(tester.takeException(), isNull);
@@ -91,7 +105,7 @@ void main() {
     final prefs = await pumpPicker(tester, fail: true);
     await tester.tap(find.byType(TextButton));
     await tester.pumpAndSettle();
-    await tester.tap(option(AppLocale.vi.nativeName));
+    await tapOption(tester, AppLocale.vi.nativeName);
     await tester.pumpAndSettle();
     expect(
       find.text('Chưa lưu được ngôn ngữ. Vui lòng thử lại.'),
@@ -135,7 +149,7 @@ void main() {
       Future<void> chooseVi() async {
         await tester.tap(find.byType(TextButton));
         await tester.pumpAndSettle();
-        await tester.tap(option(AppLocale.vi.nativeName));
+        await tapOption(tester, AppLocale.vi.nativeName);
         await tester.pumpAndSettle();
       }
 
@@ -164,7 +178,7 @@ void main() {
     await pumpPicker(tester, fail: true);
     await tester.tap(find.byType(TextButton));
     await tester.pumpAndSettle();
-    await tester.tap(option(AppLocale.vi.nativeName));
+    await tapOption(tester, AppLocale.vi.nativeName);
     await tester.pumpAndSettle();
     expect(sent, isEmpty);
     expect(
@@ -179,7 +193,7 @@ void main() {
     final prefs = await pumpPicker(tester);
     await tester.tap(find.byType(TextButton));
     await tester.pumpAndSettle();
-    await tester.tap(option(AppLocale.vi.nativeName));
+    await tapOption(tester, AppLocale.vi.nativeName);
     await tester.pumpAndSettle();
     expect(prefs.getString(PrefKeys.appLocale), 'vi-VN');
     expect(sent, hasLength(1));

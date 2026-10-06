@@ -92,6 +92,15 @@ flutter:
     - assets/legal/ja/
     - assets/legal/ko/
     - assets/legal/pt/
+    - assets/legal/ar/
+    - assets/legal/id/
+    - assets/legal/it/
+    - assets/legal/pl/
+    - assets/legal/ru/
+    - assets/legal/th/
+    - assets/legal/tr/
+    - assets/legal/zh/
+    - assets/legal/zh_Hant/
   fonts:
     - family: BeVietnamPro
       fonts:

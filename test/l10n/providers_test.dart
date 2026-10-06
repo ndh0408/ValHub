@@ -103,25 +103,21 @@ void main() {
       );
     });
 
-    test(
-      'the UI language stays vi for any device while only vi is shipped',
-      () {
-        final c = make();
-        c.listen(appLocaleProvider, (_, _) {});
-        for (final device in [
-          [const Locale('en', 'US')],
-          [const Locale('ja')],
-          [const Locale('ar', 'EG')],
-          [const Locale('hi'), const Locale('de')],
-          const <Locale>[],
-        ]) {
-          dispatcher.localesTestValue = device;
-          expect(c.read(appLocaleProvider), AppLocale.vi, reason: '$device');
-          expect(c.read(formatTagProvider), 'vi', reason: '$device');
-          expect(c.read(l10nProvider).localeName, 'vi');
-        }
-      },
-    );
+    test('the UI follows the device language, English when it is not one of the 18', () {
+      final c = make();
+      c.listen(appLocaleProvider, (_, _) {});
+      for (final (device, want, name) in [
+        ([const Locale('en', 'US')], AppLocale.en, 'en'),
+        ([const Locale('ja')], AppLocale.ja, 'ja'),
+        ([const Locale('ar', 'EG')], AppLocale.ar, 'ar'),
+        ([const Locale('hi'), const Locale('de')], AppLocale.de, 'de'),
+        (const <Locale>[], AppLocale.en, 'en'),
+      ]) {
+        dispatcher.localesTestValue = device;
+        expect(c.read(appLocaleProvider), want, reason: '$device');
+        expect(c.read(l10nProvider).localeName, name, reason: '$device');
+      }
+    });
   });
 
   group('use24hProvider', () {
@@ -171,14 +167,14 @@ void main() {
       expect(c.read(localeControllerProvider), const LocaleChoice.system());
       expect(prefs.getString(PrefKeys.appLocale), 'system');
 
-      // Not shipped: stored (it applies once en ships) but the UI stays vi.
+      // A fixed choice wins over the (Vietnamese) device.
       await controller.set(const LocaleChoice.fixed(AppLocale.en));
       expect(
         c.read(localeControllerProvider),
         const LocaleChoice.fixed(AppLocale.en),
       );
       expect(prefs.getString(PrefKeys.appLocale), 'en-US');
-      expect(c.read(appLocaleProvider), AppLocale.vi);
+      expect(c.read(appLocaleProvider), AppLocale.en);
     });
 
     test('setting the current choice writes nothing', () async {

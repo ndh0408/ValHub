@@ -351,9 +351,29 @@ enum AppLocale {
 /// Locales users can see: the picker lists exactly these, and locale
 /// resolution only ever returns them (I18N.md 3.1 principle 6).
 ///
-/// A locale joins only after passing the ship checklist (I18N.md 14.10).
-/// Until then the app stays Vietnamese-only and every merge is user-invisible.
-const Set<AppLocale> kShippedLocales = {AppLocale.vi};
+/// All 18 VALORANT languages ship (owner decision 07/10/2026): the device
+/// language is used when it is one of them, otherwise English. Translations
+/// other than Vietnamese are not yet reviewed by native speakers.
+const Set<AppLocale> kShippedLocales = {
+  AppLocale.ar,
+  AppLocale.de,
+  AppLocale.en,
+  AppLocale.es,
+  AppLocale.esMx,
+  AppLocale.fr,
+  AppLocale.id,
+  AppLocale.it,
+  AppLocale.ja,
+  AppLocale.ko,
+  AppLocale.pl,
+  AppLocale.pt,
+  AppLocale.ru,
+  AppLocale.th,
+  AppLocale.tr,
+  AppLocale.vi,
+  AppLocale.zh,
+  AppLocale.zhHant,
+};
 
 /// The locale to show for the device's preferred [device] locales.
 ///

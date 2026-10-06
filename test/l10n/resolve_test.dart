@@ -120,32 +120,36 @@ void main() {
   });
 
   group('shipped filter', () {
-    test('kShippedLocales is vi-only until a locale passes the checklist', () {
-      // W0 invariant: the app is user-invisibly Vietnamese-only.
-      expect(kShippedLocales, {AppLocale.vi});
+    test('all 18 VALORANT languages ship', () {
+      expect(kShippedLocales, AppLocale.values.toSet());
       expect(
-        kShippedLocales.contains(AppLocale.en) ||
-            kShippedLocales.contains(AppLocale.vi),
+        kShippedLocales.contains(AppLocale.en),
         isTrue,
-        reason: 'resolve() falls back to en, else vi',
+        reason: 'resolve() falls back to English',
       );
     });
 
-    test('with only vi shipped every device resolves to vi', () {
-      for (final tag in [
-        'en-US',
-        'en-GB',
-        'ja',
-        'ar-EG',
-        'zh-Hant-TW',
-        'es-419',
-        'nb',
-        'vi-VN',
+    test('every device gets its own language, anything else English', () {
+      for (final (tag, want) in [
+        ('en-US', AppLocale.en),
+        ('en-GB', AppLocale.en),
+        ('ja', AppLocale.ja),
+        ('ar-EG', AppLocale.ar),
+        ('zh-Hant-TW', AppLocale.zhHant),
+        ('zh-CN', AppLocale.zh),
+        ('es-419', AppLocale.esMx),
+        ('es-ES', AppLocale.es),
+        ('pt-PT', AppLocale.pt),
+        ('th-TH', AppLocale.th),
+        ('nb', AppLocale.en),
+        ('vi-VN', AppLocale.vi),
       ]) {
-        expect(resolve([loc(tag)]), AppLocale.vi, reason: tag);
+        expect(resolve([loc(tag)]), want, reason: tag);
       }
-      expect(resolve(const []), AppLocale.vi);
-      expect(resolve([loc('hi'), loc('ja')]), AppLocale.vi);
+      expect(resolve(const []), AppLocale.en);
+      // The first supported entry of the device list wins.
+      expect(resolve([loc('hi'), loc('ja')]), AppLocale.ja);
+      expect(resolve([loc('nl'), loc('de')]), AppLocale.de);
     });
 
     test('a locale that is not shipped is skipped, the next one may win', () {

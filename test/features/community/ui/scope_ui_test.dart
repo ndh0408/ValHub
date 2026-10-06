@@ -7,6 +7,7 @@ import 'package:valvn/features/community/community_routes.dart';
 import 'package:valvn/features/community/community_strings.dart';
 
 import '../community_test_env.dart';
+import '../../../helpers/test_locale.dart';
 
 Future<void> _open(
   WidgetTester tester,
@@ -48,7 +49,13 @@ void main() {
   late Map<String, CountryInfo> countries;
   late CountryNames countryNames;
   setUpAll(() async {
-    // Real bundled CLDR assets, loaded outside the widget fake clock.
+    // Real bundled CLDR assets, loaded outside the widget fake clock, in the
+    // pinned test language (setUp has not pinned the device locale yet).
+    TestWidgetsFlutterBinding.ensureInitialized()
+        .platformDispatcher
+        .localesTestValue = [
+      testLocale.flutter,
+    ];
     final container = ProviderContainer();
     try {
       countries = await container.read(countriesProvider.future);

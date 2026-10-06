@@ -65,14 +65,17 @@ void main() {
     return tester.element(find.byType(WelcomeScreen));
   }
 
-  testWidgets('MaterialApp uses appLocalizationsDelegates and stays vi', (
+  testWidgets('MaterialApp uses appLocalizationsDelegates, all 18 languages', (
     tester,
   ) async {
     await pumpApp(tester);
     final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
     expect(app.localizationsDelegates, same(appLocalizationsDelegates));
+    // The tests pin a Vietnamese device.
     expect(app.locale, const Locale('vi'));
-    expect(app.supportedLocales, [const Locale('vi')]);
+    expect(app.supportedLocales.toSet(), {
+      for (final l in AppLocale.values) l.flutter,
+    });
   });
 
   testWidgets('AppLocalizations and material_ui resolve in the app tree', (

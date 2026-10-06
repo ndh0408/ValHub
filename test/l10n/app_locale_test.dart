@@ -181,6 +181,6 @@ void main() {
       expect(l.shipped, kShippedLocales.contains(l));
     }
     expect(AppLocale.vi.shipped, isTrue);
-    expect(AppLocale.en.shipped, isFalse);
+    expect(AppLocale.en.shipped, isTrue);
   });
 }

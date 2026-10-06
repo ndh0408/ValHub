@@ -25,6 +25,7 @@ void main() {
       testWidgets('${locale.tag} at 360 dp, text x$scale: no overflow', (
         tester,
       ) async {
+        final reports = recordFlutterErrors();
         final router = await pumpOfflineApp(
           tester,
           locale: locale.flutter,
@@ -33,7 +34,11 @@ void main() {
         for (final route in matrixRoutes) {
           router.go(route);
           await settleFrames(tester);
-          expect(tester.takeException(), isNull, reason: route);
+          expect(
+            tester.takeException(),
+            isNull,
+            reason: '$route\n${reports.join('\n')}',
+          );
         }
         await unmountOfflineApp(tester);
       });

@@ -21,9 +21,10 @@ void main() {
         const AppSettings(itemLanguage: ItemLanguage.en).toJson(),
       );
       final locale = BackgroundLocale.fromPrefs(prefs);
-      expect(locale.effective.app, AppLocale.vi);
+      // Not the Japanese headless device: the English fallback.
+      expect(locale.effective.app, AppLocale.en);
       expect(locale.effective.content, 'en-US');
-      expect(locale.formats.number(2175), '2.175');
+      expect(locale.formats.number(2175), '2,175');
       expect(prefs.getString(PrefKeys.appLocale), isNull);
       expect(prefs.containsKey(PrefKeys.effectiveLocale), isFalse);
       expect(prefs.containsKey(PrefKeys.installMarker), isFalse);
@@ -67,6 +68,8 @@ void main() {
       'snapshot format is constrained to its UI locale: $badFormat',
       () async {
         final prefs = await createTestPrefs();
+        // An unreadable snapshot falls back to the persisted choice.
+        await prefs.setString(PrefKeys.appLocale, 'vi-VN');
         await const EffectiveLocale(
           app: AppLocale.vi,
           formatTag: 'vi',
@@ -82,24 +85,21 @@ void main() {
     );
   }
 
-  test(
-    'unshipped UI cannot escape the shipped filter through a snapshot',
-    () async {
-      final prefs = await createTestPrefs();
-      await prefs.setString(PrefKeys.appLocale, 'en-US');
-      await const EffectiveLocale(
-        app: AppLocale.en,
-        formatTag: 'en_GB',
-        h24: true,
-        content: 'ja-JP',
-      ).write(prefs);
-      final locale = BackgroundLocale.fromPrefs(prefs);
-      expect(locale.effective.app, AppLocale.vi);
-      expect(locale.effective.formatTag, 'vi');
-      expect(locale.effective.content, 'ja-JP');
-      expect(prefs.getString(PrefKeys.appLocale), 'en-US');
-    },
-  );
+  test('a snapshot of a shipped UI language is used as written', () async {
+    final prefs = await createTestPrefs();
+    await prefs.setString(PrefKeys.appLocale, 'en-US');
+    await const EffectiveLocale(
+      app: AppLocale.en,
+      formatTag: 'en_GB',
+      h24: true,
+      content: 'ja-JP',
+    ).write(prefs);
+    final locale = BackgroundLocale.fromPrefs(prefs);
+    expect(locale.effective.app, AppLocale.en);
+    expect(locale.effective.formatTag, 'en_GB');
+    expect(locale.effective.content, 'ja-JP');
+    expect(prefs.getString(PrefKeys.appLocale), 'en-US');
+  });
 
   test(
     'unknown content tag falls back to the legacy item-name preference',

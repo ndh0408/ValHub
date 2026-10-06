@@ -26,6 +26,7 @@ import 'package:valvn/features/community/ui/skins/skin_vote_button.dart';
 
 import '../community_test_env.dart';
 import '../data/skin_review_test.dart' show reviewJson, summaryJson;
+import '../../../helpers/test_locale.dart';
 
 Future<void> _openTab(
   WidgetTester tester,
@@ -110,6 +111,12 @@ void main() {
   late Map<String, CountryInfo> countries;
   late CountryNames countryNames;
   setUpAll(() async {
+    // CLDR names in the pinned test language (setUp pins it only later).
+    TestWidgetsFlutterBinding.ensureInitialized()
+        .platformDispatcher
+        .localesTestValue = [
+      testLocale.flutter,
+    ];
     final assets = ProviderContainer();
     try {
       countries = await assets.read(countriesProvider.future);

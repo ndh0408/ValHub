@@ -1,6 +1,6 @@
 # ValVN
 
-Ứng dụng đồng hành Valorant **toàn cầu** (vượt ValBuddy 2.1.2 và Daily Val), viết bằng **Flutter** cho iOS và Android. Đang chuyển sang **18 ngôn ngữ VALORANT** (tiếng Việt là ngôn ngữ gốc/template) và hỗ trợ mọi quốc gia — xem `docs/design/IA.md` (mục Toàn cầu) và `docs/design/I18N.md` khi có.
+Ứng dụng đồng hành Valorant **toàn cầu** (vượt ValBuddy 2.1.2 và Daily Val), viết bằng **Flutter** cho iOS và Android. Có đủ **18 ngôn ngữ VALORANT** (tiếng Việt là ngôn ngữ gốc/template; mặc định theo ngôn ngữ máy, ngoài 18 ngôn ngữ thì tiếng Anh) và hỗ trợ mọi quốc gia — xem `docs/design/IA.md` (mục Toàn cầu) và `docs/design/I18N.md` khi có.
 
 ## Toolchain (container)
 
@@ -23,11 +23,11 @@ flutter build apk --release
 
 ## Quy ước
 
-- Chuỗi UI đang dùng generated resources từ `lib/l10n/arb/app_vi.arb`, lấy qua `context.l10n` hoặc truyền resources rõ ràng cho helper/isolate; không hard-code chuỗi trong widget. Các lớp `*Strings` cũ còn làm oracle/parity và chờ hoàn tất cutover; không tạo hệ thống localization thứ hai. Tiếng Việt vẫn là ngôn ngữ UI duy nhất đã phát hành; xem `docs/design/I18N.md`.
-- Văn bản pháp lý dài nằm trong `assets/legal/<locale>/<doc>.json`, đọc qua `LegalRepository`/provider với fallback locale → en → vi. Chỉ VI assets đã có; không tự nhận bản dịch hay quyền pháp lý đã được duyệt. Sau sửa nội dung chạy `dart run tool/export_legal_docs.dart`, kiểm tra bằng `--check`; giữ nguyên điều khoản/phiên bản nếu chỉ di chuyển kiến trúc. `LICENSE` và `docs/legal/license.md` vẫn quản lý riêng.
+- Chuỗi UI đang dùng generated resources từ `lib/l10n/arb/app_vi.arb`, lấy qua `context.l10n` hoặc truyền resources rõ ràng cho helper/isolate; không hard-code chuỗi trong widget. Các lớp `*Strings` cũ còn làm oracle/parity và chờ hoàn tất cutover; không tạo hệ thống localization thứ hai. Cả 18 ngôn ngữ đã bật (`kShippedLocales`); chuỗi mới thêm vào `app_vi.arb` rồi dịch 17 ngôn ngữ bằng `tool/l10n/translate_kit.py` (thuật ngữ game chính thức trong `tool/l10n/glossary/`), kiểm tra bằng `dart run tool/l10n_check.dart` + `flutter gen-l10n`. Bản dịch chưa có người bản ngữ duyệt; xem `docs/design/I18N.md`.
+- Văn bản pháp lý dài nằm trong `assets/legal/<locale>/<doc>.json`, đọc qua `LegalRepository`/provider với fallback locale → ngôn ngữ gốc (es_MX → es) → en → vi. Có bản dịch cho 17 ngôn ngữ (bản tiếng Việt có hiệu lực ưu tiên); không tự nhận bản dịch hay quyền pháp lý đã được luật sư duyệt. Sau sửa nội dung chạy `dart run tool/export_legal_docs.dart`, kiểm tra bằng `--check`; giữ nguyên điều khoản/phiên bản nếu chỉ di chuyển kiến trúc. `LICENSE` và `docs/legal/license.md` vẫn quản lý riêng.
 - Không giả định người dùng ở Việt Nam: múi giờ, định dạng số/ngày, tiền tệ, quốc gia, máy chủ đều lấy theo thiết bị / tài khoản / lựa chọn của người dùng.
 - Thuật ngữ game người chơi Việt quen dùng giữ nguyên tiếng Anh (VP, RR, K/D/A, ACS, HS%, Battle Pass, skin, bundle, wishlist...).
-- Dữ liệu nội dung (tên skin, agent, map, rank...) lấy từ `https://valorant-api.com` với `language` theo ngôn ngữ app (hiện tại `vi-VN`).
+- Dữ liệu nội dung (tên skin, agent, map, rank...) lấy từ `https://valorant-api.com` với `language` theo ngôn ngữ app (hoặc ngôn ngữ tên vật phẩm người dùng chọn).
 - Mọi dữ liệu phải thật: không dữ liệu mẫu, không nút chết, không "sắp ra mắt"; số liệu không xác minh được thì ẩn, không bịa.
 - Mỗi tính năng nằm trong `lib/features/<f>/` (data / providers / ui) và test trong `test/features/<f>/`. Code dùng chung nằm trong `lib/core/`.
 - Parse JSON từ Riot một cách phòng thủ (mọi trường nullable, mảng có thể null, UUID lowercase, số đọc bằng `num`); body lỗi có thể là HTML (Cloudflare). Không bao giờ crash vì dữ liệu lạ.

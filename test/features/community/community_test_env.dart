@@ -430,7 +430,11 @@ class CommunityTestEnv {
     Account? account = meAccount,
     bool consent = true,
   }) async {
-    final prefs = await createTestPrefs();
+    // The UI's Vietnamese language handoff, read by background notifications.
+    final prefs = await createTestPrefs({
+      PrefKeys.effectiveLocale:
+          '{"v":1,"app":"vi-VN","format":"vi","h24":true,"content":"vi-VN"}',
+    });
     if (account != null) {
       if (consent) {
         await prefs.setString(communityConsentKey(account.puuid), 'granted');

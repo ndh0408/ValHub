@@ -1,4 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart' show Locale;
+import 'package:valvn/core/l10n/l10n.dart' show lookupAppLocalizations;
 import 'package:valvn/core/domain/economy/economy.dart';
 import 'package:valvn/core/notifications/notification_service.dart';
 import 'package:valvn/features/store/providers/store_reset_reminder.dart';
@@ -33,6 +35,7 @@ void main() {
         account: testAccount,
         store: store,
         now: t0,
+        l10n: lookupAppLocalizations(const Locale('vi')),
       )!;
       expect(r.id, NotificationIds.storeReset(Fx.puuid));
       expect(r.at, t0.add(const Duration(seconds: 17401, minutes: 1)));

@@ -149,3 +149,16 @@ Future<void> unmountOfflineApp(WidgetTester tester) async {
   await tester.pumpWidget(const SizedBox());
   await tester.pump(const Duration(minutes: 11));
 }
+
+/// Full Flutter error reports of this test (widget, file and line of an
+/// overflow), for failure messages; the framework still fails the test.
+List<String> recordFlutterErrors() {
+  final reports = <String>[];
+  final previous = FlutterError.onError;
+  FlutterError.onError = (details) {
+    reports.add(details.toString());
+    previous?.call(details);
+  };
+  addTearDown(() => FlutterError.onError = previous);
+  return reports;
+}

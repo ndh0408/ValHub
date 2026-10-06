@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "locale": "zh_Hant",
+  "id": "notice",
+  "title": "法律聲明",
+  "summary": "Riot Games 免責聲明、商標與致謝",
+  "version": "1.0",
+  "effectiveDate": "04/10/2026",
+  "copyright": "© 2026 Nguyễn Đức Huy. 保留所有權利。",
+  "export": {
+    "header": "<!-- 本檔案由 assets/legal/zh_Hant/ 自動產生。請勿手動編輯：請修改 JSON 內容後執行 `dart run tool/export_legal_docs.dart`。 -->",
+    "metadata": "**ValHub** · 版本 1.0 · 生效日期：04/10/2026"
+  },
+  "preamble": [
+    {
+      "type": "callout",
+      "text": "ValHub 並未獲得 Riot Games 認可，亦不代表 Riot Games 或任何正式參與製作或管理 Riot Games 產品之人士的觀點或意見。Riot Games 及所有相關資產皆為 Riot Games, Inc. 的商標或註冊商標。"
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Riot Games 免責聲明",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "ValHub 係依據 Riot Games 的「Legal Jibber Jabber」政策製作，並使用 Riot Games 所擁有的資產。Riot Games 並未認可或贊助本專案。"
+        },
+        {
+          "type": "p",
+          "text": "ValHub 是獨立的應用程式，並非 Riot Games 的官方產品，亦未以任何形式與 Riot Games 有所關聯。所有與 ValHub 相關的支援均由我們提供，而非 Riot Games。"
+        }
+      ]
+    },
+    {
+      "heading": "商標",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Riot Games、VALORANT 及所有相關資產皆為 Riot Games, Inc. 的商標或註冊商標。本應用程式中提及的其他名稱、標誌與商標皆屬其各自所有人所有，僅用於識別用途。"
+        }
+      ]
+    },
+    {
+      "heading": "遊戲內容",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "VALORANT 的造型、特務、地圖、牌位、玩家卡片及其他內容之名稱、圖片、影片與資訊，均為 Riot Games, Inc. 所有。您的帳號資料（商店、錢包、收藏庫、對戰、牌位）係直接取自 Riot Games 的伺服器。"
+        }
+      ]
+    },
+    {
+      "heading": "資料來源與致謝",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "有關物品、特務、地圖與牌位的公開資料與圖片。valorant-api.com 是獨立的社群專案，與 ValHub 及 Riot Games 皆無關聯。",
+              "lead": "valorant-api.com："
+            },
+            {
+              "text": "由 VALORANT 開發者社群編撰的技術文件。",
+              "lead": "techchrism/valorant-api-docs："
+            },
+            {
+              "text": "ValHub 使用 Flutter 及多款其他開放原始碼軟體建置。各軟體的清單與授權條款，可在「關於與法律資訊」頁面的「第三方軟體」項目中查看。",
+              "lead": "開放原始碼軟體："
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "ValHub 著作權",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "© 2026 Nguyễn Đức Huy. 保留所有權利。ValHub 為專有軟體；其使用應遵守《使用條款》。"
+        }
+      ]
+    },
+    {
+      "heading": "檢舉侵害智慧財產權",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "如果您認為 ValHub 中的內容（包括使用者在社群中發布的內容）侵害了您的智慧財產權，請寄送電子郵件至 ndh0408@gmail.com。請清楚說明：您的聯絡資訊、您受保護的作品為何、侵權內容位於本應用程式中的何處，並聲明您所提供的資訊正確無誤。我們將盡速審查並處理。"
+        }
+      ]
+    }
+  ]
+}

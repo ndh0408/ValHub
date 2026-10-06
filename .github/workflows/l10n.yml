@@ -2,16 +2,14 @@ name: i18n
 
 # Gates for the internationalization program (docs/design/I18N.md section 15).
 # A separate workflow so android.yml and ios.yml stay unchanged. Everything here
-# is language-independent tooling and tests; the locale-specific QA matrices
-# (overflow, RTL, accessibility) run on demand at the bottom.
+# is language-independent tooling and tests, plus the QA matrices that run
+# every shipped language (overflow, RTL, accessibility).
 
 on:
   push:
     branches: [main, claude/jolly-hawking-23o2j8]
   pull_request:
   workflow_dispatch:
-  schedule:
-    - cron: '17 3 * * 1'   # Mondays: the QA matrices below
 
 permissions:
   contents: read
@@ -65,25 +63,6 @@ jobs:
       - name: Tests, device locale vi
         run: flutter test
 
-  english-pass:
-    name: Tests, device locale en (fallback gate)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    # Both local configurations pass at checkpoint 4022. Keep English-device
-    # fallback regression checks required; this does not certify English UI.
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
-      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
-        with:
-          channel: stable
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          cache: true
-
-      - run: flutter pub get
-
-      - run: flutter test --dart-define=TEST_LOCALE=en
-
   codemod:
     name: Codemod package (tool/l10n_codemod)
     runs-on: ubuntu-24.04
@@ -132,15 +111,12 @@ jobs:
           retention-days: 14
 
   matrices:
-    name: QA matrices (overflow, RTL, accessibility)
-    # Weekly, on demand, or on a pull request labelled `i18n-matrix`: they are
-    # slow and only meaningful once the layout waves (W7) have landed.
-    if: >-
-      github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch' ||
-      contains(github.event.pull_request.labels.*.name, 'i18n-matrix')
+    name: QA matrices, all 18 languages (overflow, RTL, accessibility)
+    # Every shipped language through the offline app at 360 dp (normal and
+    # large text), Arabic right to left, tap targets and labels. Fast (~1
+    # min), so required on every pull request.
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 

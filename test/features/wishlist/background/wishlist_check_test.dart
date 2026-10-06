@@ -143,11 +143,17 @@ class FakeEnv implements WishlistCheckEnv {
   void log(String event, {String? detail}) => logs.add('$event $detail');
 }
 
+/// The UI's Vietnamese language handoff, as the app writes it on launch;
+/// background work never reads the headless device locale.
+const viHandoff =
+    '{"v":1,"app":"vi-VN","format":"vi","h24":true,"content":"vi-VN"}';
+
 Future<Prefs> prefsWith({bool enabled = true, bool nightMarket = false}) =>
     createTestPrefs({
       PrefKeys.appSettings:
           '{"wishlistNotifications": $enabled, '
           '"nightMarketNotifications": $nightMarket}',
+      PrefKeys.effectiveLocale: viHandoff,
     });
 
 void main() {

@@ -1,0 +1,211 @@
+{
+  "schema": 1,
+  "locale": "pl",
+  "id": "community",
+  "title": "Zasady społeczności",
+  "summary": "Zasady publikowania postów, komentowania i szukania drużyny",
+  "version": "1.0",
+  "effectiveDate": "04/10/2026",
+  "copyright": "© 2026 Nguyễn Đức Huy. Wszelkie prawa zastrzeżone.",
+  "export": {
+    "header": "<!-- Plik wygenerowany automatycznie z assets/legal/pl/. Nie edytuj ręcznie: zmień treść JSON, a następnie uruchom `dart run tool/export_legal_docs.dart`. -->",
+    "metadata": "**ValHub** · Wersja 1.0 · Obowiązuje od: 04/10/2026"
+  },
+  "preamble": [
+    {
+      "type": "p",
+      "text": "Społeczność ValHub to miejsce, w którym gracze VALORANT chwalą się swoim sklepem, rozmawiają o skinach, szukają drużyny i pomagają sobie nawzajem wbijać rangi. Aby było tu zawsze przyjemnie i bezpiecznie, wspólnie przestrzegajmy poniższych zasad. Niniejsze Zasady stanowią część Warunków korzystania."
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Szanuj wszystkich",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Śmiało dyskutuj o stylu gry, mecie czy skinach, ale krytykuj opinie, a nie ludzi."
+            },
+            {
+              "text": "Nie obrażaj, nie przeklinaj na innych, nie nękaj, nie groź, nie zastraszaj i nie podżegaj innych do nękania kogokolwiek."
+            },
+            {
+              "text": "Nie dyskryminuj i nie wyrażaj nienawiści ze względu na pochodzenie etniczne, region, płeć, religię, niepełnosprawność, orientację seksualną ani jakąkolwiek inną cechę osobistą."
+            },
+            {
+              "text": "Nie podszywaj się pod inne osoby, streamerów, zawodników ani Riot Games."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Niedozwolone treści",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Treści naruszające obowiązujące prawo (prawo wietnamskie i prawo miejsca Twojego zamieszkania), podżegające do przemocy lub nienawiści, zagrażające bezpieczeństwu innych osób albo porządkowi i bezpieczeństwu publicznemu."
+            },
+            {
+              "text": "Treści pornograficzne lub o charakterze seksualnym, w szczególności dotyczące dzieci."
+            },
+            {
+              "text": "Szokujące obrazy przemocy, drastyczne treści, samookaleczenia lub zachęcanie do niebezpiecznych zachowań."
+            },
+            {
+              "text": "Celowo fałszywe informacje, fake newsy, oszustwa, fałszywe rozdania nagród czy „darmowe hacki na VP”."
+            },
+            {
+              "text": "Treści naruszające prawa autorskie lub prawa własności intelektualnej innych osób."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Oszukiwanie, handel i reklama",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Nie promuj, nie udostępniaj i nie próbuj kupić oprogramowania do oszukiwania, hacków, makr ani narzędzi ingerujących w grę."
+            },
+            {
+              "text": "Nie kupuj, nie sprzedawaj, nie wynajmuj i nie wymieniaj kont; nie reklamuj usług boostingu ani nieuprawnionej sprzedaży VP lub przedmiotów."
+            },
+            {
+              "text": "Nie spamuj, nie publikuj wielokrotnie tych samych treści, nie reklamuj ani nie umieszczaj linków do komercyjnych stron, grup lub usług bez zgody."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Ochrona danych osobowych",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Nie publikuj danych osobowych innych osób (prawdziwego imienia i nazwiska, numeru telefonu, adresu, prywatnych zdjęć…) bez ich zgody."
+            },
+            {
+              "text": "Nigdy nie udostępniaj swojego hasła, kodów weryfikacyjnych ani adresu e-mail do logowania Riot. ValHub i zespół moderatorów nigdy nie poproszą o te informacje."
+            },
+            {
+              "text": "Uważaj na zrzuty ekranu: zakryj informacje, których nie chcesz upubliczniać."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Szukanie drużyny",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Publikuj ogłoszenie tylko wtedy, gdy naprawdę szukasz graczy, z prawidłowym regionem, trybem gry i liczbą wolnych miejsc."
+            },
+            {
+              "text": "Kod drużyny w ogłoszeniu jest widoczny dla każdego, kto je zobaczy. Ogłoszenia wygasają automatycznie po 30 minutach; gdy drużyna jest pełna, usuń ogłoszenie lub wyłącz kod w grze."
+            },
+            {
+              "text": "Nie używaj ogłoszeń o szukaniu drużyny do spamowania, reklamowania ani wciągania innych do drużyny w celu nękania ich lub psucia im gry."
+            },
+            {
+              "text": "W meczu zachowuj się jak dobry członek drużyny: nie psuj celowo meczu, nie zostawiaj drużyny (AFK), nie przeklinaj na nikogo i nikogo nie atakuj."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Obrazy i głosowanie",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Publikuj tylko obrazy, do których używania masz prawo i które są zgodne z niniejszymi Zasadami; zrzuty ekranu sklepu, kolekcji i momentów z meczów są mile widziane."
+            },
+            {
+              "text": "Każde konto ma tylko jeden głos na każdy skin. Nie używaj wielu kont ani narzędzi automatycznych do manipulowania rankingiem."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Zgłaszanie naruszeń",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Z menu treści możesz ukryć autora lub zablokować go na tym urządzeniu. Ta opcja ukrywa jego treści jedynie dla konta używanego na tym urządzeniu; nadal może on widzieć Twoje publiczne treści. Ukrycie możesz cofnąć w Ustawieniach. Ta funkcja nie zastępuje zgłoszenia."
+        },
+        {
+          "type": "p",
+          "text": "Widzisz treść naruszającą zasady? Użyj przycisku „Zgłoś” przy poście, komentarzu lub ogłoszeniu o szukaniu drużyny i wybierz odpowiedni powód. Zgłoszenia są poufne; osoba zgłoszona nie wie, kto ją zgłosił."
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Treści, które otrzymają wystarczającą liczbę zgłoszeń od różnych użytkowników, zostaną automatycznie ukryte do czasu ich rozpatrzenia."
+            },
+            {
+              "text": "W pilnych lub poważnych przypadkach (groźby, treści dotyczące dzieci, ujawnienie danych osobowych) zgłoś treść i dodatkowo wyślij e-mail na adres ndh0408@gmail.com."
+            },
+            {
+              "text": "Nie nadużywaj funkcji zgłaszania do atakowania innych; wielokrotne fałszywe zgłoszenia również stanowią naruszenie."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Konsekwencje naruszeń",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "W zależności od wagi i częstotliwości naruszeń możemy zastosować jeden lub więcej z poniższych środków, z uprzedzeniem lub bez niego:"
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Ukrycie lub usunięcie treści naruszających zasady."
+            },
+            {
+              "text": "Tymczasowe ograniczenie możliwości publikowania postów, komentowania, szukania drużyny lub głosowania."
+            },
+            {
+              "text": "Trwała blokada dostępu do Społeczności."
+            },
+            {
+              "text": "Przekazanie informacji właściwym organom w przypadku działań niezgodnych z prawem."
+            }
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Środki te są stosowane wyłącznie w ValHub i nie wpływają na Twoje Konto Riot. Naruszenia w grze mogą jednak nadal zostać ukarane przez Riot Games zgodnie z jego własnymi zasadami."
+        }
+      ]
+    },
+    {
+      "heading": "Odwołanie od decyzji moderacyjnych",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Jeśli uważasz, że Twoje treści zostały usunięte przez pomyłkę lub zastosowany środek był niewłaściwy, wyślij e-mail na adres ndh0408@gmail.com, podając swój Riot ID i krótki opis. Ponownie rozpatrzymy sprawę i odpowiemy najszybciej, jak to możliwe."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "locale": "tr",
+  "id": "notice",
+  "title": "Yasal Uyarı",
+  "summary": "Riot Games sorumluluk reddi beyanı, ticari markalar ve atıflar",
+  "version": "1.0",
+  "effectiveDate": "04/10/2026",
+  "copyright": "© 2026 Nguyễn Đức Huy. Tüm hakları saklıdır.",
+  "export": {
+    "header": "<!-- assets/legal/tr/ klasöründen otomatik olarak oluşturulan dosya. Elle düzenlemeyin: JSON içeriğini düzenleyin, ardından `dart run tool/export_legal_docs.dart` komutunu çalıştırın. -->",
+    "metadata": "**ValHub** · Sürüm 1.0 · Yürürlük tarihi: 04/10/2026"
+  },
+  "preamble": [
+    {
+      "type": "callout",
+      "text": "ValHub, Riot Games tarafından onaylanmamıştır ve Riot Games'in ya da Riot Games ürünlerinin üretiminde veya yönetiminde yer alan herhangi bir kişinin görüşlerini yansıtmaz. Riot Games ve ilgili tüm varlıklar, Riot Games, Inc.'in ticari markaları veya tescilli ticari markalarıdır."
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Riot Games sorumluluk reddi beyanı",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "ValHub, Riot Games'in \"Legal Jibber Jabber\" politikası kapsamında oluşturulmuştur ve Riot Games'e ait varlıkları kullanmaktadır. Riot Games bu projeyi onaylamamakta ve projeye sponsor olmamaktadır."
+        },
+        {
+          "type": "p",
+          "text": "ValHub bağımsız bir uygulamadır; Riot Games'in resmî bir ürünü değildir ve Riot Games ile hiçbir şekilde bağlantılı değildir. ValHub ile ilgili tüm destek Riot Games tarafından değil, tarafımızca sağlanır."
+        }
+      ]
+    },
+    {
+      "heading": "Ticari markalar",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Riot Games, VALORANT ve ilgili tüm varlıklar, Riot Games, Inc.'in ticari markaları veya tescilli ticari markalarıdır. Uygulama'da adı geçen diğer adlar, logolar ve markalar sahiplerine aittir ve yalnızca tanımlama amacıyla kullanılır."
+        }
+      ]
+    },
+    {
+      "heading": "Oyun içeriği",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "VALORANT'ın kaplamalarına, ajanlarına, haritalarına, rütbelerine, oyuncu kartlarına ve diğer içeriklerine ilişkin adlar, görseller, videolar ve bilgiler Riot Games, Inc.'in mülkiyetindedir. Hesap verileriniz (mağaza, cüzdan, koleksiyon, maçlar, sıralama) doğrudan Riot Games sunucularından alınır."
+        }
+      ]
+    },
+    {
+      "heading": "Veri kaynakları ve atıflar",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "öğeler, ajanlar, haritalar ve rütbeler hakkında herkese açık veriler ve görseller. valorant-api.com, ValHub veya Riot Games ile bağlantısı olmayan bağımsız bir topluluk projesidir.",
+              "lead": "valorant-api.com:"
+            },
+            {
+              "text": "VALORANT geliştirici topluluğu tarafından hazırlanan teknik belgeler.",
+              "lead": "techchrism/valorant-api-docs:"
+            },
+            {
+              "text": "ValHub, Flutter ve diğer birçok açık kaynaklı yazılım kullanılarak geliştirilmiştir. Her yazılımın listesi ve lisansı, Hakkında ve yasal sayfasındaki \"Üçüncü taraf yazılımlar\" bölümünde yer alır.",
+              "lead": "Açık kaynaklı yazılımlar:"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "ValHub telif hakkı",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "© 2026 Nguyễn Đức Huy. Tüm hakları saklıdır. ValHub tescilli bir yazılımdır; kullanımı Kullanım Koşulları'na tabidir."
+        }
+      ]
+    },
+    {
+      "heading": "Fikrî mülkiyet ihlali bildirimi",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Topluluk'ta kullanıcılar tarafından paylaşılan içerikler dahil, ValHub'daki herhangi bir içeriğin fikrî mülkiyet haklarınızı ihlal ettiğini düşünüyorsanız ndh0408@gmail.com adresine e-posta gönderin. Lütfen şunları açıkça belirtin: iletişim bilgileriniz, korunan eserinizin hangisi olduğu, ihlal içeren içeriğin Uygulama'nın neresinde bulunduğu ve verdiğiniz bilgilerin doğru olduğuna dair beyanınız. Bildirimi inceleyip zamanında gereğini yaparız."
+        }
+      ]
+    }
+  ]
+}

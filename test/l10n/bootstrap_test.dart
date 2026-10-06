@@ -21,13 +21,19 @@ void main() {
     });
 
     test(
-      'while only vi is shipped a fresh install is still Vietnamese',
+      'with every language shipped a fresh install follows the phone',
       () async {
-        final prefs = await createTestPrefs();
-        final boot = L10nBootstrap.load(prefs, [loc('en-US')]);
-        expect(boot.locale, AppLocale.vi);
-        expect(boot.choice.isSystem, isTrue);
-        expect(prefs.getString(PrefKeys.appLocale), 'system');
+        for (final (tag, want) in [
+          ('en-US', AppLocale.en),
+          ('ko-KR', AppLocale.ko),
+          ('nl-NL', AppLocale.en),
+        ]) {
+          final prefs = await createTestPrefs();
+          final boot = L10nBootstrap.load(prefs, [loc(tag)]);
+          expect(boot.locale, want, reason: tag);
+          expect(boot.choice.isSystem, isTrue);
+          expect(prefs.getString(PrefKeys.appLocale), 'system');
+        }
       },
     );
 

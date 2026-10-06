@@ -331,6 +331,7 @@ class HomeCardError extends StatelessWidget {
         Icon(d.icon, size: 22, color: theme.colorScheme.error),
         const SizedBox(width: 12),
         Expanded(
+          flex: 3,
           child: Text(
             d.needsLogin ? context.l10n.commonErrorNeedsLoginTitle : d.message,
             maxLines: 3,
@@ -338,15 +339,31 @@ class HomeCardError extends StatelessWidget {
             style: theme.textTheme.bodyMedium,
           ),
         ),
+        // Long labels ("Erneut versuchen") wrap instead of overflowing.
         if (d.needsLogin)
-          TextButton(
-            onPressed: () => unawaited(
-              context.push<Object?>(AuthRoutes.loginPath(reauthPuuid: puuid)),
+          Flexible(
+            flex: 2,
+            child: TextButton(
+              onPressed: () => unawaited(
+                context.push<Object?>(AuthRoutes.loginPath(reauthPuuid: puuid)),
+              ),
+              child: Text(
+                context.l10n.commonSignInAgain,
+                textAlign: TextAlign.center,
+              ),
             ),
-            child: Text(context.l10n.commonSignInAgain),
           )
         else if (retry != null && d.canRetry)
-          TextButton(onPressed: retry, child: Text(context.l10n.commonRetry)),
+          Flexible(
+            flex: 2,
+            child: TextButton(
+              onPressed: retry,
+              child: Text(
+                context.l10n.commonRetry,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
       ],
     );
   }

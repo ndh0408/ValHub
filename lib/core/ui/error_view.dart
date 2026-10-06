@@ -139,6 +139,7 @@ class ErrorView extends StatelessWidget {
               Icon(d.icon, color: error, size: 22),
               const SizedBox(width: 12),
               Expanded(
+                flex: 3,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -159,17 +160,31 @@ class ErrorView extends StatelessWidget {
                   ],
                 ),
               ),
+              // Long labels ("Erneut versuchen") wrap instead of pushing
+              // the row past the card edge.
               if (d.needsLogin)
-                TextButton(
-                  onPressed: () => context.push(
-                    AuthRoutes.loginPath(reauthPuuid: d.puuid ?? puuid),
+                Flexible(
+                  flex: 2,
+                  child: TextButton(
+                    onPressed: () => context.push(
+                      AuthRoutes.loginPath(reauthPuuid: d.puuid ?? puuid),
+                    ),
+                    child: Text(
+                      context.l10n.commonSignInAgain,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  child: Text(context.l10n.commonSignInAgain),
                 )
               else if (onRetry != null && d.canRetry)
-                TextButton(
-                  onPressed: onRetry,
-                  child: Text(context.l10n.commonRetry),
+                Flexible(
+                  flex: 2,
+                  child: TextButton(
+                    onPressed: onRetry,
+                    child: Text(
+                      context.l10n.commonRetry,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ),
             ],
           ),
