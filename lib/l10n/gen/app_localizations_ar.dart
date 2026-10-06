@@ -475,6 +475,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonYesterdayTitle => 'أمس';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'انتهت صلاحية تسجيل الدخول إلى Riot — يتم عرض البيانات المحفوظة ($time).';
+  }
+
+  @override
   String get contentCategoryHeavy => 'أسلحة ثقيلة';
 
   @override
@@ -7818,6 +7823,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String homeWinStreak(int n) {
     return 'سلسلة انتصارات في التنافسي: $n';
   }
+
+  @override
+  String get homeStoreOutdated =>
+      'تم تحديث المتجر. لم يتمكن ValHub بعد من تحميل المتجر الجديد.';
 
   @override
   String get communityErrorConsent =>

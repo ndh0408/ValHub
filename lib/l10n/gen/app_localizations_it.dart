@@ -450,6 +450,11 @@ class AppLocalizationsIt extends AppLocalizations {
   String get commonYesterdayTitle => 'Ieri';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'L\'accesso a Riot è scaduto — mostriamo i dati salvati ($time).';
+  }
+
+  @override
   String get contentCategoryHeavy => 'Armi pesanti';
 
   @override
@@ -7469,6 +7474,10 @@ class AppLocalizationsIt extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get homeStoreOutdated =>
+      'Il negozio è cambiato. ValHub non è ancora riuscito a caricare quello nuovo.';
 
   @override
   String get communityErrorConsent =>

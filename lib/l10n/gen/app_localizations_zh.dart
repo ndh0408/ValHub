@@ -395,6 +395,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonYesterdayTitle => '昨天';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'Riot 登录已过期——正在显示已保存的数据（$time）。';
+  }
+
+  @override
   String get contentCategoryHeavy => '重武器';
 
   @override
@@ -6725,6 +6730,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get homeStoreOutdated => '商店已刷新。ValHub 暂时无法加载新的商店。';
+
+  @override
   String get communityErrorConsent => '请同意与社区分享你的 Riot ID 以继续。';
 
   @override
@@ -7188,6 +7196,11 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get commonYesterdayTitle => '昨天';
+
+  @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'Riot 登入已過期 — 正在顯示已儲存的資料（$time）。';
+  }
 
   @override
   String get contentCategoryHeavy => '重型武器';
@@ -13519,6 +13532,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String homeWinStreak(int n) {
     return '競技模式 $n 連勝';
   }
+
+  @override
+  String get homeStoreOutdated => '商店已更新。ValHub 暫時無法載入新的商店。';
 
   @override
   String get communityErrorConsent => '請同意與社群分享你的 Riot ID 以繼續。';

@@ -398,6 +398,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get commonYesterdayTitle => '昨日';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'Riotのログインが期限切れです — 保存済みのデータを表示中（$time）。';
+  }
+
+  @override
   String get contentCategoryHeavy => 'ヘヴィー武器';
 
   @override
@@ -6795,6 +6800,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String homeWinStreak(int n) {
     return 'コンペティティブ$n連勝';
   }
+
+  @override
+  String get homeStoreOutdated => 'ストアが更新されました。ValHubはまだ新しいストアを読み込めていません。';
 
   @override
   String get communityErrorConsent => '続けるには、コミュニティとのRiot IDの共有に同意してください。';

@@ -449,6 +449,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get commonYesterdayTitle => 'Ontem';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'O login da Riot expirou — mostrando a versão salva ($time).';
+  }
+
+  @override
   String get contentCategoryHeavy => 'Armas Pesadas';
 
   @override
@@ -7551,6 +7556,10 @@ class AppLocalizationsPt extends AppLocalizations {
     );
     return 'Sequência de $_temp0 no Competitivo';
   }
+
+  @override
+  String get homeStoreOutdated =>
+      'A loja mudou. O ValHub ainda não conseguiu carregar a nova.';
 
   @override
   String get communityErrorConsent =>

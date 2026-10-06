@@ -667,6 +667,16 @@
     "description": "CommonStrings.yesterdayTitle — Time (VF §8.0 rule 7)",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
+  "commonSavedCopyNeedsLogin": "Đăng nhập Riot đã hết hạn — đang hiển thị bản đã lưu ({time}).",
+  "@commonSavedCopyNeedsLogin": {
+    "description": "Strip above store / Battle Pass data shown from the saved copy because the Riot sign-in expired (next to an \"Đăng nhập lại\" button). {time} is \"14:05\" or \"14:05, 06/10\".",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    },
+    "x-context": "lib/core/ui/saved_copy_notice.dart"
+  },
   "contentCategoryHeavy": "Vũ khí hạng nặng",
   "@contentCategoryHeavy": {
     "description": "ContentStrings.categoryHeavy — Weapon categories keyed by `EEquippableCategory::*` (VF §8.6)",
@@ -11570,6 +11580,11 @@
       }
     },
     "x-context": "lib/features/home/home_strings.dart"
+  },
+  "homeStoreOutdated": "Cửa hàng đã đổi. ValHub chưa tải được cửa hàng mới.",
+  "@homeStoreOutdated": {
+    "description": "Home store card: the saved daily store already reset and the new one could not be loaded (expired sign-in, offline, maintenance). Replaces the skins and the countdown.",
+    "x-context": "lib/features/home/ui/cards/store_home_card.dart"
   },
   "communityErrorConsent": "Hãy đồng ý chia sẻ Riot ID với Cộng đồng để tiếp tục.",
   "@communityErrorConsent": {

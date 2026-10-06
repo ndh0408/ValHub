@@ -824,6 +824,12 @@ abstract class AppLocalizations {
   /// **'Hôm qua'**
   String get commonYesterdayTitle;
 
+  /// Strip above store / Battle Pass data shown from the saved copy because the Riot sign-in expired (next to an "Đăng nhập lại" button). {time} is "14:05" or "14:05, 06/10".
+  ///
+  /// In vi, this message translates to:
+  /// **'Đăng nhập Riot đã hết hạn — đang hiển thị bản đã lưu ({time}).'**
+  String commonSavedCopyNeedsLogin(String time);
+
   /// ContentStrings.categoryHeavy — Weapon categories keyed by `EEquippableCategory::*` (VF §8.6)
   ///
   /// In vi, this message translates to:
@@ -11474,6 +11480,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chuỗi {n} trận thắng xếp hạng'**
   String homeWinStreak(int n);
+
+  /// Home store card: the saved daily store already reset and the new one could not be loaded (expired sign-in, offline, maintenance). Replaces the skins and the countdown.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cửa hàng đã đổi. ValHub chưa tải được cửa hàng mới.'**
+  String get homeStoreOutdated;
 
   /// CommunityStrings.errorConsent — consent
   ///

@@ -461,6 +461,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get commonYesterdayTitle => 'Вчера';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'Вход в Riot истёк — показаны сохраненные данные ($time).';
+  }
+
+  @override
   String get contentCategoryHeavy => 'Тяжелое оружие';
 
   @override
@@ -7723,6 +7728,10 @@ class AppLocalizationsRu extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get homeStoreOutdated =>
+      'Магазин обновился. ValHub пока не смог загрузить новый.';
 
   @override
   String get communityErrorConsent =>

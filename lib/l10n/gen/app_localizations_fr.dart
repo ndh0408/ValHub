@@ -449,6 +449,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get commonYesterdayTitle => 'Hier';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'Connexion Riot expirée : affichage de la version enregistrée ($time).';
+  }
+
+  @override
   String get contentCategoryHeavy => 'Armes lourdes';
 
   @override
@@ -7545,6 +7550,10 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get homeStoreOutdated =>
+      'La boutique a changé. ValHub n\'a pas encore pu charger la nouvelle.';
 
   @override
   String get communityErrorConsent =>

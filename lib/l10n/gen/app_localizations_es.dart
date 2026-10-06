@@ -452,6 +452,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get commonYesterdayTitle => 'Ayer';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'El inicio de sesión de Riot ha caducado: mostrando la versión guardada ($time).';
+  }
+
+  @override
   String get contentCategoryHeavy => 'Armas pesadas';
 
   @override
@@ -7544,6 +7549,10 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get homeStoreOutdated =>
+      'La tienda ha cambiado. ValHub aún no ha podido cargar la nueva.';
+
+  @override
   String get communityErrorConsent =>
       'Acepta compartir tu Riot ID con la Comunidad para continuar.';
 
@@ -7713,6 +7722,11 @@ class AppLocalizationsEsMx extends AppLocalizationsEs {
 
   @override
   String get commonTabSettings => 'Configuración';
+
+  @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'El inicio de sesión de Riot expiró: mostrando la versión guardada ($time).';
+  }
 
   @override
   String get contentCategorySmg => 'Subametralladoras';
@@ -8681,6 +8695,10 @@ class AppLocalizationsEsMx extends AppLocalizationsEs {
     );
     return '$_temp0';
   }
+
+  @override
+  String get homeStoreOutdated =>
+      'La tienda cambió. ValHub todavía no pudo cargar la nueva.';
 
   @override
   String get communityErrorForbidden =>

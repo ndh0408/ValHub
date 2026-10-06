@@ -398,6 +398,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get commonYesterdayTitle => '어제';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'Riot 로그인이 만료되었습니다 — 저장된 데이터를 표시합니다($time).';
+  }
+
+  @override
   String get contentCategoryHeavy => '중화기';
 
   @override
@@ -6790,6 +6795,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String homeWinStreak(int n) {
     return '경쟁전 $n연승';
   }
+
+  @override
+  String get homeStoreOutdated => '상점이 바뀌었습니다. ValHub가 아직 새 상점을 불러오지 못했습니다.';
 
   @override
   String get communityErrorConsent => '계속하려면 커뮤니티와 Riot ID 공유에 동의하세요.';

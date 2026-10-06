@@ -450,6 +450,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commonYesterdayTitle => 'Gestern';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'Riot-Anmeldung abgelaufen – gespeicherter Stand wird angezeigt ($time).';
+  }
+
+  @override
   String get contentCategoryHeavy => 'Schwere Waffen';
 
   @override
@@ -7491,6 +7496,10 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get homeStoreOutdated =>
+      'Der Shop wurde erneuert. ValHub konnte den neuen noch nicht laden.';
 
   @override
   String get communityErrorConsent =>

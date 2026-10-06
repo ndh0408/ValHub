@@ -407,6 +407,11 @@ class AppLocalizationsId extends AppLocalizations {
   String get commonYesterdayTitle => 'Kemarin';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'Login Riot sudah kedaluwarsa — menampilkan data tersimpan ($time).';
+  }
+
+  @override
   String get contentCategoryHeavy => 'Senjata Berat';
 
   @override
@@ -6980,6 +6985,10 @@ class AppLocalizationsId extends AppLocalizations {
   String homeWinStreak(int n) {
     return '$n kemenangan Competitive beruntun';
   }
+
+  @override
+  String get homeStoreOutdated =>
+      'Toko sudah berganti. ValHub belum bisa memuat toko yang baru.';
 
   @override
   String get communityErrorConsent =>

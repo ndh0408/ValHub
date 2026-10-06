@@ -403,6 +403,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get commonYesterdayTitle => 'เมื่อวาน';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'การเข้าสู่ระบบ Riot หมดอายุแล้ว — กำลังแสดงข้อมูลที่บันทึกไว้ ($time)';
+  }
+
+  @override
   String get contentCategoryHeavy => 'อาวุธร้ายแรง';
 
   @override
@@ -6920,6 +6925,10 @@ class AppLocalizationsTh extends AppLocalizations {
   String homeWinStreak(int n) {
     return 'ชนะ Competitive ติดกัน $n แมตช์';
   }
+
+  @override
+  String get homeStoreOutdated =>
+      'ร้านค้าเปลี่ยนแล้ว ValHub ยังโหลดร้านค้าใหม่ไม่ได้';
 
   @override
   String get communityErrorConsent =>

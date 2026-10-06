@@ -405,6 +405,11 @@ class AppLocalizationsTr extends AppLocalizations {
   String get commonYesterdayTitle => 'Dün';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'Riot oturumunun süresi doldu — kayıtlı veriler gösteriliyor ($time).';
+  }
+
+  @override
   String get contentCategoryHeavy => 'Ağır Silahlar';
 
   @override
@@ -6985,6 +6990,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String homeWinStreak(int n) {
     return '$n maçlık Rekabete Dayalı galibiyet serisi';
   }
+
+  @override
+  String get homeStoreOutdated =>
+      'Mağaza yenilendi. ValHub yeni mağazayı henüz yükleyemedi.';
 
   @override
   String get communityErrorConsent =>

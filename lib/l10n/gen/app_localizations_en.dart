@@ -448,6 +448,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonYesterdayTitle => 'Yesterday';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'Riot sign-in expired — showing saved data ($time).';
+  }
+
+  @override
   String get contentCategoryHeavy => 'Heavy Weapons';
 
   @override
@@ -7471,6 +7476,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String homeWinStreak(int n) {
     return '$n-match Competitive win streak';
   }
+
+  @override
+  String get homeStoreOutdated =>
+      'The store has refreshed. ValHub couldn\'t load the new one yet.';
 
   @override
   String get communityErrorConsent =>

@@ -403,6 +403,11 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonYesterdayTitle => 'Hôm qua';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'Đăng nhập Riot đã hết hạn — đang hiển thị bản đã lưu ($time).';
+  }
+
+  @override
   String get contentCategoryHeavy => 'Vũ khí hạng nặng';
 
   @override
@@ -6934,6 +6939,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String homeWinStreak(int n) {
     return 'Chuỗi $n trận thắng xếp hạng';
   }
+
+  @override
+  String get homeStoreOutdated =>
+      'Cửa hàng đã đổi. ValHub chưa tải được cửa hàng mới.';
 
   @override
   String get communityErrorConsent =>

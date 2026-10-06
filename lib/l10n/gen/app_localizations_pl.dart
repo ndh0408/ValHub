@@ -462,6 +462,11 @@ class AppLocalizationsPl extends AppLocalizations {
   String get commonYesterdayTitle => 'Wczoraj';
 
   @override
+  String commonSavedCopyNeedsLogin(String time) {
+    return 'Logowanie do Riot wygasło — pokazujemy zapisane dane ($time).';
+  }
+
+  @override
   String get contentCategoryHeavy => 'Broń ciężka';
 
   @override
@@ -7525,6 +7530,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String homeWinStreak(int n) {
     return 'Seria wygranych w rankingowych: $n';
   }
+
+  @override
+  String get homeStoreOutdated =>
+      'Sklep się zmienił. ValHub nie zdołał jeszcze wczytać nowego.';
 
   @override
   String get communityErrorConsent =>
