@@ -1,7 +1,5 @@
 import 'package:valvn/core/l10n/labels/content_labels.dart';
 
-import 'dart:math' as math;
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -121,7 +119,7 @@ class _FormBody extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _WinRateRing(rate: rate),
+              WinRateRing(rate: rate),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -287,96 +285,4 @@ class _OutcomeStrip extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Circular win-rate gauge with the percentage in Anton.
-class _WinRateRing extends StatelessWidget {
-  const _WinRateRing({required this.rate});
-
-  final double? rate;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = valColorsOf(context);
-    final r = rate;
-    final color = r == null
-        ? colors.draw
-        : r >= 0.5
-        ? colors.win
-        : colors.loss;
-    return Semantics(
-      container: true,
-      label: context.l10n.profileWinRate,
-      value: r == null ? context.l10n.competitiveNoValue : formatPercent(r),
-      excludeSemantics: true,
-      child: SizedBox.square(
-        dimension: 72,
-        child: TweenAnimationBuilder<double>(
-          tween: Tween(end: r ?? 0),
-          duration: ValMotion.slow,
-          curve: ValMotion.curve,
-          builder: (context, t, child) => CustomPaint(
-            painter: _RingPainter(value: t, color: color, track: colors.track),
-            child: child,
-          ),
-          child: Center(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Text(
-                  r == null
-                      ? context.l10n.competitiveNoValue
-                      : formatPercent(r),
-                  maxLines: 1,
-                  style: ValText.display(20, color: color),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RingPainter extends CustomPainter {
-  _RingPainter({required this.value, required this.color, required this.track});
-
-  final double value;
-  final Color color;
-  final Color track;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    const stroke = 6.0;
-    final rect = (Offset.zero & size).deflate(stroke / 2);
-    canvas.drawArc(
-      rect,
-      0,
-      math.pi * 2,
-      false,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = stroke
-        ..color = track,
-    );
-    final v = value.clamp(0.0, 1.0);
-    if (v <= 0) return;
-    canvas.drawArc(
-      rect,
-      -math.pi / 2,
-      math.pi * 2 * v,
-      false,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = stroke
-        ..strokeCap = StrokeCap.round
-        ..color = color,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_RingPainter old) =>
-      old.value != value || old.color != color || old.track != track;
 }

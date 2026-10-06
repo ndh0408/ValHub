@@ -29,8 +29,6 @@ abstract final class ProfileStrings {
     PerfSegment.agents => 'Đặc vụ',
     PerfSegment.maps => 'Bản đồ',
     PerfSegment.queues => 'Chế độ',
-    PerfSegment.sides => 'Tấn công / Phòng thủ',
-    PerfSegment.trend => 'Xu hướng',
   };
   static const title = 'Hồ sơ';
   static const rankUpTitle = 'Tính toán lên hạng';
