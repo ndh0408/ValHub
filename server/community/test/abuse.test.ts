@@ -226,7 +226,8 @@ describe('report-hiding rule', () => {
     for (const r of answers) {
       expect(r.status).toBe(204);
       expect(r.bytes.length).toBe(0);
-      expect([...r.headers.keys()].filter((h) => h.startsWith('x-'))).toEqual([]);
+      // Only the per-request random id, which every response carries (it reveals nothing).
+      expect([...r.headers.keys()].filter((h) => h.startsWith('x-') && h !== 'x-request-id')).toEqual([]);
     }
     expect(hidden()).toBe(false);
     expect(e.db.prepare('SELECT COUNT(*) AS n FROM reports WHERE target_id = ?').get(post)).toEqual({ n: 3 }); // no self-report row

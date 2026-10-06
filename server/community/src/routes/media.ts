@@ -72,13 +72,12 @@ export function registerMedia(app: Hono, x: Ctx): void {
     // Storage limits: per user (their problem: 400) and total (ours: 507).
     x.assertCurrentUser(c);
     const { mediaUserQuotaBytes: userQuota, mediaMaxTotalBytes: totalCap } = x.tuning;
+    // Same reason codes as the transactional check in the repo, so the app shows the right message.
     if (x.repo.mediaBytes(user.id) + clean.bytes.length > userQuota) {
-      throw invalid(
-        `Bạn đã dùng hết dung lượng ảnh (${mb(userQuota)} MB). Hãy xóa bớt bài viết có ảnh rồi thử lại.`,
-      );
+      throw reasonError('invalid_input', 'quota_exceeded', { maxMb: mb(userQuota) });
     }
     if (x.repo.mediaBytes() + clean.bytes.length > totalCap) {
-      throw new ApiError('storage_full', 'Kho ảnh của máy chủ đã đầy, vui lòng thử lại sau.');
+      throw reasonError('storage_full', 'storage_full');
     }
 
     const key = `u/${user.id}/${randomHex(16)}.${clean.ext}`;

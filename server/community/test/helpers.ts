@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { expect } from 'vitest';
 import { createApp } from '../src/app.js';
-import type { Tuning } from '../src/context.js';
+import type { AppDeps, Tuning } from '../src/context.js';
 import type { ContentCatalog } from '../src/content.js';
 import { DEFAULT_MIGRATIONS_DIR, openDatabase, type Db } from '../src/db/database.js';
 import { countryFromAlpha3 } from '../src/geo/countries.js';
@@ -45,6 +45,8 @@ export interface SetupOptions {
   ownership?: RiotOwnershipFn;
   /** Event-loop lag probe for load shedding (ms). */
   loadProbe?: () => number;
+  /** Receives the access log lines (route pattern, status, request id). */
+  logAccess?: AppDeps['logAccess'];
   /** Overrides of the non-tuning config (rotation secret, proxy trust, public base URL). */
   config?: { sessionSecretPrev?: string; trustProxy?: boolean; publicBaseUrl?: string; lfgCodeInList?: boolean };
 }
@@ -108,6 +110,7 @@ export function setup(opts: SetupOptions = {}) {
     now: () => clock.t,
     loadProbe: opts.loadProbe,
     logError: (m) => errors.push(m),
+    logAccess: opts.logAccess,
   });
 
   async function req(method: string, p: string, o: ReqOpts = {}): Promise<Res> {

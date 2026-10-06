@@ -133,7 +133,7 @@ export function registerAuth(app: Hono, x: Ctx): void {
     const cardId = parseOptional(body, 'cardId', (v) => parseUuid(v, 'cardId'));
     const rankTier = parseOptional(body, 'rankTier', parseRankTier);
     const regionRaw = parseOptional(body, 'region', parseRegion);
-    if (regionRaw === null) throw new ApiError('invalid_input', 'region không được để trống.');
+    if (regionRaw === null) throw invalid('region không được để trống.', 'field_empty', { field: 'region' });
     const region: Region | undefined = regionRaw;
     const languageRaw = parseOptional(body, 'language', (v) => parseLanguage(v, 'language'));
     if (languageRaw === null) throw invalid('language không được để trống.', 'field_empty', { field: 'language' });

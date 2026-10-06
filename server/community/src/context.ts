@@ -90,7 +90,7 @@ export interface AppDeps {
   /** Error sink; receives only error names/messages, never request data. */
   logError?: (msg: string) => void;
   /** Fixed route patterns only; never the URL path, query, headers or content. */
-  logAccess?: (entry: { method: string; route: string; status: number; durationMs: number }) => void;
+  logAccess?: (entry: { method: string; route: string; status: number; durationMs: number; requestId: string }) => void;
 }
 
 export type App = Hono;

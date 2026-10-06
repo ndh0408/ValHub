@@ -66,12 +66,14 @@ export function reasonError(code: ErrorCode, reason: Reason, params: ReasonParam
   return new ApiError(code, message, retryAfter, { reason, params, messageEn });
 }
 
-export function errorBody(err: ApiError): Record<string, unknown> {
+/** The JSON error body; [requestId] lets support match a user's report with the server log. */
+export function errorBody(err: ApiError, requestId?: string): Record<string, unknown> {
   const error: Record<string, unknown> = { code: err.code, message: err.message };
   if (err.extra.messageEn !== undefined) error.messageEn = err.extra.messageEn;
   if (err.extra.reason !== undefined) error.reason = err.extra.reason;
   if (err.extra.params !== undefined && Object.keys(err.extra.params).length > 0) error.params = err.extra.params;
   if (err.retryAfter !== undefined) error.retryAfter = err.retryAfter;
+  if (requestId !== undefined) error.requestId = requestId;
   return { error };
 }
 

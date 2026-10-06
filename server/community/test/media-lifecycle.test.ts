@@ -97,6 +97,9 @@ describe('storage quotas', () => {
     const full = await upload(token, PNG);
     expectError(full, 400, 'invalid_input');
     expect(full.json.error.message).toContain('dung lượng ảnh');
+    // The specific reason, so the app explains the quota instead of "content not accepted".
+    expect(full.json.error.reason).toBe('quota_exceeded');
+    expect(full.json.error.params).toEqual({ maxMb: expect.any(Number) });
     // Other users are not affected by alice's quota.
     expect((await upload(other.token, PNG)).status).toBe(200);
     // Deleting the post that uses an image gives the space back.
@@ -115,6 +118,7 @@ describe('storage quotas', () => {
     expect((await upload(b.token, PNG)).status).toBe(200);
     const full = await upload(a.token, PNG);
     expectError(full, 507, 'storage_full');
+    expect(full.json.error.reason).toBe('storage_full');
     expect(e.db.prepare('SELECT COUNT(*) AS n FROM media').get()).toEqual({ n: 2 });
     expect(fs.readdirSync(path.join(e.mediaDir, 'u')).length).toBe(2);
   });

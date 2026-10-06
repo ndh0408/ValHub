@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { Ctx, type AppDeps } from './context.js';
@@ -17,6 +18,19 @@ import { registerIdempotency } from './idempotency.js';
 export type { AppDeps } from './context.js';
 
 const MAX_JSON_BYTES = 64 * 1024;
+
+/**
+ * A client may send its own `x-request-id` (an opaque token it generated) so a bug report can quote the
+ * id the server logged; anything that is not such a token is replaced. Never derived from the user.
+ */
+const REQUEST_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{7,63}$/;
+
+/** Request id of each request: echoed in `x-request-id`, error bodies, the access and error logs. */
+const requestIds = new WeakMap<Request, string>();
+
+export function requestIdOf(req: Request): string | undefined {
+  return requestIds.get(req);
+}
 
 const jsonBodyLimit = bodyLimit({
   maxSize: MAX_JSON_BYTES,
@@ -41,11 +55,15 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
   // error for a media path (404!) would otherwise be cached at the edge and outlive a later upload.
   app.use('*', async (c, next) => {
     const started = performance.now();
+    const given = c.req.header('x-request-id');
+    const requestId = given && REQUEST_ID.test(given) ? given : randomUUID();
+    requestIds.set(c.req.raw, requestId);
     await next();
+    c.res.headers.set('x-request-id', requestId);
     if (!c.req.path.startsWith('/healthz')) x.stats.recordHttp(c.res.status);
     if (!c.req.path.startsWith('/healthz')) deps.logAccess?.({
       method: c.req.method, route: c.req.routePath || 'unmatched', status: c.res.status,
-      durationMs: Math.round(performance.now() - started),
+      durationMs: Math.round(performance.now() - started), requestId,
     });
     if (!c.res.headers.has('cache-control')) c.res.headers.set('cache-control', 'no-store');
     if (c.res.status >= 400) x.stats.inc(`${c.res.status}:${c.req.routePath ?? 'unmatched'}`);
@@ -103,7 +121,7 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
 
   app.notFound((c) => {
     const err = new ApiError('not_found', 'Không tìm thấy đường dẫn.');
-    return c.body(JSON.stringify(errorBody(err)), 404, {
+    return c.body(JSON.stringify(errorBody(err, requestIdOf(c.req.raw))), 404, {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store',
     });
@@ -114,8 +132,8 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
     if (e instanceof ApiError) {
       err = e;
     } else {
-      // Only the error name/message is logged — never headers, bodies or tokens.
-      logError(`[${c.req.method} ${c.req.routePath}] ${e.name}`);
+      // Only the error name and the request id are logged — never headers, bodies or tokens.
+      logError(`[${c.req.method} ${c.req.routePath}] ${e.name} id=${requestIdOf(c.req.raw) ?? '-'}`);
       err = reasonError('server_error', 'server_error');
     }
     const headers: Record<string, string> = {
@@ -123,7 +141,7 @@ export function createAppWithCtx(deps: AppDeps): { app: Hono; ctx: Ctx } {
       'cache-control': 'no-store',
     };
     if (err.retryAfter !== undefined) headers['retry-after'] = String(err.retryAfter);
-    return c.body(JSON.stringify(errorBody(err)), err.status as 400, headers);
+    return c.body(JSON.stringify(errorBody(err, requestIdOf(c.req.raw))), err.status as 400, headers);
   });
 
   return { app, ctx: x };
