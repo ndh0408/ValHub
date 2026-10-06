@@ -36,13 +36,25 @@ SCRIPT = {  # non-Latin locales: a translated message must contain this script
     'ja': r'[぀-ヿ一-鿿]', 'ko': r'[가-힯]',
     'zh': r'[一-鿿]', 'zh_Hant': r'[一-鿿]',
 }
-# Letters that occur in Vietnamese but in none of the other 17 languages.
+# Letters that occur in Vietnamese but in none of the other 17 languages
+# (ã/Ã are Portuguese too).
 VI_ONLY = re.compile(
-    '[ạảãầấậẩẫằắặẳẵẹẻẽềếệểễỉĩịọỏồốộổỗơờớợởỡụủũưừứựửữỳỵỷỹđăĂ'
-    'ẠẢÃẦẤẬẨẪẰẮẶẲẴẸẺẼỀẾỆỂỄỈĨỊỌỎỒỐỘỔỖƠỜỚỢỞỠỤỦŨƯỪỨỰỬỮỲỴỶỸĐ]')
+    '[ạảầấậẩẫằắặẳẵẹẻẽềếệểễỉĩịọỏồốộổỗơờớợởỡụủũưừứựửữỳỵỷỹđăĂ'
+    'ẠẢẦẤẬẨẪẰẮẶẲẴẸẺẼỀẾỆỂỄỈĨỊỌỎỒỐỘỔỖƠỜỚỢỞỠỤỦŨƯỪỨỰỬỮỲỴỶỸĐ]')
 # A message made only of capitals, digits, symbols and placeholders ("VP",
 # "{a}/{b}", "K/D/A") legitimately has no character of the target script.
+# The publisher's legal name keeps its Vietnamese spelling in every locale.
+PUBLISHER = 'Nguyễn Đức Huy'
 SCRIPT_FREE_OK = re.compile(r'^[A-Z0-9\s\W_]*$')
+def _number_word():
+    path = os.path.join(ROOT, 'tool', 'l10n', 'allowlist.yaml')
+    if not os.path.exists(path):
+        return set()
+    with open(path, encoding='utf-8') as f:
+        return {line.strip()[2:].strip() for line in f if line.strip().startswith('- ')}
+
+
+NUMBER_WORD = _number_word()
 NAME = re.compile(r'[A-Za-z_][A-Za-z0-9_]*')
 SELECTOR = re.compile(r'=?[A-Za-z0-9_]+')
 
@@ -64,6 +76,7 @@ class IcuError(Exception):
 def parse(msg):
     """(argument names, [(plural name, cases)], [(select name, cases)])."""
     args, plurals, selects = set(), [], []
+    bodies = {}
     pos = [0]
 
     def ws():
@@ -122,12 +135,15 @@ def parse(msg):
             if pos[0] >= len(msg) or msg[pos[0]] != '{':
                 raise IcuError(f'expected {{ after selector {sel}')
             pos[0] += 1
+            start = pos[0]
             message(True)
+            bodies[(name, sel)] = msg[start:pos[0]]
             pos[0] += 1
             cases.add(sel)
         (plurals if kind == 'plural' else selects).append((name, cases))
 
     message(False)
+    parse.bodies = bodies
     return args, plurals, selects
 
 
@@ -135,7 +151,7 @@ def ws_shape(s):
     return (s[:1].isspace(), s[-1:].isspace(), s.count('\n'), s.endswith('…'))
 
 
-def check_one(code, vi, text, meta):
+def check_one(code, vi, text, meta, key=''):
     if not isinstance(text, str) or not text.strip():
         return ['empty or not a string']
     try:
@@ -143,7 +159,14 @@ def check_one(code, vi, text, meta):
         a_t, p_t, s_t = parse(text)
     except IcuError as e:
         return [f'ICU: {e}']
+    bodies = parse.bodies
     errs = []
+    for name, cases in p_t:
+        for sel in cases:
+            if (not sel.startswith('=') and '{' + name + '}' not in bodies[(name, sel)]
+                    and f'{code}.{key}.{sel}' not in NUMBER_WORD):
+                errs.append(f'plural {name}: the "{sel}" branch drops {{{name}}}; keep the '
+                            f'number (or ask for an allowlist entry if the wording says it)')
     if a_t != a_vi:
         errs.append(f'placeholders {sorted(a_t)} != source {sorted(a_vi)}')
     types = {k: (v or {}).get('type')
@@ -166,14 +189,15 @@ def check_one(code, vi, text, meta):
     if ws_shape(text) != ws_shape(vi):
         errs.append('whitespace/ellipsis shape differs from the source '
                     '(leading/trailing space, newline count, trailing …)')
-    if code != 'vi' and VI_ONLY.search(text):
+    if (code != 'vi' and not meta.get('x-locked')
+            and VI_ONLY.search(text.replace(PUBLISHER, ''))):
         errs.append('contains Vietnamese letters')
     if meta.get('x-locked') and text != vi:
         errs.append('locked message must be copied verbatim')
     pat = SCRIPT.get(code)
     if pat and not meta.get('x-locked'):
-        plain = re.sub(r'\{\w+\}', '', text)
-        if (len(plain.strip()) > 3 and not re.search(pat, plain)
+        plain = re.sub(r'\{[A-Za-z0-9_]+\}', '', text)
+        if (text != vi and len(plain.strip()) > 3 and not re.search(pat, plain)
                 and not SCRIPT_FREE_OK.match(plain)):
             errs.append('no character of the target script')
     return errs
@@ -230,11 +254,41 @@ def check(work, code, only=None):
                     bad += 1
                 continue
             total += 1
-            for e in check_one(code, r['vi'], out[k], j.get('@' + k, {})):
+            for e in check_one(code, r['vi'], out[k], j.get('@' + k, {}), k):
                 print(f'{stem}:{k}: {e}')
                 bad += 1
     print(f'{code}: {total} messages checked, {bad} problems')
     return bad
+
+
+_EXACT = {'=0': 'zero', '=1': 'one', '=2': 'two'}
+
+
+def _branch_span(msg, start):
+    """End index (exclusive) of the `{...}` branch body opening at [start]."""
+    depth = 0
+    for i in range(start, len(msg)):
+        if msg[i] == '{':
+            depth += 1
+        elif msg[i] == '}':
+            depth -= 1
+            if depth == 0:
+                return i + 1
+    raise IcuError('unterminated branch')
+
+
+def drop_colliding_exact_cases(msg):
+    """gen-l10n maps =0/=1/=2 onto zero/one/two: when both exist the exact
+    case is silently overridden, so drop it (the category text stays)."""
+    for exact, category in _EXACT.items():
+        while True:
+            m = re.search(r'(?<![\w=])' + exact + r'\s*\{', msg)
+            if not m or not re.search(r'(?<![\w=])' + category + r'\s*\{', msg):
+                break
+            end = _branch_span(msg, m.end() - 1)
+            msg = (msg[:m.start()].rstrip() + ' ' + msg[end:].lstrip()).replace(', ', ', ', 1)
+            msg = re.sub(r',\s*plural,\s+', ', plural, ', msg)
+    return msg
 
 
 def merge(work, code):
@@ -243,10 +297,16 @@ def merge(work, code):
     folder = os.path.join(work, 'out', code)
     for c in sorted(os.listdir(folder)):
         merged.update(load(os.path.join(folder, c)))
+    j, _ = template()
     doc = {'@@locale': code}
     for k in keys:
-        if k in merged:
-            doc[k] = merged[k]
+        if j.get('@' + k, {}).get('x-locked'):
+            if code != 'es_MX':  # es_MX inherits locked keys from es
+                doc[k] = j[k]
+        elif k in merged:
+            # Translators may strip the accents of the publisher's legal name.
+            doc[k] = drop_colliding_exact_cases(
+                merged[k].replace('Nguyen Duc Huy', PUBLISHER))
     path = os.path.join(ARB_DIR, f'app_{code}.arb')
     with open(path, 'w', encoding='utf-8', newline='\n') as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)

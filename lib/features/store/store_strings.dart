@@ -93,7 +93,7 @@ abstract final class StoreStrings {
   static const shareCardNightMarket = 'Chợ Đêm';
   static const shareCardBrand = 'ValHub';
   static const shareCardMark = 'V';
-  static const shareCardWatermark = 'VALVN';
+  static const shareCardWatermark = 'VALHUB';
   static const shareCardTagline = 'Trợ thủ VALORANT của bạn';
   static const shareCardPriceNote = 'Giá quy đổi chỉ là ước tính theo gói VP.';
 

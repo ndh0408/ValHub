@@ -4822,7 +4822,8 @@
   "communityGoogleDisclaimer": "THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.",
   "@communityGoogleDisclaimer": {
     "description": "CommunityStrings.googleDisclaimer — translation",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityGoogleDisclaimerTitle": "Bản dịch của Google",
   "@communityGoogleDisclaimerTitle": {
@@ -4975,87 +4976,104 @@
   "communityLanguageNamesAr": "العربية",
   "@communityLanguageNamesAr": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesDe": "Deutsch",
   "@communityLanguageNamesDe": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesEn": "English",
   "@communityLanguageNamesEn": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesEs": "Español",
   "@communityLanguageNamesEs": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesFr": "Français",
   "@communityLanguageNamesFr": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesId": "Bahasa Indonesia",
   "@communityLanguageNamesId": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesIt": "Italiano",
   "@communityLanguageNamesIt": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesJa": "日本語",
   "@communityLanguageNamesJa": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesKo": "한국어",
   "@communityLanguageNamesKo": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesPl": "Polski",
   "@communityLanguageNamesPl": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesPt": "Português",
   "@communityLanguageNamesPt": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesRu": "Русский",
   "@communityLanguageNamesRu": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesTh": "ไทย",
   "@communityLanguageNamesTh": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesTr": "Türkçe",
   "@communityLanguageNamesTr": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesVi": "Tiếng Việt",
   "@communityLanguageNamesVi": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesZhCN": "简体中文",
   "@communityLanguageNamesZhCN": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguageNamesZhTW": "繁體中文",
   "@communityLanguageNamesZhTW": {
     "description": "VALORANT languages by their native names (not translated).",
-    "x-context": "lib/features/community/community_strings.dart"
+    "x-context": "lib/features/community/community_strings.dart",
+    "x-locked": true
   },
   "communityLanguagesSelected": "{n} ngôn ngữ",
   "@communityLanguagesSelected": {
@@ -10174,10 +10192,11 @@
     },
     "x-context": "lib/features/store/store_strings.dart"
   },
-  "storeShareCardWatermark": "VALVN",
+  "storeShareCardWatermark": "VALHUB",
   "@storeShareCardWatermark": {
     "description": "StoreStrings.shareCardWatermark — \"Chia sẻ ảnh\": branded picture of the daily shop / Night Market.",
-    "x-context": "lib/features/store/store_strings.dart"
+    "x-context": "lib/features/store/store_strings.dart",
+    "x-locked": true
   },
   "storeShareDailyTitle": "Chia sẻ cửa hàng hôm nay",
   "@storeShareDailyTitle": {

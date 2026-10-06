@@ -6044,7 +6044,7 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get storeShareCardWatermark => 'VALVN';
+  String get storeShareCardWatermark => 'VALHUB';
 
   @override
   String get storeShareDailyTitle => 'Chia sẻ cửa hàng hôm nay';

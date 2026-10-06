@@ -1,0 +1,7 @@
+# Exceptions to tool/l10n_check.dart (format: see parseAllowlist).
+#
+# number-word: plural branches that may omit the count because the
+# wording already says the number ("Última partida" = the last 1 match).
+number-word:
+  - pt.profileFormSemantics.one
+  - es.profileFormSemantics.one

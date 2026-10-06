@@ -5,6 +5,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
+import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_pt.dart';
 import 'app_localizations_vi.dart';
 
 // ignore_for_file: type=lint
@@ -92,7 +98,15 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('vi')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
+    Locale('en'),
+    Locale('es'),
+    Locale('fr'),
+    Locale('ja'),
+    Locale('pt'),
+    Locale('vi'),
+  ];
 
   /// Separator between item names in a localized list.
   ///
@@ -10308,7 +10322,7 @@ abstract class AppLocalizations {
   /// StoreStrings.shareCardWatermark — "Chia sẻ ảnh": branded picture of the daily shop / Night Market.
   ///
   /// In vi, this message translates to:
-  /// **'VALVN'**
+  /// **'VALHUB'**
   String get storeShareCardWatermark;
 
   /// StoreStrings.shareDailyTitle — "Chia sẻ ảnh": branded picture of the daily shop / Night Market.
@@ -11446,8 +11460,15 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['vi'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'de',
+    'en',
+    'es',
+    'fr',
+    'ja',
+    'pt',
+    'vi',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -11456,6 +11477,18 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'ja':
+      return AppLocalizationsJa();
+    case 'pt':
+      return AppLocalizationsPt();
     case 'vi':
       return AppLocalizationsVi();
   }
