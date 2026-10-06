@@ -1126,6 +1126,7 @@
   "liveGameYou": "あなた",
   "liveGameYouHover": "{agent}を選択中",
   "liveGameYouLocked": "{agent}をロックインしました",
+  "liveGamePickInGame": "エージェントの選択とロックはVALORANT内で行ってください。ValHubは残り時間と味方チームのみを表示します。",
   "profileWinLossSummary": "{wins}勝 – {losses}敗{draws, plural, =0{} other{ – {draws}分}}{unknown, plural, =0{} other{ – 結果不明{unknown}試合}}",
   "profileDeviceTimeZone": "端末の時刻（{offset}）",
   "profileKillDescription": "{killer}が{victim}をキル{hasWeapon, select, yes{（{weapon}）} other{}}（{time}）",

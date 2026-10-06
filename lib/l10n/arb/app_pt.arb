@@ -1126,6 +1126,7 @@
   "liveGameYou": "VOCÊ",
   "liveGameYouHover": "Você está selecionando {agent}",
   "liveGameYouLocked": "Você confirmou {agent}",
+  "liveGamePickInGame": "Escolha e confirme seu agente no VALORANT. O ValHub só mostra o tempo restante e o seu time.",
   "profileWinLossSummary": "{wins, plural, one{{wins} vitória} other{{wins} vitórias}} – {losses, plural, one{{losses} derrota} other{{losses} derrotas}}{draws, plural, =0{} one{ – {draws} empate} other{ – {draws} empates}}{unknown, plural, =0{} one{ – {unknown} partida sem resultado conhecido} other{ – {unknown} partidas sem resultado conhecido}}",
   "profileDeviceTimeZone": "horário do dispositivo ({offset})",
   "profileKillDescription": "{killer} abateu {victim}{hasWeapon, select, yes{ com {weapon}} other{}} ({time})",

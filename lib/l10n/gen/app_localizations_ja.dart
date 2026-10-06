@@ -3896,6 +3896,10 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get liveGamePickInGame =>
+      'エージェントの選択とロックはVALORANT内で行ってください。ValHubは残り時間と味方チームのみを表示します。';
+
+  @override
   String profileWinLossSummary(int wins, int losses, int draws, int unknown) {
     String _temp0 = intl.Intl.pluralLogic(
       draws,

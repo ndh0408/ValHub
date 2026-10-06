@@ -6605,6 +6605,11 @@
     },
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
+  "liveGamePickInGame": "Chọn và khóa đặc vụ trong VALORANT. ValHub chỉ hiển thị thời gian còn lại và đội của bạn.",
+  "@liveGamePickInGame": {
+    "description": "Agent select (information only): agents are picked in the game, the app does not pick or lock agents (Riot bans instalock tools).",
+    "x-context": "lib/features/live_game/ui/agent_select_view.dart"
+  },
   "profileWinLossSummary": "{wins} thắng – {losses} thua{draws, plural, =0{} other{ – {draws} hòa}}{unknown, plural, =0{} other{ – {unknown} trận chưa rõ kết quả}}",
   "@profileWinLossSummary": {
     "description": "Explicit view-boundary statistics display; preserves verified VI text.",

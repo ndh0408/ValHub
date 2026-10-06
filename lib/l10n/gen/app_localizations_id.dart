@@ -3990,6 +3990,10 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String get liveGamePickInGame =>
+      'Pilih dan kunci agenmu di VALORANT. ValHub hanya menampilkan sisa waktu dan timmu.';
+
+  @override
   String profileWinLossSummary(int wins, int losses, int draws, int unknown) {
     String _temp0 = intl.Intl.pluralLogic(
       draws,

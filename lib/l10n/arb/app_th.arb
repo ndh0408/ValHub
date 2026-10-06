@@ -1126,6 +1126,7 @@
   "liveGameYou": "คุณ",
   "liveGameYouHover": "คุณกำลังเลือก {agent}",
   "liveGameYouLocked": "คุณล็อก {agent} แล้ว",
+  "liveGamePickInGame": "เลือกและล็อกเอเจนต์ใน VALORANT ValHub แสดงเฉพาะเวลาที่เหลือและทีมของคุณ",
   "profileWinLossSummary": "ชนะ {wins} – แพ้ {losses}{draws, plural, =0{} other{ – เสมอ {draws}}}{unknown, plural, =0{} other{ – ไม่ทราบผล {unknown} แมตช์}}",
   "profileDeviceTimeZone": "เวลาของอุปกรณ์ ({offset})",
   "profileKillDescription": "{killer} กำจัด {victim}{hasWeapon, select, yes{ ด้วย {weapon}} other{}} ({time})",

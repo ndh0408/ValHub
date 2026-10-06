@@ -6884,6 +6884,12 @@ abstract class AppLocalizations {
   /// **'Bạn đã khóa {agent}'**
   String liveGameYouLocked(String agent);
 
+  /// Agent select (information only): agents are picked in the game, the app does not pick or lock agents (Riot bans instalock tools).
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn và khóa đặc vụ trong VALORANT. ValHub chỉ hiển thị thời gian còn lại và đội của bạn.'**
+  String get liveGamePickInGame;
+
   /// Explicit view-boundary statistics display; preserves verified VI text.
   ///
   /// In vi, this message translates to:

@@ -3845,6 +3845,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get liveGamePickInGame => '请在 VALORANT 中选择并锁定英雄。ValHub 只显示剩余时间和你的队伍。';
+
+  @override
   String profileWinLossSummary(int wins, int losses, int draws, int unknown) {
     String _temp0 = intl.Intl.pluralLogic(
       draws,
@@ -10651,6 +10654,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String liveGameYouLocked(String agent) {
     return '你已鎖定 $agent';
   }
+
+  @override
+  String get liveGamePickInGame => '請在 VALORANT 中選擇並鎖定特務。ValHub 只會顯示剩餘時間和你的隊伍。';
 
   @override
   String profileWinLossSummary(int wins, int losses, int draws, int unknown) {

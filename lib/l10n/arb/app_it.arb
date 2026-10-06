@@ -1126,6 +1126,7 @@
   "liveGameYou": "TU",
   "liveGameYouHover": "Stai selezionando {agent}",
   "liveGameYouLocked": "Hai bloccato {agent}",
+  "liveGamePickInGame": "Scegli e blocca il tuo agente in VALORANT. ValHub mostra solo il tempo rimasto e la tua squadra.",
   "profileWinLossSummary": "{wins, plural, one{{wins} vittoria} other{{wins} vittorie}} – {losses, plural, one{{losses} sconfitta} other{{losses} sconfitte}}{draws, plural, =0{} one{ – {draws} pareggio} other{ – {draws} pareggi}}{unknown, plural, =0{} one{ – {unknown} partita con esito sconosciuto} other{ – {unknown} partite con esito sconosciuto}}",
   "profileDeviceTimeZone": "ora del dispositivo ({offset})",
   "profileKillDescription": "{killer} ha eliminato {victim}{hasWeapon, select, yes{ con {weapon}} other{}} ({time})",

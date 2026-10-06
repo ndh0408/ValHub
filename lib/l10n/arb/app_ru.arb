@@ -1126,6 +1126,7 @@
   "liveGameYou": "ВЫ",
   "liveGameYouHover": "Вы выбираете: {agent}",
   "liveGameYouLocked": "Вы зафиксировали: {agent}",
+  "liveGamePickInGame": "Выбирайте и фиксируйте агента в VALORANT. ValHub показывает только оставшееся время и вашу команду.",
   "profileWinLossSummary": "{wins, plural, one{{wins} победа} few{{wins} победы} many{{wins} побед} other{{wins} победы}} – {losses, plural, one{{losses} поражение} few{{losses} поражения} many{{losses} поражений} other{{losses} поражения}}{draws, plural, =0{} one{ – {draws} ничья} few{ – {draws} ничьи} many{ – {draws} ничьих} other{ – {draws} ничьи}}{unknown, plural, =0{} one{ – {unknown} матч с неизвестным результатом} few{ – {unknown} матча с неизвестным результатом} many{ – {unknown} матчей с неизвестным результатом} other{ – {unknown} матча с неизвестным результатом}}",
   "profileDeviceTimeZone": "время устройства ({offset})",
   "profileKillDescription": "{killer} убивает {victim}{hasWeapon, select, yes{ с помощью {weapon}} other{}} ({time})",

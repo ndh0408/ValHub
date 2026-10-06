@@ -1126,6 +1126,7 @@
   "liveGameYou": "أنت",
   "liveGameYouHover": "أنت تختار {agent}",
   "liveGameYouLocked": "قفلت {agent}",
+  "liveGamePickInGame": "اختر عميلك وثبّته داخل VALORANT. يعرض ValHub الوقت المتبقي وفريقك فقط.",
   "profileWinLossSummary": "{wins, plural, zero{{wins} انتصار} one{{wins} انتصار} two{{wins} انتصاران} few{{wins} انتصارات} many{{wins} انتصارًا} other{{wins} انتصار}} – {losses, plural, zero{{losses} خسارة} one{{losses} خسارة} two{{losses} خسارتان} few{{losses} خسارات} many{{losses} خسارة} other{{losses} خسارة}}{draws, plural, zero{} one{ – {draws} تعادل} two{ – {draws} تعادلان} few{ – {draws} تعادلات} many{ – {draws} تعادلًا} other{ – {draws} تعادل}}{unknown, plural, zero{} one{ – {unknown} مباراة نتيجتها غير معروفة} two{ – {unknown} مباراتان نتيجتهما غير معروفة} few{ – {unknown} مباريات نتيجتها غير معروفة} many{ – {unknown} مباراة نتيجتها غير معروفة} other{ – {unknown} مباراة نتيجتها غير معروفة}}",
   "profileDeviceTimeZone": "توقيت الجهاز ({offset})",
   "profileKillDescription": "{killer} أقصى {victim}{hasWeapon, select, yes{ باستخدام {weapon}} other{}} ({time})",

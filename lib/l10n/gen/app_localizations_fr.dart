@@ -4218,6 +4218,10 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get liveGamePickInGame =>
+      'Choisissez et verrouillez votre agent dans VALORANT. ValHub affiche seulement le temps restant et votre équipe.';
+
+  @override
   String profileWinLossSummary(int wins, int losses, int draws, int unknown) {
     String _temp0 = intl.Intl.pluralLogic(
       wins,
