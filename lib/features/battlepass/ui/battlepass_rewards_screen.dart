@@ -6,6 +6,8 @@ import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/ui/saved_copy_notice.dart';
+
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
@@ -122,7 +124,10 @@ class _BattlePassRewardsScreenState
       if (overview.contracts.isFromCache) {
         slivers.add(
           SliverToBoxAdapter(
-            child: BpOfflineNotice(receivedAt: overview.contracts.receivedAt),
+            child: SavedCopyNotice(
+              puuid: puuid,
+              receivedAt: overview.contracts.receivedAt,
+            ),
           ),
         );
       }

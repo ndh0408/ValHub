@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../content/content_db.dart';
 import '../../content/content_repository.dart';
+import '../../util/clock.dart';
 import '../../wishlist/wishlist_store.dart';
 import 'economy_fetch.dart';
 import 'storefront.dart';
@@ -237,9 +238,16 @@ List<WishlistHit> findWishlistHits(
 final wishlistHitsProvider = FutureProvider.autoDispose
     .family<List<WishlistHit>, String>((ref, puuid) async {
       final wishlist = ref.watch(wishlistProvider(puuid));
+      final now = ref.watch(clockProvider).now();
       final (storefront, db) = await awaitBoth(
         ref.watch(storefrontProvider(puuid).future),
         ref.watch(contentProvider.future),
       );
-      return findWishlistHits(storefront, wishlist, db);
+      // A saved storefront (sign-in expired, offline) can be days old: an
+      // offer whose rotation ended is no longer on sale and never shows as
+      // "available now" with its old price.
+      return List.unmodifiable([
+        for (final hit in findWishlistHits(storefront, wishlist, db))
+          if (hit.expiresAt == null || hit.expiresAt!.isAfter(now)) hit,
+      ]);
     });

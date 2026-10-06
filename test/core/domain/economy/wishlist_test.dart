@@ -10,6 +10,7 @@ import 'package:valvn/core/domain/economy/economy_strings.dart';
 import 'package:valvn/core/domain/economy/storefront.dart';
 import 'package:valvn/core/domain/economy/wishlist.dart';
 import 'package:valvn/core/storage/prefs.dart';
+import 'package:valvn/core/util/clock.dart';
 
 import '../../../helpers/test_prefs.dart';
 import 'economy_fixtures.dart';
@@ -171,6 +172,7 @@ void main() {
           prefsProvider.overrideWithValue(prefs),
           contentProvider.overrideWith((ref) async => db),
           storefrontProvider.overrideWith((ref, puuid) async => store),
+          clockProvider.overrideWithValue(FixedClock(receivedAt)),
         ],
       );
       expect(
@@ -182,6 +184,28 @@ void main() {
           .addSkin(Fx.odinNeoFrontierL1, db);
       final hits = await readListened(c, wishlistHitsProvider(Fx.puuid).future);
       expect(hits.single.place, WishlistPlace.bundle);
+    });
+    test('a saved storefront never lists an ended offer as on sale', () async {
+      final prefs = await createTestPrefs();
+      final c = ProviderContainer.test(
+        retry: (_, _) => null,
+        overrides: [
+          prefsProvider.overrideWithValue(prefs),
+          contentProvider.overrideWith((ref) async => db),
+          storefrontProvider.overrideWith((ref, puuid) async => store),
+          // Read 30 days later: every rotation of the copy has ended.
+          clockProvider.overrideWithValue(
+            FixedClock(receivedAt.add(const Duration(days: 30))),
+          ),
+        ],
+      );
+      await c
+          .read(wishlistProvider(Fx.puuid).notifier)
+          .addSkin(Fx.odinNeoFrontierL1, db);
+      expect(
+        await readListened(c, wishlistHitsProvider(Fx.puuid).future),
+        isEmpty,
+      );
     });
   });
 }

@@ -64,6 +64,7 @@ class HomeStoreSummary {
     required this.hits,
     required this.isFromCache,
     required this.receivedAt,
+    this.dailyExpired = false,
     this.resetsAt,
     this.walletVp,
     this.nightMarket,
@@ -92,6 +93,12 @@ class HomeStoreSummary {
 
   /// An offered level is missing from the content (a new patch).
   final bool hasContentMiss;
+
+  /// The saved daily store already reset (a copy kept while the account
+  /// needs to sign in again, or Riot / the network is down): its skins are
+  /// no longer on sale, so the card shows none of them instead of passing
+  /// yesterday's store off as today's.
+  final bool dailyExpired;
 }
 
 /// The store card's summary; `null` when there are no daily offers and no
@@ -108,10 +115,11 @@ HomeStoreSummary? buildHomeStoreSummary(
 }) {
   bool live(DateTime? at) => at == null || at.isAfter(now);
 
-  final offers = store.daily.offers;
+  final dailyExpired = !live(store.daily.expiresAt);
+  final offers = dailyExpired ? const <DailyOffer>[] : store.daily.offers;
   final nm = store.nightMarket;
   final nmLive = nm != null && live(nm.expiresAt);
-  if (offers.isEmpty && !nmLive) return null;
+  if (store.daily.offers.isEmpty && !nmLive) return null;
 
   final tiles = <HomeSkinOffer>[
     for (final o in offers.take(kHomeMaxDailyTiles))
@@ -134,7 +142,7 @@ HomeStoreSummary? buildHomeStoreSummary(
   ];
 
   final walletVp = wallet?.vp;
-  final affordable = walletVp == null
+  final affordable = walletVp == null || dailyExpired
       ? 0
       : store.daily.affordableTogether(walletVp);
 
@@ -174,8 +182,9 @@ HomeStoreSummary? buildHomeStoreSummary(
 
   return HomeStoreSummary(
     daily: List.unmodifiable(tiles),
-    resetsAt: store.daily.expiresAt,
-    totalVp: store.daily.totalVp,
+    resetsAt: dailyExpired ? null : store.daily.expiresAt,
+    totalVp: dailyExpired ? 0 : store.daily.totalVp,
+    dailyExpired: dailyExpired,
     walletVp: walletVp,
     affordableTogether: affordable,
     hits: List.unmodifiable(hits),

@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/ui/saved_copy_notice.dart';
+
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
@@ -141,7 +143,7 @@ class BundleDetailScreen extends ConsumerWidget {
           ),
         if (store != null && store.isFromCache)
           SliverToBoxAdapter(
-            child: OfflineNotice(receivedAt: store.receivedAt),
+            child: SavedCopyNotice(puuid: puuid, receivedAt: store.receivedAt),
           ),
         SliverToBoxAdapter(
           child: _BundleBody(

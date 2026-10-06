@@ -259,4 +259,33 @@ void main() {
     expect(s.isFromCache, isTrue);
     expect(s.receivedAt, _t0.subtract(const Duration(hours: 1)));
   });
+
+  test('a saved store from before the reset shows none of its skins', () {
+    // The copy kept while the sign-in is expired, read the next day: the
+    // daily rotation ended at _t0 + 17401 s, the Night Market still runs.
+    final s = _summary(
+      _store(cache: true),
+      wallet: _wallet(10000),
+      wishlist: {Fx.aresPrism},
+      now: _t0.add(const Duration(days: 1)),
+    )!;
+    expect(s.dailyExpired, isTrue);
+    expect(s.daily, isEmpty);
+    expect(s.resetsAt, isNull);
+    expect(s.totalVp, 0);
+    expect(s.affordableTogether, 0);
+    expect(
+      s.hits.where((h) => h.place == WishlistPlace.daily),
+      isEmpty,
+      reason: 'the skin of the ended rotation is not on sale',
+    );
+    expect(s.nightMarket, isNotNull);
+    expect(s.isFromCache, isTrue);
+  });
+
+  test('a store still inside its rotation is not expired', () {
+    final s = _summary(_store(cache: true))!;
+    expect(s.dailyExpired, isFalse);
+    expect(s.daily, hasLength(4));
+  });
 }

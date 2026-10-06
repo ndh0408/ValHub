@@ -91,6 +91,51 @@ void main() {
     await homeUnmount(tester);
   });
 
+  testWidgets('a store that never arrives after the reset is called out', (
+    tester,
+  ) async {
+    await pumpHomeCard(
+      tester,
+      env,
+      _card(),
+      overrides: [vmStore(AsyncData(homeStoreSummary()))],
+    );
+    env.clock.advance(const Duration(seconds: 17402));
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text(tl.homeStoreRefreshing), findsOneWidget);
+    await tester.pump(const Duration(seconds: 91));
+    expect(find.text(tl.homeStoreRefreshing), findsNothing);
+    expect(find.text(tl.homeStoreOutdated), findsOneWidget);
+    await homeUnmount(tester);
+  });
+
+  testWidgets('a saved store from before the reset shows no skins', (
+    tester,
+  ) async {
+    await pumpHomeCard(
+      tester,
+      env,
+      _card(),
+      overrides: [
+        vmStore(
+          AsyncData(
+            homeStoreSummary(
+              cache: true,
+              now: homeNow.add(const Duration(days: 1)),
+            ),
+          ),
+        ),
+      ],
+    );
+    expect(find.text(tl.homeStoreOutdated), findsOneWidget);
+    expect(find.byType(HomeSkinTile), findsNothing);
+    expect(find.text(tl.homeStoreRefreshing), findsNothing);
+    expect(find.byType(CountdownRing), findsNothing);
+    homeExpectNoException(tester);
+    await homeUnmount(tester);
+  });
+
   group('wishlist', () {
     testWidgets('a daily hit: banner with its place; tap opens the store', (
       tester,

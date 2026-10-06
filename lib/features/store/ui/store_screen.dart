@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/ui/saved_copy_notice.dart';
+
 import '../../../core/accounts/account.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/accounts/account_widgets.dart';
@@ -21,7 +23,6 @@ import 'widgets/daily_section.dart';
 import 'widgets/night_market_section.dart';
 import 'widgets/store_segment_bar.dart';
 import 'widgets/store_skeletons.dart';
-import 'widgets/store_ui_bits.dart';
 import 'widgets/wallet_pill.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -194,7 +195,7 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
         ),
         if (store != null && store.isFromCache)
           SliverToBoxAdapter(
-            child: OfflineNotice(receivedAt: store.receivedAt),
+            child: SavedCopyNotice(puuid: puuid, receivedAt: store.receivedAt),
           ),
         SliverToBoxAdapter(
           child: AnimatedSwitcher(

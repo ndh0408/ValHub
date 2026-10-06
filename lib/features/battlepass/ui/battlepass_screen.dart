@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/ui/saved_copy_notice.dart';
+
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/accounts/account_widgets.dart';
 import '../../../core/content/content_db.dart';
@@ -16,7 +18,6 @@ import '../battlepass_routes.dart';
 import '../data/battlepass_models.dart';
 import '../data/xp_pace.dart';
 import '../providers/battlepass_providers.dart';
-import 'widgets/bp_ui_bits.dart';
 import 'widgets/daily_checkpoints.dart';
 import 'widgets/overview_bits.dart';
 import 'widgets/pass_card.dart';
@@ -103,7 +104,10 @@ class BattlePassOverviewView extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (overview.contracts.isFromCache)
-          BpOfflineNotice(receivedAt: overview.contracts.receivedAt),
+          SavedCopyNotice(
+            puuid: puuid,
+            receivedAt: overview.contracts.receivedAt,
+          ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
           child: bp == null

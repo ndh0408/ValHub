@@ -13,6 +13,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/val_widgets.dart';
+import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 import '../../../battlepass/battlepass_routes.dart';
 import '../../../battlepass/data/battlepass_models.dart';
@@ -141,7 +142,10 @@ class _BpBody extends ConsumerWidget {
         ],
         if (snap.isFromCache)
           HomeCardFootnote(
-            context.l10n.commonUpdatedAt(formatTime(snap.receivedAt)),
+            context.fmt.updatedAt(
+              snap.receivedAt,
+              ref.watch(clockProvider).now(),
+            ),
           ),
       ],
     );

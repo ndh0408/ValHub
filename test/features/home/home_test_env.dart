@@ -321,6 +321,7 @@ HomeStoreSummary homeStoreSummary({
   Set<String> seen = const {},
   bool cache = false,
   ContentDb? db,
+  DateTime? now,
 }) => buildHomeStoreSummary(
   homeStorefront(cache: cache),
   db: db ?? economyContent(),
@@ -331,7 +332,7 @@ HomeStoreSummary homeStoreSummary({
           'Balances': {'85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741': wallet},
         }, receivedAt: homeNow),
   nightMarketSeen: seen,
-  now: homeNow,
+  now: now ?? homeNow,
 )!;
 
 CompetitiveUpdate _row(String id, DateTime start, int earned) =>

@@ -26,6 +26,7 @@ import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/currency_amount.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/val_widgets.dart';
+import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
 import '../../../skin_detail/skin_detail_sheet.dart';
 import '../../../store/store_routes.dart';
@@ -114,6 +115,7 @@ class _StoreBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
+    final now = ref.watch(clockProvider).now();
     final muted = theme.colorScheme.onSurfaceVariant;
     final footer = <String>[
       if (summary.totalVp > 0)
@@ -132,7 +134,12 @@ class _StoreBody extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (summary.resetsAt != null && summary.daily.isNotEmpty)
+          if (summary.dailyExpired)
+            Text(
+              context.l10n.homeStoreOutdated,
+              style: theme.textTheme.bodyMedium?.copyWith(color: muted),
+            )
+          else if (summary.resetsAt != null && summary.daily.isNotEmpty)
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: _ResetPill(
@@ -169,10 +176,8 @@ class _StoreBody extends ConsumerWidget {
               onTap: () => _openStore(context, StoreSegment.nightMarket),
             ),
           ],
-          if (summary.isFromCache)
-            HomeCardFootnote(
-              context.l10n.commonUpdatedAt(formatTime(summary.receivedAt)),
-            ),
+          if (summary.isFromCache || summary.dailyExpired)
+            HomeCardFootnote(context.fmt.updatedAt(summary.receivedAt, now)),
         ],
       ),
     );
@@ -195,8 +200,10 @@ class _StoreBody extends ConsumerWidget {
   }
 }
 
-/// "Làm mới sau 11:54:37", then "Đang làm mới…" until the new storefront
-/// arrives (the provider refetches by itself at the deadline).
+/// "Làm mới sau 11:54:37", then "Đang làm mới…" while the provider fetches
+/// the new storefront at the deadline. When that has not arrived after
+/// [_grace] (expired sign-in, no network, maintenance) it says so instead of
+/// "Đang làm mới…" forever.
 class _ResetPill extends StatefulWidget {
   const _ResetPill({super.key, required this.expiresAt});
 
@@ -206,15 +213,35 @@ class _ResetPill extends StatefulWidget {
   State<_ResetPill> createState() => _ResetPillState();
 }
 
+const _grace = Duration(seconds: 90);
+
 class _ResetPillState extends State<_ResetPill> {
   bool _expired = false;
+  bool _stale = false;
+  Timer? _staleTimer;
+
+  @override
+  void dispose() {
+    _staleTimer?.cancel();
+    super.dispose();
+  }
+
+  void _onExpired() {
+    if (!mounted || _expired) return;
+    setState(() => _expired = true);
+    _staleTimer = Timer(_grace, () {
+      if (mounted) setState(() => _stale = true);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     if (_expired) {
       final theme = Theme.of(context);
       return Text(
-        context.l10n.homeStoreRefreshing,
+        _stale
+            ? context.l10n.homeStoreOutdated
+            : context.l10n.homeStoreRefreshing,
         style: theme.textTheme.labelMedium?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,
         ),
@@ -226,9 +253,7 @@ class _ResetPillState extends State<_ResetPill> {
         period: const Duration(days: 1),
         builder: context.l10n.homeStoreResetsIn,
         dense: true,
-        onExpired: () {
-          if (mounted) setState(() => _expired = true);
-        },
+        onExpired: _onExpired,
       ),
     );
   }

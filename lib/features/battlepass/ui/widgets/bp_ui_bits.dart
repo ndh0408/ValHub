@@ -5,7 +5,6 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/countdown_text.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
-import '../../../../core/util/format.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -209,41 +208,6 @@ class BpHeaderCountdown extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-/// "Đang ngoại tuyến — hiển thị dữ liệu đã lưu (14:05)." (X4).
-class BpOfflineNotice extends StatelessWidget {
-  const BpOfflineNotice({super.key, required this.receivedAt});
-
-  final DateTime receivedAt;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final warning = valColorsOf(context).warning;
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: warning.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(ValRadius.small),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.cloud_off, size: 16, color: warning),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              context.l10n.commonOfflineCached(formatTime(receivedAt)),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: legibleAccent(context, warning),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
