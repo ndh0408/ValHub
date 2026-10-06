@@ -236,13 +236,16 @@ void main() {
     );
 
     test(
-      'real fixtures: a Deathmatch (ACS 6000) next to a competitive win',
+      'real fixtures: a Deathmatch (score 6000) next to a competitive win',
       () {
         MatchPlayerSummary fromFixture(String name) =>
             MatchDetails.fromJson(competitiveFixture(name)).summaryFor(me)!;
         final comp = fromFixture('match_competitive');
         final dm = fromFixture('match_deathmatch');
-        expect(dm.stats.acs, 6000); // what the old aggregate averaged in
+        // The old aggregate averaged this score in as "ACS"; a round-less
+        // match now has no ACS at all.
+        expect(dm.stats.score, 6000);
+        expect(dm.stats.acs, isNull);
         final mixed = RecentForm.from([dm, comp]);
         expect(mixed.games, 2);
         expect(mixed.acs, comp.stats.acs); // 200, the Deathmatch is left out

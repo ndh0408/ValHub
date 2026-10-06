@@ -270,7 +270,9 @@ void main() {
       expect(s.hasHitData, isFalse);
       expect(s.adr, isNull);
       expect(s.kast, isNull);
-      expect(s.acs, 6000);
+      // ACS is per round; Deathmatch's single "round" would show the total.
+      expect(s.acs, isNull);
+      expect(s.score, 6000);
       expect(s.firstBloods, 0);
       expect(s.isMatchMvp, isFalse);
       expect(d.kills[1].killer, me);

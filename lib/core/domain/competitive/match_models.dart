@@ -1237,7 +1237,9 @@ class MatchDetails {
         assists: s?.assists ?? 0,
         score: s?.score ?? 0,
         roundsPlayed: played,
-        acs: played > 0 ? (s?.score ?? 0) / played : null,
+        // A per-round average: without rounds (Deathmatch reports one
+        // "round") it would only repeat the total score.
+        acs: kind.isRoundBased && played > 0 ? (s?.score ?? 0) / played : null,
         adr: roundBased && anyDamageData && played > 0
             ? (dmg[id] ?? 0) / played
             : null,

@@ -657,6 +657,8 @@ class _PlayerSummary extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 14),
+            // Modes without rounds (Deathmatch, Team Deathmatch, Escalation)
+            // keep only what they measure instead of a grid of dashes.
             StatGrid(
               tiles: [
                 StatTile(
@@ -667,38 +669,39 @@ class _PlayerSummary extends ConsumerWidget {
                     s.assists,
                   ),
                 ),
-                StatTile(
-                  label: context.l10n.profileAcs,
-                  value: fmt(s.acs),
-                  tooltip: context.l10n.profileAcsHint,
-                ),
-                StatTile(
-                  label: context.l10n.profileHs,
-                  value: s.headshotRate == null
-                      ? context.l10n.competitiveNoValue
-                      : formatPercent(s.headshotRate!),
-                ),
-                StatTile(label: context.l10n.profileAdr, value: fmt(s.adr)),
+                if (roundBased)
+                  StatTile(
+                    label: context.l10n.profileAcs,
+                    value: fmt(s.acs),
+                    tooltip: context.l10n.profileAcsHint,
+                  ),
+                if (roundBased || s.headshotRate != null)
+                  StatTile(
+                    label: context.l10n.profileHs,
+                    value: s.headshotRate == null
+                        ? context.l10n.competitiveNoValue
+                        : formatPercent(s.headshotRate!),
+                  ),
+                if (roundBased)
+                  StatTile(label: context.l10n.profileAdr, value: fmt(s.adr)),
                 StatTile(label: context.l10n.profileKd, value: fmt(s.kd)),
-                StatTile(
-                  label: context.l10n.profileFirstDeaths,
-                  value: roundBased
-                      ? formatNumber(s.firstDeaths)
-                      : context.l10n.competitiveNoValue,
-                ),
-                StatTile(
-                  label: context.l10n.profileKast,
-                  value: s.kast == null
-                      ? context.l10n.competitiveNoValue
-                      : formatPercent(s.kast!),
-                  tooltip: context.l10n.profileKastHint,
-                ),
-                StatTile(
-                  label: context.l10n.profileFirstBloods,
-                  value: roundBased
-                      ? formatNumber(s.firstBloods)
-                      : context.l10n.competitiveNoValue,
-                ),
+                if (roundBased) ...[
+                  StatTile(
+                    label: context.l10n.profileFirstDeaths,
+                    value: formatNumber(s.firstDeaths),
+                  ),
+                  StatTile(
+                    label: context.l10n.profileKast,
+                    value: s.kast == null
+                        ? context.l10n.competitiveNoValue
+                        : formatPercent(s.kast!),
+                    tooltip: context.l10n.profileKastHint,
+                  ),
+                  StatTile(
+                    label: context.l10n.profileFirstBloods,
+                    value: formatNumber(s.firstBloods),
+                  ),
+                ],
               ],
             ),
             if (s.hasHitData) ...[

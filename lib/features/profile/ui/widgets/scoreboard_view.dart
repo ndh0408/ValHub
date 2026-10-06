@@ -49,6 +49,9 @@ class ScoreboardSliver extends StatelessWidget {
         child: EmptyView(message: context.l10n.profileNoPlayers),
       );
     }
+    // ACS is a per-round average: Deathmatch, Team Deathmatch and Escalation
+    // have no rounds, so the column would only repeat the total score.
+    final showAcs = details.modeKind.isRoundBased;
     final slivers = <Widget>[];
     for (final side in sides) {
       if (side.freeForAll) {
@@ -62,12 +65,14 @@ class ScoreboardSliver extends StatelessWidget {
             SliverToBoxAdapter(
               child: _TeamCard(
                 deathmatch: true,
+                showAcs: showAcs,
                 rows: [
                   for (var i = 0; i < side.players.length; i++)
                     _PlayerRow(
                       details: details,
                       player: side.players[i],
                       place: i + 1,
+                      showAcs: showAcs,
                       hidden: hidden.contains(side.players[i].subject),
                       highlighted: side.players[i].subject == perspective,
                       onTap: () => onOpenPlayer(side.players[i].subject),
@@ -101,11 +106,13 @@ class ScoreboardSliver extends StatelessWidget {
         ..add(
           SliverToBoxAdapter(
             child: _TeamCard(
+              showAcs: showAcs,
               rows: [
                 for (final p in side.players)
                   _PlayerRow(
                     details: details,
                     player: p,
+                    showAcs: showAcs,
                     hidden: hidden.contains(p.subject),
                     highlighted: p.subject == perspective,
                     onTap: () => onOpenPlayer(p.subject),
@@ -199,10 +206,15 @@ class _TeamHeader extends StatelessWidget {
 /// One team (or the whole Deathmatch lobby) on a rounded card: the column
 /// labels, then the player rows separated by hairlines.
 class _TeamCard extends StatelessWidget {
-  const _TeamCard({required this.rows, this.deathmatch = false});
+  const _TeamCard({
+    required this.rows,
+    this.deathmatch = false,
+    this.showAcs = true,
+  });
 
   final List<Widget> rows;
   final bool deathmatch;
+  final bool showAcs;
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +228,7 @@ class _TeamCard extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 2),
-              child: _ColumnHeader(deathmatch: deathmatch),
+              child: _ColumnHeader(deathmatch: deathmatch, showAcs: showAcs),
             ),
             for (var i = 0; i < rows.length; i++) ...[
               if (i > 0) Divider(height: 1, thickness: 1, color: hairline),
@@ -230,9 +242,10 @@ class _TeamCard extends StatelessWidget {
 }
 
 class _ColumnHeader extends StatelessWidget {
-  const _ColumnHeader({this.deathmatch = false});
+  const _ColumnHeader({this.deathmatch = false, this.showAcs = true});
 
   final bool deathmatch;
+  final bool showAcs;
 
   @override
   Widget build(BuildContext context) {
@@ -249,10 +262,11 @@ class _ColumnHeader extends StatelessWidget {
             _Cell(context.l10n.profileColPlace, _wPlace, style: style),
           const SizedBox(width: 50),
           const Spacer(),
-          Tooltip(
-            message: context.l10n.profileAcsHint,
-            child: _Cell(context.l10n.profileAcs, _wAcs, style: style),
-          ),
+          if (showAcs)
+            Tooltip(
+              message: context.l10n.profileAcsHint,
+              child: _Cell(context.l10n.profileAcs, _wAcs, style: style),
+            ),
           _Cell(context.l10n.profileColK, _wKda, style: style),
           _Cell(context.l10n.profileColD, _wKda, style: style),
           _Cell(context.l10n.profileColA, _wKda, style: style),
@@ -291,6 +305,7 @@ class _PlayerRow extends ConsumerWidget {
     required this.onTap,
     this.place,
     this.hidden = false,
+    this.showAcs = true,
   });
 
   final MatchDetails details;
@@ -298,6 +313,7 @@ class _PlayerRow extends ConsumerWidget {
   final bool highlighted;
   final VoidCallback onTap;
   final bool hidden;
+  final bool showAcs;
 
   /// Deathmatch position.
   final int? place;
@@ -423,13 +439,14 @@ class _PlayerRow extends ConsumerWidget {
                   ],
                 ),
               ),
-              _Cell(
-                s.acs == null
-                    ? context.l10n.competitiveNoValue
-                    : formatNumber(s.acs!.round()),
-                _wAcs,
-                style: numStyle,
-              ),
+              if (showAcs)
+                _Cell(
+                  s.acs == null
+                      ? context.l10n.competitiveNoValue
+                      : formatNumber(s.acs!.round()),
+                  _wAcs,
+                  style: numStyle,
+                ),
               _Cell(formatNumber(s.kills), _wKda, style: numStyle),
               _Cell(formatNumber(s.deaths), _wKda, style: numStyle),
               _Cell(formatNumber(s.assists), _wKda, style: numStyle),
