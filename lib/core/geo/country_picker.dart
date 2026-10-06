@@ -420,8 +420,7 @@ class _CountryRow extends StatelessWidget {
           formatNumber(a.posts),
           formatNumber(a.authors),
         ),
-      if (a != null && a.lfg > 0)
-        l10n.communityCommunityLfg(formatNumber(a.lfg)),
+      if (a != null && a.lfg > 0) l10n.communityCommunityLfg(a.lfg),
       if (isMine) l10n.communityYourCountry,
     ];
     return ListTile(

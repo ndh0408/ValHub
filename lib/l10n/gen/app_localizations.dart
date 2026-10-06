@@ -2544,7 +2544,7 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'≈ {n} trận {queue}'**
-  String battlePassMatchesEstimate(String n, String queue);
+  String battlePassMatchesEstimate(int n, String queue);
 
   /// BattlePassStrings.missionDone — Weekly missions (P3)
   ///
@@ -2958,7 +2958,7 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'{n} thẻ đã sở hữu'**
-  String collectionCardsCount(String n);
+  String collectionCardsCount(int n);
 
   /// CollectionStrings.changeBuddy — S35 customize
   ///
@@ -3114,7 +3114,7 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'{n} món'**
-  String collectionItemsCount(String n);
+  String collectionItemsCount(int n);
 
   /// CollectionStrings.levelBorderAuto — S30 hub
   ///
@@ -3270,7 +3270,7 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'{n} skin đã sở hữu'**
-  String collectionOwnedSkinsStat(String n);
+  String collectionOwnedSkinsStat(int n);
 
   /// CollectionStrings.playLevelVideo — S35 customize
   ///
@@ -3666,7 +3666,7 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'{n} danh hiệu đã sở hữu'**
-  String collectionTitlesCount(String n);
+  String collectionTitlesCount(int n);
 
   /// CollectionStrings.undo — S38 presets
   ///
@@ -4038,7 +4038,7 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'{n} bình luận'**
-  String communityComments(String n);
+  String communityComments(int n);
 
   /// CommunityStrings.commentsHeader — comments
   ///
@@ -4062,7 +4062,7 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'{n} tin tìm đồng đội'**
-  String communityCommunityLfg(String n);
+  String communityCommunityLfg(int n);
 
   /// CommunityStrings.communityVotes — skin votes
   ///
@@ -5250,7 +5250,7 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'{n} người đã yêu cầu vào'**
-  String communityJoinsCount(String n);
+  String communityJoinsCount(int n);
 
   /// CommunityStrings.keepEditing — feed
   ///
@@ -5478,7 +5478,7 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'{n} lượt thích'**
-  String communityLikes(String n);
+  String communityLikes(int n);
 
   /// CommunityStrings.liveMembers — LFG v2
   ///
@@ -5814,13 +5814,13 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'{n} đánh giá'**
-  String communityRatingCount(String n);
+  String communityRatingCount(int n);
 
   /// CommunityStrings.ratingSummary — skin reviews
   ///
   /// In vi, this message translates to:
   /// **'{avg} · {n} đánh giá'**
-  String communityRatingSummary(String avg, String n);
+  String communityRatingSummary(String avg, int n);
 
   /// CommunityStrings.ratingWords — skin reviews
   ///
@@ -6372,7 +6372,7 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'{n} lượt thích'**
-  String communityVotes(String n);
+  String communityVotes(int n);
 
   /// CommunityStrings.withdrawConfirm — data rights (Settings)
   ///
@@ -10527,7 +10527,7 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'{count} skin'**
-  String wishlistCatalogCount(String count);
+  String wishlistCatalogCount(int count);
 
   /// WishlistStrings.catalogEmpty — S3B catalog
   ///
@@ -10611,7 +10611,7 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'Đang lọc: {count} skin · {value}'**
-  String wishlistFiltered(String count, String value);
+  String wishlistFiltered(int count, String value);
 
   /// WishlistStrings.hasEstimates — S3A wishlist
   ///
@@ -10743,7 +10743,7 @@ abstract class AppLocalizations {
   ///
   /// In vi, this message translates to:
   /// **'{count} skin'**
-  String wishlistSkinCount(String count);
+  String wishlistSkinCount(int count);
 
   /// WishlistStrings.sortBy — search, filter, sort
   ///

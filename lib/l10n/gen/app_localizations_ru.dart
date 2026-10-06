@@ -1465,8 +1465,21 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String battlePassMatchesEstimate(String n, String queue) {
-    return 'Матчей ($queue): ≈ $n';
+  String battlePassMatchesEstimate(int n, String queue) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString матча',
+      many: '$nString матчей',
+      few: '$nString матча',
+      one: '$nString матч',
+    );
+    return '≈ $_temp0 ($queue)';
   }
 
   @override
@@ -1731,8 +1744,21 @@ class AppLocalizationsRu extends AppLocalizations {
       'Показано сохраненное снаряжение. Потяните, чтобы обновить, прежде чем что-то менять.';
 
   @override
-  String collectionCardsCount(String n) {
-    return 'Карточек в коллекции: $n';
+  String collectionCardsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString карточки в коллекции',
+      many: '$nString карточек в коллекции',
+      few: '$nString карточки в коллекции',
+      one: '$nString карточка в коллекции',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1824,8 +1850,21 @@ class AppLocalizationsRu extends AppLocalizations {
       'Скрывать ваше имя в матчах от игроков не из вашей группы.';
 
   @override
-  String collectionItemsCount(String n) {
-    return 'Предметов: $n';
+  String collectionItemsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString предмета',
+      many: '$nString предметов',
+      few: '$nString предмета',
+      one: '$nString предмет',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1929,8 +1968,21 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String collectionOwnedSkinsStat(String n) {
-    return 'Скинов в коллекции: $n';
+  String collectionOwnedSkinsStat(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString скина в коллекции',
+      many: '$nString скинов в коллекции',
+      few: '$nString скина в коллекции',
+      one: '$nString скин в коллекции',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2195,8 +2247,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get collectionTitle => 'Коллекция';
 
   @override
-  String collectionTitlesCount(String n) {
-    return 'Званий в коллекции: $n';
+  String collectionTitlesCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString звания в коллекции',
+      many: '$nString званий в коллекции',
+      few: '$nString звания в коллекции',
+      one: '$nString звание в коллекции',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2463,8 +2528,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get communityCommentHint => 'Напишите комментарий…';
 
   @override
-  String communityComments(String n) {
-    return 'Комментарии: $n';
+  String communityComments(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString комментария',
+      many: '$nString комментариев',
+      few: '$nString комментария',
+      one: '$nString комментарий',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2481,8 +2559,21 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String communityCommunityLfg(String n) {
-    return 'Объявления о поиске напарников: $n';
+  String communityCommunityLfg(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString объявления о поиске напарников',
+      many: '$nString объявлений о поиске напарников',
+      few: '$nString объявления о поиске напарников',
+      one: '$nString объявление о поиске напарников',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -3112,8 +3203,21 @@ class AppLocalizationsRu extends AppLocalizations {
       'Вы в группе! Откройте VALORANT, чтобы играть вместе.';
 
   @override
-  String communityJoinsCount(String n) {
-    return 'Запросов на вступление: $n';
+  String communityJoinsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString запроса на вступление',
+      many: '$nString запросов на вступление',
+      few: '$nString запроса на вступление',
+      one: '$nString запрос на вступление',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -3250,8 +3354,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get communityLike => 'Нравится';
 
   @override
-  String communityLikes(String n) {
-    return 'Лайки: $n';
+  String communityLikes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString лайка',
+      many: '$nString лайков',
+      few: '$nString лайка',
+      one: '$nString лайк',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -3471,13 +3588,39 @@ class AppLocalizationsRu extends AppLocalizations {
   String get communityRateLimitedTitle => 'Подождите немного';
 
   @override
-  String communityRatingCount(String n) {
-    return 'Оценки: $n';
+  String communityRatingCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString оценки',
+      many: '$nString оценок',
+      few: '$nString оценки',
+      one: '$nString оценка',
+    );
+    return '$_temp0';
   }
 
   @override
-  String communityRatingSummary(String avg, String n) {
-    return '$avg · Оценки: $n';
+  String communityRatingSummary(String avg, int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString оценки',
+      many: '$nString оценок',
+      few: '$nString оценки',
+      one: '$nString оценка',
+    );
+    return '$avg · $_temp0';
   }
 
   @override
@@ -3820,8 +3963,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get communityVote => 'Поставить сердечко скину';
 
   @override
-  String communityVotes(String n) {
-    return 'Лайки: $n';
+  String communityVotes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString лайка',
+      many: '$nString лайков',
+      few: '$nString лайка',
+      one: '$nString лайк',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -6703,8 +6859,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get wishlistBrowseCatalog => 'Все скины';
 
   @override
-  String wishlistCatalogCount(String count) {
-    return 'Скинов: $count';
+  String wishlistCatalogCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString скина',
+      many: '$countString скинов',
+      few: '$countString скина',
+      one: '$countString скин',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -6754,8 +6922,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get wishlistFilterTiers => 'Издание';
 
   @override
-  String wishlistFiltered(String count, String value) {
-    return 'Скинов по фильтру: $count · $value';
+  String wishlistFiltered(int count, String value) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString скина',
+      many: '$countString скинов',
+      few: '$countString скина',
+      one: '$countString скин',
+    );
+    return 'По фильтру: $_temp0 · $value';
   }
 
   @override
@@ -6852,8 +7032,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get wishlistSearchHint => 'Поиск скинов…';
 
   @override
-  String wishlistSkinCount(String count) {
-    return 'Скинов: $count';
+  String wishlistSkinCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString скина',
+      many: '$countString скинов',
+      few: '$countString скина',
+      one: '$countString скин',
+    );
+    return '$_temp0';
   }
 
   @override

@@ -679,7 +679,7 @@ class _ValueCard extends ConsumerWidget {
           Text(
             [
               context.l10n.collectionOwnedSkinsStat(
-                formatNumber(o.ownedCollectibleSkins.length),
+                o.ownedCollectibleSkins.length,
               ),
               context.l10n.collectionValueAtStorePrices,
             ].join(' · '),

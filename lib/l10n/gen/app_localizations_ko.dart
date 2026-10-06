@@ -1342,8 +1342,13 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String battlePassMatchesEstimate(String n, String queue) {
-    return '$queue ≈ $n판';
+  String battlePassMatchesEstimate(int n, String queue) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$queue ≈ $nString판';
   }
 
   @override
@@ -1605,8 +1610,13 @@ class AppLocalizationsKo extends AppLocalizations {
       '저장된 장비 구성을 표시하고 있습니다. 변경하기 전에 당겨서 새로고침하세요.';
 
   @override
-  String collectionCardsCount(String n) {
-    return '보유 카드: $n';
+  String collectionCardsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '보유 카드 $nString장';
   }
 
   @override
@@ -1695,8 +1705,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get collectionIncognitoHint => '게임에서 파티원이 아닌 플레이어에게 이름을 숨깁니다.';
 
   @override
-  String collectionItemsCount(String n) {
-    return '아이템 $n개';
+  String collectionItemsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '아이템 $nString개';
   }
 
   @override
@@ -1795,8 +1810,13 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String collectionOwnedSkinsStat(String n) {
-    return '보유 스킨: $n';
+  String collectionOwnedSkinsStat(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '보유 스킨 $nString개';
   }
 
   @override
@@ -2023,8 +2043,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get collectionTitle => '수집품';
 
   @override
-  String collectionTitlesCount(String n) {
-    return '보유 칭호: $n';
+  String collectionTitlesCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '보유 칭호 $nString개';
   }
 
   @override
@@ -2263,8 +2288,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityCommentHint => '댓글 작성…';
 
   @override
-  String communityComments(String n) {
-    return '댓글 $n개';
+  String communityComments(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '댓글 $nString개';
   }
 
   @override
@@ -2281,8 +2311,13 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String communityCommunityLfg(String n) {
-    return '팀원 찾기 글 $n개';
+  String communityCommunityLfg(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '팀원 찾기 글 $nString개';
   }
 
   @override
@@ -2901,8 +2936,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityJoinedHint => '파티에 참가했습니다! VALORANT를 열어 함께 플레이하세요.';
 
   @override
-  String communityJoinsCount(String n) {
-    return '참가 요청: $n';
+  String communityJoinsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '참가 요청 $nString건';
   }
 
   @override
@@ -3026,8 +3066,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityLike => '좋아요';
 
   @override
-  String communityLikes(String n) {
-    return '좋아요 $n개';
+  String communityLikes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '좋아요 $nString개';
   }
 
   @override
@@ -3227,13 +3272,23 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityRateLimitedTitle => '잠시만 기다려 주세요';
 
   @override
-  String communityRatingCount(String n) {
-    return '평가 $n개';
+  String communityRatingCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '평가 $nString개';
   }
 
   @override
-  String communityRatingSummary(String avg, String n) {
-    return '$avg · 평가 $n개';
+  String communityRatingSummary(String avg, int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$avg · 평가 $nString개';
   }
 
   @override
@@ -3533,8 +3588,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityVote => '이 스킨에 하트 누르기';
 
   @override
-  String communityVotes(String n) {
-    return '좋아요 $n개';
+  String communityVotes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '좋아요 $nString개';
   }
 
   @override
@@ -6054,8 +6114,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get wishlistBrowseCatalog => '모든 스킨 보기';
 
   @override
-  String wishlistCatalogCount(String count) {
-    return '스킨 $count개';
+  String wishlistCatalogCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '스킨 $countString개';
   }
 
   @override
@@ -6102,8 +6166,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get wishlistFilterTiers => '에디션';
 
   @override
-  String wishlistFiltered(String count, String value) {
-    return '필터 적용: 스킨 $count개 · $value';
+  String wishlistFiltered(int count, String value) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '필터 적용: 스킨 $countString개 · $value';
   }
 
   @override
@@ -6184,8 +6252,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get wishlistSearchHint => '스킨 검색…';
 
   @override
-  String wishlistSkinCount(String count) {
-    return '스킨 $count개';
+  String wishlistSkinCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '스킨 $countString개';
   }
 
   @override

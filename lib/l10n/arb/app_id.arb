@@ -853,7 +853,7 @@
   "communityJoinPartyFull": "Party ini sudah penuh.",
   "communityJoined": "Kamu sudah bergabung ke party! Buka VALORANT untuk main bareng.",
   "communityJoinedHint": "Kamu sudah bergabung ke party! Buka VALORANT untuk main bareng.",
-  "communityJoinsCount": "Permintaan bergabung: {n}",
+  "communityJoinsCount": "{n} permintaan bergabung",
   "communityKeepEditing": "Lanjut menulis",
   "communityKindNightMarket": "Night Market",
   "communityKindStore": "Toko hari ini",

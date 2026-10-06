@@ -2787,44 +2787,6 @@ void main() {
     expect(l10n.battlePassLevelShort(5), BattlePassStrings.levelShort(5));
     expect(l10n.battlePassLevelShort(99), BattlePassStrings.levelShort(99));
   });
-  test('battlePassMatchesEstimate', () {
-    expect(
-      l10n.battlePassMatchesEstimate('', ''),
-      BattlePassStrings.matchesEstimate('', ''),
-    );
-    expect(
-      l10n.battlePassMatchesEstimate('', 'Nguyễn Văn A'),
-      BattlePassStrings.matchesEstimate('', 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.battlePassMatchesEstimate('', '{value}\n!'),
-      BattlePassStrings.matchesEstimate('', '{value}\n!'),
-    );
-    expect(
-      l10n.battlePassMatchesEstimate('Nguyễn Văn A', ''),
-      BattlePassStrings.matchesEstimate('Nguyễn Văn A', ''),
-    );
-    expect(
-      l10n.battlePassMatchesEstimate('Nguyễn Văn A', 'Nguyễn Văn A'),
-      BattlePassStrings.matchesEstimate('Nguyễn Văn A', 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.battlePassMatchesEstimate('Nguyễn Văn A', '{value}\n!'),
-      BattlePassStrings.matchesEstimate('Nguyễn Văn A', '{value}\n!'),
-    );
-    expect(
-      l10n.battlePassMatchesEstimate('{value}\n!', ''),
-      BattlePassStrings.matchesEstimate('{value}\n!', ''),
-    );
-    expect(
-      l10n.battlePassMatchesEstimate('{value}\n!', 'Nguyễn Văn A'),
-      BattlePassStrings.matchesEstimate('{value}\n!', 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.battlePassMatchesEstimate('{value}\n!', '{value}\n!'),
-      BattlePassStrings.matchesEstimate('{value}\n!', '{value}\n!'),
-    );
-  });
   test('battlePassMissionDone', () {
     expect(l10n.battlePassMissionDone, BattlePassStrings.missionDone);
   });
@@ -3534,17 +3496,6 @@ void main() {
   test('collectionCachedLoadout', () {
     expect(l10n.collectionCachedLoadout, CollectionStrings.cachedLoadout);
   });
-  test('collectionCardsCount', () {
-    expect(l10n.collectionCardsCount(''), CollectionStrings.cardsCount(''));
-    expect(
-      l10n.collectionCardsCount('Nguyễn Văn A'),
-      CollectionStrings.cardsCount('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.collectionCardsCount('{value}\n!'),
-      CollectionStrings.cardsCount('{value}\n!'),
-    );
-  });
   test('collectionChangeBuddy', () {
     expect(l10n.collectionChangeBuddy, CollectionStrings.changeBuddy);
   });
@@ -3752,17 +3703,6 @@ void main() {
   });
   test('collectionIncognitoHint', () {
     expect(l10n.collectionIncognitoHint, CollectionStrings.incognitoHint);
-  });
-  test('collectionItemsCount', () {
-    expect(l10n.collectionItemsCount(''), CollectionStrings.itemsCount(''));
-    expect(
-      l10n.collectionItemsCount('Nguyễn Văn A'),
-      CollectionStrings.itemsCount('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.collectionItemsCount('{value}\n!'),
-      CollectionStrings.itemsCount('{value}\n!'),
-    );
   });
   test('collectionLevelBorderAuto', () {
     expect(l10n.collectionLevelBorderAuto, CollectionStrings.levelBorderAuto);
@@ -4256,20 +4196,6 @@ void main() {
       CollectionStrings.ownedForWeapon(99),
     );
   });
-  test('collectionOwnedSkinsStat', () {
-    expect(
-      l10n.collectionOwnedSkinsStat(''),
-      CollectionStrings.ownedSkinsStat(''),
-    );
-    expect(
-      l10n.collectionOwnedSkinsStat('Nguyễn Văn A'),
-      CollectionStrings.ownedSkinsStat('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.collectionOwnedSkinsStat('{value}\n!'),
-      CollectionStrings.ownedSkinsStat('{value}\n!'),
-    );
-  });
   test('collectionPlayLevelVideo', () {
     expect(l10n.collectionPlayLevelVideo, CollectionStrings.playLevelVideo);
   });
@@ -4750,17 +4676,6 @@ void main() {
   test('collectionTitle', () {
     expect(l10n.collectionTitle, CollectionStrings.title);
   });
-  test('collectionTitlesCount', () {
-    expect(l10n.collectionTitlesCount(''), CollectionStrings.titlesCount(''));
-    expect(
-      l10n.collectionTitlesCount('Nguyễn Văn A'),
-      CollectionStrings.titlesCount('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.collectionTitlesCount('{value}\n!'),
-      CollectionStrings.titlesCount('{value}\n!'),
-    );
-  });
   test('collectionUndo', () {
     expect(l10n.collectionUndo, CollectionStrings.undo);
   });
@@ -5048,17 +4963,6 @@ void main() {
   test('communityCommentHint', () {
     expect(l10n.communityCommentHint, CommunityStrings.commentHint);
   });
-  test('communityComments', () {
-    expect(l10n.communityComments(''), CommunityStrings.comments(''));
-    expect(
-      l10n.communityComments('Nguyễn Văn A'),
-      CommunityStrings.comments('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.communityComments('{value}\n!'),
-      CommunityStrings.comments('{value}\n!'),
-    );
-  });
   test('communityCommentsHeader', () {
     expect(
       l10n.communityCommentsHeader(''),
@@ -5112,17 +5016,6 @@ void main() {
     expect(
       l10n.communityCommunityActivity('{value}\n!', '{value}\n!'),
       CommunityStrings.communityActivity('{value}\n!', '{value}\n!'),
-    );
-  });
-  test('communityCommunityLfg', () {
-    expect(l10n.communityCommunityLfg(''), CommunityStrings.communityLfg(''));
-    expect(
-      l10n.communityCommunityLfg('Nguyễn Văn A'),
-      CommunityStrings.communityLfg('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.communityCommunityLfg('{value}\n!'),
-      CommunityStrings.communityLfg('{value}\n!'),
     );
   });
   test('communityCommunityVotes', () {
@@ -5915,17 +5808,6 @@ void main() {
   test('communityJoinedHint', () {
     expect(l10n.communityJoinedHint, CommunityStrings.joinedHint);
   });
-  test('communityJoinsCount', () {
-    expect(l10n.communityJoinsCount(''), CommunityStrings.joinsCount(''));
-    expect(
-      l10n.communityJoinsCount('Nguyễn Văn A'),
-      CommunityStrings.joinsCount('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.communityJoinsCount('{value}\n!'),
-      CommunityStrings.joinsCount('{value}\n!'),
-    );
-  });
   test('communityKeepEditing', () {
     expect(l10n.communityKeepEditing, CommunityStrings.keepEditing);
   });
@@ -6086,17 +5968,6 @@ void main() {
   });
   test('communityLike', () {
     expect(l10n.communityLike, CommunityStrings.like);
-  });
-  test('communityLikes', () {
-    expect(l10n.communityLikes(''), CommunityStrings.likes(''));
-    expect(
-      l10n.communityLikes('Nguyễn Văn A'),
-      CommunityStrings.likes('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.communityLikes('{value}\n!'),
-      CommunityStrings.likes('{value}\n!'),
-    );
   });
   test('communityLiveMembers', () {
     expect(l10n.communityLiveMembers, CommunityStrings.liveMembers);
@@ -6495,55 +6366,6 @@ void main() {
   });
   test('communityRateLimitedTitle', () {
     expect(l10n.communityRateLimitedTitle, CommunityStrings.rateLimitedTitle);
-  });
-  test('communityRatingCount', () {
-    expect(l10n.communityRatingCount(''), CommunityStrings.ratingCount(''));
-    expect(
-      l10n.communityRatingCount('Nguyễn Văn A'),
-      CommunityStrings.ratingCount('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.communityRatingCount('{value}\n!'),
-      CommunityStrings.ratingCount('{value}\n!'),
-    );
-  });
-  test('communityRatingSummary', () {
-    expect(
-      l10n.communityRatingSummary('', ''),
-      CommunityStrings.ratingSummary('', ''),
-    );
-    expect(
-      l10n.communityRatingSummary('', 'Nguyễn Văn A'),
-      CommunityStrings.ratingSummary('', 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.communityRatingSummary('', '{value}\n!'),
-      CommunityStrings.ratingSummary('', '{value}\n!'),
-    );
-    expect(
-      l10n.communityRatingSummary('Nguyễn Văn A', ''),
-      CommunityStrings.ratingSummary('Nguyễn Văn A', ''),
-    );
-    expect(
-      l10n.communityRatingSummary('Nguyễn Văn A', 'Nguyễn Văn A'),
-      CommunityStrings.ratingSummary('Nguyễn Văn A', 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.communityRatingSummary('Nguyễn Văn A', '{value}\n!'),
-      CommunityStrings.ratingSummary('Nguyễn Văn A', '{value}\n!'),
-    );
-    expect(
-      l10n.communityRatingSummary('{value}\n!', ''),
-      CommunityStrings.ratingSummary('{value}\n!', ''),
-    );
-    expect(
-      l10n.communityRatingSummary('{value}\n!', 'Nguyễn Văn A'),
-      CommunityStrings.ratingSummary('{value}\n!', 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.communityRatingSummary('{value}\n!', '{value}\n!'),
-      CommunityStrings.ratingSummary('{value}\n!', '{value}\n!'),
-    );
   });
   test('communityRatingWordsItem0', () {
     expect(l10n.communityRatingWordsItem0, CommunityStrings.ratingWords[0]);
@@ -7127,17 +6949,6 @@ void main() {
   });
   test('communityVote', () {
     expect(l10n.communityVote, CommunityStrings.vote);
-  });
-  test('communityVotes', () {
-    expect(l10n.communityVotes(''), CommunityStrings.votes(''));
-    expect(
-      l10n.communityVotes('Nguyễn Văn A'),
-      CommunityStrings.votes('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.communityVotes('{value}\n!'),
-      CommunityStrings.votes('{value}\n!'),
-    );
   });
   test('communityWithdrawConfirm', () {
     expect(l10n.communityWithdrawConfirm, CommunityStrings.withdrawConfirm);
@@ -12834,17 +12645,6 @@ void main() {
   test('wishlistBrowseCatalog', () {
     expect(l10n.wishlistBrowseCatalog, WishlistStrings.browseCatalog);
   });
-  test('wishlistCatalogCount', () {
-    expect(l10n.wishlistCatalogCount(''), WishlistStrings.catalogCount(''));
-    expect(
-      l10n.wishlistCatalogCount('Nguyễn Văn A'),
-      WishlistStrings.catalogCount('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.wishlistCatalogCount('{value}\n!'),
-      WishlistStrings.catalogCount('{value}\n!'),
-    );
-  });
   test('wishlistCatalogEmpty', () {
     expect(l10n.wishlistCatalogEmpty, WishlistStrings.catalogEmpty);
   });
@@ -12902,41 +12702,6 @@ void main() {
   });
   test('wishlistFilterTiers', () {
     expect(l10n.wishlistFilterTiers, WishlistStrings.filterTiers);
-  });
-  test('wishlistFiltered', () {
-    expect(l10n.wishlistFiltered('', ''), WishlistStrings.filtered('', ''));
-    expect(
-      l10n.wishlistFiltered('', 'Nguyễn Văn A'),
-      WishlistStrings.filtered('', 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.wishlistFiltered('', '{value}\n!'),
-      WishlistStrings.filtered('', '{value}\n!'),
-    );
-    expect(
-      l10n.wishlistFiltered('Nguyễn Văn A', ''),
-      WishlistStrings.filtered('Nguyễn Văn A', ''),
-    );
-    expect(
-      l10n.wishlistFiltered('Nguyễn Văn A', 'Nguyễn Văn A'),
-      WishlistStrings.filtered('Nguyễn Văn A', 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.wishlistFiltered('Nguyễn Văn A', '{value}\n!'),
-      WishlistStrings.filtered('Nguyễn Văn A', '{value}\n!'),
-    );
-    expect(
-      l10n.wishlistFiltered('{value}\n!', ''),
-      WishlistStrings.filtered('{value}\n!', ''),
-    );
-    expect(
-      l10n.wishlistFiltered('{value}\n!', 'Nguyễn Văn A'),
-      WishlistStrings.filtered('{value}\n!', 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.wishlistFiltered('{value}\n!', '{value}\n!'),
-      WishlistStrings.filtered('{value}\n!', '{value}\n!'),
-    );
   });
   test('wishlistHasEstimates', () {
     expect(l10n.wishlistHasEstimates, WishlistStrings.hasEstimates);
@@ -13048,17 +12813,6 @@ void main() {
   });
   test('wishlistSearchHint', () {
     expect(l10n.wishlistSearchHint, WishlistStrings.searchHint);
-  });
-  test('wishlistSkinCount', () {
-    expect(l10n.wishlistSkinCount(''), WishlistStrings.skinCount(''));
-    expect(
-      l10n.wishlistSkinCount('Nguyễn Văn A'),
-      WishlistStrings.skinCount('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.wishlistSkinCount('{value}\n!'),
-      WishlistStrings.skinCount('{value}\n!'),
-    );
   });
   test('wishlistSortBy', () {
     expect(l10n.wishlistSortBy, WishlistStrings.sortBy);

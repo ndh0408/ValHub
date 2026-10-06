@@ -1374,8 +1374,13 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String battlePassMatchesEstimate(String n, String queue) {
-    return '≈ $n trận $queue';
+  String battlePassMatchesEstimate(int n, String queue) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '≈ $nString trận $queue';
   }
 
   @override
@@ -1640,8 +1645,13 @@ class AppLocalizationsVi extends AppLocalizations {
       'Đang hiển thị trang bị đã lưu. Kéo để làm mới trước khi thay đổi.';
 
   @override
-  String collectionCardsCount(String n) {
-    return '$n thẻ đã sở hữu';
+  String collectionCardsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString thẻ đã sở hữu';
   }
 
   @override
@@ -1733,8 +1743,13 @@ class AppLocalizationsVi extends AppLocalizations {
       'Ẩn tên của bạn với người chơi không cùng tổ đội trong trận.';
 
   @override
-  String collectionItemsCount(String n) {
-    return '$n món';
+  String collectionItemsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString món';
   }
 
   @override
@@ -1836,8 +1851,13 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String collectionOwnedSkinsStat(String n) {
-    return '$n skin đã sở hữu';
+  String collectionOwnedSkinsStat(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString skin đã sở hữu';
   }
 
   @override
@@ -2067,8 +2087,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get collectionTitle => 'Bộ sưu tập';
 
   @override
-  String collectionTitlesCount(String n) {
-    return '$n danh hiệu đã sở hữu';
+  String collectionTitlesCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString danh hiệu đã sở hữu';
   }
 
   @override
@@ -2315,8 +2340,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityCommentHint => 'Viết bình luận…';
 
   @override
-  String communityComments(String n) {
-    return '$n bình luận';
+  String communityComments(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString bình luận';
   }
 
   @override
@@ -2333,8 +2363,13 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String communityCommunityLfg(String n) {
-    return '$n tin tìm đồng đội';
+  String communityCommunityLfg(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString tin tìm đồng đội';
   }
 
   @override
@@ -2961,8 +2996,13 @@ class AppLocalizationsVi extends AppLocalizations {
       'Đã vào tổ đội! Mở VALORANT để chơi cùng nhau.';
 
   @override
-  String communityJoinsCount(String n) {
-    return '$n người đã yêu cầu vào';
+  String communityJoinsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString người đã yêu cầu vào';
   }
 
   @override
@@ -3088,8 +3128,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityLike => 'Thích';
 
   @override
-  String communityLikes(String n) {
-    return '$n lượt thích';
+  String communityLikes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString lượt thích';
   }
 
   @override
@@ -3292,13 +3337,23 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityRateLimitedTitle => 'Hãy đợi một chút';
 
   @override
-  String communityRatingCount(String n) {
-    return '$n đánh giá';
+  String communityRatingCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString đánh giá';
   }
 
   @override
-  String communityRatingSummary(String avg, String n) {
-    return '$avg · $n đánh giá';
+  String communityRatingSummary(String avg, int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$avg · $nString đánh giá';
   }
 
   @override
@@ -3604,8 +3659,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityVote => 'Thả tim cho skin này';
 
   @override
-  String communityVotes(String n) {
-    return '$n lượt thích';
+  String communityVotes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString lượt thích';
   }
 
   @override
@@ -6187,8 +6247,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get wishlistBrowseCatalog => 'Xem tất cả skin';
 
   @override
-  String wishlistCatalogCount(String count) {
-    return '$count skin';
+  String wishlistCatalogCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString skin';
   }
 
   @override
@@ -6237,8 +6301,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get wishlistFilterTiers => 'Phiên bản';
 
   @override
-  String wishlistFiltered(String count, String value) {
-    return 'Đang lọc: $count skin · $value';
+  String wishlistFiltered(int count, String value) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return 'Đang lọc: $countString skin · $value';
   }
 
   @override
@@ -6322,8 +6390,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get wishlistSearchHint => 'Tìm skin…';
 
   @override
-  String wishlistSkinCount(String count) {
-    return '$count skin';
+  String wishlistSkinCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString skin';
   }
 
   @override

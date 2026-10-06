@@ -1344,8 +1344,13 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String battlePassMatchesEstimate(String n, String queue) {
-    return '≈ $queue $n試合';
+  String battlePassMatchesEstimate(int n, String queue) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '≈ $queue $nString試合';
   }
 
   @override
@@ -1606,8 +1611,13 @@ class AppLocalizationsJa extends AppLocalizations {
       '保存済みのロードアウトを表示中です。変更する前に引っ張って更新してください。';
 
   @override
-  String collectionCardsCount(String n) {
-    return '所持カード：$n';
+  String collectionCardsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '所持カード$nString枚';
   }
 
   @override
@@ -1696,8 +1706,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get collectionIncognitoHint => '試合中、パーティー外のプレイヤーにあなたの名前を表示しません。';
 
   @override
-  String collectionItemsCount(String n) {
-    return 'アイテム数：$n';
+  String collectionItemsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'アイテム$nString個';
   }
 
   @override
@@ -1796,8 +1811,13 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String collectionOwnedSkinsStat(String n) {
-    return '所持スキン：$n';
+  String collectionOwnedSkinsStat(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '所持スキン$nString個';
   }
 
   @override
@@ -2023,8 +2043,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get collectionTitle => 'コレクション';
 
   @override
-  String collectionTitlesCount(String n) {
-    return '所持タイトル：$n';
+  String collectionTitlesCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '所持タイトル$nString個';
   }
 
   @override
@@ -2264,8 +2289,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get communityCommentHint => 'コメントを書く…';
 
   @override
-  String communityComments(String n) {
-    return 'コメント$n件';
+  String communityComments(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'コメント$nString件';
   }
 
   @override
@@ -2282,8 +2312,13 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String communityCommunityLfg(String n) {
-    return 'チームメイト募集$n件';
+  String communityCommunityLfg(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'チームメイト募集$nString件';
   }
 
   @override
@@ -2902,8 +2937,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get communityJoinedHint => 'パーティーに参加しました！VALORANTを起動して一緒にプレイしましょう。';
 
   @override
-  String communityJoinsCount(String n) {
-    return '参加リクエスト：$n人';
+  String communityJoinsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '参加リクエスト$nString件';
   }
 
   @override
@@ -3027,8 +3067,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get communityLike => 'いいね';
 
   @override
-  String communityLikes(String n) {
-    return 'いいね$n件';
+  String communityLikes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'いいね$nString件';
   }
 
   @override
@@ -3228,13 +3273,23 @@ class AppLocalizationsJa extends AppLocalizations {
   String get communityRateLimitedTitle => '少しお待ちください';
 
   @override
-  String communityRatingCount(String n) {
-    return '評価$n件';
+  String communityRatingCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '評価$nString件';
   }
 
   @override
-  String communityRatingSummary(String avg, String n) {
-    return '$avg · 評価$n件';
+  String communityRatingSummary(String avg, int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$avg · 評価$nString件';
   }
 
   @override
@@ -3535,8 +3590,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get communityVote => 'このスキンにハートを付ける';
 
   @override
-  String communityVotes(String n) {
-    return 'いいね$n件';
+  String communityVotes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'いいね$nString件';
   }
 
   @override
@@ -6058,8 +6118,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get wishlistBrowseCatalog => 'すべてのスキンを見る';
 
   @override
-  String wishlistCatalogCount(String count) {
-    return 'スキン$count個';
+  String wishlistCatalogCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return 'スキン$countString個';
   }
 
   @override
@@ -6106,8 +6170,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get wishlistFilterTiers => 'エディション';
 
   @override
-  String wishlistFiltered(String count, String value) {
-    return '絞り込み中：スキン$count個 · $value';
+  String wishlistFiltered(int count, String value) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '絞り込み中：スキン$countString個 · $value';
   }
 
   @override
@@ -6188,8 +6256,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get wishlistSearchHint => 'スキンを検索…';
 
   @override
-  String wishlistSkinCount(String count) {
-    return 'スキン$count個';
+  String wishlistSkinCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return 'スキン$countString個';
   }
 
   @override

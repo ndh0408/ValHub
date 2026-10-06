@@ -15,7 +15,6 @@ import '../../../core/ui/net_image.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
-import '../../../core/util/format.dart';
 import '../data/collection_items.dart';
 import '../data/collection_search.dart';
 import '../providers/collection_providers.dart';
@@ -137,9 +136,7 @@ class _PlayerCardPickerScreenState
                         cards.length,
                         all.length,
                       )
-                    : context.l10n.collectionCardsCount(
-                        formatNumber(all.length),
-                      ),
+                    : context.l10n.collectionCardsCount(all.length),
                 highlighted: filtering,
               ),
             ),

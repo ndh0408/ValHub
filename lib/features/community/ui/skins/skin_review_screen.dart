@@ -553,9 +553,7 @@ class _ScoreCard extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      context.l10n.communityRatingCount(
-                        formatNumber(s.rating.count),
-                      ),
+                      context.l10n.communityRatingCount(s.rating.count),
                       textAlign: TextAlign.center,
                       style: theme.textTheme.labelMedium?.copyWith(
                         color: muted,

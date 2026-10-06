@@ -5,7 +5,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/util/format.dart';
 import '../../community_routes.dart';
 import '../../data/community_models.dart';
 import '../../providers/community_providers.dart';
@@ -157,7 +156,7 @@ class SkinVoteButton extends ConsumerWidget {
                               ? context.l10n.communityWriteFirstReview
                               : context.l10n.communityRatingSummary(
                                   formatRating(avg),
-                                  formatNumber(rating.count),
+                                  rating.count,
                                 ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

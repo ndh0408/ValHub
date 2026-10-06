@@ -2,7 +2,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/val_widgets.dart';
-import '../../../../core/util/format.dart';
 import '../../data/community_models.dart';
 import '../widgets/community_widgets.dart';
 import '../widgets/translatable_text.dart';
@@ -116,9 +115,7 @@ class PostCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Semantics(
                   button: onOpen != null,
-                  label: context.l10n.communityComments(
-                    formatNumber(post.comments),
-                  ),
+                  label: context.l10n.communityComments(post.comments),
                   onTap: onOpen,
                   excludeSemantics: true,
                   child: InkWell(

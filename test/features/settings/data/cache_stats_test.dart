@@ -19,6 +19,14 @@ void main() {
       expect(formatBytes(32 * 1024 * 1024), '32,0 MB');
       expect(formatBytes((1.1 * 1024 * 1024 * 1024).round()), '1,1 GB');
     });
+
+    test('other languages use their own separators', () {
+      final mb = (130.5 * 1024 * 1024).round();
+      expect(formatBytes(mb, locale: 'en'), '130.5 MB');
+      expect(formatBytes(mb, locale: 'ja'), '130.5 MB');
+      expect(formatBytes(mb, locale: 'de'), '130,5 MB');
+      expect(formatBytes(1023 * 1024, locale: 'en'), '1,023 KB');
+    });
   });
 
   group('dirSizeBytes', () {

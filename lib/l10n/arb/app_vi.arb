@@ -2306,7 +2306,8 @@
     "description": "\"≈ 81 trận Đấu thường\".",
     "placeholders": {
       "n": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       },
       "queue": {
         "type": "String"
@@ -2776,7 +2777,8 @@
     "description": "CollectionStrings.cardsCount — S31 / S32 pickers",
     "placeholders": {
       "n": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       }
     },
     "x-context": "lib/features/collection/collection_strings.dart"
@@ -2939,7 +2941,8 @@
     "description": "Browse tile count (\"142 món\").",
     "placeholders": {
       "n": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       }
     },
     "x-context": "lib/features/collection/collection_strings.dart"
@@ -3124,7 +3127,8 @@
     "description": "CollectionStrings.ownedSkinsStat — S39 browse",
     "placeholders": {
       "n": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       }
     },
     "x-context": "lib/features/collection/collection_strings.dart"
@@ -3518,7 +3522,8 @@
     "description": "CollectionStrings.titlesCount — S31 / S32 pickers",
     "placeholders": {
       "n": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       }
     },
     "x-context": "lib/features/collection/collection_strings.dart"
@@ -3866,7 +3871,8 @@
     "description": "CommunityStrings.comments — feed",
     "placeholders": {
       "n": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       }
     },
     "x-context": "lib/features/community/community_strings.dart"
@@ -3904,7 +3910,8 @@
     "description": "CommunityStrings.communityLfg — scopes (v3)",
     "placeholders": {
       "n": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       }
     },
     "x-context": "lib/features/community/community_strings.dart"
@@ -4938,7 +4945,8 @@
     "description": "CommunityStrings.joinsCount — LFG v2",
     "placeholders": {
       "n": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       }
     },
     "x-context": "lib/features/community/community_strings.dart"
@@ -5165,7 +5173,8 @@
     "description": "CommunityStrings.likes — feed",
     "placeholders": {
       "n": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       }
     },
     "x-context": "lib/features/community/community_strings.dart"
@@ -5535,7 +5544,8 @@
     "description": "CommunityStrings.ratingCount — skin reviews",
     "placeholders": {
       "n": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       }
     },
     "x-context": "lib/features/community/community_strings.dart"
@@ -5548,7 +5558,8 @@
         "type": "String"
       },
       "n": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       }
     },
     "x-context": "lib/features/community/community_strings.dart"
@@ -6077,7 +6088,8 @@
     "description": "CommunityStrings.votes — skin votes",
     "placeholders": {
       "n": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       }
     },
     "x-context": "lib/features/community/community_strings.dart"
@@ -10427,7 +10439,8 @@
     "description": "WishlistStrings.catalogCount — S3B catalog",
     "placeholders": {
       "count": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       }
     },
     "x-context": "lib/features/wishlist/wishlist_strings.dart"
@@ -10512,7 +10525,8 @@
     "description": "\"Đang lọc: 3 skin · 5.325 VP\" (VF §8.6 filteredValue).",
     "placeholders": {
       "count": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       },
       "value": {
         "type": "String"
@@ -10650,7 +10664,8 @@
     "description": "\"12 skin\".",
     "placeholders": {
       "count": {
-        "type": "String"
+        "format": "decimalPattern",
+        "type": "int"
       }
     },
     "x-context": "lib/features/wishlist/wishlist_strings.dart"

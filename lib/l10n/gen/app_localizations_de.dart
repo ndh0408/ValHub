@@ -1448,8 +1448,19 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String battlePassMatchesEstimate(String n, String queue) {
-    return 'Matches in $queue: ≈ $n';
+  String battlePassMatchesEstimate(int n, String queue) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString Matches',
+      one: '$nString Match',
+    );
+    return '≈ $_temp0 in $queue';
   }
 
   @override
@@ -1720,8 +1731,19 @@ class AppLocalizationsDe extends AppLocalizations {
       'Gespeichertes Loadout wird angezeigt. Zum Aktualisieren ziehen, bevor du etwas änderst.';
 
   @override
-  String collectionCardsCount(String n) {
-    return 'Karten im Besitz: $n';
+  String collectionCardsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString Karten im Besitz',
+      one: '$nString Karte im Besitz',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1813,8 +1835,19 @@ class AppLocalizationsDe extends AppLocalizations {
       'Verbirgt deinen Namen im Match vor Spielern außerhalb deiner Gruppe.';
 
   @override
-  String collectionItemsCount(String n) {
-    return 'Gegenstände: $n';
+  String collectionItemsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString Gegenstände',
+      one: '$nString Gegenstand',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1917,8 +1950,19 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String collectionOwnedSkinsStat(String n) {
-    return 'Skins im Besitz: $n';
+  String collectionOwnedSkinsStat(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString Skins im Besitz',
+      one: '$nString Skin im Besitz',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2173,8 +2217,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get collectionTitle => 'Sammlung';
 
   @override
-  String collectionTitlesCount(String n) {
-    return 'Titel im Besitz: $n';
+  String collectionTitlesCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString Titel im Besitz';
   }
 
   @override
@@ -2436,8 +2485,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get communityCommentHint => 'Kommentar schreiben …';
 
   @override
-  String communityComments(String n) {
-    return 'Kommentare: $n';
+  String communityComments(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString Kommentare',
+      one: '$nString Kommentar',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2454,8 +2514,19 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String communityCommunityLfg(String n) {
-    return 'Mitspielersuchen: $n';
+  String communityCommunityLfg(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString Mitspielersuchen',
+      one: '$nString Mitspielersuche',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -3087,8 +3158,19 @@ class AppLocalizationsDe extends AppLocalizations {
       'Gruppe beigetreten! Öffne VALORANT, um zusammen zu spielen.';
 
   @override
-  String communityJoinsCount(String n) {
-    return 'Beitrittsanfragen: $n';
+  String communityJoinsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString Beitrittsanfragen',
+      one: '$nString Beitrittsanfrage',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -3221,8 +3303,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get communityLike => 'Gefällt mir';
 
   @override
-  String communityLikes(String n) {
-    return 'Likes: $n';
+  String communityLikes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString Likes',
+      one: '$nString Like',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -3434,13 +3527,35 @@ class AppLocalizationsDe extends AppLocalizations {
   String get communityRateLimitedTitle => 'Warte einen Moment';
 
   @override
-  String communityRatingCount(String n) {
-    return 'Bewertungen: $n';
+  String communityRatingCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString Bewertungen',
+      one: '$nString Bewertung',
+    );
+    return '$_temp0';
   }
 
   @override
-  String communityRatingSummary(String avg, String n) {
-    return '$avg · Bewertungen: $n';
+  String communityRatingSummary(String avg, int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString Bewertungen',
+      one: '$nString Bewertung',
+    );
+    return '$avg · $_temp0';
   }
 
   @override
@@ -3761,8 +3876,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get communityVote => 'Diesem Skin ein Herz geben';
 
   @override
-  String communityVotes(String n) {
-    return 'Herzen: $n';
+  String communityVotes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString Herzen',
+      one: '$nString Herz',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -6549,8 +6675,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get wishlistBrowseCatalog => 'Alle Skins ansehen';
 
   @override
-  String wishlistCatalogCount(String count) {
-    return 'Skins: $count';
+  String wishlistCatalogCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString Skins',
+      one: '$countString Skin',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -6600,8 +6736,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get wishlistFilterTiers => 'Edition';
 
   @override
-  String wishlistFiltered(String count, String value) {
-    return 'Gefiltert: $count · $value';
+  String wishlistFiltered(int count, String value) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString Skins',
+      one: '$countString Skin',
+    );
+    return 'Gefiltert: $_temp0 · $value';
   }
 
   @override
@@ -6693,8 +6839,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get wishlistSearchHint => 'Skins suchen …';
 
   @override
-  String wishlistSkinCount(String count) {
-    return 'Skins: $count';
+  String wishlistSkinCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString Skins',
+      one: '$countString Skin',
+    );
+    return '$_temp0';
   }
 
   @override

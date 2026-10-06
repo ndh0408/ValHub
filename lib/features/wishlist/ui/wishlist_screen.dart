@@ -21,7 +21,6 @@ import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/ui/price_estimate.dart';
-import '../../../core/util/format.dart';
 import '../../skin_detail/skin_detail_sheet.dart';
 import '../../store/store_routes.dart';
 import '../../store/ui/store_screen.dart' show StoreSegment;
@@ -455,9 +454,7 @@ class _SummaryStrip extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                context.l10n.wishlistSkinCount(
-                  formatNumber(view.entries.length),
-                ),
+                context.l10n.wishlistSkinCount(view.entries.length),
                 style: theme.textTheme.labelLarge?.copyWith(color: muted),
               ),
             ],
@@ -466,10 +463,7 @@ class _SummaryStrip extends StatelessWidget {
           if (view.query.isFiltering) ...[
             const SizedBox(height: 6),
             Text(
-              context.l10n.wishlistFiltered(
-                formatNumber(view.visible.length),
-                filteredText,
-              ),
+              context.l10n.wishlistFiltered(view.visible.length, filteredText),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: legibleAccent(context, theme.colorScheme.primary),
                 fontWeight: FontWeight.w600,

@@ -1323,8 +1323,13 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String battlePassMatchesEstimate(String n, String queue) {
-    return '$queue约 $n 场';
+  String battlePassMatchesEstimate(int n, String queue) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$queue约 $nString 场';
   }
 
   @override
@@ -1582,8 +1587,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get collectionCachedLoadout => '正在显示已保存的配置。更改前请下拉刷新。';
 
   @override
-  String collectionCardsCount(String n) {
-    return '已拥有卡片：$n';
+  String collectionCardsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '已拥有 $nString 张卡片';
   }
 
   @override
@@ -1672,8 +1682,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get collectionIncognitoHint => '在对局中向非队友玩家隐藏你的名字。';
 
   @override
-  String collectionItemsCount(String n) {
-    return '物品：$n';
+  String collectionItemsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 件物品';
   }
 
   @override
@@ -1772,8 +1787,13 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String collectionOwnedSkinsStat(String n) {
-    return '已拥有皮肤：$n';
+  String collectionOwnedSkinsStat(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '已拥有 $nString 款皮肤';
   }
 
   @override
@@ -1998,8 +2018,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get collectionTitle => '收藏';
 
   @override
-  String collectionTitlesCount(String n) {
-    return '已拥有头衔：$n';
+  String collectionTitlesCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '已拥有 $nString 个头衔';
   }
 
   @override
@@ -2230,8 +2255,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityCommentHint => '写评论…';
 
   @override
-  String communityComments(String n) {
-    return '评论：$n';
+  String communityComments(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 条评论';
   }
 
   @override
@@ -2248,8 +2278,13 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String communityCommunityLfg(String n) {
-    return '组队帖：$n';
+  String communityCommunityLfg(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 条组队帖';
   }
 
   @override
@@ -2861,8 +2896,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityJoinedHint => '已加入队伍！打开 VALORANT 一起游戏吧。';
 
   @override
-  String communityJoinsCount(String n) {
-    return '加入请求：$n';
+  String communityJoinsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 人申请加入';
   }
 
   @override
@@ -2984,8 +3024,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityLike => '点赞';
 
   @override
-  String communityLikes(String n) {
-    return '点赞：$n';
+  String communityLikes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 个赞';
   }
 
   @override
@@ -3183,13 +3228,23 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityRateLimitedTitle => '请稍等片刻';
 
   @override
-  String communityRatingCount(String n) {
-    return '评分：$n';
+  String communityRatingCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 人评分';
   }
 
   @override
-  String communityRatingSummary(String avg, String n) {
-    return '$avg · 评分：$n';
+  String communityRatingSummary(String avg, int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$avg · $nString 人评分';
   }
 
   @override
@@ -3488,8 +3543,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityVote => '为此皮肤点亮爱心';
 
   @override
-  String communityVotes(String n) {
-    return '喜爱：$n';
+  String communityVotes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 人喜爱';
   }
 
   @override
@@ -5989,8 +6049,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get wishlistBrowseCatalog => '查看全部皮肤';
 
   @override
-  String wishlistCatalogCount(String count) {
-    return '皮肤：$count';
+  String wishlistCatalogCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString 款皮肤';
   }
 
   @override
@@ -6037,8 +6101,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get wishlistFilterTiers => '版本';
 
   @override
-  String wishlistFiltered(String count, String value) {
-    return '已筛选皮肤：$count · $value';
+  String wishlistFiltered(int count, String value) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '已筛选：$countString 款皮肤 · $value';
   }
 
   @override
@@ -6119,8 +6187,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get wishlistSearchHint => '搜索皮肤…';
 
   @override
-  String wishlistSkinCount(String count) {
-    return '皮肤：$count';
+  String wishlistSkinCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString 款皮肤';
   }
 
   @override
@@ -7927,8 +7999,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String battlePassMatchesEstimate(String n, String queue) {
-    return '$queue：≈ $n 場';
+  String battlePassMatchesEstimate(int n, String queue) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$queue：≈ $nString 場';
   }
 
   @override
@@ -8185,8 +8262,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get collectionCachedLoadout => '正在顯示已儲存的裝備。進行變更前，請先下拉重新整理。';
 
   @override
-  String collectionCardsCount(String n) {
-    return '已擁有的卡片：$n';
+  String collectionCardsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '已擁有 $nString 張卡片';
   }
 
   @override
@@ -8275,8 +8357,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get collectionIncognitoHint => '在對戰中對非隊伍成員的玩家隱藏你的名稱。';
 
   @override
-  String collectionItemsCount(String n) {
-    return '物品：$n';
+  String collectionItemsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 件物品';
   }
 
   @override
@@ -8375,8 +8462,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String collectionOwnedSkinsStat(String n) {
-    return '已擁有的造型：$n';
+  String collectionOwnedSkinsStat(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '已擁有 $nString 款造型';
   }
 
   @override
@@ -8601,8 +8693,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get collectionTitle => '收藏庫';
 
   @override
-  String collectionTitlesCount(String n) {
-    return '已擁有的稱號：$n';
+  String collectionTitlesCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '已擁有 $nString 個稱號';
   }
 
   @override
@@ -8835,8 +8932,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityCommentHint => '撰寫留言…';
 
   @override
-  String communityComments(String n) {
-    return '留言：$n';
+  String communityComments(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 則留言';
   }
 
   @override
@@ -8853,8 +8955,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String communityCommunityLfg(String n) {
-    return '找隊友貼文：$n';
+  String communityCommunityLfg(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 則找隊友貼文';
   }
 
   @override
@@ -9466,8 +9573,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityJoinedHint => '已加入隊伍！開啟 VALORANT 一起玩吧。';
 
   @override
-  String communityJoinsCount(String n) {
-    return '加入請求：$n';
+  String communityJoinsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 人申請加入';
   }
 
   @override
@@ -9589,8 +9701,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityLike => '讚';
 
   @override
-  String communityLikes(String n) {
-    return '讚：$n';
+  String communityLikes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 個讚';
   }
 
   @override
@@ -9788,13 +9905,23 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityRateLimitedTitle => '請稍等一下';
 
   @override
-  String communityRatingCount(String n) {
-    return '評分：$n';
+  String communityRatingCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 人評分';
   }
 
   @override
-  String communityRatingSummary(String avg, String n) {
-    return '$avg · 評分：$n';
+  String communityRatingSummary(String avg, int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$avg · $nString 人評分';
   }
 
   @override
@@ -10093,8 +10220,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityVote => '為此造型按愛心';
 
   @override
-  String communityVotes(String n) {
-    return '讚：$n';
+  String communityVotes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$nString 個讚';
   }
 
   @override
@@ -12593,8 +12725,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get wishlistBrowseCatalog => '查看所有造型';
 
   @override
-  String wishlistCatalogCount(String count) {
-    return '造型：$count';
+  String wishlistCatalogCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString 款造型';
   }
 
   @override
@@ -12641,8 +12777,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get wishlistFilterTiers => '版本';
 
   @override
-  String wishlistFiltered(String count, String value) {
-    return '篩選中：$count 款造型 · $value';
+  String wishlistFiltered(int count, String value) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '篩選中：$countString 款造型 · $value';
   }
 
   @override
@@ -12723,8 +12863,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get wishlistSearchHint => '搜尋造型…';
 
   @override
-  String wishlistSkinCount(String count) {
-    return '造型：$count';
+  String wishlistSkinCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString 款造型';
   }
 
   @override

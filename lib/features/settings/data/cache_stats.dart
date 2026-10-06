@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../core/l10n/locale.dart' show currentIntlLocale;
 import '../../../core/storage/json_file_cache.dart';
 import '../../../core/ui/net_image.dart' show clearMediaCache;
 import '../../../core/util/format.dart';
@@ -39,19 +41,28 @@ Future<int> mediaCacheSizeBytes() async {
   }
 }
 
-/// `512 B`, `48 KB`, `3,2 MB`, `1,1 GB` (VF §8.12 "Xóa bộ nhớ đệm ({size})").
-String formatBytes(int bytes) {
-  if (bytes < 1024) return '${formatNumber(bytes < 0 ? 0 : bytes)} B';
+/// `512 B`, `48 KB`, `3,2 MB` (vi) / `3.2 MB` (en), `1,1 GB` (VF §8.12
+/// "Xóa bộ nhớ đệm ({size})"), in [locale] or the current UI locale.
+String formatBytes(int bytes, {String? locale}) {
+  if (bytes < 1024) {
+    return '${formatNumber(bytes < 0 ? 0 : bytes, locale: locale)} B';
+  }
   final kb = bytes / 1024;
-  if (kb < 1024) return '${formatNumber(kb.round())} KB';
+  if (kb < 1024) return '${formatNumber(kb.round(), locale: locale)} KB';
   final mb = kb / 1024;
-  if (mb < 1024) return '${_oneDecimal(mb)} MB';
+  if (mb < 1024) return '${_oneDecimal(mb, locale)} MB';
   final gb = mb / 1024;
-  return '${_oneDecimal(gb)} GB';
+  return '${_oneDecimal(gb, locale)} GB';
 }
 
-String _oneDecimal(double value) =>
-    value.toStringAsFixed(1).replaceAll('.', ',');
+String _oneDecimal(double value, String? locale) {
+  final tag = Intl.canonicalizedLocale(locale ?? currentIntlLocale());
+  try {
+    return NumberFormat('#,##0.0', tag).format(value);
+  } on Object {
+    return NumberFormat('#,##0.0', 'en_US').format(value);
+  }
+}
 
 /// "Xóa bộ nhớ đệm" (X2): the offline-response cache (`<appSupport>/cache`,
 /// per-account `acct/<puuid>/…` copies and match details) plus the image

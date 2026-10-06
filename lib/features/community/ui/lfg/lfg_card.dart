@@ -323,7 +323,7 @@ class _MineActions extends StatelessWidget {
         Text(
           context.fmt.inlineFacts([
             context.l10n.communityPartyCodeValue(post.partyCode),
-            context.l10n.communityJoinsCount(formatNumber(post.joins)),
+            context.l10n.communityJoinsCount(post.joins),
           ]),
           style: theme.textTheme.labelMedium?.copyWith(
             color: muted,

@@ -14,7 +14,6 @@ import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
-import '../../../core/util/format.dart';
 import '../data/collection_items.dart';
 import '../data/collection_search.dart';
 import '../providers/collection_providers.dart';
@@ -127,9 +126,7 @@ class _PlayerTitlePickerScreenState
                         titles.length,
                         all.length,
                       )
-                    : context.l10n.collectionTitlesCount(
-                        formatNumber(all.length),
-                      ),
+                    : context.l10n.collectionTitlesCount(all.length),
                 highlighted: filtering,
               ),
             ),

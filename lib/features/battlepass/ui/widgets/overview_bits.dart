@@ -126,7 +126,7 @@ class XpEstimateCard extends StatelessWidget {
                     ),
                     Text(
                       context.l10n.battlePassMatchesEstimate(
-                        formatNumber(matches),
+                        matches,
                         queueName,
                       ),
                       style: theme.textTheme.bodyMedium,

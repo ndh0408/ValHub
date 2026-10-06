@@ -77,7 +77,7 @@ class RatingBadge extends StatelessWidget {
         const SizedBox(width: 4),
         Flexible(
           child: Text(
-            context.l10n.communityRatingCount(formatNumber(rating.count)),
+            context.l10n.communityRatingCount(rating.count),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: base?.copyWith(

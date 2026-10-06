@@ -1372,8 +1372,13 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String battlePassMatchesEstimate(String n, String queue) {
-    return '$queue ≈ $n แมตช์';
+  String battlePassMatchesEstimate(int n, String queue) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '≈ $nString แมตช์ $queue';
   }
 
   @override
@@ -1636,8 +1641,13 @@ class AppLocalizationsTh extends AppLocalizations {
       'กำลังแสดงชุดอุปกรณ์ที่บันทึกไว้ ดึงลงเพื่อรีเฟรชก่อนเปลี่ยนแปลง';
 
   @override
-  String collectionCardsCount(String n) {
-    return 'การ์ดที่มี: $n';
+  String collectionCardsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'มีการ์ด $nString ใบ';
   }
 
   @override
@@ -1728,8 +1738,13 @@ class AppLocalizationsTh extends AppLocalizations {
       'ซ่อนชื่อของคุณจากผู้เล่นที่ไม่ได้อยู่ในปาร์ตี้เดียวกันระหว่างแมตช์';
 
   @override
-  String collectionItemsCount(String n) {
-    return 'ไอเทม: $n';
+  String collectionItemsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ไอเทม $nString ชิ้น';
   }
 
   @override
@@ -1828,8 +1843,13 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String collectionOwnedSkinsStat(String n) {
-    return 'สกินที่มี: $n';
+  String collectionOwnedSkinsStat(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'มี $nString สกิน';
   }
 
   @override
@@ -2059,8 +2079,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get collectionTitle => 'คอลเลกชัน';
 
   @override
-  String collectionTitlesCount(String n) {
-    return 'ฉายาที่มี: $n';
+  String collectionTitlesCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'มีฉายา $nString รายการ';
   }
 
   @override
@@ -2306,8 +2331,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get communityCommentHint => 'เขียนคอมเมนต์…';
 
   @override
-  String communityComments(String n) {
-    return 'คอมเมนต์: $n';
+  String communityComments(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'คอมเมนต์ $nString รายการ';
   }
 
   @override
@@ -2324,8 +2354,13 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String communityCommunityLfg(String n) {
-    return 'โพสต์หาเพื่อนร่วมทีม: $n';
+  String communityCommunityLfg(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'โพสต์หาเพื่อนร่วมทีม $nString โพสต์';
   }
 
   @override
@@ -2952,8 +2987,13 @@ class AppLocalizationsTh extends AppLocalizations {
       'เข้าร่วมปาร์ตี้แล้ว! เปิด VALORANT เพื่อเล่นด้วยกัน';
 
   @override
-  String communityJoinsCount(String n) {
-    return 'คำขอเข้าร่วม: $n';
+  String communityJoinsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'คำขอเข้าร่วม $nString รายการ';
   }
 
   @override
@@ -3079,8 +3119,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get communityLike => 'ถูกใจ';
 
   @override
-  String communityLikes(String n) {
-    return 'ถูกใจ: $n';
+  String communityLikes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ถูกใจ $nString ครั้ง';
   }
 
   @override
@@ -3284,13 +3329,23 @@ class AppLocalizationsTh extends AppLocalizations {
   String get communityRateLimitedTitle => 'รอสักครู่';
 
   @override
-  String communityRatingCount(String n) {
-    return 'คะแนน: $n';
+  String communityRatingCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ให้คะแนน $nString ครั้ง';
   }
 
   @override
-  String communityRatingSummary(String avg, String n) {
-    return '$avg · คะแนน: $n';
+  String communityRatingSummary(String avg, int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return '$avg · ให้คะแนน $nString ครั้ง';
   }
 
   @override
@@ -3593,8 +3648,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get communityVote => 'กดหัวใจให้สกินนี้';
 
   @override
-  String communityVotes(String n) {
-    return 'ถูกใจ: $n';
+  String communityVotes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ถูกใจ $nString ครั้ง';
   }
 
   @override
@@ -6170,8 +6230,12 @@ class AppLocalizationsTh extends AppLocalizations {
   String get wishlistBrowseCatalog => 'ดูสกินทั้งหมด';
 
   @override
-  String wishlistCatalogCount(String count) {
-    return 'สกิน: $count';
+  String wishlistCatalogCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString สกิน';
   }
 
   @override
@@ -6220,8 +6284,12 @@ class AppLocalizationsTh extends AppLocalizations {
   String get wishlistFilterTiers => 'รุ่น';
 
   @override
-  String wishlistFiltered(String count, String value) {
-    return 'กำลังกรอง: สกิน $count · $value';
+  String wishlistFiltered(int count, String value) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return 'กำลังกรอง: $countString สกิน · $value';
   }
 
   @override
@@ -6306,8 +6374,12 @@ class AppLocalizationsTh extends AppLocalizations {
   String get wishlistSearchHint => 'ค้นหาสกิน…';
 
   @override
-  String wishlistSkinCount(String count) {
-    return 'สกิน: $count';
+  String wishlistSkinCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString สกิน';
   }
 
   @override

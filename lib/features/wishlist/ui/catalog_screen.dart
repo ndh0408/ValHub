@@ -206,7 +206,7 @@ class _CountLine extends ConsumerWidget {
         children: [
           Expanded(
             child: Text(
-              context.l10n.wishlistCatalogCount(formatNumber(count)),
+              context.l10n.wishlistCatalogCount(count),
               style: theme.textTheme.labelLarge?.copyWith(
                 color: filtering
                     ? legibleAccent(context, theme.colorScheme.primary)
