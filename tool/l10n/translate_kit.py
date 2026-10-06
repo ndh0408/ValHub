@@ -148,6 +148,30 @@ def parse(msg):
     return args, plurals, selects
 
 
+_GLOSSARY = {}
+
+
+def glossary_terms(code):
+    """Latin-script official terms of [code] (tool/l10n/glossary), longest
+    first, plus Riot's own game titles."""
+    if code not in _GLOSSARY:
+        terms = {'League of Legends', 'Legends of Runeterra', 'Teamfight Tactics',
+                 '2XKO', 'Riot Games', 'Riot ID', 'VALORANT', 'ValHub'}
+        path = os.path.join(ROOT, 'tool', 'l10n', 'glossary', f'{code}.json')
+        if os.path.exists(path):
+            for rows in load(path).values():
+                for row in rows:
+                    term = row.get('term') or ''
+                    if term and re.fullmatch(r"[A-Za-z0-9 .:/&'-]+", term):
+                        for t in (term, term.title(), term.capitalize()):
+                            terms.add(t)
+                            # Single words build composed labels
+                            # ("{shortName} Edition", "Deluxe").
+                            terms.update(w for w in t.split() if len(w) > 2)
+        _GLOSSARY[code] = sorted(terms, key=len, reverse=True)
+    return _GLOSSARY[code]
+
+
 def ws_shape(s):
     return (s[:1].isspace(), s[-1:].isspace(), s.count('\n'), s.endswith('…'))
 
@@ -203,6 +227,10 @@ def check_one(code, vi, text, meta, key=''):
     pat = SCRIPT.get(code)
     if pat and not meta.get('x-locked'):
         plain = re.sub(r'\{[A-Za-z0-9_]+\}', '', text)
+        # Official terms the locale's game client keeps in Latin letters
+        # ("Competitive", "Radiant") are not untranslated text.
+        for term in glossary_terms(code):
+            plain = plain.replace(term, '')
         if (text != vi and len(plain.strip()) > 3 and not re.search(pat, plain)
                 and not SCRIPT_FREE_OK.match(plain)):
             errs.append('no character of the target script')
@@ -317,7 +345,8 @@ def merge(work, code):
     merged = {}
     folder = os.path.join(work, 'out', code)
     for c in sorted(os.listdir(folder)):
-        merged.update(load(os.path.join(folder, c)))
+        if c.endswith('.json'):
+            merged.update(load(os.path.join(folder, c)))
     j, _ = template()
     doc = {'@@locale': code}
     for k in keys:

@@ -1,0 +1,211 @@
+{
+  "schema": 1,
+  "locale": "de",
+  "id": "community",
+  "title": "Community-Richtlinien",
+  "summary": "Regeln für Beiträge, Kommentare und die Teamsuche",
+  "version": "1.0",
+  "effectiveDate": "04/10/2026",
+  "copyright": "© 2026 Nguyễn Đức Huy. Alle Rechte vorbehalten.",
+  "export": {
+    "header": "<!-- Automatisch generierte Datei aus assets/legal/de/. Nicht von Hand bearbeiten: Bearbeite den JSON-Inhalt und führe dann `dart run tool/export_legal_docs.dart` aus. -->",
+    "metadata": "**ValHub** · Version 1.0 · Gültig ab: 04/10/2026"
+  },
+  "preamble": [
+    {
+      "type": "p",
+      "text": "Die ValHub-Community ist der Ort, an dem VALORANT-Spieler ihren Shop zeigen, über Skins sprechen, Mitspieler finden und sich gegenseitig beim Rang-Aufstieg helfen. Damit es hier immer unterhaltsam und sicher bleibt, halten wir uns gemeinsam an die folgenden Regeln. Diese Richtlinien sind Bestandteil der Nutzungsbedingungen."
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Respektiere alle",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Diskutiere gern über Spielweisen, die Meta oder Skins, aber richte dich gegen die Meinung, nicht gegen die Person."
+            },
+            {
+              "text": "Beleidige, beschimpfe, belästige, bedrohe oder mobbe niemanden und stifte andere nicht dazu an, jemanden zu belästigen."
+            },
+            {
+              "text": "Keine Diskriminierung und kein Hass aufgrund von ethnischer Herkunft, regionaler Herkunft, Geschlecht, Religion, Behinderung, sexueller Orientierung oder anderer persönlicher Merkmale."
+            },
+            {
+              "text": "Gib dich nicht als andere Personen, Streamer, Profispieler oder Riot Games aus."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Unzulässige Inhalte",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Inhalte, die gegen geltendes Recht verstoßen (vietnamesisches Recht und das Recht deines Wohnorts), zu Gewalt oder Hass aufstacheln oder die Sicherheit anderer oder die öffentliche Ordnung und Sicherheit gefährden."
+            },
+            {
+              "text": "Pornografische oder sexuell anzügliche Inhalte, insbesondere mit Bezug zu Kindern."
+            },
+            {
+              "text": "Schockierende Gewalt- oder Blutdarstellungen, Selbstverletzung oder die Verherrlichung gefährlichen Verhaltens."
+            },
+            {
+              "text": "Absichtliche Falschinformationen, Fake News, Betrug, gefälschte Gewinnspiele oder „kostenlose VP-Hacks“."
+            },
+            {
+              "text": "Inhalte, die das Urheberrecht oder geistige Eigentumsrechte anderer verletzen."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Cheating, Handel und Werbung",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Bewirb oder teile keine Cheat-Software, Hacks, Makros oder Tools, die in das Spiel eingreifen, und frage nicht nach deren Kauf."
+            },
+            {
+              "text": "Kaufe, verkaufe, vermiete oder tausche keine Konten; bewirb keine Boosting-Dienste und verkaufe VP oder Gegenstände nicht unerlaubt."
+            },
+            {
+              "text": "Kein Spam, keine wiederholten Beiträge, keine Werbung und keine Links zu kommerziellen Websites, Gruppen oder Diensten ohne Erlaubnis."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Schutz persönlicher Daten",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Veröffentliche keine persönlichen Daten anderer Personen (echter Name, Telefonnummer, Adresse, private Fotos …) ohne deren Einwilligung."
+            },
+            {
+              "text": "Teile niemals dein Riot-Passwort, deine Bestätigungscodes oder deine Riot-Anmelde-E-Mail. ValHub und das Moderationsteam fragen niemals nach diesen Informationen."
+            },
+            {
+              "text": "Sei vorsichtig bei Screenshots: Verdecke Informationen, die du nicht öffentlich machen möchtest."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Teamsuche",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Poste nur, wenn du wirklich Mitspieler suchst, und gib die richtige Region, den richtigen Spielmodus und die richtige Anzahl freier Plätze an."
+            },
+            {
+              "text": "Der Gruppencode in deiner Mitspielersuche ist für alle sichtbar, die sie sehen. Mitspielersuchen laufen nach 30 Minuten automatisch ab; lösche deine Mitspielersuche oder deaktiviere den Code im Spiel, sobald deine Gruppe voll ist."
+            },
+            {
+              "text": "Nutze Mitspielersuchen nicht für Spam, Werbung oder dazu, andere in eine Gruppe zu locken, um sie zu belästigen oder ihnen das Spiel zu verderben."
+            },
+            {
+              "text": "Verhalte dich im Match wie ein guter Teamkollege: Sabotiere das Match nicht absichtlich, lass dein Team nicht im Stich (AFK) und beschimpfe oder attackiere niemanden."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Bilder und Abstimmungen",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Poste nur Bilder, die du verwenden darfst und die diesen Richtlinien entsprechen; Screenshots von deinem Shop, deiner Sammlung und Momenten aus dem Match sind alle willkommen."
+            },
+            {
+              "text": "Jedes Konto hat pro Skin nur eine Stimme. Nutze keine mehreren Konten oder automatisierten Tools, um die Rangliste zu manipulieren."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Verstöße melden",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Über das Inhaltsmenü kannst du eine Person ausblenden oder auf dem Gerät blockieren. Dadurch werden ihre Inhalte nur für das Konto ausgeblendet, das du auf diesem Gerät verwendest; sie kann deine öffentlichen Inhalte weiterhin sehen. In den Einstellungen kannst du sie wieder einblenden. Diese Funktion ersetzt nicht das Melden."
+        },
+        {
+          "type": "p",
+          "text": "Du siehst einen Inhalt, der gegen die Regeln verstößt? Nutze die Schaltfläche „Melden“ beim Beitrag, Kommentar oder bei der Mitspielersuche und wähle einen passenden Grund. Meldungen werden vertraulich behandelt; die gemeldete Person erfährt nicht, wer sie gemeldet hat."
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Inhalte, die genügend Meldungen von verschiedenen Nutzern erhalten, werden bis zur Prüfung automatisch ausgeblendet."
+            },
+            {
+              "text": "Bei dringenden oder schwerwiegenden Fällen (Drohungen, Inhalte mit Bezug zu Kindern, Offenlegung persönlicher Daten) melde den Inhalt und sende zusätzlich eine E-Mail an ndh0408@gmail.com."
+            },
+            {
+              "text": "Missbrauche die Meldefunktion nicht, um andere anzugreifen; wiederholte falsche Meldungen sind ebenfalls ein Verstoß."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Folgen von Verstößen",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Je nach Schwere und Häufigkeit können wir eine oder mehrere der folgenden Maßnahmen ergreifen, mit oder ohne vorherige Ankündigung:"
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Ausblenden oder Entfernen des regelwidrigen Inhalts."
+            },
+            {
+              "text": "Vorübergehende Einschränkung der Möglichkeit, Beiträge zu posten, zu kommentieren, Mitspieler zu suchen oder abzustimmen."
+            },
+            {
+              "text": "Dauerhafte Sperre für die Nutzung der Community."
+            },
+            {
+              "text": "Weitergabe von Informationen an die zuständigen Behörden bei rechtswidrigem Verhalten."
+            }
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Diese Maßnahmen gelten nur innerhalb von ValHub und wirken sich nicht auf dein Riot-Konto aus. Verstöße im Spiel können jedoch weiterhin von Riot Games nach dessen eigenen Richtlinien geahndet werden."
+        }
+      ]
+    },
+    {
+      "heading": "Widerspruch gegen Moderationsentscheidungen",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Wenn du der Ansicht bist, dass dein Inhalt irrtümlich entfernt wurde oder eine Maßnahme nicht angemessen war, sende eine E-Mail an ndh0408@gmail.com mit deiner Riot ID und einer kurzen Beschreibung. Wir prüfen die Entscheidung erneut und antworten so schnell wie möglich."
+        }
+      ]
+    }
+  ]
+}

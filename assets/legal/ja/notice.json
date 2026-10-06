@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "locale": "ja",
+  "id": "notice",
+  "title": "法的通知",
+  "summary": "Riot Gamesに関する免責事項、商標およびクレジット",
+  "version": "1.0",
+  "effectiveDate": "04/10/2026",
+  "copyright": "© 2026 Nguyễn Đức Huy. すべての権利を留保します。",
+  "export": {
+    "header": "<!-- assets/legal/ja/ から自動生成されたファイルです。手動で編集しないでください。JSONの内容を編集してから `dart run tool/export_legal_docs.dart` を実行してください。 -->",
+    "metadata": "**ValHub** · バージョン 1.0 · 発効日：04/10/2026"
+  },
+  "preamble": [
+    {
+      "type": "callout",
+      "text": "ValHubはRiot Gamesの承認を受けておらず、Riot GamesまたはRiot Gamesの製品の制作もしくは管理に関わるいかなる者の見解も反映していません。Riot Gamesおよび関連するすべての資産は、Riot Games, Inc.の商標または登録商標です。"
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Riot Gamesに関する免責事項",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "ValHubは、Riot Gamesの「Legal Jibber Jabber」ポリシーに基づいて作成されており、Riot Gamesが所有する資産を使用しています。Riot Gamesは本プロジェクトを承認または後援していません。"
+        },
+        {
+          "type": "p",
+          "text": "ValHubは独立したアプリであり、Riot Gamesの公式製品ではなく、いかなる形でもRiot Gamesと提携していません。ValHubに関するサポートはすべて、Riot Gamesではなく当方が提供します。"
+        }
+      ]
+    },
+    {
+      "heading": "商標",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Riot Games、VALORANTおよび関連するすべての資産は、Riot Games, Inc.の商標または登録商標です。本アプリで言及されるその他の名称、ロゴおよび商標は、それぞれの所有者に帰属し、識別の目的でのみ使用されています。"
+        }
+      ]
+    },
+    {
+      "heading": "ゲームコンテンツ",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "VALORANTのスキン、エージェント、マップ、ランク、プレイヤーカードその他のコンテンツの名称、画像、動画および情報は、Riot Games, Inc.が所有しています。あなたのアカウントデータ（ストア、ウォレット、コレクション、試合、ランク）は、Riot Gamesのサーバーから直接取得されます。"
+        }
+      ]
+    },
+    {
+      "heading": "データソースとクレジット",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "アイテム、エージェント、マップ、ランクに関する公開データおよび画像。valorant-api.comは独立したコミュニティプロジェクトであり、ValHubおよびRiot Gamesとは提携していません。",
+              "lead": "valorant-api.com："
+            },
+            {
+              "text": "VALORANT開発者コミュニティが作成した技術ドキュメント。",
+              "lead": "techchrism/valorant-api-docs："
+            },
+            {
+              "text": "ValHubは、Flutterをはじめとする多くのオープンソースソフトウェアを使用して開発されています。各ソフトウェアの一覧とライセンスは、「情報と規約」ページの「サードパーティソフトウェア」の項に掲載しています。",
+              "lead": "オープンソースソフトウェア："
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "ValHubの著作権",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "© 2026 Nguyễn Đức Huy. すべての権利を留保します。 ValHubはプロプライエタリソフトウェアであり、その利用は利用規約に従うものとします。"
+        }
+      ]
+    },
+    {
+      "heading": "知的財産権侵害の報告",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "ValHub内のコンテンツ（コミュニティでユーザーが投稿したコンテンツを含みます）があなたの知的財産権を侵害しているとお考えの場合は、ndh0408@gmail.comにメールをお送りください。その際、あなたの連絡先、保護されているあなたの著作物、侵害しているコンテンツが本アプリ内のどこにあるか、および提供する情報が正確であることの誓約を明記してください。当方は速やかに確認し、対応します。"
+        }
+      ]
+    }
+  ]
+}

@@ -5,3 +5,16 @@
 number-word:
   - pt.profileFormSemantics.one
   - es.profileFormSemantics.one
+# Arabic has separate zero/one categories: where the Vietnamese uses exact
+# =0 / =1 wording ("Chưa có skin nào", hidden at 0, "solo only"), the
+# Arabic zero/one branch carries that wording instead of the number.
+  - ar.collectionOwnedForWeapon.zero
+  - ar.collectionPresetCount.zero
+  - ar.collectionWishlistCount.zero
+  - ar.homeResultSummary.zero
+  - ar.profileRecordShort.zero
+  - ar.profileWinLossSummary.zero
+  - ar.storeResetNotificationBody.zero
+  - ar.wishlistNotifSummaryBody.zero
+  - ar.socialQueueMaxParty.one
+  - ar.wishlistOnSaleBanner.one

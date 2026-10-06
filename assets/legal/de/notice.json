@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "locale": "de",
+  "id": "notice",
+  "title": "Rechtlicher Hinweis",
+  "summary": "Haftungsausschluss zu Riot Games, Marken und Danksagungen",
+  "version": "1.0",
+  "effectiveDate": "04/10/2026",
+  "copyright": "© 2026 Nguyễn Đức Huy. Alle Rechte vorbehalten.",
+  "export": {
+    "header": "<!-- Automatisch generierte Datei aus assets/legal/de/. Nicht von Hand bearbeiten: Bearbeite den JSON-Inhalt und führe dann `dart run tool/export_legal_docs.dart` aus. -->",
+    "metadata": "**ValHub** · Version 1.0 · Gültig ab: 04/10/2026"
+  },
+  "preamble": [
+    {
+      "type": "callout",
+      "text": "ValHub wird von Riot Games nicht unterstützt und spiegelt nicht die Ansichten oder Meinungen von Riot Games oder von Personen wider, die an der Produktion oder Verwaltung der Produkte von Riot Games beteiligt sind. Riot Games und alle zugehörigen Eigentumsrechte sind Marken oder eingetragene Marken von Riot Games, Inc."
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Haftungsausschluss zu Riot Games",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "ValHub wurde gemäß der Richtlinie „Legal Jibber Jabber“ von Riot Games erstellt und verwendet Inhalte, die Eigentum von Riot Games sind. Riot Games unterstützt oder sponsert dieses Projekt nicht."
+        },
+        {
+          "type": "p",
+          "text": "ValHub ist eine unabhängige App, kein offizielles Produkt von Riot Games und in keiner Weise mit Riot Games verbunden. Sämtlicher Support für ValHub wird von uns geleistet, nicht von Riot Games."
+        }
+      ]
+    },
+    {
+      "heading": "Marken",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Riot Games, VALORANT und alle zugehörigen Eigentumsrechte sind Marken oder eingetragene Marken von Riot Games, Inc. Andere in der App erwähnte Namen, Logos und Marken gehören ihren jeweiligen Inhabern und werden nur zu Identifikationszwecken verwendet."
+        }
+      ]
+    },
+    {
+      "heading": "Spielinhalte",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Namen, Bilder, Videos und Informationen zu Skins, Agenten, Karten, Rängen, Spielerkarten und anderen VALORANT-Inhalten sind Eigentum von Riot Games, Inc. Deine Kontodaten (Shop, Guthaben, Sammlung, Matches, Ränge) werden direkt von den Servern von Riot Games abgerufen."
+        }
+      ]
+    },
+    {
+      "heading": "Datenquellen und Danksagungen",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "öffentliche Daten und Bilder zu Gegenständen, Agenten, Karten und Rängen. valorant-api.com ist ein unabhängiges Community-Projekt und weder mit ValHub noch mit Riot Games verbunden.",
+              "lead": "valorant-api.com:"
+            },
+            {
+              "text": "technische Dokumentation, zusammengestellt von der VALORANT-Entwickler-Community.",
+              "lead": "techchrism/valorant-api-docs:"
+            },
+            {
+              "text": "ValHub wurde mit Flutter und vielen weiteren Open-Source-Programmen entwickelt. Die Liste und die Lizenz jedes Programms findest du unter „Software von Drittanbietern“ auf der Seite „Über & Rechtliches“.",
+              "lead": "Open-Source-Software:"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Urheberrecht an ValHub",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "© 2026 Nguyễn Đức Huy. Alle Rechte vorbehalten. ValHub ist proprietäre Software; ihre Nutzung unterliegt den Nutzungsbedingungen."
+        }
+      ]
+    },
+    {
+      "heading": "Meldung von Verletzungen geistigen Eigentums",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Wenn du der Ansicht bist, dass Inhalte in ValHub, einschließlich von Nutzern in der Community veröffentlichter Inhalte, deine Rechte an geistigem Eigentum verletzen, sende bitte eine E-Mail an ndh0408@gmail.com. Gib bitte deutlich an: deine Kontaktdaten, welches deiner Werke geschützt ist, wo sich der rechtsverletzende Inhalt in der App befindet, sowie eine Erklärung, dass deine Angaben zutreffend sind. Wir werden die Angelegenheit prüfen und zeitnah bearbeiten."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,426 @@
+{
+  "schema": 1,
+  "locale": "de",
+  "id": "terms",
+  "title": "Nutzungsbedingungen",
+  "summary": "Regeln für das Herunterladen, Installieren und Nutzen von ValHub",
+  "version": "1.0",
+  "effectiveDate": "04/10/2026",
+  "copyright": "© 2026 Nguyễn Đức Huy. Alle Rechte vorbehalten.",
+  "export": {
+    "header": "<!-- Automatisch generierte Datei aus assets/legal/de/. Nicht von Hand bearbeiten: Bearbeite den JSON-Inhalt und führe dann `dart run tool/export_legal_docs.dart` aus. -->",
+    "metadata": "**ValHub** · Version 1.0 · Gültig ab: 04/10/2026"
+  },
+  "preamble": [
+    {
+      "type": "p",
+      "text": "Willkommen bei ValHub. Diese Nutzungsbedingungen (die „Bedingungen“) sind eine verbindliche Vereinbarung zwischen dir und Nguyễn Đức Huy („wir“) über das Herunterladen, Installieren und Nutzen der ValHub-App unter iOS und Android, einschließlich der Community-Funktionen (zusammen die „App“)."
+    },
+    {
+      "type": "callout",
+      "text": "Kurzfassung: ValHub ist eine inoffizielle Begleit-App und gehört nicht zu Riot Games. Du meldest dich mit deinem eigenen Riot-Konto auf der offiziellen Seite von Riot an. Du bist selbst für dein Konto und alle deine Aktionen verantwortlich, verhältst dich in der Community respektvoll und nutzt die App nicht für Cheating, Automatisierung oder unerlaubte Ausnutzung. Die App wird so bereitgestellt, wie sie ist."
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Annahme der Bedingungen",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Indem du die App herunterlädst, installierst, dich darin anmeldest oder sie weiter nutzt, bestätigst du, dass du diese Bedingungen, die Datenschutzerklärung und die Community-Richtlinien von ValHub gelesen und verstanden hast und ihnen zustimmst. Diese Dokumente sind untrennbarer Bestandteil der Bedingungen."
+        },
+        {
+          "type": "p",
+          "text": "Wenn du mit einem Teil davon nicht einverstanden bist, nutze die App bitte nicht und deinstalliere sie von deinem Gerät."
+        }
+      ]
+    },
+    {
+      "heading": "Begriffsbestimmungen",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "die ValHub-App, ihre Updates sowie die von uns damit bereitgestellten Inhalte und Dienste.",
+              "lead": "„App“:"
+            },
+            {
+              "text": "dein Konto bei Riot Games, mit dem du VALORANT spielst.",
+              "lead": "„Riot-Konto“:"
+            },
+            {
+              "text": "die sozialen Funktionen von ValHub wie Feed, Beiträge, Bilder, Kommentare, Likes, Skin-Abstimmungen und Teamsuche, die auf dem Community-Server von ValHub betrieben werden.",
+              "lead": "„Community“:"
+            },
+            {
+              "text": "alle Texte, Bilder, Gruppencodes, Stimmen, Meldungen und sonstigen Informationen, die du an die Community übermittelst.",
+              "lead": "„Nutzerinhalte“:"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Nutzungsvoraussetzungen",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Du musst nach den Bedingungen von Riot Games berechtigt sein, ein Riot-Konto zu besitzen und zu nutzen, und mindestens 13 Jahre alt sein (oder älter, wenn das Recht deines Wohnorts ein höheres Alter verlangt, z. B. 16 Jahre in einigen Ländern der Europäischen Union)."
+            },
+            {
+              "text": "Wenn du nach dem Recht deines Wohnorts noch nicht alt genug bist, um selbst einzuwilligen (in manchen Ländern 16 Jahre), darfst du die App nur nutzen, wenn ein Elternteil oder ein gesetzlicher Vormund diese Bedingungen und die Datenschutzerklärung gelesen und ihnen zugestimmt hat und deine Nutzung beaufsichtigt."
+            },
+            {
+              "text": "Du gehörst nicht zu den Personen, denen die Nutzung des Dienstes nach geltendem Recht untersagt ist, und dein Recht zur Nutzung der App wurde von uns noch nie beendet."
+            },
+            {
+              "text": "Du bist selbst für dein Gerät, deine Netzwerkverbindung und alle mobilen Datenkosten verantwortlich, die bei der Nutzung der App entstehen."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Riot-Konto und Anmeldedaten",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Du meldest dich in einem Webfenster an, das die offizielle Anmeldeseite von Riot Games anzeigt. ValHub empfängt, liest und speichert das Passwort, das du auf dieser Seite eingibst, nicht. Nach der Anmeldung werden die von Riot ausgestellten Anmeldedaten (das Zugriffstoken und Cookies, also Dateien, mit denen sich Riot merkt, dass du angemeldet bist) ausschließlich im sicheren Speicher des Betriebssystems auf deinem Gerät gespeichert."
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Du darfst der App nur Riot-Konten hinzufügen, die dir gehören oder deren Inhaber dir die Nutzung rechtmäßig erlaubt hat."
+            },
+            {
+              "text": "Du bist dafür verantwortlich, dein Gerät, dein Passwort und deine Codes für die Zwei-Faktor-Authentifizierung zu schützen, sowie für alle Aktivitäten in deinem Riot-Konto."
+            },
+            {
+              "text": "Die Funktion „Gespeicherte Anmeldedaten“ ist optional: Wenn du selbst deinen Benutzernamen und dein Passwort speicherst, bleiben diese nur im sicheren Speicher auf deinem Gerät und werden nur dann in die Anmeldeseite von Riot eingetragen, wenn du es verlangst. Wäge das Risiko ab, Passwörter auf einem gemeinsam genutzten Gerät zu speichern; du kannst diese Informationen jederzeit löschen."
+            },
+            {
+              "text": "Melde dich von der App ab und ändere sofort dein Riot-Passwort, wenn du einen unbefugten Zugriff auf dein Gerät oder Konto vermutest."
+            },
+            {
+              "text": "Die Nutzung eines Riot-Kontos muss stets den Nutzungsbedingungen und Richtlinien von Riot Games entsprechen. Riot Games kann dein Konto nach eigenen Richtlinien einschränken oder sperren; wir haben keine Befugnis, in diese Entscheidungen einzugreifen."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Recht zur Nutzung der App",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Unter der Voraussetzung, dass du diese Bedingungen einhältst, gewähren wir dir ein beschränktes, nicht ausschließliches, nicht übertragbares, nicht unterlizenzierbares und widerrufliches Recht, die App auf Geräten, die dir gehören oder die du kontrollierst, für persönliche, nicht kommerzielle Zwecke zu installieren und zu nutzen."
+        },
+        {
+          "type": "p",
+          "text": "ValHub ist proprietäre Software und keine Open-Source-Software. Wir lizenzieren dir die Nutzung der App, wir verkaufen sie dir nicht; alle Rechte, die in diesen Bedingungen nicht ausdrücklich gewährt werden, bleiben vorbehalten."
+        }
+      ]
+    },
+    {
+      "heading": "Verbotene Handlungen",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Bei der Nutzung der App ist es dir untersagt:"
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Die App zu kopieren, zu verändern, zurückzuentwickeln (Reverse Engineering), zu dekompilieren, zu disassemblieren, abgeleitete Werke davon zu erstellen oder zu versuchen, ihren Quellcode zu extrahieren, sofern dies nicht durch zwingendes Recht erlaubt ist."
+            },
+            {
+              "text": "Die App oder Teile davon zu verkaufen, zu vermieten, zu verleihen, weiterzuverbreiten, erneut zu veröffentlichen oder kommerziell zu verwerten."
+            },
+            {
+              "text": "Die App, Bots, Skripte (selbstständig ablaufender Code) oder automatisierte Tools zu verwenden, um zu cheaten, in das Spiel einzugreifen, massenhaft Daten zu sammeln, Warteschlangen zu spammen oder sonstige Handlungen vorzunehmen, die gegen die Richtlinien von Riot Games verstoßen."
+            },
+            {
+              "text": "Auf Konten, Daten, Server oder Systeme zuzugreifen oder dies zu versuchen, ohne dazu berechtigt zu sein; die Begrenzungen der Anfragehäufigkeit, die Sicherheitsmechanismen oder die Moderation der App und des Community-Servers zu umgehen."
+            },
+            {
+              "text": "Dich als eine andere Person auszugeben, falsche Angaben zu deiner Identität oder Riot ID zu machen oder das Konto einer anderen Person ohne Erlaubnis zu nutzen."
+            },
+            {
+              "text": "Schadsoftware zu verbreiten oder den Betrieb der App, des Community-Servers oder von Diensten Dritter zu überlasten, zu stören oder zu beeinträchtigen."
+            },
+            {
+              "text": "Die App für Zwecke zu nutzen, die nach vietnamesischem Recht oder dem Recht deines Aufenthaltsorts rechtswidrig sind."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Aktionen in deinem Riot-Konto",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Einige Funktionen ermöglichen es, den Status deines Riot-Kontos zu ändern, zum Beispiel: Loadout ändern, einen Agenten auswählen oder festlegen, einer Gruppe beitreten oder sie verlassen, die Matchsuche starten oder abbrechen, ein Match verlassen."
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Diese Aktionen werden nur ausgeführt, wenn du selbst auf die entsprechende Schaltfläche tippst; die App führt sie nicht automatisch für dich aus."
+            },
+            {
+              "text": "Bei Aktionen, die zu Strafen im Spiel führen können (z. B. ein Match verlassen oder dodgen), zeigt die App eine Warnung an und bittet dich um Bestätigung."
+            },
+            {
+              "text": "Du trägst die volle Verantwortung für die Folgen deiner Aktionen, einschließlich Strafen, Verlust von Ranglistenpunkten (RR), Warteschlangensperren oder anderer Maßnahmen von Riot Games."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Community und Nutzerinhalte",
+      "blocks": [
+        {
+          "type": "sub",
+          "text": "Bestätigung der Riot ID"
+        },
+        {
+          "type": "p",
+          "text": "Um die Community zu nutzen, bestätigt die App deine Riot ID bei Riot Games über den Community-Server von ValHub, wie in der Datenschutzerklärung beschrieben. Dein Anzeigename in der Community ist deine bestätigte Riot ID, zusammen mit deiner Spielerkarte, deinem Rang und deiner Region."
+        },
+        {
+          "type": "sub",
+          "text": "Verantwortung für Inhalte"
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Du bist für alle Nutzerinhalte verantwortlich, die du postest, und sicherst zu, dass du an diesen Inhalten über ausreichende Rechte verfügst (z. B. das Recht, Screenshots und von dir hochgeladene Bilder zu verwenden)."
+            },
+            {
+              "text": "Deine Inhalte müssen den Community-Richtlinien und den Gesetzen entsprechen. Streng verboten sind Inhalte, die gegen geltendes Recht verstoßen, sowie beleidigende, belästigende, hasserfüllte, pornografische, gewalttätige oder betrügerische Inhalte, Spam, unerlaubte Werbung, Kontohandel, Boosting-Dienste oder Cheat-Software und Inhalte, die persönliche Daten anderer offenlegen."
+            },
+            {
+              "text": "Mitspielersuchen können einen Gruppencode enthalten; jeder, der die Mitspielersuche sieht, kann mit diesem Code deiner Gruppe beitreten, bis die Mitspielersuche abläuft (30 Minuten) oder du den Code im Spiel deaktivierst."
+            }
+          ]
+        },
+        {
+          "type": "sub",
+          "text": "Rechte, die du uns einräumst"
+        },
+        {
+          "type": "p",
+          "text": "Du bleibst Inhaber deiner Nutzerinhalte. Wenn du etwas postest, räumst du uns ein nicht ausschließliches, unentgeltliches, weltweit gültiges Recht ein. Dieses Recht erlaubt uns, diese Inhalte zu speichern, technisch zu vervielfältigen, neu zu formatieren (z. B. Bilder zu komprimieren oder ihre Größe zu ändern) und anderen Nutzern in der App anzuzeigen, ausschließlich zum Betrieb der Community. Dieses Recht endet, wenn die Inhalte aus dem System gelöscht werden, mit Ausnahme von Sicherungskopien, die noch für kurze Zeit bestehen, oder wenn das Gesetz eine Aufbewahrung verlangt."
+        },
+        {
+          "type": "sub",
+          "text": "Meldungen und Moderation"
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Du kannst regelwidrige Beiträge, Kommentare oder Mitspielersuchen direkt in der App melden. Inhalte, die genügend Meldungen von verschiedenen Nutzern erhalten, können bis zur Prüfung automatisch ausgeblendet werden."
+            },
+            {
+              "text": "Wir sind berechtigt, aber nicht verpflichtet, Inhalte zu prüfen, auszublenden oder zu entfernen und die Community-Nutzung für jeden, der gegen die Bedingungen oder die Community-Richtlinien verstößt, einzuschränken oder zu sperren, mit oder ohne vorherige Ankündigung."
+            },
+            {
+              "text": "Wir prüfen nicht alle Inhalte im Voraus und sind nicht für Nutzerinhalte verantwortlich, die von anderen gepostet werden. Die darin geäußerten Ansichten sind die der Person, die sie gepostet hat."
+            },
+            {
+              "text": "Wir können auf rechtmäßige Anfrage Informationen an zuständige staatliche Behörden weitergeben."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Geistiges Eigentum",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Die App, einschließlich Quellcode, Oberflächendesign, Symbolen, dem Namen und Logo von ValHub, Texten und begleitenden Materialien, ist Eigentum von Nguyễn Đức Huy und durch das Recht des geistigen Eigentums geschützt."
+        },
+        {
+          "type": "p",
+          "text": "VALORANT, Riot Games sowie deren Namen, Bilder, Symbole und Spielinhalte (Skins, Agenten, Karten, Ränge …) sind Eigentum von Riot Games, Inc. und werden in der App nur als Referenz für Spieler angezeigt. Diese Anzeige überträgt weder dir noch uns irgendwelche Rechte an diesen Inhalten."
+        }
+      ]
+    },
+    {
+      "heading": "Dienste Dritter",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Die App stützt sich auf folgende Dienste Dritter:"
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Anmeldung, Kontodaten, Shop, Sammlung, Matches, Freunde und Chat werden direkt von den Servern von Riot Games abgerufen.",
+              "lead": "Riot Games:"
+            },
+            {
+              "text": "Namen, Bilder und öffentliche Daten zu Gegenständen, Agenten, Karten und Rängen, bereitgestellt von einem unabhängigen Community-Projekt.",
+              "lead": "valorant-api.com:"
+            },
+            {
+              "text": "das Netzwerk, das Verbindungen zu dem von uns selbst betriebenen Community-Server weiterleitet.",
+              "lead": "Cloudflare:"
+            },
+            {
+              "text": "Vertrieb der App und ihrer Updates.",
+              "lead": "App Store und Google Play:"
+            }
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Für diese Dienste gelten eigene Bedingungen und Richtlinien, die du einhalten musst. Wir kontrollieren diese Dienste nicht und sind nicht für ihre Verfügbarkeit, Genauigkeit oder Änderungen verantwortlich. Wenn Riot Games die technische Verbindungsmöglichkeit, über die die App mit Riot arbeitet, ändert oder nicht mehr bereitstellt, können einige Funktionen vorübergehend oder dauerhaft nicht mehr funktionieren."
+        }
+      ]
+    },
+    {
+      "heading": "Kein offizielles Produkt von Riot Games",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "ValHub ist eine unabhängige App, wird von Riot Games in keiner Weise unterstützt, gesponsert oder beaufsichtigt, ist nicht mit Riot Games verbunden und spiegelt nicht die Ansichten von Riot Games oder von Personen wider, die an der Produktion oder Verwaltung der Produkte von Riot Games beteiligt sind. Riot Games ist nicht für den Support der App zuständig; wende dich bei Problemen mit ValHub bitte an uns und nicht an Riot Games."
+        }
+      ]
+    },
+    {
+      "heading": "Gewährleistungsausschluss",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Soweit gesetzlich maximal zulässig, wird die App „wie besehen“ und „wie verfügbar“ bereitgestellt, ohne jegliche ausdrückliche oder stillschweigende Gewährleistung, einschließlich Gewährleistungen der Marktgängigkeit, der Eignung für einen bestimmten Zweck, der Richtigkeit oder der Nichtverletzung von Rechten."
+        },
+        {
+          "type": "p",
+          "text": "Wir garantieren nicht, dass die App ununterbrochen und fehlerfrei funktioniert, mit jedem Gerät kompatibel ist oder dass die angezeigten Daten (Preise, Shop, Statistiken, Erneuerungszeiten, Benachrichtigungen) stets vollständig, richtig und aktuell sind. Shop- und Wishlist-Benachrichtigungen hängen vom Betriebssystem ab und können verspätet oder gar nicht ankommen."
+        }
+      ]
+    },
+    {
+      "heading": "Haftungsbeschränkung",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Soweit gesetzlich maximal zulässig, haften wir nicht für indirekte, zufällige, besondere oder Folgeschäden, einschließlich Datenverlust, Verlust von Gegenständen oder virtueller Währung im Spiel, Verlust von Ranglistenpunkten, Strafen oder der Einschränkung oder Sperrung deines Riot-Kontos, die sich aus deiner Nutzung oder der Unmöglichkeit der Nutzung der App ergeben oder damit zusammenhängen."
+        },
+        {
+          "type": "p",
+          "text": "Da die App kostenlos bereitgestellt wird, ist unsere Gesamthaftung für alle Ansprüche im Zusammenhang mit der App, soweit gesetzlich zulässig, auf den Betrag begrenzt, den du uns in den 12 Monaten vor dem anspruchsbegründenden Ereignis direkt für die Nutzung der App gezahlt hast (falls zutreffend). Diese Klausel schließt keine Haftung aus, deren Ausschluss nach geltendem Recht unzulässig ist, einschließlich der Verbraucherrechte nach vietnamesischem Recht oder dem Recht deines Aufenthaltsorts."
+        }
+      ]
+    },
+    {
+      "heading": "Freistellung",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Du erklärst dich bereit, uns von Ansprüchen, Schäden und angemessenen Kosten (einschließlich Anwaltskosten) freizustellen und schadlos zu halten, die sich aus deinem Verstoß gegen diese Bedingungen, der Verletzung von Rechten Dritter oder aus den von dir veröffentlichten Nutzerinhalten ergeben."
+        }
+      ]
+    },
+    {
+      "heading": "Aussetzung und Beendigung",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Du kannst die Nutzung jederzeit beenden, indem du dich abmeldest und die App deinstallierst. Wie du deine Community-Daten auf dem Server löschst, ist in der Datenschutzerklärung beschrieben."
+            },
+            {
+              "text": "Wir können dein Recht zur Nutzung der App oder der Community aussetzen oder beenden, wenn du gegen die Bedingungen verstößt, auf Verlangen einer zuständigen Behörde oder um andere Nutzer und das System zu schützen."
+            },
+            {
+              "text": "Wir können die App ganz oder teilweise ändern, aussetzen oder einstellen und werden uns bemühen, dies, soweit angemessen, vorher in der App anzukündigen."
+            },
+            {
+              "text": "Mit der Beendigung erlischt das dir gewährte Nutzungsrecht sofort; die Bestimmungen zu geistigem Eigentum, Gewährleistungsausschluss, Haftungsbeschränkung, Freistellung und Streitbeilegung bleiben in Kraft."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Änderungen der Bedingungen",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Wir können die Bedingungen von Zeit zu Zeit aktualisieren. Version und Gültigkeitsdatum stehen immer am Anfang des Dokuments. Über wesentliche Änderungen informieren wir dich in der App, bevor sie wirksam werden. Wenn du die App nach dem Gültigkeitsdatum weiter nutzt, bedeutet das, dass du die aktualisierten Bedingungen annimmst."
+        }
+      ]
+    },
+    {
+      "heading": "Anwendbares Recht und Streitbeilegung",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Diese Bedingungen unterliegen dem Recht der Sozialistischen Republik Vietnam und werden nach diesem ausgelegt."
+        },
+        {
+          "type": "p",
+          "text": "Streitigkeiten werden zunächst durch Verhandlung und Schlichtung in gutem Glauben beigelegt. Bitte kontaktiere uns per E-Mail, damit wir sie gemeinsam lösen können. Kann eine Streitigkeit nicht innerhalb von 30 Tagen ab dem Tag beigelegt werden, an dem eine Partei sie mitgeteilt hat, wird sie vor das zuständige Volksgericht in Vietnam gebracht, es sei denn, das Verbraucherschutzrecht deines Aufenthaltsorts erlaubt dir, einen anderen Weg zu wählen. Diese Bedingungen nehmen dir keine zwingenden Rechte, die das Recht deines Wohnorts Verbrauchern und Nutzern von Diensten gewährt."
+        }
+      ]
+    },
+    {
+      "heading": "Allgemeine Bestimmungen",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Wird eine Bestimmung von einer zuständigen Stelle für unwirksam erklärt, bleiben die übrigen Bestimmungen voll wirksam."
+            },
+            {
+              "text": "Wenn wir ein Recht nicht durchsetzen, bedeutet das nicht, dass wir auf dieses Recht verzichten."
+            },
+            {
+              "text": "Du darfst deine Rechte und Pflichten aus diesen Bedingungen nicht ohne unsere schriftliche Zustimmung übertragen."
+            },
+            {
+              "text": "Diese Bedingungen sind in vietnamesischer Sprache verfasst. Gibt es eine Übersetzung in eine andere Sprache und besteht ein Widerspruch, ist die vietnamesische Fassung maßgeblich."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Kontakt",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Bei Fragen, Anregungen oder Beschwerden zu diesen Bedingungen wende dich bitte an:"
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Nguyễn Đức Huy",
+              "lead": "Herausgeber:"
+            },
+            {
+              "text": "ndh0408@gmail.com",
+              "lead": "E-Mail:"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

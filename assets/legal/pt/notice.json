@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "locale": "pt",
+  "id": "notice",
+  "title": "Aviso Legal",
+  "summary": "Isenção de responsabilidade da Riot Games, marcas e créditos",
+  "version": "1.0",
+  "effectiveDate": "04/10/2026",
+  "copyright": "© 2026 Nguyễn Đức Huy. Todos os direitos reservados.",
+  "export": {
+    "header": "<!-- Arquivo gerado automaticamente a partir de assets/legal/pt/. Não edite manualmente: edite o conteúdo JSON e depois execute `dart run tool/export_legal_docs.dart`. -->",
+    "metadata": "**ValHub** · Versão 1.0 · Em vigor desde: 04/10/2026"
+  },
+  "preamble": [
+    {
+      "type": "callout",
+      "text": "O ValHub não é endossado pela Riot Games e não reflete as opiniões da Riot Games nem de ninguém envolvido na produção ou no gerenciamento dos produtos da Riot Games. Riot Games e todos os ativos relacionados são marcas comerciais ou marcas registradas da Riot Games, Inc."
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Isenção de responsabilidade da Riot Games",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "O ValHub foi criado de acordo com a política “Legal Jibber Jabber” da Riot Games, usando ativos de propriedade da Riot Games. A Riot Games não endossa nem patrocina este projeto."
+        },
+        {
+          "type": "p",
+          "text": "O ValHub é um aplicativo independente, não é um produto oficial da Riot Games e não tem nenhum tipo de vínculo com a Riot Games. Todo o suporte relacionado ao ValHub é prestado por nós, e não pela Riot Games."
+        }
+      ]
+    },
+    {
+      "heading": "Marcas",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Riot Games, VALORANT e todos os ativos relacionados são marcas comerciais ou marcas registradas da Riot Games, Inc. Os demais nomes, logotipos e marcas mencionados no Aplicativo pertencem aos respectivos titulares e são usados apenas para fins de identificação."
+        }
+      ]
+    },
+    {
+      "heading": "Conteúdo do jogo",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Os nomes, imagens, vídeos e informações sobre skins, agentes, mapas, ranques, Cartões de Jogador e outros conteúdos de VALORANT são de propriedade da Riot Games, Inc. Os dados da sua conta (loja, carteira, coleção, partidas, ranque) são obtidos diretamente dos servidores da Riot Games."
+        }
+      ]
+    },
+    {
+      "heading": "Fontes de dados e créditos",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "dados e imagens públicos sobre itens, agentes, mapas e ranques. O valorant-api.com é um projeto comunitário independente, sem vínculo com o ValHub nem com a Riot Games.",
+              "lead": "valorant-api.com:"
+            },
+            {
+              "text": "documentação técnica elaborada pela comunidade de desenvolvedores de VALORANT.",
+              "lead": "techchrism/valorant-api-docs:"
+            },
+            {
+              "text": "o ValHub foi desenvolvido com Flutter e diversos outros softwares de código aberto. A lista e a licença de cada software estão na seção “Software de terceiros” da página Sobre e informações legais.",
+              "lead": "Software de código aberto:"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Direitos autorais do ValHub",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "© 2026 Nguyễn Đức Huy. Todos os direitos reservados. O ValHub é um software proprietário; o seu uso está sujeito aos Termos de Uso."
+        }
+      ]
+    },
+    {
+      "heading": "Denúncia de violação de propriedade intelectual",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Se você acredita que algum conteúdo do ValHub, inclusive conteúdo publicado por usuários na Comunidade, viola os seus direitos de propriedade intelectual, envie um e-mail para ndh0408@gmail.com. Informe claramente: os seus dados de contato, qual obra sua é protegida, onde está o conteúdo infrator no Aplicativo e uma declaração de que as informações fornecidas são verdadeiras. Analisaremos e trataremos o caso com rapidez."
+        }
+      ]
+    }
+  ]
+}

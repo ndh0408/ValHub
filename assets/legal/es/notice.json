@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "locale": "es",
+  "id": "notice",
+  "title": "Aviso legal",
+  "summary": "Exención de responsabilidad de Riot Games, marcas y créditos",
+  "version": "1.0",
+  "effectiveDate": "04/10/2026",
+  "copyright": "© 2026 Nguyễn Đức Huy. Todos los derechos reservados.",
+  "export": {
+    "header": "<!-- Archivo generado automáticamente a partir de assets/legal/es/. No lo edites a mano: edita el contenido JSON y luego ejecuta `dart run tool/export_legal_docs.dart`. -->",
+    "metadata": "**ValHub** · Versión 1.0 · Vigente desde: 04/10/2026"
+  },
+  "preamble": [
+    {
+      "type": "callout",
+      "text": "ValHub no está respaldada por Riot Games y no refleja las opiniones de Riot Games ni de ninguna persona que participe en la producción o gestión de los productos de Riot Games. Riot Games y todos los activos relacionados son marcas comerciales o marcas registradas de Riot Games, Inc."
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Exención de responsabilidad de Riot Games",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "ValHub se ha creado conforme a la política \"Legal Jibber Jabber\" de Riot Games y utiliza activos propiedad de Riot Games. Riot Games no respalda ni patrocina este proyecto."
+        },
+        {
+          "type": "p",
+          "text": "ValHub es una aplicación independiente, no es un producto oficial de Riot Games y no está asociada a Riot Games de ninguna forma. Todo el soporte de ValHub lo ofrecemos nosotros, no Riot Games."
+        }
+      ]
+    },
+    {
+      "heading": "Marcas",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Riot Games, VALORANT y todos los activos relacionados son marcas comerciales o marcas registradas de Riot Games, Inc. Los demás nombres, logotipos y marcas que se mencionan en la Aplicación pertenecen a sus respectivos titulares y se usan solo con fines de identificación."
+        }
+      ]
+    },
+    {
+      "heading": "Contenido del juego",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Los nombres, imágenes, videos e información sobre skins, agentes, mapas, rangos, tarjetas de jugador y demás contenido de VALORANT son propiedad de Riot Games, Inc. Los datos de tu cuenta (tienda, monedero, colección, partidas, clasificación) se obtienen directamente de los servidores de Riot Games."
+        }
+      ]
+    },
+    {
+      "heading": "Fuentes de datos y créditos",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "datos e imágenes públicos sobre objetos, agentes, mapas y rangos. valorant-api.com es un proyecto comunitario independiente, no asociado a ValHub ni a Riot Games.",
+              "lead": "valorant-api.com:"
+            },
+            {
+              "text": "documentación técnica elaborada por la comunidad de desarrolladores de VALORANT.",
+              "lead": "techchrism/valorant-api-docs:"
+            },
+            {
+              "text": "ValHub está desarrollada con Flutter y muchos otros programas de código abierto. La lista y la licencia de cada uno figuran en la sección \"Software de terceros\" de la página Acerca de y legal.",
+              "lead": "Software de código abierto:"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Derechos de autor de ValHub",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "© 2026 Nguyễn Đức Huy. Todos los derechos reservados. ValHub es software propietario; su uso se rige por los Términos de uso."
+        }
+      ]
+    },
+    {
+      "heading": "Denuncias por infracción de propiedad intelectual",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Si crees que algún contenido de ValHub, incluido el contenido que publican los usuarios en la Comunidad, infringe tus derechos de propiedad intelectual, envía un correo electrónico a ndh0408@gmail.com. Indica claramente: tus datos de contacto, qué obra tuya está protegida, en qué parte de la Aplicación se encuentra el contenido infractor y una declaración de que la información que proporcionas es exacta. Lo revisaremos y lo gestionaremos sin demora."
+        }
+      ]
+    }
+  ]
+}
