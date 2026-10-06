@@ -5154,6 +5154,139 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileYourWinRate => 'نسبة فوزك مؤخرًا';
 
   @override
+  String profilePerformanceQueueChip(String queue) {
+    return 'الوضع: $queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => 'التصفية حسب الوضع';
+
+  @override
+  String get profilePerformancePerMatchTitle => 'حسب المباراة';
+
+  @override
+  String get profilePerformancePerMatchHint => 'المس عمودًا لفتح تلك المباراة.';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return 'المتوسط $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty =>
+      'يلزم وجود مباراتين على الأقل من الأوضاع القائمة على الجولات تتضمنان هذه الإحصائية لعرض المخطط.';
+
+  @override
+  String get profilePerformanceOpeningsTitle => 'مواجهات الافتتاح';
+
+  @override
+  String get profilePerformanceOpeningWin => 'الفوز بمواجهات الافتتاح';
+
+  @override
+  String get profilePerformanceOpeningWinHint =>
+      'من بين الجولات التي حققت فيها أول إقصاء أو كنت أول من يُقصى، نسبة الجولات التي حققت فيها أول إقصاء.';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame => 'أول إقصاء لكل مباراة';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame => 'أول وفاة لكل مباراة';
+
+  @override
+  String get profilePerformanceMultiKillsTitle =>
+      'إقصاءات متعددة في جولة واحدة';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': '3 إقصاءات',
+      'k4': '4 إقصاءات',
+      'ace': 'إيس',
+      'other': 'إقصاءان',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'استنادًا إلى $nString مباراة تتوفر فيها بيانات الإقصاء كاملة.',
+      many: 'استنادًا إلى $nString مباراة تتوفر فيها بيانات الإقصاء كاملة.',
+      few: 'استنادًا إلى $nString مباريات تتوفر فيها بيانات الإقصاء كاملة.',
+      two: 'استنادًا إلى $nString مباراتين تتوفر فيها بيانات الإقصاء كاملة.',
+      one: 'استنادًا إلى $nString مباراة تتوفر فيها بيانات الإقصاء كاملة.',
+      zero: 'استنادًا إلى $nString مباراة تتوفر فيها بيانات الإقصاء كاملة.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => 'نسبة الفوز بالجولات';
+
+  @override
+  String get profilePerformanceDrillHint =>
+      'المس صفًا لعرض ذلك العميل أو الخريطة أو الوضع فقط.';
+
+  @override
+  String get profilePerformanceLoadOlder => 'تحليل مباريات أقدم';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'يحلل ValHub المباريات المفتوحة على هذا الجهاز فقط. تضيف كل نقرة مباريات أقدم (حتى $nString).';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder => 'جارٍ البحث عن مباريات أقدم…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return 'جارٍ تحليل المباريات: $doneString/$totalString…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'تمت إضافة $nString مباراة إلى التحليل.',
+      many: 'تمت إضافة $nString مباراة إلى التحليل.',
+      few: 'تمت إضافة $nString مباريات إلى التحليل.',
+      two: 'تمت إضافة $nString مباراتين إلى التحليل.',
+      one: 'تمت إضافة $nString مباراة إلى التحليل.',
+      zero: 'لا توجد مباريات جديدة لإضافتها.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder => 'لم تعد Riot تحتفظ بمباريات أقدم.';
+
+  @override
   String get legalAboutIntro =>
       'رفيقك في VALORANT: المتجر اليومي وقائمة الأمنيات والرتبة والمباريات وحسابات متعددة ومجتمع للاعبين، على جهازك مباشرةً.';
 

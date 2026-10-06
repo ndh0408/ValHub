@@ -7709,6 +7709,159 @@
     "description": "ProfileStrings.yourWinRate — Rank-Up Calculator",
     "x-context": "lib/features/profile/profile_strings.dart"
   },
+  "profilePerformanceQueueChip": "Chế độ: {queue}",
+  "@profilePerformanceQueueChip": {
+    "description": "Queue filter chip of the Performance screen (\"Chế độ: Xếp hạng\").",
+    "placeholders": {
+      "queue": {
+        "type": "String"
+      }
+    },
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceChooseQueue": "Lọc theo chế độ",
+  "@profilePerformanceChooseQueue": {
+    "description": "Title of the queue picker sheet on the Performance screen.",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformancePerMatchTitle": "Từng trận",
+  "@profilePerformancePerMatchTitle": {
+    "description": "Card title: one bar per recent match (ACS, K/D, ADR or HS%).",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformancePerMatchHint": "Chạm một cột để mở trận đó.",
+  "@profilePerformancePerMatchHint": {
+    "description": "Under the per-match chart: tapping a bar opens that match.",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceAverage": "Trung bình {value}",
+  "@profilePerformanceAverage": {
+    "description": "Dashed average line label of the per-match chart (\"Trung bình 231\").",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    },
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceChartEmpty": "Cần ít nhất 2 trận theo vòng có số liệu này để vẽ biểu đồ.",
+  "@profilePerformanceChartEmpty": {
+    "description": "Per-match chart without enough round-based matches for the chosen stat.",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceOpeningsTitle": "Giao tranh mở màn",
+  "@profilePerformanceOpeningsTitle": {
+    "description": "Card title: first bloods and first deaths (who wins the first duel of a round).",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceOpeningWin": "Thắng mở màn",
+  "@profilePerformanceOpeningWin": {
+    "description": "Share of opening duels won: first bloods / (first bloods + first deaths).",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceOpeningWinHint": "Trong các vòng bạn là người hạ gục hoặc bị hạ đầu tiên, tỉ lệ bạn là người hạ gục.",
+  "@profilePerformanceOpeningWinHint": {
+    "description": "Tooltip explaining the opening-duel win rate.",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceFirstBloodsPerGame": "First blood mỗi trận",
+  "@profilePerformanceFirstBloodsPerGame": {
+    "description": "Average first bloods per round-based match.",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceFirstDeathsPerGame": "Bị hạ đầu mỗi trận",
+  "@profilePerformanceFirstDeathsPerGame": {
+    "description": "Average times the player died first in a round, per round-based match.",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceMultiKillsTitle": "Nhiều mạng trong một vòng",
+  "@profilePerformanceMultiKillsTitle": {
+    "description": "Section title: rounds with 3 kills, 4 kills and aces.",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceMultiKill": "{kind, select, k3{3 mạng} k4{4 mạng} ace{Ace} other{2 mạng}}",
+  "@profilePerformanceMultiKill": {
+    "description": "Label of a multi-kill counter.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    },
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceMultiKillsNote": "{n, plural, other{Tính trên {n} trận có đủ dữ liệu hạ gục.}}",
+  "@profilePerformanceMultiKillsNote": {
+    "description": "Sample note of the multi-kill counters.",
+    "placeholders": {
+      "n": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    },
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceRoundWin": "Thắng vòng",
+  "@profilePerformanceRoundWin": {
+    "description": "Round win rate on the attack or defense side.",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceDrillHint": "Chạm một dòng để xem riêng đặc vụ, bản đồ hoặc chế độ đó.",
+  "@profilePerformanceDrillHint": {
+    "description": "Under the agents / maps / queues table.",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceLoadOlder": "Phân tích thêm trận cũ",
+  "@profilePerformanceLoadOlder": {
+    "description": "Button: open older matches from the Riot match history so they are added to the on-device analysis.",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceLoadOlderHint": "ValHub chỉ phân tích những trận đã mở trên máy này. Mỗi lần bấm sẽ thêm tối đa {n} trận cũ hơn.",
+  "@profilePerformanceLoadOlderHint": {
+    "description": "Explains the \"Phân tích thêm trận cũ\" button.",
+    "placeholders": {
+      "n": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    },
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceSearchingOlder": "Đang tìm trận cũ hơn…",
+  "@profilePerformanceSearchingOlder": {
+    "description": "Backfill progress before the number of matches is known.",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceLoadingOlder": "Đang phân tích {done}/{total} trận…",
+  "@profilePerformanceLoadingOlder": {
+    "description": "Backfill progress (\"Đang phân tích 6/20 trận…\").",
+    "placeholders": {
+      "done": {
+        "format": "decimalPattern",
+        "type": "int"
+      },
+      "total": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    },
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceAddedOlder": "{n, plural, =0{Không có trận mới để thêm.} other{Đã thêm {n} trận vào phân tích.}}",
+  "@profilePerformanceAddedOlder": {
+    "description": "Result of one backfill run.",
+    "placeholders": {
+      "n": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    },
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
+  "profilePerformanceNoOlder": "Riot không còn lưu trận nào cũ hơn.",
+  "@profilePerformanceNoOlder": {
+    "description": "Backfill reached the end of the Riot match history.",
+    "x-context": "lib/features/profile/ui/performance_screen.dart"
+  },
   "legalAboutIntro": "Trợ thủ VALORANT của bạn: cửa hàng mỗi ngày, wishlist, rank, trận đấu, nhiều tài khoản và cộng đồng người chơi, ngay trên thiết bị của bạn.",
   "@legalAboutIntro": {
     "description": "LegalStrings.aboutIntro — About hub",

@@ -4619,6 +4619,132 @@ class AppLocalizationsTr extends AppLocalizations {
   String get profileYourWinRate => 'Son kazanma oranın';
 
   @override
+  String profilePerformanceQueueChip(String queue) {
+    return 'Mod: $queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => 'Moda göre filtrele';
+
+  @override
+  String get profilePerformancePerMatchTitle => 'Maç maç';
+
+  @override
+  String get profilePerformancePerMatchHint =>
+      'Maçı açmak için bir çubuğa dokun.';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return 'Ortalama $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty =>
+      'Grafik için bu istatistiğe sahip en az 2 raunt tabanlı maç gerekir.';
+
+  @override
+  String get profilePerformanceOpeningsTitle => 'Açılış düelloları';
+
+  @override
+  String get profilePerformanceOpeningWin => 'Kazanılan açılış düelloları';
+
+  @override
+  String get profilePerformanceOpeningWinHint =>
+      'İlk leşi aldığın ya da ilk öldüğün rauntlar içinde ilk leşi aldığın rauntların oranı.';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame => 'Maç başına ilk kan';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame => 'Maç başına ilk ölüm';
+
+  @override
+  String get profilePerformanceMultiKillsTitle => 'Bir rauntta çoklu leş';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': '3 leş',
+      'k4': '4 leş',
+      'ace': 'Ace',
+      'other': '2 leş',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Tam leş verisi olan $nString maça göre hesaplanır.',
+      one: 'Tam leş verisi olan $nString maça göre hesaplanır.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => 'Kazanılan rauntlar';
+
+  @override
+  String get profilePerformanceDrillHint =>
+      'Yalnızca o ajanı, haritayı ya da modu görmek için bir satıra dokun.';
+
+  @override
+  String get profilePerformanceLoadOlder => 'Eski maçları analiz et';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ValHub yalnızca bu cihazda açılan maçları analiz eder. Her dokunuşta en fazla $nString eski maç eklenir.';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder => 'Daha eski maçlar aranıyor…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return 'Maçlar analiz ediliyor: $doneString/$totalString…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Analize $nString maç eklendi.',
+      one: 'Analize $nString maç eklendi.',
+      zero: 'Eklenecek yeni maç yok.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder => 'Riot daha eski maçları saklamıyor.';
+
+  @override
   String get legalAboutIntro =>
       'VALORANT yol arkadaşın: günlük mağaza, istek listesi, rütbe, maçlar, birden fazla hesap ve oyuncu topluluğu, hepsi cihazında.';
 

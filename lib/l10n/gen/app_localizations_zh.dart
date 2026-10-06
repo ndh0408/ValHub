@@ -4458,6 +4458,126 @@ class AppLocalizationsZh extends AppLocalizations {
   String get profileYourWinRate => '你最近的胜率';
 
   @override
+  String profilePerformanceQueueChip(String queue) {
+    return '模式：$queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => '按模式筛选';
+
+  @override
+  String get profilePerformancePerMatchTitle => '逐场';
+
+  @override
+  String get profilePerformancePerMatchHint => '点按柱形即可打开该场对局。';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return '平均 $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty => '至少需要 2 场包含此数据的回合制对局才能绘制图表。';
+
+  @override
+  String get profilePerformanceOpeningsTitle => '开局对枪';
+
+  @override
+  String get profilePerformanceOpeningWin => '开局对枪胜率';
+
+  @override
+  String get profilePerformanceOpeningWinHint => '在你拿到首杀或首死的回合中，你拿到首杀的比例。';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame => '场均首杀';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame => '场均首死';
+
+  @override
+  String get profilePerformanceMultiKillsTitle => '单回合多杀';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': '三杀',
+      'k4': '四杀',
+      'ace': 'ACE',
+      'other': '双杀',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '基于 $nString 场击杀数据完整的对局。',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => '回合胜率';
+
+  @override
+  String get profilePerformanceDrillHint => '点按一行即可只看该英雄、地图或模式。';
+
+  @override
+  String get profilePerformanceLoadOlder => '分析更早的对局';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ValHub 只分析在此设备上打开过的对局。每点按一次最多再添加 $nString 场更早的对局。';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder => '正在查找更早的对局…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return '正在分析对局 $doneString/$totalString…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '已将 $nString 场对局加入分析。',
+      zero: '没有可添加的新对局。',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder => 'Riot 没有保存更早的对局了。';
+
+  @override
   String get legalAboutIntro =>
       '你的 VALORANT 助手：每日商店、心愿单、段位、对局、多账号和玩家社区，尽在你的设备上。';
 
@@ -11133,6 +11253,126 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get profileYourWinRate => '你的近期勝率';
+
+  @override
+  String profilePerformanceQueueChip(String queue) {
+    return '模式：$queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => '依模式篩選';
+
+  @override
+  String get profilePerformancePerMatchTitle => '逐場';
+
+  @override
+  String get profilePerformancePerMatchHint => '點一下長條即可開啟該場對戰。';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return '平均 $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty => '至少需要 2 場含有此數據的回合制對戰才能繪製圖表。';
+
+  @override
+  String get profilePerformanceOpeningsTitle => '開局對槍';
+
+  @override
+  String get profilePerformanceOpeningWin => '開局對槍勝率';
+
+  @override
+  String get profilePerformanceOpeningWinHint => '在你取得首殺或首位陣亡的回合中，你取得首殺的比例。';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame => '每場首殺';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame => '每場首位陣亡';
+
+  @override
+  String get profilePerformanceMultiKillsTitle => '單回合多殺';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': '三殺',
+      'k4': '四殺',
+      'ace': 'ACE',
+      'other': '雙殺',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '根據 $nString 場擊殺數據完整的對戰計算。',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => '回合勝率';
+
+  @override
+  String get profilePerformanceDrillHint => '點一下任一列即可只看該特務、地圖或模式。';
+
+  @override
+  String get profilePerformanceLoadOlder => '分析更早的對戰';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ValHub 只會分析在這台裝置上開啟過的對戰。每點一下最多再加入 $nString 場更早的對戰。';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder => '正在尋找更早的對戰…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return '正在分析對戰 $doneString/$totalString…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '已將 $nString 場對戰加入分析。',
+      zero: '沒有可加入的新對戰。',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder => 'Riot 已沒有保存更早的對戰。';
 
   @override
   String get legalAboutIntro =>

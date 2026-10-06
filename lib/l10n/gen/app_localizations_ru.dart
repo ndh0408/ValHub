@@ -5096,6 +5096,137 @@ class AppLocalizationsRu extends AppLocalizations {
   String get profileYourWinRate => 'Ваша недавняя доля побед';
 
   @override
+  String profilePerformanceQueueChip(String queue) {
+    return 'Режим: $queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => 'Фильтр по режиму';
+
+  @override
+  String get profilePerformancePerMatchTitle => 'По матчам';
+
+  @override
+  String get profilePerformancePerMatchHint =>
+      'Нажмите на столбец, чтобы открыть этот матч.';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return 'Среднее $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty =>
+      'Для графика нужно хотя бы 2 матча с раундами, где есть этот показатель.';
+
+  @override
+  String get profilePerformanceOpeningsTitle => 'Стартовые дуэли';
+
+  @override
+  String get profilePerformanceOpeningWin => 'Выигранные стартовые дуэли';
+
+  @override
+  String get profilePerformanceOpeningWinHint =>
+      'Среди раундов с вашим первым убийством или первой смертью — доля первых убийств.';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame => 'Первые убийства за матч';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame => 'Первые смерти за матч';
+
+  @override
+  String get profilePerformanceMultiKillsTitle => 'Несколько убийств за раунд';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': '3 убийства',
+      'k4': '4 убийства',
+      'ace': 'Эйс',
+      'other': '2 убийства',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'На основе $nString матча с полными данными об убийствах.',
+      many: 'На основе $nString матчей с полными данными об убийствах.',
+      few: 'На основе $nString матчей с полными данными об убийствах.',
+      one: 'На основе $nString матча с полными данными об убийствах.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => 'Выигранные раунды';
+
+  @override
+  String get profilePerformanceDrillHint =>
+      'Нажмите на строку, чтобы посмотреть только этого агента, карту или режим.';
+
+  @override
+  String get profilePerformanceLoadOlder => 'Анализировать старые матчи';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ValHub анализирует только матчи, открытые на этом устройстве. Каждое нажатие добавляет более старые матчи (не больше $nString).';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder => 'Ищем более старые матчи…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return 'Анализ матчей: $doneString/$totalString…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'В анализ добавлено $nString матча.',
+      many: 'В анализ добавлено $nString матчей.',
+      few: 'В анализ добавлено $nString матча.',
+      one: 'В анализ добавлен $nString матч.',
+      zero: 'Нет новых матчей для добавления.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder =>
+      'Riot больше не хранит более старые матчи.';
+
+  @override
   String get legalAboutIntro =>
       'Ваш помощник в VALORANT: ежедневный магазин, список желаемого, ранг, матчи, несколько аккаунтов и сообщество игроков прямо на вашем устройстве.';
 

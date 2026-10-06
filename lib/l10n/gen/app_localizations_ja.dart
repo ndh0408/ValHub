@@ -4512,6 +4512,129 @@ class AppLocalizationsJa extends AppLocalizations {
   String get profileYourWinRate => 'あなたの最近の勝率';
 
   @override
+  String profilePerformanceQueueChip(String queue) {
+    return 'モード：$queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => 'モードで絞り込み';
+
+  @override
+  String get profilePerformancePerMatchTitle => '試合ごと';
+
+  @override
+  String get profilePerformancePerMatchHint => 'バーをタップするとその試合を開きます。';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return '平均 $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty =>
+      'グラフを表示するには、この数値があるラウンド制の試合が2試合以上必要です。';
+
+  @override
+  String get profilePerformanceOpeningsTitle => 'オープニングデュエル';
+
+  @override
+  String get profilePerformanceOpeningWin => 'オープニング勝率';
+
+  @override
+  String get profilePerformanceOpeningWinHint =>
+      'ファーストブラッドを取った、またはファーストデスになったラウンドのうち、ファーストブラッドを取った割合です。';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame => '1試合あたりのファーストブラッド';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame => '1試合あたりのファーストデス';
+
+  @override
+  String get profilePerformanceMultiKillsTitle => '1ラウンドでのマルチキル';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': '3キル',
+      'k4': '4キル',
+      'ace': 'エース',
+      'other': '2キル',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'キルデータがそろった$nString試合をもとに集計しています。',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => 'ラウンド勝率';
+
+  @override
+  String get profilePerformanceDrillHint =>
+      '行をタップすると、そのエージェント、マップ、モードだけを表示します。';
+
+  @override
+  String get profilePerformanceLoadOlder => '過去の試合を分析';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ValHubはこの端末で開いた試合のみを分析します。1回タップするごとに、さらに古い試合を最大$nString試合追加します。';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder => 'さらに古い試合を検索中…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return '試合を分析中 $doneString/$totalString…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString試合を分析に追加しました。',
+      zero: '追加できる新しい試合はありません。',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder => 'これより古い試合はRiotに保存されていません。';
+
+  @override
   String get legalAboutIntro =>
       'あなたのVALORANTパートナー：デイリーストア、ウィッシュリスト、ランク、試合、複数アカウント、プレイヤーコミュニティを、あなたの端末で。';
 

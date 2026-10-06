@@ -4976,6 +4976,145 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileYourWinRate => 'Sua taxa de vitória recente';
 
   @override
+  String profilePerformanceQueueChip(String queue) {
+    return 'Modo: $queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => 'Filtrar por modo';
+
+  @override
+  String get profilePerformancePerMatchTitle => 'Por partida';
+
+  @override
+  String get profilePerformancePerMatchHint =>
+      'Toque em uma barra para abrir a partida.';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return 'Média $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty =>
+      'São necessárias pelo menos 2 partidas por rodadas com essa estatística para montar o gráfico.';
+
+  @override
+  String get profilePerformanceOpeningsTitle => 'Duelos de abertura';
+
+  @override
+  String get profilePerformanceOpeningWin => 'Duelos de abertura vencidos';
+
+  @override
+  String get profilePerformanceOpeningWinHint =>
+      'Entre as rodadas em que você fez o primeiro abate ou morreu primeiro, a porcentagem em que você fez o abate.';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame =>
+      'Primeiros abates por partida';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame =>
+      'Primeiras mortes por partida';
+
+  @override
+  String get profilePerformanceMultiKillsTitle =>
+      'Abates múltiplos em uma rodada';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': '3 abates',
+      'k4': '4 abates',
+      'ace': 'Ace',
+      'other': '2 abates',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Com base em $nString partidas com dados completos de abates.',
+      one: 'Com base em $nString partida com dados completos de abates.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => 'Rodadas vencidas';
+
+  @override
+  String get profilePerformanceDrillHint =>
+      'Toque em uma linha para ver só esse agente, mapa ou modo.';
+
+  @override
+  String get profilePerformanceLoadOlder => 'Analisar partidas antigas';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other:
+          'O ValHub só analisa partidas abertas neste dispositivo. Cada toque adiciona até $nString partidas mais antigas.',
+      one:
+          'O ValHub só analisa partidas abertas neste dispositivo. Cada toque adiciona até $nString partida mais antiga.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder =>
+      'Procurando partidas mais antigas…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return 'Analisando partidas: $doneString/$totalString…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString partidas adicionadas à análise.',
+      one: '$nString partida adicionada à análise.',
+      zero: 'Nenhuma partida nova para adicionar.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder =>
+      'A Riot não guarda mais partidas antigas.';
+
+  @override
   String get legalAboutIntro =>
       'Seu parceiro de VALORANT: loja diária, wishlist, ranque, partidas, várias contas e uma comunidade de jogadores, direto no seu dispositivo.';
 

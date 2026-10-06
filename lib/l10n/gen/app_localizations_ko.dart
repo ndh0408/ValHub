@@ -4511,6 +4511,128 @@ class AppLocalizationsKo extends AppLocalizations {
   String get profileYourWinRate => '내 최근 승률';
 
   @override
+  String profilePerformanceQueueChip(String queue) {
+    return '모드: $queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => '모드별 필터';
+
+  @override
+  String get profilePerformancePerMatchTitle => '게임별';
+
+  @override
+  String get profilePerformancePerMatchHint => '막대를 탭하면 해당 게임을 엽니다.';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return '평균 $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty =>
+      '그래프를 표시하려면 이 기록이 있는 라운드 기반 게임이 2판 이상 필요합니다.';
+
+  @override
+  String get profilePerformanceOpeningsTitle => '첫 교전';
+
+  @override
+  String get profilePerformanceOpeningWin => '첫 교전 승률';
+
+  @override
+  String get profilePerformanceOpeningWinHint =>
+      '첫 킬을 하거나 첫 데스를 당한 라운드 중 첫 킬을 한 비율입니다.';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame => '게임당 첫 킬';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame => '게임당 첫 데스';
+
+  @override
+  String get profilePerformanceMultiKillsTitle => '한 라운드 멀티킬';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': '3킬',
+      'k4': '4킬',
+      'ace': '에이스',
+      'other': '2킬',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '처치 데이터가 모두 있는 게임 $nString판 기준입니다.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => '라운드 승률';
+
+  @override
+  String get profilePerformanceDrillHint => '행을 탭하면 해당 요원, 맵 또는 모드만 볼 수 있습니다.';
+
+  @override
+  String get profilePerformanceLoadOlder => '이전 게임 분석';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ValHub는 이 기기에서 연 게임만 분석합니다. 탭할 때마다 이전 게임을 최대 $nString판 추가합니다.';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder => '이전 게임을 찾는 중…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return '게임 분석 중 $doneString/$totalString…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '게임 $nString판을 분석에 추가했습니다.',
+      zero: '추가할 새 게임이 없습니다.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder => 'Riot에 더 이전 게임 기록이 남아 있지 않습니다.';
+
+  @override
   String get legalAboutIntro =>
       '나만의 VALORANT 도우미: 일일 상점, 위시리스트, 랭크, 게임 기록, 여러 계정, 플레이어 커뮤니티를 내 기기에서 바로 확인하세요.';
 

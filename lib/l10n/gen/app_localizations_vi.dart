@@ -4598,6 +4598,129 @@ class AppLocalizationsVi extends AppLocalizations {
   String get profileYourWinRate => 'Tỉ lệ thắng gần đây của bạn';
 
   @override
+  String profilePerformanceQueueChip(String queue) {
+    return 'Chế độ: $queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => 'Lọc theo chế độ';
+
+  @override
+  String get profilePerformancePerMatchTitle => 'Từng trận';
+
+  @override
+  String get profilePerformancePerMatchHint => 'Chạm một cột để mở trận đó.';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return 'Trung bình $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty =>
+      'Cần ít nhất 2 trận theo vòng có số liệu này để vẽ biểu đồ.';
+
+  @override
+  String get profilePerformanceOpeningsTitle => 'Giao tranh mở màn';
+
+  @override
+  String get profilePerformanceOpeningWin => 'Thắng mở màn';
+
+  @override
+  String get profilePerformanceOpeningWinHint =>
+      'Trong các vòng bạn là người hạ gục hoặc bị hạ đầu tiên, tỉ lệ bạn là người hạ gục.';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame => 'First blood mỗi trận';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame => 'Bị hạ đầu mỗi trận';
+
+  @override
+  String get profilePerformanceMultiKillsTitle => 'Nhiều mạng trong một vòng';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': '3 mạng',
+      'k4': '4 mạng',
+      'ace': 'Ace',
+      'other': '2 mạng',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Tính trên $nString trận có đủ dữ liệu hạ gục.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => 'Thắng vòng';
+
+  @override
+  String get profilePerformanceDrillHint =>
+      'Chạm một dòng để xem riêng đặc vụ, bản đồ hoặc chế độ đó.';
+
+  @override
+  String get profilePerformanceLoadOlder => 'Phân tích thêm trận cũ';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ValHub chỉ phân tích những trận đã mở trên máy này. Mỗi lần bấm sẽ thêm tối đa $nString trận cũ hơn.';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder => 'Đang tìm trận cũ hơn…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return 'Đang phân tích $doneString/$totalString trận…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Đã thêm $nString trận vào phân tích.',
+      zero: 'Không có trận mới để thêm.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder => 'Riot không còn lưu trận nào cũ hơn.';
+
+  @override
   String get legalAboutIntro =>
       'Trợ thủ VALORANT của bạn: cửa hàng mỗi ngày, wishlist, rank, trận đấu, nhiều tài khoản và cộng đồng người chơi, ngay trên thiết bị của bạn.';
 

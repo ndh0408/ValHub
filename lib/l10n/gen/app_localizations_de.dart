@@ -4953,6 +4953,141 @@ class AppLocalizationsDe extends AppLocalizations {
   String get profileYourWinRate => 'Deine aktuelle Siegquote';
 
   @override
+  String profilePerformanceQueueChip(String queue) {
+    return 'Modus: $queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => 'Nach Modus filtern';
+
+  @override
+  String get profilePerformancePerMatchTitle => 'Pro Match';
+
+  @override
+  String get profilePerformancePerMatchHint =>
+      'Tippe auf einen Balken, um das Match zu öffnen.';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return 'Durchschnitt $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty =>
+      'Für das Diagramm brauchst du mindestens 2 rundenbasierte Matches mit diesem Wert.';
+
+  @override
+  String get profilePerformanceOpeningsTitle => 'Eröffnungsduelle';
+
+  @override
+  String get profilePerformanceOpeningWin => 'Eröffnungsduelle gewonnen';
+
+  @override
+  String get profilePerformanceOpeningWinHint =>
+      'Von den Runden, in denen du den ersten Kill geholt hast oder zuerst gestorben bist: wie oft du den Kill geholt hast.';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame => 'First Bloods pro Match';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame => 'Erste Tode pro Match';
+
+  @override
+  String get profilePerformanceMultiKillsTitle => 'Multi-Kills in einer Runde';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': '3 Kills',
+      'k4': '4 Kills',
+      'ace': 'Ace',
+      'other': '2 Kills',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Basierend auf $nString Matches mit vollständigen Kill-Daten.',
+      one: 'Basierend auf $nString Match mit vollständigen Kill-Daten.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => 'Rundensiegquote';
+
+  @override
+  String get profilePerformanceDrillHint =>
+      'Tippe auf eine Zeile, um nur diesen Agenten, diese Karte oder diesen Modus zu sehen.';
+
+  @override
+  String get profilePerformanceLoadOlder => 'Ältere Matches analysieren';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other:
+          'ValHub analysiert nur Matches, die auf diesem Gerät geöffnet wurden. Jedes Tippen fügt bis zu $nString ältere Matches hinzu.',
+      one:
+          'ValHub analysiert nur Matches, die auf diesem Gerät geöffnet wurden. Jedes Tippen fügt bis zu $nString älteres Match hinzu.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder => 'Suche ältere Matches…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return 'Analysiere Matches: $doneString/$totalString…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString Matches zur Analyse hinzugefügt.',
+      one: '$nString Match zur Analyse hinzugefügt.',
+      zero: 'Keine neuen Matches zum Hinzufügen.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder =>
+      'Riot speichert keine älteren Matches mehr.';
+
+  @override
   String get legalAboutIntro =>
       'Dein VALORANT-Begleiter: täglicher Shop, Wishlist, Rang, Matches, mehrere Konten und eine Spieler-Community – direkt auf deinem Gerät.';
 

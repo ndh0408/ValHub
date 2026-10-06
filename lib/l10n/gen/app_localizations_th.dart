@@ -4582,6 +4582,130 @@ class AppLocalizationsTh extends AppLocalizations {
   String get profileYourWinRate => 'อัตราชนะล่าสุดของคุณ';
 
   @override
+  String profilePerformanceQueueChip(String queue) {
+    return 'โหมด: $queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => 'กรองตามโหมด';
+
+  @override
+  String get profilePerformancePerMatchTitle => 'รายแมตช์';
+
+  @override
+  String get profilePerformancePerMatchHint => 'แตะแท่งกราฟเพื่อเปิดแมตช์นั้น';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return 'เฉลี่ย $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty =>
+      'ต้องมีอย่างน้อย 2 แมตช์แบบเล่นเป็นรอบที่มีค่าสถิตินี้จึงจะแสดงกราฟได้';
+
+  @override
+  String get profilePerformanceOpeningsTitle => 'การดวลเปิดรอบ';
+
+  @override
+  String get profilePerformanceOpeningWin => 'ชนะการดวลเปิดรอบ';
+
+  @override
+  String get profilePerformanceOpeningWinHint =>
+      'ในรอบที่คุณได้เฟิร์สบลัดหรือตายคนแรก สัดส่วนที่คุณได้เฟิร์สบลัด';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame => 'เฟิร์สบลัดต่อแมตช์';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame => 'ตายคนแรกต่อแมตช์';
+
+  @override
+  String get profilePerformanceMultiKillsTitle => 'สังหารหลายคนในรอบเดียว';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': 'สังหาร 3',
+      'k4': 'สังหาร 4',
+      'ace': 'เอซ',
+      'other': 'สังหาร 2',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'คำนวณจาก $nString แมตช์ที่มีข้อมูลการสังหารครบ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => 'อัตราชนะรอบ';
+
+  @override
+  String get profilePerformanceDrillHint =>
+      'แตะแถวเพื่อดูเฉพาะเอเจนท์ แผนที่ หรือโหมดนั้น';
+
+  @override
+  String get profilePerformanceLoadOlder => 'วิเคราะห์แมตช์เก่าเพิ่ม';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ValHub วิเคราะห์เฉพาะแมตช์ที่เปิดในอุปกรณ์นี้ แตะแต่ละครั้งจะเพิ่มแมตช์ที่เก่ากว่าได้สูงสุด $nString แมตช์';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder => 'กำลังค้นหาแมตช์ที่เก่ากว่า…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return 'กำลังวิเคราะห์แมตช์ $doneString/$totalString…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'เพิ่ม $nString แมตช์ในการวิเคราะห์แล้ว',
+      zero: 'ไม่มีแมตช์ใหม่ให้เพิ่ม',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder =>
+      'Riot ไม่ได้เก็บแมตช์ที่เก่ากว่านี้แล้ว';
+
+  @override
   String get legalAboutIntro =>
       'ผู้ช่วย VALORANT ของคุณ: ร้านค้ารายวัน wishlist แรงก์ แมตช์ หลายบัญชี และชุมชนผู้เล่น ทั้งหมดอยู่ในอุปกรณ์ของคุณ';
 

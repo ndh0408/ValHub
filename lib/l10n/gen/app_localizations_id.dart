@@ -4617,6 +4617,134 @@ class AppLocalizationsId extends AppLocalizations {
   String get profileYourWinRate => 'Win rate terbarumu';
 
   @override
+  String profilePerformanceQueueChip(String queue) {
+    return 'Mode: $queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => 'Filter menurut mode';
+
+  @override
+  String get profilePerformancePerMatchTitle => 'Per pertandingan';
+
+  @override
+  String get profilePerformancePerMatchHint =>
+      'Ketuk batang untuk membuka pertandingan itu.';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return 'Rata-rata $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty =>
+      'Butuh minimal 2 pertandingan berbasis ronde dengan statistik ini untuk menampilkan grafik.';
+
+  @override
+  String get profilePerformanceOpeningsTitle => 'Duel pembuka';
+
+  @override
+  String get profilePerformanceOpeningWin => 'Menang duel pembuka';
+
+  @override
+  String get profilePerformanceOpeningWinHint =>
+      'Dari ronde saat kamu mendapat kill pertama atau mati pertama, persentase kamu yang mendapat kill.';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame =>
+      'First blood per pertandingan';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame =>
+      'Mati pertama per pertandingan';
+
+  @override
+  String get profilePerformanceMultiKillsTitle => 'Multi-kill dalam satu ronde';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': '3 kill',
+      'k4': '4 kill',
+      'ace': 'Ace',
+      'other': '2 kill',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Dihitung dari $nString pertandingan dengan data kill lengkap.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => 'Menang ronde';
+
+  @override
+  String get profilePerformanceDrillHint =>
+      'Ketuk baris untuk melihat agen, map, atau mode itu saja.';
+
+  @override
+  String get profilePerformanceLoadOlder => 'Analisis pertandingan lama';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ValHub hanya menganalisis pertandingan yang sudah dibuka di perangkat ini. Setiap ketukan menambahkan hingga $nString pertandingan yang lebih lama.';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder =>
+      'Mencari pertandingan yang lebih lama…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return 'Menganalisis pertandingan $doneString/$totalString…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString pertandingan ditambahkan ke analisis.',
+      zero: 'Tidak ada pertandingan baru untuk ditambahkan.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder =>
+      'Riot tidak lagi menyimpan pertandingan yang lebih lama.';
+
+  @override
   String get legalAboutIntro =>
       'Teman setia VALORANT-mu: toko harian, wishlist, rank, pertandingan, banyak akun, dan komunitas pemain, langsung di perangkatmu.';
 

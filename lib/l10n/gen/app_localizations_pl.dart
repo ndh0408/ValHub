@@ -4983,6 +4983,139 @@ class AppLocalizationsPl extends AppLocalizations {
   String get profileYourWinRate => 'Twój ostatni współczynnik wygranych';
 
   @override
+  String profilePerformanceQueueChip(String queue) {
+    return 'Tryb: $queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => 'Filtruj według trybu';
+
+  @override
+  String get profilePerformancePerMatchTitle => 'Mecz po meczu';
+
+  @override
+  String get profilePerformancePerMatchHint =>
+      'Dotknij słupka, aby otworzyć ten mecz.';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return 'Średnia $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty =>
+      'Do wykresu potrzeba co najmniej 2 meczów z rundami, w których jest ta statystyka.';
+
+  @override
+  String get profilePerformanceOpeningsTitle => 'Pojedynki otwarcia';
+
+  @override
+  String get profilePerformanceOpeningWin => 'Wygrane otwarcia';
+
+  @override
+  String get profilePerformanceOpeningWinHint =>
+      'Spośród rund z twoim pierwszym zabójstwem lub pierwszym zgonem: odsetek pierwszych zabójstw.';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame =>
+      'Pierwsze zabójstwa na mecz';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame => 'Pierwsze zgony na mecz';
+
+  @override
+  String get profilePerformanceMultiKillsTitle =>
+      'Wiele zabójstw w jednej rundzie';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': '3 zabójstwa',
+      'k4': '4 zabójstwa',
+      'ace': 'Ace',
+      'other': '2 zabójstwa',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Na podstawie $nString meczu z pełnymi danymi o zabójstwach.',
+      many: 'Na podstawie $nString meczów z pełnymi danymi o zabójstwach.',
+      few: 'Na podstawie $nString meczów z pełnymi danymi o zabójstwach.',
+      one: 'Na podstawie $nString meczu z pełnymi danymi o zabójstwach.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => 'Wygrane rundy';
+
+  @override
+  String get profilePerformanceDrillHint =>
+      'Dotknij wiersza, aby zobaczyć tylko tego agenta, tę mapę lub ten tryb.';
+
+  @override
+  String get profilePerformanceLoadOlder => 'Analizuj starsze mecze';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    return 'ValHub analizuje tylko mecze otwarte na tym urządzeniu. Każde dotknięcie dodaje starsze mecze (maks. $nString).';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder => 'Szukanie starszych meczów…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return 'Analizowanie meczów: $doneString/$totalString…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Dodano $nString meczu do analizy.',
+      many: 'Dodano $nString meczów do analizy.',
+      few: 'Dodano $nString mecze do analizy.',
+      one: 'Dodano $nString mecz do analizy.',
+      zero: 'Brak nowych meczów do dodania.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder =>
+      'Riot nie przechowuje już starszych meczów.';
+
+  @override
   String get legalAboutIntro =>
       'Twój towarzysz w VALORANT: dzienny sklep, lista życzeń, ranga, mecze, wiele kont i społeczność graczy — na twoim urządzeniu.';
 

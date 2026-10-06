@@ -4946,6 +4946,140 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileYourWinRate => 'Your recent win rate';
 
   @override
+  String profilePerformanceQueueChip(String queue) {
+    return 'Mode: $queue';
+  }
+
+  @override
+  String get profilePerformanceChooseQueue => 'Filter by mode';
+
+  @override
+  String get profilePerformancePerMatchTitle => 'Per match';
+
+  @override
+  String get profilePerformancePerMatchHint => 'Tap a bar to open that match.';
+
+  @override
+  String profilePerformanceAverage(String value) {
+    return 'Average $value';
+  }
+
+  @override
+  String get profilePerformanceChartEmpty =>
+      'Needs at least 2 round-based matches with this stat to draw the chart.';
+
+  @override
+  String get profilePerformanceOpeningsTitle => 'Opening duels';
+
+  @override
+  String get profilePerformanceOpeningWin => 'Opening win rate';
+
+  @override
+  String get profilePerformanceOpeningWinHint =>
+      'Of the rounds where you got the first kill or died first, how often you got the kill.';
+
+  @override
+  String get profilePerformanceFirstBloodsPerGame => 'First bloods per match';
+
+  @override
+  String get profilePerformanceFirstDeathsPerGame => 'First deaths per match';
+
+  @override
+  String get profilePerformanceMultiKillsTitle => 'Multi-kills in a round';
+
+  @override
+  String profilePerformanceMultiKill(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'k3': '3 kills',
+      'k4': '4 kills',
+      'ace': 'Ace',
+      'other': '2 kills',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profilePerformanceMultiKillsNote(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Based on $nString matches with full kill data.',
+      one: 'Based on $nString match with full kill data.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceRoundWin => 'Round win rate';
+
+  @override
+  String get profilePerformanceDrillHint =>
+      'Tap a row to see just that agent, map or mode.';
+
+  @override
+  String get profilePerformanceLoadOlder => 'Analyze older matches';
+
+  @override
+  String profilePerformanceLoadOlderHint(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other:
+          'ValHub only analyzes matches opened on this device. Each tap adds up to $nString older matches.',
+      one:
+          'ValHub only analyzes matches opened on this device. Each tap adds up to $nString older match.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceSearchingOlder => 'Looking for older matches…';
+
+  @override
+  String profilePerformanceLoadingOlder(int done, int total) {
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String doneString = doneNumberFormat.format(done);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+
+    return 'Analyzing matches: $doneString/$totalString…';
+  }
+
+  @override
+  String profilePerformanceAddedOlder(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Added $nString matches to the analysis.',
+      one: 'Added $nString match to the analysis.',
+      zero: 'No new matches to add.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profilePerformanceNoOlder =>
+      'Riot doesn\'t keep any older matches.';
+
+  @override
   String get legalAboutIntro =>
       'Your VALORANT companion: daily store, wishlist, rank, matches, multiple accounts and a player community, right on your device.';
 

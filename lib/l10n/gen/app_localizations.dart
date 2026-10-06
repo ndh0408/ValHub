@@ -7844,6 +7844,138 @@ abstract class AppLocalizations {
   /// **'Tỉ lệ thắng gần đây của bạn'**
   String get profileYourWinRate;
 
+  /// Queue filter chip of the Performance screen ("Chế độ: Xếp hạng").
+  ///
+  /// In vi, this message translates to:
+  /// **'Chế độ: {queue}'**
+  String profilePerformanceQueueChip(String queue);
+
+  /// Title of the queue picker sheet on the Performance screen.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lọc theo chế độ'**
+  String get profilePerformanceChooseQueue;
+
+  /// Card title: one bar per recent match (ACS, K/D, ADR or HS%).
+  ///
+  /// In vi, this message translates to:
+  /// **'Từng trận'**
+  String get profilePerformancePerMatchTitle;
+
+  /// Under the per-match chart: tapping a bar opens that match.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chạm một cột để mở trận đó.'**
+  String get profilePerformancePerMatchHint;
+
+  /// Dashed average line label of the per-match chart ("Trung bình 231").
+  ///
+  /// In vi, this message translates to:
+  /// **'Trung bình {value}'**
+  String profilePerformanceAverage(String value);
+
+  /// Per-match chart without enough round-based matches for the chosen stat.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cần ít nhất 2 trận theo vòng có số liệu này để vẽ biểu đồ.'**
+  String get profilePerformanceChartEmpty;
+
+  /// Card title: first bloods and first deaths (who wins the first duel of a round).
+  ///
+  /// In vi, this message translates to:
+  /// **'Giao tranh mở màn'**
+  String get profilePerformanceOpeningsTitle;
+
+  /// Share of opening duels won: first bloods / (first bloods + first deaths).
+  ///
+  /// In vi, this message translates to:
+  /// **'Thắng mở màn'**
+  String get profilePerformanceOpeningWin;
+
+  /// Tooltip explaining the opening-duel win rate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trong các vòng bạn là người hạ gục hoặc bị hạ đầu tiên, tỉ lệ bạn là người hạ gục.'**
+  String get profilePerformanceOpeningWinHint;
+
+  /// Average first bloods per round-based match.
+  ///
+  /// In vi, this message translates to:
+  /// **'First blood mỗi trận'**
+  String get profilePerformanceFirstBloodsPerGame;
+
+  /// Average times the player died first in a round, per round-based match.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bị hạ đầu mỗi trận'**
+  String get profilePerformanceFirstDeathsPerGame;
+
+  /// Section title: rounds with 3 kills, 4 kills and aces.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhiều mạng trong một vòng'**
+  String get profilePerformanceMultiKillsTitle;
+
+  /// Label of a multi-kill counter.
+  ///
+  /// In vi, this message translates to:
+  /// **'{kind, select, k3{3 mạng} k4{4 mạng} ace{Ace} other{2 mạng}}'**
+  String profilePerformanceMultiKill(String kind);
+
+  /// Sample note of the multi-kill counters.
+  ///
+  /// In vi, this message translates to:
+  /// **'{n, plural, other{Tính trên {n} trận có đủ dữ liệu hạ gục.}}'**
+  String profilePerformanceMultiKillsNote(int n);
+
+  /// Round win rate on the attack or defense side.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thắng vòng'**
+  String get profilePerformanceRoundWin;
+
+  /// Under the agents / maps / queues table.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chạm một dòng để xem riêng đặc vụ, bản đồ hoặc chế độ đó.'**
+  String get profilePerformanceDrillHint;
+
+  /// Button: open older matches from the Riot match history so they are added to the on-device analysis.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phân tích thêm trận cũ'**
+  String get profilePerformanceLoadOlder;
+
+  /// Explains the "Phân tích thêm trận cũ" button.
+  ///
+  /// In vi, this message translates to:
+  /// **'ValHub chỉ phân tích những trận đã mở trên máy này. Mỗi lần bấm sẽ thêm tối đa {n} trận cũ hơn.'**
+  String profilePerformanceLoadOlderHint(int n);
+
+  /// Backfill progress before the number of matches is known.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang tìm trận cũ hơn…'**
+  String get profilePerformanceSearchingOlder;
+
+  /// Backfill progress ("Đang phân tích 6/20 trận…").
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang phân tích {done}/{total} trận…'**
+  String profilePerformanceLoadingOlder(int done, int total);
+
+  /// Result of one backfill run.
+  ///
+  /// In vi, this message translates to:
+  /// **'{n, plural, =0{Không có trận mới để thêm.} other{Đã thêm {n} trận vào phân tích.}}'**
+  String profilePerformanceAddedOlder(int n);
+
+  /// Backfill reached the end of the Riot match history.
+  ///
+  /// In vi, this message translates to:
+  /// **'Riot không còn lưu trận nào cũ hơn.'**
+  String get profilePerformanceNoOlder;
+
   /// LegalStrings.aboutIntro — About hub
   ///
   /// In vi, this message translates to:
