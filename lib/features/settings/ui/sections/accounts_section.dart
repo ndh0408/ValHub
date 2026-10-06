@@ -243,7 +243,6 @@ class _AccountRow extends ConsumerWidget {
             tooltip: hasNote
                 ? context.l10n.accountLoginNote
                 : context.l10n.accountLoginNoteEmpty,
-            visualDensity: VisualDensity.compact,
             onPressed: onNote,
           ),
           // Red trash in a round red-tinted disc (48 dp target).

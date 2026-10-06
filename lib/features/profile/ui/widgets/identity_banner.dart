@@ -85,7 +85,9 @@ class IdentityBanner extends ConsumerWidget {
                   context.l10n.profileRiotIdCopied,
                 ),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 32),
+            constraints: const BoxConstraints(
+              minHeight: kMinInteractiveDimension,
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

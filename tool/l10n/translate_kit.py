@@ -1,0 +1,267 @@
+"""Translation work kit for the 17 non-template locales (I18N.md 14).
+
+    python tool/l10n/translate_kit.py export <workdir>        chunks of app_vi.arb
+    python tool/l10n/translate_kit.py check  <workdir> <code> [chunk]
+    python tool/l10n/translate_kit.py merge  <workdir> <code>  -> lib/l10n/arb/app_<code>.arb
+
+Chunks are `<workdir>/src/<NN>.json` (key, vi, description, placeholders...);
+translations are `<workdir>/out/<code>/<NN>.json` ({key: text}). `check` is a
+fast pre-check for translators; `dart run tool/l10n_check.dart` and
+`flutter gen-l10n` remain the authoritative gates.
+"""
+import json
+import os
+import re
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ARB_DIR = os.path.join(ROOT, 'lib', 'l10n', 'arb')
+TEMPLATE = os.path.join(ARB_DIR, 'app_vi.arb')
+CHUNK = 160
+
+PLURAL = {
+    'ar': {'zero', 'one', 'two', 'few', 'many', 'other'},
+    'ru': {'one', 'few', 'many', 'other'},
+    'pl': {'one', 'few', 'many', 'other'},
+    'en': {'one', 'other'}, 'de': {'one', 'other'}, 'tr': {'one', 'other'},
+    'fr': {'one', 'other'}, 'es': {'one', 'other'}, 'es_MX': {'one', 'other'},
+    'it': {'one', 'other'}, 'pt': {'one', 'other'},
+    'id': {'other'}, 'ja': {'other'}, 'ko': {'other'}, 'th': {'other'},
+    'zh': {'other'}, 'zh_Hant': {'other'}, 'vi': {'other'},
+}
+OPTIONAL = {'fr': {'many'}, 'es': {'many'}, 'es_MX': {'many'}, 'it': {'many'},
+            'pt': {'many'}}
+SCRIPT = {  # non-Latin locales: a translated message must contain this script
+    'ar': r'[؀-ۿ]', 'ru': r'[Ѐ-ӿ]', 'th': r'[฀-๿]',
+    'ja': r'[぀-ヿ一-鿿]', 'ko': r'[가-힯]',
+    'zh': r'[一-鿿]', 'zh_Hant': r'[一-鿿]',
+}
+# Letters that occur in Vietnamese but in none of the other 17 languages.
+VI_ONLY = re.compile(
+    '[ạảãầấậẩẫằắặẳẵẹẻẽềếệểễỉĩịọỏồốộổỗơờớợởỡụủũưừứựửữỳỵỷỹđăĂ'
+    'ẠẢÃẦẤẬẨẪẰẮẶẲẴẸẺẼỀẾỆỂỄỈĨỊỌỎỒỐỘỔỖƠỜỚỢỞỠỤỦŨƯỪỨỰỬỮỲỴỶỸĐ]')
+# A message made only of capitals, digits, symbols and placeholders ("VP",
+# "{a}/{b}", "K/D/A") legitimately has no character of the target script.
+SCRIPT_FREE_OK = re.compile(r'^[A-Z0-9\s\W_]*$')
+NAME = re.compile(r'[A-Za-z_][A-Za-z0-9_]*')
+SELECTOR = re.compile(r'=?[A-Za-z0-9_]+')
+
+
+def load(path):
+    with open(path, encoding='utf-8') as f:
+        return json.load(f)
+
+
+def template():
+    j = load(TEMPLATE)
+    return j, [k for k in j if not k.startswith('@')]
+
+
+class IcuError(Exception):
+    pass
+
+
+def parse(msg):
+    """(argument names, [(plural name, cases)], [(select name, cases)])."""
+    args, plurals, selects = set(), [], []
+    pos = [0]
+
+    def ws():
+        while pos[0] < len(msg) and msg[pos[0]].isspace():
+            pos[0] += 1
+
+    def read(pattern, what):
+        m = pattern.match(msg, pos[0])
+        if not m:
+            raise IcuError(f'expected {what} at {pos[0]}: {msg[pos[0]:pos[0] + 15]!r}')
+        pos[0] = m.end()
+        return m.group(0)
+
+    def message(nested):
+        while pos[0] < len(msg):
+            c = msg[pos[0]]
+            if c == '{':
+                pos[0] += 1
+                argument()
+            elif c == '}':
+                if nested:
+                    return
+                raise IcuError(f'unbalanced }} at {pos[0]}')
+            else:
+                pos[0] += 1
+        if nested:
+            raise IcuError('unterminated {')
+
+    def argument():
+        ws()
+        name = read(NAME, 'a placeholder name')
+        ws()
+        args.add(name)
+        if pos[0] < len(msg) and msg[pos[0]] == '}':
+            pos[0] += 1
+            return
+        if pos[0] >= len(msg) or msg[pos[0]] != ',':
+            raise IcuError(f'expected , or }} after {name}')
+        pos[0] += 1
+        ws()
+        kind = read(NAME, 'plural/select')
+        ws()
+        if kind not in ('plural', 'select'):
+            raise IcuError(f'unsupported argument type {kind}')
+        if pos[0] >= len(msg) or msg[pos[0]] != ',':
+            raise IcuError('expected , after the argument type')
+        pos[0] += 1
+        cases = set()
+        while True:
+            ws()
+            if pos[0] < len(msg) and msg[pos[0]] == '}':
+                pos[0] += 1
+                break
+            sel = read(SELECTOR, 'a case selector')
+            ws()
+            if pos[0] >= len(msg) or msg[pos[0]] != '{':
+                raise IcuError(f'expected {{ after selector {sel}')
+            pos[0] += 1
+            message(True)
+            pos[0] += 1
+            cases.add(sel)
+        (plurals if kind == 'plural' else selects).append((name, cases))
+
+    message(False)
+    return args, plurals, selects
+
+
+def ws_shape(s):
+    return (s[:1].isspace(), s[-1:].isspace(), s.count('\n'), s.endswith('…'))
+
+
+def check_one(code, vi, text, meta):
+    if not isinstance(text, str) or not text.strip():
+        return ['empty or not a string']
+    try:
+        a_vi, _, s_vi = parse(vi)
+        a_t, p_t, s_t = parse(text)
+    except IcuError as e:
+        return [f'ICU: {e}']
+    errs = []
+    if a_t != a_vi:
+        errs.append(f'placeholders {sorted(a_t)} != source {sorted(a_vi)}')
+    types = {k: (v or {}).get('type')
+             for k, v in (meta.get('placeholders') or {}).items()}
+    for name, cases in p_t:
+        if types.get(name) not in ('int', 'num', 'double'):
+            errs.append(f'plural on {name} needs a numeric placeholder (it is '
+                        f'{types.get(name)}); rephrase without a plural')
+        named = {c for c in cases if not c.startswith('=')}
+        missing = PLURAL[code] - named
+        if missing:
+            errs.append(f'plural {name} misses {sorted(missing)}')
+        extra = named - PLURAL[code] - OPTIONAL.get(code, set())
+        if extra:
+            errs.append(f'plural {name} uses categories {code} does not have: {sorted(extra)}')
+    src_selects = dict(s_vi)
+    for name, cases in s_t:
+        if name in src_selects and cases != src_selects[name]:
+            errs.append(f'select {name} cases {sorted(cases)} != source {sorted(src_selects[name])}')
+    if ws_shape(text) != ws_shape(vi):
+        errs.append('whitespace/ellipsis shape differs from the source '
+                    '(leading/trailing space, newline count, trailing …)')
+    if code != 'vi' and VI_ONLY.search(text):
+        errs.append('contains Vietnamese letters')
+    if meta.get('x-locked') and text != vi:
+        errs.append('locked message must be copied verbatim')
+    pat = SCRIPT.get(code)
+    if pat and not meta.get('x-locked'):
+        plain = re.sub(r'\{\w+\}', '', text)
+        if (len(plain.strip()) > 3 and not re.search(pat, plain)
+                and not SCRIPT_FREE_OK.match(plain)):
+            errs.append('no character of the target script')
+    return errs
+
+
+def export(work):
+    j, keys = template()
+    os.makedirs(os.path.join(work, 'src'), exist_ok=True)
+    for n in range(0, len(keys), CHUNK):
+        rows = []
+        for k in keys[n:n + CHUNK]:
+            m = j.get('@' + k, {})
+            row = {'key': k, 'vi': j[k], 'description': m.get('description', '')}
+            if m.get('placeholders'):
+                row['placeholders'] = m['placeholders']
+            for x in ('x-example', 'x-max-length', 'x-locked'):
+                if x in m:
+                    row[x] = m[x]
+            rows.append(row)
+        path = os.path.join(work, 'src', f'{n // CHUNK:02d}.json')
+        with open(path, 'w', encoding='utf-8', newline='\n') as f:
+            json.dump(rows, f, ensure_ascii=False, indent=1)
+    print(f'{len(keys)} keys -> {(len(keys) - 1) // CHUNK + 1} chunks in {work}/src')
+
+
+def check(work, code, only=None):
+    j, _ = template()
+    total = bad = 0
+    for c in sorted(os.listdir(os.path.join(work, 'src'))):
+        stem = c[:-5]
+        if only and stem != only:
+            continue
+        src = load(os.path.join(work, 'src', c))
+        out_path = os.path.join(work, 'out', code, c)
+        if not os.path.exists(out_path):
+            print(f'{stem}: MISSING {out_path}')
+            bad += 1
+            continue
+        try:
+            out = load(out_path)
+        except Exception as e:  # noqa: BLE001
+            print(f'{stem}: invalid JSON: {e}')
+            bad += 1
+            continue
+        want = {r['key'] for r in src}
+        for k in sorted(set(out) - want):
+            print(f'{stem}:{k}: unknown key')
+            bad += 1
+        for r in src:
+            k = r['key']
+            if k not in out:
+                if code != 'es_MX':  # es_MX is a delta over es
+                    print(f'{stem}:{k}: missing')
+                    bad += 1
+                continue
+            total += 1
+            for e in check_one(code, r['vi'], out[k], j.get('@' + k, {})):
+                print(f'{stem}:{k}: {e}')
+                bad += 1
+    print(f'{code}: {total} messages checked, {bad} problems')
+    return bad
+
+
+def merge(work, code):
+    _, keys = template()
+    merged = {}
+    folder = os.path.join(work, 'out', code)
+    for c in sorted(os.listdir(folder)):
+        merged.update(load(os.path.join(folder, c)))
+    doc = {'@@locale': code}
+    for k in keys:
+        if k in merged:
+            doc[k] = merged[k]
+    path = os.path.join(ARB_DIR, f'app_{code}.arb')
+    with open(path, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump(doc, f, ensure_ascii=False, indent=2)
+        f.write('\n')
+    print(f'{path}: {len(doc) - 1} messages')
+
+
+if __name__ == '__main__':
+    cmd, work = sys.argv[1], sys.argv[2]
+    if cmd == 'export':
+        export(work)
+    elif cmd == 'check':
+        only = sys.argv[4] if len(sys.argv) > 4 else None
+        sys.exit(1 if check(work, sys.argv[3], only) else 0)
+    elif cmd == 'merge':
+        merge(work, sys.argv[3])
+    else:
+        sys.exit(f'unknown command {cmd}')

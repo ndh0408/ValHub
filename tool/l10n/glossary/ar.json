@@ -1,0 +1,875 @@
+{
+ "agentRoles": [
+  {
+   "vi": "Khởi tranh",
+   "en": "Initiator",
+   "term": "مبادر"
+  },
+  {
+   "vi": "Hộ vệ",
+   "en": "Sentinel",
+   "term": "حارس"
+  },
+  {
+   "vi": "Đối đầu",
+   "en": "Duelist",
+   "term": "مبارز"
+  },
+  {
+   "vi": "Kiểm soát",
+   "en": "Controller",
+   "term": "متحكم"
+  }
+ ],
+ "contentTiers": [
+  {
+   "vi": "Phiên Bản Sang Chảnh",
+   "en": "Deluxe Edition",
+   "term": "إصدار فاخر"
+  },
+  {
+   "vi": "Phiên Bản Độc Quyền",
+   "en": "Exclusive Edition",
+   "term": "إصدار حصري"
+  },
+  {
+   "vi": "Phiên Bản Cao Cấp",
+   "en": "Premium Edition",
+   "term": "إصدار ممتاز"
+  },
+  {
+   "vi": "Phiên Bản Tuyển Chọn",
+   "en": "Select Edition",
+   "term": "إصدار مختار"
+  },
+  {
+   "vi": "Phiên Bản Siêu Cấp",
+   "en": "Ultra Edition",
+   "term": "إصدار خارق"
+  }
+ ],
+ "contracts": [
+  {
+   "vi": "Trang Bị Gekko",
+   "en": "Gekko Gear",
+   "term": "تجهيزات غيكو"
+  },
+  {
+   "vi": "Trang Bị Fade",
+   "en": "Fade Gear",
+   "term": "تجهيزات فايد"
+  },
+  {
+   "vi": "Trang Bị Breach",
+   "en": "Breach Gear",
+   "term": "تجهيزات بريتش"
+  },
+  {
+   "vi": "Trang Bị Deadlock",
+   "en": "Deadlock Gear",
+   "term": "تجهيزات ديدلوك"
+  },
+  {
+   "vi": "Trang Bị Tejo",
+   "en": "Tejo Gear",
+   "term": "تجهيزات تيهو"
+  },
+  {
+   "vi": "Trang Bị Raze",
+   "en": "Raze Gear",
+   "term": "تجهيزات رايز"
+  },
+  {
+   "vi": "Trang Bị Chamber",
+   "en": "Chamber Gear",
+   "term": "تجهيزات تشامبر"
+  },
+  {
+   "vi": "Trang Bị KAY/O",
+   "en": "KAY/O Gear",
+   "term": "تجهيزات كاي/أو"
+  },
+  {
+   "vi": "Trang Bị Skye",
+   "en": "Skye Gear",
+   "term": "تجهيزات سكاي"
+  },
+  {
+   "vi": "Trang Bị Cypher",
+   "en": "Cypher Gear",
+   "term": "تجهيزات سايفر"
+  },
+  {
+   "vi": "Trang Bị Sova",
+   "en": "Sova Gear",
+   "term": "تجهيزات سوفا"
+  },
+  {
+   "vi": "Trang Bị Miks",
+   "en": "Miks Gear",
+   "term": "تجهيزات ميكس"
+  },
+  {
+   "vi": "Trang Bị Killjoy",
+   "en": "Killjoy Gear",
+   "term": "تجهيزات كيلجوي"
+  },
+  {
+   "vi": "Trang Bị Harbor",
+   "en": "Harbor Gear",
+   "term": "تجهيزات هاربور"
+  },
+  {
+   "vi": "Trang Bị Vyse",
+   "en": "Vyse Gear",
+   "term": "تجهيزات فايس"
+  },
+  {
+   "vi": "Trang Bị Viper",
+   "en": "Viper Gear",
+   "term": "تجهيزات فايبر"
+  },
+  {
+   "vi": "Trang Bị Phoenix",
+   "en": "Phoenix Gear",
+   "term": "تجهيزات فينيكس"
+  },
+  {
+   "vi": "Trang Bị Veto",
+   "en": "Veto Gear",
+   "term": "تجهيزات فيتو"
+  },
+  {
+   "vi": "Trang Bị Astra",
+   "en": "Astra Gear",
+   "term": "تجهيزات أسترا"
+  },
+  {
+   "vi": "Trang Bị Brimstone",
+   "en": "Brimstone Gear",
+   "term": "تجهيزات بريمستون"
+  },
+  {
+   "vi": "Trang Bị Iso",
+   "en": "Iso Gear",
+   "term": "تجهيزات آيسو"
+  },
+  {
+   "vi": "Trang Bị Clove",
+   "en": "Clove Gear",
+   "term": "تجهيزات كلوف"
+  },
+  {
+   "vi": "Trang Bị Neon",
+   "en": "Neon Gear",
+   "term": "تجهيزات نيون"
+  },
+  {
+   "vi": "Trang Bị Waylay",
+   "en": "Waylay Gear",
+   "term": "تجهيزات وايلاي"
+  },
+  {
+   "vi": "Trang Bị Sage",
+   "en": "Sage Gear",
+   "term": "تجهيزات سايج"
+  },
+  {
+   "vi": "Trang Bị Reyna",
+   "en": "Reyna Gear",
+   "term": "تجهيزات ريينا"
+  },
+  {
+   "vi": "Trang Bị Omen",
+   "en": "Omen Gear",
+   "term": "تجهيزات أومن"
+  },
+  {
+   "vi": "Trang Bị Jett",
+   "en": "Jett Gear",
+   "term": "تجهيزات جيت"
+  },
+  {
+   "vi": "Trang Bị Yoru",
+   "en": "Yoru Gear",
+   "term": "تجهيزات يورو"
+  },
+  {
+   "vi": "BattlePass Champions",
+   "en": "Champions Pass",
+   "term": "رخصة Champions"
+  },
+  {
+   "vi": "Vé Sự Kiện Mừng Tết Nguyên Đán",
+   "en": "Lunar Celebration Event Pass",
+   "term": "رخصة فعالية الاحتفال القمري"
+  },
+  {
+   "vi": "Vé Sự Kiện Champions 2023",
+   "en": "Champions 2023 Event Pass",
+   "term": "رخصة فعالية Champions 2023"
+  },
+  {
+   "vi": "Vé Sự Kiện Chân Trời 2023",
+   "en": "2023 Horizons Event Pass",
+   "term": "رخصة فعالية آفاق 2023"
+  },
+  {
+   "vi": "Vé Sự Kiện Long Lân Sum Vầy",
+   "en": "Scales of Fortune Event Pass",
+   "term": "رخصة فعالية ميزان الحظ"
+  },
+  {
+   "vi": "Vé Sự Kiện Giao Thoa",
+   "en": "Collision Event Pass",
+   "term": "رخصة فعالية اندماج"
+  },
+  {
+   "vi": "Vé Sự Kiện Kết Thúc Năm",
+   "en": "Year End Event Pass",
+   "term": "رخصة فعالية نهاية العام"
+  },
+  {
+   "vi": "Vé Sự Kiện Sinh Ra Để Tỏa Sáng",
+   "en": "Born To Burn Event Pass",
+   "term": "رخصة فعالية وُلدنا لنتألق"
+  },
+  {
+   "vi": "VÉ SỰ KIỆN V25 ENCORE",
+   "en": "V25 ENCORE EVENT PASS",
+   "term": "رخصة فعالية V25 العرض الأخير"
+  },
+  {
+   "vi": "Vé Sự Kiện Năm Ất Tỵ",
+   "en": "Year of the Snake Event Pass",
+   "term": "رخصة فعالية عام الأفعى"
+  },
+  {
+   "vi": "Champions 2026: Shanghai",
+   "en": "Champions 2026: Shanghai",
+   "term": "Champions 2026: شانغهاي"
+  },
+  {
+   "vi": "Vé Sự Kiện Tết Nguyên Đán 2026",
+   "en": "Lunar 2026 Event Pass",
+   "term": "رخصة فعالية القمري 2026"
+  },
+  {
+   "vi": "Vé Sự Kiện VALORANT FC",
+   "en": "VALORANT FC Event Pass",
+   "term": "رخصة فعالية VALORANT FC"
+  },
+  {
+   "vi": "BattlePass Crossover",
+   "en": "Crossover Pass",
+   "term": "ممر عبور"
+  },
+  {
+   "vi": "BattlePass Hồi Tưởng 2022",
+   "en": "2022 Recall Pass",
+   "term": "رخصة استحضار 2022"
+  },
+  {
+   "vi": "Vé Sự Kiện 5 Years",
+   "en": "5 Years Event Pass",
+   "term": "رخصة فعالية 5 Years"
+  },
+  {
+   "vi": "BATTLEPASS KỶ NIỆM 1 NĂM",
+   "en": "YR1 ANNIVERSARY PASS",
+   "term": "رخصة ذكرى العام1"
+  },
+  {
+   "vi": "Battle Pass RiotX Arcane",
+   "en": "RiotX Arcane Pass",
+   "term": "رخصة RiotX أركين"
+  },
+  {
+   "vi": "CHƠI ĐỂ MỞ KHÓA CÁC ĐẶC VỤ",
+   "en": "PLAY TO UNLOCK AGENTS",
+   "term": "العب لفتح العملاء"
+  },
+  {
+   "vi": "PHẦN THƯỞNG CLOSED BETA",
+   "en": "CLOSED BETA REWARDS",
+   "term": "جوائز إصدار بيتا المغلق"
+  },
+  {
+   "vi": "BÙNG CHÁY: PHẦN 1",
+   "en": "IGNITION : ACT 1",
+   "term": "الشعلة: مشهد 1"
+  },
+  {
+   "vi": "BÙNG CHÁY: PHẦN 2",
+   "en": "IGNITION: ACT 2",
+   "term": "الشعلة: مشهد 2"
+  },
+  {
+   "vi": "BÙNG CHÁY: PHẦN 3",
+   "en": "IGNITION: ACT 3",
+   "term": "الشعلة: مشهد 3"
+  },
+  {
+   "vi": "TRẬN THẾ: PHẦN 1",
+   "en": "FORMATION: ACT 1",
+   "term": "التشكيل: المشهد 1"
+  },
+  {
+   "vi": "TRẬN THẾ: PHẦN 2",
+   "en": "FORMATION: ACT 2",
+   "term": "التشكيل: المشهد 2"
+  },
+  {
+   "vi": "TRẬN THẾ: PHẦN 3",
+   "en": "FORMATION: ACT 3",
+   "term": "التشكيل: المشهد 3"
+  },
+  {
+   "vi": "PHẢN CHIẾU: PHẦN 1",
+   "en": "REFLECTION: ACT 1",
+   "term": "الانعكاس: المشهد 1"
+  },
+  {
+   "vi": "PHẢN CHIẾU: PHẦN 2",
+   "en": "REFLECTION: ACT 2",
+   "term": "الانعكاس: المشهد 2"
+  },
+  {
+   "vi": "PHẢN CHIẾU: PHẦN 3",
+   "en": "REFLECTION: ACT 3",
+   "term": "الانعكاس: المشهد 3"
+  },
+  {
+   "vi": "ĐỘT PHÁ: PHẦN 1",
+   "en": "DISRUPTION: ACT 1",
+   "term": "تعطيل: المشهد 1"
+  },
+  {
+   "vi": "ĐỘT PHÁ: PHẦN 2",
+   "en": "DISRUPTION: ACT 2",
+   "term": "التعطيل: المشهد 2"
+  },
+  {
+   "vi": "ĐỘT PHÁ: PHẦN 3",
+   "en": "DISRUPTION: ACT 3",
+   "term": "التعطيل: المشهد 3"
+  },
+  {
+   "vi": "KHÔNG GIAN: PHẦN 1",
+   "en": "DIMENSION: ACT 1",
+   "term": "البُعد: المشهد 1"
+  },
+  {
+   "vi": "KHÔNG GIAN: PHẦN 2",
+   "en": "DIMENSION: ACT 2",
+   "term": "البعد: مشهد 2"
+  },
+  {
+   "vi": "KHÔNG GIAN: PHẦN 3",
+   "en": "DIMENSION: ACT 3",
+   "term": "البعد: المشهد 3"
+  },
+  {
+   "vi": "VÉN MÀN: PHẦN 1",
+   "en": "REVELATION: ACT 1",
+   "term": "الانكشاف: المشهد 1"
+  },
+  {
+   "vi": "VÉN MÀN: PHẦN 2",
+   "en": "REVELATION: ACT 2",
+   "term": "الانكشاف: المشهد 2"
+  },
+  {
+   "vi": "VÉN MÀN: PHẦN 3",
+   "en": "REVELATION: ACT 3",
+   "term": "الانكشاف: المشهد 3"
+  },
+  {
+   "vi": "BIẾN CHUYỂN: PHẦN 1",
+   "en": "EVOLUTION: ACT 1",
+   "term": "تطور: المشهد 1"
+  },
+  {
+   "vi": "BIẾN CHUYỂN: PHẦN 2",
+   "en": "EVOLUTION: ACT 2",
+   "term": "تطور: المشهد 2"
+  },
+  {
+   "vi": "BIẾN CHUYỂN: PHẦN 3",
+   "en": "EVOLUTION: ACT 3",
+   "term": "تطور: المشهد 3"
+  },
+  {
+   "vi": "THÁCH THỨC: PHẦN 1",
+   "en": "DEFIANCE: ACT 1",
+   "term": "تحدّي: المشهد 1"
+  },
+  {
+   "vi": "THÁCH THỨC: PHẦN 2",
+   "en": "DEFIANCE: ACT 2",
+   "term": "تحدّي: المشهد 2"
+  },
+  {
+   "vi": "THÁCH THỨC: PHẦN 3",
+   "en": "DEFIANCE: ACT 3",
+   "term": "تحدّي: المشهد 3"
+  },
+  {
+   "vi": "GIAO THOA: PHẦN 1",
+   "en": "COLLISION: ACT 1",
+   "term": "اندماج: المشهد 1"
+  },
+  {
+   "vi": "GIAO THOA: PHẦN 2",
+   "en": "COLLISION: ACT 2",
+   "term": "اندماج: المشهد 2"
+  },
+  {
+   "vi": "GIAO THOA: PHẦN 3",
+   "en": "COLLISION: ACT 3",
+   "term": "اندماج: المشهد 3"
+  },
+  {
+   "vi": "Mùa 2025 // Phần I",
+   "en": "Season 2025 // Act I",
+   "term": "موسم 2025 \\\\ المشهد I"
+  },
+  {
+   "vi": "Mùa 2025 // Phần II",
+   "en": "Season 2025 // Act II",
+   "term": "موسم 2025 \\\\ المشهد II"
+  },
+  {
+   "vi": "Mùa 25 // Phần III",
+   "en": "Season 25 // Act III",
+   "term": "الموسم 25 \\\\ المشهد III"
+  },
+  {
+   "vi": "Mùa 2025 // Phần IV",
+   "en": "Season 2025 // Act IV",
+   "term": "موسم 2025 \\\\ المشهد IV"
+  },
+  {
+   "vi": "Mùa 2025 // Phần V",
+   "en": "Season 2025 // Act V",
+   "term": "موسم 2025 \\\\ المشهد V"
+  },
+  {
+   "vi": "Mùa 2025 // Phần VI",
+   "en": "Season 2025 // Act VI",
+   "term": "موسم 2025 \\\\ المشهد VI"
+  },
+  {
+   "vi": "Mùa 2026 // Phần I",
+   "en": "Season 2026 // Act I",
+   "term": "موسم 2026 \\\\ المشهد I"
+  },
+  {
+   "vi": "Mùa 2026 // Phần II",
+   "en": "Season 2026 // Act II",
+   "term": "موسم 2026 \\\\ المشهد II"
+  },
+  {
+   "vi": "Mùa 2026 // Phần III",
+   "en": "Season 2026 // Act III",
+   "term": "موسم 2026 // المشهد III"
+  },
+  {
+   "vi": "Mùa 2026 // Phần IV",
+   "en": "Season 2026 // Act IV",
+   "term": "موسم 2026 // المشهد IV"
+  },
+  {
+   "vi": "Mùa 2026 // Phần V",
+   "en": "Season 2026 // Act V",
+   "term": "موسم 2026 // المشهد V"
+  }
+ ],
+ "currencies": [
+  {
+   "vi": "VALORANT POINT",
+   "en": "VALORANT POINTS",
+   "term": "نقاط VALORANT"
+  },
+  {
+   "vi": "Kingdom Credit",
+   "en": "Kingdom Credits",
+   "term": "رصيد كينغدام"
+  },
+  {
+   "vi": "Huy Hiệu Đặc Vụ",
+   "en": "Agent Tokens",
+   "term": "عملات عميل"
+  },
+  {
+   "vi": "RADIANITE Point",
+   "en": "RADIANITE Points",
+   "term": "نقاط راديانايت"
+  }
+ ],
+ "gameModes": [
+  {
+   "vi": "Tất Cả Ngẫu Nhiên Một Khu Đặt Spike",
+   "en": "All Random One Site",
+   "term": "الكل عشوائي في موقع واحد"
+  },
+  {
+   "vi": "Gauntlet: Glitched",
+   "en": "Gauntlet: Glitched",
+   "term": "Gauntlet: Glitched"
+  },
+  {
+   "vi": "Thông thường",
+   "en": "Standard",
+   "term": "قياسي"
+  },
+  {
+   "vi": "Sinh Tử",
+   "en": "Deathmatch",
+   "term": "مباراة الموت"
+  },
+  {
+   "vi": "Knockout",
+   "en": "Knockout",
+   "term": "ضربة قاضية"
+  },
+  {
+   "vi": "Đấu Với Máy",
+   "en": "Bot Match",
+   "term": "مباراة مع الروبوتات"
+  },
+  {
+   "vi": "Retake",
+   "en": "Retake",
+   "term": "استعادة السيطرة"
+  },
+  {
+   "vi": "Tăng Tiến",
+   "en": "Escalation",
+   "term": "إسكيليشن"
+  },
+  {
+   "vi": "Sinh Tử Đội",
+   "en": "Team Deathmatch",
+   "term": "مباراة الموت للفرق"
+  },
+  {
+   "vi": "Tập Luyện Cơ Bản",
+   "en": "Basic Training",
+   "term": "التدريبات الأساسية"
+  },
+  {
+   "vi": "Tân Thủ",
+   "en": "Onboarding",
+   "term": "التحاق"
+  },
+  {
+   "vi": "Nhân bản",
+   "en": "Replication",
+   "term": "الاستنساخ"
+  },
+  {
+   "vi": "Đặt Spike Nhanh",
+   "en": "Spike Rush",
+   "term": "سبايك راش"
+  },
+  {
+   "vi": "Trường Bắn",
+   "en": "The Range",
+   "term": "ميدان الرماية"
+  },
+  {
+   "vi": "Skirmish",
+   "en": "Skirmish",
+   "term": "مناوشة"
+  },
+  {
+   "vi": "Skirmish: Thăng Hoa",
+   "en": "Skirmish: Ascension",
+   "term": "المناوشة: الارتقاء"
+  },
+  {
+   "vi": "Trận Chiến Cầu Tuyết",
+   "en": "Snowball Fight",
+   "term": "قتال كرات الثلج"
+  },
+  {
+   "vi": "Siêu Tốc",
+   "en": "Swiftplay",
+   "term": "سويفت بلاي"
+  }
+ ],
+ "gear": [
+  {
+   "vi": "Giáp Hạng Nặng",
+   "en": "Heavy Armor",
+   "term": "‏الدروع الثقيلة"
+  },
+  {
+   "vi": "Giáp Hạng Nhẹ",
+   "en": "Light Armor",
+   "term": "‏الدروع الخفيفة"
+  },
+  {
+   "vi": "Khiên Hồi Phục",
+   "en": "Regen Shield",
+   "term": "الدرع المتجدد"
+  }
+ ],
+ "queues": [
+  {
+   "vi": "Gauntlet: Glitched",
+   "en": "Gauntlet: Glitched",
+   "term": "Gauntlet: Glitched"
+  },
+  {
+   "vi": "Tất Cả Ngẫu Nhiên Một Khu Đặt Spike",
+   "en": "All Random One Site",
+   "term": "الكل عشوائي في موقع واحد"
+  },
+  {
+   "vi": "Thi đấu xếp hạng",
+   "en": "Competitive",
+   "term": "تنافسي"
+  },
+  {
+   "vi": "Sinh Tử",
+   "en": "Deathmatch",
+   "term": "مباراة الموت"
+  },
+  {
+   "vi": "Knockout",
+   "en": "Knockout",
+   "term": "ضربة قاضية"
+  },
+  {
+   "vi": "Sinh Tử Đội",
+   "en": "Team Deathmatch",
+   "term": "مباراة الموت للفرق"
+  },
+  {
+   "vi": "Skirmish: 2v2",
+   "en": "Skirmish: 2v2",
+   "term": "المناوشة: 2 ضد 2"
+  },
+  {
+   "vi": "Skirmish: Thăng Hoa 1v1",
+   "en": "Skirmish: Ascension 1v1",
+   "term": "المناوشة: الارتقاء 1 ضد 1"
+  },
+  {
+   "vi": "Skirmish: Thăng Hoa 2v2",
+   "en": "Skirmish: Ascension 2v2",
+   "term": "المناوشة: الارتقاء 2 ضد 2"
+  },
+  {
+   "vi": "Trận Chiến Cầu Tuyết",
+   "en": "Snowball Fight",
+   "term": "قتال كرات الثلج"
+  },
+  {
+   "vi": "Siêu Tốc",
+   "en": "Swiftplay",
+   "term": "سويفت بلاي"
+  },
+  {
+   "vi": "Đấu thường",
+   "en": "Unrated",
+   "term": "غير مصنف"
+  },
+  {
+   "vi": "Chơi tự do",
+   "en": "Custom Game",
+   "term": "لعبة مخصصة"
+  },
+  {
+   "vi": "Retake",
+   "en": "Retake",
+   "term": "استعادة السيطرة"
+  },
+  {
+   "vi": "Tăng Tiến",
+   "en": "Escalation",
+   "term": "إسكيليشن"
+  },
+  {
+   "vi": "Summit",
+   "en": "Summit",
+   "term": "ساميت"
+  },
+  {
+   "vi": "Nhân bản",
+   "en": "Replication",
+   "term": "الاستنساخ"
+  },
+  {
+   "vi": "Premier",
+   "en": "Premier",
+   "term": "بريمير"
+  },
+  {
+   "vi": "Đặt Spike Nhanh",
+   "en": "Spike Rush",
+   "term": "سبايك راش"
+  }
+ ],
+ "rankTiers": [
+  {
+   "vi": "SẮT 1",
+   "en": "IRON 1",
+   "term": "حديدي 1"
+  },
+  {
+   "vi": "SẮT 2",
+   "en": "IRON 2",
+   "term": "حديدي 2"
+  },
+  {
+   "vi": "SẮT 3",
+   "en": "IRON 3",
+   "term": "حديدي 3"
+  },
+  {
+   "vi": "ĐỒNG 1",
+   "en": "BRONZE 1",
+   "term": "برونزي 1"
+  },
+  {
+   "vi": "ĐỒNG 2",
+   "en": "BRONZE 2",
+   "term": "برونزي 2"
+  },
+  {
+   "vi": "ĐỒNG 3",
+   "en": "BRONZE 3",
+   "term": "برونزي 3"
+  },
+  {
+   "vi": "BẠC 1",
+   "en": "SILVER 1",
+   "term": "فضي 1"
+  },
+  {
+   "vi": "BẠC 2",
+   "en": "SILVER 2",
+   "term": "فضي 2"
+  },
+  {
+   "vi": "BẠC 3",
+   "en": "SILVER 3",
+   "term": "فضي 3"
+  },
+  {
+   "vi": "VÀNG 1",
+   "en": "GOLD 1",
+   "term": "ذهبي 1"
+  },
+  {
+   "vi": "VÀNG 2",
+   "en": "GOLD 2",
+   "term": "ذهبي 2"
+  },
+  {
+   "vi": "VÀNG 3",
+   "en": "GOLD 3",
+   "term": "ذهبي 3"
+  },
+  {
+   "vi": "BẠCH KIM 1",
+   "en": "PLATINUM 1",
+   "term": "بلاتيني 1"
+  },
+  {
+   "vi": "BẠCH KIM 2",
+   "en": "PLATINUM 2",
+   "term": "بلاتيني 2"
+  },
+  {
+   "vi": "BẠCH KIM 3",
+   "en": "PLATINUM 3",
+   "term": "بلاتيني 3"
+  },
+  {
+   "vi": "KIM CƯƠNG 1",
+   "en": "DIAMOND 1",
+   "term": "ألماسي 1"
+  },
+  {
+   "vi": "KIM CƯƠNG 2",
+   "en": "DIAMOND 2",
+   "term": "ألماسي 2"
+  },
+  {
+   "vi": "KIM CƯƠNG 3",
+   "en": "DIAMOND 3",
+   "term": "ألماسي 3"
+  },
+  {
+   "vi": "THƯỢNG NHÂN 1",
+   "en": "ASCENDANT 1",
+   "term": "المرتقي 1"
+  },
+  {
+   "vi": "THƯỢNG NHÂN 2",
+   "en": "ASCENDANT 2",
+   "term": "المرتقي 2"
+  },
+  {
+   "vi": "THƯỢNG NHÂN 3",
+   "en": "ASCENDANT 3",
+   "term": "المرتقي 3"
+  },
+  {
+   "vi": "BẤT TỬ 1",
+   "en": "IMMORTAL 1",
+   "term": "الأبدي 1"
+  },
+  {
+   "vi": "BẤT TỬ 2",
+   "en": "IMMORTAL 2",
+   "term": "الأبدي 2"
+  },
+  {
+   "vi": "BẤT TỬ 3",
+   "en": "IMMORTAL 3",
+   "term": "الأبدي 3"
+  },
+  {
+   "vi": "RADIANT",
+   "en": "RADIANT",
+   "term": "راديانت"
+  }
+ ],
+ "weaponCategories": [
+  {
+   "vi": "Vũ Khí Hạng Nặng",
+   "en": "Heavy Weapons",
+   "term": "أسلحة ثقيلة"
+  },
+  {
+   "vi": "Súng Trường",
+   "en": "Assault Rifles",
+   "term": "بنادق هجومية"
+  },
+  {
+   "vi": "Shotgun",
+   "en": "Shotguns",
+   "term": "بنادق الشوتغن"
+  },
+  {
+   "vi": "Súng phụ",
+   "en": "Sidearms",
+   "term": "مسدسات"
+  },
+  {
+   "vi": "Súng bắn tỉa",
+   "en": "Sniper Rifles",
+   "term": "بنادق قنص"
+  },
+  {
+   "vi": "SMG",
+   "en": "SMGs",
+   "term": "مسدسات رشاشة"
+  }
+ ]
+}

@@ -293,39 +293,45 @@ class _LiveRefreshRingState extends ConsumerState<LiveRefreshRing>
       child: InkResponse(
         onTap: _busy ? null : () => unawaited(_refresh()),
         radius: size / 2 + 4,
+        // The ring stays [size]; the tap target is at least 48 dp.
         child: SizedBox.square(
-          dimension: size,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              if (_busy)
-                SizedBox.square(
-                  dimension: size - 6,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: ringColor,
-                  ),
-                )
-              else
-                AnimatedBuilder(
-                  animation: _ring,
-                  builder: (context, _) => SizedBox.square(
-                    dimension: size - 6,
-                    child: CircularProgressIndicator(
-                      value: _ring.value,
-                      strokeWidth: 2,
-                      color: ringColor,
-                      backgroundColor: trackColor,
+          dimension: math.max(size, kMinInteractiveDimension),
+          child: Center(
+            child: SizedBox.square(
+              dimension: size,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (_busy)
+                    SizedBox.square(
+                      dimension: size - 6,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: ringColor,
+                      ),
+                    )
+                  else
+                    AnimatedBuilder(
+                      animation: _ring,
+                      builder: (context, _) => SizedBox.square(
+                        dimension: size - 6,
+                        child: CircularProgressIndicator(
+                          value: _ring.value,
+                          strokeWidth: 2,
+                          color: ringColor,
+                          backgroundColor: trackColor,
+                        ),
+                      ),
                     ),
+                  Icon(
+                    Icons.refresh,
+                    size: size * 0.5,
+                    color: onImage ? Colors.white : null,
+                    semanticLabel: context.l10n.liveGameRefresh,
                   ),
-                ),
-              Icon(
-                Icons.refresh,
-                size: size * 0.5,
-                color: onImage ? Colors.white : null,
-                semanticLabel: context.l10n.liveGameRefresh,
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

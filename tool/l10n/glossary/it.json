@@ -1,0 +1,875 @@
+{
+ "agentRoles": [
+  {
+   "vi": "Khởi tranh",
+   "en": "Initiator",
+   "term": "Demolitore"
+  },
+  {
+   "vi": "Hộ vệ",
+   "en": "Sentinel",
+   "term": "Guardiano"
+  },
+  {
+   "vi": "Đối đầu",
+   "en": "Duelist",
+   "term": "Assassino"
+  },
+  {
+   "vi": "Kiểm soát",
+   "en": "Controller",
+   "term": "Stratega"
+  }
+ ],
+ "contentTiers": [
+  {
+   "vi": "Phiên Bản Sang Chảnh",
+   "en": "Deluxe Edition",
+   "term": "Edizione Deluxe"
+  },
+  {
+   "vi": "Phiên Bản Độc Quyền",
+   "en": "Exclusive Edition",
+   "term": "Edizione Esclusiva"
+  },
+  {
+   "vi": "Phiên Bản Cao Cấp",
+   "en": "Premium Edition",
+   "term": "Edizione Premium"
+  },
+  {
+   "vi": "Phiên Bản Tuyển Chọn",
+   "en": "Select Edition",
+   "term": "Edizione Selezionata"
+  },
+  {
+   "vi": "Phiên Bản Siêu Cấp",
+   "en": "Ultra Edition",
+   "term": "Edizione Ultra"
+  }
+ ],
+ "contracts": [
+  {
+   "vi": "Trang Bị Gekko",
+   "en": "Gekko Gear",
+   "term": "Attrezzatura di Gekko"
+  },
+  {
+   "vi": "Trang Bị Fade",
+   "en": "Fade Gear",
+   "term": "Attrezzatura di Fade"
+  },
+  {
+   "vi": "Trang Bị Breach",
+   "en": "Breach Gear",
+   "term": "Attrezzatura di Breach"
+  },
+  {
+   "vi": "Trang Bị Deadlock",
+   "en": "Deadlock Gear",
+   "term": "Attrezzatura di Deadlock"
+  },
+  {
+   "vi": "Trang Bị Tejo",
+   "en": "Tejo Gear",
+   "term": "Attrezzatura di Tejo"
+  },
+  {
+   "vi": "Trang Bị Raze",
+   "en": "Raze Gear",
+   "term": "Attrezzatura di Raze"
+  },
+  {
+   "vi": "Trang Bị Chamber",
+   "en": "Chamber Gear",
+   "term": "Attrezzatura di Chamber"
+  },
+  {
+   "vi": "Trang Bị KAY/O",
+   "en": "KAY/O Gear",
+   "term": "Attrezzatura di KAY/O"
+  },
+  {
+   "vi": "Trang Bị Skye",
+   "en": "Skye Gear",
+   "term": "Attrezzatura di Skye"
+  },
+  {
+   "vi": "Trang Bị Cypher",
+   "en": "Cypher Gear",
+   "term": "Attrezzatura di Cypher"
+  },
+  {
+   "vi": "Trang Bị Sova",
+   "en": "Sova Gear",
+   "term": "Attrezzatura di Sova"
+  },
+  {
+   "vi": "Trang Bị Miks",
+   "en": "Miks Gear",
+   "term": "Attrezzatura di Miks"
+  },
+  {
+   "vi": "Trang Bị Killjoy",
+   "en": "Killjoy Gear",
+   "term": "Attrezzatura di Killjoy"
+  },
+  {
+   "vi": "Trang Bị Harbor",
+   "en": "Harbor Gear",
+   "term": "Attrezzatura di Harbor"
+  },
+  {
+   "vi": "Trang Bị Vyse",
+   "en": "Vyse Gear",
+   "term": "Attrezzatura di Vyse"
+  },
+  {
+   "vi": "Trang Bị Viper",
+   "en": "Viper Gear",
+   "term": "Attrezzatura di Viper"
+  },
+  {
+   "vi": "Trang Bị Phoenix",
+   "en": "Phoenix Gear",
+   "term": "Attrezzatura di Phoenix"
+  },
+  {
+   "vi": "Trang Bị Veto",
+   "en": "Veto Gear",
+   "term": "Attrezzatura di Veto"
+  },
+  {
+   "vi": "Trang Bị Astra",
+   "en": "Astra Gear",
+   "term": "Attrezzatura di Astra"
+  },
+  {
+   "vi": "Trang Bị Brimstone",
+   "en": "Brimstone Gear",
+   "term": "Attrezzatura di Brimstone"
+  },
+  {
+   "vi": "Trang Bị Iso",
+   "en": "Iso Gear",
+   "term": "Attrezzatura di Iso"
+  },
+  {
+   "vi": "Trang Bị Clove",
+   "en": "Clove Gear",
+   "term": "Attrezzatura di Clove"
+  },
+  {
+   "vi": "Trang Bị Neon",
+   "en": "Neon Gear",
+   "term": "Attrezzatura di Neon"
+  },
+  {
+   "vi": "Trang Bị Waylay",
+   "en": "Waylay Gear",
+   "term": "Attrezzatura di Waylay"
+  },
+  {
+   "vi": "Trang Bị Sage",
+   "en": "Sage Gear",
+   "term": "Attrezzatura di Sage"
+  },
+  {
+   "vi": "Trang Bị Reyna",
+   "en": "Reyna Gear",
+   "term": "Attrezzatura di Reyna"
+  },
+  {
+   "vi": "Trang Bị Omen",
+   "en": "Omen Gear",
+   "term": "Attrezzatura di Omen"
+  },
+  {
+   "vi": "Trang Bị Jett",
+   "en": "Jett Gear",
+   "term": "Attrezzatura di Jett"
+  },
+  {
+   "vi": "Trang Bị Yoru",
+   "en": "Yoru Gear",
+   "term": "Attrezzatura di Yoru"
+  },
+  {
+   "vi": "BattlePass Champions",
+   "en": "Champions Pass",
+   "term": "Pass Champions"
+  },
+  {
+   "vi": "Vé Sự Kiện Mừng Tết Nguyên Đán",
+   "en": "Lunar Celebration Event Pass",
+   "term": "Pass evento Festeggiamenti lunari"
+  },
+  {
+   "vi": "Vé Sự Kiện Champions 2023",
+   "en": "Champions 2023 Event Pass",
+   "term": "Pass evento Champions 2023"
+  },
+  {
+   "vi": "Vé Sự Kiện Chân Trời 2023",
+   "en": "2023 Horizons Event Pass",
+   "term": "Pass evento Orizzonti 2023"
+  },
+  {
+   "vi": "Vé Sự Kiện Long Lân Sum Vầy",
+   "en": "Scales of Fortune Event Pass",
+   "term": "Pass evento Squame della fortuna"
+  },
+  {
+   "vi": "Vé Sự Kiện Giao Thoa",
+   "en": "Collision Event Pass",
+   "term": "Pass evento Collisione"
+  },
+  {
+   "vi": "Vé Sự Kiện Kết Thúc Năm",
+   "en": "Year End Event Pass",
+   "term": "Pass evento Fine anno"
+  },
+  {
+   "vi": "Vé Sự Kiện Sinh Ra Để Tỏa Sáng",
+   "en": "Born To Burn Event Pass",
+   "term": "Pass evento Nati per bruciare"
+  },
+  {
+   "vi": "VÉ SỰ KIỆN V25 ENCORE",
+   "en": "V25 ENCORE EVENT PASS",
+   "term": "PASS EVENTO BIS V25"
+  },
+  {
+   "vi": "Vé Sự Kiện Năm Ất Tỵ",
+   "en": "Year of the Snake Event Pass",
+   "term": "Pass evento Anno del Serpente"
+  },
+  {
+   "vi": "Champions 2026: Shanghai",
+   "en": "Champions 2026: Shanghai",
+   "term": "Champions 2026: Shanghai"
+  },
+  {
+   "vi": "Vé Sự Kiện Tết Nguyên Đán 2026",
+   "en": "Lunar 2026 Event Pass",
+   "term": "Pass evento Anno lunare 2026"
+  },
+  {
+   "vi": "Vé Sự Kiện VALORANT FC",
+   "en": "VALORANT FC Event Pass",
+   "term": "Pass evento VALORANT FC"
+  },
+  {
+   "vi": "BattlePass Crossover",
+   "en": "Crossover Pass",
+   "term": "Pass Crossover"
+  },
+  {
+   "vi": "BattlePass Hồi Tưởng 2022",
+   "en": "2022 Recall Pass",
+   "term": "Pass 2022 Un anno di ricordi"
+  },
+  {
+   "vi": "Vé Sự Kiện 5 Years",
+   "en": "5 Years Event Pass",
+   "term": "Pass evento 5 Years"
+  },
+  {
+   "vi": "BATTLEPASS KỶ NIỆM 1 NĂM",
+   "en": "YR1 ANNIVERSARY PASS",
+   "term": "PASS ANNIVERSARIO A1"
+  },
+  {
+   "vi": "Battle Pass RiotX Arcane",
+   "en": "RiotX Arcane Pass",
+   "term": "Pass RiotX Arcane"
+  },
+  {
+   "vi": "CHƠI ĐỂ MỞ KHÓA CÁC ĐẶC VỤ",
+   "en": "PLAY TO UNLOCK AGENTS",
+   "term": "GIOCA PER SBLOCCARE AGENTI"
+  },
+  {
+   "vi": "PHẦN THƯỞNG CLOSED BETA",
+   "en": "CLOSED BETA REWARDS",
+   "term": "RICOMPENSE BETA CHIUSA"
+  },
+  {
+   "vi": "BÙNG CHÁY: PHẦN 1",
+   "en": "IGNITION : ACT 1",
+   "term": "COMBUSTIONE: ATTO 1"
+  },
+  {
+   "vi": "BÙNG CHÁY: PHẦN 2",
+   "en": "IGNITION: ACT 2",
+   "term": "COMBUSTIONE: ATTO 2"
+  },
+  {
+   "vi": "BÙNG CHÁY: PHẦN 3",
+   "en": "IGNITION: ACT 3",
+   "term": "COMBUSTIONE: ATTO 3"
+  },
+  {
+   "vi": "TRẬN THẾ: PHẦN 1",
+   "en": "FORMATION: ACT 1",
+   "term": "FORMAZIONE: ATTO 1"
+  },
+  {
+   "vi": "TRẬN THẾ: PHẦN 2",
+   "en": "FORMATION: ACT 2",
+   "term": "FORMAZIONE: ATTO 2"
+  },
+  {
+   "vi": "TRẬN THẾ: PHẦN 3",
+   "en": "FORMATION: ACT 3",
+   "term": "FORMAZIONE: ATTO 3"
+  },
+  {
+   "vi": "PHẢN CHIẾU: PHẦN 1",
+   "en": "REFLECTION: ACT 1",
+   "term": "RIFLESSO: ATTO I"
+  },
+  {
+   "vi": "PHẢN CHIẾU: PHẦN 2",
+   "en": "REFLECTION: ACT 2",
+   "term": "RIFLESSO: ATTO II"
+  },
+  {
+   "vi": "PHẢN CHIẾU: PHẦN 3",
+   "en": "REFLECTION: ACT 3",
+   "term": "RIFLESSO: ATTO 3"
+  },
+  {
+   "vi": "ĐỘT PHÁ: PHẦN 1",
+   "en": "DISRUPTION: ACT 1",
+   "term": "DISTURBO: ATTO I"
+  },
+  {
+   "vi": "ĐỘT PHÁ: PHẦN 2",
+   "en": "DISRUPTION: ACT 2",
+   "term": "DISTURBO: ATTO II"
+  },
+  {
+   "vi": "ĐỘT PHÁ: PHẦN 3",
+   "en": "DISRUPTION: ACT 3",
+   "term": "DISTURBO: ATTO III"
+  },
+  {
+   "vi": "KHÔNG GIAN: PHẦN 1",
+   "en": "DIMENSION: ACT 1",
+   "term": "DIMENSIONE: ATTO I"
+  },
+  {
+   "vi": "KHÔNG GIAN: PHẦN 2",
+   "en": "DIMENSION: ACT 2",
+   "term": "DIMENSIONE: ATTO II"
+  },
+  {
+   "vi": "KHÔNG GIAN: PHẦN 3",
+   "en": "DIMENSION: ACT 3",
+   "term": "DIMENSIONE: ATTO III"
+  },
+  {
+   "vi": "VÉN MÀN: PHẦN 1",
+   "en": "REVELATION: ACT 1",
+   "term": "RIVELAZIONE: ATTO I"
+  },
+  {
+   "vi": "VÉN MÀN: PHẦN 2",
+   "en": "REVELATION: ACT 2",
+   "term": "RIVELAZIONE: ATTO II"
+  },
+  {
+   "vi": "VÉN MÀN: PHẦN 3",
+   "en": "REVELATION: ACT 3",
+   "term": "RIVELAZIONE: ATTO III"
+  },
+  {
+   "vi": "BIẾN CHUYỂN: PHẦN 1",
+   "en": "EVOLUTION: ACT 1",
+   "term": "EVOLUZIONE: ATTO I"
+  },
+  {
+   "vi": "BIẾN CHUYỂN: PHẦN 2",
+   "en": "EVOLUTION: ACT 2",
+   "term": "EVOLUZIONE: ATTO II"
+  },
+  {
+   "vi": "BIẾN CHUYỂN: PHẦN 3",
+   "en": "EVOLUTION: ACT 3",
+   "term": "EVOLUZIONE: ATTO III"
+  },
+  {
+   "vi": "THÁCH THỨC: PHẦN 1",
+   "en": "DEFIANCE: ACT 1",
+   "term": "AUDACIA: ATTO I"
+  },
+  {
+   "vi": "THÁCH THỨC: PHẦN 2",
+   "en": "DEFIANCE: ACT 2",
+   "term": "AUDACIA: ATTO II"
+  },
+  {
+   "vi": "THÁCH THỨC: PHẦN 3",
+   "en": "DEFIANCE: ACT 3",
+   "term": "AUDACIA: ATTO III"
+  },
+  {
+   "vi": "GIAO THOA: PHẦN 1",
+   "en": "COLLISION: ACT 1",
+   "term": "COLLISIONE: ATTO I"
+  },
+  {
+   "vi": "GIAO THOA: PHẦN 2",
+   "en": "COLLISION: ACT 2",
+   "term": "COLLISIONE: ATTO II"
+  },
+  {
+   "vi": "GIAO THOA: PHẦN 3",
+   "en": "COLLISION: ACT 3",
+   "term": "COLLISIONE: ATTO III"
+  },
+  {
+   "vi": "Mùa 2025 // Phần I",
+   "en": "Season 2025 // Act I",
+   "term": "Stagione 2025 // Atto I"
+  },
+  {
+   "vi": "Mùa 2025 // Phần II",
+   "en": "Season 2025 // Act II",
+   "term": "Stagione 2025 // Atto II"
+  },
+  {
+   "vi": "Mùa 25 // Phần III",
+   "en": "Season 25 // Act III",
+   "term": "Stagione 25 // Atto III"
+  },
+  {
+   "vi": "Mùa 2025 // Phần IV",
+   "en": "Season 2025 // Act IV",
+   "term": "Stagione 2025 // Atto IV"
+  },
+  {
+   "vi": "Mùa 2025 // Phần V",
+   "en": "Season 2025 // Act V",
+   "term": "Stagione 2025 // Atto V"
+  },
+  {
+   "vi": "Mùa 2025 // Phần VI",
+   "en": "Season 2025 // Act VI",
+   "term": "Stagione 2025 // Atto VI"
+  },
+  {
+   "vi": "Mùa 2026 // Phần I",
+   "en": "Season 2026 // Act I",
+   "term": "Stagione 2026 // Atto I"
+  },
+  {
+   "vi": "Mùa 2026 // Phần II",
+   "en": "Season 2026 // Act II",
+   "term": "Stagione 2026 // Atto II"
+  },
+  {
+   "vi": "Mùa 2026 // Phần III",
+   "en": "Season 2026 // Act III",
+   "term": "Stagione 2026 // Atto III"
+  },
+  {
+   "vi": "Mùa 2026 // Phần IV",
+   "en": "Season 2026 // Act IV",
+   "term": "Stagione 2026 // Atto IV"
+  },
+  {
+   "vi": "Mùa 2026 // Phần V",
+   "en": "Season 2026 // Act V",
+   "term": "Stagione 2026 // Atto V"
+  }
+ ],
+ "currencies": [
+  {
+   "vi": "VALORANT POINT",
+   "en": "VALORANT POINTS",
+   "term": "VALORANT POINT"
+  },
+  {
+   "vi": "Kingdom Credit",
+   "en": "Kingdom Credits",
+   "term": "Crediti Kingdom"
+  },
+  {
+   "vi": "Huy Hiệu Đặc Vụ",
+   "en": "Agent Tokens",
+   "term": "Gettoni agente"
+  },
+  {
+   "vi": "RADIANITE Point",
+   "en": "RADIANITE Points",
+   "term": "Punti RADIANITE"
+  }
+ ],
+ "gameModes": [
+  {
+   "vi": "Tất Cả Ngẫu Nhiên Một Khu Đặt Spike",
+   "en": "All Random One Site",
+   "term": "All Random One Site"
+  },
+  {
+   "vi": "Gauntlet: Glitched",
+   "en": "Gauntlet: Glitched",
+   "term": "Gauntlet: Glitched"
+  },
+  {
+   "vi": "Thông thường",
+   "en": "Standard",
+   "term": "Standard"
+  },
+  {
+   "vi": "Sinh Tử",
+   "en": "Deathmatch",
+   "term": "Deathmatch"
+  },
+  {
+   "vi": "Knockout",
+   "en": "Knockout",
+   "term": "Eliminazione"
+  },
+  {
+   "vi": "Đấu Với Máy",
+   "en": "Bot Match",
+   "term": "Partita con i bot"
+  },
+  {
+   "vi": "Retake",
+   "en": "Retake",
+   "term": "Riconquista"
+  },
+  {
+   "vi": "Tăng Tiến",
+   "en": "Escalation",
+   "term": "Corsa alle armi"
+  },
+  {
+   "vi": "Sinh Tử Đội",
+   "en": "Team Deathmatch",
+   "term": "Deathmatch a squadre"
+  },
+  {
+   "vi": "Tập Luyện Cơ Bản",
+   "en": "Basic Training",
+   "term": "Addestramento base"
+  },
+  {
+   "vi": "Tân Thủ",
+   "en": "Onboarding",
+   "term": "Introduzione"
+  },
+  {
+   "vi": "Nhân bản",
+   "en": "Replication",
+   "term": "Replicazione"
+  },
+  {
+   "vi": "Đặt Spike Nhanh",
+   "en": "Spike Rush",
+   "term": "Assalto Spike"
+  },
+  {
+   "vi": "Trường Bắn",
+   "en": "The Range",
+   "term": "Poligono"
+  },
+  {
+   "vi": "Skirmish",
+   "en": "Skirmish",
+   "term": "Schermaglia"
+  },
+  {
+   "vi": "Skirmish: Thăng Hoa",
+   "en": "Skirmish: Ascension",
+   "term": "Schermaglia: Ascensione"
+  },
+  {
+   "vi": "Trận Chiến Cầu Tuyết",
+   "en": "Snowball Fight",
+   "term": "Battaglia a palle di neve"
+  },
+  {
+   "vi": "Siêu Tốc",
+   "en": "Swiftplay",
+   "term": "Partita rapida"
+  }
+ ],
+ "gear": [
+  {
+   "vi": "Giáp Hạng Nặng",
+   "en": "Heavy Armor",
+   "term": "Scudo pesante"
+  },
+  {
+   "vi": "Giáp Hạng Nhẹ",
+   "en": "Light Armor",
+   "term": "Scudo leggero"
+  },
+  {
+   "vi": "Khiên Hồi Phục",
+   "en": "Regen Shield",
+   "term": "Scudo rigenerante"
+  }
+ ],
+ "queues": [
+  {
+   "vi": "Gauntlet: Glitched",
+   "en": "Gauntlet: Glitched",
+   "term": "Gauntlet: Glitched"
+  },
+  {
+   "vi": "Tất Cả Ngẫu Nhiên Một Khu Đặt Spike",
+   "en": "All Random One Site",
+   "term": "All Random One Site"
+  },
+  {
+   "vi": "Thi đấu xếp hạng",
+   "en": "Competitive",
+   "term": "Competitiva"
+  },
+  {
+   "vi": "Sinh Tử",
+   "en": "Deathmatch",
+   "term": "Deathmatch"
+  },
+  {
+   "vi": "Knockout",
+   "en": "Knockout",
+   "term": "Eliminazione"
+  },
+  {
+   "vi": "Sinh Tử Đội",
+   "en": "Team Deathmatch",
+   "term": "Deathmatch a squadre"
+  },
+  {
+   "vi": "Skirmish: 2v2",
+   "en": "Skirmish: 2v2",
+   "term": "Schermaglia: 2 vs 2"
+  },
+  {
+   "vi": "Skirmish: Thăng Hoa 1v1",
+   "en": "Skirmish: Ascension 1v1",
+   "term": "Schermaglia: Ascensione 1 vs 1"
+  },
+  {
+   "vi": "Skirmish: Thăng Hoa 2v2",
+   "en": "Skirmish: Ascension 2v2",
+   "term": "Schermaglia: Ascensione 2 vs 2"
+  },
+  {
+   "vi": "Trận Chiến Cầu Tuyết",
+   "en": "Snowball Fight",
+   "term": "Battaglia a palle di neve"
+  },
+  {
+   "vi": "Siêu Tốc",
+   "en": "Swiftplay",
+   "term": "Partita rapida"
+  },
+  {
+   "vi": "Đấu thường",
+   "en": "Unrated",
+   "term": "Non competitiva"
+  },
+  {
+   "vi": "Chơi tự do",
+   "en": "Custom Game",
+   "term": "Personalizzata"
+  },
+  {
+   "vi": "Retake",
+   "en": "Retake",
+   "term": "Riconquista"
+  },
+  {
+   "vi": "Tăng Tiến",
+   "en": "Escalation",
+   "term": "Corsa alle armi"
+  },
+  {
+   "vi": "Summit",
+   "en": "Summit",
+   "term": "Summit"
+  },
+  {
+   "vi": "Nhân bản",
+   "en": "Replication",
+   "term": "Replicazione"
+  },
+  {
+   "vi": "Premier",
+   "en": "Premier",
+   "term": "Premier"
+  },
+  {
+   "vi": "Đặt Spike Nhanh",
+   "en": "Spike Rush",
+   "term": "Assalto Spike"
+  }
+ ],
+ "rankTiers": [
+  {
+   "vi": "SẮT 1",
+   "en": "IRON 1",
+   "term": "FERRO 1"
+  },
+  {
+   "vi": "SẮT 2",
+   "en": "IRON 2",
+   "term": "FERRO 2"
+  },
+  {
+   "vi": "SẮT 3",
+   "en": "IRON 3",
+   "term": "FERRO 3"
+  },
+  {
+   "vi": "ĐỒNG 1",
+   "en": "BRONZE 1",
+   "term": "BRONZO 1"
+  },
+  {
+   "vi": "ĐỒNG 2",
+   "en": "BRONZE 2",
+   "term": "BRONZO 2"
+  },
+  {
+   "vi": "ĐỒNG 3",
+   "en": "BRONZE 3",
+   "term": "BRONZO 3"
+  },
+  {
+   "vi": "BẠC 1",
+   "en": "SILVER 1",
+   "term": "ARGENTO 1"
+  },
+  {
+   "vi": "BẠC 2",
+   "en": "SILVER 2",
+   "term": "ARGENTO 2"
+  },
+  {
+   "vi": "BẠC 3",
+   "en": "SILVER 3",
+   "term": "ARGENTO 3"
+  },
+  {
+   "vi": "VÀNG 1",
+   "en": "GOLD 1",
+   "term": "ORO 1"
+  },
+  {
+   "vi": "VÀNG 2",
+   "en": "GOLD 2",
+   "term": "ORO 2"
+  },
+  {
+   "vi": "VÀNG 3",
+   "en": "GOLD 3",
+   "term": "ORO 3"
+  },
+  {
+   "vi": "BẠCH KIM 1",
+   "en": "PLATINUM 1",
+   "term": "PLATINO 1"
+  },
+  {
+   "vi": "BẠCH KIM 2",
+   "en": "PLATINUM 2",
+   "term": "PLATINO 2"
+  },
+  {
+   "vi": "BẠCH KIM 3",
+   "en": "PLATINUM 3",
+   "term": "PLATINO 3"
+  },
+  {
+   "vi": "KIM CƯƠNG 1",
+   "en": "DIAMOND 1",
+   "term": "DIAMANTE 1"
+  },
+  {
+   "vi": "KIM CƯƠNG 2",
+   "en": "DIAMOND 2",
+   "term": "DIAMANTE 2"
+  },
+  {
+   "vi": "KIM CƯƠNG 3",
+   "en": "DIAMOND 3",
+   "term": "DIAMANTE 3"
+  },
+  {
+   "vi": "THƯỢNG NHÂN 1",
+   "en": "ASCENDANT 1",
+   "term": "ASCENDENTE 1"
+  },
+  {
+   "vi": "THƯỢNG NHÂN 2",
+   "en": "ASCENDANT 2",
+   "term": "ASCENDENTE 2"
+  },
+  {
+   "vi": "THƯỢNG NHÂN 3",
+   "en": "ASCENDANT 3",
+   "term": "ASCENDENTE 3"
+  },
+  {
+   "vi": "BẤT TỬ 1",
+   "en": "IMMORTAL 1",
+   "term": "IMMORTALE 1"
+  },
+  {
+   "vi": "BẤT TỬ 2",
+   "en": "IMMORTAL 2",
+   "term": "IMMORTALE 2"
+  },
+  {
+   "vi": "BẤT TỬ 3",
+   "en": "IMMORTAL 3",
+   "term": "IMMORTALE 3"
+  },
+  {
+   "vi": "RADIANT",
+   "en": "RADIANT",
+   "term": "RADIANTE"
+  }
+ ],
+ "weaponCategories": [
+  {
+   "vi": "Vũ Khí Hạng Nặng",
+   "en": "Heavy Weapons",
+   "term": "Armi pesanti"
+  },
+  {
+   "vi": "Súng Trường",
+   "en": "Assault Rifles",
+   "term": "Fucili d'assalto"
+  },
+  {
+   "vi": "Shotgun",
+   "en": "Shotguns",
+   "term": "Fucili a pompa"
+  },
+  {
+   "vi": "Súng phụ",
+   "en": "Sidearms",
+   "term": "Armi secondarie"
+  },
+  {
+   "vi": "Súng bắn tỉa",
+   "en": "Sniper Rifles",
+   "term": "Fucili di precisione"
+  },
+  {
+   "vi": "SMG",
+   "en": "SMGs",
+   "term": "SMG"
+  }
+ ]
+}

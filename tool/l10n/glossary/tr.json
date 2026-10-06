@@ -1,0 +1,875 @@
+{
+ "agentRoles": [
+  {
+   "vi": "Khởi tranh",
+   "en": "Initiator",
+   "term": "Öncü"
+  },
+  {
+   "vi": "Hộ vệ",
+   "en": "Sentinel",
+   "term": "Gözcü"
+  },
+  {
+   "vi": "Đối đầu",
+   "en": "Duelist",
+   "term": "Düellocu"
+  },
+  {
+   "vi": "Kiểm soát",
+   "en": "Controller",
+   "term": "Kontrol Uzmanı"
+  }
+ ],
+ "contentTiers": [
+  {
+   "vi": "Phiên Bản Sang Chảnh",
+   "en": "Deluxe Edition",
+   "term": "Üstün Seri"
+  },
+  {
+   "vi": "Phiên Bản Độc Quyền",
+   "en": "Exclusive Edition",
+   "term": "Seçkin Seri"
+  },
+  {
+   "vi": "Phiên Bản Cao Cấp",
+   "en": "Premium Edition",
+   "term": "İhtişamlı Seri"
+  },
+  {
+   "vi": "Phiên Bản Tuyển Chọn",
+   "en": "Select Edition",
+   "term": "Özel Seri"
+  },
+  {
+   "vi": "Phiên Bản Siêu Cấp",
+   "en": "Ultra Edition",
+   "term": "Ultra Seri"
+  }
+ ],
+ "contracts": [
+  {
+   "vi": "Trang Bị Gekko",
+   "en": "Gekko Gear",
+   "term": "Gekko Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Fade",
+   "en": "Fade Gear",
+   "term": "Fade Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Breach",
+   "en": "Breach Gear",
+   "term": "Breach Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Deadlock",
+   "en": "Deadlock Gear",
+   "term": "Deadlock Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Tejo",
+   "en": "Tejo Gear",
+   "term": "Tejo Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Raze",
+   "en": "Raze Gear",
+   "term": "Raze Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Chamber",
+   "en": "Chamber Gear",
+   "term": "Chamber Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị KAY/O",
+   "en": "KAY/O Gear",
+   "term": "KAY/O Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Skye",
+   "en": "Skye Gear",
+   "term": "Skye Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Cypher",
+   "en": "Cypher Gear",
+   "term": "Cypher Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Sova",
+   "en": "Sova Gear",
+   "term": "Sova Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Miks",
+   "en": "Miks Gear",
+   "term": "Miks Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Killjoy",
+   "en": "Killjoy Gear",
+   "term": "Killjoy Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Harbor",
+   "en": "Harbor Gear",
+   "term": "Harbor Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Vyse",
+   "en": "Vyse Gear",
+   "term": "Vyse Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Viper",
+   "en": "Viper Gear",
+   "term": "Viper Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Phoenix",
+   "en": "Phoenix Gear",
+   "term": "Phoenix Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Veto",
+   "en": "Veto Gear",
+   "term": "Veto Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Astra",
+   "en": "Astra Gear",
+   "term": "Astra Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Brimstone",
+   "en": "Brimstone Gear",
+   "term": "Brimstone Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Iso",
+   "en": "Iso Gear",
+   "term": "Iso Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Clove",
+   "en": "Clove Gear",
+   "term": "Clove Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Neon",
+   "en": "Neon Gear",
+   "term": "Neon Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Waylay",
+   "en": "Waylay Gear",
+   "term": "Waylay Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Sage",
+   "en": "Sage Gear",
+   "term": "Sage Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Reyna",
+   "en": "Reyna Gear",
+   "term": "Reyna Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Omen",
+   "en": "Omen Gear",
+   "term": "Omen Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Jett",
+   "en": "Jett Gear",
+   "term": "Jett Teçhizatı"
+  },
+  {
+   "vi": "Trang Bị Yoru",
+   "en": "Yoru Gear",
+   "term": "Yoru Teçhizatı"
+  },
+  {
+   "vi": "BattlePass Champions",
+   "en": "Champions Pass",
+   "term": "Champions Bileti"
+  },
+  {
+   "vi": "Vé Sự Kiện Mừng Tết Nguyên Đán",
+   "en": "Lunar Celebration Event Pass",
+   "term": "Yeni Ay Yılı Etkinlik Bileti"
+  },
+  {
+   "vi": "Vé Sự Kiện Champions 2023",
+   "en": "Champions 2023 Event Pass",
+   "term": "Champions 2023 Etkinlik Bileti"
+  },
+  {
+   "vi": "Vé Sự Kiện Chân Trời 2023",
+   "en": "2023 Horizons Event Pass",
+   "term": "2023 Yeni Ufuklar Etkinlik Bileti"
+  },
+  {
+   "vi": "Vé Sự Kiện Long Lân Sum Vầy",
+   "en": "Scales of Fortune Event Pass",
+   "term": "Talih Pulları Etkinlik Bileti"
+  },
+  {
+   "vi": "Vé Sự Kiện Giao Thoa",
+   "en": "Collision Event Pass",
+   "term": "Çarpışma Etkinlik Bileti"
+  },
+  {
+   "vi": "Vé Sự Kiện Kết Thúc Năm",
+   "en": "Year End Event Pass",
+   "term": "Yıl Sonu Etkinlik Bileti"
+  },
+  {
+   "vi": "Vé Sự Kiện Sinh Ra Để Tỏa Sáng",
+   "en": "Born To Burn Event Pass",
+   "term": "İçindeki Alev Etkinlik Bileti"
+  },
+  {
+   "vi": "VÉ SỰ KIỆN V25 ENCORE",
+   "en": "V25 ENCORE EVENT PASS",
+   "term": "V25 YENİDEN ETKİNLİK BİLETİ"
+  },
+  {
+   "vi": "Vé Sự Kiện Năm Ất Tỵ",
+   "en": "Year of the Snake Event Pass",
+   "term": "Yılan Yılı Etkinlik Bileti"
+  },
+  {
+   "vi": "Champions 2026: Shanghai",
+   "en": "Champions 2026: Shanghai",
+   "term": "Champions 2026: Shanghai"
+  },
+  {
+   "vi": "Vé Sự Kiện Tết Nguyên Đán 2026",
+   "en": "Lunar 2026 Event Pass",
+   "term": "Ay 2026 Etkinlik Bileti"
+  },
+  {
+   "vi": "Vé Sự Kiện VALORANT FC",
+   "en": "VALORANT FC Event Pass",
+   "term": "VALORANT FC Etkinlik Bileti"
+  },
+  {
+   "vi": "BattlePass Crossover",
+   "en": "Crossover Pass",
+   "term": "Geçit Bileti"
+  },
+  {
+   "vi": "BattlePass Hồi Tưởng 2022",
+   "en": "2022 Recall Pass",
+   "term": "2022 Anımsama Bileti"
+  },
+  {
+   "vi": "Vé Sự Kiện 5 Years",
+   "en": "5 Years Event Pass",
+   "term": "5 Years Etkinlik Bileti"
+  },
+  {
+   "vi": "BATTLEPASS KỶ NIỆM 1 NĂM",
+   "en": "YR1 ANNIVERSARY PASS",
+   "term": "01. YIL DOĞUM GÜNÜ BİLETİ"
+  },
+  {
+   "vi": "Battle Pass RiotX Arcane",
+   "en": "RiotX Arcane Pass",
+   "term": "RiotX Arcane Bileti"
+  },
+  {
+   "vi": "CHƠI ĐỂ MỞ KHÓA CÁC ĐẶC VỤ",
+   "en": "PLAY TO UNLOCK AGENTS",
+   "term": "AJANLARI AÇMAK İÇİN OYNA"
+  },
+  {
+   "vi": "PHẦN THƯỞNG CLOSED BETA",
+   "en": "CLOSED BETA REWARDS",
+   "term": "KAPALI BETA ÖDÜLLERİ"
+  },
+  {
+   "vi": "BÙNG CHÁY: PHẦN 1",
+   "en": "IGNITION : ACT 1",
+   "term": "KIVILCIM: KISIM 01"
+  },
+  {
+   "vi": "BÙNG CHÁY: PHẦN 2",
+   "en": "IGNITION: ACT 2",
+   "term": "KIVILCIM: KISIM 02"
+  },
+  {
+   "vi": "BÙNG CHÁY: PHẦN 3",
+   "en": "IGNITION: ACT 3",
+   "term": "KIVILCIM: KISIM 03"
+  },
+  {
+   "vi": "TRẬN THẾ: PHẦN 1",
+   "en": "FORMATION: ACT 1",
+   "term": "BİRLİK: KISIM 01"
+  },
+  {
+   "vi": "TRẬN THẾ: PHẦN 2",
+   "en": "FORMATION: ACT 2",
+   "term": "BİRLİK: KISIM 02"
+  },
+  {
+   "vi": "TRẬN THẾ: PHẦN 3",
+   "en": "FORMATION: ACT 3",
+   "term": "BİRLİK: KISIM 03"
+  },
+  {
+   "vi": "PHẢN CHIẾU: PHẦN 1",
+   "en": "REFLECTION: ACT 1",
+   "term": "YANSIMA: KISIM 01"
+  },
+  {
+   "vi": "PHẢN CHIẾU: PHẦN 2",
+   "en": "REFLECTION: ACT 2",
+   "term": "YANSIMA: KISIM 02"
+  },
+  {
+   "vi": "PHẢN CHIẾU: PHẦN 3",
+   "en": "REFLECTION: ACT 3",
+   "term": "YANSIMA: KISIM 03"
+  },
+  {
+   "vi": "ĐỘT PHÁ: PHẦN 1",
+   "en": "DISRUPTION: ACT 1",
+   "term": "KARMAŞA: KISIM 01"
+  },
+  {
+   "vi": "ĐỘT PHÁ: PHẦN 2",
+   "en": "DISRUPTION: ACT 2",
+   "term": "KARMAŞA: KISIM 02"
+  },
+  {
+   "vi": "ĐỘT PHÁ: PHẦN 3",
+   "en": "DISRUPTION: ACT 3",
+   "term": "KARMAŞA: KISIM 03"
+  },
+  {
+   "vi": "KHÔNG GIAN: PHẦN 1",
+   "en": "DIMENSION: ACT 1",
+   "term": "BOYUT: KISIM 01"
+  },
+  {
+   "vi": "KHÔNG GIAN: PHẦN 2",
+   "en": "DIMENSION: ACT 2",
+   "term": "BOYUT: KISIM 02"
+  },
+  {
+   "vi": "KHÔNG GIAN: PHẦN 3",
+   "en": "DIMENSION: ACT 3",
+   "term": "BOYUT: KISIM 03"
+  },
+  {
+   "vi": "VÉN MÀN: PHẦN 1",
+   "en": "REVELATION: ACT 1",
+   "term": "AYDINLANMA: KISIM 01"
+  },
+  {
+   "vi": "VÉN MÀN: PHẦN 2",
+   "en": "REVELATION: ACT 2",
+   "term": "Aydınlanma: Kısım 02"
+  },
+  {
+   "vi": "VÉN MÀN: PHẦN 3",
+   "en": "REVELATION: ACT 3",
+   "term": "AYDINLANMA: KISIM 03"
+  },
+  {
+   "vi": "BIẾN CHUYỂN: PHẦN 1",
+   "en": "EVOLUTION: ACT 1",
+   "term": "EVRİM: KISIM 01"
+  },
+  {
+   "vi": "BIẾN CHUYỂN: PHẦN 2",
+   "en": "EVOLUTION: ACT 2",
+   "term": "EVRİM: KISIM 02"
+  },
+  {
+   "vi": "BIẾN CHUYỂN: PHẦN 3",
+   "en": "EVOLUTION: ACT 3",
+   "term": "EVRİM: KISIM 03"
+  },
+  {
+   "vi": "THÁCH THỨC: PHẦN 1",
+   "en": "DEFIANCE: ACT 1",
+   "term": "BAŞKALDIRI: KISIM 01"
+  },
+  {
+   "vi": "THÁCH THỨC: PHẦN 2",
+   "en": "DEFIANCE: ACT 2",
+   "term": "BAŞKALDIRI: KISIM 02"
+  },
+  {
+   "vi": "THÁCH THỨC: PHẦN 3",
+   "en": "DEFIANCE: ACT 3",
+   "term": "BAŞKALDIRI: KISIM 03"
+  },
+  {
+   "vi": "GIAO THOA: PHẦN 1",
+   "en": "COLLISION: ACT 1",
+   "term": "ÇARPIŞMA: KISIM 01"
+  },
+  {
+   "vi": "GIAO THOA: PHẦN 2",
+   "en": "COLLISION: ACT 2",
+   "term": "ÇARPIŞMA: KISIM 02"
+  },
+  {
+   "vi": "GIAO THOA: PHẦN 3",
+   "en": "COLLISION: ACT 3",
+   "term": "ÇARPIŞMA: KISIM 03"
+  },
+  {
+   "vi": "Mùa 2025 // Phần I",
+   "en": "Season 2025 // Act I",
+   "term": "Sezon 2025 // Kısım 01"
+  },
+  {
+   "vi": "Mùa 2025 // Phần II",
+   "en": "Season 2025 // Act II",
+   "term": "Sezon 2025 // Kısım 02"
+  },
+  {
+   "vi": "Mùa 25 // Phần III",
+   "en": "Season 25 // Act III",
+   "term": "Sezon 2025 // Kısım 03"
+  },
+  {
+   "vi": "Mùa 2025 // Phần IV",
+   "en": "Season 2025 // Act IV",
+   "term": "Sezon 2025 // Kısım 04"
+  },
+  {
+   "vi": "Mùa 2025 // Phần V",
+   "en": "Season 2025 // Act V",
+   "term": "Sezon 2025 // Kısım 05"
+  },
+  {
+   "vi": "Mùa 2025 // Phần VI",
+   "en": "Season 2025 // Act VI",
+   "term": "Sezon 2025 // Kısım 06"
+  },
+  {
+   "vi": "Mùa 2026 // Phần I",
+   "en": "Season 2026 // Act I",
+   "term": "Sezon 2026 // Kısım 01"
+  },
+  {
+   "vi": "Mùa 2026 // Phần II",
+   "en": "Season 2026 // Act II",
+   "term": "Sezon 2026 // Kısım 02"
+  },
+  {
+   "vi": "Mùa 2026 // Phần III",
+   "en": "Season 2026 // Act III",
+   "term": "Sezon 2026 // Kısım 03"
+  },
+  {
+   "vi": "Mùa 2026 // Phần IV",
+   "en": "Season 2026 // Act IV",
+   "term": "Sezon 2026 // Kısım 04"
+  },
+  {
+   "vi": "Mùa 2026 // Phần V",
+   "en": "Season 2026 // Act V",
+   "term": "Sezon 2026 // Kısım 05"
+  }
+ ],
+ "currencies": [
+  {
+   "vi": "VALORANT POINT",
+   "en": "VALORANT POINTS",
+   "term": "VALORANT PUANI"
+  },
+  {
+   "vi": "Kingdom Credit",
+   "en": "Kingdom Credits",
+   "term": "Kingdom Kredisi"
+  },
+  {
+   "vi": "Huy Hiệu Đặc Vụ",
+   "en": "Agent Tokens",
+   "term": "Ajan Sembolleri"
+  },
+  {
+   "vi": "RADIANITE Point",
+   "en": "RADIANITE Points",
+   "term": "RADYANİT Puanı"
+  }
+ ],
+ "gameModes": [
+  {
+   "vi": "Tất Cả Ngẫu Nhiên Một Khu Đặt Spike",
+   "en": "All Random One Site",
+   "term": "AR1S (TEK BÖLGEDE HEPSİ RASGELE)"
+  },
+  {
+   "vi": "Gauntlet: Glitched",
+   "en": "Gauntlet: Glitched",
+   "term": "Gauntlet: Glitched"
+  },
+  {
+   "vi": "Thông thường",
+   "en": "Standard",
+   "term": "STANDART"
+  },
+  {
+   "vi": "Sinh Tử",
+   "en": "Deathmatch",
+   "term": "ÖLÜM KALIM SAVAŞI"
+  },
+  {
+   "vi": "Knockout",
+   "en": "Knockout",
+   "term": "NAKAVT"
+  },
+  {
+   "vi": "Đấu Với Máy",
+   "en": "Bot Match",
+   "term": "BOT KARŞILAŞMASI"
+  },
+  {
+   "vi": "Retake",
+   "en": "Retake",
+   "term": "AKIN"
+  },
+  {
+   "vi": "Tăng Tiến",
+   "en": "Escalation",
+   "term": "TIRMANIŞ"
+  },
+  {
+   "vi": "Sinh Tử Đội",
+   "en": "Team Deathmatch",
+   "term": "TAKIMLI ÖLÜM KALIM SAVAŞI"
+  },
+  {
+   "vi": "Tập Luyện Cơ Bản",
+   "en": "Basic Training",
+   "term": "TEMEL EĞİTİM"
+  },
+  {
+   "vi": "Tân Thủ",
+   "en": "Onboarding",
+   "term": "ALIŞMA AŞAMASI"
+  },
+  {
+   "vi": "Nhân bản",
+   "en": "Replication",
+   "term": "KOPYA"
+  },
+  {
+   "vi": "Đặt Spike Nhanh",
+   "en": "Spike Rush",
+   "term": "SPIKE'A HÜCUM"
+  },
+  {
+   "vi": "Trường Bắn",
+   "en": "The Range",
+   "term": "POLİGON"
+  },
+  {
+   "vi": "Skirmish",
+   "en": "Skirmish",
+   "term": "ÇARPIŞMA"
+  },
+  {
+   "vi": "Skirmish: Thăng Hoa",
+   "en": "Skirmish: Ascension",
+   "term": "ÇARPIŞMA: YÜKSELİŞ"
+  },
+  {
+   "vi": "Trận Chiến Cầu Tuyết",
+   "en": "Snowball Fight",
+   "term": "KARTOPU ÇATIŞMASI"
+  },
+  {
+   "vi": "Siêu Tốc",
+   "en": "Swiftplay",
+   "term": "TAM GAZ"
+  }
+ ],
+ "gear": [
+  {
+   "vi": "Giáp Hạng Nặng",
+   "en": "Heavy Armor",
+   "term": "Ağır Zırh"
+  },
+  {
+   "vi": "Giáp Hạng Nhẹ",
+   "en": "Light Armor",
+   "term": "Hafif Zırh"
+  },
+  {
+   "vi": "Khiên Hồi Phục",
+   "en": "Regen Shield",
+   "term": "Yenilenen Klkn"
+  }
+ ],
+ "queues": [
+  {
+   "vi": "Gauntlet: Glitched",
+   "en": "Gauntlet: Glitched",
+   "term": "Gauntlet: Glitched"
+  },
+  {
+   "vi": "Tất Cả Ngẫu Nhiên Một Khu Đặt Spike",
+   "en": "All Random One Site",
+   "term": "AR1S (TEK BÖLGEDE HEPSİ RASGELE)"
+  },
+  {
+   "vi": "Thi đấu xếp hạng",
+   "en": "Competitive",
+   "term": "REKABETE DAYALI"
+  },
+  {
+   "vi": "Sinh Tử",
+   "en": "Deathmatch",
+   "term": "ÖLÜM KALIM SAVAŞI"
+  },
+  {
+   "vi": "Knockout",
+   "en": "Knockout",
+   "term": "NAKAVT"
+  },
+  {
+   "vi": "Sinh Tử Đội",
+   "en": "Team Deathmatch",
+   "term": "TAKIMLI ÖLÜM KALIM SAVAŞI"
+  },
+  {
+   "vi": "Skirmish: 2v2",
+   "en": "Skirmish: 2v2",
+   "term": "ÇARPIŞMA: 2'YE 2"
+  },
+  {
+   "vi": "Skirmish: Thăng Hoa 1v1",
+   "en": "Skirmish: Ascension 1v1",
+   "term": "ÇARPIŞMA: YÜKSELİŞ 1'E 1"
+  },
+  {
+   "vi": "Skirmish: Thăng Hoa 2v2",
+   "en": "Skirmish: Ascension 2v2",
+   "term": "ÇARPIŞMA: YÜKSELİŞ 2'YE 2"
+  },
+  {
+   "vi": "Trận Chiến Cầu Tuyết",
+   "en": "Snowball Fight",
+   "term": "KARTOPU ÇATIŞMASI"
+  },
+  {
+   "vi": "Siêu Tốc",
+   "en": "Swiftplay",
+   "term": "TAM GAZ"
+  },
+  {
+   "vi": "Đấu thường",
+   "en": "Unrated",
+   "term": "DERECESİZ"
+  },
+  {
+   "vi": "Chơi tự do",
+   "en": "Custom Game",
+   "term": "ÖZEL OYUN"
+  },
+  {
+   "vi": "Retake",
+   "en": "Retake",
+   "term": "AKIN"
+  },
+  {
+   "vi": "Tăng Tiến",
+   "en": "Escalation",
+   "term": "TIRMANIŞ"
+  },
+  {
+   "vi": "Summit",
+   "en": "Summit",
+   "term": "SUMMIT"
+  },
+  {
+   "vi": "Nhân bản",
+   "en": "Replication",
+   "term": "KOPYA"
+  },
+  {
+   "vi": "Premier",
+   "en": "Premier",
+   "term": "PREMIER"
+  },
+  {
+   "vi": "Đặt Spike Nhanh",
+   "en": "Spike Rush",
+   "term": "SPIKE'A HÜCUM"
+  }
+ ],
+ "rankTiers": [
+  {
+   "vi": "SẮT 1",
+   "en": "IRON 1",
+   "term": "DEMİR 1"
+  },
+  {
+   "vi": "SẮT 2",
+   "en": "IRON 2",
+   "term": "DEMİR 2"
+  },
+  {
+   "vi": "SẮT 3",
+   "en": "IRON 3",
+   "term": "DEMİR 3"
+  },
+  {
+   "vi": "ĐỒNG 1",
+   "en": "BRONZE 1",
+   "term": "BRONZ 1"
+  },
+  {
+   "vi": "ĐỒNG 2",
+   "en": "BRONZE 2",
+   "term": "BRONZ 2"
+  },
+  {
+   "vi": "ĐỒNG 3",
+   "en": "BRONZE 3",
+   "term": "BRONZ 3"
+  },
+  {
+   "vi": "BẠC 1",
+   "en": "SILVER 1",
+   "term": "GÜMÜŞ 1"
+  },
+  {
+   "vi": "BẠC 2",
+   "en": "SILVER 2",
+   "term": "GÜMÜŞ 2"
+  },
+  {
+   "vi": "BẠC 3",
+   "en": "SILVER 3",
+   "term": "GÜMÜŞ 3"
+  },
+  {
+   "vi": "VÀNG 1",
+   "en": "GOLD 1",
+   "term": "ALTIN 1"
+  },
+  {
+   "vi": "VÀNG 2",
+   "en": "GOLD 2",
+   "term": "ALTIN 2"
+  },
+  {
+   "vi": "VÀNG 3",
+   "en": "GOLD 3",
+   "term": "ALTIN 3"
+  },
+  {
+   "vi": "BẠCH KIM 1",
+   "en": "PLATINUM 1",
+   "term": "PLATİN 1"
+  },
+  {
+   "vi": "BẠCH KIM 2",
+   "en": "PLATINUM 2",
+   "term": "PLATİN 2"
+  },
+  {
+   "vi": "BẠCH KIM 3",
+   "en": "PLATINUM 3",
+   "term": "PLATİN 3"
+  },
+  {
+   "vi": "KIM CƯƠNG 1",
+   "en": "DIAMOND 1",
+   "term": "ELMAS 1"
+  },
+  {
+   "vi": "KIM CƯƠNG 2",
+   "en": "DIAMOND 2",
+   "term": "ELMAS 2"
+  },
+  {
+   "vi": "KIM CƯƠNG 3",
+   "en": "DIAMOND 3",
+   "term": "ELMAS 3"
+  },
+  {
+   "vi": "THƯỢNG NHÂN 1",
+   "en": "ASCENDANT 1",
+   "term": "YÜCELİK 1"
+  },
+  {
+   "vi": "THƯỢNG NHÂN 2",
+   "en": "ASCENDANT 2",
+   "term": "YÜCELİK 2"
+  },
+  {
+   "vi": "THƯỢNG NHÂN 3",
+   "en": "ASCENDANT 3",
+   "term": "YÜCELİK 3"
+  },
+  {
+   "vi": "BẤT TỬ 1",
+   "en": "IMMORTAL 1",
+   "term": "ÖLÜMSÜZLÜK 1"
+  },
+  {
+   "vi": "BẤT TỬ 2",
+   "en": "IMMORTAL 2",
+   "term": "ÖLÜMSÜZLÜK 2"
+  },
+  {
+   "vi": "BẤT TỬ 3",
+   "en": "IMMORTAL 3",
+   "term": "ÖLÜMSÜZLÜK 3"
+  },
+  {
+   "vi": "RADIANT",
+   "en": "RADIANT",
+   "term": "RADYANT"
+  }
+ ],
+ "weaponCategories": [
+  {
+   "vi": "Vũ Khí Hạng Nặng",
+   "en": "Heavy Weapons",
+   "term": "Ağır Silahlar"
+  },
+  {
+   "vi": "Súng Trường",
+   "en": "Assault Rifles",
+   "term": "Taarruz Tüfekleri"
+  },
+  {
+   "vi": "Shotgun",
+   "en": "Shotguns",
+   "term": "Pompalı Tüfekler"
+  },
+  {
+   "vi": "Súng phụ",
+   "en": "Sidearms",
+   "term": "Beylik Silahlar"
+  },
+  {
+   "vi": "Súng bắn tỉa",
+   "en": "Sniper Rifles",
+   "term": "Keskin Nişancı Tüfekleri"
+  },
+  {
+   "vi": "SMG",
+   "en": "SMGs",
+   "term": "Hafif Makineliler"
+  }
+ ]
+}
