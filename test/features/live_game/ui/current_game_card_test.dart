@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/settings/app_settings.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/theme/app_theme.dart';
@@ -87,6 +88,15 @@ void main() {
     env.sessionError = Exception('boom');
     await pumpCard(tester);
     expect(find.text('Chưa cập nhật được trạng thái trận'), findsOneWidget);
+  });
+
+  testWidgets('an expired sign-in is named once, not the full banner text', (
+    tester,
+  ) async {
+    env.sessionError = const NeedsLoginException(puuid: me);
+    await pumpCard(tester);
+    expect(find.text('Cần đăng nhập lại'), findsOneWidget);
+    expect(find.textContaining('đã hết hạn'), findsNothing);
   });
 
   testWidgets('tap opens the live-game sheet', (tester) async {

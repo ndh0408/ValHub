@@ -233,6 +233,7 @@ void main() {
       ]);
       final out = await client(adapter).reauth(jar);
       expect(out, isA<ReauthOk>());
+      expect((out as ReauthOk).ssoLifetime, const Duration(days: 30));
       expect(out.jar.cookies, {'ssid': 'new', 'tdid': 't', 'clid': 'uw1'});
       expect(adapter.requests.single.headers['Cookie'], 'ssid=old; tdid=t');
       expect(adapter.requests.single.headers['User-Agent'], 'UA');

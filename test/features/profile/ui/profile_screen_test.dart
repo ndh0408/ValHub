@@ -349,6 +349,38 @@ void main() {
     expect(find.byKey(ValueKey(id(24))), findsOneWidget);
   });
 
+  testWidgets('daily RR makes no "none today" claim when Riot did not answer', (
+    tester,
+  ) async {
+    when(
+      () => env.api.competitiveUpdates(
+        any(),
+        subject: any(named: 'subject'),
+        startIndex: any(named: 'startIndex'),
+        endIndex: any(named: 'endIndex'),
+        queue: any(named: 'queue'),
+        cancelToken: any(named: 'cancelToken'),
+      ),
+    ).thenAnswer(
+      (_) async => throw const TransientException(reason: 'network'),
+    );
+    when(
+      () => env.api.mmr(
+        any(),
+        subject: any(named: 'subject'),
+        cancelToken: any(named: 'cancelToken'),
+      ),
+    ).thenAnswer(
+      (_) async => throw const TransientException(reason: 'network'),
+    );
+    await pumpProfile(tester, env, screen, height: 2600);
+    await settle(tester);
+
+    expect(find.text(ProfileStrings.dailyRrTitle), findsOneWidget);
+    expect(find.text(ProfileStrings.todayNone), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('no account shows the signed-out message', (tester) async {
     env = await ProfileTestEnv.create(accounts: const []);
     await pumpProfile(tester, env, screen);

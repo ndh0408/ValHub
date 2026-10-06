@@ -75,11 +75,40 @@ class RiotCookieJar {
 /// One parsed `Set-Cookie` header.
 @immutable
 class SetCookie {
-  const SetCookie(this.name, this.value, {required this.expired});
+  const SetCookie(
+    this.name,
+    this.value, {
+    required this.expired,
+    this.lifetime,
+  });
 
   final String name;
   final String value;
   final bool expired;
+
+  /// How long the cookie lives (`Max-Age` wins over `Expires`); `null` for a
+  /// cookie that ends with the browser session.
+  final Duration? lifetime;
+}
+
+/// Lifetime that [setCookieHeaders] give cookie [name]: `null` when no header
+/// sets it, [Duration.zero] when it is a browser-session cookie (no
+/// `Max-Age` / `Expires`) or is being deleted. Riot's SSO cookie (`ssid`)
+/// only slides for weeks when the user ticked "Stay signed in", so this is
+/// the token-free evidence of what Riot granted.
+Duration? cookieLifetime(
+  Iterable<String>? setCookieHeaders,
+  String name, {
+  DateTime? now,
+}) {
+  if (setCookieHeaders == null) return null;
+  Duration? found;
+  for (final raw in setCookieHeaders) {
+    final parsed = parseSetCookie(raw, now: now);
+    if (parsed == null || parsed.name != name) continue;
+    found = parsed.expired ? Duration.zero : parsed.lifetime ?? Duration.zero;
+  }
+  return found;
 }
 
 /// Parses a single `Set-Cookie` header value. Returns `null` when malformed.
@@ -96,6 +125,8 @@ SetCookie? parseSetCookie(String raw, {DateTime? now}) {
   if (name.isEmpty) return null;
   var expired = value.isEmpty;
   final at = (now ?? DateTime.now()).toUtc();
+  Duration? maxAge;
+  Duration? untilExpires;
   for (final attr in parts.skip(1)) {
     final i = attr.indexOf('=');
     final key = (i < 0 ? attr : attr.substring(0, i)).trim().toLowerCase();
@@ -103,12 +134,19 @@ SetCookie? parseSetCookie(String raw, {DateTime? now}) {
     if (key == 'max-age') {
       final seconds = int.tryParse(v);
       if (seconds != null && seconds <= 0) expired = true;
+      if (seconds != null && seconds > 0) maxAge = Duration(seconds: seconds);
     } else if (key == 'expires') {
       final when = _parseCookieDate(v);
       if (when != null && !when.isAfter(at)) expired = true;
+      if (when != null && when.isAfter(at)) untilExpires = when.difference(at);
     }
   }
-  return SetCookie(name, value, expired: expired);
+  return SetCookie(
+    name,
+    value,
+    expired: expired,
+    lifetime: expired ? null : maxAge ?? untilExpires,
+  );
 }
 
 const _months = {

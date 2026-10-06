@@ -18,8 +18,12 @@ sealed class ReauthOutcome {
 }
 
 final class ReauthOk extends ReauthOutcome {
-  const ReauthOk(this.tokens, super.jar);
+  const ReauthOk(this.tokens, super.jar, {this.ssoLifetime});
   final AuthTokens tokens;
+
+  /// What Riot's answer said about the SSO cookie (see [cookieLifetime]);
+  /// `null` when the answer did not set it.
+  final Duration? ssoLifetime;
 }
 
 /// Cookies are dead; only an interactive login helps.
@@ -35,6 +39,10 @@ final class ReauthTransient extends ReauthOutcome {
   final Duration? retryAfter;
   final int? status;
 }
+
+/// One auth-host call: its verdict, the jar after `Set-Cookie`, and the SSO
+/// cookie lifetime the answer carried.
+typedef _CallResult = (ReauthVerdict, RiotCookieJar, Duration?);
 
 /// Pure classification result used by both re-auth calls.
 sealed class ReauthVerdict {
@@ -256,11 +264,11 @@ class RiotReauthClient {
     final calls = postFirst ? [_post, _get] : [_get, _post];
     String lastReason = 'unknown';
     for (final call in calls) {
-      final (verdict, merged) = await call(current);
+      final (verdict, merged, ssoLifetime) = await call(current);
       current = merged;
       switch (verdict) {
         case VerdictOk(:final tokens):
-          return ReauthOk(tokens, current);
+          return ReauthOk(tokens, current, ssoLifetime: ssoLifetime);
         case VerdictNeedsLogin(:final reason):
           return ReauthNeedsLogin(reason, current);
         case VerdictTransient(:final reason, :final retryAfter, :final status):
@@ -281,14 +289,14 @@ class RiotReauthClient {
   /// Runs one auth-host call through the shared limiter: fails fast while the
   /// host cools down, otherwise waits for a slot, sends, and teaches the
   /// limiter what the answer meant.
-  Future<(ReauthVerdict, RiotCookieJar)> _throttled(
+  Future<_CallResult> _throttled(
     RiotCookieJar jar,
-    Future<(ReauthVerdict, RiotCookieJar)> Function() send,
+    Future<_CallResult> Function() send,
   ) async {
     const host = AuthConstants.authHost;
     final blocked = _limiter.cooldownRemaining(host);
     if (blocked != null) {
-      return (VerdictTransient('cooldown', retryAfter: blocked), jar);
+      return (VerdictTransient('cooldown', retryAfter: blocked), jar, null);
     }
     await _limiter.acquire(host);
     try {
@@ -314,13 +322,19 @@ class RiotReauthClient {
     }
   }
 
-  Future<(ReauthVerdict, RiotCookieJar)> _get(RiotCookieJar jar) =>
+  Future<_CallResult> _get(RiotCookieJar jar) =>
       _throttled(jar, () => _sendGet(jar));
 
-  Future<(ReauthVerdict, RiotCookieJar)> _post(RiotCookieJar jar) =>
+  Future<_CallResult> _post(RiotCookieJar jar) =>
       _throttled(jar, () => _sendPost(jar));
 
-  Future<(ReauthVerdict, RiotCookieJar)> _sendGet(RiotCookieJar jar) async {
+  Duration? _ssoLifetime(Response<String> res) => cookieLifetime(
+    res.headers['set-cookie'],
+    AuthConstants.sessionCookie,
+    now: _now(),
+  );
+
+  Future<_CallResult> _sendGet(RiotCookieJar jar) async {
     try {
       final res = await _dio.get<String>(
         reauthAuthorizeUrl,
@@ -339,13 +353,14 @@ class RiotReauthClient {
           receivedAt: _now(),
         ),
         merged,
+        _ssoLifetime(res),
       );
     } on DioException catch (e) {
-      return (_networkVerdict(e), jar);
+      return (_networkVerdict(e), jar, null);
     }
   }
 
-  Future<(ReauthVerdict, RiotCookieJar)> _sendPost(RiotCookieJar jar) async {
+  Future<_CallResult> _sendPost(RiotCookieJar jar) async {
     try {
       final res = await _dio.post<String>(
         AuthConstants.authorizationApiUrl,
@@ -374,9 +389,10 @@ class RiotReauthClient {
           receivedAt: _now(),
         ),
         merged,
+        _ssoLifetime(res),
       );
     } on DioException catch (e) {
-      return (_networkVerdict(e), jar);
+      return (_networkVerdict(e), jar, null);
     }
   }
 

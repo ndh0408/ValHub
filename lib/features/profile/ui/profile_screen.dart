@@ -145,12 +145,17 @@ class _DailyRrRow extends ConsumerWidget {
     final days = ref.watch(dailyRrProvider(puuid)).value;
     final now = ref.watch(clockProvider).now();
     final today = days == null ? null : dailyRrOn(days, now);
+    // "No ranked match today" is only true once Riot answered just now; with
+    // an expired sign-in or no network the local history may simply be
+    // behind, so the row then stays without a claim.
+    final updates = ref.watch(competitiveUpdatesProvider(puuid));
+    final checkedToday = updates.hasValue && !updates.hasError;
     return ValCard(
       padding: EdgeInsets.zero,
       child: ProfileNavRow(
         icon: Icons.calendar_month_rounded,
         title: context.l10n.profileDailyRrTitle,
-        subtitle: days == null
+        subtitle: days == null || (today == null && !checkedToday)
             ? null
             : Text(
                 today == null

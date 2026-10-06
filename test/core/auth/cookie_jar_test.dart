@@ -59,4 +59,47 @@ void main() {
     const jar = RiotCookieJar({'ssid': 'secret-value'});
     expect(jar.toString(), isNot(contains('secret-value')));
   });
+
+  group('cookieLifetime (Stay signed in evidence)', () {
+    test('Max-Age gives the lifetime and wins over Expires', () {
+      expect(
+        cookieLifetime(
+          [
+            'clid=x; Max-Age=60',
+            'ssid=s; Expires=Thu, 29 Oct 2026 00:00:00 GMT; Max-Age=2592000',
+          ],
+          'ssid',
+          now: now,
+        ),
+        const Duration(days: 30),
+      );
+    });
+
+    test('Expires alone counts from now', () {
+      expect(
+        cookieLifetime(
+          ['ssid=s; Expires=Thu, 01 Oct 2026 00:00:00 GMT; Path=/'],
+          'ssid',
+          now: now,
+        ),
+        const Duration(days: 3),
+      );
+    });
+
+    test('a browser-session or deleted cookie is zero', () {
+      expect(
+        cookieLifetime(['ssid=s; Path=/; Secure'], 'ssid', now: now),
+        Duration.zero,
+      );
+      expect(
+        cookieLifetime(['ssid=; Max-Age=0'], 'ssid', now: now),
+        Duration.zero,
+      );
+    });
+
+    test('null when no header sets the cookie', () {
+      expect(cookieLifetime(null, 'ssid'), isNull);
+      expect(cookieLifetime(['clid=x; Max-Age=60'], 'ssid', now: now), isNull);
+    });
+  });
 }

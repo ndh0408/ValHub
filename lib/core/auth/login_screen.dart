@@ -29,6 +29,7 @@ import '../ui/sub_page.dart';
 import '../ui/val_widgets.dart';
 import 'auth_callback.dart';
 import 'cookie_jar.dart';
+import 'remember_me.dart';
 import '../l10n/locale_controller.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -314,6 +315,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return NavigationActionPolicy.CANCEL;
   }
 
+  /// Ticks "Stay signed in" on Riot's own login page so the account keeps a
+  /// sliding 30-day session instead of dying after a day (see
+  /// [rememberMeScript]).
+  Future<void> _tickRememberMe(
+    InAppWebViewController controller,
+    WebUri? url,
+  ) async {
+    if (!mounted || _completed) return;
+    if (!shouldTickRememberMe(Uri.tryParse(url?.toString() ?? ''))) return;
+    try {
+      await controller.evaluateJavascript(source: rememberMeScript);
+    } on Object {
+      // The page navigated away meanwhile; the hint above still applies.
+    }
+  }
+
   /// Types a saved login note into Riot's page (only on a Riot host; the
   /// values never leave the device otherwise).
   Future<void> _quickFill(List<(Account, LoginNote)> saved) async {
@@ -470,6 +487,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     onLoadStart: (controller, url) => unawaited(_maybeFinish(url)),
     onUpdateVisitedHistory: (controller, url, isReload) =>
         unawaited(_maybeFinish(url)),
+    onLoadStop: (controller, url) =>
+        unawaited(_tickRememberMe(controller, url)),
     onCreateWindow: (controller, action) async {
       final url = action.request.url;
       if (url != null) {

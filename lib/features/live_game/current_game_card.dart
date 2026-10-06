@@ -69,9 +69,11 @@ class CurrentGameCard extends ConsumerWidget {
     } else if (state != null) {
       subtitle = _StatusLine(state: state, db: db);
     } else if (value.hasError && !value.isLoading) {
+      // The screen's own sign-in banner explains an expired session; the
+      // card only names the state instead of repeating the full sentence.
       subtitle = Text(
         describeError(context.l10n, value.error!).needsLogin
-            ? describeError(context.l10n, value.error!).message
+            ? context.l10n.accountNeedsLogin
             : context.l10n.liveGameStatusUnavailable,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,

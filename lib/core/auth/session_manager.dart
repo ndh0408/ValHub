@@ -95,6 +95,15 @@ bool isBlockingReauthTransient(ReauthTransient t) {
   };
 }
 
+/// Session-log detail for the SSO cookie lifetime Riot granted on a re-auth:
+/// `session` (ends with the browser session — "Stay signed in" was off),
+/// else whole days, or hours below a day.
+String describeSsoLifetime(Duration lifetime) {
+  if (lifetime <= Duration.zero) return 'session';
+  if (lifetime.inDays >= 1) return '${lifetime.inDays}d';
+  return '${lifetime.inHours}h';
+}
+
 /// Result of [SessionManager.establishFromLogin].
 @immutable
 class LoginEstablished {
@@ -618,7 +627,7 @@ class SessionManager {
     }
 
     switch (outcome) {
-      case ReauthOk(:final tokens, jar: final rotated):
+      case ReauthOk(:final tokens, jar: final rotated, :final ssoLifetime):
         if (!await _stillExists(id)) {
           // Signed out while the re-auth ran: persist nothing.
           throw NeedsLoginException(puuid: id, reason: 'unknown_account');
@@ -657,6 +666,9 @@ class SessionManager {
           elapsed: _clock.now().difference(started),
           detail: usedPrevious ? 'previous_jar' : null,
         );
+        if (ssoLifetime != null) {
+          _log?.add('sso.lifetime', detail: describeSsoLifetime(ssoLifetime));
+        }
         return session;
       case ReauthNeedsLogin(:final reason):
         _log?.add(
