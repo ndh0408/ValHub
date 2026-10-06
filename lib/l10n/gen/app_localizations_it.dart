@@ -7554,6 +7554,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Il collegamento alla community è scaduto. Riprova.';
 
   @override
+  String get communityErrorImageQuota =>
+      'Hai esaurito lo spazio per le immagini. Elimina qualche post con immagini e riprova.';
+
+  @override
   String get smokePlain => 'Verifica generazione codice';
 
   @override

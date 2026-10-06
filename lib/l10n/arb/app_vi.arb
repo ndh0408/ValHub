@@ -11691,6 +11691,11 @@
     "description": "CommunityStrings.errorUnauthorized — errors",
     "x-context": "lib/features/community/community_strings.dart"
   },
+  "communityErrorImageQuota": "Bạn đã dùng hết dung lượng ảnh. Hãy xóa bớt bài viết có ảnh rồi thử lại.",
+  "@communityErrorImageQuota": {
+    "description": "Community error (server reason quota_exceeded): the player has used up their image storage.",
+    "x-context": "lib/features/community/data/community_errors.dart"
+  },
   "smokePlain": "Kiểm tra sinh mã",
   "@smokePlain": {
     "description": "SMOKE/TEST ONLY (W0 foundation). Proves gen-l10n output and the delegate list. Never shown to users; W1 replaces this file with the real template.",

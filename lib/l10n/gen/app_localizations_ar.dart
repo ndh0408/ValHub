@@ -7902,6 +7902,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'انتهت صلاحية اتصالك بالمجتمع. يُرجى المحاولة مجددًا.';
 
   @override
+  String get communityErrorImageQuota =>
+      'لقد استهلكت مساحة تخزين الصور بالكامل. احذف بعض المنشورات التي تحتوي على صور ثم حاول مرة أخرى.';
+
+  @override
   String get smokePlain => 'فحص توليد الشيفرة';
 
   @override

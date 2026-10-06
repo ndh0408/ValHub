@@ -11601,6 +11601,12 @@ abstract class AppLocalizations {
   /// **'Kết nối Cộng đồng đã hết hạn. Hãy thử lại.'**
   String get communityErrorUnauthorized;
 
+  /// Community error (server reason quota_exceeded): the player has used up their image storage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn đã dùng hết dung lượng ảnh. Hãy xóa bớt bài viết có ảnh rồi thử lại.'**
+  String get communityErrorImageQuota;
+
   /// SMOKE/TEST ONLY (W0 foundation). Proves gen-l10n output and the delegate list. Never shown to users; W1 replaces this file with the real template.
   ///
   /// In vi, this message translates to:

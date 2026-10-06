@@ -1906,6 +1906,7 @@
   "communityErrorTimeout": "ValHub 社群回應時間過長，請再試一次。",
   "communityErrorTitle": "未完成",
   "communityErrorUnauthorized": "社群連線已過期，請再試一次。",
+  "communityErrorImageQuota": "你的圖片儲存空間已用完。請刪除一些含圖片的貼文後再試。",
   "smokePlain": "產生程式碼檢查",
   "smokeGreeting": "你好，{name}！",
   "smokeCount": "{n, plural, other{{n} 個項目}}"

@@ -7809,6 +7809,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'Подключение к сообществу истекло. Повторите попытку.';
 
   @override
+  String get communityErrorImageQuota =>
+      'Место для изображений закончилось. Удалите несколько публикаций с изображениями и попробуйте снова.';
+
+  @override
   String get smokePlain => 'Проверка генерации кода';
 
   @override

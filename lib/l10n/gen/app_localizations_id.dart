@@ -7064,6 +7064,10 @@ class AppLocalizationsId extends AppLocalizations {
       'Koneksi Komunitas sudah kedaluwarsa. Coba lagi.';
 
   @override
+  String get communityErrorImageQuota =>
+      'Ruang penyimpanan gambarmu sudah habis. Hapus beberapa postingan bergambar lalu coba lagi.';
+
+  @override
   String get smokePlain => 'Pemeriksaan codegen';
 
   @override

@@ -7556,6 +7556,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your Community connection has expired. Try again.';
 
   @override
+  String get communityErrorImageQuota =>
+      'You\'ve used up your image storage. Delete some posts with images and try again.';
+
+  @override
   String get smokePlain => 'Codegen check';
 
   @override

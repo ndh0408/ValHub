@@ -1906,6 +1906,7 @@
   "communityErrorTimeout": "A Comunidade ValHub está demorando para responder. Tente de novo.",
   "communityErrorTitle": "Não concluído",
   "communityErrorUnauthorized": "A conexão com a Comunidade expirou. Tente de novo.",
+  "communityErrorImageQuota": "Você usou todo o espaço para imagens. Apague algumas publicações com imagens e tente de novo.",
   "smokePlain": "Teste de geração de código",
   "smokeGreeting": "Olá, {name}!",
   "smokeCount": "{n, plural, one{{n} item} other{{n} itens}}"

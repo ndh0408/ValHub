@@ -6794,6 +6794,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityErrorUnauthorized => '你的社区连接已过期，请重试。';
 
   @override
+  String get communityErrorImageQuota => '你的图片存储空间已用完。请删除一些带图片的帖子后再试。';
+
+  @override
   String get smokePlain => '代码生成检查';
 
   @override
@@ -13596,6 +13599,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get communityErrorUnauthorized => '社群連線已過期，請再試一次。';
+
+  @override
+  String get communityErrorImageQuota => '你的圖片儲存空間已用完。請刪除一些含圖片的貼文後再試。';
 
   @override
   String get smokePlain => '產生程式碼檢查';

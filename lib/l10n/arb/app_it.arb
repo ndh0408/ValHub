@@ -1906,6 +1906,7 @@
   "communityErrorTimeout": "La community di ValHub sta impiegando troppo a rispondere. Riprova.",
   "communityErrorTitle": "Operazione non completata",
   "communityErrorUnauthorized": "Il collegamento alla community è scaduto. Riprova.",
+  "communityErrorImageQuota": "Hai esaurito lo spazio per le immagini. Elimina qualche post con immagini e riprova.",
   "smokePlain": "Verifica generazione codice",
   "smokeGreeting": "Ciao, {name}!",
   "smokeCount": "{n, plural, one{{n} voce} other{{n} voci}}"

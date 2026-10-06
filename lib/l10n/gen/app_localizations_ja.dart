@@ -6873,6 +6873,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get communityErrorUnauthorized => 'コミュニティへの接続の期限が切れました。もう一度お試しください。';
 
   @override
+  String get communityErrorImageQuota =>
+      '画像の保存容量を使い切りました。画像付きの投稿をいくつか削除してから、もう一度お試しください。';
+
+  @override
   String get smokePlain => 'コード生成テスト';
 
   @override

@@ -7610,6 +7610,10 @@ class AppLocalizationsPl extends AppLocalizations {
       'Połączenie ze Społecznością wygasło. Spróbuj ponownie.';
 
   @override
+  String get communityErrorImageQuota =>
+      'Wykorzystano całe miejsce na obrazy. Usuń kilka postów z obrazami i spróbuj ponownie.';
+
+  @override
   String get smokePlain => 'Test generowania kodu';
 
   @override

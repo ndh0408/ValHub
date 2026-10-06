@@ -6867,6 +6867,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityErrorUnauthorized => '커뮤니티 연결이 만료되었습니다. 다시 시도하세요.';
 
   @override
+  String get communityErrorImageQuota =>
+      '이미지 저장 공간을 모두 사용했습니다. 이미지가 있는 게시물을 일부 삭제한 뒤 다시 시도하세요.';
+
+  @override
   String get smokePlain => '코드 생성 확인';
 
   @override

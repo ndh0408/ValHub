@@ -1906,6 +1906,7 @@
   "communityErrorTimeout": "ValHub 社区响应时间过长，请重试。",
   "communityErrorTitle": "未能完成",
   "communityErrorUnauthorized": "你的社区连接已过期，请重试。",
+  "communityErrorImageQuota": "你的图片存储空间已用完。请删除一些带图片的帖子后再试。",
   "smokePlain": "代码生成检查",
   "smokeGreeting": "你好，{name}！",
   "smokeCount": "{n, plural, other{{n}项}}"

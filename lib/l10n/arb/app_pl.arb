@@ -1906,6 +1906,7 @@
   "communityErrorTimeout": "Społeczność ValHub zbyt długo nie odpowiada. Spróbuj ponownie.",
   "communityErrorTitle": "Nie udało się",
   "communityErrorUnauthorized": "Połączenie ze Społecznością wygasło. Spróbuj ponownie.",
+  "communityErrorImageQuota": "Wykorzystano całe miejsce na obrazy. Usuń kilka postów z obrazami i spróbuj ponownie.",
   "smokePlain": "Test generowania kodu",
   "smokeGreeting": "Cześć, {name}!",
   "smokeCount": "{n, plural, one{{n} element} few{{n} elementy} many{{n} elementów} other{{n} elementu}}"

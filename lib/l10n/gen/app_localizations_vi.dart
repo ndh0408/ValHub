@@ -7019,6 +7019,10 @@ class AppLocalizationsVi extends AppLocalizations {
       'Kết nối Cộng đồng đã hết hạn. Hãy thử lại.';
 
   @override
+  String get communityErrorImageQuota =>
+      'Bạn đã dùng hết dung lượng ảnh. Hãy xóa bớt bài viết có ảnh rồi thử lại.';
+
+  @override
   String get smokePlain => 'Kiểm tra sinh mã';
 
   @override

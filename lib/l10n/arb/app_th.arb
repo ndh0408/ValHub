@@ -1906,6 +1906,7 @@
   "communityErrorTimeout": "ชุมชน ValHub ตอบสนองช้าเกินไป ลองอีกครั้ง",
   "communityErrorTitle": "ดำเนินการไม่สำเร็จ",
   "communityErrorUnauthorized": "การเชื่อมต่อชุมชนหมดอายุแล้ว ลองอีกครั้ง",
+  "communityErrorImageQuota": "พื้นที่เก็บรูปภาพของคุณเต็มแล้ว ลบโพสต์ที่มีรูปภาพบางโพสต์แล้วลองอีกครั้ง",
   "smokePlain": "ตรวจสอบการสร้างโค้ด",
   "smokeGreeting": "สวัสดี {name}!",
   "smokeCount": "{n, plural, other{{n} รายการ}}"

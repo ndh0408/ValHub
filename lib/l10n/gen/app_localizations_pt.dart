@@ -7636,6 +7636,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'A conexão com a Comunidade expirou. Tente de novo.';
 
   @override
+  String get communityErrorImageQuota =>
+      'Você usou todo o espaço para imagens. Apague algumas publicações com imagens e tente de novo.';
+
+  @override
   String get smokePlain => 'Teste de geração de código';
 
   @override

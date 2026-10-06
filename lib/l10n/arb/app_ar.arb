@@ -1906,6 +1906,7 @@
   "communityErrorTimeout": "يستغرق مجتمع ValHub وقتًا طويلًا للرد. يُرجى المحاولة مجددًا.",
   "communityErrorTitle": "تعذّر الإكمال",
   "communityErrorUnauthorized": "انتهت صلاحية اتصالك بالمجتمع. يُرجى المحاولة مجددًا.",
+  "communityErrorImageQuota": "لقد استهلكت مساحة تخزين الصور بالكامل. احذف بعض المنشورات التي تحتوي على صور ثم حاول مرة أخرى.",
   "smokePlain": "فحص توليد الشيفرة",
   "smokeGreeting": "مرحبًا، {name}!",
   "smokeCount": "{n, plural, zero{{n} عنصر} one{{n} عنصر} two{{n} عنصران} few{{n} عناصر} many{{n} عنصرًا} other{{n} عنصر}}"

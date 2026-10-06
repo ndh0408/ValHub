@@ -7631,6 +7631,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Votre connexion à la Communauté a expiré. Réessayez.';
 
   @override
+  String get communityErrorImageQuota =>
+      'Vous avez utilisé tout votre espace pour les images. Supprimez quelques publications avec images, puis réessayez.';
+
+  @override
   String get smokePlain => 'Test de génération';
 
   @override

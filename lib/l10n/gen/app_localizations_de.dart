@@ -7577,6 +7577,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Die Community-Verbindung ist abgelaufen. Versuch es erneut.';
 
   @override
+  String get communityErrorImageQuota =>
+      'Dein Bilderspeicher ist voll. Lösche ein paar Beiträge mit Bildern und versuche es erneut.';
+
+  @override
   String get smokePlain => 'Generierungstest';
 
   @override

@@ -7627,6 +7627,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'La conexión con la Comunidad ha caducado. Vuelve a intentarlo.';
 
   @override
+  String get communityErrorImageQuota =>
+      'Has agotado tu espacio para imágenes. Borra algunas publicaciones con imágenes y vuelve a intentarlo.';
+
+  @override
   String get smokePlain => 'Prueba de generación de código';
 
   @override

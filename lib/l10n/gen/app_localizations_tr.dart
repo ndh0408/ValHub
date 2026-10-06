@@ -7071,6 +7071,10 @@ class AppLocalizationsTr extends AppLocalizations {
       'Topluluk bağlantının süresi doldu. Tekrar dene.';
 
   @override
+  String get communityErrorImageQuota =>
+      'Görsel depolama alanın doldu. Görselli birkaç gönderini silip tekrar dene.';
+
+  @override
   String get smokePlain => 'Kod üretimi kontrolü';
 
   @override

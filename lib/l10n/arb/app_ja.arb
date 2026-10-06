@@ -1906,6 +1906,7 @@
   "communityErrorTimeout": "ValHubコミュニティの応答に時間がかかっています。もう一度お試しください。",
   "communityErrorTitle": "完了できませんでした",
   "communityErrorUnauthorized": "コミュニティへの接続の期限が切れました。もう一度お試しください。",
+  "communityErrorImageQuota": "画像の保存容量を使い切りました。画像付きの投稿をいくつか削除してから、もう一度お試しください。",
   "smokePlain": "コード生成テスト",
   "smokeGreeting": "こんにちは、{name}さん！",
   "smokeCount": "{n, plural, other{{n}件}}"

@@ -1906,6 +1906,7 @@
   "communityErrorTimeout": "Komunitas ValHub terlalu lama merespons. Coba lagi.",
   "communityErrorTitle": "Belum selesai",
   "communityErrorUnauthorized": "Koneksi Komunitas sudah kedaluwarsa. Coba lagi.",
+  "communityErrorImageQuota": "Ruang penyimpanan gambarmu sudah habis. Hapus beberapa postingan bergambar lalu coba lagi.",
   "smokePlain": "Pemeriksaan codegen",
   "smokeGreeting": "Halo, {name}!",
   "smokeCount": "{n, plural, other{{n} item}}"

@@ -7004,6 +7004,10 @@ class AppLocalizationsTh extends AppLocalizations {
       'การเชื่อมต่อชุมชนหมดอายุแล้ว ลองอีกครั้ง';
 
   @override
+  String get communityErrorImageQuota =>
+      'พื้นที่เก็บรูปภาพของคุณเต็มแล้ว ลบโพสต์ที่มีรูปภาพบางโพสต์แล้วลองอีกครั้ง';
+
+  @override
   String get smokePlain => 'ตรวจสอบการสร้างโค้ด';
 
   @override
