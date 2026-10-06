@@ -52,6 +52,11 @@ void main() {
       expect((await repository.load('terms', locale: 'fr')).locale, 'fr');
       expect((await repository.load('terms', locale: 'de')).locale, 'en');
       expect(read.where((p) => p.endsWith('vi/terms.json')), hasLength(1));
+      // Regional variants read their base language; zh_Hant never zh.
+      assets['assets/legal/es/terms.json'] = jsonEncode(fixture('terms', 'es'));
+      assets['assets/legal/zh/terms.json'] = jsonEncode(fixture('terms', 'zh'));
+      expect((await repository.load('terms', locale: 'es_MX')).locale, 'es');
+      expect((await repository.load('terms', locale: 'zh_Hant')).locale, 'en');
       final viOnly = LegalRepository(
         (path) async => path.contains('/vi/') ? assets[path] : null,
       );

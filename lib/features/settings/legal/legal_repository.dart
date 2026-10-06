@@ -47,7 +47,16 @@ final class LegalRepository {
     }
     final source = await _asset('vi', id);
     if (source == null) throw StateError('Missing authoritative legal asset');
-    for (final candidate in {locale, 'en', 'vi'}) {
+    // A regional variant reads its base language first (es_MX -> es);
+    // Traditional Chinese never falls back to Simplified.
+    final base = locale.split('_').first;
+    final chain = {
+      locale,
+      if (base != locale && base != 'zh') base,
+      'en',
+      'vi',
+    };
+    for (final candidate in chain) {
       final doc = candidate == 'vi' ? source : await _asset(candidate, id);
       if (doc == null) continue;
       if (!doc.hasSameStructureAs(source)) {
