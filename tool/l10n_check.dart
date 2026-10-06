@@ -712,7 +712,7 @@ CheckResult checkProject({String root = '.'}) {
         continue;
       }
       // 9. whitespace parity.
-      _checkWhitespace(source, v, name, k, error);
+      _checkWhitespace(source, v, name, k, error, spaceless: _spaceless(code));
       // 5. ICU.
       final List<IcuNode> nodes;
       try {
@@ -851,16 +851,27 @@ void _checkBranches(
   }
 }
 
+/// Scripts written without spaces between words: a fragment joined to a
+/// link or placeholder ("、", "に同意") must not carry the template's space.
+const Set<String> _spacelessLocales = {'ja', 'zh', 'zh_Hant', 'th'};
+
+bool _spaceless(String code) => _spacelessLocales.contains(code);
+
 void _checkWhitespace(
   String source,
   String value,
   String file,
   String key,
-  void Function(String, String, String, {String? key}) error,
-) {
+  void Function(String, String, String, {String? key}) error, {
+  bool spaceless = false,
+}) {
   String leading(String s) => s.substring(0, s.length - s.trimLeft().length);
   String trailing(String s) => s.substring(s.trimRight().length);
-  if (leading(source) != leading(value)) {
+  // Spaceless scripts may drop a template space, never add or change one.
+  bool same(String a, String b) =>
+      a == b ||
+      (spaceless && b.isEmpty && a.trim().isEmpty && !a.contains('\n'));
+  if (!same(leading(source), leading(value))) {
     error(
       file,
       'whitespace',
@@ -868,7 +879,7 @@ void _checkWhitespace(
       key: key,
     );
   }
-  if (trailing(source) != trailing(value)) {
+  if (!same(trailing(source), trailing(value))) {
     error(
       file,
       'whitespace',

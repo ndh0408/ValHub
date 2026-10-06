@@ -1,0 +1,3 @@
+/* Permission prompts (docs/design/I18N.md 11.5). */
+"NSFaceIDUsageDescription" = "تحقّق من هويتك لفتح ملاحظات تسجيل الدخول إلى Riot المحفوظة على هذا الجهاز.";
+"NSPhotoLibraryUsageDescription" = "اختر صورًا من مكتبتك لإرفاقها بمنشوراتك في مجتمع ValHub. لا يستخدم ValHub إلا الصور التي تختارها.";

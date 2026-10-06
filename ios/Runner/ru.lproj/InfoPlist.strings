@@ -1,0 +1,3 @@
+/* Permission prompts (docs/design/I18N.md 11.5). */
+"NSFaceIDUsageDescription" = "Подтвердите личность, чтобы открыть заметки для входа в Riot, сохранённые на этом устройстве.";
+"NSPhotoLibraryUsageDescription" = "Выберите фото из медиатеки, чтобы прикрепить их к своим публикациям в сообществе ValHub. ValHub использует только выбранные вами фото.";

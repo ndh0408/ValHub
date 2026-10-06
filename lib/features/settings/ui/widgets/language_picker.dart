@@ -59,14 +59,29 @@ Future<void> pickUiLanguage(BuildContext context, WidgetRef ref) async {
   }
 }
 
+/// Welcome-screen language switch: shows the language the UI is in, by its
+/// own name ("English", "日本語"), so a player who does not read the
+/// current language still recognises it.
 class AppLanguageButton extends ConsumerWidget {
   const AppLanguageButton({super.key});
   @override
-  Widget build(BuildContext context, WidgetRef ref) => TextButton.icon(
-    icon: const Icon(Icons.language),
-    label: Text(
-      '${context.l10n.settingsUiLanguageTitle}: ${uiLanguageLabel(ref, context.l10n)}',
-    ),
-    onPressed: () => unawaited(pickUiLanguage(context, ref)),
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final title = context.l10n.settingsUiLanguageTitle;
+    final name = ref.watch(appLocaleProvider).nativeName;
+    void open() => unawaited(pickUiLanguage(context, ref));
+    return Semantics(
+      label: '$title: $name',
+      button: true,
+      excludeSemantics: true,
+      onTap: open,
+      child: Tooltip(
+        message: title,
+        child: TextButton.icon(
+          icon: const Icon(Icons.language),
+          label: Text(name),
+          onPressed: open,
+        ),
+      ),
+    );
+  }
 }

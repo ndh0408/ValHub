@@ -1305,6 +1305,7 @@
   "legalVersion": "Version {version}",
   "legalDocumentLanguage": "This document is currently shown in {language}.",
   "legalContentUnavailable": "Couldn't read the legal document. Try again or contact support.",
+  "legalTranslationNotice": "This translation is provided for convenience. If there is any difference, the Vietnamese version prevails.",
   "settingsUiLanguageTitle": "App language",
   "settingsLanguageFollowDevice": "Use device language",
   "settingsLanguageSaveFailed": "Couldn't save the language. Please try again.",

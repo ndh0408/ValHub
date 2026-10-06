@@ -1,0 +1,3 @@
+/* Permission prompts (docs/design/I18N.md 11.5). */
+"NSFaceIDUsageDescription" = "Bu cihazda kayıtlı Riot giriş notlarını açmak için kimliğini doğrula.";
+"NSPhotoLibraryUsageDescription" = "ValHub Topluluğu’ndaki gönderilerine eklemek için kitaplığından fotoğraf seç. ValHub yalnızca seçtiğin fotoğrafları kullanır.";

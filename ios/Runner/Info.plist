@@ -7,10 +7,27 @@
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>vi</string>
+	<string>en</string>
 	<key>CFBundleLocalizations</key>
 	<array>
+		<string>ar</string>
+		<string>de</string>
+		<string>en</string>
+		<string>es</string>
+		<string>es-419</string>
+		<string>fr</string>
+		<string>id</string>
+		<string>it</string>
+		<string>ja</string>
+		<string>ko</string>
+		<string>pl</string>
+		<string>pt-BR</string>
+		<string>ru</string>
+		<string>th</string>
+		<string>tr</string>
 		<string>vi</string>
+		<string>zh-Hans</string>
+		<string>zh-Hant</string>
 	</array>
 	<key>CFBundleDisplayName</key>
 	<string>ValHub</string>
@@ -54,7 +71,7 @@
 		</dict>
 	</dict>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Xác thực để mở ghi chú đăng nhập Riot đã lưu trên thiết bị này.</string>
+	<string>Authenticate to open the Riot login notes saved on this device.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -66,7 +83,7 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Chọn ảnh từ thư viện để đính kèm vào bài đăng của bạn trên Cộng đồng ValHub. ValHub chỉ dùng những ảnh bạn chọn.</string>
+	<string>Choose photos from your library to attach to your posts in the ValHub Community. ValHub only uses the photos you pick.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

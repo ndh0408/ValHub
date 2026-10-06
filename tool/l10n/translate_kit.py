@@ -31,6 +31,7 @@ PLURAL = {
 }
 OPTIONAL = {'fr': {'many'}, 'es': {'many'}, 'es_MX': {'many'}, 'it': {'many'},
             'pt': {'many'}}
+SPACELESS = {'ja', 'zh', 'zh_Hant', 'th'}
 SCRIPT = {  # non-Latin locales: a translated message must contain this script
     'ar': r'[؀-ۿ]', 'ru': r'[Ѐ-ӿ]', 'th': r'[฀-๿]',
     'ja': r'[぀-ヿ一-鿿]', 'ko': r'[가-힯]',
@@ -186,7 +187,12 @@ def check_one(code, vi, text, meta, key=''):
     for name, cases in s_t:
         if name in src_selects and cases != src_selects[name]:
             errs.append(f'select {name} cases {sorted(cases)} != source {sorted(src_selects[name])}')
-    if ws_shape(text) != ws_shape(vi):
+    shape_t, shape_v = ws_shape(text), ws_shape(vi)
+    if code in SPACELESS:  # may drop (not add) a leading/trailing space
+        shape_t = (shape_t[0] or shape_v[0] and not text[:1].isspace(),
+                   shape_t[1] or shape_v[1] and not text[-1:].isspace(),
+                   shape_t[2], shape_t[3])
+    if shape_t != shape_v:
         errs.append('whitespace/ellipsis shape differs from the source '
                     '(leading/trailing space, newline count, trailing …)')
     if (code != 'vi' and not meta.get('x-locked')
@@ -291,6 +297,21 @@ def drop_colliding_exact_cases(msg):
     return msg
 
 
+_CJK = re.compile('[　-ヿ一-鿿＀-￯]')
+
+
+def trim_cjk_edges(code, text):
+    """ja/zh: drop a template edge space that sits next to CJK text
+    ("、 " -> "、"); Latin neighbours (ValHub, {name}) keep theirs."""
+    if code not in ('ja', 'zh', 'zh_Hant'):
+        return text
+    if text.endswith(' ') and len(text) > 1 and _CJK.match(text[-2]):
+        text = text.rstrip(' ')
+    if text.startswith(' ') and len(text) > 1 and _CJK.match(text[1]):
+        text = text.lstrip(' ')
+    return text
+
+
 def merge(work, code):
     _, keys = template()
     merged = {}
@@ -305,8 +326,8 @@ def merge(work, code):
                 doc[k] = j[k]
         elif k in merged:
             # Translators may strip the accents of the publisher's legal name.
-            doc[k] = drop_colliding_exact_cases(
-                merged[k].replace('Nguyen Duc Huy', PUBLISHER))
+            doc[k] = trim_cjk_edges(code, drop_colliding_exact_cases(
+                merged[k].replace('Nguyen Duc Huy', PUBLISHER)))
     path = os.path.join(ARB_DIR, f'app_{code}.arb')
     with open(path, 'w', encoding='utf-8', newline='\n') as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)

@@ -1,0 +1,3 @@
+/* Permission prompts (docs/design/I18N.md 11.5). */
+"NSFaceIDUsageDescription" = "Xác thực để mở ghi chú đăng nhập Riot đã lưu trên thiết bị này.";
+"NSPhotoLibraryUsageDescription" = "Chọn ảnh từ thư viện để đính kèm vào bài đăng của bạn trên Cộng đồng ValHub. ValHub chỉ dùng những ảnh bạn chọn.";

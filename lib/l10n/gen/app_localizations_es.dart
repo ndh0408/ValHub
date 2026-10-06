@@ -4919,6 +4919,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se ha podido leer el documento legal. Vuelve a intentarlo o contacta con el soporte.';
 
   @override
+  String get legalTranslationNotice =>
+      'Esta traducción se ofrece para tu comodidad. En caso de diferencia, prevalece la versión en vietnamita.';
+
+  @override
   String get settingsUiLanguageTitle => 'Idioma de la interfaz';
 
   @override
@@ -7342,4 +7346,1037 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return '$_temp0';
   }
+}
+
+/// The translations for Spanish Castilian, as used in Mexico (`es_MX`).
+class AppLocalizationsEsMx extends AppLocalizationsEs {
+  AppLocalizationsEsMx() : super('es_MX');
+
+  @override
+  String get commonDone => 'Listo';
+
+  @override
+  String get commonErrorGeneric => 'Algo salió mal. Vuelve a intentarlo.';
+
+  @override
+  String get commonErrorNeedsLogin =>
+      'Tu sesión de Riot expiró. Vuelve a iniciar sesión para continuar.';
+
+  @override
+  String get commonErrorNotFound => 'No se encontró este contenido.';
+
+  @override
+  String get commonErrorUnsupportedRegion =>
+      'No se pudo determinar tu región de Riot. Elige una región en Configuración.';
+
+  @override
+  String get commonIncidentTitle => 'Incidente en el servidor';
+
+  @override
+  String get commonOpenSettings => 'Abrir configuración';
+
+  @override
+  String get commonPageNotFound => 'No se encontró esta pantalla.';
+
+  @override
+  String get commonPriceEditOwn => 'Editar el precio que ingresaste';
+
+  @override
+  String get commonPriceEnterOwn => 'Ingresa el precio de tu paquete de VP';
+
+  @override
+  String get commonPriceEstimateBody =>
+      'El monto «≈ …» junto al precio en VP es una estimación según el paquete de VP más rentable. En el juego pagas con VP; el monto real depende del paquete, el método de pago, los impuestos y las ofertas al momento de la compra.';
+
+  @override
+  String get commonPriceHidden =>
+      'Precio estimado oculto. Puedes volver a activarlo en Configuración.';
+
+  @override
+  String get commonPriceOverrideBody =>
+      'Ingresa lo que pagaste realmente por un paquete de VP (consúltalo en la tienda del juego o en tu recibo). ValHub usa este precio para estimar el precio de cada objeto; solo se guarda en este dispositivo.';
+
+  @override
+  String get commonPriceOverrideInvalidCurrency =>
+      'Ingresa un código de moneda de 3 letras, por ejemplo USD o MXN.';
+
+  @override
+  String get commonPriceOverrideInvalidNumber =>
+      'Ingresa un número mayor que 0.';
+
+  @override
+  String get commonPriceOverrideRemove => 'Borrar precio ingresado';
+
+  @override
+  String get commonPriceOverrideRemoved => 'Se borró el precio que ingresaste.';
+
+  @override
+  String get commonPriceOverrideSaved =>
+      'Se guardó el precio de tu paquete de VP.';
+
+  @override
+  String get commonPriceSourceUser =>
+      'Según el precio de paquete de VP que ingresaste';
+
+  @override
+  String get commonPriceUnavailable =>
+      'Aún no hay precios verificados para tu región. Ingresa el precio de un paquete de VP que hayas comprado para ver el precio estimado.';
+
+  @override
+  String get commonTabSettings => 'Configuración';
+
+  @override
+  String get contentCategorySmg => 'Subametralladoras';
+
+  @override
+  String get contentCategorySniper => 'Rifles de francotirador';
+
+  @override
+  String get contentCurrencyRpFull => 'Radianite Points';
+
+  @override
+  String get contentCurrencyVpFull => 'VALORANT Points';
+
+  @override
+  String get contentItemBuddy => 'Buddy';
+
+  @override
+  String get contentItemSpray => 'Spray';
+
+  @override
+  String get contentQueueNamesUnrated => 'Normal';
+
+  @override
+  String get contentQueueNamesSwiftplay => 'Swiftplay';
+
+  @override
+  String get contentQueueNamesSpikerush => 'Spike Rush';
+
+  @override
+  String get contentQueueNamesDeathmatch => 'Deathmatch';
+
+  @override
+  String get contentQueueNamesHurm => 'Deathmatch Definitivo';
+
+  @override
+  String get contentQueueNamesGgteam => 'Carrera de Armas';
+
+  @override
+  String get contentQueueNamesOnefa => 'Réplica';
+
+  @override
+  String get contentQueueNamesDodgeball => 'Quemados';
+
+  @override
+  String get contentQueueNamesFortcollins => 'Recaptura';
+
+  @override
+  String get contentQueueNamesSnowball => 'Pelea de Bolas de Nieve';
+
+  @override
+  String get contentTierDeluxe => 'Deluxe';
+
+  @override
+  String accountAddAccount(int count, int max) {
+    return 'Agregar cuenta ($count/$max)';
+  }
+
+  @override
+  String get accountLinkAccountMissing =>
+      'Se cerró la sesión de la cuenta de la notificación. Vuelve a iniciar sesión y abre la notificación.';
+
+  @override
+  String get accountLoginNoteHint =>
+      'Solo se guardan en este dispositivo, protegidos de forma segura. Sirven para consultarlos o completarlos rápido al volver a iniciar sesión.';
+
+  @override
+  String get accountManageHint =>
+      'Elimina cuentas o edita los datos de inicio de sesión en Configuración.';
+
+  @override
+  String accountMaxAccounts(int max) {
+    return 'Alcanzaste el máximo de cuentas ($max).';
+  }
+
+  @override
+  String get accountQuickFill => 'Autocompletar cuenta guardada';
+
+  @override
+  String get accountQuickFillDone => 'Datos completados. Toca Iniciar sesión.';
+
+  @override
+  String get accountQuickFillNotReady =>
+      'La página de inicio de sesión aún no carga. Espera un momento y vuelve a intentarlo.';
+
+  @override
+  String get accountQuickFillSubtitle =>
+      'Elige una cuenta para completar la página de inicio de sesión de Riot';
+
+  @override
+  String get accountQuickFillTitle => 'Autocompletar cuenta guardada';
+
+  @override
+  String get accountSwitchFailed =>
+      'No se pudo cambiar de cuenta. Vuelve a intentarlo.';
+
+  @override
+  String get authAccountAlreadyAdded => 'Esta cuenta ya está agregada';
+
+  @override
+  String get authAddAsNew => 'Agregar como cuenta nueva';
+
+  @override
+  String get authDifferentAccountBody =>
+      'Iniciaste sesión con una cuenta distinta de la que tenía que volver a iniciar sesión. ¿Quieres agregarla como cuenta nueva?';
+
+  @override
+  String get authLoginCancelledByRiot =>
+      'Riot rechazó este inicio de sesión. Vuelve a intentarlo.';
+
+  @override
+  String get authLoginFailed => 'No se pudo completar el inicio de sesión';
+
+  @override
+  String get authLoginFailedBody =>
+      'Riot no confirmó tu inicio de sesión. Vuelve a intentarlo.';
+
+  @override
+  String get authMissingCookies =>
+      'No se puede guardar el inicio de sesión en este dispositivo, así que tendrás que volver a iniciar sesión cuando expire.';
+
+  @override
+  String get authPageLoadFailed =>
+      'No se pudo cargar la página de inicio de sesión de Riot. Revisa tu conexión y vuelve a intentarlo.';
+
+  @override
+  String get notificationLfgJoinedTitle => 'Alguien se unió a tu grupo';
+
+  @override
+  String get notificationNightMarketOpenTitle => '¡Abrió el Mercado nocturno!';
+
+  @override
+  String notificationPassProgressBody(int level) {
+    return 'Alcanzaste el nivel $level del Battle Pass actual.';
+  }
+
+  @override
+  String get notificationRankChangedTitle => 'Tu rango cambió';
+
+  @override
+  String get loadoutNotPersisted =>
+      'Riot no guardó tus cambios, así que tu equipamiento sigue igual. Vuelve a intentarlo.';
+
+  @override
+  String get loadoutSaveFailed => 'No se pudo guardar el equipamiento';
+
+  @override
+  String get battlePassAllMissionsDone => 'Completaste todas las misiones';
+
+  @override
+  String get battlePassAllWeeklyDone =>
+      'Completaste todas las misiones semanales';
+
+  @override
+  String get battlePassCheckpointHint =>
+      'Gana rondas para avanzar hacia el hito (Deathmatch no cuenta).';
+
+  @override
+  String get battlePassDailyAllDone => 'Alcanzaste todos los hitos de hoy';
+
+  @override
+  String get battlePassDailyExpired =>
+      'Los hitos del día anterior expiraron. Entra al juego o actualízalos aquí.';
+
+  @override
+  String get battlePassDailyNotReady =>
+      'Los hitos de hoy aún no están listos. Entra al juego o actualízalos aquí.';
+
+  @override
+  String get battlePassDailyPlayToStart =>
+      'Los hitos de hoy aún no están listos. Entra al juego para empezar el nuevo día.';
+
+  @override
+  String get battlePassPremiumHint =>
+      'No compraste el Prémium: solo recibes las recompensas gratuitas. Cómpralo en el juego para desbloquear los niveles que ya alcanzaste.';
+
+  @override
+  String get battlePassRenewFailed =>
+      'No se pudieron actualizar los hitos. Vuelve a intentarlo más tarde.';
+
+  @override
+  String get battlePassUnratedFallback => 'Normal';
+
+  @override
+  String collectionSaveFailedWith(String detail) {
+    return 'No se pudo guardar el equipamiento. $detail';
+  }
+
+  @override
+  String collectionBrowseDescription(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'skin': 'Todas tus skins, valoradas según el precio de la tienda',
+      'buddy': 'Buddies que tienes y número de copias',
+      'spray': 'Sprays que puedes poner en tu rueda de expresiones',
+      'card':
+          'Tarjetas de jugador desbloqueadas: toca para verlas y equiparlas',
+      'title': 'Títulos que puedes mostrar bajo tu nombre',
+      'flex': 'Flex que tienes',
+      'other': 'Explorar colección',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get collectionApplyPresetBody =>
+      'Las skins, buddies, rueda de expresiones, tarjeta y título que llevas ahora se reemplazarán por los de este conjunto.';
+
+  @override
+  String get collectionBrowseBuddies => 'Buddies';
+
+  @override
+  String get collectionBrowseSprays => 'Sprays';
+
+  @override
+  String get collectionBuddyPickerTitle => 'Elegir buddy';
+
+  @override
+  String get collectionBuddyRemoved => 'Buddy quitado';
+
+  @override
+  String get collectionBuddySlot => 'Buddy';
+
+  @override
+  String get collectionBuddyUnavailable =>
+      'No se pudo poner este buddy. Actualiza o elige otro.';
+
+  @override
+  String get collectionExpressionsHint =>
+      'Toca un espacio para elegir un spray o un Flex.';
+
+  @override
+  String get collectionMeleeNoBuddy =>
+      'No se pueden poner buddies en el arma cuerpo a cuerpo.';
+
+  @override
+  String get collectionMoveBuddyTitle => '¿Mover buddy?';
+
+  @override
+  String get collectionNoBuddies => 'Todavía no tienes buddies.';
+
+  @override
+  String get collectionNoBuddy => 'Sin buddy';
+
+  @override
+  String get collectionNoResults => 'No se encontraron resultados.';
+
+  @override
+  String get collectionNoSprays => 'Todavía no tienes sprays.';
+
+  @override
+  String get collectionPlayLevelVideo => 'Ver video de este nivel';
+
+  @override
+  String get collectionPlayVideo => 'Ver video';
+
+  @override
+  String collectionPresetSkipped(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Se omitieron $n objetos que ya no tienes.',
+      one: 'Se omitió $n objeto que ya no tienes.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get collectionPresetsFull =>
+      'Alcanzaste el máximo de 50 conjuntos. Elimina alguno para guardar más.';
+
+  @override
+  String get collectionRemoveBuddy => 'Quitar buddy';
+
+  @override
+  String get collectionSaveFailed => 'No se pudo guardar el equipamiento';
+
+  @override
+  String get collectionSearchBuddies => 'Buscar buddies…';
+
+  @override
+  String get collectionSearchSprays => 'Buscar sprays…';
+
+  @override
+  String get collectionSearchWeapons => 'Buscar armas, skins o buddies…';
+
+  @override
+  String get collectionSkinNotFound => 'No se encontró esta skin.';
+
+  @override
+  String get collectionTabSprays => 'Sprays';
+
+  @override
+  String get collectionWeaponNotFound => 'No se encontró esta arma.';
+
+  @override
+  String get communityModerationContentInappropriate =>
+      'No se pudo publicar porque contiene lenguaje inapropiado. Edita el texto y vuelve a intentarlo.';
+
+  @override
+  String get communityModerationAccountBanned =>
+      'Esta cuenta perdió el acceso a la Comunidad. Si crees que es un error, contacta a ValHub en Acerca de y legal.';
+
+  @override
+  String get communityModerationAccountRestricted =>
+      'Esta cuenta tiene restringido publicar, comentar, buscar compañeros y votar. Vuelve a intentarlo más tarde o contacta a ValHub en Acerca de y legal.';
+
+  @override
+  String communityModeName(String mode) {
+    String _temp0 = intl.Intl.selectLogic(mode, {
+      'competitive': 'Competitivo',
+      'unrated': 'Normal',
+      'swiftplay': 'Swiftplay',
+      'spikerush': 'Spike Rush',
+      'deathmatch': 'Deathmatch',
+      'teamdeathmatch': 'Deathmatch Definitivo',
+      'premier': 'Premier',
+      'custom': 'Personalizada',
+      'other': 'Otro',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get communityRankingNoSearch =>
+      'No se encontraron skins. Prueba con otro nombre o quita el filtro de arma.';
+
+  @override
+  String get communityRankingCatalogUnavailable =>
+      'No se pudo cargar el catálogo de skins. Cierra el panel y vuelve a intentarlo cuando se sincronicen los datos.';
+
+  @override
+  String get communityReviewOwnershipUnavailable =>
+      'No se pudo verificar que tengas esta skin. Vuelve a cargar la Colección o inténtalo de nuevo cuando tengas conexión.';
+
+  @override
+  String get communityAddPhotos => 'Agregar fotos';
+
+  @override
+  String get communityCodeAutoFailed =>
+      'No se pudo crear el código de grupo. Abre VALORANT o ingresa el código manualmente.';
+
+  @override
+  String get communityCodeRequired => 'Ingresa o crea un código de grupo.';
+
+  @override
+  String get communityConsentLocal =>
+      'Tu contraseña y el resto de tus datos de inicio de sesión se quedan siempre en este dispositivo. Puedes retirar tu consentimiento en Configuración.';
+
+  @override
+  String get communityConsentWithdrawn =>
+      'Retiraste tu consentimiento. Debes volver a aceptarlo para seguir usando la app.';
+
+  @override
+  String get communityCountriesEmpty => 'No se encontró ningún país.';
+
+  @override
+  String get communityCountryNamesBD => 'Bangladesh';
+
+  @override
+  String get communityCountryNamesBH => 'Bahréin';
+
+  @override
+  String get communityCountryNamesCZ => 'República Checa';
+
+  @override
+  String get communityCountryNamesQA => 'Qatar';
+
+  @override
+  String get communityCountryNamesRO => 'Rumania';
+
+  @override
+  String get communityCountryNamesSA => 'Arabia Saudita';
+
+  @override
+  String get communityDataDeleted => 'Se eliminaron tus datos de la Comunidad.';
+
+  @override
+  String get communityDeleteDataSubtitle =>
+      'Elimina para siempre todo lo que publicaste en la Comunidad.';
+
+  @override
+  String get communityEmptyPost => 'Escribe algo o agrega una foto.';
+
+  @override
+  String get communityExpired => 'Expirado';
+
+  @override
+  String get communityExportSubtitle =>
+      'Una copia de todo lo que publicaste en la Comunidad: publicaciones, comentarios, reseñas, me gusta, votos y anuncios de búsqueda de compañeros.';
+
+  @override
+  String get communityFeedEmptyScopeBody =>
+      'Intenta ver publicaciones de la comunidad internacional o cambia los filtros.';
+
+  @override
+  String get communityHiddenAuthorsEmpty =>
+      'No ocultaste ni bloqueaste a nadie';
+
+  @override
+  String get communityJoinCodeExpired =>
+      'El código de grupo expiró o ya no es válido.';
+
+  @override
+  String get communityJoinGameNotRunning =>
+      'Abre VALORANT en tu computadora o consola y vuelve a intentarlo.';
+
+  @override
+  String get communityJoined =>
+      '¡Te uniste al grupo! Abre VALORANT para jugar juntos.';
+
+  @override
+  String get communityJoinedHint =>
+      '¡Te uniste al grupo! Abre VALORANT para jugar juntos.';
+
+  @override
+  String get communityLfgExpiredRepost =>
+      'Tu anuncio expiró. Publica uno nuevo para buscar compañeros.';
+
+  @override
+  String get communityLfgExpiryNote =>
+      'El anuncio expira automáticamente a los 30 minutos.';
+
+  @override
+  String communityLfgSheetSubtitle(String region) {
+    return 'Región: $region · El anuncio expira a los 30 minutos.';
+  }
+
+  @override
+  String get communityLoadMoreFailed =>
+      'No se pudieron cargar más publicaciones. Vuelve a intentarlo.';
+
+  @override
+  String communityMemberJoined(String name) {
+    return '$name se unió al grupo';
+  }
+
+  @override
+  String get communityNoAccountBody =>
+      'Agrega una cuenta de Riot para publicar, buscar compañeros y votar skins.';
+
+  @override
+  String get communityNoParty =>
+      'No se encontró ningún grupo. Abre VALORANT y vuelve a intentarlo, o ingresa el código manualmente.';
+
+  @override
+  String communityNoPartyWithReason(String reason) {
+    return 'No se encontró ningún grupo. Abre VALORANT y vuelve a intentarlo, o ingresa el código manualmente.\n$reason';
+  }
+
+  @override
+  String get communityNoteHint =>
+      'Ej.: falta 1 Controlador, con micro, buena onda ante todo';
+
+  @override
+  String get communityPlayVideo => 'Ver video';
+
+  @override
+  String get communityPostNotFound =>
+      'Esta publicación se eliminó o se ocultó.';
+
+  @override
+  String get communityReport => 'Reportar';
+
+  @override
+  String get communityReportConfirmBody =>
+      'El contenido reportado por muchos jugadores se ocultará de la Comunidad.';
+
+  @override
+  String get communityReportConfirmTitle => '¿Enviar reporte?';
+
+  @override
+  String get communityReportPrompt => '¿Por qué reportas este contenido?';
+
+  @override
+  String get communityReportTitle => 'Reportar contenido';
+
+  @override
+  String get communityReported => '¡Gracias! Recibimos tu reporte.';
+
+  @override
+  String get communityShareNightMarketHint => 'Presume tu Mercado nocturno';
+
+  @override
+  String get communityShareStoreHint => 'Presume tu tienda de hoy';
+
+  @override
+  String get communitySignInToReview =>
+      'Agrega una cuenta de Riot para valorar skins.';
+
+  @override
+  String get communitySkinNotFound => 'No se encontró esta skin.';
+
+  @override
+  String communitySlotsTooMany(int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other:
+          'Un grupo tiene como máximo 5 jugadores: solo quedan $max lugares.',
+      one: 'Un grupo tiene como máximo 5 jugadores: solo queda $max lugar.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityTranslateFailed =>
+      'No se pudo traducir. Vuelve a intentarlo.';
+
+  @override
+  String get communityUnavailableBody =>
+      'No se pudo conectar con la Comunidad de ValHub. Vuelve a intentarlo en unos minutos.';
+
+  @override
+  String get communityUnavailableTitle =>
+      'No se pudo conectar con la Comunidad';
+
+  @override
+  String get liveGameAgentTaken => 'Un compañero ya fijó este agente.';
+
+  @override
+  String get liveGameBuddy => 'Buddy';
+
+  @override
+  String get liveGameLiveStatsUnavailable =>
+      'Esta fuente de partidas en vivo no ofrece bajas, muertes ni asistencias. La tabla de puntuación aparecerá cuando Riot publique los datos tras la partida.';
+
+  @override
+  String get liveGameHoverLockHint =>
+      'Toca para seleccionar, mantén presionado para fijar el agente.';
+
+  @override
+  String get liveGameLiveScore => 'Marcador en vivo';
+
+  @override
+  String get liveGameLockFailed =>
+      'No se pudo fijar este agente. Actualiza y vuelve a intentarlo.';
+
+  @override
+  String get liveGameNoAgents =>
+      'No se pudo cargar la lista de agentes. Actualiza para volver a intentarlo.';
+
+  @override
+  String get liveGameQuitDone => 'Abandonaste la partida.';
+
+  @override
+  String get liveGameQuitFailed => 'No se pudo abandonar la partida.';
+
+  @override
+  String get liveGameQuitMatchChanged =>
+      'La partida cambió de fase mientras confirmabas. No saliste; vuelve a intentarlo.';
+
+  @override
+  String get liveGameSelectFailed =>
+      'No se pudo seleccionar este agente. Actualiza y vuelve a intentarlo.';
+
+  @override
+  String get liveGameSprays => 'Sprays';
+
+  @override
+  String get liveGameStatusUnavailable =>
+      'No se pudo actualizar el estado de la partida';
+
+  @override
+  String liveGameYouLocked(String agent) {
+    return 'Fijaste a $agent';
+  }
+
+  @override
+  String get profileAlreadyReached => 'Ya alcanzaste este rango.';
+
+  @override
+  String get profileMatchUnavailable => 'No se pudo cargar la partida';
+
+  @override
+  String get profileOvertime => 'Tiempo extra';
+
+  @override
+  String get profilePerformanceEmpty =>
+      'Todavía no hay partidas registradas en este dispositivo. Abre el historial de partidas para registrar las que jugaste.';
+
+  @override
+  String profilePerformanceSideCoverage(int known, int total) {
+    return 'Se identificó el lado atacante o defensor en $known/$total rondas.';
+  }
+
+  @override
+  String get legalContentUnavailable =>
+      'No se pudo leer el documento legal. Vuelve a intentarlo o contacta al soporte.';
+
+  @override
+  String get settingsLanguageSaveFailed =>
+      'No se pudo guardar el idioma. Vuelve a intentarlo.';
+
+  @override
+  String get settingsGeoNoRegion => 'No se pudo determinar la región de Riot';
+
+  @override
+  String get settingsGeoValidationFailed =>
+      'La cuenta no se confirmó en este servidor. Vuelve a elegir la región.';
+
+  @override
+  String get settingsGeoUnsupported =>
+      'La región de Riot aún no es compatible. Elige una región en Configuración.';
+
+  @override
+  String get settingsGeoSaveFailed =>
+      'No se pudo guardar la selección. Vuelve a intentarlo.';
+
+  @override
+  String get settingsGeoActivityUnavailable =>
+      'No se pudo cargar la actividad por país. Puedes elegir de todos modos en Todos los países.';
+
+  @override
+  String settingsGeoManualConfirm(String manual, String detected) {
+    return 'Elegiste $manual, pero Riot ubica tu cuenta en $detected. ¿Quieres comprobar esta conexión de todos modos?';
+  }
+
+  @override
+  String get settingsGeoUnverified =>
+      'No se pudo verificar la conexión porque el servidor o la red tienen problemas. ¿Guardar esta opción y volver a intentarlo más tarde?';
+
+  @override
+  String get settingsAboutCreditRiotBody =>
+      'La tienda, la billetera, la colección, las partidas y el rango se obtienen directamente de la cuenta de Riot con la que inicias sesión.';
+
+  @override
+  String settingsCacheCleared(String size) {
+    return 'Se liberaron $size';
+  }
+
+  @override
+  String get settingsClearCacheFailed =>
+      'No se pudieron borrar los datos temporales. Vuelve a intentarlo.';
+
+  @override
+  String get settingsLinkOpenFailed =>
+      'No se pudo abrir el enlace. Vuelve a intentarlo.';
+
+  @override
+  String get settingsLogFilterErrors => 'Problemas';
+
+  @override
+  String get settingsLogShareFailed =>
+      'No se pudo enviar el informe de errores. Vuelve a intentarlo.';
+
+  @override
+  String get settingsOptionOwnPriceEmpty =>
+      'Sin ingresar: se usan los precios de tu región si los hay';
+
+  @override
+  String get settingsOptionShowLiveScore => 'Mostrar marcador en vivo';
+
+  @override
+  String get settingsOptionShowPriceUnavailable =>
+      'Aún no hay precios verificados para tu región: ingresa el precio de tu paquete de VP.';
+
+  @override
+  String get settingsPrimingFootnote =>
+      'Puedes activar o desactivar cada tipo de notificación cuando quieras en Configuración.';
+
+  @override
+  String get settingsPrimingPointNightMarketDetail =>
+      'Para descubrir tus ofertas antes de que expiren';
+
+  @override
+  String settingsRemovedAccount(String account) {
+    return 'Se eliminó $account';
+  }
+
+  @override
+  String get settingsServerStatusSubtitle =>
+      'Mantenimientos e incidentes de VALORANT por servidor';
+
+  @override
+  String get settingsSignedOutAll => 'Se cerró sesión en todas las cuentas';
+
+  @override
+  String settingsStatusAllGoodBody(String region) {
+    return 'No hay incidentes ni mantenimientos en el servidor $region.';
+  }
+
+  @override
+  String get settingsStatusIssues => 'Riot está solucionando un incidente';
+
+  @override
+  String settingsStatusIssuesBody(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Este servidor tiene $n avisos de incidentes.',
+      one: 'Este servidor tiene $n aviso de incidente.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsStatusKindIncident => 'Incidente';
+
+  @override
+  String get settingsStatusMaintenanceNowBody =>
+      'Es posible que no puedas entrar al juego y que ValHub no pueda cargar la información por ahora.';
+
+  @override
+  String settingsStatusScheduledBody(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Riot anunció $n mantenimientos programados.',
+      one: 'Riot anunció $n mantenimiento programado.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String settingsSwitchedTo(String account) {
+    return 'Cambiaste a $account';
+  }
+
+  @override
+  String get settingsTitle => 'Configuración';
+
+  @override
+  String get settingsWelcomeBulletStoreDetail =>
+      'Precios, rareza y cuenta regresiva de renovación';
+
+  @override
+  String get skinDetailAddToWishlist => 'Agregar a la lista de deseos';
+
+  @override
+  String get skinDetailNotFound => 'No se encontró esta skin.';
+
+  @override
+  String get skinDetailPlayVideo => 'Ver video';
+
+  @override
+  String get skinDetailVideoError =>
+      'No se pudo reproducir el video. Revisa tu conexión y vuelve a intentarlo.';
+
+  @override
+  String socialActionFailed(String message) {
+    return 'No se pudo completar la acción. $message';
+  }
+
+  @override
+  String get socialFriendsPrivacyNote =>
+      'Tu lista de amigos y tus mensajes se obtienen directamente de Riot. ValHub no los guarda en ningún otro lugar.';
+
+  @override
+  String get socialGameNotRunningBody =>
+      'Grupo y cola solo funciona cuando VALORANT se está ejecutando en tu computadora o consola. Abre el juego y desliza hacia abajo para actualizar.';
+
+  @override
+  String get socialGameNotRunningTitle =>
+      'Abre VALORANT en tu computadora o consola';
+
+  @override
+  String get socialHistoryFailed =>
+      'No se pudieron cargar los mensajes anteriores. Vuelve a conectarte e inténtalo de nuevo.';
+
+  @override
+  String get socialJoinWithCode => 'Ingresa un código para unirte';
+
+  @override
+  String get socialJoined => 'Te uniste al grupo.';
+
+  @override
+  String get socialNoFriends =>
+      'Tu lista de amigos de Riot está vacía. Agrega amigos en el juego.';
+
+  @override
+  String get socialNoSearchResults => 'No se encontró ningún amigo.';
+
+  @override
+  String get socialOnlineMobile => 'En línea en el celular';
+
+  @override
+  String socialPlayingOther(String game) {
+    return 'Jugando $game';
+  }
+
+  @override
+  String get socialQueueStatusUnavailable =>
+      'No se pudo verificar el estado del juego. Actualiza para usar Listo y la cola.';
+
+  @override
+  String get socialReconnecting =>
+      'Se perdió la conexión con el chat. Reconectando…';
+
+  @override
+  String get socialRemoteNote =>
+      'Los cambios solo se envían a Riot cuando tú tocas. ValHub nunca busca partida ni fija agentes por ti.';
+
+  @override
+  String get socialSendFailed =>
+      'No se pudo enviar el mensaje. Revisa tu conexión y vuelve a intentarlo.';
+
+  @override
+  String get socialShootingRange => 'En La Galería';
+
+  @override
+  String get socialSuggestionsItem1 => '¿Jugamos unas partidas?';
+
+  @override
+  String get socialPartyUnavailable =>
+      'No se pudo sincronizar el grupo. Actualiza para volver a intentarlo.';
+
+  @override
+  String get storeAddToWishlist => 'Agregar a la lista de deseos';
+
+  @override
+  String storeBundleEndsAt(String wall) {
+    return 'Expira: $wall';
+  }
+
+  @override
+  String get storeBundleNotFound =>
+      'No se encontró este lote. Es posible que haya expirado.';
+
+  @override
+  String get storeBundleNotFoundTitle => 'Lote expirado';
+
+  @override
+  String get storeResetNotificationTitle => 'La tienda se renovó';
+
+  @override
+  String get storeShareFailed =>
+      'No se pudo crear la imagen. Vuelve a intentarlo.';
+
+  @override
+  String get storeShareShowRiotIdHint =>
+      'Desactivado de forma predeterminada para proteger tu privacidad.';
+
+  @override
+  String get wishlistAddSkins => 'Agregar skins';
+
+  @override
+  String get wishlistAddToWishlist => 'Agregar a la lista de deseos';
+
+  @override
+  String get wishlistCatalogEmpty =>
+      'No se pudo cargar la lista de skins. Actualiza para volver a intentarlo.';
+
+  @override
+  String get wishlistCatalogSubtitle =>
+      'Toca ♡ para agregar una skin a tu lista de deseos';
+
+  @override
+  String get wishlistEmpty =>
+      'Tu lista de deseos está vacía. Toca ♡ en cualquier skin para agregarla.';
+
+  @override
+  String get wishlistNoMatchTitle => 'No se encontraron skins';
+
+  @override
+  String get wishlistNotifDailyTitle =>
+      '¡Apareció una skin de tu lista de deseos!';
+
+  @override
+  String get wishlistOpenSettings => 'Abrir configuración';
+
+  @override
+  String get wishlistStoreCheckTitle => 'No se pudo comprobar la tienda';
+
+  @override
+  String homeTodayRankAccessibility(
+    String direction,
+    int rr,
+    int wins,
+    int losses,
+  ) {
+    String _temp0 = intl.Intl.selectLogic(direction, {
+      'gain': 'subiste',
+      'other': 'bajaste',
+    });
+    String _temp1 = intl.Intl.pluralLogic(
+      wins,
+      locale: localeName,
+      other: '$wins victorias',
+      one: '$wins victoria',
+    );
+    String _temp2 = intl.Intl.pluralLogic(
+      losses,
+      locale: localeName,
+      other: '$losses derrotas',
+      one: '$losses derrota',
+    );
+    return 'Hoy $_temp0 $rr RR, $_temp1, $_temp2';
+  }
+
+  @override
+  String get homeAllHiddenTitle => 'Ocultaste todas las tarjetas';
+
+  @override
+  String homeCardHidden(String name) {
+    return 'Se ocultó \"$name\"';
+  }
+
+  @override
+  String get homeCardServerStatusDesc =>
+      'Solo aparece si hay mantenimiento o un incidente.';
+
+  @override
+  String homeFocused(String name) {
+    return 'Fuiste a $name';
+  }
+
+  @override
+  String get homeNoRankedToday => 'Hoy aún no jugaste Competitivo';
+
+  @override
+  String homeStatusIncident(String region) {
+    return 'Incidente en el servidor · $region';
+  }
+
+  @override
+  String homeStoreWallet(String vp) {
+    return 'Billetera: $vp';
+  }
+
+  @override
+  String homeStoreWalletCanBuy(String vp, int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Billetera: $vp · alcanza para $n skins como máximo',
+      one: 'Billetera: $vp · alcanza para $n skin como máximo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityErrorForbidden =>
+      'Todavía no puedes hacer esto. Consulta las Normas de la comunidad o contacta a ValHub.';
+
+  @override
+  String get communityErrorGeneric => 'Algo salió mal. Vuelve a intentarlo.';
+
+  @override
+  String get communityErrorInvalid =>
+      'El contenido no se aceptó. Revísalo y vuelve a intentarlo.';
+
+  @override
+  String get communityErrorNetwork =>
+      'No se pudo conectar con la Comunidad de ValHub. Revisa tu conexión y vuelve a intentarlo.';
+
+  @override
+  String get communityErrorPickImage =>
+      'No se pudo abrir la galería. Vuelve a intentarlo.';
+
+  @override
+  String get communityErrorRiotRejected =>
+      'Riot no pudo verificar tu cuenta. Vuelve a iniciar sesión en tu cuenta de Riot e inténtalo de nuevo.';
+
+  @override
+  String get communityErrorUnauthorized =>
+      'La conexión con la Comunidad expiró. Vuelve a intentarlo.';
 }

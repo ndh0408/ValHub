@@ -1305,6 +1305,7 @@
   "legalVersion": "Version {version}",
   "legalDocumentLanguage": "Sprache, in der dieses Dokument derzeit angezeigt wird: {language}.",
   "legalContentUnavailable": "Das rechtliche Dokument konnte nicht gelesen werden. Versuch es erneut oder wende dich an den Support.",
+  "legalTranslationNotice": "Diese Übersetzung dient nur der Lesbarkeit. Bei Abweichungen gilt die vietnamesische Fassung.",
   "settingsUiLanguageTitle": "Sprache der Oberfläche",
   "settingsLanguageFollowDevice": "Wie Gerät",
   "settingsLanguageSaveFailed": "Sprache konnte nicht gespeichert werden. Versuch es erneut.",

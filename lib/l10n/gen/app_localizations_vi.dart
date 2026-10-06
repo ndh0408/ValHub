@@ -4608,6 +4608,10 @@ class AppLocalizationsVi extends AppLocalizations {
       'Không đọc được văn bản pháp lý. Hãy thử lại hoặc liên hệ hỗ trợ.';
 
   @override
+  String get legalTranslationNotice =>
+      'Đây là bản dịch để bạn tiện đọc. Nếu có khác biệt, bản tiếng Việt được ưu tiên áp dụng.';
+
+  @override
   String get settingsUiLanguageTitle => 'Ngôn ngữ giao diện';
 
   @override

@@ -9,9 +9,14 @@ import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
 import 'app_localizations_fr.dart';
+import 'app_localizations_it.dart';
 import 'app_localizations_ja.dart';
+import 'app_localizations_ko.dart';
+import 'app_localizations_pl.dart';
 import 'app_localizations_pt.dart';
+import 'app_localizations_ru.dart';
 import 'app_localizations_vi.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -102,10 +107,17 @@ abstract class AppLocalizations {
     Locale('de'),
     Locale('en'),
     Locale('es'),
+    Locale('es', 'MX'),
     Locale('fr'),
+    Locale('it'),
     Locale('ja'),
+    Locale('ko'),
+    Locale('pl'),
     Locale('pt'),
+    Locale('ru'),
     Locale('vi'),
+    Locale('zh'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
   ];
 
   /// Separator between item names in a localized list.
@@ -7944,6 +7956,12 @@ abstract class AppLocalizations {
   /// **'Không đọc được văn bản pháp lý. Hãy thử lại hoặc liên hệ hỗ trợ.'**
   String get legalContentUnavailable;
 
+  /// Shown above a legal document that is a translation (not the authoritative Vietnamese text).
+  ///
+  /// In vi, this message translates to:
+  /// **'Đây là bản dịch để bạn tiện đọc. Nếu có khác biệt, bản tiếng Việt được ưu tiên áp dụng.'**
+  String get legalTranslationNotice;
+
   /// UI language setting and welcome-screen picker; separate from game item names.
   ///
   /// In vi, this message translates to:
@@ -11465,9 +11483,14 @@ class _AppLocalizationsDelegate
     'en',
     'es',
     'fr',
+    'it',
     'ja',
+    'ko',
+    'pl',
     'pt',
+    'ru',
     'vi',
+    'zh',
   ].contains(locale.languageCode);
 
   @override
@@ -11475,6 +11498,30 @@ class _AppLocalizationsDelegate
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when language+script codes are specified.
+  switch (locale.languageCode) {
+    case 'zh':
+      {
+        switch (locale.scriptCode) {
+          case 'Hant':
+            return AppLocalizationsZhHant();
+        }
+        break;
+      }
+  }
+
+  // Lookup logic when language+country codes are specified.
+  switch (locale.languageCode) {
+    case 'es':
+      {
+        switch (locale.countryCode) {
+          case 'MX':
+            return AppLocalizationsEsMx();
+        }
+        break;
+      }
+  }
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'de':
@@ -11485,12 +11532,22 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEs();
     case 'fr':
       return AppLocalizationsFr();
+    case 'it':
+      return AppLocalizationsIt();
     case 'ja':
       return AppLocalizationsJa();
+    case 'ko':
+      return AppLocalizationsKo();
+    case 'pl':
+      return AppLocalizationsPl();
     case 'pt':
       return AppLocalizationsPt();
+    case 'ru':
+      return AppLocalizationsRu();
     case 'vi':
       return AppLocalizationsVi();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(

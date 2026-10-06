@@ -10,7 +10,7 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
-  String get commonListSeparator => '、 ';
+  String get commonListSeparator => '、';
 
   @override
   String get commonPriceSourceLabel => '価格表の出典を見る';
@@ -1549,7 +1549,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get collectionBannerTitlePrefix => 'タイトル： ';
+  String get collectionBannerTitlePrefix => 'タイトル：';
 
   @override
   String get collectionBrowseBuddies => 'ガンバディー';
@@ -4459,16 +4459,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get legalBackToTop => 'ページの先頭へ';
 
   @override
-  String get legalConsentAnd => ' と ';
+  String get legalConsentAnd => 'と';
 
   @override
-  String get legalConsentPrefix => '続行すると、ValHubの ';
+  String get legalConsentPrefix => '続行すると、ValHubの';
 
   @override
   String get legalConsentPrivacy => 'プライバシーポリシー';
 
   @override
-  String get legalConsentSuffix => ' に同意したものとみなされます。';
+  String get legalConsentSuffix => 'に同意したものとみなされます。';
 
   @override
   String get legalConsentTerms => '利用規約';
@@ -4518,6 +4518,10 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get legalContentUnavailable =>
       '法的文書を読み込めませんでした。もう一度お試しいただくか、サポートにお問い合わせください。';
+
+  @override
+  String get legalTranslationNotice =>
+      'この翻訳は参考のために提供しています。内容に相違がある場合は、ベトナム語版が優先されます。';
 
   @override
   String get settingsUiLanguageTitle => '表示言語';

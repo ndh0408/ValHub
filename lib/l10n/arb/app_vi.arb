@@ -7810,6 +7810,11 @@
   "@legalContentUnavailable": {
     "description": "Bundled legal asset read or validation failed; this is not a Riot server failure."
   },
+  "legalTranslationNotice": "Đây là bản dịch để bạn tiện đọc. Nếu có khác biệt, bản tiếng Việt được ưu tiên áp dụng.",
+  "@legalTranslationNotice": {
+    "description": "Shown above a legal document that is a translation (not the authoritative Vietnamese text).",
+    "x-context": "lib/features/settings/ui/legal_document_screen.dart"
+  },
   "settingsUiLanguageTitle": "Ngôn ngữ giao diện",
   "@settingsUiLanguageTitle": {
     "description": "UI language setting and welcome-screen picker; separate from game item names."

@@ -85,6 +85,7 @@ flutter:
     - assets/l10n/languages/
     - assets/l10n/UNICODE-LICENSE.txt
     - assets/legal/vi/
+    - assets/legal/en/
   fonts:
     - family: BeVietnamPro
       fonts:

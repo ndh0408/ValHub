@@ -4914,6 +4914,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Não foi possível ler o documento legal. Tente de novo ou entre em contato com o suporte.';
 
   @override
+  String get legalTranslationNotice =>
+      'Esta tradução é fornecida para sua conveniência. Em caso de divergência, prevalece a versão em vietnamita.';
+
+  @override
   String get settingsUiLanguageTitle => 'Idioma do app';
 
   @override

@@ -1,0 +1,211 @@
+{
+  "schema": 1,
+  "locale": "en",
+  "id": "community",
+  "title": "Community Guidelines",
+  "summary": "Rules for posting, commenting and finding teammates",
+  "version": "1.0",
+  "effectiveDate": "04/10/2026",
+  "copyright": "© 2026 Nguyễn Đức Huy. All rights reserved.",
+  "export": {
+    "header": "<!-- File generated automatically from assets/legal/en/. Do not edit by hand: edit the JSON content, then run `dart run tool/export_legal_docs.dart`. -->",
+    "metadata": "**ValHub** · Version 1.0 · Effective from: 04/10/2026"
+  },
+  "preamble": [
+    {
+      "type": "p",
+      "text": "ValHub Community is where VALORANT players show off their store, talk about skins, find teammates and help each other climb the ranks. To keep it fun and safe, let's all follow the rules below. These Guidelines are part of the Terms of Use."
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Respect everyone",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Feel free to debate playstyles, the meta or skins, but target the opinion, not the person."
+            },
+            {
+              "text": "Do not insult, swear at, harass, threaten or bully anyone, or incite others to harass someone."
+            },
+            {
+              "text": "Do not discriminate or express hatred based on ethnicity, region, gender, religion, disability, sexual orientation or any other personal characteristic."
+            },
+            {
+              "text": "Do not impersonate other people, streamers, pro players or Riot Games."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Content that is not allowed",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Content that violates applicable law (Vietnamese law and the law where you live), incites violence or hatred, or harms the safety of others or public order and safety."
+            },
+            {
+              "text": "Pornographic or sexually suggestive content, especially anything involving children."
+            },
+            {
+              "text": "Shocking violent or gory images, self-harm, or content encouraging dangerous behavior."
+            },
+            {
+              "text": "Deliberately false information, fake news, scams, fake giveaways or \"free VP hacks\"."
+            },
+            {
+              "text": "Content that infringes other people's copyright or intellectual property rights."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Cheating, trading and advertising",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Do not promote, share or ask to buy cheating software, hacks, macros or tools that interfere with the game."
+            },
+            {
+              "text": "Do not buy, sell, rent or trade accounts; do not advertise boosting services, or sell VP or items without authorization."
+            },
+            {
+              "text": "Do not spam, post repeatedly, advertise or link to commercial websites, groups or services without permission."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Protecting personal information",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Do not post other people's personal information (real name, phone number, address, private photos…) without their consent."
+            },
+            {
+              "text": "Never share your Riot password, verification codes or sign-in email. ValHub and the moderation team will never ask for this information."
+            },
+            {
+              "text": "Be careful with screenshots: cover any information you do not want to make public."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Find teammates",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Only post when you are actually looking for players, with the correct region, game mode and number of open slots."
+            },
+            {
+              "text": "The party code in your post is visible to everyone who sees the post. Posts expire automatically after 30 minutes; delete your post or turn off the code in the game once your party is full."
+            },
+            {
+              "text": "Do not use LFG posts to spam, advertise, or lure others into a party to harass them or ruin their game."
+            },
+            {
+              "text": "Once in a match, behave like a good teammate: do not deliberately throw the match, do not abandon your team (AFK), and do not swear at or attack anyone."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Images and voting",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Only post images you have the right to use and that comply with these Guidelines; screenshots of your store, collection and in-match moments are all welcome."
+            },
+            {
+              "text": "Each account has only one vote per skin. Do not use multiple accounts or automated tools to manipulate the rankings."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Reporting violations",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "You can hide a player or block them on your device from the content menu. This only hides their content for the account you are using on this device; they can still see your public content. You can unhide them in Settings. This feature does not replace Report."
+        },
+        {
+          "type": "p",
+          "text": "See content that breaks the rules? Use the Report button on the post, comment or LFG post and choose the appropriate reason. Reports are kept confidential; the reported person does not know who reported them."
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Content that receives enough reports from different users will be hidden automatically pending review."
+            },
+            {
+              "text": "For urgent or serious cases (threats, content involving children, exposure of personal information), report the content and also email ndh0408@gmail.com."
+            },
+            {
+              "text": "Do not misuse the report feature to attack others; repeated false reports are also a violation."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Consequences of violations",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Depending on the severity and frequency, we may apply one or more of the following measures, with or without prior notice:"
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "Hiding or removing the violating content."
+            },
+            {
+              "text": "Temporarily restricting the ability to post, comment, find teammates or vote."
+            },
+            {
+              "text": "Permanently banning access to Community."
+            },
+            {
+              "text": "Providing information to the competent authorities in cases of unlawful conduct."
+            }
+          ]
+        },
+        {
+          "type": "p",
+          "text": "These measures apply only within ValHub and do not affect your Riot Account. However, violations in the game may still be dealt with by Riot Games under its own policies."
+        }
+      ]
+    },
+    {
+      "heading": "Appealing moderation decisions",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "If you believe your content was removed by mistake or a measure applied to you was unfair, email ndh0408@gmail.com with your Riot ID and a short description. We will review the decision and respond as soon as possible."
+        }
+      ]
+    }
+  ]
+}

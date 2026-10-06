@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "locale": "en",
+  "id": "notice",
+  "title": "Legal notice",
+  "summary": "Riot Games disclaimer, trademarks and credits",
+  "version": "1.0",
+  "effectiveDate": "04/10/2026",
+  "copyright": "© 2026 Nguyễn Đức Huy. All rights reserved.",
+  "export": {
+    "header": "<!-- File generated automatically from assets/legal/en/. Do not edit by hand: edit the JSON content, then run `dart run tool/export_legal_docs.dart`. -->",
+    "metadata": "**ValHub** · Version 1.0 · Effective from: 04/10/2026"
+  },
+  "preamble": [
+    {
+      "type": "callout",
+      "text": "ValHub isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games and all associated properties are trademarks or registered trademarks of Riot Games, Inc."
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Riot Games disclaimer",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "ValHub was created under Riot Games' \"Legal Jibber Jabber\" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project."
+        },
+        {
+          "type": "p",
+          "text": "ValHub is an independent app, is not an official Riot Games product, and is not affiliated with Riot Games in any way. All support for ValHub is provided by us, not by Riot Games."
+        }
+      ]
+    },
+    {
+      "heading": "Trademarks",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Riot Games, VALORANT and all associated properties are trademarks or registered trademarks of Riot Games, Inc. Other names, logos and trademarks mentioned in the App belong to their respective owners and are used for identification purposes only."
+        }
+      ]
+    },
+    {
+      "heading": "Game content",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Names, images, videos and information about skins, agents, maps, ranks, Player Cards and other VALORANT content are the property of Riot Games, Inc. Your account data (store, wallet, collection, matches, rankings) is retrieved directly from Riot Games' servers."
+        }
+      ]
+    },
+    {
+      "heading": "Data sources and credits",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "text": "public data and images about items, agents, maps and ranks. valorant-api.com is an independent community project, not affiliated with ValHub or Riot Games.",
+              "lead": "valorant-api.com:"
+            },
+            {
+              "text": "technical documentation compiled by the VALORANT developer community.",
+              "lead": "techchrism/valorant-api-docs:"
+            },
+            {
+              "text": "ValHub is built with Flutter and many other open-source software packages. The list and license of each package are available under \"Third-party software\" on the About & legal page.",
+              "lead": "Open-source software:"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "ValHub copyright",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "© 2026 Nguyễn Đức Huy. All rights reserved. ValHub is proprietary software; its use is subject to the Terms of Use."
+        }
+      ]
+    },
+    {
+      "heading": "Reporting intellectual property infringement",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "If you believe that content in ValHub, including content posted by users in Community, infringes your intellectual property rights, please email ndh0408@gmail.com. Please clearly state: your contact information, which of your works is protected, where the infringing content is located in the App, and a statement that the information you provide is accurate. We will review and handle the matter promptly."
+        }
+      ]
+    }
+  ]
+}

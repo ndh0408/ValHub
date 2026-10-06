@@ -174,6 +174,20 @@ class _LegalDocumentScreenState extends State<_LegalDocumentReader> {
                             ),
                           ),
                         ),
+                      // Only the Vietnamese text is authoritative.
+                      if (doc.locale != AppLocale.vi.arbCode)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Text(
+                            context.l10n.legalTranslationNotice,
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
+                          ),
+                        ),
                       _Header(document: doc),
                       for (final block in doc.preamble) _Block(block: block),
                       const SizedBox(height: 8),

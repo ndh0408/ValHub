@@ -4897,6 +4897,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Das rechtliche Dokument konnte nicht gelesen werden. Versuch es erneut oder wende dich an den Support.';
 
   @override
+  String get legalTranslationNotice =>
+      'Diese Übersetzung dient nur der Lesbarkeit. Bei Abweichungen gilt die vietnamesische Fassung.';
+
+  @override
   String get settingsUiLanguageTitle => 'Sprache der Oberfläche';
 
   @override

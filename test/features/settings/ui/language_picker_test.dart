@@ -11,6 +11,10 @@ import 'package:valvn/features/settings/ui/widgets/language_picker.dart';
 
 import '../../../helpers/test_prefs.dart';
 
+/// A choice in the open sheet: the button behind it shows the current
+/// language's name too, and the sheet is the later (top-most) match.
+Finder option(String text) => find.text(text).last;
+
 void main() {
   Future<Prefs> pumpPicker(
     WidgetTester tester, {
@@ -55,9 +59,10 @@ void main() {
       await tester.tap(find.byType(TextButton));
       await tester.pumpAndSettle();
       expect(find.text('Theo thiết bị'), findsOneWidget);
-      expect(find.text(AppLocale.vi.nativeName), findsOneWidget);
+      // The button and the sheet's option.
+      expect(find.text(AppLocale.vi.nativeName), findsNWidgets(2));
       expect(find.text(AppLocale.en.nativeName), findsNothing);
-      await tester.tap(find.text(AppLocale.vi.nativeName));
+      await tester.tap(option(AppLocale.vi.nativeName));
       await tester.pumpAndSettle();
       expect(prefs.getString(PrefKeys.appLocale), 'vi-VN');
       await tester.tap(find.byType(TextButton));
@@ -75,7 +80,7 @@ void main() {
     final prefs = await pumpPicker(tester);
     await tester.tap(find.byType(TextButton));
     await tester.pumpAndSettle();
-    Navigator.of(tester.element(find.text(AppLocale.vi.nativeName))).pop();
+    Navigator.of(tester.element(option(AppLocale.vi.nativeName))).pop();
     await tester.pumpAndSettle();
     expect(prefs.getString(PrefKeys.appLocale), isNull);
   });
@@ -86,7 +91,7 @@ void main() {
     final prefs = await pumpPicker(tester, fail: true);
     await tester.tap(find.byType(TextButton));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(AppLocale.vi.nativeName));
+    await tester.tap(option(AppLocale.vi.nativeName));
     await tester.pumpAndSettle();
     expect(
       find.text('Chưa lưu được ngôn ngữ. Vui lòng thử lại.'),
@@ -130,7 +135,7 @@ void main() {
       Future<void> chooseVi() async {
         await tester.tap(find.byType(TextButton));
         await tester.pumpAndSettle();
-        await tester.tap(find.text(AppLocale.vi.nativeName));
+        await tester.tap(option(AppLocale.vi.nativeName));
         await tester.pumpAndSettle();
       }
 
@@ -152,14 +157,14 @@ void main() {
     await pumpPicker(tester);
     await tester.tap(find.byType(TextButton));
     await tester.pumpAndSettle();
-    Navigator.of(tester.element(find.text(AppLocale.vi.nativeName))).pop();
+    Navigator.of(tester.element(option(AppLocale.vi.nativeName))).pop();
     await tester.pumpAndSettle();
     expect(sent, isEmpty);
     await tester.pumpWidget(const SizedBox.shrink());
     await pumpPicker(tester, fail: true);
     await tester.tap(find.byType(TextButton));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(AppLocale.vi.nativeName));
+    await tester.tap(option(AppLocale.vi.nativeName));
     await tester.pumpAndSettle();
     expect(sent, isEmpty);
     expect(
@@ -174,7 +179,7 @@ void main() {
     final prefs = await pumpPicker(tester);
     await tester.tap(find.byType(TextButton));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(AppLocale.vi.nativeName));
+    await tester.tap(option(AppLocale.vi.nativeName));
     await tester.pumpAndSettle();
     expect(prefs.getString(PrefKeys.appLocale), 'vi-VN');
     expect(sent, hasLength(1));
@@ -192,10 +197,29 @@ void main() {
       await pumpPicker(tester, width: width);
       await tester.tap(find.byType(TextButton));
       await tester.pumpAndSettle();
-      expect(find.text(AppLocale.vi.nativeName), findsOneWidget);
+      expect(find.text(AppLocale.vi.nativeName), findsNWidgets(2));
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets('the button names the current language in that language', (
+    tester,
+  ) async {
+    final handle = tester.ensureSemantics();
+    await pumpPicker(tester);
+    expect(
+      find.descendant(
+        of: find.byType(TextButton),
+        matching: find.text(AppLocale.vi.nativeName),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.bySemanticsLabel('Ngôn ngữ giao diện: ${AppLocale.vi.nativeName}'),
+      findsOneWidget,
+    );
+    handle.dispose();
+  });
 }
 
 class _FailingController extends LocaleController {

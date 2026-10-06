@@ -1,0 +1,3 @@
+/* Permission prompts (docs/design/I18N.md 11.5). */
+"NSFaceIDUsageDescription" = "Authentifiez-vous pour ouvrir les notes de connexion Riot enregistrées sur cet appareil.";
+"NSPhotoLibraryUsageDescription" = "Choisissez des photos dans votre photothèque pour les joindre à vos publications dans la Communauté ValHub. ValHub n’utilise que les photos que vous choisissez.";

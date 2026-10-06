@@ -4931,6 +4931,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Impossible de lire ce document juridique. Réessayez ou contactez l\'assistance.';
 
   @override
+  String get legalTranslationNotice =>
+      'Cette traduction est fournie pour votre confort. En cas de divergence, la version vietnamienne prévaut.';
+
+  @override
   String get settingsUiLanguageTitle => 'Langue de l\'interface';
 
   @override
