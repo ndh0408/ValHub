@@ -7,8 +7,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Read-only by default; only the tag-release job below may write.
 permissions:
-  contents: write          # needed to create a GitHub Release on tags
+  contents: read
 
 concurrency:
   group: android-${{ github.ref }}
@@ -21,18 +22,20 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
+    outputs:
+      artifact: ValVN-android-${{ steps.ver.outputs.name }}+${{ steps.ver.outputs.number }}
     env:
       HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: actions/setup-java@v6
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
         with:
           distribution: temurin
           java-version: '21'
           cache: gradle
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -66,7 +69,7 @@ jobs:
 
       - name: Coverage evidence
         if: always() && hashFiles('coverage/lcov.info') != ''
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: flutter-line-coverage
           path: |
@@ -110,7 +113,7 @@ jobs:
           (cd dist && sha256sum *.apk > SHA256SUMS.txt)
           if [ "$HAS_KEYSTORE" != "true" ]; then echo "::warning::APK được ký bằng DEBUG key (chưa cấu hình secret ANDROID_KEYSTORE_BASE64)"; fi
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: github.event_name != 'pull_request'
         with:
           name: ValVN-android-${{ steps.ver.outputs.name }}+${{ steps.ver.outputs.number }}
@@ -129,14 +132,29 @@ jobs:
           echo "::error::Không phát hành GitHub Release khi APK ký bằng debug key ngẫu nhiên của CI (bản sau không cập nhật đè được bản trước). Cấu hình secret ANDROID_KEYSTORE_BASE64 (docs/BUILD.md §4)."
           exit 1
 
+      - name: Clean secrets
+        if: always()
+        run: rm -f android/key.properties android/app/upload-keystore.jks
+
+  # Publishes the exact artifact the build job tested and signed; the only job
+  # with a write token, and it never sees the signing secrets. The build job
+  # already fails a tag run without the real keystore.
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: ${{ needs.build.outputs.artifact }}
+          path: dist
+
       - name: GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v') && env.HAS_KEYSTORE == 'true'
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3
         with:
           files: dist/*
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, '-') }}
-
-      - name: Clean secrets
-        if: always()
-        run: rm -f android/key.properties android/app/upload-keystore.jks

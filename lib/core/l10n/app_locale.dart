@@ -75,7 +75,7 @@ enum AppLocale {
     riotUiLocale: 'es-419',
     riotStatusCode: 'es_MX',
     intlTag: 'es_MX',
-    nativeName: 'Español (Latinoamérica)',
+    nativeName: 'Español (Latinoamérica)', // l10n-allow: endonym
     mlKitCode: 'es',
   ),
   fr(
@@ -155,7 +155,7 @@ enum AppLocale {
     riotUiLocale: 'pt-BR',
     riotStatusCode: 'pt_BR',
     intlTag: 'pt_BR',
-    nativeName: 'Português (Brasil)',
+    nativeName: 'Português (Brasil)', // l10n-allow: endonym
     mlKitCode: 'pt',
   ),
   ru(
@@ -202,7 +202,7 @@ enum AppLocale {
     riotUiLocale: 'vi',
     riotStatusCode: 'vi_VN',
     intlTag: 'vi',
-    nativeName: 'Tiếng Việt',
+    nativeName: 'Tiếng Việt', // l10n-allow: endonym
     mlKitCode: 'vi',
   ),
   // Simplified Chinese.

@@ -30,6 +30,9 @@ import 'ast_context.dart';
 import 'known_classes.dart';
 import 'project.dart';
 
+/// `// l10n-allow: <reason>`: a literal that must never be translated.
+final RegExp _allowMarker = RegExp(r'//\s*l10n-allow:\s*\S');
+
 /// Vietnamese-only letters: a literal containing one is user-visible text.
 final RegExp _viChars = RegExp(
   r'[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ'
@@ -383,6 +386,28 @@ class _RefVisitor extends RecursiveAstVisitor<void> {
   final String content;
 
   int lineOf(int offset) => unit.lineInfo.getLocation(offset).lineNumber;
+
+  late final List<String> _lines = content.split('\n');
+
+  /// Data that must never be translated (language endonyms, proper names)
+  /// carries `// l10n-allow: <reason>` on its own line, the previous line or
+  /// the line above the declaration / argument that holds it.
+  bool _allowed(AstNode node) {
+    bool marked(int l) =>
+        l >= 1 && l <= _lines.length && _allowMarker.hasMatch(_lines[l - 1]);
+    final line = lineOf(node.offset);
+    if (marked(line) || marked(line - 1)) return true;
+    final holder = node.thisOrAncestorMatching(
+      (n) =>
+          n is VariableDeclaration ||
+          n is FieldDeclaration ||
+          n is TopLevelVariableDeclaration ||
+          n is NamedExpression ||
+          n is Statement,
+    );
+    return holder != null && marked(lineOf(holder.offset) - 1);
+  }
+
   int colOf(int offset) => unit.lineInfo.getLocation(offset).columnNumber;
 
   bool _isStringsClass(String? name) =>
@@ -676,6 +701,7 @@ class _RefVisitor extends RecursiveAstVisitor<void> {
     if (rel.endsWith('_strings.dart') || !rel.startsWith('lib/')) return;
     if (node.thisOrAncestorOfType<Directive>() != null) return;
     if (!_viChars.hasMatch(value)) return;
+    if (_allowed(node)) return;
     c.viLiterals.add({
       'file': rel,
       'line': lineOf(node.offset),

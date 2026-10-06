@@ -114,7 +114,7 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
   if (problems.length > 0) throw new Error(`Invalid configuration:\n- ${problems.join('\n- ')}`);
 
   return {
-    lfgCodeInList: (env.LFG_CODE_IN_LIST ?? 'true').trim().toLowerCase() === 'true',
+    lfgCodeInList: (env.LFG_CODE_IN_LIST ?? 'false').trim().toLowerCase() === 'true',
     port,
     dataDir: path.resolve(env.DATA_DIR || '/data'),
     sessionSecret,

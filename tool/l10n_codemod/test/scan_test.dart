@@ -73,6 +73,18 @@ Future<String> early(BuildContext context) async {
 String literal() => 'Xin chào';
 
 String mapUse(BuildContext context) => CommonStrings.names['k']!;
+
+const endonym = 'Tiếng Việt'; // l10n-allow: endonym
+
+// l10n-allow: proper name
+const owner = 'Nguyễn';
+
+/// l10n-allow: legal export
+const wrapped =
+    'Bảo lưu mọi quyền.';
+
+// l10n-allow:
+const noReason = 'Không lý do';
 ''';
 
 const _storeTest = r'''
@@ -322,8 +334,12 @@ void main() {
     test('Vietnamese literals outside the strings files', () {
       final vi = (report['viLiterals']! as List<Object?>)
           .cast<Map<String, Object?>>();
-      expect(vi.single['file'], 'lib/features/store/ui/store_screen.dart');
-      expect(vi.single['value'], 'Xin chào');
+      expect(vi.map((v) => v['file']).toSet(), {
+        'lib/features/store/ui/store_screen.dart',
+      });
+      // `// l10n-allow: <reason>` on the same or the previous line exempts a
+      // literal; a marker without a reason does not.
+      expect(vi.map((v) => v['value']), ['Xin chào', 'Không lý do']);
     });
 
     test('the MaterialApp census of the test harness (R8)', () {

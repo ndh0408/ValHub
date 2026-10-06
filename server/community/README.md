@@ -81,7 +81,7 @@ CRITICAL/HIGH and ignore-unfixed policy; no vulnerability suppression was added.
 | `BACKUP_DIR`, `BACKUP_KEEP_DAYS`, `BACKUP_INTERVAL_SECONDS` | no | Backup service: writable host directory (`./backups`, uid 1000), retention (1–14 days, default 14), period (≥60 seconds, default 86400). |
 | `BACKUP_OFFSITE_CMD`, `BACKUP_AGE_RECIPIENT` | no | Optional operator command and age public recipient. Hook receives `BACKUP_FILE`, pointing only to the encrypted `.tgz.age`; failure prevents the success stamp. |
 | `SESSION_SECRET_FILE`, `SESSION_SECRET_PREV_FILE`, `PEPPER_FILE` | no | Read a secret from a mounted file instead of the corresponding env value; setting both is rejected. Compose secret mounts must be provided by the operator. |
-| `LFG_CODE_IN_LIST` | no (true) | Compatibility flag: false hides another author's party code in lists; join returns it. Keep true until the updated app requests the code before joining. |
+| `LFG_CODE_IN_LIST` | no (false) | Legacy compatibility only: true also shows another author's party code in lists. The app requests the code through `POST /v1/lfg/{id}/join`, so keep it false. |
 
 The process exits immediately with a clear message if a secret is missing / too short or a number is out of range.
 

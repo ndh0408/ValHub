@@ -36,7 +36,7 @@ function jsonArray(text: string): string[] {
   }
 }
 
-function serialize(r: LfgView, viewerId = '', codeInList = true) {
+function serialize(r: LfgView, viewerId = '', codeInList = false) {
   return {
     id: r.id,
     author: author(r),
@@ -107,7 +107,7 @@ export function registerLfg(app: Hono, x: Ctx): void {
     const cursor = decodeCursor(q.cursor);
     const limit = parseLimit(q.limit, 20, 50);
     const rows = x.repo.listLfg({ geo, mode, rank, role, mic, languages, status, now: x.now(), cursor, limit });
-    return x.json(c, { ...page(rows, limit, (r) => serialize(r, user.id, x.deps.config.lfgCodeInList ?? true)), appliedScope: appliedScope(geo) });
+    return x.json(c, { ...page(rows, limit, (r) => serialize(r, user.id, x.deps.config.lfgCodeInList ?? false)), appliedScope: appliedScope(geo) });
   });
 
   app.get('/v1/lfg/mine', (c) => {

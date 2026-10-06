@@ -7,7 +7,7 @@
 /// Pure Dart (no Flutter import) so the export tool can run it.
 abstract final class LegalInfo {
   /// Tên cá nhân / tổ chức phát hành ValHub (bên kiểm soát dữ liệu).
-  static const publisherName = 'Nguyễn Đức Huy';
+  static const publisherName = 'Nguyễn Đức Huy'; // l10n-allow: proper name
 
   /// Email nhận liên hệ, yêu cầu về dữ liệu cá nhân và báo cáo vi phạm.
   static const contactEmail = 'ndh0408@gmail.com';
@@ -21,7 +21,8 @@ abstract final class LegalInfo {
   /// Tên sản phẩm dùng trong văn bản pháp lý.
   static const productName = 'ValHub';
 
-  /// "© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền."
+  /// "© 2026 Nguyễn Đức Huy. Bảo lưu mọi quyền." for the VI legal export.
+  /// l10n-allow: the UI shows the ARB resource `legalLicensePageLegalese`.
   static const copyrightNotice =
       '© $copyrightYear $publisherName. Bảo lưu mọi quyền.';
 

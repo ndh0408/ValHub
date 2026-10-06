@@ -29,9 +29,9 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -57,9 +57,6 @@ jobs:
       - name: Legal assets and published text stay in sync
         run: dart run tool/export_legal_docs.dart --check
 
-      # After wave W4 (cutover): fail on any remaining *Strings reference.
-      # - run: dart run tool/l10n_codemod/bin/l10n.dart verify --ci
-
       - name: Formatting
         run: dart format --output=none --set-exit-if-changed lib test tool
 
@@ -75,9 +72,9 @@ jobs:
     # Both local configurations pass at checkpoint 4022. Keep English-device
     # fallback regression checks required; this does not certify English UI.
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -92,9 +89,9 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -115,13 +112,18 @@ jobs:
         working-directory: tool/l10n_codemod
         run: dart test
 
+      # Cutover gate: no legacy *Strings reference from lib/, no hard-coded
+      # Vietnamese literal (endonyms / proper names carry `// l10n-allow:`).
+      - name: Legacy localization references
+        run: dart run tool/l10n_codemod/bin/l10n.dart verify --ci
+
       # The inventory of the whole tree (about 2 minutes), for the wave
       # planning; not on every pull request.
       - name: Inventory (l10n scan)
         if: github.event_name != 'pull_request'
         run: dart run tool/l10n_codemod/bin/l10n.dart scan
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: github.event_name != 'pull_request'
         with:
           name: l10n-scan
@@ -140,9 +142,9 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -150,17 +152,18 @@ jobs:
 
       - run: flutter pub get
 
-      - name: Run the matrices that exist
+      # A missing matrix is a failure, never a silent pass (wave W7 owes them).
+      - name: Run the required matrices
         run: |
-          files=""
+          set -euo pipefail
+          files=()
           for t in overflow_matrix_test rtl_smoke_test a11y_test; do
-            if [ -f "test/l10n/$t.dart" ]; then files="$files test/l10n/$t.dart"; fi
+            f="test/l10n/$t.dart"
+            if [ ! -f "$f" ]; then echo "::error::Missing required QA matrix: $f"; missing=1; fi
+            files+=("$f")
           done
-          if [ -z "$files" ]; then
-            echo "No QA matrix tests yet (they arrive with wave W7)."
-          else
-            flutter test $files
-          fi
+          [ -z "${missing:-}" ] || exit 1
+          flutter test "${files[@]}"
 
 # The macOS job of ios.yml additionally verifies the iOS locale codes
 # (CFBundleLocalizations, docs/design/I18N.md 11.5) once lane LP lands.

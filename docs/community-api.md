@@ -264,8 +264,8 @@ party code (G-18) and opens the party when the user has not typed one. Joiner: t
 list shows only posts matching the viewer's rank by default ("Phù hợp với rank của
 bạn" toggle), marks mismatches, and "Vào tổ đội" joins by code (G-19) after one
 confirmation. New clients call `POST /v1/lfg/{id}/join` first to obtain `partyCode`;
-legacy clients can still use the list code while `LFG_CODE_IN_LIST=true` (default).
-When false, other authors' list codes are empty strings; the owner still receives their own code.
+the list never shows another author's code unless the legacy flag `LFG_CODE_IN_LIST=true` is set (default false).
+Other authors' list codes are empty strings; the owner still receives their own code.
 
 `joins` counts unique authorized **join requests**, including requests whose later
 Riot join fails or is cancelled. It does not prove party membership, fill a seat,

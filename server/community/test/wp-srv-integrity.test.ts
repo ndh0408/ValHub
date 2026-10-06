@@ -136,8 +136,16 @@ describe('WP-SRV integrity', () => {
     expect(e.repo.getPost(next, a.user.id)?.hidden).toBe(1);
   });
 
-  it('returns a party code on join; keeps list compatibility by default and supports hiding it', async () => {
-    e = setup({ config: { lfgCodeInList: false } });
+  it('keeps list compatibility only when explicitly enabled', async () => {
+    e = setup({ config: { lfgCodeInList: true } });
+    const owner = await e.login('owner');
+    const viewer = await e.login('viewer');
+    await e.req('POST', '/v1/lfg', { token: owner.token, body: { region: 'ap', mode: 'unrated', partyCode: 'ABCDEF', slots: 2 } });
+    expect((await e.req('GET', '/v1/lfg', { token: viewer.token })).json.items[0].partyCode).toBe('ABCDEF');
+  });
+
+  it('hides other authors\' party codes in lists by default and returns the code on join', async () => {
+    e = setup();
     const owner = await e.login('owner');
     const viewer = await e.login('viewer');
     const p = await e.req('POST', '/v1/lfg', { token: owner.token, body: { region: 'ap', mode: 'unrated', partyCode: 'ABCDEF', slots: 2 } });
