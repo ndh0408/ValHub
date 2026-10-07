@@ -58,7 +58,7 @@ Saat menggunakan Aplikasi, Anda dilarang:
 
 ## 7. Tindakan pada Akun Riot
 
-Beberapa fitur memungkinkan perubahan status Akun Riot Anda, misalnya: mengganti loadout, memilih atau mengunci agen, bergabung atau keluar dari party, memulai atau membatalkan pencarian pertandingan, serta keluar dari pertandingan.
+Beberapa fitur memungkinkan perubahan status Akun Riot Anda, misalnya: mengganti loadout, bergabung atau keluar dari party, memulai atau membatalkan pencarian pertandingan, serta keluar dari pertandingan.
 
 - Tindakan ini hanya dilakukan jika Anda sendiri mengetuk tombol yang sesuai; Aplikasi tidak melakukannya secara otomatis atas nama Anda.
 - Untuk tindakan yang dapat mengakibatkan penalti di dalam game (misalnya keluar dari pertandingan atau dodge), Aplikasi akan menampilkan peringatan dan meminta Anda mengonfirmasi.

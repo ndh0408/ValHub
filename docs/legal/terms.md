@@ -58,7 +58,7 @@ Khi sử dụng Ứng dụng, bạn không được:
 
 ## 7. Thao tác trên Tài khoản Riot
 
-Một số tính năng cho phép thay đổi trạng thái Tài khoản Riot của bạn, ví dụ: đổi trang bị, chọn hoặc khóa đặc vụ, tham gia hay rời tổ đội, bắt đầu hoặc hủy tìm trận, rời trận đấu.
+Một số tính năng cho phép thay đổi trạng thái Tài khoản Riot của bạn, ví dụ: đổi trang bị, tham gia hay rời tổ đội, bắt đầu hoặc hủy tìm trận, rời trận đấu.
 
 - Các thao tác này chỉ được thực hiện khi chính bạn bấm nút tương ứng; Ứng dụng không tự động thực hiện thay bạn.
 - Với thao tác có thể dẫn đến hình phạt trong trò chơi (ví dụ rời trận, né trận), Ứng dụng sẽ hiển thị cảnh báo và yêu cầu bạn xác nhận.

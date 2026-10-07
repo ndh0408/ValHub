@@ -58,7 +58,7 @@ Bei der Nutzung der App ist es dir untersagt:
 
 ## 7. Aktionen in deinem Riot-Konto
 
-Einige Funktionen ermöglichen es, den Status deines Riot-Kontos zu ändern, zum Beispiel: Loadout ändern, einen Agenten auswählen oder festlegen, einer Gruppe beitreten oder sie verlassen, die Matchsuche starten oder abbrechen, ein Match verlassen.
+Einige Funktionen ermöglichen es, den Status deines Riot-Kontos zu ändern, zum Beispiel: Loadout ändern, einer Gruppe beitreten oder sie verlassen, die Matchsuche starten oder abbrechen, ein Match verlassen.
 
 - Diese Aktionen werden nur ausgeführt, wenn du selbst auf die entsprechende Schaltfläche tippst; die App führt sie nicht automatisch für dich aus.
 - Bei Aktionen, die zu Strafen im Spiel führen können (z. B. ein Match verlassen oder dodgen), zeigt die App eine Warnung an und bittet dich um Bestätigung.

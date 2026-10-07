@@ -58,7 +58,7 @@ Quando usi l'App, non devi:
 
 ## 7. Azioni sull'Account Riot
 
-Alcune funzionalità ti consentono di modificare lo stato del tuo Account Riot, ad esempio: cambiare l'equipaggiamento, selezionare o bloccare un agente, unirti a un gruppo o lasciarlo, avviare o annullare la ricerca di una partita, abbandonare una partita.
+Alcune funzionalità ti consentono di modificare lo stato del tuo Account Riot, ad esempio: cambiare l'equipaggiamento, unirti a un gruppo o lasciarlo, avviare o annullare la ricerca di una partita, abbandonare una partita.
 
 - Queste azioni vengono eseguite solo quando sei tu a toccare il pulsante corrispondente; l'App non le esegue mai automaticamente al posto tuo.
 - Per le azioni che possono comportare penalità nel gioco (ad esempio abbandonare una partita o il dodge), l'App mostra un avviso e ti chiede di confermare.

@@ -58,7 +58,7 @@ Ao usar o Aplicativo, você não pode:
 
 ## 7. Ações na Conta Riot
 
-Alguns recursos permitem alterar o estado da sua Conta Riot, por exemplo: trocar o loadout, escolher ou confirmar um agente, entrar ou sair de um grupo, iniciar ou cancelar a busca por partida e sair de uma partida.
+Alguns recursos permitem alterar o estado da sua Conta Riot, por exemplo: trocar o loadout, entrar ou sair de um grupo, iniciar ou cancelar a busca por partida e sair de uma partida.
 
 - Essas ações só são realizadas quando você mesmo toca no botão correspondente; o Aplicativo não as realiza automaticamente por você.
 - Para ações que podem resultar em penalidades no jogo (por exemplo, sair de uma partida ou desistir dela na seleção de agentes), o Aplicativo exibirá um aviso e pedirá a sua confirmação.

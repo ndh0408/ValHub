@@ -58,7 +58,7 @@ Korzystając z Aplikacji, nie wolno Ci:
 
 ## 7. Czynności na Koncie Riot
 
-Niektóre funkcje pozwalają zmieniać stan Twojego Konta Riot, na przykład: zmieniać wyposażenie, wybierać lub blokować agenta, dołączać do drużyny lub ją opuszczać, rozpoczynać lub anulować szukanie meczu, opuszczać mecz.
+Niektóre funkcje pozwalają zmieniać stan Twojego Konta Riot, na przykład: zmieniać wyposażenie, dołączać do drużyny lub ją opuszczać, rozpoczynać lub anulować szukanie meczu, opuszczać mecz.
 
 - Czynności te są wykonywane wyłącznie wtedy, gdy sam naciśniesz odpowiedni przycisk; Aplikacja nie wykonuje ich automatycznie w Twoim imieniu.
 - W przypadku czynności, które mogą skutkować karami w grze (np. opuszczenie meczu, wyjście z wyboru agenta, czyli dodge), Aplikacja wyświetli ostrzeżenie i poprosi o potwierdzenie.

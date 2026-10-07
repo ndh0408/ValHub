@@ -165,7 +165,7 @@
       "blocks": [
         {
           "type": "p",
-          "text": "Algunas funciones permiten cambiar el estado de tu Cuenta de Riot, por ejemplo: cambiar el equipamiento, seleccionar o fijar un agente, unirte a un grupo o salir de él, empezar o cancelar la búsqueda de partida o abandonar una partida."
+          "text": "Algunas funciones permiten cambiar el estado de tu Cuenta de Riot, por ejemplo: cambiar el equipamiento, unirte a un grupo o salir de él, empezar o cancelar la búsqueda de partida o abandonar una partida."
         },
         {
           "type": "list",

@@ -165,7 +165,7 @@
       "blocks": [
         {
           "type": "p",
-          "text": "Alcune funzionalità ti consentono di modificare lo stato del tuo Account Riot, ad esempio: cambiare l'equipaggiamento, selezionare o bloccare un agente, unirti a un gruppo o lasciarlo, avviare o annullare la ricerca di una partita, abbandonare una partita."
+          "text": "Alcune funzionalità ti consentono di modificare lo stato del tuo Account Riot, ad esempio: cambiare l'equipaggiamento, unirti a un gruppo o lasciarlo, avviare o annullare la ricerca di una partita, abbandonare una partita."
         },
         {
           "type": "list",

@@ -165,7 +165,7 @@
       "blocks": [
         {
           "type": "p",
-          "text": "Some features let you change the state of your Riot Account, for example: changing your loadout, selecting or locking an agent, joining or leaving a party, starting or cancelling matchmaking, or leaving a match."
+          "text": "Some features let you change the state of your Riot Account, for example: changing your loadout, joining or leaving a party, starting or cancelling matchmaking, or leaving a match."
         },
         {
           "type": "list",

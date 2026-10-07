@@ -165,7 +165,7 @@
       "blocks": [
         {
           "type": "p",
-          "text": "Einige Funktionen ermöglichen es, den Status deines Riot-Kontos zu ändern, zum Beispiel: Loadout ändern, einen Agenten auswählen oder festlegen, einer Gruppe beitreten oder sie verlassen, die Matchsuche starten oder abbrechen, ein Match verlassen."
+          "text": "Einige Funktionen ermöglichen es, den Status deines Riot-Kontos zu ändern, zum Beispiel: Loadout ändern, einer Gruppe beitreten oder sie verlassen, die Matchsuche starten oder abbrechen, ein Match verlassen."
         },
         {
           "type": "list",

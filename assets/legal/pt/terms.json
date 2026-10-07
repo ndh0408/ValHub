@@ -165,7 +165,7 @@
       "blocks": [
         {
           "type": "p",
-          "text": "Alguns recursos permitem alterar o estado da sua Conta Riot, por exemplo: trocar o loadout, escolher ou confirmar um agente, entrar ou sair de um grupo, iniciar ou cancelar a busca por partida e sair de uma partida."
+          "text": "Alguns recursos permitem alterar o estado da sua Conta Riot, por exemplo: trocar o loadout, entrar ou sair de um grupo, iniciar ou cancelar a busca por partida e sair de uma partida."
         },
         {
           "type": "list",

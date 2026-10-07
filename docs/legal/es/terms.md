@@ -58,7 +58,7 @@ Al usar la Aplicación, no puedes:
 
 ## 7. Acciones en la Cuenta de Riot
 
-Algunas funciones permiten cambiar el estado de tu Cuenta de Riot, por ejemplo: cambiar el equipamiento, seleccionar o fijar un agente, unirte a un grupo o salir de él, empezar o cancelar la búsqueda de partida o abandonar una partida.
+Algunas funciones permiten cambiar el estado de tu Cuenta de Riot, por ejemplo: cambiar el equipamiento, unirte a un grupo o salir de él, empezar o cancelar la búsqueda de partida o abandonar una partida.
 
 - Estas acciones solo se realizan cuando tú pulsas el botón correspondiente; la Aplicación no las realiza automáticamente en tu lugar.
 - En las acciones que pueden conllevar una penalización en el juego (por ejemplo, abandonar una partida o hacer dodge), la Aplicación mostrará una advertencia y te pedirá que confirmes.

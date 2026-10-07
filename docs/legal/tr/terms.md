@@ -58,7 +58,7 @@ Uygulama'yı kullanırken şunları yapamazsınız:
 
 ## 7. Riot Hesabınızdaki işlemler
 
-Bazı özellikler Riot Hesabınızın durumunu değiştirmenize olanak tanır; örneğin: kuşanımı değiştirmek, ajan seçmek veya kilitlemek, gruba katılmak veya gruptan ayrılmak, maç aramayı başlatmak veya iptal etmek, maçtan ayrılmak.
+Bazı özellikler Riot Hesabınızın durumunu değiştirmenize olanak tanır; örneğin: kuşanımı değiştirmek, gruba katılmak veya gruptan ayrılmak, maç aramayı başlatmak veya iptal etmek, maçtan ayrılmak.
 
 - Bu işlemler yalnızca ilgili düğmeye bizzat siz dokunduğunuzda gerçekleştirilir; Uygulama bunları sizin yerinize otomatik olarak gerçekleştirmez.
 - Oyun içi cezaya yol açabilecek işlemler için (örneğin maçtan ayrılma, maçtan kaçma) Uygulama bir uyarı gösterir ve onayınızı ister.

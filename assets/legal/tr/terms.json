@@ -165,7 +165,7 @@
       "blocks": [
         {
           "type": "p",
-          "text": "Bazı özellikler Riot Hesabınızın durumunu değiştirmenize olanak tanır; örneğin: kuşanımı değiştirmek, ajan seçmek veya kilitlemek, gruba katılmak veya gruptan ayrılmak, maç aramayı başlatmak veya iptal etmek, maçtan ayrılmak."
+          "text": "Bazı özellikler Riot Hesabınızın durumunu değiştirmenize olanak tanır; örneğin: kuşanımı değiştirmek, gruba katılmak veya gruptan ayrılmak, maç aramayı başlatmak veya iptal etmek, maçtan ayrılmak."
         },
         {
           "type": "list",

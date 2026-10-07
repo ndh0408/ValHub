@@ -58,7 +58,7 @@ Lorsque vous utilisez l'Application, il vous est interdit de :
 
 ## 7. Actions sur votre Compte Riot
 
-Certaines fonctionnalités permettent de modifier l'état de votre Compte Riot, par exemple : changer d'équipement, sélectionner ou verrouiller un agent, rejoindre ou quitter un groupe, lancer ou annuler la recherche de partie, quitter une partie.
+Certaines fonctionnalités permettent de modifier l'état de votre Compte Riot, par exemple : changer d'équipement, rejoindre ou quitter un groupe, lancer ou annuler la recherche de partie, quitter une partie.
 
 - Ces actions ne sont effectuées que lorsque vous appuyez vous-même sur le bouton correspondant ; l'Application ne les effectue jamais automatiquement à votre place.
 - Pour les actions susceptibles d'entraîner des pénalités dans le jeu (par exemple quitter une partie ou esquiver une partie), l'Application affiche un avertissement et vous demande de confirmer.

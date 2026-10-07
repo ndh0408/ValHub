@@ -165,7 +165,7 @@
       "blocks": [
         {
           "type": "p",
-          "text": "Certaines fonctionnalités permettent de modifier l'état de votre Compte Riot, par exemple : changer d'équipement, sélectionner ou verrouiller un agent, rejoindre ou quitter un groupe, lancer ou annuler la recherche de partie, quitter une partie."
+          "text": "Certaines fonctionnalités permettent de modifier l'état de votre Compte Riot, par exemple : changer d'équipement, rejoindre ou quitter un groupe, lancer ou annuler la recherche de partie, quitter une partie."
         },
         {
           "type": "list",

@@ -58,7 +58,7 @@ When using the App, you must not:
 
 ## 7. Actions on your Riot Account
 
-Some features let you change the state of your Riot Account, for example: changing your loadout, selecting or locking an agent, joining or leaving a party, starting or cancelling matchmaking, or leaving a match.
+Some features let you change the state of your Riot Account, for example: changing your loadout, joining or leaving a party, starting or cancelling matchmaking, or leaving a match.
 
 - These actions are performed only when you yourself tap the corresponding button; the App never performs them automatically on your behalf.
 - For actions that may lead to in-game penalties (for example leaving a match or dodging), the App shows a warning and asks you to confirm.
