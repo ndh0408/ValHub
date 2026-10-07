@@ -8,6 +8,7 @@ import '../../../../core/notifications/notification_service.dart';
 import '../../../../core/riot/pvp_api.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/json.dart';
+import '../../../../core/xmpp/xmpp_providers.dart' show appForegroundProvider;
 import '../../community_routes.dart';
 import '../../data/community_exception.dart';
 import '../../data/lfg_sync.dart';
@@ -19,8 +20,10 @@ import '../community_screen.dart' show CommunitySection;
 /// is on screen: every [kLfgRefreshInterval] it reads the party (G-12 /
 /// G-13 / G-1), PATCHes party size / slots / status (and a heartbeat), and
 /// notifies "Tên#TAG đã vào tổ đội" for new members. The timer belongs to
-/// this widget (cancelled on dispose) and skips ticks while its tab is in
-/// the background. It never changes anything on the Riot account.
+/// this widget (cancelled on dispose) and skips ticks while its tab or the
+/// whole app is in the background: a backgrounded app must not keep the
+/// post alive (heartbeat) for a player who left. It never changes anything
+/// on the Riot account.
 class LfgPosterSync extends ConsumerStatefulWidget {
   const LfgPosterSync({super.key, required this.account, required this.child});
 
@@ -72,6 +75,7 @@ class _LfgPosterSyncState extends ConsumerState<LfgPosterSync> {
 
   Future<void> _tick() async {
     if (!mounted || !_visible || _busy) return;
+    if (!ref.read(appForegroundProvider)) return;
     final puuid = _puuid;
     final post = ref.read(myLfgProvider(puuid)).value;
     final now = ref.read(clockProvider).now();

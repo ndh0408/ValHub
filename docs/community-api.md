@@ -259,8 +259,11 @@ Client behaviour (poster): while the LFG screen / app is open, the poster's app 
 its own Riot party (G-12/G-13) every 20 s: it PATCHes `partySize` / `slots` when members
 change, sets `status: "full"` when the party reaches 5 (or the mode maximum), and
 `in_game` when the party enters matchmaking or a match; it shows a local notification
-"<Riot ID> đã vào tổ đội" when a new member appears. Creating a post auto-generates a
-party code (G-18) and opens the party when the user has not typed one. Joiner: the
+"<Riot ID> đã vào tổ đội" when a new member appears. The sync runs only while the app is
+in the foreground (a backgrounded app neither reads the party nor extends the post, so
+it expires instead of advertising a player who left). Creating a post auto-generates a
+party code (G-18) when the user has not typed one; it never changes the party's
+open/closed setting (codes work for closed parties; 2026-10-07). Joiner: the
 list shows only posts matching the viewer's rank by default ("Phù hợp với rank của
 bạn" toggle), marks mismatches, and "Vào tổ đội" joins by code (G-19) after one
 confirmation. New clients call `POST /v1/lfg/{id}/join` first to obtain `partyCode`;

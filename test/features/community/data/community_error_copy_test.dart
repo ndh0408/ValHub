@@ -68,4 +68,38 @@ void main() {
       CommunityStrings.errorRateLimitedIn('2 phút'),
     );
   });
+
+  test('a known reason wins over the code that carries it', () {
+    final notOwned = CommunityException.fromResponse(403, {
+      'error': {
+        'code': 'forbidden',
+        'reason': 'skin_not_owned',
+        'message': 'x',
+      },
+    });
+    expect(
+      describeCommunityError(tl, notOwned).message,
+      tl.communityReviewOwnershipRequired,
+      reason: 'not the Community Guidelines refusal',
+    );
+    final quota = CommunityException.fromResponse(400, {
+      'error': {
+        'code': 'invalid_input',
+        'reason': 'quota_exceeded',
+        'params': {'maxMb': 50},
+      },
+    });
+    expect(
+      describeCommunityError(tl, quota).message,
+      tl.communityErrorImageQuota,
+    );
+    expect(describeCommunityError(tl, quota).canRetry, isFalse);
+    final forbidden = CommunityException.fromResponse(403, {
+      'error': {'code': 'forbidden'},
+    });
+    expect(
+      describeCommunityError(tl, forbidden).message,
+      tl.communityErrorForbidden,
+    );
+  });
 }

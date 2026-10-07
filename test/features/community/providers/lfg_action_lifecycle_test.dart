@@ -77,52 +77,50 @@ void main() {
     final response = Completer<JsonMap>();
     when(() => env.pvp.partyPlayer(any())).thenAnswer((_) => response.future);
     when(() => env.pvp.party(any(), any())).thenAnswer((_) async => _party());
-    await runAction(
-      tester,
-      (ref) => currentPartyCode(ref, mePuuid, openParty: true),
-      (pending, visible) async {
-        visible.value = false;
-        await settle(tester);
-        response.complete({'Subject': mePuuid, 'CurrentPartyID': _partyId});
-        await settle(tester);
-        expect(await pending, isNull);
-        verifyNever(
-          () => env.pvp.partySetAccessibility(
-            any(),
-            any(),
-            open: any(named: 'open'),
-          ),
-        );
-        verifyNever(() => env.pvp.partyGenerateInviteCode(any(), any()));
-      },
-    );
+    await runAction(tester, (ref) => currentPartyCode(ref, mePuuid), (
+      pending,
+      visible,
+    ) async {
+      visible.value = false;
+      await settle(tester);
+      response.complete({'Subject': mePuuid, 'CurrentPartyID': _partyId});
+      await settle(tester);
+      expect(await pending, isNull);
+      verifyNever(
+        () => env.pvp.partySetAccessibility(
+          any(),
+          any(),
+          open: any(named: 'open'),
+        ),
+      );
+      verifyNever(() => env.pvp.partyGenerateInviteCode(any(), any()));
+    });
   });
 
-  testWidgets('closed widget stops code generation after opening the party', (
+  testWidgets('a closed party gets a code without being opened', (
     tester,
   ) async {
-    final response = Completer<JsonMap>();
     when(
       () => env.pvp.partyPlayer(any()),
     ).thenAnswer((_) async => {'Subject': mePuuid, 'CurrentPartyID': _partyId});
     when(() => env.pvp.party(any(), any())).thenAnswer((_) async => _party());
-    when(() => env.pvp.partySetAccessibility(any(), any(), open: true))
-        .thenAnswer((_) => response.future);
-    await runAction(
-      tester,
-      (ref) => currentPartyCode(ref, mePuuid, openParty: true),
-      (pending, visible) async {
-        verify(
-          () => env.pvp.partySetAccessibility(mePuuid, _partyId, open: true),
-        ).called(1);
-        visible.value = false;
-        await settle(tester);
-        response.complete(_party(open: true));
-        await settle(tester);
-        expect(await pending, isNull);
-        verifyNever(() => env.pvp.partyGenerateInviteCode(any(), any()));
-      },
-    );
+    when(() => env.pvp.partyGenerateInviteCode(any(), any()))
+        .thenAnswer((_) async => _party(code: 'AB12CD'));
+    await runAction(tester, (ref) => currentPartyCode(ref, mePuuid), (
+      pending,
+      visible,
+    ) async {
+      expect(await pending, 'AB12CD');
+      verify(() => env.pvp.partyGenerateInviteCode(mePuuid, _partyId))
+          .called(1);
+      verifyNever(
+        () => env.pvp.partySetAccessibility(
+          any(),
+          any(),
+          open: any(named: 'open'),
+        ),
+      );
+    });
   });
 
   testWidgets(

@@ -11,16 +11,22 @@ import '../data/community_exception.dart';
 ErrorDescription describeCommunityError(AppLocalizations l10n, Object error) {
   if (error is! CommunityException) return describeError(l10n, error);
   final e = error;
-  final reasonMessage =
-      e.code == CommunityException.invalidInput || e.code == 'suspended'
-      ? l10n.communityModerationReason(e.reason)
-      : null;
+  // A known reason explains the refusal whatever the HTTP code carries it
+  // (`skin_not_owned` arrives as `forbidden`, a full image quota as
+  // `invalid_input`); only local copy is shown, never the server's text.
+  final reasonMessage = e.reason == 'quota_exceeded'
+      ? l10n.communityErrorImageQuota
+      : l10n.communityModerationReason(e.reason);
   if (reasonMessage != null) {
     return ErrorDescription(
       message: reasonMessage,
-      icon: e.code == 'suspended'
-          ? Icons.block_outlined
-          : Icons.edit_note_outlined,
+      icon: switch (e.reason) {
+        'skin_not_owned' ||
+        'ownership_unavailable' => Icons.verified_user_outlined,
+        'quota_exceeded' => Icons.photo_library_outlined,
+        _ when e.code == 'suspended' => Icons.block_outlined,
+        _ => Icons.edit_note_outlined,
+      },
       canRetry: false,
     );
   }

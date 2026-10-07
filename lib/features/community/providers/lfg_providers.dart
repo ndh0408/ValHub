@@ -324,8 +324,9 @@ class LfgCodeUnavailable implements Exception {
 }
 
 /// Creates an LFG post for [puuid] (one active post per user). An empty
-/// [partyCode] is generated from the account's party (G-18, opening the
-/// party) as part of this single user action.
+/// [partyCode] is generated from the account's party (G-18) as part of this
+/// single user action. The party's open / closed setting is never changed:
+/// players join by code whether the party is open or not.
 Future<LfgPost> createLfgPost(
   WidgetRef ref, {
   required String puuid,
@@ -346,7 +347,7 @@ Future<LfgPost> createLfgPost(
 }) async {
   var code = partyCode.trim().toUpperCase();
   if (code.isEmpty) {
-    code = await currentPartyCode(ref, puuid, openParty: true) ?? '';
+    code = await currentPartyCode(ref, puuid) ?? '';
     if (!ref.context.mounted) {
       throw const CommunityException(CommunityException.cancelled);
     }
@@ -430,19 +431,14 @@ Future<void> joinLfgParty(WidgetRef ref, String puuid, String code) =>
     ref.read(pvpApiProvider).partyJoinByCode(puuid, code.trim().toUpperCase());
 
 /// The invite code of the account's current party, generating one (G-18)
-/// through the party feature when the party has none (and opening the party
-/// when [openParty]). `null` when the game is not running or no party
-/// exists.
-Future<String?> currentPartyCode(
-  WidgetRef ref,
-  String puuid, {
-  bool openParty = false,
-}) async {
+/// through the party feature when the party has none. `null` when the game
+/// is not running or no party exists. Never opens the party.
+Future<String?> currentPartyCode(WidgetRef ref, String puuid) async {
   final party = partyProvider(puuid);
   // Keeps the auto-disposed party provider alive while we use it.
   final sub = ref.listenManual(party, (_, _) {});
   try {
-    return await _partyCode(ref, party, openParty: openParty);
+    return await _partyCode(ref, party);
   } finally {
     sub.close();
   }
@@ -450,21 +446,12 @@ Future<String?> currentPartyCode(
 
 Future<String?> _partyCode(
   WidgetRef ref,
-  AsyncNotifierProvider<PartyNotifier, PartyView> party, {
-  required bool openParty,
-}) async {
+  AsyncNotifierProvider<PartyNotifier, PartyView> party,
+) async {
   final view = await ref.read(party.future);
   if (!ref.context.mounted) return null;
   final current = view.party;
   if (current == null) return null;
-  if (openParty && !current.isOpen) {
-    try {
-      await ref.read(party.notifier).setOpen(true);
-    } on Object {
-      // Joining by code works for closed parties too.
-    }
-    if (!ref.context.mounted) return null;
-  }
   final existing = asNonEmptyString(current.inviteCode)?.toUpperCase();
   if (existing != null && partyCodePattern.hasMatch(existing)) return existing;
   await ref.read(party.notifier).generateCode();

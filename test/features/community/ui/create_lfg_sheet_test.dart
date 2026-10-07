@@ -118,8 +118,11 @@ void main() {
     await settle(tester);
 
     verify(() => env.pvp.partyGenerateInviteCode(mePuuid, any())).called(1);
-    verify(() => env.pvp.partySetAccessibility(mePuuid, any(), open: true))
-        .called(1);
+    // Posting never opens the party: players join by code.
+    verifyNever(
+      () =>
+          env.pvp.partySetAccessibility(any(), any(), open: any(named: 'open')),
+    );
     final body = env.server.calls('POST /v1/lfg').single.json! as Map;
     expect(body['partyCode'], 'ZX9Y8W');
     expect(body['partySize'], 2);

@@ -305,6 +305,10 @@ WeeklyMissions buildWeeklyMissions(
   final unknown = <String>{};
   DateTime? earliestExpiry;
   for (final m in contracts.missions) {
+    // A saved copy (expired sign-in, offline) can hold last week's missions:
+    // an ended mission is not this week's.
+    final ends = m.expiresAt;
+    if (ends != null && !ends.isAfter(now)) continue;
     final def = db.mission(m.id);
     if (def == null) {
       unknown.add(m.id);

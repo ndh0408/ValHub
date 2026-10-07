@@ -149,6 +149,28 @@ void main() {
     final db = bpContent();
     final now = t0;
 
+    test('a saved copy never lists missions whose week has ended', () {
+      final w = buildWeeklyMissions(
+        PlayerContracts.fromJson(
+          contractsJson(
+            missions: [
+              activeMission(
+                Bp.missionUlt,
+                Bp.objUlt,
+                8,
+                expires: '2026-09-01T00:00:00Z',
+              ),
+              activeMission(Bp.missionHeadshots, Bp.objHeadshots, 1),
+            ],
+          ),
+          receivedAt: now,
+        ),
+        db,
+        now: now,
+      );
+      expect(w.missions.map((m) => m.id), [Bp.missionHeadshots]);
+    });
+
     test('joins P-15 with /v1/missions, incomplete first', () {
       final w = buildWeeklyMissions(
         PlayerContracts.fromJson(contractsJson(), receivedAt: now),
