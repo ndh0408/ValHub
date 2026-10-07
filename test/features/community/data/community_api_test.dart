@@ -307,6 +307,38 @@ void main() {
     );
   });
 
+  test("every request carries an id; a failure keeps the server's", () async {
+    env.server.on(
+      'POST /v1/posts',
+      (req) => FakeResponse(
+        500,
+        {
+          'error': {'code': 'server_error', 'requestId': 'srv-12345678'},
+        },
+        {
+          'x-request-id': [req.headers[kRequestIdHeader] as String],
+        },
+      ),
+    );
+    final e = await api
+        .createPost(mePuuid, kind: PostKind.text, body: 'x')
+        .then<Object?>((_) => null, onError: (Object e) => e);
+    final sent = env.server.calls('POST /v1/posts').single.headers;
+    expect(sent[kRequestIdHeader], matches(RegExp(r'^vh[0-9a-f]{16}$')));
+    expect((e! as CommunityException).requestId, 'srv-12345678');
+    // Two requests never share an id.
+    expect(newRequestId(), isNot(newRequestId()));
+  });
+
+  test('without an id in the body, the echoed header is kept', () {
+    final ex = CommunityException.fromResponse(
+      503,
+      '<html>busy</html>',
+      requestId: 'vh0123456789abcdef',
+    );
+    expect(ex.requestId, 'vh0123456789abcdef');
+  });
+
   test('HTML error pages and garbage 2xx bodies never crash', () async {
     env.server
       ..json(

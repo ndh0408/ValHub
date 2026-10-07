@@ -1,4 +1,4 @@
-import 'dart:io' show HttpHeaders, SocketException;
+import 'dart:io' show HttpHeaders;
 
 import 'package:dio/dio.dart';
 
@@ -14,6 +14,7 @@ class CommunityException implements Exception {
     this.retryAfter,
     this.serverMessage,
     this.reason,
+    this.requestId,
   });
 
   static const unauthorized = 'unauthorized';
@@ -55,6 +56,9 @@ class CommunityException implements Exception {
   /// Stable v3 reason. Unknown and legacy reasons use the app's fallback.
   final String? reason;
 
+  /// Id of the failed request (`X-Request-Id`), as the server logged it.
+  final String? requestId;
+
   bool get isAuthFailure => code == unauthorized || status == 401;
 
   bool get isRetryable =>
@@ -69,29 +73,39 @@ class CommunityException implements Exception {
   /// Maps a dio failure (or anything else) to a [CommunityException].
   static CommunityException fromDio(DioException e) {
     final response = e.response;
+    final sent = asNonEmptyString(e.requestOptions.headers[_requestIdHeader]);
     if (response == null) {
       return switch (e.type) {
         DioExceptionType.connectionTimeout ||
         DioExceptionType.sendTimeout ||
-        DioExceptionType.receiveTimeout => const CommunityException(timeout),
-        DioExceptionType.cancel => const CommunityException(cancelled),
+        DioExceptionType.receiveTimeout => CommunityException(
+          timeout,
+          requestId: sent,
+        ),
+        DioExceptionType.cancel => CommunityException(
+          cancelled,
+          requestId: sent,
+        ),
         _ when e.error is CommunityException => e.error! as CommunityException,
-        _ when e.error is SocketException => const CommunityException(network),
-        _ => const CommunityException(network),
+        _ => CommunityException(network, requestId: sent),
       };
     }
     return fromResponse(
       response.statusCode ?? 0,
       response.data,
       retryAfterHeader: response.headers.value(HttpHeaders.retryAfterHeader),
+      requestId: response.headers.value(_requestIdHeader) ?? sent,
     );
   }
+
+  static const _requestIdHeader = 'X-Request-Id';
 
   /// Error body `{"error": {"code", "message"}, "retryAfter"?}` (or HTML).
   static CommunityException fromResponse(
     int status,
     Object? body, {
     String? retryAfterHeader,
+    String? requestId,
   }) {
     final decoded = body is String ? tryDecodeJson(body) : body;
     final m = asMap(decoded);
@@ -117,6 +131,7 @@ class CommunityException implements Exception {
       retryAfter: retryAfter,
       serverMessage: asNonEmptyString(error?['message']),
       reason: asNonEmptyString(error?['reason']),
+      requestId: asNonEmptyString(error?['requestId']) ?? requestId,
     );
   }
 

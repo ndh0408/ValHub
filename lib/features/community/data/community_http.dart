@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 
@@ -12,6 +13,22 @@ bool isUsableCommunityUrl(String url) {
       uri.scheme == 'https' &&
       uri.host.isNotEmpty &&
       !uri.host.contains('replace.');
+}
+
+/// Header carrying the id of one request; the server echoes it and writes
+/// it in its log, so a bug report can be matched with the server's lines.
+const kRequestIdHeader = 'X-Request-Id';
+
+final Random _ids = Random.secure();
+
+/// A fresh request id: `vh` + 16 hex digits (the server accepts 8–64 of
+/// `[A-Za-z0-9._-]`; it says nothing about the user or the device).
+String newRequestId() {
+  final b = StringBuffer('vh');
+  for (var i = 0; i < 16; i++) {
+    b.write(_ids.nextInt(16).toRadixString(16));
+  }
+  return b.toString();
 }
 
 /// Low-level JSON transport to the community server: builds the URL,
@@ -51,6 +68,7 @@ class CommunityHttp {
     final uri = q.isEmpty ? base : base.replace(queryParameters: q);
     final headers = <String, Object>{
       'Accept': 'application/json',
+      kRequestIdHeader: newRequestId(),
       'Idempotency-Key': ?idempotencyKey,
       if (token != null) 'Authorization': 'Bearer $token',
       if (bytes != null) Headers.contentLengthHeader: bytes.length,

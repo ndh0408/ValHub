@@ -141,11 +141,20 @@ class SessionLogInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     final o = err.requestOptions;
-    _log.http(
-      o.method,
-      o.uri,
+    // The community server's request id (sent by the app, echoed back), so
+    // a bug report can be matched with the server log. Nothing personal.
+    final id =
+        err.response?.headers.value('x-request-id') ??
+        o.headers.entries
+            .where((e) => e.key.toLowerCase() == 'x-request-id')
+            .map((e) => '${e.value}')
+            .firstOrNull;
+    _log.add(
+      'http.${o.method.toLowerCase()}',
+      uri: o.uri,
       status: err.response?.statusCode ?? -1,
       elapsed: _elapsed(o),
+      detail: id == null ? null : 'id=$id',
     );
     handler.next(err);
   }
