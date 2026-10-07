@@ -8,6 +8,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
+import '../../../../core/ui/sub_page.dart';
 import '../../../../core/util/format.dart';
 import '../../data/community_models.dart';
 import '../../providers/skin_review_providers.dart';
@@ -25,12 +26,10 @@ Future<bool> showReviewEditor(
   int initialRating = 0,
   String initialBody = '',
 }) async {
-  final saved = await showModalBottomSheet<bool>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    showDragHandle: true,
-    builder: (_) => ReviewEditorSheet(
+  final saved = await showValSheet<bool>(
+    context,
+    title: context.l10n.communityYourReview,
+    builder: (_, _) => ReviewEditorSheet(
       puuid: puuid,
       skinUuid: skinUuid,
       weaponUuid: weaponUuid,
@@ -93,11 +92,7 @@ class _ReviewEditorSheetState extends ConsumerState<ReviewEditorSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              context.l10n.communityYourReview,
-              style: theme.textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 4),
             Center(
               child: FittedBox(
                 fit: BoxFit.scaleDown,

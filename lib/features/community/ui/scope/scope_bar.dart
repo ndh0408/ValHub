@@ -9,6 +9,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/geo/countries.dart';
 import '../../../../core/ui/filter_bar.dart';
+import '../../../../core/ui/sub_page.dart';
 import '../../data/community_models.dart';
 import '../../providers/scope_providers.dart';
 import 'countries_sheet.dart';
@@ -136,78 +137,68 @@ class ScopeBar extends ConsumerWidget {
     };
 
     Future<void> pickScope() async {
-      final choice = await showModalBottomSheet<String>(
-        context: context,
+      final choice = await showValSheet<String>(
+        context,
+        title: l10n.communityTitle,
+        scrollable: true,
         useRootNavigator: true,
-        isScrollControlled: true,
-        useSafeArea: true,
-        showDragHandle: true,
-        builder: (sheetContext) => SizedBox(
-          height: (MediaQuery.sizeOf(sheetContext).height * 0.8).clamp(0, 600),
-          child: ListView(
-            padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 24),
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  sheetContext.l10n.communityTitle,
-                  style: Theme.of(sheetContext).textTheme.titleLarge,
-                ),
-              ),
-              if (myCountry != null)
-                ListTile(
-                  key: ValueKey('scope-home-${section.name}'),
-                  leading: Text(flagEmoji(myCountry)),
-                  title: Text(
-                    names?.name(myCountry) ??
-                        sheetContext.l10n.communityCountryName(myCountry),
-                  ),
-                  subtitle: Text(
-                    displayedCountry != myCountry &&
-                            selected == CommunityScope.country
-                        ? sheetContext.l10n.communityBackToMyCountry
-                        : sheetContext.l10n.communityYourCountry,
-                  ),
-                  trailing:
-                      selected == CommunityScope.country &&
-                          displayedCountry == myCountry
-                      ? const Icon(Icons.check_rounded)
-                      : null,
-                  onTap: () => Navigator.pop(sheetContext, 'home'),
-                ),
+        builder: (sheetContext, controller) => ListView(
+          controller: controller,
+          padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 24),
+          children: [
+            if (myCountry != null)
               ListTile(
-                key: ValueKey('scope-global-${section.name}'),
-                leading: const Icon(Icons.public_rounded),
-                title: Text(globalText),
-                trailing: selected == CommunityScope.global
+                key: ValueKey('scope-home-${section.name}'),
+                leading: Text(flagEmoji(myCountry)),
+                title: Text(
+                  names?.name(myCountry) ??
+                      sheetContext.l10n.communityCountryName(myCountry),
+                ),
+                subtitle: Text(
+                  displayedCountry != myCountry &&
+                          selected == CommunityScope.country
+                      ? sheetContext.l10n.communityBackToMyCountry
+                      : sheetContext.l10n.communityYourCountry,
+                ),
+                trailing:
+                    selected == CommunityScope.country &&
+                        displayedCountry == myCountry
                     ? const Icon(Icons.check_rounded)
                     : null,
-                onTap: () => Navigator.pop(sheetContext, 'global'),
+                onTap: () => Navigator.pop(sheetContext, 'home'),
               ),
+            ListTile(
+              key: ValueKey('scope-global-${section.name}'),
+              leading: const Icon(Icons.public_rounded),
+              title: Text(globalText),
+              trailing: selected == CommunityScope.global
+                  ? const Icon(Icons.check_rounded)
+                  : null,
+              onTap: () => Navigator.pop(sheetContext, 'global'),
+            ),
+            ListTile(
+              key: ValueKey('scope-countries-${section.name}'),
+              leading: const Icon(Icons.travel_explore_rounded),
+              title: Text(sheetContext.l10n.communityCountriesTitle),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () => Navigator.pop(sheetContext, 'countries'),
+            ),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(sheetContext.l10n.communityScopeRegion),
+            ),
+            for (final r in kCommunityRegions)
               ListTile(
-                key: ValueKey('scope-countries-${section.name}'),
-                leading: const Icon(Icons.travel_explore_rounded),
-                title: Text(sheetContext.l10n.communityCountriesTitle),
-                trailing: const Icon(Icons.chevron_right_rounded),
-                onTap: () => Navigator.pop(sheetContext, 'countries'),
+                key: ValueKey('scope-region-$r-${section.name}'),
+                leading: const Icon(Icons.dns_rounded),
+                title: Text(sheetContext.l10n.communityRegionName(r)),
+                trailing: selected == CommunityScope.region && region == r
+                    ? const Icon(Icons.check_rounded)
+                    : null,
+                onTap: () => Navigator.pop(sheetContext, r),
               ),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(sheetContext.l10n.communityScopeRegion),
-              ),
-              for (final r in kCommunityRegions)
-                ListTile(
-                  key: ValueKey('scope-region-$r-${section.name}'),
-                  leading: const Icon(Icons.dns_rounded),
-                  title: Text(sheetContext.l10n.communityRegionName(r)),
-                  trailing: selected == CommunityScope.region && region == r
-                      ? const Icon(Icons.check_rounded)
-                      : null,
-                  onTap: () => Navigator.pop(sheetContext, r),
-                ),
-            ],
-          ),
+          ],
         ),
       );
       if (!context.mounted || choice == null) return;

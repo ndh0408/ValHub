@@ -1,6 +1,7 @@
 import '../../../helpers/l10n.dart';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/network/riot_exception.dart';
@@ -191,6 +192,42 @@ void main() {
       'language': 'ja',
       'partySize': 1,
     });
+    await unmount(tester);
+  });
+
+  testWidgets('shared sheet chrome at 360 dp × 2.0: title, ×, nothing sent', (
+    tester,
+  ) async {
+    when(() => env.pvp.partyPlayer(any()))
+        .thenAnswer((_) async => throw const NotFoundException());
+    await pumpCommunityRouter(
+      tester,
+      env,
+      routes: [GoRoute(path: '/', builder: (_, _) => const _Host())],
+      initialLocation: '/',
+      size: const Size(360, 800),
+      textScale: 2,
+    );
+    await settle(tester);
+    await tester.tap(find.text('tạo'));
+    await settle(tester);
+    expect(tester.takeException(), isNull);
+    expect(find.text(tl.communityCreateLfg), findsOneWidget);
+
+    // The rank and language pickers wear the same chrome.
+    await _tap(tester, find.byKey(const ValueKey('rank-min')));
+    await settle(tester);
+    expect(find.text(CommunityStrings.rankFrom), findsNWidgets(2));
+    await tester.tap(find.byTooltip(tl.commonClose).last);
+    await settle(tester, frames: 20);
+    expect(find.text(CommunityStrings.rankFrom), findsOneWidget);
+
+    await tester.tap(find.byTooltip(tl.commonClose));
+    await settle(tester, frames: 20);
+    expect(find.text(CommunityStrings.postLfg), findsNothing);
+    expect(find.textContaining('created:'), findsNothing);
+    expect(env.server.calls('POST /v1/lfg'), isEmpty);
+    expect(tester.takeException(), isNull);
     await unmount(tester);
   });
 

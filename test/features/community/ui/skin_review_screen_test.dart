@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/domain/economy/economy.dart';
+import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/features/community/community_strings.dart';
 import 'package:valvn/features/community/ui/skins/skin_review_screen.dart';
@@ -242,6 +243,9 @@ void main() {
     expect(find.text(CommunityStrings.blockAuthor), findsNothing);
     await tester.tap(find.text(CommunityStrings.report));
     await settle(tester);
+    // The reasons sheet wears the shared title and × of every sheet.
+    expect(find.text(CommunityStrings.reportTitle), findsOneWidget);
+    expect(find.byTooltip(CommonStrings.close), findsOneWidget);
     await tester.tap(find.text('Quấy rối, xúc phạm'));
     await settle(tester);
     await tester.tap(find.text(CommunityStrings.send));

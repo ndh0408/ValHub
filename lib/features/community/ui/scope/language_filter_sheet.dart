@@ -1,6 +1,7 @@
 import 'package:valvn/core/l10n/labels/community_labels.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../core/ui/sub_page.dart';
 import '../../data/community_models.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -10,19 +11,27 @@ import 'package:valvn/core/l10n/l10n.dart';
 Future<Set<String>?> showLanguageFilterSheet(
   BuildContext context, {
   required Set<String> initial,
-}) => showModalBottomSheet<Set<String>>(
-  context: context,
-  isScrollControlled: true,
-  useSafeArea: true,
-  showDragHandle: true,
-  builder: (_) => LanguageFilterSheet(initial: initial),
+}) => showValSheet<Set<String>>(
+  context,
+  title: context.l10n.communityLanguageFilter,
+  scrollable: true,
+  initialSize: 0.8,
+  builder: (_, controller) =>
+      LanguageFilterSheet(initial: initial, controller: controller),
 );
 
 /// The VALORANT languages by native name, with checkboxes.
 class LanguageFilterSheet extends StatefulWidget {
-  const LanguageFilterSheet({super.key, required this.initial});
+  const LanguageFilterSheet({
+    super.key,
+    required this.initial,
+    this.controller,
+  });
 
   final Set<String> initial;
+
+  /// Scroll controller of the draggable sheet.
+  final ScrollController? controller;
 
   @override
   State<LanguageFilterSheet> createState() => _LanguageFilterSheetState();
@@ -34,72 +43,62 @@ class _LanguageFilterSheetState extends State<LanguageFilterSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return SizedBox(
-      height: MediaQuery.sizeOf(context).height * 0.8,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
-            child: Text(
-              context.l10n.communityLanguageFilter,
-              style: theme.textTheme.titleLarge,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+          child: Text(
+            context.l10n.communityLanguageFilterHint,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-            child: Text(
-              context.l10n.communityLanguageFilterHint,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
+        ),
+        Expanded(
+          child: ListView(
+            controller: widget.controller,
+            children: [
+              for (final code in kLfgLanguages)
+                CheckboxListTile(
+                  key: ValueKey('filter-lang-$code'),
+                  value: _selected.contains(code),
+                  title: Text(context.l10n.communityLanguageName(code)),
+                  onChanged: (v) => setState(() {
+                    if (v ?? false) {
+                      _selected.add(code);
+                    } else {
+                      _selected.remove(code);
+                    }
+                  }),
+                ),
+            ],
           ),
-          Expanded(
-            child: ListView(
+        ),
+        SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            child: Row(
               children: [
-                for (final code in kLfgLanguages)
-                  CheckboxListTile(
-                    key: ValueKey('filter-lang-$code'),
-                    value: _selected.contains(code),
-                    title: Text(context.l10n.communityLanguageName(code)),
-                    onChanged: (v) => setState(() {
-                      if (v ?? false) {
-                        _selected.add(code);
-                      } else {
-                        _selected.remove(code);
-                      }
-                    }),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => setState(_selected.clear),
+                    child: Text(context.l10n.communityClearFilter),
                   ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () => Navigator.of(context).pop({..._selected}),
+                    child: Text(context.l10n.communityApply),
+                  ),
+                ),
               ],
             ),
           ),
-          SafeArea(
-            top: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => setState(_selected.clear),
-                      child: Text(context.l10n.communityClearFilter),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: () =>
-                          Navigator.of(context).pop({..._selected}),
-                      child: Text(context.l10n.communityApply),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/ui/sub_page.dart';
 import '../../settings/ui/widgets/settings_widgets.dart';
 import '../providers/hidden_authors.dart';
 
@@ -29,11 +30,13 @@ class HiddenAuthorsRow extends ConsumerWidget {
       ),
       trailing: const SettingsChevron(),
       onTap: () => unawaited(
-        showModalBottomSheet<void>(
-          context: context,
-          isScrollControlled: true,
-          useSafeArea: true,
-          builder: (_) => HiddenAuthorsSheet(puuid: puuid),
+        showValSheet<void>(
+          context,
+          title: context.l10n.communityHiddenAuthors,
+          scrollable: true,
+          initialSize: 0.8,
+          builder: (_, controller) =>
+              HiddenAuthorsSheet(puuid: puuid, controller: controller),
         ),
       ),
     );
@@ -41,55 +44,57 @@ class HiddenAuthorsRow extends ConsumerWidget {
 }
 
 class HiddenAuthorsSheet extends ConsumerWidget {
-  const HiddenAuthorsSheet({super.key, required this.puuid});
+  const HiddenAuthorsSheet({super.key, required this.puuid, this.controller});
   final String puuid;
+
+  /// Scroll controller of the draggable sheet.
+  final ScrollController? controller;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final rows = ref.watch(hiddenAuthorsProvider(puuid)).values.toList();
-    return FractionallySizedBox(
-      heightFactor: 0.8,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Text(
-              context.l10n.communityHiddenAuthors,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text(context.l10n.communityHiddenAuthorsHint),
-          ),
-          Expanded(
-            child: rows.isEmpty
-                ? Center(child: Text(context.l10n.communityHiddenAuthorsEmpty))
-                : ListView.builder(
-                    itemCount: rows.length,
-                    itemBuilder: (context, i) {
-                      final author = rows[i];
-                      return ListTile(
-                        title: Text(author.name),
-                        subtitle: Text(
-                          author.rule == AuthorVisibilityRule.blocked
-                              ? context.l10n.communityBlockAuthor
-                              : context.l10n.communityMuteAuthor,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text(context.l10n.communityHiddenAuthorsHint),
+        ),
+        Expanded(
+          child: rows.isEmpty
+              ? ListView(
+                  controller: controller,
+                  padding: const EdgeInsets.all(32),
+                  children: [
+                    Center(
+                      child: Text(context.l10n.communityHiddenAuthorsEmpty),
+                    ),
+                  ],
+                )
+              : ListView.builder(
+                  controller: controller,
+                  itemCount: rows.length,
+                  itemBuilder: (context, i) {
+                    final author = rows[i];
+                    return ListTile(
+                      title: Text(author.name),
+                      subtitle: Text(
+                        author.rule == AuthorVisibilityRule.blocked
+                            ? context.l10n.communityBlockAuthor
+                            : context.l10n.communityMuteAuthor,
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.undo),
+                        tooltip: context.l10n.communityUnhideAuthor,
+                        onPressed: () => unawaited(
+                          ref
+                              .read(hiddenAuthorsProvider(puuid).notifier)
+                              .unhide(author.id),
                         ),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.undo),
-                          tooltip: context.l10n.communityUnhideAuthor,
-                          onPressed: () => unawaited(
-                            ref
-                                .read(hiddenAuthorsProvider(puuid).notifier)
-                                .unhide(author.id),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
-      ),
+                      ),
+                    );
+                  },
+                ),
+        ),
+      ],
     );
   }
 }

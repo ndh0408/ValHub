@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/ui/sub_page.dart';
 import '../../data/community_api.dart';
 import '../../data/community_models.dart';
 import '../../providers/hidden_authors.dart';
@@ -133,11 +134,10 @@ Future<bool> reportContent(
   if (!await promptConsentFromContext(context) || !context.mounted) {
     return false;
   }
-  final reason = await showModalBottomSheet<String>(
-    context: context,
-    useSafeArea: true,
-    showDragHandle: true,
-    builder: (context) => const _ReasonPicker(),
+  final reason = await showValSheet<String>(
+    context,
+    title: l10nBeforeAwait.communityReportTitle,
+    builder: (_, _) => const _ReasonPicker(),
   );
   if (reason == null || !context.mounted) return false;
   final ok = await confirmCommunityAction(
@@ -182,13 +182,6 @@ class _ReasonPicker extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
-            child: Text(
-              context.l10n.communityReportTitle,
-              style: theme.textTheme.titleMedium,
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(

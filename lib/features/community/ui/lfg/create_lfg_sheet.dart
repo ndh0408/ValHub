@@ -11,6 +11,7 @@ import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/rank_badge.dart';
+import '../../../../core/ui/sub_page.dart';
 import '../../../../core/util/clock.dart';
 import '../../data/community_models.dart';
 import '../../data/lfg_sync.dart';
@@ -34,12 +35,10 @@ Future<LfgPost?> showCreateLfgSheet(
   required Account account,
   required String region,
   LfgQuery? shownIn,
-}) => showModalBottomSheet<LfgPost>(
-  context: context,
-  isScrollControlled: true,
-  useSafeArea: true,
-  showDragHandle: true,
-  builder: (_) =>
+}) => showValSheet<LfgPost>(
+  context,
+  title: context.l10n.communityCreateLfg,
+  builder: (_, _) =>
       CreateLfgSheet(account: account, region: region, shownIn: shownIn),
 );
 
@@ -124,11 +123,6 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              context.l10n.communityCreateLfg,
-              style: theme.textTheme.titleLarge,
-            ),
-            const SizedBox(height: 4),
             Text(
               context.l10n.communityLfgSheetSubtitle(
                 context.l10n.communityRegionName(widget.region),
@@ -359,28 +353,24 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
   );
 
   Future<void> _pickLanguage() async {
-    final picked = await showModalBottomSheet<String>(
-      context: context,
-      useSafeArea: true,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.6,
-        builder: (context, controller) => ListView(
-          controller: controller,
-          children: [
-            for (final code in [kLfgAnyLanguage, ...kLfgLanguages])
-              ListTile(
-                key: ValueKey('lang-$code'),
-                title: Text(context.l10n.communityLanguageName(code)),
-                trailing: code == _language
-                    ? const Icon(Icons.check_rounded)
-                    : null,
-                onTap: () => Navigator.of(context).pop(code),
-              ),
-          ],
-        ),
+    final picked = await showValSheet<String>(
+      context,
+      title: context.l10n.communityLanguage,
+      scrollable: true,
+      initialSize: 0.6,
+      builder: (context, controller) => ListView(
+        controller: controller,
+        children: [
+          for (final code in [kLfgAnyLanguage, ...kLfgLanguages])
+            ListTile(
+              key: ValueKey('lang-$code'),
+              title: Text(context.l10n.communityLanguageName(code)),
+              trailing: code == _language
+                  ? const Icon(Icons.check_rounded)
+                  : null,
+              onTap: () => Navigator.of(context).pop(code),
+            ),
+        ],
       ),
     );
     if (picked != null && mounted) setState(() => _languageChoice = picked);
@@ -392,30 +382,28 @@ class _CreateLfgSheetState extends ConsumerState<CreateLfgSheet> {
           in db.tierTableForSeason(null)?.tiers ?? const <CompetitiveTier>[])
         if (t.tier > 2 && !t.isUnranked) t.tier,
     }.toList()..sort();
-    final picked = await showModalBottomSheet<int>(
-      context: context,
-      useSafeArea: true,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.6,
-        builder: (context, controller) => ListView(
-          controller: controller,
-          children: [
+    final picked = await showValSheet<int>(
+      context,
+      title: min
+          ? context.l10n.communityRankFrom
+          : context.l10n.communityRankTo,
+      scrollable: true,
+      initialSize: 0.6,
+      builder: (context, controller) => ListView(
+        controller: controller,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.all_inclusive_rounded),
+            title: Text(context.l10n.communityAnyRank),
+            onTap: () => Navigator.of(context).pop(0),
+          ),
+          for (final t in tiers)
             ListTile(
-              leading: const Icon(Icons.all_inclusive_rounded),
-              title: Text(context.l10n.communityAnyRank),
-              onTap: () => Navigator.of(context).pop(0),
+              key: ValueKey('tier-$t'),
+              title: RankBadge(tier: t, size: 28),
+              onTap: () => Navigator.of(context).pop(t),
             ),
-            for (final t in tiers)
-              ListTile(
-                key: ValueKey('tier-$t'),
-                title: RankBadge(tier: t, size: 28),
-                onTap: () => Navigator.of(context).pop(t),
-              ),
-          ],
-        ),
+        ],
       ),
     );
     if (picked == null || !mounted) return;

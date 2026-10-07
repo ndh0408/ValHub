@@ -7,6 +7,7 @@ import 'package:valvn/features/community/community_routes.dart';
 import 'package:valvn/features/community/community_strings.dart';
 
 import '../community_test_env.dart';
+import '../../../helpers/l10n.dart' show tl;
 import '../../../helpers/test_locale.dart';
 
 Future<void> _open(
@@ -168,6 +169,30 @@ void main() {
         env.prefs.getString(PrefKeys.ui('community.feed.languages')),
         'ja,vi',
       );
+      await unmount(tester);
+    });
+
+    testWidgets('scope and language sheets close with the shared ×', (
+      tester,
+    ) async {
+      await _open(tester, env);
+      final before = env.server.calls('GET /v1/posts').length;
+      await tester.tap(find.byKey(const ValueKey('scope-selector-feed')));
+      await settle(tester);
+      expect(find.byKey(const ValueKey('scope-global-feed')), findsOneWidget);
+      await tester.tap(find.byTooltip(tl.commonClose));
+      await settle(tester, frames: 20);
+      expect(find.byKey(const ValueKey('scope-global-feed')), findsNothing);
+
+      await chooseCommunityScope(tester, 'global');
+      await tester.tap(find.byKey(const ValueKey('scope-languages-feed')));
+      await settle(tester);
+      expect(find.text(tl.communityLanguageFilter), findsOneWidget);
+      await tester.tap(find.byTooltip(tl.commonClose));
+      await settle(tester, frames: 20);
+      expect(find.byKey(const ValueKey('filter-lang-ja')), findsNothing);
+      expect(_lastQuery(env, 'GET /v1/posts').containsKey('language'), isFalse);
+      expect(env.server.calls('GET /v1/posts').length, greaterThan(before));
       await unmount(tester);
     });
 
