@@ -1039,6 +1039,7 @@
   "liveGameYouHover": "Seçtiğin ajan: {agent}",
   "liveGameYouLocked": "Kilitlediğin ajan: {agent}",
   "liveGamePickInGame": "Ajanını VALORANT'ta seç ve kilitle. ValHub yalnızca kalan süreyi ve takımını gösterir.",
+  "liveGameLastMatchTitle": "Son maç",
   "profileWinLossSummary": "{wins} galibiyet – {losses} mağlubiyet{draws, plural, =0{} one{ – {draws} beraberlik} other{ – {draws} beraberlik}}{unknown, plural, =0{} one{ – sonucu bilinmeyen {unknown} maç} other{ – sonucu bilinmeyen {unknown} maç}}",
   "profileDeviceTimeZone": "cihaz saati ({offset})",
   "profileKillDescription": "{killer}, {victim} oyuncusunu indirdi{hasWeapon, select, yes{ · {weapon}} other{}} ({time})",

@@ -239,7 +239,11 @@ void main() {
       env.loop = 'MENUS';
       await container.read(liveGameProvider(me).notifier).refresh();
       await settle(tester);
-      expect(find.byType(LiveEndedView), findsOneWidget);
+      // Back in the lobby the party comes first again, with the match just
+      // played as one row on top (it opens the match details).
+      expect(find.byType(LiveEndedView), findsNothing);
+      expect(find.textContaining('THÀNH VIÊN'), findsOneWidget);
+      expect(find.text(tl.liveGameLastMatchTitle), findsOneWidget);
       // Starting another queue takes priority over a retained previous result.
       env.party = partyJson();
       await container.read(liveGameProvider(me).notifier).refresh();

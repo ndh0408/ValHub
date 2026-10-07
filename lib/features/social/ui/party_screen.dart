@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/services.dart'
     show Clipboard, ClipboardData, FilteringTextInputFormatter;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/accounts/account_providers.dart';
@@ -25,6 +26,8 @@ import '../../live_game/current_game_card.dart';
 import '../../live_game/live_game_sheet.dart';
 import '../../live_game/data/live_game_models.dart';
 import '../../live_game/providers/live_game_providers.dart';
+import '../../profile/profile_routes.dart';
+import '../../profile/ui/widgets/profile_widgets.dart' show outcomeColor;
 import '../data/party_models.dart';
 import '../data/riot_id_input.dart';
 import '../providers/party_providers.dart';
@@ -32,6 +35,7 @@ import 'widgets/party_widgets.dart';
 import 'widgets/social_widgets.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
+import 'package:valvn/core/l10n/labels/competitive_labels.dart';
 
 /// S55 "Tổ đội & hàng chờ". Route `/profile/party`.
 ///
@@ -61,10 +65,10 @@ class PartyScreen extends ConsumerWidget {
     final puuid = ref.watch(activePuuidProvider);
     if (includeCurrentGame && puuid != null) {
       final live = ref.watch(liveGameProvider(puuid)).value;
-      // Match state takes priority over party reads, including when the party
-      // endpoint fails. Ended state keeps the final scoreboard reachable.
-      if ((live?.phase.inMatch ?? false) ||
-          (live?.ended != null && live?.phase != LivePhase.queueing)) {
+      // A match takes priority over party reads, including when the party
+      // endpoint fails. Back in the lobby the party comes first again (ready,
+      // queue, invites); the match just played is one row on top of it.
+      if (live?.phase.inMatch ?? false) {
         return LiveGamePage(
           key: ValueKey(puuid),
           onOpenParty: () => unawaited(
@@ -264,10 +268,10 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
       },
       slivers: [
         if (widget.includeCurrentGame)
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(16, 4, 16, 12),
-              child: CurrentGameCard(matchOnly: true),
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+              child: _LastMatchOrStatus(puuid: puuid),
             ),
           ),
         ...slivers,
@@ -1251,6 +1255,82 @@ class _RequestRow extends ConsumerWidget {
             child: Text(context.l10n.socialDecline),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Top of the combined page in the lobby: the match just played ("Trận vừa
+/// rồi · Thắng · 13 – 9 · Ascent ›", opens its details) while Riot still
+/// reports it, else the live status card.
+class _LastMatchOrStatus extends ConsumerWidget {
+  const _LastMatchOrStatus({required this.puuid});
+
+  final String puuid;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final live = ref.watch(liveGameProvider(puuid)).value;
+    final ended = live?.ended;
+    if (ended == null || live?.phase == LivePhase.queueing) {
+      return const CurrentGameCard(matchOnly: true);
+    }
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
+    final summary = ref
+        .watch(matchSummaryProvider((matchId: ended.matchId, puuid: puuid)))
+        .value;
+    final result = summary?.result;
+    final map = db.mapByUrl(summary?.info.mapId ?? ended.mapId)?.displayName;
+    final facts = context.fmt.inlineFacts([
+      if (result != null && result.outcome != MatchOutcome.unknown)
+        context.l10n.matchOutcome(result.outcome),
+      if (result != null && result.hasScore)
+        context.l10n.profileScore(result.myScore!, result.otherScore!),
+      ?map,
+    ]);
+    return ValCard(
+      padding: EdgeInsets.zero,
+      onTap: () => unawaited(context.push(ProfileRoutes.match(ended.matchId))),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+        child: Row(
+          children: [
+            Icon(
+              Icons.flag_outlined,
+              color: result == null
+                  ? muted
+                  : legibleAccent(
+                      context,
+                      outcomeColor(context, result.outcome),
+                    ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    context.l10n.liveGameLastMatchTitle,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  if (facts.isNotEmpty)
+                    Text(
+                      facts,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(color: muted),
+                    ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: muted),
+          ],
+        ),
       ),
     );
   }

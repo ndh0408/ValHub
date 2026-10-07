@@ -3906,6 +3906,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Pick and lock in your agent in VALORANT. ValHub only shows the time left and your team.';
 
   @override
+  String get liveGameLastMatchTitle => 'Last match';
+
+  @override
   String profileWinLossSummary(int wins, int losses, int draws, int unknown) {
     String _temp0 = intl.Intl.pluralLogic(
       wins,

@@ -1039,6 +1039,7 @@
   "liveGameYouHover": "你正在选择{agent}",
   "liveGameYouLocked": "你已锁定{agent}",
   "liveGamePickInGame": "请在 VALORANT 中选择并锁定英雄。ValHub 只显示剩余时间和你的队伍。",
+  "liveGameLastMatchTitle": "刚才的比赛",
   "profileWinLossSummary": "{wins}胜 – {losses}负{draws, plural, =0{} other{ – {draws}平}}{unknown, plural, =0{} other{ – {unknown}场结果未知}}",
   "profileDeviceTimeZone": "设备时间（{offset}）",
   "profileKillDescription": "{killer}{hasWeapon, select, yes{使用{weapon}} other{}}击杀了{victim}（{time}）",

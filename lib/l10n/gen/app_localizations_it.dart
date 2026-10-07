@@ -3903,6 +3903,9 @@ class AppLocalizationsIt extends AppLocalizations {
       'Scegli e blocca il tuo agente in VALORANT. ValHub mostra solo il tempo rimasto e la tua squadra.';
 
   @override
+  String get liveGameLastMatchTitle => 'Ultima partita';
+
+  @override
   String profileWinLossSummary(int wins, int losses, int draws, int unknown) {
     String _temp0 = intl.Intl.pluralLogic(
       wins,

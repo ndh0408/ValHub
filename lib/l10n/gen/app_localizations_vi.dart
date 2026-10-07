@@ -3693,6 +3693,9 @@ class AppLocalizationsVi extends AppLocalizations {
       'Chọn và khóa đặc vụ trong VALORANT. ValHub chỉ hiển thị thời gian còn lại và đội của bạn.';
 
   @override
+  String get liveGameLastMatchTitle => 'Trận vừa rồi';
+
+  @override
   String profileWinLossSummary(int wins, int losses, int draws, int unknown) {
     String _temp0 = intl.Intl.pluralLogic(
       draws,

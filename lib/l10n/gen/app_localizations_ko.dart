@@ -3624,6 +3624,9 @@ class AppLocalizationsKo extends AppLocalizations {
       '요원 선택과 확정은 VALORANT에서 하세요. ValHub는 남은 시간과 우리 팀만 보여 줍니다.';
 
   @override
+  String get liveGameLastMatchTitle => '방금 끝난 경기';
+
+  @override
   String profileWinLossSummary(int wins, int losses, int draws, int unknown) {
     String _temp0 = intl.Intl.pluralLogic(
       draws,

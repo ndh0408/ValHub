@@ -6362,6 +6362,12 @@ abstract class AppLocalizations {
   /// **'Chọn và khóa đặc vụ trong VALORANT. ValHub chỉ hiển thị thời gian còn lại và đội của bạn.'**
   String get liveGamePickInGame;
 
+  /// Row on top of the party page back in the lobby: the match just played (result, score and map follow); opens its details.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trận vừa rồi'**
+  String get liveGameLastMatchTitle;
+
   /// Explicit view-boundary statistics display; preserves verified VI text.
   ///
   /// In vi, this message translates to:

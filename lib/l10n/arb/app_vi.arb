@@ -6147,6 +6147,11 @@
     "description": "Agent select (information only): agents are picked in the game, the app does not pick or lock agents (Riot bans instalock tools).",
     "x-context": "lib/features/live_game/ui/agent_select_view.dart"
   },
+  "liveGameLastMatchTitle": "Trận vừa rồi",
+  "@liveGameLastMatchTitle": {
+    "description": "Row on top of the party page back in the lobby: the match just played (result, score and map follow); opens its details.",
+    "x-context": "lib/features/social/ui/party_screen.dart"
+  },
   "profileWinLossSummary": "{wins} thắng – {losses} thua{draws, plural, =0{} other{ – {draws} hòa}}{unknown, plural, =0{} other{ – {unknown} trận chưa rõ kết quả}}",
   "@profileWinLossSummary": {
     "description": "Explicit view-boundary statistics display; preserves verified VI text.",

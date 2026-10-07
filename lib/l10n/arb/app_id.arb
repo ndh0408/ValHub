@@ -1039,6 +1039,7 @@
   "liveGameYouHover": "Kamu sedang memilih {agent}",
   "liveGameYouLocked": "Kamu mengunci {agent}",
   "liveGamePickInGame": "Pilih dan kunci agenmu di VALORANT. ValHub hanya menampilkan sisa waktu dan timmu.",
+  "liveGameLastMatchTitle": "Pertandingan terakhir",
   "profileWinLossSummary": "{wins} menang – {losses} kalah{draws, plural, =0{} other{ – {draws} seri}}{unknown, plural, =0{} other{ – {unknown} pertandingan dengan hasil tidak diketahui}}",
   "profileDeviceTimeZone": "waktu perangkat ({offset})",
   "profileKillDescription": "{killer} mengeliminasi {victim}{hasWeapon, select, yes{ dengan {weapon}} other{}} ({time})",
