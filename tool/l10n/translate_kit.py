@@ -2,7 +2,9 @@
 
     python tool/l10n/translate_kit.py export <workdir>        chunks of app_vi.arb
     python tool/l10n/translate_kit.py check  <workdir> <code> [chunk]
-    python tool/l10n/translate_kit.py merge  <workdir> <code>  -> lib/l10n/arb/app_<code>.arb
+    python tool/l10n/translate_kit.py merge  <workdir> <code> [keys] -> lib/l10n/arb/app_<code>.arb
+        (keeps messages already in the file; comma-separated [keys] are
+        re-applied from the work dir)
 
 Chunks are `<workdir>/src/<NN>.json` (key, vi, description, placeholders...);
 translations are `<workdir>/out/<code>/<NN>.json` ({key: text}). `check` is a
@@ -340,24 +342,31 @@ def trim_cjk_edges(code, text):
     return text
 
 
-def merge(work, code):
+def merge(work, code, overwrite=()):
+    """Writes app_<code>.arb for the template's keys. Messages already in
+    the file are KEPT (another session may have added or fixed them there);
+    work-dir translations only fill keys the file lacks, plus the keys
+    listed in [overwrite] (re-translations after a template change)."""
     _, keys = template()
     merged = {}
     folder = os.path.join(work, 'out', code)
     for c in sorted(os.listdir(folder)):
         if c.endswith('.json'):
             merged.update(load(os.path.join(folder, c)))
+    path = os.path.join(ARB_DIR, f'app_{code}.arb')
+    existing = load(path) if os.path.exists(path) else {}
     j, _ = template()
     doc = {'@@locale': code}
     for k in keys:
         if j.get('@' + k, {}).get('x-locked'):
             if code != 'es_MX':  # es_MX inherits locked keys from es
                 doc[k] = j[k]
+        elif k in existing and k not in overwrite:
+            doc[k] = existing[k]
         elif k in merged:
             # Translators may strip the accents of the publisher's legal name.
             doc[k] = trim_cjk_edges(code, drop_colliding_exact_cases(
                 merged[k].replace('Nguyen Duc Huy', PUBLISHER)))
-    path = os.path.join(ARB_DIR, f'app_{code}.arb')
     with open(path, 'w', encoding='utf-8', newline='\n') as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)
         f.write('\n')
@@ -372,6 +381,8 @@ if __name__ == '__main__':
         only = sys.argv[4] if len(sys.argv) > 4 else None
         sys.exit(1 if check(work, sys.argv[3], only) else 0)
     elif cmd == 'merge':
-        merge(work, sys.argv[3])
+        # merge <work> <code> [key1,key2,...]: listed keys are re-applied.
+        keys = sys.argv[4].split(',') if len(sys.argv) > 4 else ()
+        merge(work, sys.argv[3], overwrite=set(keys))
     else:
         sys.exit(f'unknown command {cmd}')
