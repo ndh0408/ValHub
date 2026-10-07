@@ -978,6 +978,7 @@
   "communityYou": "你",
   "communityYourCountry": "你的國家",
   "communityYourReview": "你的評論",
+  "communityHiddenAuthorsCount": "{n, plural, other{已隱藏 {n} 人}}",
   "liveGamePlayerStatistics": "你：{kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "特務選擇",

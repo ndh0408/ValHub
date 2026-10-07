@@ -978,6 +978,7 @@
   "communityYou": "나",
   "communityYourCountry": "내 국가",
   "communityYourReview": "내 리뷰",
+  "communityHiddenAuthorsCount": "{n, plural, other{{n}명 숨김}}",
   "liveGamePlayerStatistics": "나: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "요원 선택",

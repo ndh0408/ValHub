@@ -978,6 +978,7 @@
   "communityYou": "Sen",
   "communityYourCountry": "Ülken",
   "communityYourReview": "İncelemen",
+  "communityHiddenAuthorsCount": "{n, plural, one{{n} kişi gizlendi} other{{n} kişi gizlendi}}",
   "liveGamePlayerStatistics": "Sen: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "Ajan seçimi",

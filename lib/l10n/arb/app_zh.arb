@@ -978,6 +978,7 @@
   "communityYou": "你",
   "communityYourCountry": "你的国家/地区",
   "communityYourReview": "你的评价",
+  "communityHiddenAuthorsCount": "{n, plural, other{已隐藏 {n} 人}}",
   "liveGamePlayerStatistics": "你：{kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "英雄选择中",

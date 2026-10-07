@@ -120,7 +120,7 @@ class _SettingsNotificationsSectionState
             resetAt == null
                 ? context.l10n.notificationResetTimingUnknown
                 : context.l10n.settingsNotifStoreResetSubtitle(
-                    formatTime(resetAt),
+                    formatTime(roundToMinute(resetAt)),
                   ),
           ),
           (

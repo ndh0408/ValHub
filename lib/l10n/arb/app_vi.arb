@@ -5765,6 +5765,17 @@
     "description": "CommunityStrings.yourReview — skin reviews",
     "x-context": "lib/features/community/community_strings.dart"
   },
+  "communityHiddenAuthorsCount": "{n, plural, other{Đã ẩn {n} người}}",
+  "@communityHiddenAuthorsCount": {
+    "description": "Subtitle of 'Người đã ẩn và chặn' in Settings: how many people this account hid or blocked.",
+    "placeholders": {
+      "n": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    },
+    "x-context": "lib/features/community/ui/hidden_authors_sheet.dart"
+  },
   "liveGamePlayerStatistics": "Bạn: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "@liveGamePlayerStatistics": {
     "description": "Explicit render-time message, preserving existing VI behavior.",

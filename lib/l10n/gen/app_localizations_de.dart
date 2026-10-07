@@ -3659,6 +3659,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get communityYourReview => 'Deine Bewertung';
 
   @override
+  String communityHiddenAuthorsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString Personen ausgeblendet',
+      one: '$nString Person ausgeblendet',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

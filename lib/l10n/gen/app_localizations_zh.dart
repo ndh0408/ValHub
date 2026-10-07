@@ -3349,6 +3349,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityYourReview => '你的评价';
 
   @override
+  String communityHiddenAuthorsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '已隐藏 $nString 人',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',
@@ -9844,6 +9859,21 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get communityYourReview => '你的評論';
+
+  @override
+  String communityHiddenAuthorsCount(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '已隱藏 $nString 人',
+    );
+    return '$_temp0';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

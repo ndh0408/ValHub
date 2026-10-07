@@ -10,17 +10,23 @@ import 'package:valvn/core/l10n/l10n.dart';
 
 /// Settings row "Người đã ẩn và chặn" (in the CỘNG ĐỒNG group) opening
 /// [HiddenAuthorsSheet] for [puuid].
-class HiddenAuthorsRow extends StatelessWidget {
+class HiddenAuthorsRow extends ConsumerWidget {
   const HiddenAuthorsRow({super.key, required this.puuid});
 
   final String puuid;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // How many, not the rules: the sheet explains what hiding does.
+    final count = ref.watch(hiddenAuthorsProvider(puuid)).length;
     return ListTile(
       leading: const SettingsIcon(Icons.visibility_off_outlined),
       title: Text(context.l10n.communityHiddenAuthors),
-      subtitle: Text(context.l10n.communityHiddenAuthorsHint),
+      subtitle: Text(
+        count == 0
+            ? context.l10n.communityHiddenAuthorsEmpty
+            : context.l10n.communityHiddenAuthorsCount(count),
+      ),
       trailing: const SettingsChevron(),
       onTap: () => unawaited(
         showModalBottomSheet<void>(

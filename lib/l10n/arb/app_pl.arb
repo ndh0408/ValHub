@@ -978,6 +978,7 @@
   "communityYou": "Ty",
   "communityYourCountry": "Twój kraj",
   "communityYourReview": "Twoja recenzja",
+  "communityHiddenAuthorsCount": "{n, plural, one{Ukryto {n} osobę} few{Ukryto {n} osoby} many{Ukryto {n} osób} other{Ukryto {n} osoby}}",
   "liveGamePlayerStatistics": "Ty: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "Wybór agenta",

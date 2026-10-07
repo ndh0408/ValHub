@@ -978,6 +978,7 @@
   "communityYou": "คุณ",
   "communityYourCountry": "ประเทศของคุณ",
   "communityYourReview": "รีวิวของคุณ",
+  "communityHiddenAuthorsCount": "{n, plural, other{ซ่อนแล้ว {n} คน}}",
   "liveGamePlayerStatistics": "คุณ: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "เลือกเอเจนท์",

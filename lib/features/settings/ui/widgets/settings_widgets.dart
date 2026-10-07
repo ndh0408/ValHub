@@ -63,7 +63,13 @@ class SettingsGroup extends StatelessWidget {
         if (footer != null)
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-            child: footer,
+            // A quiet note under the card, never body text.
+            child: DefaultTextStyle.merge(
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+              child: footer!,
+            ),
           ),
       ],
     );
@@ -178,10 +184,8 @@ class SettingsSwitchTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final changed = onChanged;
-    final titleText = Text(
-      title,
-      style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
-    );
+    // The list tile's own title style, like every other Settings row.
+    final titleText = Text(title);
     final subtitleText = subtitle == null
         ? null
         : Text(

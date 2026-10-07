@@ -5996,6 +5996,12 @@ abstract class AppLocalizations {
   /// **'Đánh giá của bạn'**
   String get communityYourReview;
 
+  /// Subtitle of 'Người đã ẩn và chặn' in Settings: how many people this account hid or blocked.
+  ///
+  /// In vi, this message translates to:
+  /// **'{n, plural, other{Đã ẩn {n} người}}'**
+  String communityHiddenAuthorsCount(int n);
+
   /// Explicit render-time message, preserving existing VI behavior.
   ///
   /// In vi, this message translates to:

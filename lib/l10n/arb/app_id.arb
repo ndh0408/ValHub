@@ -978,6 +978,7 @@
   "communityYou": "Kamu",
   "communityYourCountry": "Negaramu",
   "communityYourReview": "Ulasanmu",
+  "communityHiddenAuthorsCount": "{n, plural, other{{n} orang disembunyikan}}",
   "liveGamePlayerStatistics": "Kamu: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "Pemilihan agen",

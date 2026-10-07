@@ -978,6 +978,7 @@
   "communityYou": "あなた",
   "communityYourCountry": "あなたの国",
   "communityYourReview": "あなたの評価",
+  "communityHiddenAuthorsCount": "{n, plural, other{{n}人を非表示}}",
   "liveGamePlayerStatistics": "あなた：{kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "エージェント選択中",

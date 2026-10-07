@@ -978,6 +978,7 @@
   "communityYou": "أنت",
   "communityYourCountry": "بلدك",
   "communityYourReview": "مراجعتك",
+  "communityHiddenAuthorsCount": "{n, plural, zero{تم إخفاء {n} شخص} one{تم إخفاء {n} شخص} two{تم إخفاء {n} شخص} few{تم إخفاء {n} أشخاص} many{تم إخفاء {n} شخصًا} other{تم إخفاء {n} شخص}}",
   "liveGamePlayerStatistics": "أنت: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "اختيار العميل",
