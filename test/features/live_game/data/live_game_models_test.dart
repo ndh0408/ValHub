@@ -119,18 +119,6 @@ void main() {
     });
   });
 
-  test('withSelection updates only the given player', () {
-    final m = LiveMatch.fromPregame(pregameMatchJson(), receivedAt: at)!;
-    final next = m.withSelection(
-      me,
-      reyna.toUpperCase(),
-      AgentSelection.locked,
-    );
-    expect(next.player(me)!.characterId, reyna);
-    expect(next.player(me)!.isLocked, isTrue);
-    expect(next.player(mate), m.player(mate));
-  });
-
   group('LiveParty', () {
     test('parses members, state and queue entry time', () {
       final p = LiveParty.fromJson(partyJson())!;

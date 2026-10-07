@@ -3942,14 +3942,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => 'Du besitzt diesen Agenten nicht.';
-
-  @override
   String get liveGameAgentSelect => 'In der Agentenauswahl';
-
-  @override
-  String get liveGameAgentTaken =>
-      'Ein Teammitglied hat diesen Agenten bereits festgelegt.';
 
   @override
   String get liveGameAnonymous => 'Anonym';
@@ -3990,10 +3983,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get liveGameFlex => 'Flex';
 
   @override
-  String get liveGameHoverLockHint =>
-      'Tippen zum Auswählen, halten zum Festlegen.';
-
-  @override
   String get liveGameInLobby => 'In der Lobby';
 
   @override
@@ -4029,15 +4018,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Sobald ein Match gefunden ist, zeigt ValHub Aufstellungen und Ränge aller Spieler.';
 
   @override
-  String get liveGameLockFailed =>
-      'Agent konnte nicht festgelegt werden. Aktualisiere und versuch es erneut.';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return '$agent festgelegt';
-  }
-
-  @override
   String get liveGameLockedTag => 'Festgelegt';
 
   @override
@@ -4046,10 +4026,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get liveGameNoAgentYet => 'Noch kein Agent gewählt';
-
-  @override
-  String get liveGameNoAgents =>
-      'Die Agentenliste konnte nicht geladen werden. Aktualisiere, um es erneut zu versuchen.';
 
   @override
   String get liveGameNoLoadout => 'Keine Loadout-Infos für diesen Spieler.';
@@ -4145,10 +4121,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get liveGameSelectFailed =>
-      'Agent konnte nicht ausgewählt werden. Aktualisiere und versuch es erneut.';
-
-  @override
   String get liveGameSheetTitle => 'Matchdetails';
 
   @override
@@ -4166,9 +4138,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get liveGameStatusUnavailable =>
       'Matchstatus konnte nicht aktualisiert werden';
-
-  @override
-  String get liveGameTabAgents => 'Agenten';
 
   @override
   String get liveGameTabAllPlayers => 'Spieler';

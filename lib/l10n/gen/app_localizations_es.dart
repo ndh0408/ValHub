@@ -3949,13 +3949,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => 'Todavía no tienes este agente.';
-
-  @override
   String get liveGameAgentSelect => 'Selección de agente';
-
-  @override
-  String get liveGameAgentTaken => 'Un compañero ya ha fijado este agente.';
 
   @override
   String get liveGameAnonymous => 'Anónimo';
@@ -3996,10 +3990,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get liveGameFlex => 'Flex';
 
   @override
-  String get liveGameHoverLockHint =>
-      'Toca para seleccionar, mantén pulsado para fijar el agente.';
-
-  @override
   String get liveGameInLobby => 'En la sala';
 
   @override
@@ -4036,15 +4026,6 @@ class AppLocalizationsEs extends AppLocalizations {
       'Cuando se encuentre partida, ValHub mostrará las alineaciones y los rangos de todos.';
 
   @override
-  String get liveGameLockFailed =>
-      'No se ha podido fijar este agente. Actualiza y vuelve a intentarlo.';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return '$agent fijado';
-  }
-
-  @override
   String get liveGameLockedTag => 'Fijado';
 
   @override
@@ -4053,10 +4034,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get liveGameNoAgentYet => 'Sin agente';
-
-  @override
-  String get liveGameNoAgents =>
-      'No se ha podido cargar la lista de agentes. Actualiza para volver a intentarlo.';
 
   @override
   String get liveGameNoLoadout =>
@@ -4153,10 +4130,6 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get liveGameSelectFailed =>
-      'No se ha podido seleccionar este agente. Actualiza y vuelve a intentarlo.';
-
-  @override
   String get liveGameSheetTitle => 'Detalles de la partida';
 
   @override
@@ -4174,9 +4147,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get liveGameStatusUnavailable =>
       'No se ha podido actualizar el estado de la partida';
-
-  @override
-  String get liveGameTabAgents => 'Agentes';
 
   @override
   String get liveGameTabAllPlayers => 'Jugadores';
@@ -8289,9 +8259,6 @@ class AppLocalizationsEsMx extends AppLocalizationsEs {
       'No se pudo conectar con la Comunidad';
 
   @override
-  String get liveGameAgentTaken => 'Un compañero ya fijó este agente.';
-
-  @override
   String get liveGameBuddy => 'Buddy';
 
   @override
@@ -8299,19 +8266,7 @@ class AppLocalizationsEsMx extends AppLocalizationsEs {
       'Esta fuente de partidas en vivo no ofrece bajas, muertes ni asistencias. La tabla de puntuación aparecerá cuando Riot publique los datos tras la partida.';
 
   @override
-  String get liveGameHoverLockHint =>
-      'Toca para seleccionar, mantén presionado para fijar el agente.';
-
-  @override
   String get liveGameLiveScore => 'Marcador en vivo';
-
-  @override
-  String get liveGameLockFailed =>
-      'No se pudo fijar este agente. Actualiza y vuelve a intentarlo.';
-
-  @override
-  String get liveGameNoAgents =>
-      'No se pudo cargar la lista de agentes. Actualiza para volver a intentarlo.';
 
   @override
   String get liveGameQuitDone => 'Abandonaste la partida.';
@@ -8322,10 +8277,6 @@ class AppLocalizationsEsMx extends AppLocalizationsEs {
   @override
   String get liveGameQuitMatchChanged =>
       'La partida cambió de fase mientras confirmabas. No saliste; vuelve a intentarlo.';
-
-  @override
-  String get liveGameSelectFailed =>
-      'No se pudo seleccionar este agente. Actualiza y vuelve a intentarlo.';
 
   @override
   String get liveGameSprays => 'Sprays';

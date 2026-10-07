@@ -269,46 +269,11 @@ class LiveGameController extends AsyncNotifier<LiveGameState> {
       ..invalidate(matchHistoryProvider);
   }
 
-  // ------------------------------------------------ user actions (G4–G6/G11)
+  // ------------------------------------------------ user actions (G6/G11)
 
-  /// Hovers [agentId] in agent select (G-4). Only call from a tap.
-  Future<void> hoverAgent(String agentId) =>
-      _selectAgent(agentId, AgentSelection.selected);
-
-  /// Locks [agentId] in agent select (G-5). Only call from a long press.
-  Future<void> lockAgent(String agentId) =>
-      _selectAgent(agentId, AgentSelection.locked);
-
-  Future<void> _selectAgent(String agentId, AgentSelection selection) async {
-    final api = _api;
-    final current = _last;
-    final match = current?.match;
-    if (api == null || current == null || match == null || !match.isPregame) {
-      throw const NotFoundException(errorCode: 'no_pregame');
-    }
-    final json = selection == AgentSelection.locked
-        ? await api.pregameLockAgent(puuid, match.matchId, agentId)
-        : await api.pregameSelectAgent(puuid, match.matchId, agentId);
-    if (!ref.mounted) return;
-    final latest = _last;
-    if (latest?.match?.matchId != match.matchId) return;
-    final parsed = asMap(json)?['AllyTeam'] == null
-        ? null
-        : LiveMatch.fromPregame(
-            json,
-            fallbackMatchId: match.matchId,
-            receivedAt: _clock.now(),
-          );
-    final me = parsed?.player(puuid);
-    final updated =
-        (me != null && me.characterId == agentId.toLowerCase()
-            ? parsed
-            : null) ??
-        match.withSelection(puuid, agentId, selection);
-    final next = latest!.copyWith(match: updated);
-    _last = next;
-    state = AsyncData(next);
-  }
+  // Agent pick / lock from the phone was removed (2026-10-07): Riot bans
+  // "instalock tools" (patch 13.05) and those used the same pregame calls.
+  // Agents are chosen in the game; ValHub only shows agent select.
 
   /// Leaves the current match: dodge in agent select (G-6) or disassociate
   /// from a running match (G-11). **Penalty** — only call after the user

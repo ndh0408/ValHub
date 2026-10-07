@@ -3602,13 +3602,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => '你尚未拥有此英雄。';
-
-  @override
   String get liveGameAgentSelect => '英雄选择中';
-
-  @override
-  String get liveGameAgentTaken => '队友已锁定此英雄。';
 
   @override
   String get liveGameAnonymous => '匿名';
@@ -3647,9 +3641,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get liveGameFlex => '展示道具';
 
   @override
-  String get liveGameHoverLockHint => '点按以预选，长按以锁定英雄。';
-
-  @override
   String get liveGameInLobby => '在大厅中';
 
   @override
@@ -3684,14 +3675,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get liveGameLobbyHint => '匹配成功后，ValHub 将显示所有人的阵容和段位。';
 
   @override
-  String get liveGameLockFailed => '无法锁定此英雄。请刷新后重试。';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return '已锁定$agent';
-  }
-
-  @override
   String get liveGameLockedTag => '已锁定';
 
   @override
@@ -3699,9 +3682,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get liveGameNoAgentYet => '尚未选择英雄';
-
-  @override
-  String get liveGameNoAgents => '无法加载英雄列表。请刷新后重试。';
 
   @override
   String get liveGameNoLoadout => '暂无此玩家的配置信息。';
@@ -3788,9 +3768,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get liveGameSelectFailed => '无法选择此英雄。请刷新后重试。';
-
-  @override
   String get liveGameSheetTitle => '对局详情';
 
   @override
@@ -3807,9 +3784,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get liveGameStatusUnavailable => '无法更新对局状态';
-
-  @override
-  String get liveGameTabAgents => '英雄';
 
   @override
   String get liveGameTabAllPlayers => '玩家';
@@ -10451,13 +10425,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => '你尚未擁有此特務。';
-
-  @override
   String get liveGameAgentSelect => '特務選擇';
-
-  @override
-  String get liveGameAgentTaken => '隊友已鎖定此特務。';
 
   @override
   String get liveGameAnonymous => '匿名';
@@ -10496,9 +10464,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get liveGameFlex => '炫耀道具';
 
   @override
-  String get liveGameHoverLockHint => '點一下即可選擇，長按即可鎖定特務。';
-
-  @override
   String get liveGameInLobby => '在大廳中';
 
   @override
@@ -10533,14 +10498,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get liveGameLobbyHint => '找到對戰後，ValHub 會顯示所有人的陣容與牌位。';
 
   @override
-  String get liveGameLockFailed => '無法鎖定此特務。請重新整理後再試一次。';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return '已鎖定 $agent';
-  }
-
-  @override
   String get liveGameLockedTag => '已鎖定';
 
   @override
@@ -10548,9 +10505,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get liveGameNoAgentYet => '尚未選擇特務';
-
-  @override
-  String get liveGameNoAgents => '無法載入特務清單。請重新整理再試一次。';
 
   @override
   String get liveGameNoLoadout => '沒有此玩家的裝備資訊。';
@@ -10637,9 +10591,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get liveGameSelectFailed => '無法選擇此特務。請重新整理後再試一次。';
-
-  @override
   String get liveGameSheetTitle => '對戰詳情';
 
   @override
@@ -10656,9 +10607,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get liveGameStatusUnavailable => '無法更新對戰狀態';
-
-  @override
-  String get liveGameTabAgents => '特務';
 
   @override
   String get liveGameTabAllPlayers => '玩家';

@@ -3708,13 +3708,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => 'คุณยังไม่มีเอเจนท์นี้';
-
-  @override
   String get liveGameAgentSelect => 'เลือกเอเจนท์';
-
-  @override
-  String get liveGameAgentTaken => 'เพื่อนร่วมทีมล็อกเอเจนท์นี้ไปแล้ว';
 
   @override
   String get liveGameAnonymous => 'ไม่ระบุตัวตน';
@@ -3754,9 +3748,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get liveGameFlex => 'Flex';
 
   @override
-  String get liveGameHoverLockHint => 'แตะเพื่อเลือก กดค้างเพื่อล็อก';
-
-  @override
   String get liveGameInLobby => 'อยู่ในล็อบบี้';
 
   @override
@@ -3792,14 +3783,6 @@ class AppLocalizationsTh extends AppLocalizations {
       'เมื่อพบแมตช์ ValHub จะแสดงรายชื่อผู้เล่นและแรงก์ของทุกทีม';
 
   @override
-  String get liveGameLockFailed => 'ล็อกเอเจนท์นี้ไม่ได้ รีเฟรชแล้วลองอีกครั้ง';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return 'ล็อก $agent แล้ว';
-  }
-
-  @override
   String get liveGameLockedTag => 'ล็อกแล้ว';
 
   @override
@@ -3808,10 +3791,6 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get liveGameNoAgentYet => 'ยังไม่ได้เลือกเอเจนท์';
-
-  @override
-  String get liveGameNoAgents =>
-      'โหลดรายชื่อเอเจนท์ไม่ได้ รีเฟรชเพื่อลองอีกครั้ง';
 
   @override
   String get liveGameNoLoadout => 'ไม่มีข้อมูลชุดอุปกรณ์ของผู้เล่นนี้';
@@ -3901,10 +3880,6 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get liveGameSelectFailed =>
-      'เลือกเอเจนท์นี้ไม่ได้ รีเฟรชแล้วลองอีกครั้ง';
-
-  @override
   String get liveGameSheetTitle => 'รายละเอียดแมตช์';
 
   @override
@@ -3921,9 +3896,6 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get liveGameStatusUnavailable => 'อัปเดตสถานะแมตช์ไม่ได้';
-
-  @override
-  String get liveGameTabAgents => 'เอเจนท์';
 
   @override
   String get liveGameTabAllPlayers => 'ผู้เล่น';

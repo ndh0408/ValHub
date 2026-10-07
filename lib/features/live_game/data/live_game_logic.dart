@@ -179,69 +179,6 @@ String currentGameStatusText(
   };
 }
 
-// ---------------------------------------------------------- agent grid
-
-/// How one agent tile of the agent-select grid (G4) looks and reacts.
-enum AgentTileState {
-  /// Can be hovered / locked.
-  available,
-
-  /// Your current hover.
-  hovered,
-
-  /// Your locked agent.
-  locked,
-
-  /// Locked by a teammate (dimmed, disabled).
-  taken,
-
-  /// Not owned (dimmed, disabled).
-  notOwned,
-
-  /// You already locked another agent (disabled).
-  disabled;
-
-  bool get isEnabled => this == available || this == hovered;
-  bool get isDimmed => this == taken || this == notOwned || this == disabled;
-}
-
-/// State of [agentId]'s tile for [self] in [match]. [owned] = owned agent
-/// uuids (starters included); `null` while unknown (everything is allowed
-/// then and Riot validates the lock).
-AgentTileState agentTileState({
-  required String agentId,
-  required LiveMatch match,
-  required String self,
-  Set<String>? owned,
-}) {
-  final id = agentId.toLowerCase();
-  final me = match.player(self);
-  final mine = me?.characterId == id;
-  if (me != null && me.isLocked) {
-    return mine ? AgentTileState.locked : AgentTileState.disabled;
-  }
-  final takenByMate = match.players.any(
-    (p) =>
-        p.subject != me?.subject &&
-        p.teamId == (me?.teamId ?? match.allyTeamId) &&
-        p.isLocked &&
-        p.characterId == id,
-  );
-  if (takenByMate) return AgentTileState.taken;
-  if (owned != null && !owned.contains(id)) return AgentTileState.notOwned;
-  return mine ? AgentTileState.hovered : AgentTileState.available;
-}
-
-/// Agents of the grid: playable agents (with a role) by name.
-List<Agent> selectableAgents(ContentDb db) =>
-    [
-      for (final a in db.agents)
-        if (a.role != null && a.displayName.trim().isNotEmpty) a,
-    ]..sort(
-      (a, b) =>
-          a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()),
-    );
-
 // Separator is neutral punctuation; wording comes from the supplied resources.
 String _joinStatus(Iterable<String> parts) =>
     parts.where((s) => s.isNotEmpty).join(' · ');

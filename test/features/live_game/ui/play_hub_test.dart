@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -130,7 +132,8 @@ void main() {
           findsWidgets,
         );
       } else {
-        expect(find.text('Đặc vụ'), findsOneWidget);
+        // Agent select is information only (no pick grid).
+        expect(find.text(tl.liveGamePickInGame), findsOneWidget);
         expect(find.text('Đội địch'), findsNothing);
       }
       expect(tester.takeException(), isNull);
@@ -224,7 +227,7 @@ void main() {
       await container.read(liveGameProvider(me).notifier).refresh();
       await settle(tester);
       expect(find.byType(LiveGamePage), findsOneWidget);
-      expect(find.text('Đặc vụ'), findsOneWidget);
+      expect(find.text(tl.liveGamePickInGame), findsOneWidget);
       expect(container.read(liveGameSheetOpenProvider), 1);
       env
         ..loop = 'INGAME'

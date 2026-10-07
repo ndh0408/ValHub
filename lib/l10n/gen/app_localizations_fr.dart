@@ -3956,13 +3956,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => 'Vous ne possédez pas cet agent.';
-
-  @override
   String get liveGameAgentSelect => 'Sélection d\'agent';
-
-  @override
-  String get liveGameAgentTaken => 'Un coéquipier a déjà verrouillé cet agent.';
 
   @override
   String get liveGameAnonymous => 'Anonyme';
@@ -4003,10 +3997,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get liveGameFlex => 'Flex';
 
   @override
-  String get liveGameHoverLockHint =>
-      'Touchez pour présélectionner, maintenez pour verrouiller l\'agent.';
-
-  @override
   String get liveGameInLobby => 'Dans le salon';
 
   @override
@@ -4043,15 +4033,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'Dès qu\'une partie est trouvée, ValHub affiche la composition et le rang de chacun.';
 
   @override
-  String get liveGameLockFailed =>
-      'Impossible de verrouiller cet agent. Actualisez et réessayez.';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return '$agent verrouillé';
-  }
-
-  @override
   String get liveGameLockedTag => 'Verrouillé';
 
   @override
@@ -4060,10 +4041,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get liveGameNoAgentYet => 'Aucun agent choisi';
-
-  @override
-  String get liveGameNoAgents =>
-      'Impossible de charger la liste des agents. Actualisez pour réessayer.';
 
   @override
   String get liveGameNoLoadout => 'Aucune info d\'équipement pour ce joueur.';
@@ -4159,10 +4136,6 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get liveGameSelectFailed =>
-      'Impossible de sélectionner cet agent. Actualisez et réessayez.';
-
-  @override
   String get liveGameSheetTitle => 'Détails de la partie';
 
   @override
@@ -4180,9 +4153,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get liveGameStatusUnavailable =>
       'Impossible de mettre à jour l\'état de la partie';
-
-  @override
-  String get liveGameTabAgents => 'Agents';
 
   @override
   String get liveGameTabAllPlayers => 'Joueurs';

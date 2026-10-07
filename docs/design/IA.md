@@ -43,7 +43,7 @@ Một thẻ dùng dữ liệu live hiện có, thay cho thẻ trận và hàng t
 | Phiên game còn chạy nhưng tổ đội chưa có | Giữ trạng thái phiên thật; báo tổ đội chưa đồng bộ và cho thử lại, không bảo mở game lại |
 | Đang tìm trận | Thời gian chờ, hủy tìm trận; không hiển thị bảng điểm cũ thay hàng chờ mới |
 | Đã tìm thấy trận, phiên game chưa đổi | Báo tìm thấy trận; khóa sẵn sàng/hàng chờ, không hiện kết quả trận trước |
-| Chọn đặc vụ | Màn chọn/khóa đặc vụ và đội mình hiện có; giữ ẩn đội địch trong pregame |
+| Chọn đặc vụ | Chỉ thông tin: thời gian còn lại, đặc vụ bạn đang chọn trong game, đội mình (rank, đặc vụ); giữ ẩn đội địch trong pregame. Không chọn/khóa đặc vụ từ điện thoại (Riot phạt "instalock tools" từ bản 13.05; quyết định chủ dự án 07/10/2026) |
 | Đang đấu | Mở thẳng chi tiết trận từ Hồ sơ; đội mình/đội địch, map, chế độ và tỉ số khi có dữ liệu còn mới |
 | Vừa kết thúc | Kết quả/bảng điểm khi Riot công bố; trạng thái chờ dữ liệu nếu chưa có |
 | Lỗi / trạng thái game chưa rõ | Hiển thị lỗi/làm mới; khóa sẵn sàng và thao tác hàng chờ |

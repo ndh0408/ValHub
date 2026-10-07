@@ -3738,14 +3738,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => 'Bu ajana henüz sahip değilsin.';
-
-  @override
   String get liveGameAgentSelect => 'Ajan seçimi';
-
-  @override
-  String get liveGameAgentTaken =>
-      'Bir takım arkadaşın bu ajanı zaten kilitledi.';
 
   @override
   String get liveGameAnonymous => 'Anonim';
@@ -3785,10 +3778,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get liveGameFlex => 'Flex';
 
   @override
-  String get liveGameHoverLockHint =>
-      'Seçmek için dokun, kilitlemek için basılı tut.';
-
-  @override
   String get liveGameInLobby => 'Lobide';
 
   @override
@@ -3824,15 +3813,6 @@ class AppLocalizationsTr extends AppLocalizations {
       'Maç bulunduğunda ValHub herkesin kadrosunu ve rütbesini gösterir.';
 
   @override
-  String get liveGameLockFailed =>
-      'Bu ajan kilitlenemedi. Yenileyip tekrar dene.';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return 'Kilitlendi: $agent';
-  }
-
-  @override
   String get liveGameLockedTag => 'Kilitlendi';
 
   @override
@@ -3841,10 +3821,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get liveGameNoAgentYet => 'Ajan seçilmedi';
-
-  @override
-  String get liveGameNoAgents =>
-      'Ajan listesi yüklenemedi. Tekrar denemek için yenile.';
 
   @override
   String get liveGameNoLoadout => 'Bu oyuncunun kuşanım bilgisi yok.';
@@ -3934,10 +3910,6 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get liveGameSelectFailed =>
-      'Bu ajan seçilemedi. Yenileyip tekrar dene.';
-
-  @override
   String get liveGameSheetTitle => 'Maç ayrıntıları';
 
   @override
@@ -3954,9 +3926,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get liveGameStatusUnavailable => 'Maç durumu güncellenemedi';
-
-  @override
-  String get liveGameTabAgents => 'Ajanlar';
 
   @override
   String get liveGameTabAllPlayers => 'Oyuncular';

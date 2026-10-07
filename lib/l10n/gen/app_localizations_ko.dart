@@ -3648,13 +3648,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => '아직 보유하지 않은 요원입니다.';
-
-  @override
   String get liveGameAgentSelect => '요원 선택';
-
-  @override
-  String get liveGameAgentTaken => '아군이 이미 이 요원을 확정했습니다.';
 
   @override
   String get liveGameAnonymous => '익명';
@@ -3693,9 +3687,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get liveGameFlex => '플렉스';
 
   @override
-  String get liveGameHoverLockHint => '탭하여 선택, 길게 눌러 확정하세요.';
-
-  @override
   String get liveGameInLobby => '대기실';
 
   @override
@@ -3730,14 +3721,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get liveGameLobbyHint => '게임이 잡히면 ValHub에서 모든 팀의 구성과 랭크를 보여 줍니다.';
 
   @override
-  String get liveGameLockFailed => '이 요원을 확정하지 못했습니다. 새로고침 후 다시 시도하세요.';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return '$agent 확정';
-  }
-
-  @override
   String get liveGameLockedTag => '확정';
 
   @override
@@ -3746,9 +3729,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get liveGameNoAgentYet => '요원 미선택';
-
-  @override
-  String get liveGameNoAgents => '요원 목록을 불러오지 못했습니다. 새로고침하여 다시 시도하세요.';
 
   @override
   String get liveGameNoLoadout => '이 플레이어의 장비 정보가 없습니다.';
@@ -3837,9 +3817,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get liveGameSelectFailed => '이 요원을 선택하지 못했습니다. 새로고침 후 다시 시도하세요.';
-
-  @override
   String get liveGameSheetTitle => '게임 정보';
 
   @override
@@ -3856,9 +3833,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get liveGameStatusUnavailable => '게임 상태를 업데이트하지 못했습니다';
-
-  @override
-  String get liveGameTabAgents => '요원';
 
   @override
   String get liveGameTabAllPlayers => '플레이어';

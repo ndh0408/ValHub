@@ -426,14 +426,11 @@ void main() {
   test('mutations are never retried automatically', () async {
     adapter.reply(503, {'errorCode': 'x'});
     await expectLater(
-      api.pregameLockAgent(_puuid, 'match', 'agent'),
+      api.pregameQuit(_puuid, 'match'),
       throwsA(isA<TransientException>()),
     );
     expect(adapter.requests, hasLength(1));
-    expect(
-      adapter.requests.single.uri.path,
-      '/pregame/v1/matches/match/lock/agent',
-    );
+    expect(adapter.requests.single.uri.path, '/pregame/v1/matches/match/quit');
   });
 
   test('loadout PUT sends the raw map back', () async {

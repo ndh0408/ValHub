@@ -3929,13 +3929,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => 'Non possiedi ancora questo agente.';
-
-  @override
   String get liveGameAgentSelect => 'Selezione agente';
-
-  @override
-  String get liveGameAgentTaken => 'Un compagno ha già bloccato questo agente.';
 
   @override
   String get liveGameAnonymous => 'Anonimo';
@@ -3976,10 +3970,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get liveGameFlex => 'Flex';
 
   @override
-  String get liveGameHoverLockHint =>
-      'Tocca per selezionare, tieni premuto per bloccare.';
-
-  @override
   String get liveGameInLobby => 'Nella lobby';
 
   @override
@@ -4016,15 +4006,6 @@ class AppLocalizationsIt extends AppLocalizations {
       'Quando viene trovata una partita, ValHub mostra le formazioni e i gradi di tutti.';
 
   @override
-  String get liveGameLockFailed =>
-      'Impossibile bloccare questo agente. Aggiorna e riprova.';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return '$agent bloccato';
-  }
-
-  @override
   String get liveGameLockedTag => 'Bloccato';
 
   @override
@@ -4033,10 +4014,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get liveGameNoAgentYet => 'Nessun agente selezionato';
-
-  @override
-  String get liveGameNoAgents =>
-      'Impossibile caricare l\'elenco degli agenti. Aggiorna per riprovare.';
 
   @override
   String get liveGameNoLoadout =>
@@ -4133,10 +4110,6 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get liveGameSelectFailed =>
-      'Impossibile selezionare questo agente. Aggiorna e riprova.';
-
-  @override
   String get liveGameSheetTitle => 'Dettagli partita';
 
   @override
@@ -4154,9 +4127,6 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get liveGameStatusUnavailable =>
       'Impossibile aggiornare lo stato della partita';
-
-  @override
-  String get liveGameTabAgents => 'Agenti';
 
   @override
   String get liveGameTabAllPlayers => 'Giocatori';

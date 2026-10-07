@@ -6997,14 +6997,8 @@ void main() {
   test('liveGameAcs', () {
     expect(l10n.liveGameAcs, LiveGameStrings.acs);
   });
-  test('liveGameAgentNotOwned', () {
-    expect(l10n.liveGameAgentNotOwned, LiveGameStrings.agentNotOwned);
-  });
   test('liveGameAgentSelect', () {
     expect(l10n.liveGameAgentSelect, LiveGameStrings.agentSelect);
-  });
-  test('liveGameAgentTaken', () {
-    expect(l10n.liveGameAgentTaken, LiveGameStrings.agentTaken);
   });
   test('liveGameAnonymous', () {
     expect(l10n.liveGameAnonymous, LiveGameStrings.anonymous);
@@ -7066,9 +7060,6 @@ void main() {
   test('liveGameFlex', () {
     expect(l10n.liveGameFlex, LiveGameStrings.flex);
   });
-  test('liveGameHoverLockHint', () {
-    expect(l10n.liveGameHoverLockHint, LiveGameStrings.hoverLockHint);
-  });
   test('liveGameInLobby', () {
     expect(l10n.liveGameInLobby, LiveGameStrings.inLobby);
   });
@@ -7114,20 +7105,6 @@ void main() {
   test('liveGameLobbyHint', () {
     expect(l10n.liveGameLobbyHint, LiveGameStrings.lobbyHint);
   });
-  test('liveGameLockFailed', () {
-    expect(l10n.liveGameLockFailed, LiveGameStrings.lockFailed);
-  });
-  test('liveGameLockedAgent', () {
-    expect(l10n.liveGameLockedAgent(''), LiveGameStrings.lockedAgent(''));
-    expect(
-      l10n.liveGameLockedAgent('Nguyễn Văn A'),
-      LiveGameStrings.lockedAgent('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.liveGameLockedAgent('{value}\n!'),
-      LiveGameStrings.lockedAgent('{value}\n!'),
-    );
-  });
   test('liveGameLockedTag', () {
     expect(l10n.liveGameLockedTag, LiveGameStrings.lockedTag);
   });
@@ -7136,9 +7113,6 @@ void main() {
   });
   test('liveGameNoAgentYet', () {
     expect(l10n.liveGameNoAgentYet, LiveGameStrings.noAgentYet);
-  });
-  test('liveGameNoAgents', () {
-    expect(l10n.liveGameNoAgents, LiveGameStrings.noAgents);
   });
   test('liveGameNoLoadout', () {
     expect(l10n.liveGameNoLoadout, LiveGameStrings.noLoadout);
@@ -7270,9 +7244,6 @@ void main() {
     expect(l10n.liveGameScore(99, 5), LiveGameStrings.score(99, 5));
     expect(l10n.liveGameScore(99, 99), LiveGameStrings.score(99, 99));
   });
-  test('liveGameSelectFailed', () {
-    expect(l10n.liveGameSelectFailed, LiveGameStrings.selectFailed);
-  });
   test('liveGameSheetTitle', () {
     expect(l10n.liveGameSheetTitle, LiveGameStrings.sheetTitle);
   });
@@ -7290,9 +7261,6 @@ void main() {
   });
   test('liveGameStatusUnavailable', () {
     expect(l10n.liveGameStatusUnavailable, LiveGameStrings.statusUnavailable);
-  });
-  test('liveGameTabAgents', () {
-    expect(l10n.liveGameTabAgents, LiveGameStrings.tabAgents);
   });
   test('liveGameTabAllPlayers', () {
     expect(l10n.liveGameTabAllPlayers, LiveGameStrings.tabAllPlayers);

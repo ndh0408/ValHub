@@ -340,29 +340,6 @@ class PvpApi {
   Future<JsonMap> pregameMatch(String puuid, String matchId) =>
       _map(puuid, 'GET', (h) => '${h.glz}/pregame/v1/matches/$matchId');
 
-  /// G-4 `POST /pregame/v1/matches/{matchId}/select/{agentId}` (hover).
-  Future<JsonMap> pregameSelectAgent(
-    String puuid,
-    String matchId,
-    String agentId,
-  ) => _map(
-    puuid,
-    'POST',
-    (h) => '${h.glz}/pregame/v1/matches/$matchId/select/$agentId',
-  );
-
-  /// G-5 `POST /pregame/v1/matches/{matchId}/lock/{agentId}` (lock; owned
-  /// agents only; user hold gesture only).
-  Future<JsonMap> pregameLockAgent(
-    String puuid,
-    String matchId,
-    String agentId,
-  ) => _map(
-    puuid,
-    'POST',
-    (h) => '${h.glz}/pregame/v1/matches/$matchId/lock/$agentId',
-  );
-
   /// G-6 `POST /pregame/v1/matches/{matchId}/quit` — DODGE, PENALTY.
   /// Confirm with the user first.
   Future<JsonMap> pregameQuit(String puuid, String matchId) =>

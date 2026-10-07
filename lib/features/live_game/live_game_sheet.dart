@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../core/accounts/account_providers.dart';
+import '../../core/content/content_db.dart';
+import '../../core/content/content_repository.dart';
 import '../../core/ui/adaptive.dart';
 import '../../core/ui/empty_view.dart';
 import '../../core/ui/error_view.dart';
@@ -157,28 +159,36 @@ class LiveGameSheet extends ConsumerWidget {
   }
 }
 
-class _PregameTabs extends StatelessWidget {
+/// Agent select, information only: the timer and your agent, then your
+/// team with ranks and picks (the enemy team stays hidden, as in the game).
+class _PregameTabs extends ConsumerWidget {
   const _PregameTabs({super.key, required this.puuid, required this.match});
 
   final String puuid;
   final LiveMatch match;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final teams = splitTeams(match, puuid);
     final theme = Theme.of(context);
-    return LiveTabs(
-      labels: [
-        context.l10n.liveGameTabAgents,
-        context.l10n.liveGameTabYourTeam,
-      ],
-      children: [
-        AgentSelectView(puuid: puuid, match: match),
-        LiveRosterList(
-          puuid: puuid,
-          match: match,
-          players: teams.ally,
-          header: Padding(
+    final db = ref.watch(contentProvider).value ?? ContentDb.empty();
+    final me = match.player(puuid);
+    final agentId = me?.characterId;
+    return LiveRosterList(
+      puuid: puuid,
+      match: match,
+      players: teams.ally,
+      header: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AgentSelectInfo(
+            match: match,
+            myAgent: agentId == null ? null : db.agent(agentId),
+            myLocked: me?.isLocked ?? false,
+            onExpired: () =>
+                unawaited(ref.read(liveGameProvider(puuid).notifier).refresh()),
+          ),
+          Padding(
             padding: const EdgeInsets.fromLTRB(4, 4, 4, 10),
             child: Row(
               children: [
@@ -199,8 +209,8 @@ class _PregameTabs extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

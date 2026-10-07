@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoAlertDialog;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -105,76 +107,34 @@ void main() {
         ..party = partyJson(matchmaking: false);
     });
 
-    testWidgets('header, hint, timer and grid', (tester) async {
+    testWidgets('information only: header, timer, your agent and team', (
+      tester,
+    ) async {
       await pumpSheet(tester);
       expect(find.text('Đang chọn đặc vụ'), findsOneWidget);
       // The hero carries the map name in capitals (with or without art).
       expect(find.text('ASCENT'), findsOneWidget);
       expect(find.text('Thi đấu xếp hạng'), findsOneWidget);
-      expect(find.text(LiveGameStrings.hoverLockHint), findsOneWidget);
+      // Agents are picked in the game (Riot bans instalock tools).
+      expect(find.text(tl.liveGamePickInGame), findsOneWidget);
       expect(find.text('Còn 0:42'), findsOneWidget);
       expect(find.text('Đội địch đã khóa 4/5'), findsOneWidget);
-      for (final name in ['Jett', 'Omen', 'Raze', 'Reyna', 'Sage', 'Sova']) {
-        expect(find.text(name), findsOneWidget);
+      // No agent grid: agents nobody picked are not offered.
+      for (final name in ['Jett', 'Omen', 'Raze', 'Reyna']) {
+        expect(find.text(name), findsNothing);
       }
       expect(find.text('Rời trận'), findsOneWidget);
-    });
-
-    testWidgets('tap hovers (G-4), hold locks (G-5) with a toast', (
-      tester,
-    ) async {
-      await pumpSheet(tester);
-      await tester.tap(find.text('Reyna'));
+      // Nothing on the screen changes the account.
+      await tester.tap(find.text('Đồng Đội#VN1'));
+      await tester.longPress(find.text('Đồng Đội#VN1'));
       await settle(tester);
-      verify(() => env.api.pregameSelectAgent(me, pregameMatchId, reyna))
-          .called(1);
-      verifyNever(() => env.api.pregameLockAgent(any(), any(), any()));
-      expect(find.text('Bạn đang chọn Reyna'), findsOneWidget);
-
-      await tester.longPress(find.text('Reyna'));
-      await settle(tester);
-      verify(() => env.api.pregameLockAgent(me, pregameMatchId, reyna))
-          .called(1);
-      expect(find.text('Đã khóa Reyna'), findsOneWidget);
-      expect(find.text('Bạn đã khóa Reyna'), findsOneWidget);
-    });
-
-    testWidgets('unowned and taken agents explain instead of calling Riot', (
-      tester,
-    ) async {
-      await pumpSheet(tester);
-      await tester.tap(find.text('Omen'));
-      await settle(tester);
-      expect(find.text('Bạn chưa sở hữu đặc vụ này.'), findsOneWidget);
-      // The map splash header pushes the grid down: bring Sova to the top
-      // of the grid, clear of the snackbar.
-      await tester.ensureVisible(find.text('Sova'));
-      await settle(tester);
-      await tester.longPress(find.text('Sova'));
-      await tester.tap(find.text('Sova'));
-      await settle(tester);
-      expect(find.text('Đồng đội đã khóa đặc vụ này.'), findsOneWidget);
-      verifyNever(() => env.api.pregameSelectAgent(any(), any(), any()));
-      verifyNever(() => env.api.pregameLockAgent(any(), any(), any()));
-    });
-
-    testWidgets('a refused lock shows an error', (tester) async {
-      when(() => env.api.pregameLockAgent(any(), any(), any()))
-          .thenThrow(const RiotApiException(409));
-      await pumpSheet(tester);
-      await tester.longPress(find.text('Jett'));
-      await settle(tester);
-      expect(
-        find.text('Chưa khóa được đặc vụ này. Hãy làm mới rồi thử lại.'),
-        findsOneWidget,
-      );
+      verifyNever(() => env.api.pregameQuit(any(), any()));
     });
 
     testWidgets('your team: names, "Ẩn danh", BẠN, party, levels', (
       tester,
     ) async {
       await pumpSheet(tester);
-      await tester.tap(find.text('Đội của bạn'));
       await settle(tester, frames: 12);
       expect(find.text('Tôi#VN1'), findsOneWidget);
       expect(find.text('Đồng Đội#VN1'), findsOneWidget);
@@ -230,7 +190,7 @@ void main() {
     testWidgets('no overflow at 320 dp with 130 % text', (tester) async {
       await pumpSheet(tester, width: 320, height: 640, textScale: 1.3);
       expect(tester.takeException(), isNull);
-      await tester.tap(find.text('Đội của bạn'));
+      await tester.drag(find.byType(Scrollable).last, const Offset(0, -400));
       await settle(tester);
       expect(tester.takeException(), isNull);
     });

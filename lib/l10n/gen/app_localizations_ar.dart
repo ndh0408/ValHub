@@ -4064,13 +4064,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => 'لا تملك هذا العميل بعد.';
-
-  @override
   String get liveGameAgentSelect => 'اختيار العميل';
-
-  @override
-  String get liveGameAgentTaken => 'قفل أحد زملائك هذا العميل بالفعل.';
 
   @override
   String get liveGameAnonymous => 'مجهول';
@@ -4111,9 +4105,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get liveGameFlex => 'Flex';
 
   @override
-  String get liveGameHoverLockHint => 'المس للاختيار، واضغط مطولًا للقفل.';
-
-  @override
   String get liveGameInLobby => 'في الردهة';
 
   @override
@@ -4149,15 +4140,6 @@ class AppLocalizationsAr extends AppLocalizations {
       'عند العثور على مباراة، يعرض ValHub تشكيلة كل فريق ورتب اللاعبين.';
 
   @override
-  String get liveGameLockFailed =>
-      'تعذّر قفل هذا العميل. حدّث الصفحة ثم حاول مجددًا.';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return 'تم قفل $agent';
-  }
-
-  @override
   String get liveGameLockedTag => 'مقفل';
 
   @override
@@ -4166,10 +4148,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get liveGameNoAgentYet => 'لم يتم اختيار عميل';
-
-  @override
-  String get liveGameNoAgents =>
-      'تعذّر تحميل قائمة العملاء. حدّث الصفحة لإعادة المحاولة.';
 
   @override
   String get liveGameNoLoadout => 'لا تتوفر معلومات تجهيزات لهذا اللاعب.';
@@ -4269,10 +4247,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get liveGameSelectFailed =>
-      'تعذّر اختيار هذا العميل. حدّث الصفحة ثم حاول مجددًا.';
-
-  @override
   String get liveGameSheetTitle => 'تفاصيل المباراة';
 
   @override
@@ -4289,9 +4263,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get liveGameStatusUnavailable => 'تعذّر تحديث حالة المباراة';
-
-  @override
-  String get liveGameTabAgents => 'العملاء';
 
   @override
   String get liveGameTabAllPlayers => 'اللاعبون';

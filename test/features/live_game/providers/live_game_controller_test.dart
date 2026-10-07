@@ -39,8 +39,6 @@ void main() {
   }
 
   void verifyNoMutation() {
-    verifyNever(() => env.api.pregameSelectAgent(any(), any(), any()));
-    verifyNever(() => env.api.pregameLockAgent(any(), any(), any()));
     verifyNever(() => env.api.pregameQuit(any(), any()));
     verifyNever(() => env.api.coreGameDisassociate(any(), any()));
   }
@@ -147,49 +145,6 @@ void main() {
       await tester.pump();
       // One poll, then exactly one follow-up for the second request.
       verify(() => env.api.gameSession(me)).called(2);
-    });
-  });
-
-  testWidgets('hover (G-4) and lock (G-5) update the match at once', (
-    tester,
-  ) async {
-    env
-      ..loop = 'PREGAME'
-      ..pregame = pregameMatchJson();
-    await withContainer((c) async {
-      c.listen(liveGameProvider(me), (_, _) {});
-      await tester.pump();
-      final controller = c.read(liveGameProvider(me).notifier);
-
-      await controller.hoverAgent(reyna);
-      verify(() => env.api.pregameSelectAgent(me, pregameMatchId, reyna))
-          .called(1);
-      var self = c.read(liveGameProvider(me)).value!.match!.player(me)!;
-      expect(self.characterId, reyna);
-      expect(self.selection, AgentSelection.selected);
-
-      // Riot answers the lock with the pregame match: it is used as is.
-      when(() => env.api.pregameLockAgent(any(), any(), any())).thenAnswer(
-        (_) async => pregameMatchJson(myAgent: reyna, myState: 'locked'),
-      );
-      await controller.lockAgent(reyna);
-      verify(() => env.api.pregameLockAgent(me, pregameMatchId, reyna))
-          .called(1);
-      self = c.read(liveGameProvider(me)).value!.match!.player(me)!;
-      expect(self.isLocked, isTrue);
-      verifyNever(() => env.api.pregameQuit(any(), any()));
-    });
-  });
-
-  testWidgets('agent actions outside agent select fail', (tester) async {
-    await withContainer((c) async {
-      c.listen(liveGameProvider(me), (_, _) {});
-      await tester.pump();
-      await expectLater(
-        c.read(liveGameProvider(me).notifier).lockAgent(jett),
-        throwsA(isA<NotFoundException>()),
-      );
-      verifyNoMutation();
     });
   });
 

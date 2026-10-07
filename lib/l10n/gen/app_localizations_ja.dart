@@ -3650,13 +3650,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => 'このエージェントはまだ所持していません。';
-
-  @override
   String get liveGameAgentSelect => 'エージェント選択中';
-
-  @override
-  String get liveGameAgentTaken => '味方がこのエージェントをロックインしています。';
 
   @override
   String get liveGameAnonymous => '匿名';
@@ -3695,9 +3689,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get liveGameFlex => 'フレックス';
 
   @override
-  String get liveGameHoverLockHint => 'タップで仮選択、長押しでロックイン。';
-
-  @override
   String get liveGameInLobby => 'ロビーにいます';
 
   @override
@@ -3732,14 +3723,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get liveGameLobbyHint => '試合が見つかると、ValHubに全員の構成とランクが表示されます。';
 
   @override
-  String get liveGameLockFailed => 'このエージェントをロックインできませんでした。更新してもう一度お試しください。';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return '$agentをロックインしました';
-  }
-
-  @override
   String get liveGameLockedTag => 'ロックイン済み';
 
   @override
@@ -3748,9 +3731,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get liveGameNoAgentYet => 'エージェント未選択';
-
-  @override
-  String get liveGameNoAgents => 'エージェント一覧を読み込めませんでした。更新してもう一度お試しください。';
 
   @override
   String get liveGameNoLoadout => 'このプレイヤーのロードアウト情報はありません。';
@@ -3839,9 +3819,6 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get liveGameSelectFailed => 'このエージェントを選択できませんでした。更新してもう一度お試しください。';
-
-  @override
   String get liveGameSheetTitle => '試合の詳細';
 
   @override
@@ -3858,9 +3835,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get liveGameStatusUnavailable => '試合の状態を更新できませんでした';
-
-  @override
-  String get liveGameTabAgents => 'エージェント';
 
   @override
   String get liveGameTabAllPlayers => 'プレイヤー';

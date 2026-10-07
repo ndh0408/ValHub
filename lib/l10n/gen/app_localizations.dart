@@ -6452,23 +6452,11 @@ abstract class AppLocalizations {
   /// **'ACS'**
   String get liveGameAcs;
 
-  /// LiveGameStrings.agentNotOwned — Agent select (G4)
-  ///
-  /// In vi, this message translates to:
-  /// **'Bạn chưa sở hữu đặc vụ này.'**
-  String get liveGameAgentNotOwned;
-
   /// LiveGameStrings.agentSelect — Current game card (R7) / idle states
   ///
   /// In vi, this message translates to:
   /// **'Đang chọn đặc vụ'**
   String get liveGameAgentSelect;
-
-  /// LiveGameStrings.agentTaken — Agent select (G4)
-  ///
-  /// In vi, this message translates to:
-  /// **'Đồng đội đã khóa đặc vụ này.'**
-  String get liveGameAgentTaken;
 
   /// LiveGameStrings.anonymous — Rosters (G5, G6)
   ///
@@ -6536,12 +6524,6 @@ abstract class AppLocalizations {
   /// **'Flex'**
   String get liveGameFlex;
 
-  /// LiveGameStrings.hoverLockHint — Agent select (G4)
-  ///
-  /// In vi, this message translates to:
-  /// **'Chạm để chọn thử, giữ để khóa đặc vụ.'**
-  String get liveGameHoverLockHint;
-
   /// LiveGameStrings.inLobby — Current game card (R7) / idle states
   ///
   /// In vi, this message translates to:
@@ -6602,18 +6584,6 @@ abstract class AppLocalizations {
   /// **'Khi tìm được trận, ValHub sẽ hiện đội hình và rank của mọi người.'**
   String get liveGameLobbyHint;
 
-  /// LiveGameStrings.lockFailed — Agent select (G4)
-  ///
-  /// In vi, this message translates to:
-  /// **'Chưa khóa được đặc vụ này. Hãy làm mới rồi thử lại.'**
-  String get liveGameLockFailed;
-
-  /// LiveGameStrings.lockedAgent — Agent select (G4)
-  ///
-  /// In vi, this message translates to:
-  /// **'Đã khóa {agent}'**
-  String liveGameLockedAgent(String agent);
-
   /// LiveGameStrings.lockedTag — Rosters (G5, G6)
   ///
   /// In vi, this message translates to:
@@ -6631,12 +6601,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chưa chọn đặc vụ'**
   String get liveGameNoAgentYet;
-
-  /// LiveGameStrings.noAgents — Agent select (G4)
-  ///
-  /// In vi, this message translates to:
-  /// **'Chưa tải được danh sách đặc vụ. Hãy làm mới để thử lại.'**
-  String get liveGameNoAgents;
 
   /// LiveGameStrings.noLoadout — Player loadout (S51)
   ///
@@ -6782,12 +6746,6 @@ abstract class AppLocalizations {
   /// **'{ally} – {enemy}'**
   String liveGameScore(int ally, int enemy);
 
-  /// LiveGameStrings.selectFailed — Agent select (G4)
-  ///
-  /// In vi, this message translates to:
-  /// **'Chưa chọn được đặc vụ này. Hãy làm mới rồi thử lại.'**
-  String get liveGameSelectFailed;
-
   /// LiveGameStrings.sheetTitle — Sheet (S50)
   ///
   /// In vi, this message translates to:
@@ -6823,12 +6781,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chưa cập nhật được trạng thái trận'**
   String get liveGameStatusUnavailable;
-
-  /// LiveGameStrings.tabAgents — Tabs (VF §8.10)
-  ///
-  /// In vi, this message translates to:
-  /// **'Đặc vụ'**
-  String get liveGameTabAgents;
 
   /// LiveGameStrings.tabAllPlayers — Tabs (VF §8.10)
   ///

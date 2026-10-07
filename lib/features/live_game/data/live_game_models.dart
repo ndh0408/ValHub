@@ -318,40 +318,6 @@ class LiveMatch {
     return null;
   }
 
-  /// Returns a copy where [puuid] hovers / locks [agentId] (optimistic
-  /// update after G-4 / G-5 when Riot's answer is not a match body).
-  LiveMatch withSelection(
-    String puuid,
-    String agentId,
-    AgentSelection selection,
-  ) {
-    final id = puuid.trim().toLowerCase();
-    return LiveMatch(
-      matchId: matchId,
-      isPregame: isPregame,
-      receivedAt: receivedAt,
-      mapId: mapId,
-      modeId: modeId,
-      queueId: queueId,
-      provisioningFlow: provisioningFlow,
-      isRanked: isRanked,
-      state: state,
-      phaseTimeRemaining: phaseTimeRemaining,
-      allyTeamId: allyTeamId,
-      players: List.unmodifiable([
-        for (final p in players)
-          p.subject == id
-              ? p.copyWith(
-                  characterId: agentId.toLowerCase(),
-                  selection: selection,
-                )
-              : p,
-      ]),
-      enemyTeamSize: enemyTeamSize,
-      enemyTeamLockCount: enemyTeamLockCount,
-    );
-  }
-
   @override
   bool operator ==(Object other) =>
       other is LiveMatch &&

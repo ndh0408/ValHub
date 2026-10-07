@@ -3719,13 +3719,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => 'Bạn chưa sở hữu đặc vụ này.';
-
-  @override
   String get liveGameAgentSelect => 'Đang chọn đặc vụ';
-
-  @override
-  String get liveGameAgentTaken => 'Đồng đội đã khóa đặc vụ này.';
 
   @override
   String get liveGameAnonymous => 'Ẩn danh';
@@ -3765,9 +3759,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get liveGameFlex => 'Flex';
 
   @override
-  String get liveGameHoverLockHint => 'Chạm để chọn thử, giữ để khóa đặc vụ.';
-
-  @override
   String get liveGameInLobby => 'Đang ở sảnh chờ';
 
   @override
@@ -3803,15 +3794,6 @@ class AppLocalizationsVi extends AppLocalizations {
       'Khi tìm được trận, ValHub sẽ hiện đội hình và rank của mọi người.';
 
   @override
-  String get liveGameLockFailed =>
-      'Chưa khóa được đặc vụ này. Hãy làm mới rồi thử lại.';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return 'Đã khóa $agent';
-  }
-
-  @override
   String get liveGameLockedTag => 'Đã khóa';
 
   @override
@@ -3820,10 +3802,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get liveGameNoAgentYet => 'Chưa chọn đặc vụ';
-
-  @override
-  String get liveGameNoAgents =>
-      'Chưa tải được danh sách đặc vụ. Hãy làm mới để thử lại.';
 
   @override
   String get liveGameNoLoadout =>
@@ -3914,10 +3892,6 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get liveGameSelectFailed =>
-      'Chưa chọn được đặc vụ này. Hãy làm mới rồi thử lại.';
-
-  @override
   String get liveGameSheetTitle => 'Chi tiết trận';
 
   @override
@@ -3934,9 +3908,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get liveGameStatusUnavailable => 'Chưa cập nhật được trạng thái trận';
-
-  @override
-  String get liveGameTabAgents => 'Đặc vụ';
 
   @override
   String get liveGameTabAllPlayers => 'Người chơi';

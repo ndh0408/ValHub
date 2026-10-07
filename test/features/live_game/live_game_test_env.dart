@@ -468,10 +468,6 @@ class LiveTestEnv {
       if (p == null) throw const NotFoundException();
       return p;
     });
-    when(() => api.pregameSelectAgent(any(), any(), any()))
-        .thenAnswer((inv) async => <String, dynamic>{});
-    when(() => api.pregameLockAgent(any(), any(), any()))
-        .thenAnswer((inv) async => <String, dynamic>{});
     when(() => api.pregameQuit(any(), any()))
         .thenAnswer((_) async => <String, dynamic>{});
     when(() => api.coreGameDisassociate(any(), any()))

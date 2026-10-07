@@ -3735,13 +3735,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => 'Kamu belum memiliki agen ini.';
-
-  @override
   String get liveGameAgentSelect => 'Pemilihan agen';
-
-  @override
-  String get liveGameAgentTaken => 'Rekan tim sudah mengunci agen ini.';
 
   @override
   String get liveGameAnonymous => 'Anonim';
@@ -3782,10 +3776,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get liveGameFlex => 'Flex';
 
   @override
-  String get liveGameHoverLockHint =>
-      'Ketuk untuk memilih, tahan untuk mengunci.';
-
-  @override
   String get liveGameInLobby => 'Di lobi';
 
   @override
@@ -3821,15 +3811,6 @@ class AppLocalizationsId extends AppLocalizations {
       'Begitu pertandingan ditemukan, ValHub akan menampilkan susunan tim dan rank semua pemain.';
 
   @override
-  String get liveGameLockFailed =>
-      'Gagal mengunci agen ini. Muat ulang lalu coba lagi.';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return '$agent dikunci';
-  }
-
-  @override
   String get liveGameLockedTag => 'Terkunci';
 
   @override
@@ -3838,10 +3819,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get liveGameNoAgentYet => 'Belum memilih agen';
-
-  @override
-  String get liveGameNoAgents =>
-      'Gagal memuat daftar agen. Muat ulang untuk mencoba lagi.';
 
   @override
   String get liveGameNoLoadout => 'Tidak ada info loadout untuk pemain ini.';
@@ -3931,10 +3908,6 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get liveGameSelectFailed =>
-      'Gagal memilih agen ini. Muat ulang lalu coba lagi.';
-
-  @override
   String get liveGameSheetTitle => 'Detail pertandingan';
 
   @override
@@ -3952,9 +3925,6 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get liveGameStatusUnavailable =>
       'Gagal memperbarui status pertandingan';
-
-  @override
-  String get liveGameTabAgents => 'Agen';
 
   @override
   String get liveGameTabAllPlayers => 'Pemain';

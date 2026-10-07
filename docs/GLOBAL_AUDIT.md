@@ -33,6 +33,7 @@ Every finding row has: ID, severity, area, file:line, current behavior, problem,
 | D5 | Redis: not adopted; SQLite stays. Add injected store interfaces only (CS-41); PostgreSQL only when multi-node/HA/size demands (CS-40) | Evidence from the audit; avoid over-engineering. |
 | D6 | Token-receiving host is pinned in code (allow-list); community base URL removed from remote config | AR-009, CS-28. |
 | D7 | Riot integration (06/10/2026): the owner accepts the policy risk of the Riot web sign-in and game-client endpoints without RSO / a Production API key, as ValBuddy and Daily Val do. Not a release blocker; keep existing safeguards (consent, no token egress beyond the two approved endpoints, user-initiated mutations) | Owner decision after the external production audit. |
+| D8 | Agent select (07/10/2026): no agent pick or lock from the phone; the screen shows agent select only (timer, your agent, your team) | Riot patch 13.05 (2026-09-01) bans "instalock tools", which call the same pregame select/lock endpoints; DailyVal 3.0 removed its remote pick/lock. Owner chose removal. |
 
 ## 3. Work packages (Phases 1–6 of the brief)
 

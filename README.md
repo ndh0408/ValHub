@@ -121,7 +121,7 @@ năng chính:
 - **Bộ sưu tập**: đổi thẻ, danh hiệu, skin, phụ kiện súng, tổ hợp cảm xúc, preset trang bị.
 - **Wishlist**: báo khi skin bạn thích xuất hiện trong cửa hàng (kể cả khi đóng app).
 - **Hồ sơ**: rank, lịch sử trận, chi tiết trận, RR theo ngày, tính số trận lên hạng.
-- **Trận hiện tại**: đội hình kèm rank, chọn/khóa đặc vụ, trang bị người chơi.
+- **Trận hiện tại**: đội hình kèm rank, đặc vụ đồng đội đang chọn, trang bị người chơi (chọn/khóa đặc vụ làm trong game).
 - **Xã hội**: bạn bè, trò chuyện, tổ đội và hàng chờ.
 - **Cộng đồng**: bảng tin, tìm đồng đội, xếp hạng và đánh giá skin.
 - Tối đa 10 tài khoản Riot, đổi qua lại nhanh.

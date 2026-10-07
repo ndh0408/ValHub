@@ -3945,13 +3945,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get liveGameAcs => 'ACS';
 
   @override
-  String get liveGameAgentNotOwned => 'You don\'t own this agent yet.';
-
-  @override
   String get liveGameAgentSelect => 'Agent select';
-
-  @override
-  String get liveGameAgentTaken => 'A teammate already locked this agent.';
 
   @override
   String get liveGameAnonymous => 'Anonymous';
@@ -3992,9 +3986,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get liveGameFlex => 'Flex';
 
   @override
-  String get liveGameHoverLockHint => 'Tap to select, hold to lock in.';
-
-  @override
   String get liveGameInLobby => 'In lobby';
 
   @override
@@ -4030,15 +4021,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Once a match is found, ValHub shows every team\'s lineup and ranks.';
 
   @override
-  String get liveGameLockFailed =>
-      'Couldn\'t lock in this agent. Refresh and try again.';
-
-  @override
-  String liveGameLockedAgent(String agent) {
-    return 'Locked in $agent';
-  }
-
-  @override
   String get liveGameLockedTag => 'Locked in';
 
   @override
@@ -4047,10 +4029,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get liveGameNoAgentYet => 'No agent selected';
-
-  @override
-  String get liveGameNoAgents =>
-      'Couldn\'t load the agent list. Refresh to try again.';
 
   @override
   String get liveGameNoLoadout => 'No loadout info for this player.';
@@ -4146,10 +4124,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get liveGameSelectFailed =>
-      'Couldn\'t select this agent. Refresh and try again.';
-
-  @override
   String get liveGameSheetTitle => 'Match details';
 
   @override
@@ -4166,9 +4140,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get liveGameStatusUnavailable => 'Couldn\'t update match status';
-
-  @override
-  String get liveGameTabAgents => 'Agents';
 
   @override
   String get liveGameTabAllPlayers => 'Players';

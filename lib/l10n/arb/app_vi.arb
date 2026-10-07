@@ -6180,19 +6180,9 @@
     "description": "LiveGameStrings.acs — Ended (G11)",
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
-  "liveGameAgentNotOwned": "Bạn chưa sở hữu đặc vụ này.",
-  "@liveGameAgentNotOwned": {
-    "description": "LiveGameStrings.agentNotOwned — Agent select (G4)",
-    "x-context": "lib/features/live_game/live_game_strings.dart"
-  },
   "liveGameAgentSelect": "Đang chọn đặc vụ",
   "@liveGameAgentSelect": {
     "description": "LiveGameStrings.agentSelect — Current game card (R7) / idle states",
-    "x-context": "lib/features/live_game/live_game_strings.dart"
-  },
-  "liveGameAgentTaken": "Đồng đội đã khóa đặc vụ này.",
-  "@liveGameAgentTaken": {
-    "description": "LiveGameStrings.agentTaken — Agent select (G4)",
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
   "liveGameAnonymous": "Ẩn danh",
@@ -6257,11 +6247,6 @@
     "description": "LiveGameStrings.flex — Player loadout (S51)",
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
-  "liveGameHoverLockHint": "Chạm để chọn thử, giữ để khóa đặc vụ.",
-  "@liveGameHoverLockHint": {
-    "description": "LiveGameStrings.hoverLockHint — Agent select (G4)",
-    "x-context": "lib/features/live_game/live_game_strings.dart"
-  },
   "liveGameInLobby": "Đang ở sảnh chờ",
   "@liveGameInLobby": {
     "description": "LiveGameStrings.inLobby — Current game card (R7) / idle states",
@@ -6322,21 +6307,6 @@
     "description": "LiveGameStrings.lobbyHint — Current game card (R7) / idle states",
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
-  "liveGameLockFailed": "Chưa khóa được đặc vụ này. Hãy làm mới rồi thử lại.",
-  "@liveGameLockFailed": {
-    "description": "LiveGameStrings.lockFailed — Agent select (G4)",
-    "x-context": "lib/features/live_game/live_game_strings.dart"
-  },
-  "liveGameLockedAgent": "Đã khóa {agent}",
-  "@liveGameLockedAgent": {
-    "description": "LiveGameStrings.lockedAgent — Agent select (G4)",
-    "placeholders": {
-      "agent": {
-        "type": "String"
-      }
-    },
-    "x-context": "lib/features/live_game/live_game_strings.dart"
-  },
   "liveGameLockedTag": "Đã khóa",
   "@liveGameLockedTag": {
     "description": "LiveGameStrings.lockedTag — Rosters (G5, G6)",
@@ -6350,11 +6320,6 @@
   "liveGameNoAgentYet": "Chưa chọn đặc vụ",
   "@liveGameNoAgentYet": {
     "description": "LiveGameStrings.noAgentYet — Rosters (G5, G6)",
-    "x-context": "lib/features/live_game/live_game_strings.dart"
-  },
-  "liveGameNoAgents": "Chưa tải được danh sách đặc vụ. Hãy làm mới để thử lại.",
-  "@liveGameNoAgents": {
-    "description": "LiveGameStrings.noAgents — Agent select (G4)",
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
   "liveGameNoLoadout": "Không có thông tin trang bị của người chơi này.",
@@ -6505,11 +6470,6 @@
     },
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
-  "liveGameSelectFailed": "Chưa chọn được đặc vụ này. Hãy làm mới rồi thử lại.",
-  "@liveGameSelectFailed": {
-    "description": "LiveGameStrings.selectFailed — Agent select (G4)",
-    "x-context": "lib/features/live_game/live_game_strings.dart"
-  },
   "liveGameSheetTitle": "Chi tiết trận",
   "@liveGameSheetTitle": {
     "description": "LiveGameStrings.sheetTitle — Sheet (S50)",
@@ -6538,11 +6498,6 @@
   "liveGameStatusUnavailable": "Chưa cập nhật được trạng thái trận",
   "@liveGameStatusUnavailable": {
     "description": "LiveGameStrings.statusUnavailable — Current game card (R7) / idle states",
-    "x-context": "lib/features/live_game/live_game_strings.dart"
-  },
-  "liveGameTabAgents": "Đặc vụ",
-  "@liveGameTabAgents": {
-    "description": "LiveGameStrings.tabAgents — Tabs (VF §8.10)",
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
   "liveGameTabAllPlayers": "Người chơi",

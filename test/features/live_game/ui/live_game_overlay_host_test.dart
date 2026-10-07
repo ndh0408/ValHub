@@ -57,8 +57,6 @@ void main() {
     expect(find.byType(LiveGameSheet), findsOneWidget);
     expect(find.text('Đang chọn đặc vụ'), findsOneWidget);
     // Opening the sheet never changes anything on the account.
-    verifyNever(() => env.api.pregameSelectAgent(any(), any(), any()));
-    verifyNever(() => env.api.pregameLockAgent(any(), any(), any()));
     verifyNever(() => env.api.pregameQuit(any(), any()));
   });
 

@@ -150,68 +150,6 @@ void main() {
     });
   });
 
-  group('agentTileState', () {
-    const owned = {jett, sova, sage, reyna};
-
-    test('available, taken by a teammate, not owned', () {
-      final m = pregame();
-      AgentTileState s(String id) =>
-          agentTileState(agentId: id, match: m, self: me, owned: owned);
-      expect(s(jett), AgentTileState.available);
-      expect(s(sova), AgentTileState.taken); // mate locked Sova
-      expect(s(sage), AgentTileState.available); // only hovered by a mate
-      expect(s(omen), AgentTileState.notOwned);
-      expect(s(reyna), AgentTileState.available);
-    });
-
-    test('unknown ownership allows everything not taken', () {
-      final m = pregame();
-      expect(
-        agentTileState(agentId: omen, match: m, self: me),
-        AgentTileState.available,
-      );
-    });
-
-    test('hovered, then locked (everything else disabled)', () {
-      final hovering = pregame(myAgent: reyna, myState: 'selected');
-      expect(
-        agentTileState(
-          agentId: reyna.toUpperCase(),
-          match: hovering,
-          self: me,
-          owned: owned,
-        ),
-        AgentTileState.hovered,
-      );
-      final locked = pregame(myAgent: reyna, myState: 'locked');
-      expect(
-        agentTileState(agentId: reyna, match: locked, self: me, owned: owned),
-        AgentTileState.locked,
-      );
-      final other = agentTileState(
-        agentId: jett,
-        match: locked,
-        self: me,
-        owned: owned,
-      );
-      expect(other, AgentTileState.disabled);
-      expect(other.isEnabled, isFalse);
-      expect(other.isDimmed, isTrue);
-    });
-  });
-
-  test('selectableAgents: playable agents by name', () {
-    expect(selectableAgents(db).map((a) => a.displayName), [
-      'Jett',
-      'Omen',
-      'Raze',
-      'Reyna',
-      'Sage',
-      'Sova',
-    ]);
-    expect(selectableAgents(ContentDb.empty()), isEmpty);
-  });
-
   test('auto-open only on menus → agent select', () {
     LiveGameState s(LivePhase p) => LiveGameState(
       phase: p,
