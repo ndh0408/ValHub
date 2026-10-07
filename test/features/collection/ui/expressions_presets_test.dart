@@ -10,6 +10,7 @@ import 'package:valvn/features/collection/ui/loadout_presets_screen.dart';
 
 import '../../../core/domain/economy/economy_fixtures.dart';
 import '../../../core/domain/loadout/loadout_fixtures.dart';
+import '../../../helpers/l10n.dart';
 import '../../../helpers/test_prefs.dart';
 import '../collection_test_harness.dart';
 
@@ -101,6 +102,16 @@ void main() {
         const SetPlayerCard(Lx.cardDefault),
       ]).appliedTo(loadoutJson(version: 40));
 
+      // A quiet outlined "Áp dụng" on the card; the red fill stays for
+      // "Lưu trang bị hiện tại".
+      expect(
+        find.widgetWithText(OutlinedButton, tl.collectionApplyPreset),
+        findsOneWidget,
+      );
+      expect(
+        find.widgetWithText(FilledButton, tl.collectionApplyPreset),
+        findsNothing,
+      );
       await tester.tap(find.text(CollectionStrings.applyPreset));
       await settle(tester);
       expect(

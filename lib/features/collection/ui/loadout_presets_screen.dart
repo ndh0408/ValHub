@@ -519,10 +519,14 @@ class PresetCard extends StatelessWidget {
               ],
             ),
           ),
+          // Outlined, not the red fill: one per card made the list a stack
+          // of red bars, and "Lưu trang bị hiện tại" is the page's primary
+          // action. (The theme paints every FilledButton red, tonal too.)
+          // Applying still asks first.
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-            child: FilledButton.icon(
-              style: FilledButton.styleFrom(
+            child: OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(44),
               ),
               onPressed: busy ? null : onApply,
