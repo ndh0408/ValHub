@@ -675,9 +675,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get accountLoginNoteDeleted => '로그인 정보를 삭제했습니다';
 
   @override
-  String get accountLoginNoteEmpty => '저장된 로그인 정보가 없습니다';
-
-  @override
   String get accountLoginNoteHint =>
       '이 기기에만 안전하게 잠긴 상태로 저장됩니다. 다시 로그인할 때 확인하거나 빠르게 입력하는 데 사용하세요.';
 
@@ -692,9 +689,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get accountLoginNoteUsername => 'Riot 아이디';
-
-  @override
-  String get accountManageHint => '설정에서 계정을 삭제하거나 로그인 정보를 수정할 수 있습니다.';
 
   @override
   String accountMaxAccounts(int max) {
@@ -941,9 +935,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get notificationLfgJoinedTitle => '플레이어가 파티에 참가했습니다';
-
-  @override
-  String get notificationLocalOnlyHint => 'ValHub가 데이터를 업데이트할 때 이 기기에서만 알립니다';
 
   @override
   String notificationNightMarketOpenBody(String cards, String account) {
@@ -2586,9 +2577,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String communityDataFooter(String riotId) {
     return '현재 계정에 적용됩니다: $riotId. 다운로드 파일에는 비밀번호나 Riot 로그인 데이터가 포함되지 않습니다.';
   }
-
-  @override
-  String get communityDataTitle => '내 커뮤니티 데이터';
 
   @override
   String get communityDecrease => '줄이기';
@@ -4628,16 +4616,10 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutHeader => '정보';
-
-  @override
   String get settingsAboutRowSubtitle => '개인정보, 약관, 저작권 및 문의';
 
   @override
   String get settingsAboutTitle => '정보 및 법적 고지';
-
-  @override
-  String get settingsAppHeader => '고급';
 
   @override
   String get settingsAppearanceHeader => '화면';
@@ -4725,9 +4707,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsNotifWishlist => '위시리스트의 스킨이 나올 때';
-
-  @override
-  String get settingsNotifWishlistSubtitle => '앱을 열지 않아도 모든 계정의 상점을 확인합니다';
 
   @override
   String get settingsNotificationsHeader => '알림';
@@ -5011,11 +4990,6 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String skinDetailAvailableInStoreOf(String accounts) {
     return '상점에 있는 계정: $accounts';
-  }
-
-  @override
-  String skinDetailHistory(int daily, int night, String since) {
-    return '내 상점 기록: 일일 상점 $daily회, 야시장 $night회. 이 기기에서 $since부터 기록된 데이터만 집계합니다.';
   }
 
   @override

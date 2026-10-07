@@ -689,9 +689,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get accountLoginNoteDeleted => 'Info login dihapus';
 
   @override
-  String get accountLoginNoteEmpty => 'Belum ada info login tersimpan';
-
-  @override
   String get accountLoginNoteHint =>
       'Hanya disimpan di perangkat ini dan dikunci dengan aman. Gunakan untuk melihat atau mengisi cepat datamu saat login lagi.';
 
@@ -706,10 +703,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get accountLoginNoteUsername => 'Nama pengguna Riot';
-
-  @override
-  String get accountManageHint =>
-      'Hapus akun atau ubah info login di Pengaturan.';
 
   @override
   String accountMaxAccounts(int max) {
@@ -970,10 +963,6 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get notificationLfgJoinedTitle =>
       'Ada pemain yang bergabung ke party-mu';
-
-  @override
-  String get notificationLocalOnlyHint =>
-      'Hanya muncul di perangkat ini saat ValHub memperbarui data';
 
   @override
   String notificationNightMarketOpenBody(String cards, String account) {
@@ -2640,9 +2629,6 @@ class AppLocalizationsId extends AppLocalizations {
   String communityDataFooter(String riotId) {
     return 'Berlaku untuk akun yang sedang dipakai: $riotId. File unduhan tidak berisi kata sandi atau data login Riot.';
   }
-
-  @override
-  String get communityDataTitle => 'Data Komunitas kamu';
 
   @override
   String get communityDecrease => 'Kurangi';
@@ -4734,17 +4720,11 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutHeader => 'INFO';
-
-  @override
   String get settingsAboutRowSubtitle =>
       'Privasi, ketentuan, hak cipta, dan kontak';
 
   @override
   String get settingsAboutTitle => 'Tentang & legal';
-
-  @override
-  String get settingsAppHeader => 'LANJUTAN';
 
   @override
   String get settingsAppearanceHeader => 'TAMPILAN';
@@ -4837,10 +4817,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get settingsNotifWishlist => 'Saat skin di wishlist muncul';
-
-  @override
-  String get settingsNotifWishlistSubtitle =>
-      'Memeriksa toko di semua akun, bahkan saat aplikasi ditutup';
 
   @override
   String get settingsNotificationsHeader => 'NOTIFIKASI';
@@ -5139,11 +5115,6 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String skinDetailAvailableInStoreOf(String accounts) {
     return 'Ada di toko: $accounts';
-  }
-
-  @override
-  String skinDetailHistory(int daily, int night, String since) {
-    return 'Di tokomu: $daily kali di toko harian, $night kali di Night Market. Hanya menghitung data di perangkat ini, dicatat sejak $since.';
   }
 
   @override

@@ -733,9 +733,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get accountLoginNoteDeleted => 'Dados de login apagados';
 
   @override
-  String get accountLoginNoteEmpty => 'Nenhum dado de login salvo';
-
-  @override
   String get accountLoginNoteHint =>
       'Salvo apenas neste dispositivo, com bloqueio seguro. Use para consultar ou preencher rápido quando entrar novamente.';
 
@@ -750,10 +747,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get accountLoginNoteUsername => 'Nome de usuário Riot';
-
-  @override
-  String get accountManageHint =>
-      'Remova contas ou edite os dados de login nas Configurações.';
 
   @override
   String accountMaxAccounts(int max) {
@@ -1020,10 +1013,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get notificationLfgJoinedTitle => 'Um jogador entrou no seu grupo';
-
-  @override
-  String get notificationLocalOnlyHint =>
-      'Avisa só neste dispositivo, quando o ValHub atualiza os dados';
 
   @override
   String notificationNightMarketOpenBody(String cards, String account) {
@@ -2785,9 +2774,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String communityDataFooter(String riotId) {
     return 'Vale para a conta em uso: $riotId. O arquivo baixado não contém senha nem dados de login da Riot.';
   }
-
-  @override
-  String get communityDataTitle => 'Seus dados da Comunidade';
 
   @override
   String get communityDecrease => 'Diminuir';
@@ -5086,17 +5072,11 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutHeader => 'INFORMAÇÕES';
-
-  @override
   String get settingsAboutRowSubtitle =>
       'Privacidade, termos, direitos autorais e contato';
 
   @override
   String get settingsAboutTitle => 'Sobre e informações legais';
-
-  @override
-  String get settingsAppHeader => 'AVANÇADO';
 
   @override
   String get settingsAppearanceHeader => 'APARÊNCIA';
@@ -5192,10 +5172,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsNotifWishlist => 'Quando uma skin da wishlist aparecer';
-
-  @override
-  String get settingsNotifWishlistSubtitle =>
-      'Verifica a loja de todas as contas, mesmo com o app fechado';
 
   @override
   String get settingsNotificationsHeader => 'NOTIFICAÇÕES';
@@ -5519,23 +5495,6 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String skinDetailAvailableInStoreOf(String accounts) {
     return 'Na loja de: $accounts';
-  }
-
-  @override
-  String skinDetailHistory(int daily, int night, String since) {
-    String _temp0 = intl.Intl.pluralLogic(
-      daily,
-      locale: localeName,
-      other: '$daily vezes na loja diária',
-      one: '$daily vez na loja diária',
-    );
-    String _temp1 = intl.Intl.pluralLogic(
-      night,
-      locale: localeName,
-      other: '$night Mercados Noturnos',
-      one: '$night Mercado Noturno',
-    );
-    return 'Na sua loja: $_temp0, $_temp1. Só conta dados deste dispositivo, registrados desde $since.';
   }
 
   @override

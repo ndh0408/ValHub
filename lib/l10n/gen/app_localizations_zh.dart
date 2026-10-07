@@ -670,9 +670,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountLoginNoteDeleted => '已删除登录信息';
 
   @override
-  String get accountLoginNoteEmpty => '尚未保存登录信息';
-
-  @override
   String get accountLoginNoteHint => '仅保存在此设备上，并经过安全加密。可用于查看或在重新登录时快速填写。';
 
   @override
@@ -686,9 +683,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get accountLoginNoteUsername => 'Riot 用户名';
-
-  @override
-  String get accountManageHint => '可在设置中删除账号或修改登录信息。';
 
   @override
   String accountMaxAccounts(int max) {
@@ -928,9 +922,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notificationLfgJoinedTitle => '有玩家加入了你的队伍';
-
-  @override
-  String get notificationLocalOnlyHint => '仅在 ValHub 更新数据时于此设备上提醒';
 
   @override
   String notificationNightMarketOpenBody(String cards, String account) {
@@ -2550,9 +2541,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String communityDataFooter(String riotId) {
     return '适用于当前账号：$riotId。下载的文件不包含你的密码或 Riot 登录数据。';
   }
-
-  @override
-  String get communityDataTitle => '你的社区数据';
 
   @override
   String get communityDecrease => '减少';
@@ -4570,16 +4558,10 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutHeader => '信息';
-
-  @override
   String get settingsAboutRowSubtitle => '隐私、条款、版权和联系方式';
 
   @override
   String get settingsAboutTitle => '关于与法律信息';
-
-  @override
-  String get settingsAppHeader => '高级';
 
   @override
   String get settingsAppearanceHeader => '外观';
@@ -4666,9 +4648,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsNotifWishlist => '心愿单中的皮肤出现时';
-
-  @override
-  String get settingsNotifWishlistSubtitle => '即使你没有打开应用，也会检查所有账号的商店';
 
   @override
   String get settingsNotificationsHeader => '通知';
@@ -4948,11 +4927,6 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String skinDetailAvailableInStoreOf(String accounts) {
     return '出现在以下账号的商店中：$accounts';
-  }
-
-  @override
-  String skinDetailHistory(int daily, int night, String since) {
-    return '在你的商店中：每日商店出现$daily次，夜市出现$night次。仅统计此设备上自$since起记录的数据。';
   }
 
   @override
@@ -7211,9 +7185,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get accountLoginNoteDeleted => '已刪除登入資訊';
 
   @override
-  String get accountLoginNoteEmpty => '尚未儲存登入資訊';
-
-  @override
   String get accountLoginNoteHint => '只會加密儲存在這台裝置上。可在重新登入時查看或快速填入。';
 
   @override
@@ -7227,9 +7198,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get accountLoginNoteUsername => 'Riot 使用者名稱';
-
-  @override
-  String get accountManageHint => '可在設定中移除帳號或編輯登入資訊。';
 
   @override
   String accountMaxAccounts(int max) {
@@ -7469,9 +7437,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get notificationLfgJoinedTitle => '有玩家加入了隊伍';
-
-  @override
-  String get notificationLocalOnlyHint => '只會在 ValHub 更新資料時於這台裝置上通知';
 
   @override
   String notificationNightMarketOpenBody(String cards, String account) {
@@ -9092,9 +9057,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String communityDataFooter(String riotId) {
     return '適用於目前使用的帳號：$riotId。下載的檔案不包含密碼或 Riot 登入資料。';
   }
-
-  @override
-  String get communityDataTitle => '你的社群資料';
 
   @override
   String get communityDecrease => '減少';
@@ -11110,16 +11072,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get settingsAboutHeader => '資訊';
-
-  @override
   String get settingsAboutRowSubtitle => '隱私權、條款、著作權與聯絡方式';
 
   @override
   String get settingsAboutTitle => '關於與法律資訊';
-
-  @override
-  String get settingsAppHeader => '進階';
 
   @override
   String get settingsAppearanceHeader => '外觀';
@@ -11206,9 +11162,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsNotifWishlist => '願望清單中的造型出現時';
-
-  @override
-  String get settingsNotifWishlistSubtitle => '檢查所有帳號的商店，即使你沒有開啟 App';
 
   @override
   String get settingsNotificationsHeader => '通知';
@@ -11488,11 +11441,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String skinDetailAvailableInStoreOf(String accounts) {
     return '出現在以下帳號的商店：$accounts';
-  }
-
-  @override
-  String skinDetailHistory(int daily, int night, String since) {
-    return '在你的商店中：每日商店出現 $daily 次，夜市出現 $night 次。僅計算此裝置上自 $since 起記錄的資料。';
   }
 
   @override

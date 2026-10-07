@@ -41,7 +41,6 @@
   "accountAddAccount": "Agregar cuenta ({count}/{max})",
   "accountLinkAccountMissing": "Se cerró la sesión de la cuenta de la notificación. Vuelve a iniciar sesión y abre la notificación.",
   "accountLoginNoteHint": "Solo se guardan en este dispositivo, protegidos de forma segura. Sirven para consultarlos o completarlos rápido al volver a iniciar sesión.",
-  "accountManageHint": "Elimina cuentas o edita los datos de inicio de sesión en Configuración.",
   "accountMaxAccounts": "Alcanzaste el máximo de cuentas ({max}).",
   "accountQuickFill": "Autocompletar cuenta guardada",
   "accountQuickFillDone": "Datos completados. Toca Iniciar sesión.",

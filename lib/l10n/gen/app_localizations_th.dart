@@ -686,9 +686,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get accountLoginNoteDeleted => 'ลบข้อมูลเข้าสู่ระบบแล้ว';
 
   @override
-  String get accountLoginNoteEmpty => 'ยังไม่ได้บันทึกข้อมูลเข้าสู่ระบบ';
-
-  @override
   String get accountLoginNoteHint =>
       'บันทึกไว้ในอุปกรณ์นี้เท่านั้นและล็อกไว้อย่างปลอดภัย ใช้เพื่อดูหรือกรอกข้อมูลอย่างรวดเร็วเมื่อคุณเข้าสู่ระบบอีกครั้ง';
 
@@ -703,10 +700,6 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get accountLoginNoteUsername => 'ชื่อผู้ใช้ Riot';
-
-  @override
-  String get accountManageHint =>
-      'ลบบัญชีหรือแก้ไขข้อมูลเข้าสู่ระบบได้ในการตั้งค่า';
 
   @override
   String accountMaxAccounts(int max) {
@@ -967,10 +960,6 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get notificationLfgJoinedTitle => 'มีผู้เล่นเข้าร่วมปาร์ตี้ของคุณ';
-
-  @override
-  String get notificationLocalOnlyHint =>
-      'แสดงเฉพาะในอุปกรณ์นี้เมื่อ ValHub อัปเดตข้อมูล';
 
   @override
   String notificationNightMarketOpenBody(String cards, String account) {
@@ -2629,9 +2618,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String communityDataFooter(String riotId) {
     return 'ใช้กับบัญชีที่ใช้อยู่: $riotId ไฟล์ที่ดาวน์โหลดจะไม่มีรหัสผ่านหรือข้อมูลเข้าสู่ระบบ Riot';
   }
-
-  @override
-  String get communityDataTitle => 'ข้อมูลชุมชนของคุณ';
 
   @override
   String get communityDecrease => 'ลด';
@@ -4697,17 +4683,11 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutHeader => 'ข้อมูล';
-
-  @override
   String get settingsAboutRowSubtitle =>
       'ความเป็นส่วนตัว ข้อกำหนด ลิขสิทธิ์ และการติดต่อ';
 
   @override
   String get settingsAboutTitle => 'เกี่ยวกับและข้อกฎหมาย';
-
-  @override
-  String get settingsAppHeader => 'ขั้นสูง';
 
   @override
   String get settingsAppearanceHeader => 'การแสดงผล';
@@ -4799,10 +4779,6 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get settingsNotifWishlist => 'เมื่อสกินใน wishlist ปรากฏ';
-
-  @override
-  String get settingsNotifWishlistSubtitle =>
-      'ตรวจสอบร้านค้าของทุกบัญชี แม้คุณไม่ได้เปิดแอป';
 
   @override
   String get settingsNotificationsHeader => 'การแจ้งเตือน';
@@ -5097,11 +5073,6 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String skinDetailAvailableInStoreOf(String accounts) {
     return 'มีในร้านค้าของ: $accounts';
-  }
-
-  @override
-  String skinDetailHistory(int daily, int night, String since) {
-    return 'ในร้านค้าของคุณ: ร้านค้ารายวัน $daily ครั้ง ไนท์มาร์เก็ต $night รอบ นับเฉพาะข้อมูลในอุปกรณ์นี้ บันทึกตั้งแต่ $since';
   }
 
   @override

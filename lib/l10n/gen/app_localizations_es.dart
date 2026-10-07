@@ -738,10 +738,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get accountLoginNoteDeleted => 'Datos de inicio de sesión borrados';
 
   @override
-  String get accountLoginNoteEmpty =>
-      'No hay datos de inicio de sesión guardados';
-
-  @override
   String get accountLoginNoteHint =>
       'Solo se guardan en este dispositivo, protegidos de forma segura. Sirven para consultarlos o rellenarlos rápido al volver a iniciar sesión.';
 
@@ -756,10 +752,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get accountLoginNoteUsername => 'Nombre de usuario de Riot';
-
-  @override
-  String get accountManageHint =>
-      'Elimina cuentas o edita los datos de inicio de sesión en Ajustes.';
 
   @override
   String accountMaxAccounts(int max) {
@@ -1020,10 +1012,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get notificationLfgJoinedTitle => 'Alguien se ha unido a tu grupo';
-
-  @override
-  String get notificationLocalOnlyHint =>
-      'Solo avisa en este dispositivo cuando ValHub actualiza los datos';
 
   @override
   String notificationNightMarketOpenBody(String cards, String account) {
@@ -2789,9 +2777,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String communityDataFooter(String riotId) {
     return 'Se aplica a la cuenta en uso: $riotId. El archivo descargado no incluye contraseñas ni datos de inicio de sesión de Riot.';
   }
-
-  @override
-  String get communityDataTitle => 'Tus datos de la Comunidad';
 
   @override
   String get communityDecrease => 'Reducir';
@@ -5086,17 +5071,11 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutHeader => 'INFORMACIÓN';
-
-  @override
   String get settingsAboutRowSubtitle =>
       'Privacidad, términos, derechos de autor y contacto';
 
   @override
   String get settingsAboutTitle => 'Acerca de y legal';
-
-  @override
-  String get settingsAppHeader => 'AVANZADO';
 
   @override
   String get settingsAppearanceHeader => 'APARIENCIA';
@@ -5194,10 +5173,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get settingsNotifWishlist =>
       'Cuando aparezca una skin de tu lista de deseos';
-
-  @override
-  String get settingsNotifWishlistSubtitle =>
-      'Comprueba la tienda de todas tus cuentas, incluso si no abres la app';
 
   @override
   String get settingsNotificationsHeader => 'NOTIFICACIONES';
@@ -5522,23 +5497,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String skinDetailAvailableInStoreOf(String accounts) {
     return 'En la tienda de: $accounts';
-  }
-
-  @override
-  String skinDetailHistory(int daily, int night, String since) {
-    String _temp0 = intl.Intl.pluralLogic(
-      daily,
-      locale: localeName,
-      other: '$daily veces en la tienda diaria',
-      one: '$daily vez en la tienda diaria',
-    );
-    String _temp1 = intl.Intl.pluralLogic(
-      night,
-      locale: localeName,
-      other: '$night Mercados nocturnos',
-      one: '$night Mercado nocturno',
-    );
-    return 'En tu tienda: $_temp0, $_temp1. Solo cuenta los datos de este dispositivo, registrados desde el $since.';
   }
 
   @override
@@ -7493,10 +7451,6 @@ class AppLocalizationsEsMx extends AppLocalizationsEs {
   @override
   String get accountLoginNoteHint =>
       'Solo se guardan en este dispositivo, protegidos de forma segura. Sirven para consultarlos o completarlos rápido al volver a iniciar sesión.';
-
-  @override
-  String get accountManageHint =>
-      'Elimina cuentas o edita los datos de inicio de sesión en Configuración.';
 
   @override
   String accountMaxAccounts(int max) {

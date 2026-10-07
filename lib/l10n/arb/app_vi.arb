@@ -1142,11 +1142,6 @@
     "description": "AccountStrings.loginNoteDeleted — Login note: the user's own Riot username / password per account",
     "x-context": "lib/core/l10n/account_strings.dart"
   },
-  "accountLoginNoteEmpty": "Chưa lưu thông tin đăng nhập",
-  "@accountLoginNoteEmpty": {
-    "description": "AccountStrings.loginNoteEmpty — Login note: the user's own Riot username / password per account",
-    "x-context": "lib/core/l10n/account_strings.dart"
-  },
   "accountLoginNoteHint": "Chỉ lưu trên thiết bị này, được khóa an toàn. Dùng để xem lại hoặc điền nhanh khi bạn đăng nhập lại.",
   "@accountLoginNoteHint": {
     "description": "AccountStrings.loginNoteHint — Login note: the user's own Riot username / password per account",
@@ -1170,11 +1165,6 @@
   "accountLoginNoteUsername": "Tên đăng nhập Riot",
   "@accountLoginNoteUsername": {
     "description": "AccountStrings.loginNoteUsername — Login note: the user's own Riot username / password per account",
-    "x-context": "lib/core/l10n/account_strings.dart"
-  },
-  "accountManageHint": "Xóa tài khoản hoặc sửa thông tin đăng nhập trong Cài đặt.",
-  "@accountManageHint": {
-    "description": "AccountStrings.manageHint — Switcher sheet (S05)",
     "x-context": "lib/core/l10n/account_strings.dart"
   },
   "accountMaxAccounts": "Đã đạt tối đa {max} tài khoản.",
@@ -1583,11 +1573,6 @@
   "notificationLfgJoinedTitle": "Có người chơi tham gia tổ đội",
   "@notificationLfgJoinedTitle": {
     "description": "NotificationStrings.lfgJoinedTitle — ",
-    "x-context": "lib/core/l10n/notification_strings.dart"
-  },
-  "notificationLocalOnlyHint": "Chỉ báo trên thiết bị này khi ValHub cập nhật dữ liệu",
-  "@notificationLocalOnlyHint": {
-    "description": "NotificationStrings.localOnlyHint — ",
     "x-context": "lib/core/l10n/notification_strings.dart"
   },
   "notificationNightMarketOpenBody": "Lật {cards} thẻ ưu đãi của {account} ngay.",
@@ -4361,11 +4346,6 @@
         "type": "String"
       }
     },
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityDataTitle": "Dữ liệu Cộng đồng của bạn",
-  "@communityDataTitle": {
-    "description": "CommunityStrings.dataTitle — data rights (Settings)",
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communityDecrease": "Giảm",
@@ -7771,11 +7751,6 @@
     },
     "x-manual": true
   },
-  "settingsAboutHeader": "THÔNG TIN",
-  "@settingsAboutHeader": {
-    "description": "SettingsStrings.aboutHeader — Section headers (S70)",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
   "settingsAboutRowSubtitle": "Quyền riêng tư, điều khoản, bản quyền và liên hệ",
   "@settingsAboutRowSubtitle": {
     "description": "SettingsStrings.aboutRowSubtitle — ",
@@ -7784,11 +7759,6 @@
   "settingsAboutTitle": "Giới thiệu & pháp lý",
   "@settingsAboutTitle": {
     "description": "SettingsStrings.aboutTitle — ",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsAppHeader": "NÂNG CAO",
-  "@settingsAppHeader": {
-    "description": "Header of the \"Nâng cao\" group (send a bug report, clear temporary data). The member keeps its historical name.",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsAppearanceHeader": "GIAO DIỆN",
@@ -7942,11 +7912,6 @@
   "settingsNotifWishlist": "Khi skin trong wishlist xuất hiện",
   "@settingsNotifWishlist": {
     "description": "SettingsStrings.notifWishlist — THÔNG BÁO",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsNotifWishlistSubtitle": "Kiểm tra cửa hàng của mọi tài khoản, kể cả khi bạn không mở ứng dụng",
-  "@settingsNotifWishlistSubtitle": {
-    "description": "SettingsStrings.notifWishlistSubtitle — THÔNG BÁO",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsNotificationsHeader": "THÔNG BÁO",
@@ -8429,22 +8394,6 @@
     "description": "\"Có trong cửa hàng của: Tài khoản 2\".",
     "placeholders": {
       "accounts": {
-        "type": "String"
-      }
-    },
-    "x-context": "lib/features/skin_detail/skin_detail_strings.dart"
-  },
-  "skinDetailHistory": "Trong cửa hàng của bạn: {daily} lần ở cửa hàng hằng ngày, {night} đợt Chợ Đêm. Chỉ tính dữ liệu trên thiết bị, ghi nhận từ {since}.",
-  "@skinDetailHistory": {
-    "description": "SkinDetailStrings.history — ",
-    "placeholders": {
-      "daily": {
-        "type": "int"
-      },
-      "night": {
-        "type": "int"
-      },
-      "since": {
         "type": "String"
       }
     },

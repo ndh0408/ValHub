@@ -746,9 +746,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get accountLoginNoteDeleted => 'Данные для входа удалены';
 
   @override
-  String get accountLoginNoteEmpty => 'Данные для входа не сохранены';
-
-  @override
   String get accountLoginNoteHint =>
       'Хранятся только на этом устройстве под надежной защитой. Пригодятся, чтобы посмотреть или быстро заполнить данные при повторном входе.';
 
@@ -763,10 +760,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get accountLoginNoteUsername => 'Имя пользователя Riot';
-
-  @override
-  String get accountManageHint =>
-      'Удалить аккаунт или изменить данные для входа можно в настройках.';
 
   @override
   String accountMaxAccounts(int max) {
@@ -1035,10 +1028,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get notificationLfgJoinedTitle => 'Игрок вступил в вашу группу';
-
-  @override
-  String get notificationLocalOnlyHint =>
-      'Показываются только на этом устройстве, когда ValHub обновляет данные';
 
   @override
   String notificationNightMarketOpenBody(String cards, String account) {
@@ -2833,9 +2822,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String communityDataFooter(String riotId) {
     return 'Относится к текущему аккаунту: $riotId. Загружаемый файл не содержит пароль и данные для входа Riot.';
   }
-
-  @override
-  String get communityDataTitle => 'Ваши данные сообщества';
 
   @override
   String get communityDecrease => 'Уменьшить';
@@ -5198,17 +5184,11 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutHeader => 'ИНФОРМАЦИЯ';
-
-  @override
   String get settingsAboutRowSubtitle =>
       'Конфиденциальность, условия, авторские права и контакты';
 
   @override
   String get settingsAboutTitle => 'О приложении и правовая информация';
-
-  @override
-  String get settingsAppHeader => 'ДОПОЛНИТЕЛЬНО';
 
   @override
   String get settingsAppearanceHeader => 'ВНЕШНИЙ ВИД';
@@ -5304,10 +5284,6 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get settingsNotifWishlist =>
       'Когда появляется скин из списка желаемого';
-
-  @override
-  String get settingsNotifWishlistSubtitle =>
-      'Проверяет магазин всех аккаунтов, даже когда приложение закрыто';
 
   @override
   String get settingsNotificationsHeader => 'УВЕДОМЛЕНИЯ';
@@ -5637,27 +5613,6 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String skinDetailAvailableInStoreOf(String accounts) {
     return 'Есть в магазине: $accounts';
-  }
-
-  @override
-  String skinDetailHistory(int daily, int night, String since) {
-    String _temp0 = intl.Intl.pluralLogic(
-      daily,
-      locale: localeName,
-      other: '$daily раза в ежедневном магазине',
-      many: '$daily раз в ежедневном магазине',
-      few: '$daily раза в ежедневном магазине',
-      one: '$daily раз в ежедневном магазине',
-    );
-    String _temp1 = intl.Intl.pluralLogic(
-      night,
-      locale: localeName,
-      other: '$night Ночного рынка',
-      many: '$night Ночных рынков',
-      few: '$night Ночных рынка',
-      one: '$night Ночной рынок',
-    );
-    return 'В вашем магазине: $_temp0, $_temp1. Учитываются только данные на этом устройстве, записанные с $since.';
   }
 
   @override

@@ -675,9 +675,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get accountLoginNoteDeleted => 'ログイン情報を削除しました';
 
   @override
-  String get accountLoginNoteEmpty => 'ログイン情報は保存されていません';
-
-  @override
   String get accountLoginNoteHint =>
       'この端末にのみ安全にロックして保存されます。再ログイン時の確認や自動入力に使えます。';
 
@@ -692,9 +689,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get accountLoginNoteUsername => 'Riotユーザー名';
-
-  @override
-  String get accountManageHint => 'アカウントの削除やログイン情報の編集は設定から行えます。';
 
   @override
   String accountMaxAccounts(int max) {
@@ -944,9 +938,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get notificationLfgJoinedTitle => 'パーティーにプレイヤーが参加しました';
-
-  @override
-  String get notificationLocalOnlyHint => 'ValHubがデータを更新したときに、この端末でのみ通知します';
 
   @override
   String notificationNightMarketOpenBody(String cards, String account) {
@@ -2587,9 +2578,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String communityDataFooter(String riotId) {
     return '使用中のアカウント（$riotId）に適用されます。ダウンロードするファイルには、パスワードやRiotのログインデータは含まれません。';
   }
-
-  @override
-  String get communityDataTitle => 'あなたのコミュニティデータ';
 
   @override
   String get communityDecrease => '減らす';
@@ -4632,16 +4620,10 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutHeader => '情報';
-
-  @override
   String get settingsAboutRowSubtitle => 'プライバシー、規約、著作権、お問い合わせ';
 
   @override
   String get settingsAboutTitle => '情報と規約';
-
-  @override
-  String get settingsAppHeader => '詳細設定';
 
   @override
   String get settingsAppearanceHeader => '表示';
@@ -4730,10 +4712,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get settingsNotifWishlist => 'ウィッシュリストのスキン登場時';
-
-  @override
-  String get settingsNotifWishlistSubtitle =>
-      'アプリを開いていなくても、すべてのアカウントのストアを確認します';
 
   @override
   String get settingsNotificationsHeader => '通知';
@@ -5016,11 +4994,6 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String skinDetailAvailableInStoreOf(String accounts) {
     return 'ストアに登場中のアカウント：$accounts';
-  }
-
-  @override
-  String skinDetailHistory(int daily, int night, String since) {
-    return 'あなたのストアでの登場回数：デイリーストア$daily回、ナイトマーケット$night回。端末上のデータのみ（$sinceから記録）。';
   }
 
   @override

@@ -1346,12 +1346,6 @@ abstract class AppLocalizations {
   /// **'Đã xóa thông tin đăng nhập'**
   String get accountLoginNoteDeleted;
 
-  /// AccountStrings.loginNoteEmpty — Login note: the user's own Riot username / password per account
-  ///
-  /// In vi, this message translates to:
-  /// **'Chưa lưu thông tin đăng nhập'**
-  String get accountLoginNoteEmpty;
-
   /// AccountStrings.loginNoteHint — Login note: the user's own Riot username / password per account
   ///
   /// In vi, this message translates to:
@@ -1381,12 +1375,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Tên đăng nhập Riot'**
   String get accountLoginNoteUsername;
-
-  /// AccountStrings.manageHint — Switcher sheet (S05)
-  ///
-  /// In vi, this message translates to:
-  /// **'Xóa tài khoản hoặc sửa thông tin đăng nhập trong Cài đặt.'**
-  String get accountManageHint;
 
   /// AccountStrings.maxAccounts —
   ///
@@ -1837,12 +1825,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Có người chơi tham gia tổ đội'**
   String get notificationLfgJoinedTitle;
-
-  /// NotificationStrings.localOnlyHint —
-  ///
-  /// In vi, this message translates to:
-  /// **'Chỉ báo trên thiết bị này khi ValHub cập nhật dữ liệu'**
-  String get notificationLocalOnlyHint;
 
   /// NotificationStrings.nightMarketOpenBody —
   ///
@@ -4591,12 +4573,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Áp dụng cho tài khoản đang dùng: {riotId}. Tệp tải về không chứa mật khẩu hay dữ liệu đăng nhập Riot.'**
   String communityDataFooter(String riotId);
-
-  /// CommunityStrings.dataTitle — data rights (Settings)
-  ///
-  /// In vi, this message translates to:
-  /// **'Dữ liệu Cộng đồng của bạn'**
-  String get communityDataTitle;
 
   /// CommunityStrings.decrease — Create LFG sheet
   ///
@@ -7862,12 +7838,6 @@ abstract class AppLocalizations {
   /// **'Ngôn ngữ: {language}.'**
   String settingsLanguageChanged(String language);
 
-  /// SettingsStrings.aboutHeader — Section headers (S70)
-  ///
-  /// In vi, this message translates to:
-  /// **'THÔNG TIN'**
-  String get settingsAboutHeader;
-
   /// SettingsStrings.aboutRowSubtitle —
   ///
   /// In vi, this message translates to:
@@ -7879,12 +7849,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Giới thiệu & pháp lý'**
   String get settingsAboutTitle;
-
-  /// Header of the "Nâng cao" group (send a bug report, clear temporary data). The member keeps its historical name.
-  ///
-  /// In vi, this message translates to:
-  /// **'NÂNG CAO'**
-  String get settingsAppHeader;
 
   /// SettingsStrings.appearanceHeader — Section headers (S70)
   ///
@@ -8041,12 +8005,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Khi skin trong wishlist xuất hiện'**
   String get settingsNotifWishlist;
-
-  /// SettingsStrings.notifWishlistSubtitle — THÔNG BÁO
-  ///
-  /// In vi, this message translates to:
-  /// **'Kiểm tra cửa hàng của mọi tài khoản, kể cả khi bạn không mở ứng dụng'**
-  String get settingsNotifWishlistSubtitle;
 
   /// SettingsStrings.notificationsHeader — Section headers (S70)
   ///
@@ -8526,12 +8484,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Có trong cửa hàng của: {accounts}'**
   String skinDetailAvailableInStoreOf(String accounts);
-
-  /// SkinDetailStrings.history —
-  ///
-  /// In vi, this message translates to:
-  /// **'Trong cửa hàng của bạn: {daily} lần ở cửa hàng hằng ngày, {night} đợt Chợ Đêm. Chỉ tính dữ liệu trên thiết bị, ghi nhận từ {since}.'**
-  String skinDetailHistory(int daily, int night, String since);
 
   /// SkinDetailStrings.historyDelete —
   ///

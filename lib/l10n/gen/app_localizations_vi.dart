@@ -687,9 +687,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get accountLoginNoteDeleted => 'Đã xóa thông tin đăng nhập';
 
   @override
-  String get accountLoginNoteEmpty => 'Chưa lưu thông tin đăng nhập';
-
-  @override
   String get accountLoginNoteHint =>
       'Chỉ lưu trên thiết bị này, được khóa an toàn. Dùng để xem lại hoặc điền nhanh khi bạn đăng nhập lại.';
 
@@ -704,10 +701,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get accountLoginNoteUsername => 'Tên đăng nhập Riot';
-
-  @override
-  String get accountManageHint =>
-      'Xóa tài khoản hoặc sửa thông tin đăng nhập trong Cài đặt.';
 
   @override
   String accountMaxAccounts(int max) {
@@ -967,10 +960,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get notificationLfgJoinedTitle => 'Có người chơi tham gia tổ đội';
-
-  @override
-  String get notificationLocalOnlyHint =>
-      'Chỉ báo trên thiết bị này khi ValHub cập nhật dữ liệu';
 
   @override
   String notificationNightMarketOpenBody(String cards, String account) {
@@ -2637,9 +2626,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String communityDataFooter(String riotId) {
     return 'Áp dụng cho tài khoản đang dùng: $riotId. Tệp tải về không chứa mật khẩu hay dữ liệu đăng nhập Riot.';
   }
-
-  @override
-  String get communityDataTitle => 'Dữ liệu Cộng đồng của bạn';
 
   @override
   String get communityDecrease => 'Giảm';
@@ -4714,17 +4700,11 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutHeader => 'THÔNG TIN';
-
-  @override
   String get settingsAboutRowSubtitle =>
       'Quyền riêng tư, điều khoản, bản quyền và liên hệ';
 
   @override
   String get settingsAboutTitle => 'Giới thiệu & pháp lý';
-
-  @override
-  String get settingsAppHeader => 'NÂNG CAO';
 
   @override
   String get settingsAppearanceHeader => 'GIAO DIỆN';
@@ -4817,10 +4797,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get settingsNotifWishlist => 'Khi skin trong wishlist xuất hiện';
-
-  @override
-  String get settingsNotifWishlistSubtitle =>
-      'Kiểm tra cửa hàng của mọi tài khoản, kể cả khi bạn không mở ứng dụng';
 
   @override
   String get settingsNotificationsHeader => 'THÔNG BÁO';
@@ -5114,11 +5090,6 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String skinDetailAvailableInStoreOf(String accounts) {
     return 'Có trong cửa hàng của: $accounts';
-  }
-
-  @override
-  String skinDetailHistory(int daily, int night, String since) {
-    return 'Trong cửa hàng của bạn: $daily lần ở cửa hàng hằng ngày, $night đợt Chợ Đêm. Chỉ tính dữ liệu trên thiết bị, ghi nhận từ $since.';
   }
 
   @override

@@ -691,9 +691,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get accountLoginNoteDeleted => 'Giriş bilgileri silindi';
 
   @override
-  String get accountLoginNoteEmpty => 'Kayıtlı giriş bilgisi yok';
-
-  @override
   String get accountLoginNoteHint =>
       'Yalnızca bu cihazda, güvenli şekilde kilitli olarak saklanır. Tekrar giriş yaparken bilgilerine bakmak veya onları hızlıca doldurmak için kullan.';
 
@@ -708,10 +705,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get accountLoginNoteUsername => 'Riot kullanıcı adı';
-
-  @override
-  String get accountManageHint =>
-      'Hesapları kaldırmak veya giriş bilgilerini düzenlemek için Ayarlar\'a git.';
 
   @override
   String accountMaxAccounts(int max) {
@@ -972,10 +965,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get notificationLfgJoinedTitle => 'Grubuna bir oyuncu katıldı';
-
-  @override
-  String get notificationLocalOnlyHint =>
-      'Yalnızca ValHub verilerini güncellediğinde bu cihazda gösterilir';
 
   @override
   String notificationNightMarketOpenBody(String cards, String account) {
@@ -2648,9 +2637,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String communityDataFooter(String riotId) {
     return 'Kullanılan hesap için geçerlidir: $riotId. İndirilen dosya şifreni veya Riot giriş verilerini içermez.';
   }
-
-  @override
-  String get communityDataTitle => 'Topluluk verilerin';
 
   @override
   String get communityDecrease => 'Azalt';
@@ -4734,17 +4720,11 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutHeader => 'BİLGİ';
-
-  @override
   String get settingsAboutRowSubtitle =>
       'Gizlilik, koşullar, telif hakkı ve iletişim';
 
   @override
   String get settingsAboutTitle => 'Hakkında ve yasal';
-
-  @override
-  String get settingsAppHeader => 'GELİŞMİŞ';
 
   @override
   String get settingsAppearanceHeader => 'GÖRÜNÜM';
@@ -4840,10 +4820,6 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get settingsNotifWishlist =>
       'İstek listendeki bir kaplama göründüğünde';
-
-  @override
-  String get settingsNotifWishlistSubtitle =>
-      'Uygulama kapalıyken bile tüm hesapların mağazasını kontrol eder';
 
   @override
   String get settingsNotificationsHeader => 'BİLDİRİMLER';
@@ -5140,11 +5116,6 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String skinDetailAvailableInStoreOf(String accounts) {
     return 'Şu hesapların mağazasında: $accounts';
-  }
-
-  @override
-  String skinDetailHistory(int daily, int night, String since) {
-    return 'Mağazanda: günlük mağazada $daily kez, $night Gece Pazarı\'nda. Yalnızca bu cihazdaki veriler sayılır; kayıt başlangıcı: $since.';
   }
 
   @override

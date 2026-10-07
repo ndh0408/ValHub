@@ -1062,9 +1062,6 @@ void main() {
   test('accountLoginNoteDeleted', () {
     expect(l10n.accountLoginNoteDeleted, AccountStrings.loginNoteDeleted);
   });
-  test('accountLoginNoteEmpty', () {
-    expect(l10n.accountLoginNoteEmpty, AccountStrings.loginNoteEmpty);
-  });
   test('accountLoginNoteHint', () {
     expect(l10n.accountLoginNoteHint, AccountStrings.loginNoteHint);
   });
@@ -1079,9 +1076,6 @@ void main() {
   });
   test('accountLoginNoteUsername', () {
     expect(l10n.accountLoginNoteUsername, AccountStrings.loginNoteUsername);
-  });
-  test('accountManageHint', () {
-    expect(l10n.accountManageHint, AccountStrings.manageHint);
   });
   test('accountMaxAccounts', () {
     expect(l10n.accountMaxAccounts(0), AccountStrings.maxAccounts(0));
@@ -1463,9 +1457,6 @@ void main() {
   });
   test('notificationLfgJoinedTitle', () {
     expect(l10n.notificationLfgJoinedTitle, NotificationStrings.lfgJoinedTitle);
-  });
-  test('notificationLocalOnlyHint', () {
-    expect(l10n.notificationLocalOnlyHint, NotificationStrings.localOnlyHint);
   });
   test('notificationNightMarketOpenBody', () {
     expect(
@@ -5255,9 +5246,6 @@ void main() {
       l10n.communityDataFooter('{value}\n!'),
       CommunityStrings.dataFooter('{value}\n!'),
     );
-  });
-  test('communityDataTitle', () {
-    expect(l10n.communityDataTitle, CommunityStrings.dataTitle);
   });
   test('communityDecrease', () {
     expect(l10n.communityDecrease, CommunityStrings.decrease);
@@ -9499,17 +9487,11 @@ void main() {
     );
     expect(l10n.legalVersion('{value}\n!'), LegalStrings.version('{value}\n!'));
   });
-  test('settingsAboutHeader', () {
-    expect(l10n.settingsAboutHeader, SettingsStrings.aboutHeader);
-  });
   test('settingsAboutRowSubtitle', () {
     expect(l10n.settingsAboutRowSubtitle, SettingsStrings.aboutRowSubtitle);
   });
   test('settingsAboutTitle', () {
     expect(l10n.settingsAboutTitle, SettingsStrings.aboutTitle);
-  });
-  test('settingsAppHeader', () {
-    expect(l10n.settingsAppHeader, SettingsStrings.appHeader);
   });
   test('settingsAppearanceHeader', () {
     expect(l10n.settingsAppearanceHeader, SettingsStrings.appearanceHeader);
@@ -9659,12 +9641,6 @@ void main() {
   });
   test('settingsNotifWishlist', () {
     expect(l10n.settingsNotifWishlist, SettingsStrings.notifWishlist);
-  });
-  test('settingsNotifWishlistSubtitle', () {
-    expect(
-      l10n.settingsNotifWishlistSubtitle,
-      SettingsStrings.notifWishlistSubtitle,
-    );
   });
   test('settingsNotificationsHeader', () {
     expect(
@@ -10183,308 +10159,6 @@ void main() {
     expect(
       l10n.skinDetailAvailableInStoreOf('{value}\n!'),
       SkinDetailStrings.availableInStoreOf('{value}\n!'),
-    );
-  });
-  test('skinDetailHistory', () {
-    expect(
-      l10n.skinDetailHistory(0, 0, ''),
-      SkinDetailStrings.history(0, 0, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 0, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(0, 0, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 0, '{value}\n!'),
-      SkinDetailStrings.history(0, 0, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 1, ''),
-      SkinDetailStrings.history(0, 1, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 1, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(0, 1, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 1, '{value}\n!'),
-      SkinDetailStrings.history(0, 1, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 2, ''),
-      SkinDetailStrings.history(0, 2, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 2, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(0, 2, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 2, '{value}\n!'),
-      SkinDetailStrings.history(0, 2, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 5, ''),
-      SkinDetailStrings.history(0, 5, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 5, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(0, 5, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 5, '{value}\n!'),
-      SkinDetailStrings.history(0, 5, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 99, ''),
-      SkinDetailStrings.history(0, 99, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 99, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(0, 99, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(0, 99, '{value}\n!'),
-      SkinDetailStrings.history(0, 99, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 0, ''),
-      SkinDetailStrings.history(1, 0, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 0, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(1, 0, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 0, '{value}\n!'),
-      SkinDetailStrings.history(1, 0, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 1, ''),
-      SkinDetailStrings.history(1, 1, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 1, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(1, 1, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 1, '{value}\n!'),
-      SkinDetailStrings.history(1, 1, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 2, ''),
-      SkinDetailStrings.history(1, 2, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 2, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(1, 2, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 2, '{value}\n!'),
-      SkinDetailStrings.history(1, 2, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 5, ''),
-      SkinDetailStrings.history(1, 5, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 5, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(1, 5, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 5, '{value}\n!'),
-      SkinDetailStrings.history(1, 5, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 99, ''),
-      SkinDetailStrings.history(1, 99, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 99, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(1, 99, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(1, 99, '{value}\n!'),
-      SkinDetailStrings.history(1, 99, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 0, ''),
-      SkinDetailStrings.history(2, 0, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 0, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(2, 0, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 0, '{value}\n!'),
-      SkinDetailStrings.history(2, 0, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 1, ''),
-      SkinDetailStrings.history(2, 1, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 1, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(2, 1, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 1, '{value}\n!'),
-      SkinDetailStrings.history(2, 1, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 2, ''),
-      SkinDetailStrings.history(2, 2, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 2, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(2, 2, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 2, '{value}\n!'),
-      SkinDetailStrings.history(2, 2, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 5, ''),
-      SkinDetailStrings.history(2, 5, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 5, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(2, 5, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 5, '{value}\n!'),
-      SkinDetailStrings.history(2, 5, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 99, ''),
-      SkinDetailStrings.history(2, 99, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 99, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(2, 99, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(2, 99, '{value}\n!'),
-      SkinDetailStrings.history(2, 99, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 0, ''),
-      SkinDetailStrings.history(5, 0, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 0, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(5, 0, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 0, '{value}\n!'),
-      SkinDetailStrings.history(5, 0, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 1, ''),
-      SkinDetailStrings.history(5, 1, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 1, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(5, 1, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 1, '{value}\n!'),
-      SkinDetailStrings.history(5, 1, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 2, ''),
-      SkinDetailStrings.history(5, 2, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 2, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(5, 2, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 2, '{value}\n!'),
-      SkinDetailStrings.history(5, 2, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 5, ''),
-      SkinDetailStrings.history(5, 5, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 5, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(5, 5, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 5, '{value}\n!'),
-      SkinDetailStrings.history(5, 5, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 99, ''),
-      SkinDetailStrings.history(5, 99, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 99, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(5, 99, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(5, 99, '{value}\n!'),
-      SkinDetailStrings.history(5, 99, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 0, ''),
-      SkinDetailStrings.history(99, 0, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 0, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(99, 0, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 0, '{value}\n!'),
-      SkinDetailStrings.history(99, 0, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 1, ''),
-      SkinDetailStrings.history(99, 1, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 1, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(99, 1, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 1, '{value}\n!'),
-      SkinDetailStrings.history(99, 1, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 2, ''),
-      SkinDetailStrings.history(99, 2, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 2, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(99, 2, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 2, '{value}\n!'),
-      SkinDetailStrings.history(99, 2, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 5, ''),
-      SkinDetailStrings.history(99, 5, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 5, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(99, 5, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 5, '{value}\n!'),
-      SkinDetailStrings.history(99, 5, '{value}\n!'),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 99, ''),
-      SkinDetailStrings.history(99, 99, ''),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 99, 'Nguyễn Văn A'),
-      SkinDetailStrings.history(99, 99, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.skinDetailHistory(99, 99, '{value}\n!'),
-      SkinDetailStrings.history(99, 99, '{value}\n!'),
     );
   });
   test('skinDetailHistoryDelete', () {

@@ -422,10 +422,8 @@ void main() {
       expect(find.text(SettingsStrings.notifWishlist), findsOneWidget);
       // The Riot ID is the row's subtitle; the account row shows it too.
       expect(find.text('Player1#VN'), findsNWidgets(2));
-      expect(find.text(tl.settingsNotifWishlistSubtitle), findsNothing);
       // One timing note for the whole group, not one per row.
       expect(find.text(tl.notificationBackgroundTimingHint), findsOneWidget);
-      expect(find.text(tl.notificationLocalOnlyHint), findsNothing);
 
       await tester.tap(find.text('Player2#VN'));
       await tester.pumpAndSettle();
