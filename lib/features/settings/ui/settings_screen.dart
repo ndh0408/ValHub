@@ -5,7 +5,6 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/riot/platform_status.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../../community/ui/data_rights/community_data_section.dart';
-import '../../community/ui/hidden_authors_sheet.dart';
 import '../providers/settings_providers.dart';
 import 'sections/accounts_section.dart';
 import 'sections/country_section.dart';
@@ -18,11 +17,13 @@ import 'package:valvn/core/l10n/l10n.dart';
 /// "Cài đặt" (S70), hosted by the Hồ sơ tab and opened by the ⚙ button of
 /// the Trang chủ and Hồ sơ headers. Route `/settings`.
 ///
-/// Sections: TÀI KHOẢN (ending with "Đăng xuất tất cả tài khoản"), TÙY CHỌN,
-/// THÔNG BÁO, GIAO DIỆN, HỖ TRỢ (server status, feedback), NÂNG CAO ("Gửi
-/// báo lỗi cho ValHub" and "Xóa dữ liệu tạm", the only technical actions; no
-/// log lines are ever shown), and finally THÔNG TIN with the single "Giới
-/// thiệu & pháp lý" row (docs/design/IA.md, docs/design/VOICE.md §6).
+/// Sections: TÀI KHOẢN (ending with "Đăng xuất tất cả tài khoản"), TÙY CHỌN
+/// (Riot connection, platform, live-match switches), QUỐC GIA & GIÁ,
+/// THÔNG BÁO, GIAO DIỆN, CỘNG ĐỒNG (hidden people and, once joined, the
+/// account's Community data), HỖ TRỢ (server status, feedback, "Gửi báo lỗi
+/// cho ValHub", "Giới thiệu & pháp lý") and DỮ LIỆU TRÊN MÁY (every
+/// clean-up). No log lines are ever shown (docs/design/IA.md,
+/// docs/design/VOICE.md §6).
 /// Pull-to-refresh re-measures the temporary data, re-reads the notification
 /// permission and the server status.
 class SettingsScreen extends ConsumerWidget {
@@ -50,15 +51,13 @@ class SettingsScreen extends ConsumerWidget {
           sliver: SliverList(
             delegate: SliverChildListDelegate.fixed([
               SettingsAccountsSection(),
-              CommunityDataSection(),
-              SettingsHiddenAuthorsSection(),
-              SettingsCountrySection(),
               SettingsOptionsSection(),
+              SettingsCountrySection(),
               SettingsNotificationsSection(),
               SettingsAppearanceSection(),
+              CommunityDataSection(),
               SettingsSupportSection(),
               SettingsAppSection(),
-              SettingsAboutSection(),
               SizedBox(height: 32),
             ]),
           ),

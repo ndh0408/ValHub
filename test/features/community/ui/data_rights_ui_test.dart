@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'package:valvn/features/community/ui/consent/consent_sheet.dart';
 import 'package:valvn/core/l10n/l10n.dart';
 
@@ -83,10 +85,7 @@ void main() {
       _serve(env);
       await _open(tester, env);
 
-      expect(
-        find.text(CommunityStrings.dataTitle.toUpperCase()),
-        findsOneWidget,
-      );
+      expect(find.text(tl.communityTitle.toUpperCase()), findsOneWidget);
       expect(find.text(CommunityStrings.exportTitle), findsOneWidget);
       expect(find.text(CommunityStrings.deleteDataTitle), findsOneWidget);
       expect(find.text(CommunityStrings.withdrawTitle), findsOneWidget);
@@ -100,26 +99,34 @@ void main() {
       await unmount(tester);
     });
 
-    testWidgets('an account that never joined sees nothing', (tester) async {
+    testWidgets('an account that never joined sees only hidden people', (
+      tester,
+    ) async {
       env = await CommunityTestEnv.create(consent: false);
       await _open(tester, env);
-      expect(find.text(CommunityStrings.dataTitle.toUpperCase()), findsNothing);
-      expect(find.byType(ListTile), findsNothing);
+      expect(find.text(tl.communityTitle.toUpperCase()), findsOneWidget);
+      expect(find.byType(ListTile), findsOneWidget);
+      expect(find.text(tl.communityHiddenAuthors), findsOneWidget);
+      expect(_exportRow, findsNothing);
       await unmount(tester);
     });
 
-    testWidgets('a declined account sees nothing', (tester) async {
+    testWidgets('a declined account has no data rows', (tester) async {
       env = await CommunityTestEnv.create(consent: false);
       await env.prefs.setString(communityConsentKey(mePuuid), 'declined');
       await _open(tester, env);
-      expect(find.text(CommunityStrings.dataTitle.toUpperCase()), findsNothing);
+      expect(_exportRow, findsNothing);
+      expect(
+        find.text(CommunityStrings.dataFooter(meAccount.riotId)),
+        findsNothing,
+      );
       await unmount(tester);
     });
 
     testWidgets('no account: nothing', (tester) async {
       env = await CommunityTestEnv.create(account: null);
       await _open(tester, env);
-      expect(find.text(CommunityStrings.dataTitle.toUpperCase()), findsNothing);
+      expect(find.text(tl.communityTitle.toUpperCase()), findsNothing);
       await unmount(tester);
     });
 

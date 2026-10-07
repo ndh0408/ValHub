@@ -825,6 +825,21 @@ class AppLocalizationsTh extends AppLocalizations {
       'ยืนยันตัวตนเพื่อปลดล็อกข้อมูลเข้าสู่ระบบ Riot';
 
   @override
+  String accountMoreActions(String riotId) {
+    return 'ตัวเลือกสำหรับ $riotId';
+  }
+
+  @override
+  String get accountLoginNoteAdd => 'บันทึกข้อมูลเข้าสู่ระบบ';
+
+  @override
+  String get accountClearRrHistorySubtitle => 'เฉพาะบัญชีที่เลือกอยู่';
+
+  @override
+  String get accountClearLocalDataSubtitle =>
+      'ประวัติ ชุดอุปกรณ์ที่บันทึกไว้ และข้อมูลของบัญชีที่ออกจากระบบแล้ว';
+
+  @override
   String get authAddAsNew => 'เพิ่มเป็นบัญชีใหม่';
 
   @override
@@ -5012,6 +5027,12 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get settingsWelcomeKicker => 'ผู้ช่วย VALORANT';
+
+  @override
+  String get settingsCountryPriceHeader => 'ประเทศและราคา';
+
+  @override
+  String get settingsDataHeader => 'ข้อมูลในอุปกรณ์';
 
   @override
   String skinDetailCommunitySummary(

@@ -875,6 +875,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'Verify to unlock your Riot sign-in info';
 
   @override
+  String accountMoreActions(String riotId) {
+    return 'Options for $riotId';
+  }
+
+  @override
+  String get accountLoginNoteAdd => 'Save sign-in info';
+
+  @override
+  String get accountClearRrHistorySubtitle => 'Only the selected account';
+
+  @override
+  String get accountClearLocalDataSubtitle =>
+      'History, saved loadouts and data of signed-out accounts';
+
+  @override
   String get authAddAsNew => 'Add as new account';
 
   @override
@@ -5396,6 +5411,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsWelcomeKicker => 'VALORANT COMPANION';
+
+  @override
+  String get settingsCountryPriceHeader => 'Country & prices';
+
+  @override
+  String get settingsDataHeader => 'Data on this device';
 
   @override
   String skinDetailCommunitySummary(

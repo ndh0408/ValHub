@@ -893,6 +893,21 @@ class AppLocalizationsRu extends AppLocalizations {
       'Подтвердите личность, чтобы открыть данные для входа Riot';
 
   @override
+  String accountMoreActions(String riotId) {
+    return 'Действия с $riotId';
+  }
+
+  @override
+  String get accountLoginNoteAdd => 'Сохранить данные для входа';
+
+  @override
+  String get accountClearRrHistorySubtitle => 'Только выбранный аккаунт';
+
+  @override
+  String get accountClearLocalDataSubtitle =>
+      'История, сохраненные комплекты и данные аккаунтов, из которых вы вышли';
+
+  @override
   String get authAddAsNew => 'Добавить как новый';
 
   @override
@@ -5549,6 +5564,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsWelcomeKicker => 'ПОМОЩНИК В VALORANT';
+
+  @override
+  String get settingsCountryPriceHeader => 'Страна и цены';
+
+  @override
+  String get settingsDataHeader => 'Данные на устройстве';
 
   @override
   String skinDetailCommunitySummary(

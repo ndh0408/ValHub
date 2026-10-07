@@ -40,6 +40,14 @@ void _smallPhoneTallSurface(WidgetTester tester) {
 }
 
 /// Lets snackbar timers run out so nothing is pending when the test ends.
+/// Opens the ⋮ menu of [riotId]'s row and picks "Xóa tài khoản".
+Future<void> _openRemove(WidgetTester tester, String riotId) async {
+  await tester.tap(find.byTooltip(tl.accountMoreActions(riotId)));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(tl.accountRemoveAccount));
+  await tester.pumpAndSettle();
+}
+
 Future<void> _drainSnackBars(WidgetTester tester) =>
     tester.pump(const Duration(seconds: 5));
 
@@ -106,15 +114,26 @@ void main() {
       await pumpSettings(tester, accounts: [testAccount(1), testAccount(2)]);
 
       expect(find.text(AccountStrings.accountsHeader(2, 10)), findsOneWidget);
-      for (final header in const [
+      for (final header in [
         SettingsStrings.optionsHeader,
+        tl.settingsCountryPriceHeader.toUpperCase(),
         SettingsStrings.notificationsHeader,
         SettingsStrings.appearanceHeader,
-        SettingsStrings.appHeader,
-        SettingsStrings.aboutHeader,
+        tl.communityTitle.toUpperCase(),
+        SettingsStrings.supportHeader,
+        tl.settingsDataHeader.toUpperCase(),
       ]) {
-        expect(find.text(header), findsOneWidget);
+        expect(find.text(header), findsOneWidget, reason: header);
       }
+      // The single-row sections are gone.
+      expect(find.text(SettingsStrings.appHeader), findsNothing);
+      expect(find.text(SettingsStrings.aboutHeader), findsNothing);
+      // One ⋮ per account instead of three buttons.
+      expect(
+        find.byTooltip(tl.accountMoreActions('Player1#VN')),
+        findsOneWidget,
+      );
+      expect(find.byTooltip(AccountStrings.removeAccount), findsNothing);
       expect(find.text('Player1#VN'), findsOneWidget);
       expect(find.text('Player2#VN'), findsOneWidget);
       // Exactly one active marker (the first account is active by default).
@@ -184,8 +203,7 @@ void main() {
     ) async {
       await pumpSettings(tester, accounts: [testAccount(1), testAccount(2)]);
 
-      await tester.tap(find.byTooltip(AccountStrings.removeAccount).first);
-      await tester.pumpAndSettle();
+      await _openRemove(tester, 'Player1#VN');
       expect(
         find.text(AccountStrings.removeAccountConfirm('Player1#VN')),
         findsOneWidget,
@@ -195,8 +213,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Player1#VN'), findsOneWidget);
 
-      await tester.tap(find.byTooltip(AccountStrings.removeAccount).first);
-      await tester.pumpAndSettle();
+      await _openRemove(tester, 'Player1#VN');
       await tester.tap(find.text(CommonStrings.delete));
       await tester.pumpAndSettle();
 
@@ -237,19 +254,20 @@ void main() {
     });
   });
 
-  group('DỮ LIỆU CỘNG ĐỒNG', () {
-    final header = CommunityStrings.dataTitle.toUpperCase();
+  group('CỘNG ĐỒNG', () {
+    final header = tl.communityTitle.toUpperCase();
 
-    testWidgets('hidden until the active account joined the Community', (
+    testWidgets('hidden people always; the data rows once joined', (
       tester,
     ) async {
       await pumpSettings(tester, accounts: [testAccount(1), testAccount(2)]);
 
-      expect(find.text(header), findsNothing);
+      expect(find.text(header), findsOneWidget);
+      expect(find.text(tl.communityHiddenAuthors), findsOneWidget);
       expect(find.text(CommunityStrings.deleteDataTitle), findsNothing);
     });
 
-    testWidgets('shown under the accounts, for the active account only', (
+    testWidgets('data rows for the active account only, after Giao diện', (
       tester,
     ) async {
       await prefs.setString(communityConsentKey(testPuuid(1)), 'granted');
@@ -267,24 +285,25 @@ void main() {
         find.text(CommunityStrings.dataFooter('Player1#VN')),
         findsOneWidget,
       );
-      // Between "TÀI KHOẢN" and "TÙY CHỌN".
-      final accounts = tester.getTopLeft(
-        find.text(AccountStrings.accountsHeader(2, 10)),
+      // Between "GIAO DIỆN" and "HỖ TRỢ".
+      final appearance = tester.getTopLeft(
+        find.text(SettingsStrings.appearanceHeader),
       );
       final data = tester.getTopLeft(find.text(header));
-      final options = tester.getTopLeft(
-        find.text(SettingsStrings.optionsHeader),
+      final support = tester.getTopLeft(
+        find.text(SettingsStrings.supportHeader),
       );
-      expect(accounts.dy, lessThan(data.dy));
-      expect(data.dy, lessThan(options.dy));
+      expect(appearance.dy, lessThan(data.dy));
+      expect(data.dy, lessThan(support.dy));
 
-      // Account 2 never joined: switching to it hides the group.
+      // Account 2 never joined: switching to it hides the data rows.
       await tester.tap(find.text('Player2#VN'));
       await tester.pumpAndSettle();
-      expect(find.text(header), findsNothing);
+      expect(find.text(CommunityStrings.exportTitle), findsNothing);
+      expect(find.text(header), findsOneWidget);
       await tester.tap(find.text('Player1#VN'));
       await tester.pumpAndSettle();
-      expect(find.text(header), findsOneWidget);
+      expect(find.text(CommunityStrings.exportTitle), findsOneWidget);
       await _drainSnackBars(tester);
     });
 
@@ -299,8 +318,7 @@ void main() {
       await pumpSettings(tester, accounts: [testAccount(1)]);
       expect(find.text(header), findsOneWidget);
 
-      await tester.tap(find.byTooltip(AccountStrings.removeAccount).first);
-      await tester.pumpAndSettle();
+      await _openRemove(tester, 'Player1#VN');
       await tester.tap(find.text(CommonStrings.delete));
       await tester.pumpAndSettle();
 
@@ -481,7 +499,7 @@ void main() {
     });
   });
 
-  group('NÂNG CAO and THÔNG TIN', () {
+  group('DỮ LIỆU TRÊN MÁY and HỖ TRỢ', () {
     testWidgets('clearing the cache reports the freed size', (tester) async {
       await pumpSettings(tester, accounts: [testAccount(1)]);
 
@@ -505,16 +523,59 @@ void main() {
       await _drainSnackBars(tester);
     });
 
-    testWidgets('"Nâng cao" holds exactly the report and the temp data', (
+    testWidgets('every clean-up sits in one group; the report in Hỗ trợ', (
       tester,
     ) async {
       await pumpSettings(tester, accounts: [testAccount(1)]);
 
-      expect(find.text(SettingsStrings.exportLog), findsOneWidget);
+      double top(String text) => tester.getTopLeft(find.text(text)).dy;
+      final data = top(tl.settingsDataHeader.toUpperCase());
+      final support = top(SettingsStrings.supportHeader);
+      for (final row in [
+        SettingsStrings.clearCache,
+        tl.accountClearRrHistory,
+        tl.accountClearLocalData,
+      ]) {
+        expect(top(row), greaterThan(data), reason: row);
+      }
+      expect(top(SettingsStrings.exportLog), greaterThan(support));
+      expect(top(SettingsStrings.exportLog), lessThan(data));
       expect(find.text(SettingsStrings.exportLogSubtitle), findsOneWidget);
-      expect(find.text(SettingsStrings.clearCache), findsOneWidget);
       // No log viewer, no HTTP filter, no raw ids on screen.
       expect(find.text('HTTP'), findsNothing);
+    });
+
+    testWidgets('clearing the RR history and the local data ask first', (
+      tester,
+    ) async {
+      await pumpSettings(tester, accounts: [testAccount(1)]);
+
+      for (final (row, confirm, done) in [
+        (
+          tl.accountClearRrHistory,
+          tl.accountClearRrHistoryConfirm,
+          tl.accountRrHistoryCleared,
+        ),
+        (
+          tl.accountClearLocalData,
+          tl.accountClearLocalDataConfirm,
+          tl.accountLocalDataCleared,
+        ),
+      ]) {
+        await tester.tap(find.text(row));
+        await tester.pumpAndSettle();
+        expect(find.text(confirm), findsOneWidget);
+        await tester.tap(find.text(CommonStrings.cancel));
+        await tester.pumpAndSettle();
+        expect(find.text(done), findsNothing);
+
+        await tester.tap(find.text(row));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(CommonStrings.delete));
+        await tester.pumpAndSettle();
+        expect(find.text(done), findsOneWidget);
+        await _drainSnackBars(tester);
+      }
     });
 
     testWidgets('sending a bug report shares a file, not text on screen', (

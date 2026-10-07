@@ -1375,6 +1375,32 @@
     "description": "AccountStrings.unlockLoginNote — Login note: the user's own Riot username / password per account",
     "x-context": "lib/core/l10n/account_strings.dart"
   },
+  "accountMoreActions": "Tùy chọn cho {riotId}",
+  "@accountMoreActions": {
+    "description": "Tooltip of the ⋮ button on an account row in Settings (opens: saved sign-in info, remove account).",
+    "placeholders": {
+      "riotId": {
+        "example": "Player#VN2",
+        "type": "String"
+      }
+    },
+    "x-context": "lib/features/settings/ui/sections/accounts_section.dart"
+  },
+  "accountLoginNoteAdd": "Lưu thông tin đăng nhập",
+  "@accountLoginNoteAdd": {
+    "description": "Action in the account ⋮ menu when no sign-in info is saved yet for that account (opens the note sheet).",
+    "x-context": "lib/features/settings/ui/sections/accounts_section.dart"
+  },
+  "accountClearRrHistorySubtitle": "Chỉ tài khoản đang chọn",
+  "@accountClearRrHistorySubtitle": {
+    "description": "Subtitle of 'Xóa lịch sử RR' in Settings: it clears the RR history of the active account only.",
+    "x-context": "lib/features/settings/ui/sections/app_info_sections.dart"
+  },
+  "accountClearLocalDataSubtitle": "Lịch sử, bộ trang bị đã lưu và dữ liệu của tài khoản đã đăng xuất",
+  "@accountClearLocalDataSubtitle": {
+    "description": "Subtitle of 'Xóa dữ liệu cục bộ' in Settings: what it clears (sign-ins, wishlists and settings stay).",
+    "x-context": "lib/features/settings/ui/sections/app_info_sections.dart"
+  },
   "authAddAsNew": "Thêm tài khoản mới",
   "@authAddAsNew": {
     "description": "AuthStrings.addAsNew — ",
@@ -8312,6 +8338,16 @@
   "@settingsWelcomeKicker": {
     "description": "SettingsStrings.welcomeKicker — Welcome hero (S01)",
     "x-context": "lib/features/settings/settings_strings.dart"
+  },
+  "settingsCountryPriceHeader": "Quốc gia & giá",
+  "@settingsCountryPriceHeader": {
+    "description": "Settings section header (shown uppercase): the country used by the app and the local-currency estimate next to VP prices.",
+    "x-context": "lib/features/settings/ui/sections/country_section.dart"
+  },
+  "settingsDataHeader": "Dữ liệu trên máy",
+  "@settingsDataHeader": {
+    "description": "Settings section header (shown uppercase) grouping every clean-up of data stored on this device.",
+    "x-context": "lib/features/settings/ui/sections/app_info_sections.dart"
   },
   "skinDetailCommunitySummary": "Cộng đồng: {hasAverage, select, yes{★ {average} ({count} đánh giá) · } other{}}{votes} lượt thích",
   "@skinDetailCommunitySummary": {

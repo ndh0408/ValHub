@@ -1,5 +1,3 @@
-import 'package:valvn/core/l10n/labels/economy_labels.dart';
-
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,14 +5,12 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account.dart';
 import '../../../../core/accounts/account_providers.dart';
-import '../../../../core/config/local_price.dart';
+import '../../../../core/geo/region_picker.dart';
 import '../../../../core/l10n/app_locale.dart';
 import '../../../../core/settings/app_settings.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/ui/adaptive.dart';
-import '../../../../core/ui/price_estimate.dart';
 import '../../../../core/ui/sub_page.dart';
-import '../../../../core/util/format.dart';
 import '../widgets/settings_widgets.dart';
 import '../widgets/language_picker.dart';
 
@@ -39,9 +35,8 @@ String contentLocaleLabel(String choice, AppLocalizations l10n) =>
     AppLocale.fromTag(choice)?.nativeName ??
     l10n.settingsContentLanguageFollowApp;
 
-/// "TÙY CHỌN" (S70, X1): live-game switches, the platform of the active
-/// account, the local-currency estimate next to VP prices and the user's
-/// own pack price (ValHub extras).
+/// "TÙY CHỌN" (S70, X1): the Riot connection and the platform of the active
+/// account, then the live-game switches. Prices live in "Quốc gia & giá".
 class SettingsOptionsSection extends ConsumerWidget {
   const SettingsOptionsSection({super.key});
 
@@ -75,14 +70,33 @@ class SettingsOptionsSection extends ConsumerWidget {
     final settings = ref.watch(appSettingsProvider);
     final account = ref.watch(activeAccountProvider);
     final notifier = ref.read(appSettingsProvider.notifier);
-    // Estimates need a verified table for the device's country or the
-    // user's own pack price.
-    final price = ref.watch(localPriceSourceProvider);
-    final hasPrices = price != null;
-    final override = ref.watch(vpPriceOverrideProvider);
     return SettingsGroup(
       title: context.l10n.settingsOptionsHeader,
       children: [
+        if (account != null)
+          ListTile(
+            leading: const SettingsIcon(Icons.public_outlined),
+            title: Text(context.l10n.settingsGeoConnection),
+            subtitle: Text(
+              account.needsRegionSelection
+                  ? context.l10n.settingsGeoNoRegion
+                  : context.l10n.riotRegionName(account.region),
+            ),
+            trailing: const SettingsChevron(),
+            onTap: () => showRegionPicker(context, account),
+          ),
+        ListTile(
+          leading: const SettingsIcon(Icons.sports_esports_outlined),
+          title: Text(context.l10n.settingsOptionPlatform),
+          trailing: SettingsValue(
+            context.l10n.gamePlatformName(account?.platform ?? GamePlatform.pc),
+            icon: Icons.expand_more,
+          ),
+          enabled: account != null,
+          onTap: account == null
+              ? null
+              : () => unawaited(_pickPlatform(context, ref, account)),
+        ),
         SettingsSwitchTile(
           icon: Icons.bolt_outlined,
           title: context.l10n.settingsOptionAutoOpenLiveGame,
@@ -106,50 +120,6 @@ class SettingsOptionsSection extends ConsumerWidget {
           value: settings.showLiveScore,
           onChanged: (v) =>
               unawaited(notifier.update((s) => s.copyWith(showLiveScore: v))),
-        ),
-        ListTile(
-          leading: const SettingsIcon(Icons.sports_esports_outlined),
-          title: Text(context.l10n.settingsOptionPlatform),
-          trailing: SettingsValue(
-            context.l10n.gamePlatformName(account?.platform ?? GamePlatform.pc),
-            icon: Icons.expand_more,
-          ),
-          enabled: account != null,
-          onTap: account == null
-              ? null
-              : () => unawaited(_pickPlatform(context, ref, account)),
-        ),
-        SettingsSwitchTile(
-          icon: Icons.payments_outlined,
-          title: context.l10n.settingsOptionShowPrice,
-          subtitle: price == null
-              ? context.l10n.settingsOptionShowPriceUnavailable
-              : context.l10n.settingsOptionShowPriceSubtitle(
-                  context.fmt.vp(1775),
-                  price.estimateText(context.fmt, 1775) ?? '',
-                ),
-          value: hasPrices && settings.showPriceEstimate,
-          onChanged: hasPrices
-              ? (v) => unawaited(
-                  notifier.update((s) => s.copyWith(showPriceEstimate: v)),
-                )
-              : null,
-          infoTooltip: context.l10n.settingsOptionShowPriceInfo,
-          onInfo: () => unawaited(showPriceEstimateInfoSheet(context)),
-        ),
-        ListTile(
-          leading: const SettingsIcon(Icons.edit_note_outlined),
-          title: Text(context.l10n.settingsOptionOwnPrice),
-          subtitle: Text(
-            override == null
-                ? context.l10n.settingsOptionOwnPriceEmpty
-                : context.l10n.settingsOptionOwnPriceValue(
-                    context.fmt.vp(override.vp),
-                    formatCurrency(override.price, override.currency),
-                  ),
-          ),
-          trailing: const SettingsChevron(),
-          onTap: () => unawaited(showVpPriceOverrideSheet(context)),
         ),
       ],
     );

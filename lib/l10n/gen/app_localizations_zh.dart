@@ -803,6 +803,20 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountUnlockLoginNote => '验证身份以查看 Riot 登录信息';
 
   @override
+  String accountMoreActions(String riotId) {
+    return '$riotId 的选项';
+  }
+
+  @override
+  String get accountLoginNoteAdd => '保存登录信息';
+
+  @override
+  String get accountClearRrHistorySubtitle => '仅当前选中的账号';
+
+  @override
+  String get accountClearLocalDataSubtitle => '历史记录、已保存的配置和已登出账号的数据';
+
+  @override
   String get authAddAsNew => '添加为新账号';
 
   @override
@@ -4866,6 +4880,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsWelcomeKicker => 'VALORANT 助手';
 
   @override
+  String get settingsCountryPriceHeader => '国家/地区与价格';
+
+  @override
+  String get settingsDataHeader => '设备上的数据';
+
+  @override
   String skinDetailCommunitySummary(
     String hasAverage,
     String average,
@@ -7249,6 +7269,20 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get accountUnlockLoginNote => '驗證身分以解鎖 Riot 登入資訊';
+
+  @override
+  String accountMoreActions(String riotId) {
+    return '$riotId 的選項';
+  }
+
+  @override
+  String get accountLoginNoteAdd => '儲存登入資訊';
+
+  @override
+  String get accountClearRrHistorySubtitle => '僅目前選取的帳號';
+
+  @override
+  String get accountClearLocalDataSubtitle => '紀錄、已儲存的裝備組合和已登出帳號的資料';
 
   @override
   String get authAddAsNew => '新增為新帳號';
@@ -11311,6 +11345,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsWelcomeKicker => 'VALORANT 好幫手';
+
+  @override
+  String get settingsCountryPriceHeader => '國家／地區與價格';
+
+  @override
+  String get settingsDataHeader => '裝置上的資料';
 
   @override
   String skinDetailCommunitySummary(

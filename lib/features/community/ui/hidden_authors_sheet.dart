@@ -3,35 +3,33 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../core/accounts/account_providers.dart';
 import '../../settings/ui/widgets/settings_widgets.dart';
 import '../providers/hidden_authors.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
-class SettingsHiddenAuthorsSection extends ConsumerWidget {
-  const SettingsHiddenAuthorsSection({super.key});
+/// Settings row "Người đã ẩn và chặn" (in the CỘNG ĐỒNG group) opening
+/// [HiddenAuthorsSheet] for [puuid].
+class HiddenAuthorsRow extends StatelessWidget {
+  const HiddenAuthorsRow({super.key, required this.puuid});
+
+  final String puuid;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final account = ref.watch(activeAccountProvider);
-    if (account == null) return const SizedBox.shrink();
-    return SettingsGroup(
-      title: context.l10n.communityHiddenAuthors,
-      children: [
-        ListTile(
-          leading: const SettingsIcon(Icons.visibility_off_outlined),
-          title: Text(context.l10n.communityHiddenAuthors),
-          subtitle: Text(context.l10n.communityHiddenAuthorsHint),
-          onTap: () => unawaited(
-            showModalBottomSheet<void>(
-              context: context,
-              isScrollControlled: true,
-              useSafeArea: true,
-              builder: (_) => HiddenAuthorsSheet(puuid: account.puuid),
-            ),
-          ),
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: const SettingsIcon(Icons.visibility_off_outlined),
+      title: Text(context.l10n.communityHiddenAuthors),
+      subtitle: Text(context.l10n.communityHiddenAuthorsHint),
+      trailing: const SettingsChevron(),
+      onTap: () => unawaited(
+        showModalBottomSheet<void>(
+          context: context,
+          isScrollControlled: true,
+          useSafeArea: true,
+          builder: (_) => HiddenAuthorsSheet(puuid: puuid),
         ),
-      ],
+      ),
     );
   }
 }

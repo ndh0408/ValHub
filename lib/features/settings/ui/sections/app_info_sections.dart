@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/domain/competitive/names.dart';
+import '../../../../core/domain/competitive/rank.dart';
 import '../../../../core/logging/session_log.dart';
 import '../../../../core/riot/platform_status.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -37,7 +38,9 @@ Future<void> openSettingsLink(
 }
 
 /// "HỖ TRỢ": server status of the active account's region (with a colored
-/// dot while Riot reports a maintenance or an incident) and feedback.
+/// dot while Riot reports a maintenance or an incident), feedback, the bug
+/// report for ValHub, and "Giới thiệu & pháp lý" (every legal document,
+/// licences, contact) closing the settings.
 class SettingsSupportSection extends ConsumerWidget {
   const SettingsSupportSection({super.key});
 
@@ -61,9 +64,74 @@ class SettingsSupportSection extends ConsumerWidget {
           onTap: () =>
               unawaited(openSettingsLink(context, ref, SettingsLinks.feedback)),
         ),
+        const _BugReportRow(),
+        ListTile(
+          leading: const SettingsIcon(Icons.shield_outlined),
+          title: Text(context.l10n.settingsAboutTitle),
+          subtitle: Text(context.l10n.settingsAboutRowSubtitle),
+          trailing: const SettingsChevron(),
+          onTap: () => unawaited(context.push(SettingsRoutes.about)),
+        ),
       ],
     );
   }
+}
+
+/// "Gửi báo lỗi cho ValHub": a scrubbed file handed to the share sheet,
+/// never shown on screen.
+class _BugReportRow extends ConsumerStatefulWidget {
+  const _BugReportRow();
+
+  @override
+  ConsumerState<_BugReportRow> createState() => _BugReportRowState();
+}
+
+class _BugReportRowState extends ConsumerState<_BugReportRow> {
+  void _snack(String message) {
+    ScaffoldMessenger.maybeOf(context)
+      ?..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _sendReport() async {
+    final l10n = context.l10n;
+    final log = ref.read(sessionLogProvider);
+    if (log.entries.isEmpty) {
+      _snack(l10n.settingsExportLogEmpty);
+      return;
+    }
+    final box = context.findRenderObject();
+    final origin = box is RenderBox && box.hasSize
+        ? box.localToGlobal(Offset.zero) & box.size
+        : null;
+    String? version;
+    try {
+      version = (await ref.read(packageInfoProvider.future)).version;
+    } on Object {
+      // A report can still be shared when app information is unavailable.
+    }
+    if (!mounted) return;
+    final report = buildBugReport(
+      log,
+      now: ref.read(clockProvider).now(),
+      version: version,
+      messages: l10n,
+    );
+    try {
+      await ref.read(bugReportSharerProvider)(report, origin: origin);
+    } on Object {
+      if (mounted) _snack(l10n.settingsLogShareFailed);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+    leading: const SettingsIcon(Icons.bug_report_outlined),
+    title: Text(context.l10n.settingsExportLog),
+    subtitle: Text(context.l10n.settingsExportLogSubtitle),
+    trailing: const SettingsChevron(icon: Icons.ios_share),
+    onTap: () => unawaited(_sendReport()),
+  );
 }
 
 /// "● Đang bảo trì" / "● 2 thông báo" from the (cached) X-1 status of the
@@ -125,10 +193,10 @@ class _ServerStatusValue extends ConsumerWidget {
   }
 }
 
-/// "NÂNG CAO" (S70, X2): the only two actions a player may ever need that
-/// are not about the game: send a bug report to ValHub (a scrubbed file handed
-/// to the share sheet, never shown on screen) and clear temporary data (with
-/// its size). The app version lives on the About screen only.
+/// "DỮ LIỆU TRÊN MÁY" (S70, X2): every clean-up in one place, from the
+/// lightest to the widest: temporary data (with its size), the RR history
+/// of the active account, then everything this device recorded (sign-ins,
+/// wishlists and settings stay).
 class SettingsAppSection extends ConsumerStatefulWidget {
   const SettingsAppSection({super.key});
 
@@ -145,35 +213,32 @@ class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Future<void> _sendReport(BuildContext rowContext) async {
-    final l10n = rowContext.l10n;
-    final log = ref.read(sessionLogProvider);
-    if (log.entries.isEmpty) {
-      _snack(rowContext.l10n.settingsExportLogEmpty);
-      return;
-    }
-    final box = rowContext.findRenderObject();
-    final origin = box is RenderBox && box.hasSize
-        ? box.localToGlobal(Offset.zero) & box.size
-        : null;
-    String? version;
-    try {
-      version = (await ref.read(packageInfoProvider.future)).version;
-    } on Object {
-      // A report can still be shared when app information is unavailable.
-    }
-    if (!mounted) return;
-    final report = buildBugReport(
-      log,
-      now: ref.read(clockProvider).now(),
-      version: version,
-      messages: l10n,
+  Future<void> _clearRrHistory(String puuid) async {
+    final l10n = context.l10n;
+    final ok = await confirmSettingsAction(
+      context,
+      title: l10n.accountClearRrHistory,
+      message: l10n.accountClearRrHistoryConfirm,
+      confirmLabel: l10n.commonDelete,
+      destructive: true,
     );
-    try {
-      await ref.read(bugReportSharerProvider)(report, origin: origin);
-    } on Object {
-      if (mounted) _snack(l10n.settingsLogShareFailed);
-    }
+    if (!ok || !mounted) return;
+    await ref.read(deleteRrHistoryProvider(puuid))();
+    if (mounted) _snack(l10n.accountRrHistoryCleared);
+  }
+
+  Future<void> _clearLocalData() async {
+    final l10n = context.l10n;
+    final ok = await confirmSettingsAction(
+      context,
+      title: l10n.accountClearLocalData,
+      message: l10n.accountClearLocalDataConfirm,
+      confirmLabel: l10n.commonDelete,
+      destructive: true,
+    );
+    if (!ok || !mounted) return;
+    await ref.read(accountsProvider.notifier).clearLocalData();
+    if (mounted) _snack(l10n.accountLocalDataCleared);
   }
 
   /// Clears the image / offline-response caches and the recorded bug-report
@@ -202,19 +267,12 @@ class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
   @override
   Widget build(BuildContext context) {
     final cacheSize = ref.watch(cacheSizeBytesProvider);
+    final active = ref.watch(activePuuidProvider);
+    final hasAccounts = ref.watch(accountsProvider).isNotEmpty;
     final muted = Theme.of(context).colorScheme.onSurfaceVariant;
     return SettingsGroup(
-      title: context.l10n.settingsAppHeader,
+      title: context.l10n.settingsDataHeader,
       children: [
-        Builder(
-          builder: (rowContext) => ListTile(
-            leading: const SettingsIcon(Icons.bug_report_outlined),
-            title: Text(rowContext.l10n.settingsExportLog),
-            subtitle: Text(rowContext.l10n.settingsExportLogSubtitle),
-            trailing: const SettingsChevron(icon: Icons.ios_share),
-            onTap: () => unawaited(_sendReport(rowContext)),
-          ),
-        ),
         ListTile(
           leading: const SettingsIcon(Icons.cleaning_services_outlined),
           title: Text(context.l10n.settingsClearCache),
@@ -238,30 +296,20 @@ class _SettingsAppSectionState extends ConsumerState<SettingsAppSection> {
                 },
           onTap: _clearing ? null : () => unawaited(_clearCache()),
         ),
-      ],
-    );
-  }
-}
-
-/// "THÔNG TIN": the single "Giới thiệu & pháp lý" row that closes the
-/// settings (docs/design/IA.md "Pháp lý"); every legal document, the
-/// licences of third-party libraries, contact and the copyright line live in
-/// that hub (S72).
-class SettingsAboutSection extends StatelessWidget {
-  const SettingsAboutSection({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SettingsGroup(
-      title: context.l10n.settingsAboutHeader,
-      children: [
-        ListTile(
-          leading: const SettingsIcon(Icons.shield_outlined),
-          title: Text(context.l10n.settingsAboutTitle),
-          subtitle: Text(context.l10n.settingsAboutRowSubtitle),
-          trailing: const SettingsChevron(),
-          onTap: () => unawaited(context.push(SettingsRoutes.about)),
-        ),
+        if (active != null)
+          ListTile(
+            leading: const SettingsIcon(Icons.history_outlined),
+            title: Text(context.l10n.accountClearRrHistory),
+            subtitle: Text(context.l10n.accountClearRrHistorySubtitle),
+            onTap: () => unawaited(_clearRrHistory(active)),
+          ),
+        if (hasAccounts)
+          ListTile(
+            leading: const SettingsIcon(Icons.delete_sweep_outlined),
+            title: Text(context.l10n.accountClearLocalData),
+            subtitle: Text(context.l10n.accountClearLocalDataSubtitle),
+            onTap: () => unawaited(_clearLocalData()),
+          ),
       ],
     );
   }

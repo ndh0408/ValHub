@@ -811,6 +811,20 @@ class AppLocalizationsKo extends AppLocalizations {
   String get accountUnlockLoginNote => '인증하여 Riot 로그인 정보 잠금 해제';
 
   @override
+  String accountMoreActions(String riotId) {
+    return '$riotId 옵션';
+  }
+
+  @override
+  String get accountLoginNoteAdd => '로그인 정보 저장';
+
+  @override
+  String get accountClearRrHistorySubtitle => '선택한 계정만';
+
+  @override
+  String get accountClearLocalDataSubtitle => '기록, 저장된 장비 구성, 로그아웃한 계정의 데이터';
+
+  @override
   String get authAddAsNew => '새 계정으로 추가';
 
   @override
@@ -4927,6 +4941,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsWelcomeKicker => 'VALORANT 도우미';
+
+  @override
+  String get settingsCountryPriceHeader => '국가 및 가격';
+
+  @override
+  String get settingsDataHeader => '기기 데이터';
 
   @override
   String skinDetailCommunitySummary(

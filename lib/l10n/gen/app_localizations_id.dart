@@ -828,6 +828,21 @@ class AppLocalizationsId extends AppLocalizations {
       'Verifikasi untuk membuka info login Riot';
 
   @override
+  String accountMoreActions(String riotId) {
+    return 'Opsi untuk $riotId';
+  }
+
+  @override
+  String get accountLoginNoteAdd => 'Simpan info login';
+
+  @override
+  String get accountClearRrHistorySubtitle => 'Hanya akun yang dipilih';
+
+  @override
+  String get accountClearLocalDataSubtitle =>
+      'Riwayat, loadout tersimpan, dan data akun yang sudah logout';
+
+  @override
   String get authAddAsNew => 'Tambah sebagai akun baru';
 
   @override
@@ -5054,6 +5069,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get settingsWelcomeKicker => 'TEMAN SETIA VALORANT';
+
+  @override
+  String get settingsCountryPriceHeader => 'Negara & harga';
+
+  @override
+  String get settingsDataHeader => 'Data di perangkat';
 
   @override
   String skinDetailCommunitySummary(

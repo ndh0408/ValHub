@@ -1592,6 +1592,30 @@ abstract class AppLocalizations {
   /// **'Xác thực để mở thông tin đăng nhập Riot'**
   String get accountUnlockLoginNote;
 
+  /// Tooltip of the ⋮ button on an account row in Settings (opens: saved sign-in info, remove account).
+  ///
+  /// In vi, this message translates to:
+  /// **'Tùy chọn cho {riotId}'**
+  String accountMoreActions(String riotId);
+
+  /// Action in the account ⋮ menu when no sign-in info is saved yet for that account (opens the note sheet).
+  ///
+  /// In vi, this message translates to:
+  /// **'Lưu thông tin đăng nhập'**
+  String get accountLoginNoteAdd;
+
+  /// Subtitle of 'Xóa lịch sử RR' in Settings: it clears the RR history of the active account only.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉ tài khoản đang chọn'**
+  String get accountClearRrHistorySubtitle;
+
+  /// Subtitle of 'Xóa dữ liệu cục bộ' in Settings: what it clears (sign-ins, wishlists and settings stay).
+  ///
+  /// In vi, this message translates to:
+  /// **'Lịch sử, bộ trang bị đã lưu và dữ liệu của tài khoản đã đăng xuất'**
+  String get accountClearLocalDataSubtitle;
+
   /// AuthStrings.addAsNew —
   ///
   /// In vi, this message translates to:
@@ -8437,6 +8461,18 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'TRỢ THỦ VALORANT'**
   String get settingsWelcomeKicker;
+
+  /// Settings section header (shown uppercase): the country used by the app and the local-currency estimate next to VP prices.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quốc gia & giá'**
+  String get settingsCountryPriceHeader;
+
+  /// Settings section header (shown uppercase) grouping every clean-up of data stored on this device.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dữ liệu trên máy'**
+  String get settingsDataHeader;
 
   /// Explicit render-time message, preserving existing VI behavior.
   ///

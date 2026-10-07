@@ -878,6 +878,21 @@ class AppLocalizationsEs extends AppLocalizations {
       'Verifica tu identidad para ver los datos de inicio de sesión de Riot';
 
   @override
+  String accountMoreActions(String riotId) {
+    return 'Opciones de $riotId';
+  }
+
+  @override
+  String get accountLoginNoteAdd => 'Guardar datos de inicio de sesión';
+
+  @override
+  String get accountClearRrHistorySubtitle => 'Solo la cuenta seleccionada';
+
+  @override
+  String get accountClearLocalDataSubtitle =>
+      'Historial, equipamientos guardados y datos de cuentas cerradas';
+
+  @override
   String get authAddAsNew => 'Añadir como cuenta nueva';
 
   @override
@@ -5436,6 +5451,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsWelcomeKicker => 'TU COMPAÑERO DE VALORANT';
+
+  @override
+  String get settingsCountryPriceHeader => 'País y precios';
+
+  @override
+  String get settingsDataHeader => 'Datos en el dispositivo';
 
   @override
   String skinDetailCommunitySummary(

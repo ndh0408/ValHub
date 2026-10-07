@@ -886,6 +886,21 @@ class AppLocalizationsPl extends AppLocalizations {
       'Potwierdź tożsamość, aby odblokować dane logowania Riot';
 
   @override
+  String accountMoreActions(String riotId) {
+    return 'Opcje dla $riotId';
+  }
+
+  @override
+  String get accountLoginNoteAdd => 'Zapisz dane logowania';
+
+  @override
+  String get accountClearRrHistorySubtitle => 'Tylko wybrane konto';
+
+  @override
+  String get accountClearLocalDataSubtitle =>
+      'Historia, zapisane zestawy i dane wylogowanych kont';
+
+  @override
   String get authAddAsNew => 'Dodaj jako nowe konto';
 
   @override
@@ -5420,6 +5435,12 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get settingsWelcomeKicker => 'TOWARZYSZ W VALORANT';
+
+  @override
+  String get settingsCountryPriceHeader => 'Kraj i ceny';
+
+  @override
+  String get settingsDataHeader => 'Dane na urządzeniu';
 
   @override
   String skinDetailCommunitySummary(

@@ -811,6 +811,20 @@ class AppLocalizationsJa extends AppLocalizations {
   String get accountUnlockLoginNote => '認証してRiotのログイン情報を表示';
 
   @override
+  String accountMoreActions(String riotId) {
+    return '$riotId のオプション';
+  }
+
+  @override
+  String get accountLoginNoteAdd => 'ログイン情報を保存';
+
+  @override
+  String get accountClearRrHistorySubtitle => '選択中のアカウントのみ';
+
+  @override
+  String get accountClearLocalDataSubtitle => '履歴、保存済みロードアウト、ログアウト済みアカウントのデータ';
+
+  @override
   String get authAddAsNew => '新しいアカウントとして追加';
 
   @override
@@ -4932,6 +4946,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get settingsWelcomeKicker => 'VALORANTパートナー';
+
+  @override
+  String get settingsCountryPriceHeader => '国と価格';
+
+  @override
+  String get settingsDataHeader => '端末のデータ';
 
   @override
   String skinDetailCommunitySummary(

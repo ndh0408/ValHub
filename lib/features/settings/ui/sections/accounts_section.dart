@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account.dart';
-import '../../../../core/geo/region_picker.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/l10n/account_labels.dart';
 import '../../../../core/accounts/sign_out_dialog.dart';
@@ -16,15 +15,17 @@ import '../../../../core/accounts/login_note_sheet.dart';
 import '../../../../core/accounts/account_widgets.dart';
 import '../../../../core/auth/auth_routes.dart';
 import '../../../../core/config/app_constants.dart';
-import '../../../../core/domain/competitive/rank.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/error_view.dart';
 import '../widgets/settings_widgets.dart';
 
 /// "TÀI KHOẢN (n/10) · 2 ĐANG TRỰC TUYẾN" (S70, A4/A11): rows with the
 /// active marker and each account's live status, tap to switch (or re-login
-/// when the session expired), trash with confirmation, "+ Thêm tài khoản"
-/// and the red "Đăng xuất tất cả tài khoản" row (with confirmation).
+/// when the session expired), one ⋮ menu per row (saved login, remove with
+/// confirmation), "+ Thêm tài khoản" and the red "Đăng xuất tất cả tài
+/// khoản" row (with confirmation). Data clean-up lives in "Dữ liệu trên
+/// máy", the Riot connection in "Tùy chọn".
 class SettingsAccountsSection extends ConsumerWidget {
   const SettingsAccountsSection({super.key});
 
@@ -78,59 +79,6 @@ class SettingsAccountsSection extends ConsumerWidget {
             ? '$header · ${context.l10n.accountOnlineCount(online).toUpperCase()}'
             : header,
         children: [
-          ListTile(
-            leading: const Icon(Icons.delete_sweep_outlined),
-            title: Text(context.l10n.accountClearLocalData),
-            onTap: () async {
-              final l10n = context.l10n;
-              final ok = await confirmSettingsAction(
-                context,
-                title: l10n.accountClearLocalData,
-                message: l10n.accountClearLocalDataConfirm,
-                confirmLabel: l10n.commonDelete,
-                destructive: true,
-              );
-              if (!ok || !context.mounted) return;
-              await ref.read(accountsProvider.notifier).clearLocalData();
-              if (context.mounted) {
-                showAppSnackBar(context, l10n.accountLocalDataCleared);
-              }
-            },
-          ),
-          if (active != null)
-            ListTile(
-              leading: const Icon(Icons.public_outlined),
-              title: Text(context.l10n.settingsGeoConnection),
-              subtitle: Text(
-                ref.watch(accountProvider(active))!.needsRegionSelection
-                    ? context.l10n.settingsGeoNoRegion
-                    : context.l10n.riotRegionName(
-                        ref.watch(accountProvider(active))!.region,
-                      ),
-              ),
-              onTap: () =>
-                  showRegionPicker(context, ref.read(accountProvider(active))!),
-            ),
-          if (active != null)
-            ListTile(
-              leading: const Icon(Icons.history_outlined),
-              title: Text(context.l10n.accountClearRrHistory),
-              onTap: () async {
-                final l10n = context.l10n;
-                final ok = await confirmSettingsAction(
-                  context,
-                  title: l10n.accountClearRrHistory,
-                  message: l10n.accountClearRrHistoryConfirm,
-                  confirmLabel: l10n.commonDelete,
-                  destructive: true,
-                );
-                if (!ok || !context.mounted) return;
-                await ref.read(deleteRrHistoryProvider(active))();
-                if (context.mounted) {
-                  showAppSnackBar(context, l10n.accountRrHistoryCleared);
-                }
-              },
-            ),
           if (accounts.isEmpty)
             ListTile(
               leading: SettingsIcon(
@@ -213,7 +161,8 @@ class _AccountRow extends ConsumerWidget {
         false;
     // Active marker: a red accent bar (always) plus a check mark when there
     // is room. The tile is not `selected`: a red title would read like the
-    // "Cần đăng nhập lại" error of another row.
+    // "Cần đăng nhập lại" error of another row. Everything else about the
+    // account sits behind one ⋮ so the row stays on one line.
     final tile = AccountTile(
       account: account,
       onTap: onTap,
@@ -238,26 +187,35 @@ class _AccountRow extends ConsumerWidget {
               ),
             ),
           IconButton(
-            icon: Icon(hasNote ? Icons.key : Icons.key_outlined),
-            color: hasNote ? scheme.primary : scheme.onSurfaceVariant,
-            tooltip: hasNote
-                ? context.l10n.accountLoginNote
-                : context.l10n.accountLoginNoteEmpty,
-            onPressed: onNote,
-          ),
-          // Red trash in a round red-tinted disc (48 dp target).
-          IconButton(
-            icon: const Icon(Icons.delete_outline, size: 20),
-            color: scheme.error,
-            style: IconButton.styleFrom(
-              backgroundColor: scheme.error.withValues(alpha: 0.14),
-              side: BorderSide(color: scheme.error.withValues(alpha: 0.25)),
-              fixedSize: const Size.square(38),
-              minimumSize: const Size.square(38),
-              tapTargetSize: MaterialTapTargetSize.padded,
+            icon: Icon(Icons.adaptive.more),
+            color: scheme.onSurfaceVariant,
+            tooltip: context.l10n.accountMoreActions(
+              account.displayRiotId(context.l10n),
             ),
-            tooltip: context.l10n.accountRemoveAccount,
-            onPressed: onRemove,
+            onPressed: () async {
+              final l10n = context.l10n;
+              final action = await showActionSheet<String>(
+                context,
+                title: account.displayRiotId(l10n),
+                actions: [
+                  SheetAction(
+                    value: 'note',
+                    label: hasNote
+                        ? l10n.accountLoginNote
+                        : l10n.accountLoginNoteAdd,
+                    icon: hasNote ? Icons.key : Icons.key_outlined,
+                  ),
+                  SheetAction(
+                    value: 'remove',
+                    label: l10n.accountRemoveAccount,
+                    icon: Icons.delete_outline,
+                    destructive: true,
+                  ),
+                ],
+              );
+              if (action == 'note') onNote();
+              if (action == 'remove') onRemove();
+            },
           ),
         ],
       ),

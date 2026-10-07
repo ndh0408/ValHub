@@ -15,13 +15,14 @@ import '../../data/community_exception.dart';
 import '../../providers/community_providers.dart';
 import '../../providers/consent_providers.dart';
 import '../../providers/data_rights_providers.dart';
+import '../hidden_authors_sheet.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
-/// Settings group "DỮ LIỆU CỘNG ĐỒNG CỦA BẠN": download, delete or stop
-/// sharing what the account has on the Community server. Only shown for the
-/// active account when it agreed to join (an account that never joined has
-/// nothing there), and never while the Community is switched off.
+/// Settings group "CỘNG ĐỒNG": the people the active account hid or blocked,
+/// then — once the account agreed to join — download, delete or stop
+/// sharing what it has on the Community server (an account that never
+/// joined has nothing there). Never shown while the Community is off.
 class CommunityDataSection extends ConsumerStatefulWidget {
   const CommunityDataSection({super.key});
 
@@ -155,7 +156,6 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
     final joined =
         ref.watch(communityConsentProvider(account.puuid)) ==
         CommunityConsent.granted;
-    if (!joined) return const SizedBox.shrink();
 
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
@@ -167,55 +167,62 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
     );
 
     return SettingsGroup(
-      title: context.l10n.communityDataTitle,
-      footer: Text(
-        context.l10n.communityDataFooter(account.displayRiotId(context.l10n)),
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: scheme.onSurfaceVariant,
-        ),
-      ),
+      title: context.l10n.communityTitle,
+      footer: joined
+          ? Text(
+              context.l10n.communityDataFooter(
+                account.displayRiotId(context.l10n),
+              ),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            )
+          : null,
       children: [
-        Builder(
-          builder: (rowContext) => ListTile(
-            key: const ValueKey('community-data-export'),
-            enabled: busy == null,
-            leading: const SettingsIcon(Icons.download_outlined),
-            title: Text(rowContext.l10n.communityExportTitle),
-            subtitle: Text(
-              busy == _DataAction.export
-                  ? rowContext.l10n.communityExportPreparing
-                  : rowContext.l10n.communityExportSubtitle,
+        HiddenAuthorsRow(puuid: account.puuid),
+        if (joined) ...[
+          Builder(
+            builder: (rowContext) => ListTile(
+              key: const ValueKey('community-data-export'),
+              enabled: busy == null,
+              leading: const SettingsIcon(Icons.download_outlined),
+              title: Text(rowContext.l10n.communityExportTitle),
+              subtitle: Text(
+                busy == _DataAction.export
+                    ? rowContext.l10n.communityExportPreparing
+                    : rowContext.l10n.communityExportSubtitle,
+              ),
+              trailing: busy == _DataAction.export
+                  ? spinner()
+                  : const SettingsChevron(icon: Icons.ios_share_outlined),
+              onTap: () => unawaited(_export(rowContext, account)),
             ),
-            trailing: busy == _DataAction.export
-                ? spinner()
-                : const SettingsChevron(icon: Icons.ios_share_outlined),
-            onTap: () => unawaited(_export(rowContext, account)),
           ),
-        ),
-        ListTile(
-          key: const ValueKey('community-data-delete'),
-          enabled: busy == null,
-          leading: SettingsIcon(
-            Icons.delete_forever_outlined,
-            color: scheme.error,
+          ListTile(
+            key: const ValueKey('community-data-delete'),
+            enabled: busy == null,
+            leading: SettingsIcon(
+              Icons.delete_forever_outlined,
+              color: scheme.error,
+            ),
+            title: Text(
+              context.l10n.communityDeleteDataTitle,
+              style: TextStyle(color: scheme.error),
+            ),
+            subtitle: Text(context.l10n.communityDeleteDataSubtitle),
+            trailing: busy == _DataAction.delete ? spinner() : null,
+            onTap: () => unawaited(_delete(context, account)),
           ),
-          title: Text(
-            context.l10n.communityDeleteDataTitle,
-            style: TextStyle(color: scheme.error),
+          ListTile(
+            key: const ValueKey('community-data-withdraw'),
+            enabled: busy == null,
+            leading: const SettingsIcon(Icons.logout_rounded),
+            title: Text(context.l10n.communityWithdrawTitle),
+            subtitle: Text(context.l10n.communityWithdrawSubtitle),
+            trailing: busy == _DataAction.withdraw ? spinner() : null,
+            onTap: () => unawaited(_withdraw(context, account)),
           ),
-          subtitle: Text(context.l10n.communityDeleteDataSubtitle),
-          trailing: busy == _DataAction.delete ? spinner() : null,
-          onTap: () => unawaited(_delete(context, account)),
-        ),
-        ListTile(
-          key: const ValueKey('community-data-withdraw'),
-          enabled: busy == null,
-          leading: const SettingsIcon(Icons.logout_rounded),
-          title: Text(context.l10n.communityWithdrawTitle),
-          subtitle: Text(context.l10n.communityWithdrawSubtitle),
-          trailing: busy == _DataAction.withdraw ? spinner() : null,
-          onTap: () => unawaited(_withdraw(context, account)),
-        ),
+        ],
       ],
     );
   }

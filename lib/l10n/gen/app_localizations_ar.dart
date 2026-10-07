@@ -898,6 +898,21 @@ class AppLocalizationsAr extends AppLocalizations {
       'تحقّق من هويتك لفتح معلومات تسجيل الدخول إلى Riot';
 
   @override
+  String accountMoreActions(String riotId) {
+    return 'خيارات $riotId';
+  }
+
+  @override
+  String get accountLoginNoteAdd => 'حفظ معلومات تسجيل الدخول';
+
+  @override
+  String get accountClearRrHistorySubtitle => 'للحساب المحدد فقط';
+
+  @override
+  String get accountClearLocalDataSubtitle =>
+      'السجل والتجهيزات المحفوظة وبيانات الحسابات التي تم تسجيل الخروج منها';
+
+  @override
   String get authAddAsNew => 'إضافة كحساب جديد';
 
   @override
@@ -5617,6 +5632,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsWelcomeKicker => 'رفيقك في VALORANT';
+
+  @override
+  String get settingsCountryPriceHeader => 'الدولة والأسعار';
+
+  @override
+  String get settingsDataHeader => 'البيانات على الجهاز';
 
   @override
   String skinDetailCommunitySummary(

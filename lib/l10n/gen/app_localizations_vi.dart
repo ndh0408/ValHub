@@ -826,6 +826,21 @@ class AppLocalizationsVi extends AppLocalizations {
       'Xác thực để mở thông tin đăng nhập Riot';
 
   @override
+  String accountMoreActions(String riotId) {
+    return 'Tùy chọn cho $riotId';
+  }
+
+  @override
+  String get accountLoginNoteAdd => 'Lưu thông tin đăng nhập';
+
+  @override
+  String get accountClearRrHistorySubtitle => 'Chỉ tài khoản đang chọn';
+
+  @override
+  String get accountClearLocalDataSubtitle =>
+      'Lịch sử, bộ trang bị đã lưu và dữ liệu của tài khoản đã đăng xuất';
+
+  @override
   String get authAddAsNew => 'Thêm tài khoản mới';
 
   @override
@@ -5029,6 +5044,12 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get settingsWelcomeKicker => 'TRỢ THỦ VALORANT';
+
+  @override
+  String get settingsCountryPriceHeader => 'Quốc gia & giá';
+
+  @override
+  String get settingsDataHeader => 'Dữ liệu trên máy';
 
   @override
   String skinDetailCommunitySummary(

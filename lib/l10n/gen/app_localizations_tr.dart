@@ -830,6 +830,21 @@ class AppLocalizationsTr extends AppLocalizations {
       'Riot giriş bilgilerinin kilidini açmak için doğrula';
 
   @override
+  String accountMoreActions(String riotId) {
+    return '$riotId seçenekleri';
+  }
+
+  @override
+  String get accountLoginNoteAdd => 'Giriş bilgilerini kaydet';
+
+  @override
+  String get accountClearRrHistorySubtitle => 'Yalnızca seçili hesap';
+
+  @override
+  String get accountClearLocalDataSubtitle =>
+      'Geçmiş, kayıtlı kuşanım setleri ve çıkış yapılmış hesapların verileri';
+
+  @override
   String get authAddAsNew => 'Yeni hesap olarak ekle';
 
   @override
@@ -5054,6 +5069,12 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get settingsWelcomeKicker => 'VALORANT YOL ARKADAŞI';
+
+  @override
+  String get settingsCountryPriceHeader => 'Ülke ve fiyatlar';
+
+  @override
+  String get settingsDataHeader => 'Cihazdaki veriler';
 
   @override
   String skinDetailCommunitySummary(

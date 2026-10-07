@@ -179,6 +179,8 @@ Nguyên tắc: **không có gì trông như console trong app.** Không màn hì
 
 "Nâng cao" chỉ chứa hai hàng trên và **không có gì kỹ thuật khác**. Nhóm mới thêm vào đây phải qua checklist §8 và không được là màn hình chỉ chứa dữ liệu thô.
 
+Cập nhật 07/10/2026: nhóm "Nâng cao" được bỏ. "Gửi báo lỗi cho ValHub" nằm trong **Hỗ trợ** (cùng "Giới thiệu & pháp lý"); mọi thao tác xóa dữ liệu trên máy ("Xóa dữ liệu tạm", "Xóa lịch sử RR", "Xóa dữ liệu cục bộ") gom vào nhóm **Dữ liệu trên máy**. Quy tắc trên vẫn giữ: không hàng nào hiện log hay mã kỹ thuật.
+
 ---
 
 ## 7. Giữ nguyên cấu trúc để trích xuất ARB (ICU) về sau
