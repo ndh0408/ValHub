@@ -17,6 +17,7 @@ import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
 import '../providers/night_market_seen.dart';
+import 'store_history_screen.dart';
 import 'widgets/accessory_section.dart';
 import 'widgets/bundle_section.dart';
 import 'widgets/daily_section.dart';
@@ -237,7 +238,13 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
         puuid: puuid,
         onRetry: retry,
         loading: const StoreSkeleton(kind: StoreSkeletonKind.daily),
-        data: (s) => DailySection(daily: s.daily, puuid: puuid),
+        data: (s) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            DailySection(daily: s.daily, puuid: puuid),
+            StoreHistoryEntry(puuid: puuid),
+          ],
+        ),
       ),
       StoreSegment.nightMarket => AsyncValueView<Storefront>(
         value: storeAsync,
