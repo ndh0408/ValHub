@@ -11,6 +11,7 @@ import '../../../../core/ui/empty_view.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
+import '../../data/round_economy.dart';
 import '../../data/round_timeline.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
@@ -52,6 +53,12 @@ class RoundTimelineSliver extends StatelessWidget {
       );
     }
     final showHalves = roundsPerHalf(details.info.queueId) != null;
+    final me = details.player(perspective);
+    final sides = details.sideIds;
+    final myTeam = me != null && !me.isObserver
+        ? me.teamId
+        : (sides.isEmpty ? null : sides.first);
+    final economy = hasBuyPhase(details);
     final items = <Widget>[];
     MatchHalf? half;
     for (final row in rows) {
@@ -66,6 +73,9 @@ class RoundTimelineSliver extends StatelessWidget {
           details: details,
           perspective: perspective,
           hidden: hidden,
+          buys: economy
+              ? roundBuysOf(details, row.round, myTeam: myTeam)
+              : null,
         ),
       );
     }
@@ -245,12 +255,16 @@ class _RoundLine extends ConsumerStatefulWidget {
     required this.details,
     required this.perspective,
     required this.hidden,
+    this.buys,
   });
 
   final RoundRow row;
   final MatchDetails details;
   final String? perspective;
   final Set<String> hidden;
+
+  /// Both teams' buy types, when the match has a buy phase.
+  final RoundBuys? buys;
 
   @override
   ConsumerState<_RoundLine> createState() => _RoundLineState();
@@ -273,6 +287,11 @@ class _RoundLineState extends ConsumerState<_RoundLine> {
       if (site != null && site.isNotEmpty) context.l10n.profilePlantedAt(site),
       if (row.myKills > 0) context.l10n.profileRoundKills(row.myKills),
       if (row.firstBloodByMe) context.l10n.profileFirstBloods,
+      if (widget.buys case RoundBuys(:final mine?, :final theirs?))
+        context.l10n.profileEconomyMatchup(
+          context.l10n.profileBuyType(mine.type.name),
+          context.l10n.profileBuyType(theirs.type.name),
+        ),
     ];
     final gold = valColorsOf(context).gold;
     final header = Row(

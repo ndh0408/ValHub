@@ -53,6 +53,29 @@ String formatNumber(num value, {String? locale}) {
   return f.format(value.isFinite ? value : 0);
 }
 
+/// [value] with exactly [decimals] fraction digits in the locale's pattern:
+/// a K/D of `1` reads `1,00` (vi) / `1.00` (en), not `1`. Non-finite values
+/// format as `0`.
+String formatDecimal(num value, int decimals, {String? locale}) {
+  final l = _loc(locale);
+  final f = _fixed.putIfAbsent('$l/$decimals', () {
+    try {
+      return NumberFormat.decimalPatternDigits(
+        locale: l,
+        decimalDigits: decimals,
+      );
+    } on Object {
+      return NumberFormat.decimalPatternDigits(
+        locale: 'en_US',
+        decimalDigits: decimals,
+      );
+    }
+  });
+  return f.format(value.isFinite ? value : 0);
+}
+
+final Map<String, NumberFormat> _fixed = {};
+
 /// [amount] of [currency] (ISO 4217) in the locale's currency format and
 /// with the currency's usual decimals: `268000, 'VND'` → `268.000 ₫` (vi),
 /// `16.1, 'USD'` → `$16.10` (en_US).

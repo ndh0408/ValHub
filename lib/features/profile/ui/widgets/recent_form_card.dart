@@ -110,7 +110,7 @@ class _FormBody extends StatelessWidget {
         ? context.l10n.competitiveNoValue
         : decimals == 0
         ? formatNumber(v.round())
-        : formatNumber(double.parse(v.toStringAsFixed(decimals)));
+        : formatDecimal(v, decimals);
     return ValCard(
       padding: const EdgeInsets.all(16),
       child: Column(

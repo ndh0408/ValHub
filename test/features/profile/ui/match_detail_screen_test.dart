@@ -10,6 +10,9 @@ import 'package:valvn/features/profile/profile_strings.dart';
 import 'package:valvn/features/profile/ui/match_detail_screen.dart';
 import 'package:valvn/features/profile/ui/widgets/profile_widgets.dart';
 
+import 'package:valvn/features/profile/ui/widgets/economy_card.dart';
+
+import '../../../helpers/l10n.dart';
 import '../profile_test_env.dart';
 
 void main() {
@@ -59,6 +62,23 @@ void main() {
     expect(find.text(ProfileStrings.enemyTeam), findsOneWidget);
     expect(find.text('Đồng Đội'), findsOneWidget);
     expect(find.text('Đối Thủ'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('the economy card counts rounds by your team\'s buy type', (
+    tester,
+  ) async {
+    await pumpProfile(
+      tester,
+      env,
+      const MatchDetailScreen(matchId: compMatch),
+      height: 2600,
+    );
+    await settle(tester);
+    expect(find.byType(EconomyCard), findsOneWidget);
+    expect(find.text(tl.profileEconomyTitle), findsOneWidget);
+    // Round 1 opens the match: a pistol round.
+    expect(find.text(tl.profileBuyType('pistol')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

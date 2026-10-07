@@ -22,6 +22,8 @@ import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/format.dart';
 import '../profile_routes.dart';
+import '../data/round_economy.dart';
+import 'widgets/economy_card.dart';
 import 'widgets/profile_widgets.dart';
 import '../data/hit_distribution.dart';
 import 'widgets/round_timeline_view.dart';
@@ -130,6 +132,9 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
     final score = result.hasScore
         ? context.l10n.profileScore(result.myScore!, result.otherScore!)
         : null;
+    final economy = inMatch
+        ? economyRecordOf(d, puuid: perspective)
+        : const <BuyType, BuyRecord>{};
     return SubPageScaffold(
       // Bar title once the hero has collapsed: "Sunset · 4 – 13".
       title: context.fmt.inlineFacts([
@@ -168,6 +173,8 @@ class _MatchDetailScreenState extends ConsumerState<MatchDetailScreen> {
           onOpenPlayer: openPlayer,
           hidden: hidden,
         ),
+        if (economy.isNotEmpty)
+          SliverToBoxAdapter(child: EconomyCard(record: economy)),
         // The scoreboard stays on screen; the round list opens under it.
         if (hasRounds)
           SliverToBoxAdapter(

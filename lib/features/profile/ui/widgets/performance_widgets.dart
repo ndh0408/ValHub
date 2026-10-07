@@ -28,7 +28,7 @@ String perfValue(
   if (!allowed || value == null) return context.l10n.competitiveNoValue;
   return decimals == 0
       ? formatNumber(value.round())
-      : formatNumber(double.parse(value.toStringAsFixed(decimals)));
+      : formatDecimal(value, decimals);
 }
 
 /// A share (0–1) as a percentage, or the dash.
@@ -399,6 +399,7 @@ class PerfOpeningsCard extends StatelessWidget {
           StatGrid(
             tiles: [
               StatTile(
+                labelLines: 2,
                 label: context.l10n.profilePerformanceOpeningWin,
                 value: perfPercent(context, opening),
                 tooltip: context.l10n.profilePerformanceOpeningWinHint,
@@ -409,6 +410,7 @@ class PerfOpeningsCard extends StatelessWidget {
                     : colors.loss,
               ),
               StatTile(
+                labelLines: 2,
                 label: context.l10n.profilePerformanceFirstBloodsPerGame,
                 value: perfValue(
                   context,
@@ -418,6 +420,7 @@ class PerfOpeningsCard extends StatelessWidget {
                 ),
               ),
               StatTile(
+                labelLines: 2,
                 label: context.l10n.profilePerformanceFirstDeathsPerGame,
                 value: perfValue(
                   context,

@@ -125,6 +125,7 @@ class StatTile extends StatelessWidget {
     this.tooltip,
     this.tag,
     this.tagColor,
+    this.labelLines = 1,
   });
 
   final String label;
@@ -133,6 +134,10 @@ class StatTile extends StatelessWidget {
   final String? tooltip;
   final String? tag;
   final Color? tagColor;
+
+  /// Lines the label may wrap to; a label always takes that many lines so
+  /// the tiles of one row stay the same height.
+  final int labelLines;
 
   @override
   Widget build(BuildContext context) {
@@ -161,13 +166,20 @@ class StatTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: ValText.label.copyWith(
-                    fontSize: 11,
-                    color: theme.colorScheme.onSurfaceVariant,
+                child: SizedBox(
+                  height: labelLines > 1
+                      ? MediaQuery.textScalerOf(context).scale(11) *
+                            1.4 *
+                            labelLines
+                      : null,
+                  child: Text(
+                    label,
+                    maxLines: labelLines,
+                    overflow: TextOverflow.ellipsis,
+                    style: ValText.label.copyWith(
+                      fontSize: 11,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
               ),
