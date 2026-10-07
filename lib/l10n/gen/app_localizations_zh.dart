@@ -5426,6 +5426,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get socialPartyUnavailable => '无法同步你的队伍。请刷新后重试。';
 
   @override
+  String get socialAcceptConfirmBody => '你将离开当前队伍，加入邀请你的队伍。';
+
+  @override
   String get storeAccessoryEmpty => '配件商店目前没有商品。';
 
   @override
@@ -11859,6 +11862,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get socialPartyUnavailable => '無法同步隊伍。請重新整理再試一次。';
+
+  @override
+  String get socialAcceptConfirmBody => '你將離開目前的隊伍，加入邀請你的隊伍。';
 
   @override
   String get storeAccessoryEmpty => '配件商店目前沒有任何商品。';

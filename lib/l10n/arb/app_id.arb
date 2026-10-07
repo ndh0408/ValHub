@@ -1540,6 +1540,7 @@
   "socialWaitingForConnection": "Menghubungkan… Kamu bisa mengirim pesan setelah terhubung.",
   "socialYou": "Kamu",
   "socialPartyUnavailable": "Gagal menyinkronkan party-mu. Muat ulang untuk mencoba lagi.",
+  "socialAcceptConfirmBody": "Kamu akan keluar dari party saat ini untuk bergabung ke party yang mengundangmu.",
   "storeAccessoryEmpty": "Toko aksesori sedang kosong.",
   "storeAccessoryEmptyTitle": "Belum ada aksesori",
   "storeAccessoryFrom": "Dari: {contract}",

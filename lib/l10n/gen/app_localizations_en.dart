@@ -6001,6 +6001,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Couldn\'t sync your party. Refresh to try again.';
 
   @override
+  String get socialAcceptConfirmBody =>
+      'You\'ll leave your current party to join the party that invited you.';
+
+  @override
   String get storeAccessoryEmpty => 'The accessory store is empty right now.';
 
   @override

@@ -5638,6 +5638,10 @@ class AppLocalizationsId extends AppLocalizations {
       'Gagal menyinkronkan party-mu. Muat ulang untuk mencoba lagi.';
 
   @override
+  String get socialAcceptConfirmBody =>
+      'Kamu akan keluar dari party saat ini untuk bergabung ke party yang mengundangmu.';
+
+  @override
   String get storeAccessoryEmpty => 'Toko aksesori sedang kosong.';
 
   @override

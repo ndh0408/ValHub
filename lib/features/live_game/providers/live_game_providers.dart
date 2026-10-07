@@ -23,6 +23,12 @@ const kLivePollSlow = Duration(seconds: 20);
 /// Slowest cadence while the servers are in maintenance.
 const kLivePollMaintenance = Duration(seconds: 60);
 
+/// Cadence outside a match while a screen polls the party itself
+/// ([livePartyPollCoverProvider]): that screen reads the same session and
+/// party every few seconds and hands a new phase over with
+/// [LiveGameController.refresh], so this poll is only a safety net.
+const kLivePollCovered = Duration(seconds: 60);
+
 /// Number of open "Chi tiết trận" sheets (> 0 switches to the fast cadence).
 final liveGameSheetOpenProvider =
     NotifierProvider<LiveGameSheetOpenNotifier, int>(
@@ -37,6 +43,26 @@ class LiveGameSheetOpenNotifier extends Notifier<int> {
 
   void close() {
     // Modal/page teardown may finish after the root ProviderScope is disposed.
+    if (!ref.mounted) return;
+    if (state > 0) state = state - 1;
+  }
+}
+
+/// Number of open screens that poll the party and the game session on their
+/// own (the party screen, every 5 s). While > 0 the live game polls at
+/// [kLivePollCovered] outside a match instead of duplicating those calls.
+final livePartyPollCoverProvider =
+    NotifierProvider<LivePartyPollCoverNotifier, int>(
+      LivePartyPollCoverNotifier.new,
+    );
+
+class LivePartyPollCoverNotifier extends Notifier<int> {
+  @override
+  int build() => 0;
+
+  void open() => state = state + 1;
+
+  void close() {
     if (!ref.mounted) return;
     if (state > 0) state = state - 1;
   }
@@ -58,7 +84,11 @@ class LiveGameController extends AsyncNotifier<LiveGameState> {
   final nextPollAt = ValueNotifier<DateTime?>(null);
 
   /// Current cadence.
-  Duration get interval => _fast ? kLivePollFast : kLivePollSlow;
+  Duration get interval {
+    if (_fast) return kLivePollFast;
+    final inMatch = _last?.phase.inMatch ?? false;
+    return _covered && !inMatch ? kLivePollCovered : kLivePollSlow;
+  }
 
   PvpApi? _api;
   LiveGamePoller? _poller;
@@ -69,6 +99,7 @@ class LiveGameController extends AsyncNotifier<LiveGameState> {
   Future<void>? _inFlight;
   bool _again = false;
   bool _fast = false;
+  bool _covered = false;
   bool _foreground = true;
   bool _paused = false;
   int _generation = 0;
@@ -87,6 +118,7 @@ class LiveGameController extends AsyncNotifier<LiveGameState> {
       clock: clock,
     );
     _fast = ref.read(liveGameSheetOpenProvider) > 0;
+    _covered = ref.read(livePartyPollCoverProvider) > 0;
     _foreground = ref.read(appForegroundProvider);
     _paused = false;
 
@@ -98,6 +130,13 @@ class LiveGameController extends AsyncNotifier<LiveGameState> {
         } else {
           _schedule();
         }
+      })
+      ..listen<bool>(livePartyPollCoverProvider.select((n) => n > 0), (
+        _,
+        covered,
+      ) {
+        _covered = covered;
+        if (_inFlight == null) _schedule();
       })
       ..listen<bool>(appForegroundProvider, (_, foreground) {
         _foreground = foreground;

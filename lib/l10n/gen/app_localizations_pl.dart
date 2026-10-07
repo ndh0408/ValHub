@@ -6023,6 +6023,10 @@ class AppLocalizationsPl extends AppLocalizations {
       'Nie udało się zsynchronizować drużyny. Odśwież, aby spróbować ponownie.';
 
   @override
+  String get socialAcceptConfirmBody =>
+      'Opuścisz obecną drużynę, aby dołączyć do drużyny, która wysłała ci zaproszenie.';
+
+  @override
   String get storeAccessoryEmpty => 'Sklep z akcesoriami jest teraz pusty.';
 
   @override

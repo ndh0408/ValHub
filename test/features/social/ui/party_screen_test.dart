@@ -14,6 +14,7 @@ import 'package:valvn/core/xmpp/xmpp.dart';
 import 'package:valvn/features/social/social_strings.dart';
 import 'package:valvn/features/social/ui/party_screen.dart';
 
+import '../../../helpers/l10n.dart';
 import '../social_test_env.dart';
 
 Future<void> _pump(WidgetTester tester, SocialTestEnv env) async {
@@ -393,6 +394,44 @@ void main() {
     await _pump(tester, env);
     expect(find.text('Lời mời vào tổ đội'), findsOneWidget);
     await tester.tap(find.text('Chấp nhận'));
+    await settle(tester);
+    verify(() => env.api.partyAcceptInvite(me, otherPartyId)).called(1);
+    await unmount(tester);
+  });
+
+  testWidgets('accepting an invite out of a party with others asks first', (
+    tester,
+  ) async {
+    env = await SocialTestEnv.create(
+      remoteConfig: const RemoteConfig(
+        flags: {RemoteFlags.partyAcceptInvite: true},
+      ),
+    );
+    addTearDown(env.xmpp.dispose);
+    env.xmpp.seed();
+    env.serveParty(
+      partyJson(members: [memberJson(me, owner: true), memberJson(mate)]),
+      invites: [
+        {'PartyID': otherPartyId},
+      ],
+    );
+    await _pump(tester, env);
+    await tester.tap(find.text('Chấp nhận'));
+    await settle(tester);
+    expect(find.text(tl.socialJoinConfirmTitle), findsOneWidget);
+    expect(find.text(tl.socialAcceptConfirmBody), findsOneWidget);
+    await tester.tap(find.text('Hủy'));
+    await settle(tester);
+    verifyNever(() => env.api.partyAcceptInvite(any(), any()));
+
+    await tester.tap(find.text('Chấp nhận'));
+    await settle(tester);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(Dialog),
+        matching: find.widgetWithText(FilledButton, 'Chấp nhận'),
+      ),
+    );
     await settle(tester);
     verify(() => env.api.partyAcceptInvite(me, otherPartyId)).called(1);
     await unmount(tester);

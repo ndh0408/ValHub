@@ -1540,6 +1540,7 @@
   "socialWaitingForConnection": "جارٍ الاتصال… يمكنك إرسال الرسائل بعد اكتمال الاتصال.",
   "socialYou": "أنت",
   "socialPartyUnavailable": "تعذّرت مزامنة فريقك. حدّث الصفحة لإعادة المحاولة.",
+  "socialAcceptConfirmBody": "ستغادر فريقك الحالي للانضمام إلى الفريق الذي دعاك.",
   "storeAccessoryEmpty": "متجر الإكسسوارات فارغ حاليًا.",
   "storeAccessoryEmptyTitle": "لا توجد إكسسوارات بعد",
   "storeAccessoryFrom": "من: {contract}",

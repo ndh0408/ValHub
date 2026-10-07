@@ -9301,6 +9301,11 @@
   "@socialPartyUnavailable": {
     "description": "A running game session is verified, but its party is not available yet."
   },
+  "socialAcceptConfirmBody": "Bạn sẽ rời tổ đội hiện tại để vào tổ đội đã mời bạn.",
+  "@socialAcceptConfirmBody": {
+    "description": "Confirmation before accepting a party invite while the player is in a party with other people (title: socialJoinConfirmTitle).",
+    "x-context": "lib/features/social/ui/party_screen.dart"
+  },
   "storeAccessoryEmpty": "Cửa hàng phụ kiện hiện không có gì.",
   "@storeAccessoryEmpty": {
     "description": "StoreStrings.accessoryEmpty — Accessories (S12).",

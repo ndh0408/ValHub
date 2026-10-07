@@ -5636,6 +5636,10 @@ class AppLocalizationsTr extends AppLocalizations {
       'Grubun eşitlenemedi. Tekrar denemek için yenile.';
 
   @override
+  String get socialAcceptConfirmBody =>
+      'Seni davet eden gruba katılmak için mevcut grubundan ayrılacaksın.';
+
+  @override
   String get storeAccessoryEmpty => 'Aksesuar mağazası şu anda boş.';
 
   @override

@@ -5607,6 +5607,10 @@ class AppLocalizationsVi extends AppLocalizations {
       'Chưa đồng bộ được tổ đội. Làm mới để thử lại.';
 
   @override
+  String get socialAcceptConfirmBody =>
+      'Bạn sẽ rời tổ đội hiện tại để vào tổ đội đã mời bạn.';
+
+  @override
   String get storeAccessoryEmpty => 'Cửa hàng phụ kiện hiện không có gì.';
 
   @override

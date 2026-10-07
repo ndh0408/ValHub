@@ -1540,6 +1540,7 @@
   "socialWaitingForConnection": "Conectando… Você poderá enviar mensagens quando a conexão for concluída.",
   "socialYou": "Você",
   "socialPartyUnavailable": "Não foi possível sincronizar o grupo. Atualize para tentar de novo.",
+  "socialAcceptConfirmBody": "Você vai sair do grupo atual para entrar no grupo que te convidou.",
   "storeAccessoryEmpty": "A loja de acessórios está vazia no momento.",
   "storeAccessoryEmptyTitle": "Nenhum acessório ainda",
   "storeAccessoryFrom": "De: {contract}",

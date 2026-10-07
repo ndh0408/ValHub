@@ -6057,6 +6057,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se ha podido sincronizar el grupo. Actualiza para volver a intentarlo.';
 
   @override
+  String get socialAcceptConfirmBody =>
+      'Saldrás de tu grupo actual para unirte al grupo que te invitó.';
+
+  @override
   String get storeAccessoryEmpty =>
       'La tienda de accesorios no tiene nada ahora mismo.';
 

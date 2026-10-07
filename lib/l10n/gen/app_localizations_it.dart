@@ -6028,6 +6028,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Impossibile sincronizzare il tuo gruppo. Aggiorna per riprovare.';
 
   @override
+  String get socialAcceptConfirmBody =>
+      'Lascerai il tuo gruppo attuale per unirti al gruppo che ti ha mandato l\'invito.';
+
+  @override
   String get storeAccessoryEmpty =>
       'Il negozio degli accessori è vuoto al momento.';
 

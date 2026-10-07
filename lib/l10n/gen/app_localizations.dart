@@ -9379,6 +9379,12 @@ abstract class AppLocalizations {
   /// **'Chưa đồng bộ được tổ đội. Làm mới để thử lại.'**
   String get socialPartyUnavailable;
 
+  /// Confirmation before accepting a party invite while the player is in a party with other people (title: socialJoinConfirmTitle).
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn sẽ rời tổ đội hiện tại để vào tổ đội đã mời bạn.'**
+  String get socialAcceptConfirmBody;
+
   /// StoreStrings.accessoryEmpty — Accessories (S12).
   ///
   /// In vi, this message translates to:

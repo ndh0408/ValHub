@@ -80,6 +80,33 @@ void main() {
     });
   });
 
+  testWidgets('a screen polling the party slows the menus poll to 60 s', (
+    tester,
+  ) async {
+    await withContainer((c) async {
+      c.listen(liveGameProvider(me), (_, _) {});
+      await tester.pump();
+      verify(() => env.api.gameSession(me)).called(1);
+      final controller = c.read(liveGameProvider(me).notifier);
+
+      c.read(livePartyPollCoverProvider.notifier).open();
+      await tester.pump();
+      expect(controller.interval, kLivePollCovered);
+      await advance(tester, const Duration(seconds: 59));
+      verifyNever(() => env.api.gameSession(me));
+      await advance(tester, const Duration(seconds: 2));
+      verify(() => env.api.gameSession(me)).called(1);
+
+      // Closed: back to every 20 s.
+      c.read(livePartyPollCoverProvider.notifier).close();
+      await tester.pump();
+      expect(controller.interval, kLivePollSlow);
+      await advance(tester, const Duration(seconds: 21));
+      verify(() => env.api.gameSession(me)).called(1);
+      verifyNoMutation();
+    });
+  });
+
   testWidgets('never polls in the background; polls on return', (tester) async {
     await withContainer((c) async {
       c.listen(liveGameProvider(me), (_, _) {});

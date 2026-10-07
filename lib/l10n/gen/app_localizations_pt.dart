@@ -6051,6 +6051,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Não foi possível sincronizar o grupo. Atualize para tentar de novo.';
 
   @override
+  String get socialAcceptConfirmBody =>
+      'Você vai sair do grupo atual para entrar no grupo que te convidou.';
+
+  @override
   String get storeAccessoryEmpty =>
       'A loja de acessórios está vazia no momento.';
 

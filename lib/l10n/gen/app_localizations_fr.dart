@@ -6050,6 +6050,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Impossible de synchroniser le groupe. Actualisez pour réessayer.';
 
   @override
+  String get socialAcceptConfirmBody =>
+      'Vous allez quitter votre groupe actuel pour rejoindre le groupe qui vous a envoyé l\'invitation.';
+
+  @override
   String get storeAccessoryEmpty =>
       'La boutique d\'accessoires est vide pour le moment.';
 

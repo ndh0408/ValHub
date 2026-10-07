@@ -6172,6 +6172,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'Не удалось синхронизировать группу. Обновите, чтобы повторить попытку.';
 
   @override
+  String get socialAcceptConfirmBody =>
+      'Вы покинете текущую группу и вступите в группу, которая вас пригласила.';
+
+  @override
   String get storeAccessoryEmpty => 'В магазине аксессуаров сейчас пусто.';
 
   @override

@@ -105,11 +105,36 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
   final _code = TextEditingController();
   final Set<String> _busy = {};
   final Set<String> _invited = {};
+  LivePartyPollCoverNotifier? _cover;
 
   static final _codePattern = RegExp(r'^[A-Za-z0-9]{3,16}$');
 
   @override
+  void initState() {
+    super.initState();
+    // This screen polls the session and party every few seconds: the live
+    // game slows its own copy of those calls down meanwhile.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final cover = ref.read(livePartyPollCoverProvider.notifier);
+      cover.open();
+      _cover = cover;
+    });
+  }
+
+  @override
   void dispose() {
+    final cover = _cover;
+    if (cover != null) {
+      // Avoid a provider mutation while the route is being torn down.
+      scheduleMicrotask(() {
+        try {
+          cover.close();
+        } on StateError {
+          /* Provider scope disposed. */
+        }
+      });
+    }
     _code.dispose();
     super.dispose();
   }
@@ -158,6 +183,13 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
     }
     final puuid = account.puuid;
     final provider = partyProvider(puuid);
+    // A match starting is seen here first: hand it to the live game, which
+    // switches the combined page to the match.
+    ref.listen(provider.select((v) => v.value?.inMatch), (was, inMatch) {
+      if (inMatch == true && was != true && widget.includeCurrentGame) {
+        unawaited(ref.read(liveGameProvider(puuid).notifier).refresh());
+      }
+    });
     final value = ref.watch(provider);
     final view = value.value;
     final party = view?.party;
@@ -279,7 +311,7 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
               _InviteRow(
                 invite: invite,
                 busy: _isBusy('accept-${invite.partyId}'),
-                onAccept: () => _accept(me, invite),
+                onAccept: () => _accept(me, invite, p),
                 onDecline: () => _notifier(me).dismissInvite(invite),
               ),
           ],
@@ -727,13 +759,24 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
     );
   }
 
-  Future<void> _accept(String me, PartyInvite invite) async {
+  Future<void> _accept(String me, PartyInvite invite, Party? current) async {
     if (!mounted) return;
     final l10n = context.l10n;
     final notifier = _notifier(me);
     if (!notifier.canAcceptInvites) {
       showAppSnackBar(context, l10n.socialAcceptInGame);
       return;
+    }
+    // Like joining by code: accepting leaves a party with other people.
+    if (current != null && current.size > 1) {
+      final ok = await confirmAction(
+        context,
+        title: l10n.socialJoinConfirmTitle,
+        body: l10n.socialAcceptConfirmBody,
+        confirmLabel: l10n.socialAccept,
+        destructive: false,
+      );
+      if (!ok || !mounted) return;
     }
     await _run(
       'accept-${invite.partyId}',

@@ -6253,6 +6253,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'تعذّرت مزامنة فريقك. حدّث الصفحة لإعادة المحاولة.';
 
   @override
+  String get socialAcceptConfirmBody =>
+      'ستغادر فريقك الحالي للانضمام إلى الفريق الذي دعاك.';
+
+  @override
   String get storeAccessoryEmpty => 'متجر الإكسسوارات فارغ حاليًا.';
 
   @override

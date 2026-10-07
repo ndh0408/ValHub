@@ -1540,6 +1540,7 @@
   "socialWaitingForConnection": "Łączenie… Wiadomości wyślesz po nawiązaniu połączenia.",
   "socialYou": "Ty",
   "socialPartyUnavailable": "Nie udało się zsynchronizować drużyny. Odśwież, aby spróbować ponownie.",
+  "socialAcceptConfirmBody": "Opuścisz obecną drużynę, aby dołączyć do drużyny, która wysłała ci zaproszenie.",
   "storeAccessoryEmpty": "Sklep z akcesoriami jest teraz pusty.",
   "storeAccessoryEmptyTitle": "Brak akcesoriów",
   "storeAccessoryFrom": "Z: {contract}",

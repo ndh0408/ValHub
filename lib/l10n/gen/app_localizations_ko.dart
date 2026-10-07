@@ -5491,6 +5491,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get socialPartyUnavailable => '파티를 동기화하지 못했습니다. 새로고침하여 다시 시도하세요.';
 
   @override
+  String get socialAcceptConfirmBody => '현재 파티를 나가고 초대한 파티에 참가합니다.';
+
+  @override
   String get storeAccessoryEmpty => '현재 액세서리 상점에 아무것도 없습니다.';
 
   @override
