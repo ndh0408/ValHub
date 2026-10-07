@@ -893,6 +893,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Histórico, loadouts salvos e dados de contas desconectadas';
 
   @override
+  String get accountQuickFillLocked =>
+      'Desbloqueie com digital, rosto ou PIN do aparelho para usar uma conta salva. Se o celular não tiver bloqueio de tela, configure um e tente de novo.';
+
+  @override
   String get authAddAsNew => 'Adicionar como nova conta';
 
   @override

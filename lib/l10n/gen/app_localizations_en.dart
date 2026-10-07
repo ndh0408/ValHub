@@ -890,6 +890,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'History, saved loadouts and data of signed-out accounts';
 
   @override
+  String get accountQuickFillLocked =>
+      'Unlock with your fingerprint, face or device PIN to use a saved account. If your phone has no screen lock, set one and try again.';
+
+  @override
   String get authAddAsNew => 'Add as new account';
 
   @override

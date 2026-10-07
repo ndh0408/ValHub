@@ -894,6 +894,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Verlauf, gespeicherte Loadouts und Daten abgemeldeter Konten';
 
   @override
+  String get accountQuickFillLocked =>
+      'Entsperre mit Fingerabdruck, Gesicht oder Geräte-PIN, um ein gespeichertes Konto zu nutzen. Hat dein Handy keine Displaysperre, richte eine ein und versuche es erneut.';
+
+  @override
   String get authAddAsNew => 'Als neues Konto hinzufügen';
 
   @override

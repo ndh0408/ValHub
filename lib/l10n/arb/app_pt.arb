@@ -248,6 +248,7 @@
   "accountLoginNoteAdd": "Salvar dados de login",
   "accountClearRrHistorySubtitle": "Somente a conta selecionada",
   "accountClearLocalDataSubtitle": "Histórico, loadouts salvos e dados de contas desconectadas",
+  "accountQuickFillLocked": "Desbloqueie com digital, rosto ou PIN do aparelho para usar uma conta salva. Se o celular não tiver bloqueio de tela, configure um e tente de novo.",
   "authAddAsNew": "Adicionar como nova conta",
   "authDifferentAccountBody": "Você entrou com uma conta diferente da que precisava entrar novamente. Adicionar esta conta como uma nova conta?",
   "authDifferentAccountTitle": "Outra conta",

@@ -893,6 +893,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Historial, equipamientos guardados y datos de cuentas cerradas';
 
   @override
+  String get accountQuickFillLocked =>
+      'Desbloquea con tu huella, tu cara o el PIN del dispositivo para usar una cuenta guardada. Si tu móvil no tiene bloqueo de pantalla, configura uno y vuelve a intentarlo.';
+
+  @override
   String get authAddAsNew => 'Añadir como cuenta nueva';
 
   @override
@@ -7443,6 +7447,10 @@ class AppLocalizationsEsMx extends AppLocalizationsEs {
 
   @override
   String get accountQuickFillTitle => 'Autocompletar cuenta guardada';
+
+  @override
+  String get accountQuickFillLocked =>
+      'Desbloquea con tu huella, tu cara o el PIN del dispositivo para usar una cuenta guardada. Si tu celular no tiene bloqueo de pantalla, configura uno e inténtalo de nuevo.';
 
   @override
   String get authAddAsNew => 'Agregar como cuenta nueva';

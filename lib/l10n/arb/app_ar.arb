@@ -248,6 +248,7 @@
   "accountLoginNoteAdd": "حفظ معلومات تسجيل الدخول",
   "accountClearRrHistorySubtitle": "للحساب المحدد فقط",
   "accountClearLocalDataSubtitle": "السجل والتجهيزات المحفوظة وبيانات الحسابات التي تم تسجيل الخروج منها",
+  "accountQuickFillLocked": "افتح القفل ببصمة الإصبع أو الوجه أو رمز PIN الخاص بالجهاز لاستخدام حساب محفوظ. إذا لم يكن لهاتفك قفل شاشة، فاضبط واحدًا ثم حاول مرة أخرى.",
   "authAddAsNew": "إضافة كحساب جديد",
   "authDifferentAccountBody": "سجّلت الدخول بحساب مختلف عن الحساب الذي يلزمه تسجيل الدخول مجددًا. هل تريد إضافة هذا الحساب كحساب جديد؟",
   "authDifferentAccountTitle": "حساب مختلف",

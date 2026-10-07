@@ -817,6 +817,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountClearLocalDataSubtitle => '历史记录、已保存的配置和已登出账号的数据';
 
   @override
+  String get accountQuickFillLocked =>
+      '请用指纹、面容或设备 PIN 解锁后使用已保存的账号。如果手机未设置屏幕锁，请先设置后再试。';
+
+  @override
   String get authAddAsNew => '添加为新账号';
 
   @override
@@ -7283,6 +7287,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get accountClearLocalDataSubtitle => '紀錄、已儲存的裝備組合和已登出帳號的資料';
+
+  @override
+  String get accountQuickFillLocked =>
+      '請用指紋、臉部或裝置 PIN 解鎖後使用已儲存的帳號。如果手機尚未設定螢幕鎖定，請先設定後再試。';
 
   @override
   String get authAddAsNew => '新增為新帳號';

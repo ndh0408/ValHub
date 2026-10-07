@@ -248,6 +248,7 @@
   "accountLoginNoteAdd": "Salva dati di accesso",
   "accountClearRrHistorySubtitle": "Solo l'account selezionato",
   "accountClearLocalDataSubtitle": "Cronologia, equipaggiamenti salvati e dati degli account disconnessi",
+  "accountQuickFillLocked": "Sblocca con impronta, volto o PIN del dispositivo per usare un account salvato. Se il telefono non ha un blocco schermo, impostane uno e riprova.",
   "authAddAsNew": "Aggiungi come nuovo account",
   "authDifferentAccountBody": "Hai effettuato l'accesso con un account diverso da quello che deve accedere di nuovo. Aggiungere questo account come nuovo account?",
   "authDifferentAccountTitle": "Account diverso",

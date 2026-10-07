@@ -248,6 +248,7 @@
   "accountLoginNoteAdd": "Guardar datos de inicio de sesión",
   "accountClearRrHistorySubtitle": "Solo la cuenta seleccionada",
   "accountClearLocalDataSubtitle": "Historial, equipamientos guardados y datos de cuentas cerradas",
+  "accountQuickFillLocked": "Desbloquea con tu huella, tu cara o el PIN del dispositivo para usar una cuenta guardada. Si tu móvil no tiene bloqueo de pantalla, configura uno y vuelve a intentarlo.",
   "authAddAsNew": "Añadir como cuenta nueva",
   "authDifferentAccountBody": "Has iniciado sesión con una cuenta distinta de la que tenía que volver a iniciar sesión. ¿Quieres añadirla como cuenta nueva?",
   "authDifferentAccountTitle": "Otra cuenta",

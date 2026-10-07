@@ -96,6 +96,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   _Phase _phase = _Phase.preparing;
   double _progress = 0;
   bool _completed = false;
+
+  /// [_autoFillReauth] runs at most once per screen.
+  bool _autoFillTried = false;
   String? _errorMessage;
   InAppWebViewController? _controller;
 
@@ -335,6 +338,55 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } on Object {
       // The page navigated away meanwhile.
     }
+    unawaited(_autoFillReauth(controller));
+  }
+
+  /// Signing in again to an account with a saved login note: its username
+  /// and password are typed into Riot's form as soon as the form appears,
+  /// once per screen; the player only presses Riot's sign-in button (and
+  /// solves Riot's captcha if it asks). Never for a different account.
+  Future<void> _autoFillReauth(InAppWebViewController controller) async {
+    final puuid = widget.reauthPuuid;
+    if (puuid == null || _autoFillTried || !mounted || _completed) return;
+    // build() watches this provider, so it has loaded by the time Riot's
+    // page has.
+    final saved =
+        ref.read(savedLoginNotesProvider(puuid)).value ??
+        const <(Account, LoginNote)>[];
+    if (!saved.any((e) => e.$1.puuid == puuid)) return;
+    _autoFillTried = true;
+    final l10n = context.l10n;
+    final note = await ref.read(loginNoteProvider(puuid).future);
+    if (!mounted) return;
+    if (note == null) {
+      showAppSnackBar(context, l10n.accountQuickFillLocked);
+      return;
+    }
+    if (note.username.isEmpty || note.password.isEmpty) return;
+    // Riot's page renders its form after load: try for about five seconds.
+    for (var attempt = 0; attempt < 10; attempt++) {
+      if (!mounted || _completed) return;
+      final url = await controller.getUrl();
+      final host = url?.host ?? '';
+      if (url?.scheme != 'https' ||
+          (host != 'auth.riotgames.com' &&
+              host != 'authenticate.riotgames.com')) {
+        return;
+      }
+      Object? ok;
+      try {
+        ok = await controller.evaluateJavascript(
+          source: loginNoteFillScript(note),
+        );
+      } on Object {
+        ok = false;
+      }
+      if (ok == true) {
+        if (mounted) showAppSnackBar(context, l10n.accountQuickFillDone);
+        return;
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+    }
   }
 
   /// Types a saved login note into Riot's page (only on a Riot host; the
@@ -352,7 +404,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
     ref.invalidate(loginNoteProvider(selected.puuid));
     final note = await ref.read(loginNoteProvider(selected.puuid).future);
-    if (note == null || !mounted) return;
+    if (!mounted) return;
+    if (note == null) {
+      // The device unlock failed or the phone has no screen lock: say so
+      // instead of silently doing nothing.
+      showAppSnackBar(context, l10n.accountQuickFillLocked);
+      return;
+    }
     // Recheck the destination AFTER unlocking; navigation may have changed.
     final url = await controller.getUrl();
     final host = url?.host ?? '';

@@ -248,6 +248,7 @@
   "accountLoginNoteAdd": "Save sign-in info",
   "accountClearRrHistorySubtitle": "Only the selected account",
   "accountClearLocalDataSubtitle": "History, saved loadouts and data of signed-out accounts",
+  "accountQuickFillLocked": "Unlock with your fingerprint, face or device PIN to use a saved account. If your phone has no screen lock, set one and try again.",
   "authAddAsNew": "Add as new account",
   "authDifferentAccountBody": "You signed in with a different account than the one that needs to sign in again. Add this account as a new account?",
   "authDifferentAccountTitle": "Different account",

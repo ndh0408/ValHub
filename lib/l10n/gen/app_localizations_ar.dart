@@ -913,6 +913,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'السجل والتجهيزات المحفوظة وبيانات الحسابات التي تم تسجيل الخروج منها';
 
   @override
+  String get accountQuickFillLocked =>
+      'افتح القفل ببصمة الإصبع أو الوجه أو رمز PIN الخاص بالجهاز لاستخدام حساب محفوظ. إذا لم يكن لهاتفك قفل شاشة، فاضبط واحدًا ثم حاول مرة أخرى.';
+
+  @override
   String get authAddAsNew => 'إضافة كحساب جديد';
 
   @override

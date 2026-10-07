@@ -248,6 +248,7 @@
   "accountLoginNoteAdd": "ログイン情報を保存",
   "accountClearRrHistorySubtitle": "選択中のアカウントのみ",
   "accountClearLocalDataSubtitle": "履歴、保存済みロードアウト、ログアウト済みアカウントのデータ",
+  "accountQuickFillLocked": "保存済みアカウントを使うには、指紋・顔認証または端末のPINでロックを解除してください。画面ロックを設定していない場合は、設定してからもう一度お試しください。",
   "authAddAsNew": "新しいアカウントとして追加",
   "authDifferentAccountBody": "再ログインが必要なアカウントとは別のアカウントでログインしました。このアカウントを新しいアカウントとして追加しますか？",
   "authDifferentAccountTitle": "別のアカウント",

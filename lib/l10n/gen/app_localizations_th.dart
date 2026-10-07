@@ -840,6 +840,10 @@ class AppLocalizationsTh extends AppLocalizations {
       'ประวัติ ชุดอุปกรณ์ที่บันทึกไว้ และข้อมูลของบัญชีที่ออกจากระบบแล้ว';
 
   @override
+  String get accountQuickFillLocked =>
+      'ปลดล็อกด้วยลายนิ้วมือ ใบหน้า หรือ PIN ของเครื่องเพื่อใช้บัญชีที่บันทึกไว้ หากโทรศัพท์ยังไม่ได้ตั้งล็อกหน้าจอ ให้ตั้งค่าแล้วลองอีกครั้ง';
+
+  @override
   String get authAddAsNew => 'เพิ่มเป็นบัญชีใหม่';
 
   @override

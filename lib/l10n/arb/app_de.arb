@@ -248,6 +248,7 @@
   "accountLoginNoteAdd": "Anmeldedaten speichern",
   "accountClearRrHistorySubtitle": "Nur das ausgewählte Konto",
   "accountClearLocalDataSubtitle": "Verlauf, gespeicherte Loadouts und Daten abgemeldeter Konten",
+  "accountQuickFillLocked": "Entsperre mit Fingerabdruck, Gesicht oder Geräte-PIN, um ein gespeichertes Konto zu nutzen. Hat dein Handy keine Displaysperre, richte eine ein und versuche es erneut.",
   "authAddAsNew": "Als neues Konto hinzufügen",
   "authDifferentAccountBody": "Du hast dich mit einem anderen Konto angemeldet als dem, das eine erneute Anmeldung braucht. Dieses Konto als neues Konto hinzufügen?",
   "authDifferentAccountTitle": "Anderes Konto",

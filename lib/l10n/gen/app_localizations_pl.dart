@@ -901,6 +901,10 @@ class AppLocalizationsPl extends AppLocalizations {
       'Historia, zapisane zestawy i dane wylogowanych kont';
 
   @override
+  String get accountQuickFillLocked =>
+      'Odblokuj odciskiem palca, twarzą lub kodem urządzenia, aby użyć zapisanego konta. Jeśli telefon nie ma blokady ekranu, ustaw ją i spróbuj ponownie.';
+
+  @override
   String get authAddAsNew => 'Dodaj jako nowe konto';
 
   @override

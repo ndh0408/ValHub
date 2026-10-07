@@ -48,6 +48,7 @@
   "accountQuickFillNotReady": "La página de inicio de sesión aún no carga. Espera un momento y vuelve a intentarlo.",
   "accountQuickFillSubtitle": "Elige una cuenta para completar la página de inicio de sesión de Riot",
   "accountQuickFillTitle": "Autocompletar cuenta guardada",
+  "accountQuickFillLocked": "Desbloquea con tu huella, tu cara o el PIN del dispositivo para usar una cuenta guardada. Si tu celular no tiene bloqueo de pantalla, configura uno e inténtalo de nuevo.",
   "authAddAsNew": "Agregar como cuenta nueva",
   "authDifferentAccountBody": "Iniciaste sesión con una cuenta distinta de la que tenía que volver a iniciar sesión. ¿Quieres agregarla como cuenta nueva?",
   "authLoginCancelledByRiot": "Riot rechazó este inicio de sesión. Vuelve a intentarlo.",

@@ -843,6 +843,10 @@ class AppLocalizationsId extends AppLocalizations {
       'Riwayat, loadout tersimpan, dan data akun yang sudah logout';
 
   @override
+  String get accountQuickFillLocked =>
+      'Buka kunci dengan sidik jari, wajah, atau PIN perangkat untuk memakai akun tersimpan. Jika ponselmu belum memakai kunci layar, aturlah lalu coba lagi.';
+
+  @override
   String get authAddAsNew => 'Tambah sebagai akun baru';
 
   @override

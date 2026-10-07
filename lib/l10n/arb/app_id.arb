@@ -248,6 +248,7 @@
   "accountLoginNoteAdd": "Simpan info login",
   "accountClearRrHistorySubtitle": "Hanya akun yang dipilih",
   "accountClearLocalDataSubtitle": "Riwayat, loadout tersimpan, dan data akun yang sudah logout",
+  "accountQuickFillLocked": "Buka kunci dengan sidik jari, wajah, atau PIN perangkat untuk memakai akun tersimpan. Jika ponselmu belum memakai kunci layar, aturlah lalu coba lagi.",
   "authAddAsNew": "Tambah sebagai akun baru",
   "authDifferentAccountBody": "Kamu login dengan akun yang berbeda dari akun yang perlu login lagi. Tambahkan akun ini sebagai akun baru?",
   "authDifferentAccountTitle": "Akun berbeda",

@@ -890,6 +890,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Cronologia, equipaggiamenti salvati e dati degli account disconnessi';
 
   @override
+  String get accountQuickFillLocked =>
+      'Sblocca con impronta, volto o PIN del dispositivo per usare un account salvato. Se il telefono non ha un blocco schermo, impostane uno e riprova.';
+
+  @override
   String get authAddAsNew => 'Aggiungi come nuovo account';
 
   @override

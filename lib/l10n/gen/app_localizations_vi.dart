@@ -841,6 +841,10 @@ class AppLocalizationsVi extends AppLocalizations {
       'Lịch sử, bộ trang bị đã lưu và dữ liệu của tài khoản đã đăng xuất';
 
   @override
+  String get accountQuickFillLocked =>
+      'Cần mở khóa bằng vân tay, khuôn mặt hoặc mã máy để dùng tài khoản đã lưu. Nếu máy chưa đặt khóa màn hình, hãy đặt rồi thử lại.';
+
+  @override
   String get authAddAsNew => 'Thêm tài khoản mới';
 
   @override

@@ -248,6 +248,7 @@
   "accountLoginNoteAdd": "로그인 정보 저장",
   "accountClearRrHistorySubtitle": "선택한 계정만",
   "accountClearLocalDataSubtitle": "기록, 저장된 장비 구성, 로그아웃한 계정의 데이터",
+  "accountQuickFillLocked": "저장된 계정을 사용하려면 지문, 얼굴 또는 기기 PIN으로 잠금을 해제하세요. 화면 잠금이 설정되어 있지 않다면 설정한 뒤 다시 시도하세요.",
   "authAddAsNew": "새 계정으로 추가",
   "authDifferentAccountBody": "다시 로그인해야 하는 계정과 다른 계정으로 로그인했습니다. 이 계정을 새 계정으로 추가할까요?",
   "authDifferentAccountTitle": "다른 계정",

@@ -248,6 +248,7 @@
   "accountLoginNoteAdd": "Giriş bilgilerini kaydet",
   "accountClearRrHistorySubtitle": "Yalnızca seçili hesap",
   "accountClearLocalDataSubtitle": "Geçmiş, kayıtlı kuşanım setleri ve çıkış yapılmış hesapların verileri",
+  "accountQuickFillLocked": "Kayıtlı bir hesabı kullanmak için parmak izi, yüz veya cihaz PIN’i ile kilidi aç. Telefonunda ekran kilidi yoksa bir tane ayarla ve tekrar dene.",
   "authAddAsNew": "Yeni hesap olarak ekle",
   "authDifferentAccountBody": "Tekrar giriş yapması gereken hesaptan farklı bir hesapla giriş yaptın. Bu hesap yeni bir hesap olarak eklensin mi?",
   "authDifferentAccountTitle": "Farklı hesap",

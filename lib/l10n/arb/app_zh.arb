@@ -248,6 +248,7 @@
   "accountLoginNoteAdd": "保存登录信息",
   "accountClearRrHistorySubtitle": "仅当前选中的账号",
   "accountClearLocalDataSubtitle": "历史记录、已保存的配置和已登出账号的数据",
+  "accountQuickFillLocked": "请用指纹、面容或设备 PIN 解锁后使用已保存的账号。如果手机未设置屏幕锁，请先设置后再试。",
   "authAddAsNew": "添加为新账号",
   "authDifferentAccountBody": "你登录的账号与需要重新登录的账号不同。要将此账号添加为新账号吗？",
   "authDifferentAccountTitle": "不同的账号",

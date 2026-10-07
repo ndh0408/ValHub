@@ -1401,6 +1401,11 @@
     "description": "Subtitle of 'Xóa dữ liệu cục bộ' in Settings: what it clears (sign-ins, wishlists and settings stay).",
     "x-context": "lib/features/settings/ui/sections/app_info_sections.dart"
   },
+  "accountQuickFillLocked": "Cần mở khóa bằng vân tay, khuôn mặt hoặc mã máy để dùng tài khoản đã lưu. Nếu máy chưa đặt khóa màn hình, hãy đặt rồi thử lại.",
+  "@accountQuickFillLocked": {
+    "description": "Login page: a saved login note could not be used because the device unlock (biometrics / screen lock) failed or no screen lock is set.",
+    "x-context": "lib/core/auth/login_screen.dart"
+  },
   "authAddAsNew": "Thêm tài khoản mới",
   "@authAddAsNew": {
     "description": "AuthStrings.addAsNew — ",

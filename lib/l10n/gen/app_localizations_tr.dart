@@ -845,6 +845,10 @@ class AppLocalizationsTr extends AppLocalizations {
       'Geçmiş, kayıtlı kuşanım setleri ve çıkış yapılmış hesapların verileri';
 
   @override
+  String get accountQuickFillLocked =>
+      'Kayıtlı bir hesabı kullanmak için parmak izi, yüz veya cihaz PIN’i ile kilidi aç. Telefonunda ekran kilidi yoksa bir tane ayarla ve tekrar dene.';
+
+  @override
   String get authAddAsNew => 'Yeni hesap olarak ekle';
 
   @override

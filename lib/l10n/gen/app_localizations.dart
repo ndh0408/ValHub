@@ -1616,6 +1616,12 @@ abstract class AppLocalizations {
   /// **'Lịch sử, bộ trang bị đã lưu và dữ liệu của tài khoản đã đăng xuất'**
   String get accountClearLocalDataSubtitle;
 
+  /// Login page: a saved login note could not be used because the device unlock (biometrics / screen lock) failed or no screen lock is set.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cần mở khóa bằng vân tay, khuôn mặt hoặc mã máy để dùng tài khoản đã lưu. Nếu máy chưa đặt khóa màn hình, hãy đặt rồi thử lại.'**
+  String get accountQuickFillLocked;
+
   /// AuthStrings.addAsNew —
   ///
   /// In vi, this message translates to:

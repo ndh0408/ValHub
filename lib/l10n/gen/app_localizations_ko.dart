@@ -825,6 +825,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get accountClearLocalDataSubtitle => '기록, 저장된 장비 구성, 로그아웃한 계정의 데이터';
 
   @override
+  String get accountQuickFillLocked =>
+      '저장된 계정을 사용하려면 지문, 얼굴 또는 기기 PIN으로 잠금을 해제하세요. 화면 잠금이 설정되어 있지 않다면 설정한 뒤 다시 시도하세요.';
+
+  @override
   String get authAddAsNew => '새 계정으로 추가';
 
   @override

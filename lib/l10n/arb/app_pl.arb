@@ -248,6 +248,7 @@
   "accountLoginNoteAdd": "Zapisz dane logowania",
   "accountClearRrHistorySubtitle": "Tylko wybrane konto",
   "accountClearLocalDataSubtitle": "Historia, zapisane zestawy i dane wylogowanych kont",
+  "accountQuickFillLocked": "Odblokuj odciskiem palca, twarzą lub kodem urządzenia, aby użyć zapisanego konta. Jeśli telefon nie ma blokady ekranu, ustaw ją i spróbuj ponownie.",
   "authAddAsNew": "Dodaj jako nowe konto",
   "authDifferentAccountBody": "Zalogowano się na inne konto niż to, które wymaga ponownego logowania. Dodać je jako nowe konto?",
   "authDifferentAccountTitle": "Inne konto",

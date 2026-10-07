@@ -825,6 +825,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get accountClearLocalDataSubtitle => '履歴、保存済みロードアウト、ログアウト済みアカウントのデータ';
 
   @override
+  String get accountQuickFillLocked =>
+      '保存済みアカウントを使うには、指紋・顔認証または端末のPINでロックを解除してください。画面ロックを設定していない場合は、設定してからもう一度お試しください。';
+
+  @override
   String get authAddAsNew => '新しいアカウントとして追加';
 
   @override

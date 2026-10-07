@@ -248,6 +248,7 @@
   "accountLoginNoteAdd": "儲存登入資訊",
   "accountClearRrHistorySubtitle": "僅目前選取的帳號",
   "accountClearLocalDataSubtitle": "紀錄、已儲存的裝備組合和已登出帳號的資料",
+  "accountQuickFillLocked": "請用指紋、臉部或裝置 PIN 解鎖後使用已儲存的帳號。如果手機尚未設定螢幕鎖定，請先設定後再試。",
   "authAddAsNew": "新增為新帳號",
   "authDifferentAccountBody": "你登入的帳號與需要重新登入的帳號不同。要將此帳號新增為新帳號嗎？",
   "authDifferentAccountTitle": "不同的帳號",

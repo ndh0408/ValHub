@@ -908,6 +908,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'История, сохраненные комплекты и данные аккаунтов, из которых вы вышли';
 
   @override
+  String get accountQuickFillLocked =>
+      'Разблокируйте отпечатком пальца, лицом или PIN-кодом устройства, чтобы использовать сохранённый аккаунт. Если на телефоне нет блокировки экрана, включите её и попробуйте снова.';
+
+  @override
   String get authAddAsNew => 'Добавить как новый';
 
   @override

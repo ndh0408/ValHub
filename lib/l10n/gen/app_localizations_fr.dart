@@ -895,6 +895,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Historique, configurations enregistrées et données des comptes déconnectés';
 
   @override
+  String get accountQuickFillLocked =>
+      'Déverrouillez avec votre empreinte, votre visage ou le code de l\'appareil pour utiliser un compte enregistré. Si votre téléphone n\'a pas de verrouillage d\'écran, configurez-en un et réessayez.';
+
+  @override
   String get authAddAsNew => 'Ajouter comme nouveau compte';
 
   @override
