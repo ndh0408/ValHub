@@ -183,6 +183,22 @@ void main() {
     await homeUnmount(tester);
   });
 
+  testWidgets('the analysis is one tap away from the rank card', (
+    tester,
+  ) async {
+    await pumpHomeCard(
+      tester,
+      env,
+      _card(),
+      overrides: [vmRank(AsyncData(homeRankSnapshot()))],
+    );
+    await tester.tap(find.text(tl.profilePerformanceTitle));
+    await homeSettle(tester);
+    expect(find.text('route /profile/performance'), findsOneWidget);
+    expect(find.byType(BackButton), findsOneWidget);
+    await homeUnmount(tester);
+  });
+
   testWidgets('the card itself switches to the Hồ sơ tab', (tester) async {
     await pumpHomeCard(
       tester,

@@ -24,6 +24,7 @@ List<GoRoute> homeProbeRoutes() => [
     '/profile',
     '/profile/rankup',
     '/profile/daily-rr',
+    '/profile/performance',
     '/profile/friends',
     '/profile/friends/:puuid/chat',
     '/battlepass',

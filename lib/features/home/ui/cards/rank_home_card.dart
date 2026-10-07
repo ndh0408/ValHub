@@ -190,12 +190,23 @@ class _RankBody extends ConsumerWidget {
         _FormRow(snap: snap, now: now),
         if (snap.matchesToNext != null &&
             (snap.nextRank != null || snap.nextTierName != null))
-          _EstimateRow(
+          _LinkRow(
+            icon: Icons.trending_up_rounded,
+            iconColor: valColorsOf(context).win,
             text: context.l10n.homeMatchesToRankUp(
               snap.matchesToNext!,
               snap.nextRank?.displayLabel(context.fmt) ?? snap.nextTierName!,
             ),
+            route: ProfileRoutes.rankUp,
           ),
+        // The match analysis lives in Profile; Home is where players look
+        // at their rank, so the way there starts here too.
+        _LinkRow(
+          icon: Icons.insights_outlined,
+          iconColor: theme.colorScheme.primary,
+          text: context.l10n.profilePerformanceTitle,
+          route: ProfileRoutes.performance,
+        ),
       ],
     );
 
@@ -371,27 +382,32 @@ class _ChipButton extends StatelessWidget {
   }
 }
 
-/// "≈ 9 trận để lên Kim Cương 2 ›".
-class _EstimateRow extends StatelessWidget {
-  const _EstimateRow({required this.text});
+/// "≈ 9 trận để lên Kim Cương 2 ›", "Hiệu suất ›": a 48 dp row that opens
+/// a Profile page.
+class _LinkRow extends StatelessWidget {
+  const _LinkRow({
+    required this.icon,
+    required this.iconColor,
+    required this.text,
+    required this.route,
+  });
 
+  final IconData icon;
+  final Color iconColor;
   final String text;
+  final String route;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return InkWell(
-      onTap: () => unawaited(context.push<Object?>(ProfileRoutes.rankUp)),
+      onTap: () => unawaited(context.push<Object?>(route)),
       borderRadius: BorderRadius.circular(ValRadius.small),
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 48),
         child: Row(
           children: [
-            Icon(
-              Icons.trending_up_rounded,
-              size: 20,
-              color: valColorsOf(context).win,
-            ),
+            Icon(icon, size: 20, color: iconColor),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
