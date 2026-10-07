@@ -3,15 +3,17 @@ import 'package:valvn/app/shell.dart';
 import 'package:valvn/core/l10n/app_locale.dart';
 import 'package:valvn/features/profile/profile_routes.dart';
 import 'package:valvn/features/settings/settings_routes.dart';
+import 'package:valvn/features/store/store_routes.dart';
 
 import '../helpers/offline_app.dart';
 
 /// Every route a first-time user reaches without Riot data (Riot and the
 /// community server are offline, so screens show their real error/empty
-/// states): the five tabs, the Profile analysis pages (Performance,
+/// states): the five tabs, Store history, the Profile analysis pages (Performance,
 /// rank-up calculator, daily RR), Settings, About and every legal document.
 final List<String> matrixRoutes = [
   for (final tab in AppTab.values) tab.root,
+  StoreRoutes.history,
   ProfileRoutes.performance,
   ProfileRoutes.rankUp,
   ProfileRoutes.dailyRr,
