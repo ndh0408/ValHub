@@ -5236,6 +5236,44 @@ class AppLocalizationsRu extends AppLocalizations {
       'Riot больше не хранит более старые матчи.';
 
   @override
+  String get profileEconomyTitle => 'Экономика вашей команды';
+
+  @override
+  String get profileEconomyHint =>
+      'Тип закупки по общей стоимости снаряжения команды в начале раунда (принято на vlr.gg для 5 игроков): Eco — меньше 5 000, Semi-eco — меньше 10 000, Semi-buy — меньше 20 000, Full buy — от 20 000 кредитов. Первый раунд каждой половины — Pistol.';
+
+  @override
+  String profileBuyType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'pistol': 'Pistol',
+      'eco': 'Eco',
+      'semiEco': 'Semi-eco',
+      'semiBuy': 'Semi-buy',
+      'fullBuy': 'Full buy',
+      'other': '–',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profileEconomyWon(int won, int played) {
+    final intl.NumberFormat wonNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String wonString = wonNumberFormat.format(won);
+    final intl.NumberFormat playedNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String playedString = playedNumberFormat.format(played);
+
+    return 'Победы $wonString/$playedString';
+  }
+
+  @override
+  String profileEconomyMatchup(String mine, String theirs) {
+    return '$mine vs $theirs';
+  }
+
+  @override
   String get legalAboutIntro =>
       'Ваш помощник в VALORANT: ежедневный магазин, список желаемого, ранг, матчи, несколько аккаунтов и сообщество игроков прямо на вашем устройстве.';
 

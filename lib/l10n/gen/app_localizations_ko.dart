@@ -4642,6 +4642,44 @@ class AppLocalizationsKo extends AppLocalizations {
   String get profilePerformanceNoOlder => 'Riot에 더 이전 게임 기록이 남아 있지 않습니다.';
 
   @override
+  String get profileEconomyTitle => '우리 팀 경제';
+
+  @override
+  String get profileEconomyHint =>
+      '구매 유형은 라운드 시작 시 우리 팀 장비 총액으로 정합니다(5인 기준 vlr.gg 방식): Eco 5,000 미만, Semi-eco 10,000 미만, Semi-buy 20,000 미만, Full buy 20,000 크레드 이상. 각 전반/후반의 첫 라운드는 Pistol입니다.';
+
+  @override
+  String profileBuyType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'pistol': 'Pistol',
+      'eco': 'Eco',
+      'semiEco': 'Semi-eco',
+      'semiBuy': 'Semi-buy',
+      'fullBuy': 'Full buy',
+      'other': '–',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profileEconomyWon(int won, int played) {
+    final intl.NumberFormat wonNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String wonString = wonNumberFormat.format(won);
+    final intl.NumberFormat playedNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String playedString = playedNumberFormat.format(played);
+
+    return '승리 $wonString/$playedString';
+  }
+
+  @override
+  String profileEconomyMatchup(String mine, String theirs) {
+    return '$mine vs $theirs';
+  }
+
+  @override
   String get legalAboutIntro =>
       '나만의 VALORANT 도우미: 일일 상점, 위시리스트, 랭크, 게임 기록, 여러 계정, 플레이어 커뮤니티를 내 기기에서 바로 확인하세요.';
 

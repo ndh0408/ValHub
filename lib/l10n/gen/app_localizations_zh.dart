@@ -4586,6 +4586,44 @@ class AppLocalizationsZh extends AppLocalizations {
   String get profilePerformanceNoOlder => 'Riot 没有保存更早的对局了。';
 
   @override
+  String get profileEconomyTitle => '你方经济';
+
+  @override
+  String get profileEconomyHint =>
+      '购买类型按回合开始时你方队伍的装备总价值判定（vlr.gg 的 5 人标准）：Eco 低于 5,000，Semi-eco 低于 10,000，Semi-buy 低于 20,000，Full buy 为 20,000 积分及以上。每个半场的第一回合为 Pistol。';
+
+  @override
+  String profileBuyType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'pistol': 'Pistol',
+      'eco': 'Eco',
+      'semiEco': 'Semi-eco',
+      'semiBuy': 'Semi-buy',
+      'fullBuy': 'Full buy',
+      'other': '–',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profileEconomyWon(int won, int played) {
+    final intl.NumberFormat wonNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String wonString = wonNumberFormat.format(won);
+    final intl.NumberFormat playedNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String playedString = playedNumberFormat.format(played);
+
+    return '胜 $wonString/$playedString';
+  }
+
+  @override
+  String profileEconomyMatchup(String mine, String theirs) {
+    return '$mine vs $theirs';
+  }
+
+  @override
   String get legalAboutIntro =>
       '你的 VALORANT 助手：每日商店、心愿单、段位、对局、多账号和玩家社区，尽在你的设备上。';
 
@@ -11395,6 +11433,44 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get profilePerformanceNoOlder => 'Riot 已沒有保存更早的對戰。';
+
+  @override
+  String get profileEconomyTitle => '我方經濟';
+
+  @override
+  String get profileEconomyHint =>
+      '購買類型依回合開始時我方隊伍的裝備總價值判定（vlr.gg 的 5 人標準）：Eco 低於 5,000，Semi-eco 低於 10,000，Semi-buy 低於 20,000，Full buy 為 20,000 點以上。每個半場的第一回合為 Pistol。';
+
+  @override
+  String profileBuyType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'pistol': 'Pistol',
+      'eco': 'Eco',
+      'semiEco': 'Semi-eco',
+      'semiBuy': 'Semi-buy',
+      'fullBuy': 'Full buy',
+      'other': '–',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profileEconomyWon(int won, int played) {
+    final intl.NumberFormat wonNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String wonString = wonNumberFormat.format(won);
+    final intl.NumberFormat playedNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String playedString = playedNumberFormat.format(played);
+
+    return '勝 $wonString/$playedString';
+  }
+
+  @override
+  String profileEconomyMatchup(String mine, String theirs) {
+    return '$mine vs $theirs';
+  }
 
   @override
   String get legalAboutIntro =>

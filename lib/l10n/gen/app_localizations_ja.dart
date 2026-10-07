@@ -4644,6 +4644,44 @@ class AppLocalizationsJa extends AppLocalizations {
   String get profilePerformanceNoOlder => 'これより古い試合はRiotに保存されていません。';
 
   @override
+  String get profileEconomyTitle => '味方チームのエコノミー';
+
+  @override
+  String get profileEconomyHint =>
+      '購入タイプは、ラウンド開始時の味方チームの装備総額で判定します（5人分のvlr.gg基準）：Ecoは5,000未満、Semi-ecoは10,000未満、Semi-buyは20,000未満、Full buyは20,000クレジット以上。各ハーフの最初のラウンドはPistolです。';
+
+  @override
+  String profileBuyType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'pistol': 'Pistol',
+      'eco': 'Eco',
+      'semiEco': 'Semi-eco',
+      'semiBuy': 'Semi-buy',
+      'fullBuy': 'Full buy',
+      'other': '–',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profileEconomyWon(int won, int played) {
+    final intl.NumberFormat wonNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String wonString = wonNumberFormat.format(won);
+    final intl.NumberFormat playedNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String playedString = playedNumberFormat.format(played);
+
+    return '勝利 $wonString/$playedString';
+  }
+
+  @override
+  String profileEconomyMatchup(String mine, String theirs) {
+    return '$mine vs $theirs';
+  }
+
+  @override
   String get legalAboutIntro =>
       'あなたのVALORANTパートナー：デイリーストア、ウィッシュリスト、ランク、試合、複数アカウント、プレイヤーコミュニティを、あなたの端末で。';
 

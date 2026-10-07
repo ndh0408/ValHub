@@ -4715,6 +4715,44 @@ class AppLocalizationsTh extends AppLocalizations {
       'Riot ไม่ได้เก็บแมตช์ที่เก่ากว่านี้แล้ว';
 
   @override
+  String get profileEconomyTitle => 'เศรษฐกิจทีมคุณ';
+
+  @override
+  String get profileEconomyHint =>
+      'ประเภทการซื้อคิดจากมูลค่าอุปกรณ์รวมของทีมคุณตอนเริ่มรอบ (เกณฑ์ของ vlr.gg สำหรับ 5 คน): Eco ต่ำกว่า 5,000 Semi-eco ต่ำกว่า 10,000 Semi-buy ต่ำกว่า 20,000 และ Full buy ตั้งแต่ 20,000 เครดิต รอบแรกของแต่ละครึ่งคือ Pistol';
+
+  @override
+  String profileBuyType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'pistol': 'Pistol',
+      'eco': 'Eco',
+      'semiEco': 'Semi-eco',
+      'semiBuy': 'Semi-buy',
+      'fullBuy': 'Full buy',
+      'other': '–',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profileEconomyWon(int won, int played) {
+    final intl.NumberFormat wonNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String wonString = wonNumberFormat.format(won);
+    final intl.NumberFormat playedNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String playedString = playedNumberFormat.format(played);
+
+    return 'ชนะ $wonString/$playedString';
+  }
+
+  @override
+  String profileEconomyMatchup(String mine, String theirs) {
+    return '$mine vs $theirs';
+  }
+
+  @override
   String get legalAboutIntro =>
       'ผู้ช่วย VALORANT ของคุณ: ร้านค้ารายวัน wishlist แรงก์ แมตช์ หลายบัญชี และชุมชนผู้เล่น ทั้งหมดอยู่ในอุปกรณ์ของคุณ';
 

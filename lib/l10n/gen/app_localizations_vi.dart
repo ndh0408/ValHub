@@ -4730,6 +4730,44 @@ class AppLocalizationsVi extends AppLocalizations {
   String get profilePerformanceNoOlder => 'Riot không còn lưu trận nào cũ hơn.';
 
   @override
+  String get profileEconomyTitle => 'Kinh tế đội bạn';
+
+  @override
+  String get profileEconomyHint =>
+      'Loại mua tính theo tổng giá trị trang bị của đội lúc bắt đầu vòng (quy ước của vlr.gg cho 5 người): Eco dưới 5.000, Semi-eco dưới 10.000, Semi-buy dưới 20.000, Full buy từ 20.000 credits. Vòng đầu mỗi hiệp là Pistol.';
+
+  @override
+  String profileBuyType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'pistol': 'Pistol',
+      'eco': 'Eco',
+      'semiEco': 'Semi-eco',
+      'semiBuy': 'Semi-buy',
+      'fullBuy': 'Full buy',
+      'other': '–',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profileEconomyWon(int won, int played) {
+    final intl.NumberFormat wonNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String wonString = wonNumberFormat.format(won);
+    final intl.NumberFormat playedNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String playedString = playedNumberFormat.format(played);
+
+    return 'Thắng $wonString/$playedString';
+  }
+
+  @override
+  String profileEconomyMatchup(String mine, String theirs) {
+    return '$mine vs $theirs';
+  }
+
+  @override
   String get legalAboutIntro =>
       'Trợ thủ VALORANT của bạn: cửa hàng mỗi ngày, wishlist, rank, trận đấu, nhiều tài khoản và cộng đồng người chơi, ngay trên thiết bị của bạn.';
 

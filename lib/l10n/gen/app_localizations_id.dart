@@ -4754,6 +4754,44 @@ class AppLocalizationsId extends AppLocalizations {
       'Riot tidak lagi menyimpan pertandingan yang lebih lama.';
 
   @override
+  String get profileEconomyTitle => 'Ekonomi timmu';
+
+  @override
+  String get profileEconomyHint =>
+      'Jenis pembelian dihitung dari total nilai perlengkapan timmu di awal ronde (konvensi vlr.gg untuk 5 pemain): Eco di bawah 5.000, Semi-eco di bawah 10.000, Semi-buy di bawah 20.000, Full buy mulai 20.000 kredit. Ronde pertama tiap babak adalah Pistol.';
+
+  @override
+  String profileBuyType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'pistol': 'Pistol',
+      'eco': 'Eco',
+      'semiEco': 'Semi-eco',
+      'semiBuy': 'Semi-buy',
+      'fullBuy': 'Full buy',
+      'other': '–',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profileEconomyWon(int won, int played) {
+    final intl.NumberFormat wonNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String wonString = wonNumberFormat.format(won);
+    final intl.NumberFormat playedNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String playedString = playedNumberFormat.format(played);
+
+    return 'Menang $wonString/$playedString';
+  }
+
+  @override
+  String profileEconomyMatchup(String mine, String theirs) {
+    return '$mine vs $theirs';
+  }
+
+  @override
   String get legalAboutIntro =>
       'Teman setia VALORANT-mu: toko harian, wishlist, rank, pertandingan, banyak akun, dan komunitas pemain, langsung di perangkatmu.';
 

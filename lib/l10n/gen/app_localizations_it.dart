@@ -5098,6 +5098,44 @@ class AppLocalizationsIt extends AppLocalizations {
       'Riot non conserva partite più vecchie.';
 
   @override
+  String get profileEconomyTitle => 'Economia della tua squadra';
+
+  @override
+  String get profileEconomyHint =>
+      'Tipo di acquisto in base al valore totale dell\'equipaggiamento della squadra a inizio round (convenzione vlr.gg per 5 giocatori): Eco sotto 5.000, Semi-eco sotto 10.000, Semi-buy sotto 20.000, Full buy da 20.000 crediti. Il primo round di ogni metà è Pistol.';
+
+  @override
+  String profileBuyType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'pistol': 'Pistol',
+      'eco': 'Eco',
+      'semiEco': 'Semi-eco',
+      'semiBuy': 'Semi-buy',
+      'fullBuy': 'Full buy',
+      'other': '–',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profileEconomyWon(int won, int played) {
+    final intl.NumberFormat wonNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String wonString = wonNumberFormat.format(won);
+    final intl.NumberFormat playedNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String playedString = playedNumberFormat.format(played);
+
+    return 'Vinti $wonString/$playedString';
+  }
+
+  @override
+  String profileEconomyMatchup(String mine, String theirs) {
+    return '$mine vs $theirs';
+  }
+
+  @override
   String get legalAboutIntro =>
       'Il tuo compagno per VALORANT: negozio giornaliero, wishlist, grado, partite, più account e una community di giocatori, direttamente sul tuo dispositivo.';
 

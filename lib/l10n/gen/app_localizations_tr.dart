@@ -4754,6 +4754,44 @@ class AppLocalizationsTr extends AppLocalizations {
   String get profilePerformanceNoOlder => 'Riot daha eski maçları saklamıyor.';
 
   @override
+  String get profileEconomyTitle => 'Takımının ekonomisi';
+
+  @override
+  String get profileEconomyHint =>
+      'Satın alma türü, raunt başında takımının toplam ekipman değerine göre belirlenir (5 oyuncu için vlr.gg kuralı): Eco 5.000 altı, Semi-eco 10.000 altı, Semi-buy 20.000 altı, Full buy 20.000 kredi ve üstü. Her yarının ilk rauntu Pistol rauntudur.';
+
+  @override
+  String profileBuyType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'pistol': 'Pistol',
+      'eco': 'Eco',
+      'semiEco': 'Semi-eco',
+      'semiBuy': 'Semi-buy',
+      'fullBuy': 'Full buy',
+      'other': '–',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profileEconomyWon(int won, int played) {
+    final intl.NumberFormat wonNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String wonString = wonNumberFormat.format(won);
+    final intl.NumberFormat playedNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String playedString = playedNumberFormat.format(played);
+
+    return 'Kazanılan $wonString/$playedString';
+  }
+
+  @override
+  String profileEconomyMatchup(String mine, String theirs) {
+    return '$mine vs $theirs';
+  }
+
+  @override
   String get legalAboutIntro =>
       'VALORANT yol arkadaşın: günlük mağaza, istek listesi, rütbe, maçlar, birden fazla hesap ve oyuncu topluluğu, hepsi cihazında.';
 

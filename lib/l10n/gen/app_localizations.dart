@@ -7988,6 +7988,36 @@ abstract class AppLocalizations {
   /// **'Riot không còn lưu trận nào cũ hơn.'**
   String get profilePerformanceNoOlder;
 
+  /// Match detail card: rounds your team won with each buy type (pistol, eco, semi-eco, semi-buy, full buy).
+  ///
+  /// In vi, this message translates to:
+  /// **'Kinh tế đội bạn'**
+  String get profileEconomyTitle;
+
+  /// How the buy types are decided (shown from the info button of the economy card). Keep the numbers and the English buy-type names.
+  ///
+  /// In vi, this message translates to:
+  /// **'Loại mua tính theo tổng giá trị trang bị của đội lúc bắt đầu vòng (quy ước của vlr.gg cho 5 người): Eco dưới 5.000, Semi-eco dưới 10.000, Semi-buy dưới 20.000, Full buy từ 20.000 credits. Vòng đầu mỗi hiệp là Pistol.'**
+  String get profileEconomyHint;
+
+  /// Buy type of a team in a round. Players use these English terms (vlr.gg); keep them unless the game client of the language uses others.
+  ///
+  /// In vi, this message translates to:
+  /// **'{type, select, pistol{Pistol} eco{Eco} semiEco{Semi-eco} semiBuy{Semi-buy} fullBuy{Full buy} other{–}}'**
+  String profileBuyType(String type);
+
+  /// Rounds won out of rounds played with one buy type ("Thắng 3/5").
+  ///
+  /// In vi, this message translates to:
+  /// **'Thắng {won}/{played}'**
+  String profileEconomyWon(int won, int played);
+
+  /// Round line of the match timeline: your team's buy type vs the enemy's ("Full buy vs Eco").
+  ///
+  /// In vi, this message translates to:
+  /// **'{mine} vs {theirs}'**
+  String profileEconomyMatchup(String mine, String theirs);
+
   /// LegalStrings.aboutIntro — About hub
   ///
   /// In vi, this message translates to:

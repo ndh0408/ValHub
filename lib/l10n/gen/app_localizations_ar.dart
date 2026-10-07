@@ -5296,6 +5296,44 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profilePerformanceNoOlder => 'لم تعد Riot تحتفظ بمباريات أقدم.';
 
   @override
+  String get profileEconomyTitle => 'اقتصاد فريقك';
+
+  @override
+  String get profileEconomyHint =>
+      'يُحدَّد نوع الشراء حسب القيمة الإجمالية لعتاد فريقك في بداية الجولة (اصطلاح vlr.gg لخمسة لاعبين): Eco أقل من 5,000، وSemi-eco أقل من 10,000، وSemi-buy أقل من 20,000، وFull buy من 20,000 رصيد فأكثر. الجولة الأولى من كل شوط هي Pistol.';
+
+  @override
+  String profileBuyType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'pistol': 'Pistol',
+      'eco': 'Eco',
+      'semiEco': 'Semi-eco',
+      'semiBuy': 'Semi-buy',
+      'fullBuy': 'Full buy',
+      'other': '–',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String profileEconomyWon(int won, int played) {
+    final intl.NumberFormat wonNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String wonString = wonNumberFormat.format(won);
+    final intl.NumberFormat playedNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String playedString = playedNumberFormat.format(played);
+
+    return 'الفوز $wonString/$playedString';
+  }
+
+  @override
+  String profileEconomyMatchup(String mine, String theirs) {
+    return '$mine vs $theirs';
+  }
+
+  @override
   String get legalAboutIntro =>
       'رفيقك في VALORANT: المتجر اليومي وقائمة الأمنيات والرتبة والمباريات وحسابات متعددة ومجتمع للاعبين، على جهازك مباشرةً.';
 
