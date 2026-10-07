@@ -57,8 +57,10 @@ void main() {
     expect(find.text('Phụ kiện súng'), findsOneWidget);
     expect(find.text('Trống'), findsOneWidget); // empty wishlist
 
-    await scrollTo(tester, find.text(CollectionStrings.excludedRewards));
+    await scrollTo(tester, find.text('GIÁ TRỊ BỘ SƯU TẬP'));
     expect(find.text('GIÁ TRỊ BỘ SƯU TẬP'), findsOneWidget);
+    // No reward skin in the fixture: no "rewards not counted" line at all.
+    expect(find.text(CollectionStrings.excludedRewards), findsNothing);
     expect(find.textContaining('VP'), findsWidgets);
     expect(tester.takeException(), isNull);
     await unmount(tester);

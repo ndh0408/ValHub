@@ -677,30 +677,28 @@ class _ValueCard extends ConsumerWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            [
+            context.fmt.inlineFacts([
               context.l10n.collectionOwnedSkinsStat(
                 o.ownedCollectibleSkins.length,
               ),
               context.l10n.collectionValueAtStorePrices,
-            ].join(' · '),
+            ]),
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            context.l10n.collectionExcludedRewards,
-            style: theme.textTheme.bodySmall?.copyWith(color: muted),
-          ),
+          // The reward skins left out are counted below when there are any;
+          // a separate "rewards not counted" line repeated it every time.
           if (value.skinCount > 0)
             Text(
-              [
+              context.fmt.inlineFacts([
                 context.l10n.collectionValueSkinCount(value.pricedCount),
                 if (value.rewardCount > 0)
                   context.l10n.collectionValueRewardCount(value.rewardCount),
                 if (value.isEstimate) context.l10n.collectionValueHasEstimates,
-              ].join(' · '),
+              ]),
               style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),
         ],

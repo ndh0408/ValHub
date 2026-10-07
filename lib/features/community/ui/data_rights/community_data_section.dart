@@ -122,14 +122,27 @@ class _CommunityDataSectionState extends ConsumerState<CommunityDataSection> {
     if (!ok || !context.mounted) return;
     final messenger = ScaffoldMessenger.maybeOf(context);
     await _run(_DataAction.withdraw, () async {
-      await ref
-          .read(communityDataRightsProvider)
-          .withdrawConsent(account.puuid);
-      messenger
-        ?..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(content: Text(l10nBeforeAwait2.communityConsentWithdrawn)),
-        );
+      try {
+        await ref
+            .read(communityDataRightsProvider)
+            .withdrawConsent(account.puuid);
+        messenger
+          ?..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(content: Text(l10nBeforeAwait2.communityConsentWithdrawn)),
+          );
+      } on Object catch (e) {
+        // A failure used to vanish silently: say why, like export / delete.
+        messenger
+          ?..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(
+                describeCommunityError(l10nBeforeAwait2, e).message,
+              ),
+            ),
+          );
+      }
     });
   }
 
