@@ -231,9 +231,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
     final hitsValue = ref.watch(wishlistHitsProvider(puuid));
     final owned = ref.watch(ownedItemsProvider(puuid)).value;
 
-    final slivers = <Widget>[
-      const SliverToBoxAdapter(child: WishlistNotificationToggle()),
-    ];
+    final slivers = <Widget>[];
 
     final catalog = catalogValue.value;
     final showSearch = catalog != null && wishlist.isNotEmpty;
@@ -282,6 +280,9 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
             tiers: catalog.tiers,
           ),
         ),
+        // What is on sale comes first: it is why the player opened this.
+        if (view.onSaleCount > 0)
+          SliverToBoxAdapter(child: _OnSaleBanner(count: view.onSaleCount)),
         SliverToBoxAdapter(child: _SummaryStrip(view: view)),
         if (hitsValue.hasError && !hitsValue.isLoading)
           SliverToBoxAdapter(
@@ -292,8 +293,6 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
               onRetry: () => ref.invalidate(storefrontProvider(puuid)),
             ),
           ),
-        if (view.onSaleCount > 0)
-          SliverToBoxAdapter(child: _OnSaleBanner(count: view.onSaleCount)),
         if (view.visible.isEmpty)
           SliverFillRemaining(
             hasScrollBody: false,
@@ -326,6 +325,9 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
               },
             ),
           ),
+        // The alert switch once there is something to watch for.
+        const SliverToBoxAdapter(child: WishlistNotificationToggle()),
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
       ]);
     }
 

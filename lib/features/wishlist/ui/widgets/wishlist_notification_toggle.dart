@@ -1,5 +1,3 @@
-import 'package:valvn/core/l10n/account_labels.dart';
-
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -88,13 +86,8 @@ class _WishlistNotificationToggleState
           color: theme.colorScheme.primary,
         ),
         title: Text(context.l10n.wishlistNotifToggle),
-        subtitle: Text(
-          account == null
-              ? context.l10n.wishlistNotifToggleSubtitle
-              : context.l10n.settingsPlatformAppliesTo(
-                  account.displayRiotId(context.l10n),
-                ),
-        ),
+        // The page already names the account.
+        subtitle: Text(context.l10n.wishlistNotifToggleSubtitle),
       ),
     );
   }

@@ -27,6 +27,16 @@ const _all = [
 Future<Prefs> _prefs([List<String> wishlist = _all]) =>
     createTestPrefs({WishlistRepository.key(Fx.puuid): wishlist});
 
+/// The alert switch sits after the list.
+Future<void> _scrollToSwitch(WidgetTester tester) async {
+  await tester.scrollUntilVisible(
+    find.byType(Switch),
+    300,
+    scrollable: find.byType(Scrollable).first,
+  );
+  await settle(tester);
+}
+
 Future<void> _pump(
   WidgetTester tester, {
   required Prefs prefs,
@@ -73,7 +83,8 @@ void main() {
     );
     expect(find.text(WishlistStrings.empty), findsOneWidget);
     expect(find.text(WishlistStrings.browseCatalog), findsOneWidget);
-    expect(find.text(WishlistStrings.notifToggle), findsOneWidget);
+    // Nothing to watch for yet: no alert switch.
+    expect(find.text(WishlistStrings.notifToggle), findsNothing);
     await unmount(tester);
   });
 
@@ -242,6 +253,7 @@ void main() {
   ) async {
     final prefs = await _prefs();
     await _pump(tester, prefs: prefs);
+    await _scrollToSwitch(tester);
     await tester.tap(find.byType(Switch));
     await settle(tester);
     expect(readAppSettings(prefs).wishlistNotificationsFor(Fx.puuid), isTrue);
@@ -257,6 +269,7 @@ void main() {
     final prefs = await _prefs();
     final notifications = FakeNotificationService(enabled: false);
     await _pump(tester, prefs: prefs, notifications: notifications);
+    await _scrollToSwitch(tester);
     await tester.tap(find.byType(Switch));
     await settle(tester);
     await tester.ensureVisible(find.text('Bật thông báo').last);
