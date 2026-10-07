@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../accounts/account_providers.dart';
+import '../l10n/account_labels.dart';
 import '../l10n/l10n.dart';
 import '../storage/prefs.dart';
 import '../util/format.dart';
@@ -261,10 +262,8 @@ class _CountryPickerState extends ConsumerState<CountryPicker> {
                           ),
                           for (final region in RegionTable.visibleRegions)
                             ChoiceChip(
-                              label: Text(
-                                region.toUpperCase(),
-                                textDirection: TextDirection.ltr,
-                              ),
+                              // The server's name, never its code ("AP").
+                              label: Text(l10n.riotRegionName(region)),
                               selected: _region == region,
                               onSelected: (_) =>
                                   setState(() => _region = region),
@@ -442,21 +441,18 @@ class _CountryRow extends StatelessWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    '$status${country.regionHint == null ? '' : ' · ${country.regionHint!.toUpperCase()}'}',
+                    country.regionHint == null
+                        ? status
+                        : context.fmt.inlineFacts([
+                            status,
+                            context.l10n.riotRegionName(country.regionHint!),
+                          ]),
                   ),
                 ),
               ],
             ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(country.code, textDirection: TextDirection.ltr),
-          if (selected) ...[
-            const SizedBox(width: 8),
-            const Icon(Icons.check_rounded),
-          ],
-        ],
-      ),
+      // The name says which country; no ISO code next to it.
+      trailing: selected ? const Icon(Icons.check_rounded) : null,
       onTap: () => community
           ? Navigator.pop(context, country.code)
           : Navigator.pop(context, country),

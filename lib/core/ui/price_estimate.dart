@@ -10,6 +10,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../config/local_price.dart';
+import '../geo/countries.dart';
 import '../config/vp_prices.dart';
 import '../settings/app_settings.dart';
 import '../theme/app_theme.dart';
@@ -152,7 +153,13 @@ class _InfoBody extends ConsumerWidget {
                   price.isUserProvided
                       ? context.l10n.commonPriceSourceUser
                       : context.l10n.commonPriceSourceOfficial(
-                          price.country ?? '',
+                          // The country's name, not its code ("VN").
+                          ref
+                                  .watch(countryNamesProvider)
+                                  .value
+                                  ?.name(price.country ?? '') ??
+                              price.country ??
+                              '',
                         ),
                   style: smallMuted,
                 ),

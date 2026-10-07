@@ -149,7 +149,8 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(CommonStrings.priceSourceOfficial('VN')),
+        // The country's name, never its code.
+        find.text(CommonStrings.priceSourceOfficial('Việt Nam')),
         findsOneWidget,
       );
     });

@@ -149,13 +149,14 @@ void main() {
         scrollable: scrollable,
       );
       expect(find.byKey(const ValueKey('VN')), findsOneWidget);
-      final iso = tester.widget<Text>(
+      // Rows name the country; the ISO code is not shown.
+      expect(
         find.descendant(
           of: find.byKey(const ValueKey('VN')),
           matching: find.text('VN'),
         ),
+        findsNothing,
       );
-      expect(iso.textDirection, TextDirection.ltr);
       expect(tester.takeException(), isNull);
     },
   );

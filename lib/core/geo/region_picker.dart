@@ -10,6 +10,7 @@ import '../l10n/l10n.dart';
 import '../network/riot_exception.dart';
 import '../riot/pvp_api.dart';
 import '../ui/error_view.dart';
+import 'countries.dart';
 import 'country_picker.dart';
 import 'regions.dart';
 
@@ -247,7 +248,12 @@ class _RegionPickerState extends ConsumerState<RegionPicker> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(l10n.settingsGeoCountry),
-              subtitle: Text(_country ?? l10n.settingsGeoHintOnly),
+              subtitle: Text(
+                _country == null
+                    ? l10n.settingsGeoHintOnly
+                    : ref.watch(countryNamesProvider).value?.name(_country!) ??
+                          _country!,
+              ),
               trailing: const Icon(Icons.public),
               onTap: _busy
                   ? null
