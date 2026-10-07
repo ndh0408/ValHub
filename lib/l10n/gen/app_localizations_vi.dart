@@ -873,10 +873,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get authReloginDone => 'Đã đăng nhập lại';
 
   @override
-  String get authRememberMeHint =>
-      'Hãy bật \"Duy trì đăng nhập\" để không phải đăng nhập lại.';
-
-  @override
   String get authSignInCta => 'Đăng nhập bằng tài khoản Riot';
 
   @override

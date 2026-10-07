@@ -874,10 +874,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get authReloginDone => 'Berhasil login lagi';
 
   @override
-  String get authRememberMeHint =>
-      'Aktifkan \"Tetap login\" agar tidak perlu login lagi.';
-
-  @override
   String get authSignInCta => 'Login dengan akun Riot';
 
   @override

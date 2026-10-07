@@ -258,7 +258,6 @@
   "authPageLoadFailed": "Não foi possível carregar a página de login da Riot. Verifique sua conexão e tente de novo.",
   "authPreparing": "Preparando a página de login…",
   "authReloginDone": "Login renovado",
-  "authRememberMeHint": "Ative “Manter login” para não precisar entrar novamente.",
   "authSignInCta": "Entrar com a conta Riot",
   "authSocialLoginHint": "Se o login com Google ou Facebook não funcionar, use seu nome de usuário Riot.",
   "authStateMismatch": "Este login não é válido. Comece o login novamente do início.",

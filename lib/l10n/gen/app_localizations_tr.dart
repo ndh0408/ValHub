@@ -877,10 +877,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get authReloginDone => 'Tekrar giriş yapıldı';
 
   @override
-  String get authRememberMeHint =>
-      'Tekrar giriş yapmak zorunda kalmamak için \"Oturumu açık tut\" seçeneğini aç.';
-
-  @override
   String get authSignInCta => 'Riot hesabıyla giriş yap';
 
   @override

@@ -926,10 +926,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authReloginDone => 'Reconnecté';
 
   @override
-  String get authRememberMeHint =>
-      'Activez « Rester connecté » pour ne pas avoir à vous reconnecter.';
-
-  @override
   String get authSignInCta => 'Se connecter avec un compte Riot';
 
   @override

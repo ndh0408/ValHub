@@ -845,9 +845,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get authReloginDone => '已重新登录';
 
   @override
-  String get authRememberMeHint => '请开启“保持登录状态”，以免需要重新登录。';
-
-  @override
   String get authSignInCta => '使用 Riot 账号登录';
 
   @override
@@ -7282,9 +7279,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get authReloginDone => '已重新登入';
-
-  @override
-  String get authRememberMeHint => '請開啟「保持登入」，就不必再重新登入。';
 
   @override
   String get authSignInCta => '使用 Riot 帳號登入';

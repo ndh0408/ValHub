@@ -933,10 +933,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get authReloginDone => 'Zalogowano ponownie';
 
   @override
-  String get authRememberMeHint =>
-      'Włącz „Nie wylogowuj mnie”, aby nie logować się ponownie.';
-
-  @override
   String get authSignInCta => 'Zaloguj się kontem Riot';
 
   @override

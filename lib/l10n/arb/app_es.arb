@@ -258,7 +258,6 @@
   "authPageLoadFailed": "No se ha podido cargar la página de inicio de sesión de Riot. Revisa tu conexión y vuelve a intentarlo.",
   "authPreparing": "Preparando la página de inicio de sesión…",
   "authReloginDone": "Sesión iniciada de nuevo",
-  "authRememberMeHint": "Activa \"Mantener sesión iniciada\" para no tener que volver a iniciar sesión.",
   "authSignInCta": "Iniciar sesión con tu cuenta de Riot",
   "authSocialLoginHint": "Si no puedes iniciar sesión con Google o Facebook, usa tu nombre de usuario de Riot.",
   "authStateMismatch": "Este inicio de sesión no es válido. Vuelve a iniciar sesión desde el principio.",

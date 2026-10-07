@@ -945,10 +945,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authReloginDone => 'تم تسجيل الدخول مجددًا';
 
   @override
-  String get authRememberMeHint =>
-      'يُرجى تفعيل خيار \"البقاء مسجلًا الدخول\" حتى لا يلزمك تسجيل الدخول مجددًا.';
-
-  @override
   String get authSignInCta => 'تسجيل الدخول بحساب Riot';
 
   @override

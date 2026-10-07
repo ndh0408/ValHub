@@ -258,7 +258,6 @@
   "authPageLoadFailed": "无法加载 Riot 登录页面。请检查网络后重试。",
   "authPreparing": "正在准备登录页面…",
   "authReloginDone": "已重新登录",
-  "authRememberMeHint": "请开启“保持登录状态”，以免需要重新登录。",
   "authSignInCta": "使用 Riot 账号登录",
   "authSocialLoginHint": "如果使用 Google 或 Facebook 登录失败，请改用 Riot 用户名登录。",
   "authStateMismatch": "本次登录无效，请从头重新登录。",

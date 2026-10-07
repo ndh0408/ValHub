@@ -258,7 +258,6 @@
   "authPageLoadFailed": "Riotのログインページを読み込めませんでした。ネットワークを確認してもう一度お試しください。",
   "authPreparing": "ログインページを準備中…",
   "authReloginDone": "再ログインしました",
-  "authRememberMeHint": "再ログインの手間を省くには「サインインしたままにする」をオンにしてください。",
   "authSignInCta": "Riotアカウントでログイン",
   "authSocialLoginHint": "GoogleまたはFacebookでログインできない場合は、Riotのユーザー名を使用してください。",
   "authStateMismatch": "このログインは無効です。最初からログインし直してください。",

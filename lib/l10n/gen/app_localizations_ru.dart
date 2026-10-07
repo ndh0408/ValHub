@@ -940,10 +940,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get authReloginDone => 'Вход выполнен снова';
 
   @override
-  String get authRememberMeHint =>
-      'Включите \"Не выходить из системы\", чтобы не входить заново.';
-
-  @override
   String get authSignInCta => 'Войти через аккаунт Riot';
 
   @override

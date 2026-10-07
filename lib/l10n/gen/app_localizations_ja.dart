@@ -855,9 +855,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get authReloginDone => '再ログインしました';
 
   @override
-  String get authRememberMeHint => '再ログインの手間を省くには「サインインしたままにする」をオンにしてください。';
-
-  @override
   String get authSignInCta => 'Riotアカウントでログイン';
 
   @override

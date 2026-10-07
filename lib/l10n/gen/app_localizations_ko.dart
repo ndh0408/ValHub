@@ -855,9 +855,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get authReloginDone => '다시 로그인했습니다';
 
   @override
-  String get authRememberMeHint => '다시 로그인하지 않으려면 \"로그인 상태 유지\"를 켜세요.';
-
-  @override
   String get authSignInCta => 'Riot 계정으로 로그인';
 
   @override

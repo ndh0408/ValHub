@@ -258,7 +258,6 @@
   "authPageLoadFailed": "Impossible de charger la page de connexion Riot. Vérifiez votre connexion et réessayez.",
   "authPreparing": "Préparation de la page de connexion…",
   "authReloginDone": "Reconnecté",
-  "authRememberMeHint": "Activez « Rester connecté » pour ne pas avoir à vous reconnecter.",
   "authSignInCta": "Se connecter avec un compte Riot",
   "authSocialLoginHint": "Si la connexion via Google ou Facebook ne fonctionne pas, utilisez votre nom d'utilisateur Riot.",
   "authStateMismatch": "Cette tentative de connexion n'est pas valide. Recommencez la connexion depuis le début.",

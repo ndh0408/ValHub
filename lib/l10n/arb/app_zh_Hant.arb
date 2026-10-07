@@ -258,7 +258,6 @@
   "authPageLoadFailed": "無法載入 Riot 登入頁面。請檢查網路後再試一次。",
   "authPreparing": "正在準備登入頁面…",
   "authReloginDone": "已重新登入",
-  "authRememberMeHint": "請開啟「保持登入」，就不必再重新登入。",
   "authSignInCta": "使用 Riot 帳號登入",
   "authSocialLoginHint": "如果無法使用 Google 或 Facebook 登入，請改用 Riot 使用者名稱。",
   "authStateMismatch": "這次登入無效，請從頭重新登入。",

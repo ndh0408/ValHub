@@ -1,11 +1,13 @@
 import 'package:valvn/core/l10n/account_labels.dart';
 
 import 'dart:async';
+import 'dart:collection' show UnmodifiableListView;
 
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, visibleForTesting;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart'
     hide AndroidOptions;
+import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -29,6 +31,7 @@ import '../ui/sub_page.dart';
 import '../ui/val_widgets.dart';
 import 'auth_callback.dart';
 import 'cookie_jar.dart';
+import 'login_page_scripts.dart';
 import 'remember_me.dart';
 import '../l10n/locale_controller.dart';
 
@@ -326,8 +329,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!shouldTickRememberMe(Uri.tryParse(url?.toString() ?? ''))) return;
     try {
       await controller.evaluateJavascript(source: rememberMeScript);
+      // Riot's storage banner covers half of the form: close it (essential
+      // cookies only, as the banner itself offers).
+      await controller.evaluateJavascript(source: consentBannerScript);
     } on Object {
-      // The page navigated away meanwhile; the hint above still applies.
+      // The page navigated away meanwhile.
     }
   }
 
@@ -408,57 +414,85 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final socialHint = ref
         .watch(remoteConfigProvider)
         .flag(RemoteFlags.socialLoginHint, fallback: true);
-    return Scaffold(
-      appBar: AppBar(
-        title: const _LoginTitle(),
-        leadingWidth: 64,
-        leading: Center(
-          child: SheetCloseButton(
-            onPressed: () =>
-                context.canPop() ? context.pop() : context.go('/welcome'),
-          ),
-        ),
-        bottom: _phase == _Phase.web && _progress < 1
-            ? PreferredSize(
-                preferredSize: const Size.fromHeight(3),
-                child: TweenAnimationBuilder<double>(
-                  tween: Tween(end: _progress),
-                  duration: ValMotion.medium,
-                  builder: (context, v, _) =>
-                      LinearProgressIndicator(value: v, minHeight: 3),
+    final onWeb = _phase == _Phase.web;
+    // Riot's page fills the screen like a native sign-in: only a close
+    // button, the official-host badge and (with a saved note) quick fill
+    // float over it.
+    final scaffold = Scaffold(
+      backgroundColor: onWeb ? _riotPageBackground : null,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: SafeArea(
+              bottom: !onWeb,
+              child: switch (_phase) {
+                _Phase.preparing => _CenteredStatus(
+                  message: context.l10n.authPreparing,
                 ),
-              )
-            : null,
-      ),
-      body: switch (_phase) {
-        _Phase.preparing => _CenteredStatus(
-          message: context.l10n.authPreparing,
-        ),
-        _Phase.finishing => _CenteredStatus(
-          message: context.l10n.authLoadingAccount,
-        ),
-        _Phase.failed => _FailedView(
-          message: _errorMessage ?? context.l10n.authLoginFailedBody,
-          onRetry: _restart,
-        ),
-        _Phase.web => Column(
-          children: [
-            _Hint(
-              text: context.l10n.authRememberMeHint,
-              secondary: socialHint ? context.l10n.authSocialLoginHint : null,
-              action: saved.isEmpty
-                  ? null
-                  : FilledButton.tonalIcon(
-                      onPressed: () => unawaited(_quickFill(saved)),
-                      icon: const Icon(Icons.key, size: 18),
-                      label: Text(context.l10n.accountQuickFill),
-                    ),
+                _Phase.finishing => _CenteredStatus(
+                  message: context.l10n.authLoadingAccount,
+                ),
+                _Phase.failed => _FailedView(
+                  message: _errorMessage ?? context.l10n.authLoginFailedBody,
+                  hint: socialHint ? context.l10n.authSocialLoginHint : null,
+                  onRetry: _restart,
+                ),
+                _Phase.web => _webView(),
+              },
             ),
-            Expanded(child: _webView()),
-          ],
-        ),
-      },
+          ),
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (onWeb && _progress < 1)
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(end: _progress),
+                    duration: ValMotion.medium,
+                    builder: (context, v, _) =>
+                        LinearProgressIndicator(value: v, minHeight: 2),
+                  )
+                else
+                  const SizedBox(height: 2),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
+                  child: Row(
+                    children: [
+                      _OverlayCloseButton(
+                        onWeb: onWeb,
+                        onPressed: () => context.canPop()
+                            ? context.pop()
+                            : context.go('/welcome'),
+                      ),
+                      const Spacer(),
+                      _OfficialBadge(onWeb: onWeb),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (onWeb && saved.isNotEmpty)
+            PositionedDirectional(
+              end: 16,
+              bottom: 16 + MediaQuery.paddingOf(context).bottom,
+              child: FloatingActionButton.extended(
+                heroTag: null,
+                onPressed: () => unawaited(_quickFill(saved)),
+                icon: const Icon(Icons.key),
+                label: Text(context.l10n.accountQuickFill),
+              ),
+            ),
+        ],
+      ),
     );
+    // Light status-bar icons over Riot's dark page.
+    return onWeb
+        ? AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle.light,
+            child: scaffold,
+          )
+        : scaffold;
   }
 
   Widget _webView() => InAppWebView(
@@ -472,6 +506,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
       ),
     ),
+    initialUserScripts: UnmodifiableListView([
+      UserScript(
+        source: riotLocaleScript(ref.read(appLocaleProvider).tag),
+        injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
+      ),
+    ]),
     initialSettings: InAppWebViewSettings(
       useShouldOverrideUrlLoading: true,
       javaScriptEnabled: true,
@@ -514,120 +554,67 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   );
 }
 
-class _Hint extends StatelessWidget {
-  const _Hint({required this.text, this.secondary, this.action});
+/// Behind Riot's page while it loads (its own header is this dark navy), so
+/// the switch from the app to the page does not flash white.
+const Color _riotPageBackground = Color(0xFF111823);
 
-  final String text;
-  final String? secondary;
+/// Round close button floating over Riot's page.
+class _OverlayCloseButton extends StatelessWidget {
+  const _OverlayCloseButton({required this.onWeb, required this.onPressed});
 
-  /// "Điền nhanh" when a login note is saved.
-  final Widget? action;
+  final bool onWeb;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final light = theme.brightness == Brightness.light;
-    return Container(
-      margin: const EdgeInsets.fromLTRB(12, 4, 12, 8),
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(ValRadius.card),
-        border: light ? Border.all(color: valColorsOf(context).hairline) : null,
+    final scheme = Theme.of(context).colorScheme;
+    return IconButton(
+      tooltip: context.l10n.commonClose,
+      onPressed: onPressed,
+      style: IconButton.styleFrom(
+        backgroundColor: onWeb
+            ? Colors.black.withValues(alpha: 0.45)
+            : scheme.surfaceContainerHighest,
+        foregroundColor: onWeb ? Colors.white : scheme.onSurface,
+        minimumSize: const Size.square(kMinInteractiveDimension),
       ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: scheme.primary.withValues(alpha: 0.12),
-                  ),
-                  child: Icon(
-                    Icons.lightbulb_outline,
-                    size: 18,
-                    color: legibleAccent(context, scheme.primary, min: 3),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        text,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurface,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      if (secondary != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2),
-                          child: Text(
-                            secondary!,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            if (action != null)
-              Align(alignment: AlignmentDirectional.centerEnd, child: action),
-          ],
-        ),
-      ),
+      icon: const Icon(Icons.close),
     );
   }
 }
 
-/// "Đăng nhập Riot" with a lock and the official host underneath, so it
-/// is clear the page is Riot's own.
-class _LoginTitle extends StatelessWidget {
-  const _LoginTitle();
+/// A round lock next to the close button: the page is Riot's own and the
+/// app never sees the password. Kept as a small circle so it never covers
+/// Riot's logo; the full "Trang chính thức · auth.riotgames.com" is its
+/// tooltip and spoken label.
+class _OfficialBadge extends StatelessWidget {
+  const _OfficialBadge({required this.onWeb});
+
+  final bool onWeb;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final win = valColorsOf(context).win;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          context.l10n.authLoginTitle,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+    final scheme = Theme.of(context).colorScheme;
+    final label =
+        '${context.l10n.authLoginTitle}. ${context.l10n.authOfficialHost}';
+    return Tooltip(
+      message: context.l10n.authOfficialHost,
+      triggerMode: TooltipTriggerMode.tap,
+      child: Semantics(
+        label: label,
+        excludeSemantics: true,
+        child: Container(
+          width: kMinInteractiveDimension,
+          height: kMinInteractiveDimension,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: onWeb
+                ? Colors.black.withValues(alpha: 0.45)
+                : scheme.surfaceContainerHighest,
+          ),
+          child: Icon(Icons.lock, size: 20, color: valColorsOf(context).win),
         ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.lock, size: 12, color: win),
-            const SizedBox(width: 4),
-            Flexible(
-              child: Text(
-                context.l10n.authOfficialHost,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
+      ),
     );
   }
 }
@@ -675,10 +662,13 @@ class _CenteredStatus extends StatelessWidget {
 }
 
 class _FailedView extends StatelessWidget {
-  const _FailedView({required this.message, required this.onRetry});
+  const _FailedView({required this.message, required this.onRetry, this.hint});
 
   final String message;
   final Future<void> Function() onRetry;
+
+  /// "Google / Facebook sign-in failing? Use your Riot username."
+  final String? hint;
 
   @override
   Widget build(BuildContext context) {
@@ -712,6 +702,16 @@ class _FailedView extends StatelessWidget {
                   height: 1.4,
                 ),
               ),
+              if (hint != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  hint!,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
               const SizedBox(height: 20),
               FilledButton.icon(
                 onPressed: () => unawaited(onRetry()),

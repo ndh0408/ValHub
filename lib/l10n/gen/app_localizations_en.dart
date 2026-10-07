@@ -922,10 +922,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authReloginDone => 'Signed in again';
 
   @override
-  String get authRememberMeHint =>
-      'Turn on \"Stay signed in\" so you don\'t have to sign in again.';
-
-  @override
   String get authSignInCta => 'Sign in with Riot account';
 
   @override

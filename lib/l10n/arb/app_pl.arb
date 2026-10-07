@@ -258,7 +258,6 @@
   "authPageLoadFailed": "Nie udało się wczytać strony logowania Riot. Sprawdź połączenie i spróbuj ponownie.",
   "authPreparing": "Przygotowywanie strony logowania…",
   "authReloginDone": "Zalogowano ponownie",
-  "authRememberMeHint": "Włącz „Nie wylogowuj mnie”, aby nie logować się ponownie.",
   "authSignInCta": "Zaloguj się kontem Riot",
   "authSocialLoginHint": "Jeśli logowanie przez Google lub Facebooka nie działa, użyj nazwy użytkownika Riot.",
   "authStateMismatch": "Ta próba logowania jest nieprawidłowa. Zacznij logowanie od nowa.",

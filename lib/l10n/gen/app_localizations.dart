@@ -1676,12 +1676,6 @@ abstract class AppLocalizations {
   /// **'Đã đăng nhập lại'**
   String get authReloginDone;
 
-  /// AuthStrings.rememberMeHint —
-  ///
-  /// In vi, this message translates to:
-  /// **'Hãy bật \"Duy trì đăng nhập\" để không phải đăng nhập lại.'**
-  String get authRememberMeHint;
-
   /// AuthStrings.signInCta —
   ///
   /// In vi, this message translates to:

@@ -258,7 +258,6 @@
   "authPageLoadFailed": "Riot 로그인 페이지를 불러오지 못했습니다. 네트워크를 확인하고 다시 시도하세요.",
   "authPreparing": "로그인 페이지 준비 중…",
   "authReloginDone": "다시 로그인했습니다",
-  "authRememberMeHint": "다시 로그인하지 않으려면 \"로그인 상태 유지\"를 켜세요.",
   "authSignInCta": "Riot 계정으로 로그인",
   "authSocialLoginHint": "Google 또는 Facebook 로그인이 되지 않으면 Riot 아이디로 로그인하세요.",
   "authStateMismatch": "유효하지 않은 로그인 시도입니다. 처음부터 다시 로그인하세요.",

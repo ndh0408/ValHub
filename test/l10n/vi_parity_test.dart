@@ -1353,9 +1353,6 @@ void main() {
   test('authReloginDone', () {
     expect(l10n.authReloginDone, AuthStrings.reloginDone);
   });
-  test('authRememberMeHint', () {
-    expect(l10n.authRememberMeHint, AuthStrings.rememberMeHint);
-  });
   test('authSignInCta', () {
     expect(l10n.authSignInCta, AuthStrings.signInCta);
   });

@@ -258,7 +258,6 @@
   "authPageLoadFailed": "Riot giriş sayfası yüklenemedi. Bağlantını kontrol edip tekrar dene.",
   "authPreparing": "Giriş sayfası hazırlanıyor…",
   "authReloginDone": "Tekrar giriş yapıldı",
-  "authRememberMeHint": "Tekrar giriş yapmak zorunda kalmamak için \"Oturumu açık tut\" seçeneğini aç.",
   "authSignInCta": "Riot hesabıyla giriş yap",
   "authSocialLoginHint": "Google veya Facebook ile giriş yapamıyorsan Riot kullanıcı adını kullan.",
   "authStateMismatch": "Bu giriş denemesi geçerli değil. Girişe baştan başla.",

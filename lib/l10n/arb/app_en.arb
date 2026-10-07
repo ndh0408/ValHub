@@ -258,7 +258,6 @@
   "authPageLoadFailed": "Couldn't load the Riot sign-in page. Check your connection and try again.",
   "authPreparing": "Preparing sign-in page…",
   "authReloginDone": "Signed in again",
-  "authRememberMeHint": "Turn on \"Stay signed in\" so you don't have to sign in again.",
   "authSignInCta": "Sign in with Riot account",
   "authSocialLoginHint": "If signing in with Google or Facebook doesn't work, use your Riot username.",
   "authStateMismatch": "This sign-in attempt isn't valid. Start signing in again from the beginning.",

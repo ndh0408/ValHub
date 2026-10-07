@@ -258,7 +258,6 @@
   "authPageLoadFailed": "Impossibile caricare la pagina di accesso Riot. Controlla la connessione e riprova.",
   "authPreparing": "Preparazione della pagina di accesso…",
   "authReloginDone": "Accesso effettuato di nuovo",
-  "authRememberMeHint": "Attiva \"Resta connesso\" per non dover accedere di nuovo.",
   "authSignInCta": "Accedi con l'account Riot",
   "authSocialLoginHint": "Se l'accesso con Google o Facebook non funziona, usa il tuo nome utente Riot.",
   "authStateMismatch": "Questo tentativo di accesso non è valido. Ricomincia l'accesso dall'inizio.",

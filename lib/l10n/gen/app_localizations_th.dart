@@ -872,10 +872,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get authReloginDone => 'เข้าสู่ระบบอีกครั้งแล้ว';
 
   @override
-  String get authRememberMeHint =>
-      'เปิด \"คงสถานะการเข้าสู่ระบบ\" เพื่อไม่ต้องเข้าสู่ระบบใหม่';
-
-  @override
   String get authSignInCta => 'เข้าสู่ระบบด้วยบัญชี Riot';
 
   @override

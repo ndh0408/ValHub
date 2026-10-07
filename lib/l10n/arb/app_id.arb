@@ -258,7 +258,6 @@
   "authPageLoadFailed": "Gagal memuat halaman login Riot. Periksa koneksimu lalu coba lagi.",
   "authPreparing": "Menyiapkan halaman login…",
   "authReloginDone": "Berhasil login lagi",
-  "authRememberMeHint": "Aktifkan \"Tetap login\" agar tidak perlu login lagi.",
   "authSignInCta": "Login dengan akun Riot",
   "authSocialLoginHint": "Jika login dengan Google atau Facebook tidak berhasil, gunakan nama pengguna Riot.",
   "authStateMismatch": "Percobaan login ini tidak valid. Mulai login lagi dari awal.",

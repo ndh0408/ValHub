@@ -926,10 +926,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get authReloginDone => 'Erneut angemeldet';
 
   @override
-  String get authRememberMeHint =>
-      'Aktiviere „Angemeldet bleiben“, damit du dich nicht erneut anmelden musst.';
-
-  @override
   String get authSignInCta => 'Mit Riot-Konto anmelden';
 
   @override

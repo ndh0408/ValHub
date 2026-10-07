@@ -925,10 +925,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authReloginDone => 'Sesión iniciada de nuevo';
 
   @override
-  String get authRememberMeHint =>
-      'Activa \"Mantener sesión iniciada\" para no tener que volver a iniciar sesión.';
-
-  @override
   String get authSignInCta => 'Iniciar sesión con tu cuenta de Riot';
 
   @override

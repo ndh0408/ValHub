@@ -925,10 +925,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get authReloginDone => 'Login renovado';
 
   @override
-  String get authRememberMeHint =>
-      'Ative “Manter login” para não precisar entrar novamente.';
-
-  @override
   String get authSignInCta => 'Entrar com a conta Riot';
 
   @override
