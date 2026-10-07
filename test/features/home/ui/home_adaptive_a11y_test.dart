@@ -327,9 +327,18 @@ void main() {
           reason: id.name,
         );
       }
-      // The ⋯ menu of each card names its card.
+      // Each card's menu is a screen-reader action naming its card.
       expect(
-        find.byTooltip(HomeStrings.moreActions(HomeCardId.store.title(tl))),
+        find.byWidgetPredicate(
+          (w) =>
+              w is Semantics &&
+              (w.properties.customSemanticsActions?.keys.any(
+                    (a) =>
+                        a.label ==
+                        HomeStrings.moreActions(HomeCardId.store.title(tl)),
+                  ) ??
+                  false),
+        ),
         findsOneWidget,
       );
       handle.dispose();

@@ -5,6 +5,7 @@ library;
 
 import 'dart:async';
 
+import 'package:flutter/semantics.dart' show CustomSemanticsAction;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -196,40 +197,48 @@ class HomeCardFrame extends ConsumerWidget {
                 ),
               ),
               if (trailing != null) ...[const SizedBox(width: 8), trailing!],
-              if (showMenu)
-                IconButton(
-                  constraints: const BoxConstraints(
-                    minWidth: 48,
-                    minHeight: 48,
-                  ),
-                  icon: const Icon(Icons.more_horiz_rounded),
-                  color: theme.colorScheme.onSurfaceVariant,
-                  tooltip: context.l10n.homeMoreActions(name),
-                  onPressed: () => unawaited(_openMenu(context, ref, name)),
-                )
-              else
-                const SizedBox(width: 12),
+              const SizedBox(width: 12),
             ],
           ),
         ),
         Padding(padding: childPadding, child: child),
       ],
     );
+    final frame = ValCard(
+      padding: EdgeInsets.zero,
+      onTap: onTap,
+      child: background == null
+          ? body
+          : Stack(
+              children: [
+                Positioned.fill(child: background!),
+                body,
+              ],
+            ),
+    );
+    // Hide / customize: a long press on the card (and a screen-reader
+    // action), not a ⋯ on every card ("Tùy chỉnh Trang chủ" stays at the
+    // bottom of Home).
     return Semantics(
       container: true,
       label: semanticsLabel,
-      child: ValCard(
-        padding: EdgeInsets.zero,
-        onTap: onTap,
-        child: background == null
-            ? body
-            : Stack(
-                children: [
-                  Positioned.fill(child: background!),
-                  body,
-                ],
-              ),
-      ),
+      customSemanticsActions: showMenu
+          ? {
+              CustomSemanticsAction(
+                label: context.l10n.homeMoreActions(name),
+              ): () =>
+                  unawaited(_openMenu(context, ref, name)),
+            }
+          : null,
+      child: showMenu
+          ? GestureDetector(
+              onLongPress: () {
+                Haptics.medium();
+                unawaited(_openMenu(context, ref, name));
+              },
+              child: frame,
+            )
+          : frame,
     );
   }
 }

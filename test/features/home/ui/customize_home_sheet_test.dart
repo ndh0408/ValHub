@@ -11,6 +11,7 @@ import 'package:valvn/features/home/home_strings.dart';
 import 'package:valvn/features/home/providers/home_layout_provider.dart';
 import 'package:valvn/features/home/ui/cards/friends_home_card.dart';
 import 'package:valvn/features/home/ui/cards/rank_home_card.dart';
+import 'package:valvn/features/home/ui/cards/store_home_card.dart';
 import 'package:valvn/features/home/ui/home_card_frame.dart';
 
 import '../home_test_env.dart';
@@ -293,7 +294,7 @@ void main() {
     });
   });
 
-  testWidgets('the ⋯ menu of a card hides it with an undo', (tester) async {
+  testWidgets('a long press on a card hides it with an undo', (tester) async {
     final env = await HomeTestEnv.create();
     await pumpHomeScreen(tester, env, overrides: vmFull());
     await homePastGate(tester);
@@ -301,9 +302,7 @@ void main() {
       tester.element(find.byType(Scaffold).first),
     );
 
-    await tester.tap(
-      find.byTooltip(HomeStrings.moreActions(HomeCardId.rank.title(tl))),
-    );
+    await tester.longPress(find.byType(RankHomeCard));
     await homeSettle(tester);
     expect(find.text(HomeStrings.hideCard), findsOneWidget);
     expect(find.text('${HomeStrings.customize}…'), findsOneWidget);
@@ -330,13 +329,13 @@ void main() {
     await homeUnmount(tester);
   });
 
-  testWidgets('the ⋯ menu also opens the customize sheet', (tester) async {
+  testWidgets('the long-press menu also opens the customize sheet', (
+    tester,
+  ) async {
     final env = await HomeTestEnv.create();
     await pumpHomeScreen(tester, env, overrides: vmFull());
     await homePastGate(tester);
-    await tester.tap(
-      find.byTooltip(HomeStrings.moreActions(HomeCardId.store.title(tl))),
-    );
+    await tester.longPress(find.byType(StoreHomeCard));
     await homeSettle(tester);
     await tester.tap(find.text('${HomeStrings.customize}…'));
     await homeSettle(tester);
