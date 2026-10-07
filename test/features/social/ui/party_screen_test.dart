@@ -110,7 +110,8 @@ void main() {
     );
     await _pump(tester, env);
     expect(find.text('Hủy tìm trận · 01:32'), findsOneWidget);
-    expect(find.text('Đang tìm trận · 01:32'), findsOneWidget);
+    // One copy of the state: the pill, and the timer on the button.
+    expect(find.text('Đang tìm trận · 01:32'), findsNothing);
     await tester.tap(find.text('Hủy tìm trận · 01:32'));
     await settle(tester);
     verify(() => env.api.partyLeaveMatchmaking(me, partyId)).called(1);
@@ -164,7 +165,7 @@ void main() {
       ),
     );
     await _pump(tester, env);
-    expect(find.text('Đã tìm thấy trận!'), findsNWidgets(2));
+    expect(find.text('Đã tìm thấy trận!'), findsOneWidget);
     expect(find.text('Sẵn sàng'), findsNothing);
     expect(find.text('Bắt đầu tìm trận'), findsNothing);
     expect(find.text('Hủy tìm trận'), findsNothing);
@@ -183,7 +184,10 @@ void main() {
   testWidgets(
     'unknown game state disables ready and queue actions until refreshed',
     (tester) async {
-      env.serveParty(partyJson(members: [memberJson(me, owner: true)]));
+      // A member (the leader has no Ready button: Riot counts them ready).
+      env.serveParty(
+        partyJson(members: [memberJson(mate, owner: true), memberJson(me)]),
+      );
       when(() => env.api.gameSession(any()))
           .thenThrow(const TransientException(reason: 'network'));
       await _pump(tester, env);
@@ -207,6 +211,16 @@ void main() {
       await unmount(tester);
     },
   );
+
+  testWidgets('the leader gets no Ready button', (tester) async {
+    env.serveParty(
+      partyJson(members: [memberJson(me, owner: true), memberJson(mate)]),
+    );
+    await _pump(tester, env);
+    expect(find.text('Bắt đầu tìm trận'), findsOneWidget);
+    expect(find.text('Sẵn sàng'), findsNothing);
+    await unmount(tester);
+  });
 
   testWidgets('in a match: queue locked', (tester) async {
     env.serveParty(partyJson(), loopState: 'INGAME');

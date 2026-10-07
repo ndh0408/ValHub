@@ -406,7 +406,6 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
     final choice = queueChoices(p)
         .where((c) => c.queueId == p.queueId)
         .firstOrNull;
-    final since = p.queueEntryTime;
     final accent = p.isMatchFound
         ? colors.win
         : p.isMatchmaking
@@ -514,41 +513,8 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
             )
           else
             queueRow,
-          if (p.isMatchmaking && since != null) ...[
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                SizedBox.square(
-                  dimension: 14,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: legibleAccent(context, colors.warning, min: 3),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElapsedText(
-                    since: since,
-                    builder: context.l10n.socialSearching,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: legibleAccent(context, colors.warning),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-          if (p.isMatchFound) ...[
-            const SizedBox(height: 10),
-            Text(
-              context.l10n.socialMatchFound,
-              style: theme.textTheme.titleSmall?.copyWith(
-                color: legibleAccent(context, colors.win),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
+          // The pill says searching / found; the cancel button carries the
+          // timer. No third copy of the same state here.
           if (p.isCustomGame || choice != null && !choice.eligible)
             const SizedBox(height: 8),
           if (p.isCustomGame)
@@ -658,6 +624,9 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
         ready ? context.l10n.socialUnready : context.l10n.socialReady,
       ),
     );
+    // The leader counts as ready (Riot ignores their flag): only the
+    // others get the button.
+    if (isOwner) return primary;
     return Row(
       children: [
         Expanded(flex: 2, child: readyButton),
