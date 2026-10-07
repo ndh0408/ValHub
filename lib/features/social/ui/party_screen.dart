@@ -802,6 +802,7 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
               alignment: WrapAlignment.center,
               children: [
                 FilledButton.tonalIcon(
+                  style: tonalButtonStyle(context),
                   onPressed: () async {
                     await Clipboard.setData(ClipboardData(text: code));
                     Haptics.light();
@@ -813,6 +814,7 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
                   label: Text(l10n.socialCopyCode),
                 ),
                 FilledButton.tonalIcon(
+                  style: tonalButtonStyle(context),
                   onPressed: () => unawaited(
                     ref.read(partyShareProvider)(
                       l10n.socialShareCodeText(code),
@@ -852,6 +854,7 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
             if (isOwner) ...[
               const SizedBox(width: 8),
               FilledButton.tonal(
+                style: tonalButtonStyle(context),
                 onPressed: _isBusy('code')
                     ? null
                     : () => _run('code', () => _notifier(me).generateCode()),

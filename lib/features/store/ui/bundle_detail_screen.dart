@@ -99,6 +99,7 @@ class BundleDetailScreen extends ConsumerWidget {
             message: context.l10n.storeBundleNotFound,
             icon: Icons.inventory_2_outlined,
             action: FilledButton.tonal(
+              style: tonalButtonStyle(context),
               onPressed: () => _backToBundles(context),
               child: Text(context.l10n.storeBackToBundles),
             ),

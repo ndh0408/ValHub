@@ -185,6 +185,7 @@ class _InfoBody extends ConsumerWidget {
           ),
         const SizedBox(height: 8),
         FilledButton.tonalIcon(
+          style: tonalButtonStyle(context),
           onPressed: () {
             Navigator.of(context).maybePop();
             unawaited(showVpPriceOverrideSheet(context));

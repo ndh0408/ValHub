@@ -933,6 +933,7 @@ class PerfBackfillTile extends ConsumerWidget {
           ],
           if (!state.exhausted)
             FilledButton.tonalIcon(
+              style: tonalButtonStyle(context),
               onPressed: state.running ? null : () => notifier.run(),
               icon: const Icon(Icons.history_rounded, size: 18),
               label: Text(context.l10n.profilePerformanceLoadOlder),

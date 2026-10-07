@@ -251,6 +251,7 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
         bottomEnd: video == null
             ? null
             : FilledButton.tonalIcon(
+                // Over the artwork: stays a solid button to be readable.
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(48, 40),
                   shape: const StadiumBorder(),

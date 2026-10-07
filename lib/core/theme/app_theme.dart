@@ -223,6 +223,18 @@ Color legibleOn(Color color, Color background, {double minContrast = 4.5}) {
   return hsl.withLightness(l).toColor();
 }
 
+/// The look of a secondary filled action ("Sao chép mã", "Thử lại" on an
+/// empty state): a soft accent background with accent text. The theme
+/// paints every FilledButton red, the tonal ones included, so tonal
+/// buttons pass this style explicitly.
+ButtonStyle tonalButtonStyle(BuildContext context) {
+  final accent = Theme.of(context).colorScheme.primary;
+  return FilledButton.styleFrom(
+    backgroundColor: accent.withValues(alpha: 0.14),
+    foregroundColor: legibleAccent(context, accent),
+  );
+}
+
 /// [legibleOn] against the current theme's card surface.
 Color legibleAccent(BuildContext context, Color color, {double min = 4.5}) =>
     legibleOn(

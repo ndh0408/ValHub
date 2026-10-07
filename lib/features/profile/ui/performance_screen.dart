@@ -182,6 +182,7 @@ class _PerformanceScreenState extends ConsumerState<PerformanceScreen> {
                         icon: Icons.filter_alt_off_outlined,
                         message: context.l10n.profilePerformanceNoMatches,
                         action: FilledButton.tonal(
+                          style: tonalButtonStyle(context),
                           onPressed: () => setState(() {
                             _clearFilters();
                             _period = PerfPeriod.all;
