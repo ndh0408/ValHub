@@ -7436,6 +7436,24 @@ abstract class AppLocalizations {
   /// **'{mine} vs {theirs}'**
   String profileEconomyMatchup(String mine, String theirs);
 
+  /// Title (shown uppercase) of the Profile card summarising the matches the player just played in one sitting.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phiên vừa chơi'**
+  String get profileSessionTitle;
+
+  /// Time spent in matches during the session, one hour or more ('2 giờ 15 phút').
+  ///
+  /// In vi, this message translates to:
+  /// **'{hours} giờ {minutes} phút'**
+  String profileSessionDuration(int hours, int minutes);
+
+  /// Agent played most in the session and how many times ('Nhiều nhất: Jett ×3'). The agent name comes from the game data.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhiều nhất: {agent} ×{count}'**
+  String profileSessionTopAgent(String agent, int count);
+
   /// LegalStrings.aboutIntro — About hub
   ///
   /// In vi, this message translates to:

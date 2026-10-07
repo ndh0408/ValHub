@@ -4304,6 +4304,30 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get profileSessionTitle => '最近一次游戏';
+
+  @override
+  String profileSessionDuration(int hours, int minutes) {
+    final intl.NumberFormat hoursNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String hoursString = hoursNumberFormat.format(hours);
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '$hoursString 小时 $minutesString 分钟';
+  }
+
+  @override
+  String profileSessionTopAgent(String agent, int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '最常用：$agent ×$countString';
+  }
+
+  @override
   String get legalAboutIntro =>
       '你的 VALORANT 助手：每日商店、心愿单、段位、对局、多账号和玩家社区，尽在你的设备上。';
 
@@ -10774,6 +10798,30 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String profileEconomyMatchup(String mine, String theirs) {
     return '$mine vs $theirs';
+  }
+
+  @override
+  String get profileSessionTitle => '最近一次遊戲';
+
+  @override
+  String profileSessionDuration(int hours, int minutes) {
+    final intl.NumberFormat hoursNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String hoursString = hoursNumberFormat.format(hours);
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '$hoursString 小時 $minutesString 分鐘';
+  }
+
+  @override
+  String profileSessionTopAgent(String agent, int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '最常用：$agent ×$countString';
   }
 
   @override

@@ -4439,6 +4439,30 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get profileSessionTitle => 'Phiên vừa chơi';
+
+  @override
+  String profileSessionDuration(int hours, int minutes) {
+    final intl.NumberFormat hoursNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String hoursString = hoursNumberFormat.format(hours);
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '$hoursString giờ $minutesString phút';
+  }
+
+  @override
+  String profileSessionTopAgent(String agent, int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return 'Nhiều nhất: $agent ×$countString';
+  }
+
+  @override
   String get legalAboutIntro =>
       'Trợ thủ VALORANT của bạn: cửa hàng mỗi ngày, wishlist, rank, trận đấu, nhiều tài khoản và cộng đồng người chơi, ngay trên thiết bị của bạn.';
 

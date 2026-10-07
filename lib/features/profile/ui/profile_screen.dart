@@ -20,6 +20,7 @@ import '../../settings/ui/settings_gear_button.dart';
 import '../../social/social_routes.dart';
 import '../profile_routes.dart';
 import '../providers/profile_providers.dart';
+import 'widgets/play_session_card.dart';
 import 'widgets/identity_banner.dart';
 import 'widgets/match_history_sliver.dart';
 import 'widgets/profile_widgets.dart';
@@ -69,6 +70,7 @@ class ProfileScreen extends ConsumerWidget {
                     unawaited(context.push(ProfileRoutes.rankUp)),
               ),
               const SizedBox(height: 12),
+              PlaySessionCard(puuid: puuid),
               RecentFormCard(puuid: puuid),
               _DailyRrRow(puuid: puuid),
               ValCard(

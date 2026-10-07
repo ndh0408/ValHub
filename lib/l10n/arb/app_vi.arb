@@ -7391,6 +7391,41 @@
     },
     "x-context": "lib/features/profile/ui/widgets/economy_card.dart"
   },
+  "profileSessionTitle": "Phiên vừa chơi",
+  "@profileSessionTitle": {
+    "description": "Title (shown uppercase) of the Profile card summarising the matches the player just played in one sitting.",
+    "x-context": "lib/features/profile/ui/widgets/play_session_card.dart"
+  },
+  "profileSessionDuration": "{hours} giờ {minutes} phút",
+  "@profileSessionDuration": {
+    "description": "Time spent in matches during the session, one hour or more ('2 giờ 15 phút').",
+    "placeholders": {
+      "hours": {
+        "format": "decimalPattern",
+        "type": "int"
+      },
+      "minutes": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    },
+    "x-context": "lib/features/profile/ui/widgets/play_session_card.dart"
+  },
+  "profileSessionTopAgent": "Nhiều nhất: {agent} ×{count}",
+  "@profileSessionTopAgent": {
+    "description": "Agent played most in the session and how many times ('Nhiều nhất: Jett ×3'). The agent name comes from the game data.",
+    "placeholders": {
+      "agent": {
+        "example": "Jett",
+        "type": "String"
+      },
+      "count": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    },
+    "x-context": "lib/features/profile/ui/widgets/play_session_card.dart"
+  },
   "legalAboutIntro": "Trợ thủ VALORANT của bạn: cửa hàng mỗi ngày, wishlist, rank, trận đấu, nhiều tài khoản và cộng đồng người chơi, ngay trên thiết bị của bạn.",
   "@legalAboutIntro": {
     "description": "LegalStrings.aboutIntro — About hub",

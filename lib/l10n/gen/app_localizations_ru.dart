@@ -4917,6 +4917,30 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get profileSessionTitle => 'Последняя сессия';
+
+  @override
+  String profileSessionDuration(int hours, int minutes) {
+    final intl.NumberFormat hoursNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String hoursString = hoursNumberFormat.format(hours);
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '$hoursString ч $minutesString мин';
+  }
+
+  @override
+  String profileSessionTopAgent(String agent, int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return 'Чаще всего: $agent ×$countString';
+  }
+
+  @override
   String get legalAboutIntro =>
       'Ваш помощник в VALORANT: ежедневный магазин, список желаемого, ранг, матчи, несколько аккаунтов и сообщество игроков прямо на вашем устройстве.';
 

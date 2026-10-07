@@ -4425,6 +4425,30 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
+  String get profileSessionTitle => 'เซสชันล่าสุด';
+
+  @override
+  String profileSessionDuration(int hours, int minutes) {
+    final intl.NumberFormat hoursNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String hoursString = hoursNumberFormat.format(hours);
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '$hoursString ชม. $minutesString นาที';
+  }
+
+  @override
+  String profileSessionTopAgent(String agent, int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return 'เล่นบ่อยสุด: $agent ×$countString';
+  }
+
+  @override
   String get legalAboutIntro =>
       'ผู้ช่วย VALORANT ของคุณ: ร้านค้ารายวัน wishlist แรงก์ แมตช์ หลายบัญชี และชุมชนผู้เล่น ทั้งหมดอยู่ในอุปกรณ์ของคุณ';
 

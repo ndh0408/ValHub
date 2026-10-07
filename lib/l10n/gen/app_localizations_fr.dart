@@ -4813,6 +4813,30 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get profileSessionTitle => 'Dernière session';
+
+  @override
+  String profileSessionDuration(int hours, int minutes) {
+    final intl.NumberFormat hoursNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String hoursString = hoursNumberFormat.format(hours);
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '$hoursString h $minutesString min';
+  }
+
+  @override
+  String profileSessionTopAgent(String agent, int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return 'Le plus joué : $agent ×$countString';
+  }
+
+  @override
   String get legalAboutIntro =>
       'Votre compagnon VALORANT : boutique du jour, wishlist, rang, parties, multicompte et communauté de joueurs, directement sur votre appareil.';
 

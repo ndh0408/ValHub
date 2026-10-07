@@ -4361,6 +4361,30 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get profileSessionTitle => '直近のセッション';
+
+  @override
+  String profileSessionDuration(int hours, int minutes) {
+    final intl.NumberFormat hoursNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String hoursString = hoursNumberFormat.format(hours);
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '$hoursString時間$minutesString分';
+  }
+
+  @override
+  String profileSessionTopAgent(String agent, int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '最多: $agent ×$countString';
+  }
+
+  @override
   String get legalAboutIntro =>
       'あなたのVALORANTパートナー：デイリーストア、ウィッシュリスト、ランク、試合、複数アカウント、プレイヤーコミュニティを、あなたの端末で。';
 

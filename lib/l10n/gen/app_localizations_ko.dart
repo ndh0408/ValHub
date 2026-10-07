@@ -4358,6 +4358,30 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get profileSessionTitle => '최근 세션';
+
+  @override
+  String profileSessionDuration(int hours, int minutes) {
+    final intl.NumberFormat hoursNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String hoursString = hoursNumberFormat.format(hours);
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '$hoursString시간 $minutesString분';
+  }
+
+  @override
+  String profileSessionTopAgent(String agent, int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '최다: $agent ×$countString';
+  }
+
+  @override
   String get legalAboutIntro =>
       '나만의 VALORANT 도우미: 일일 상점, 위시리스트, 랭크, 게임 기록, 여러 계정, 플레이어 커뮤니티를 내 기기에서 바로 확인하세요.';
 
