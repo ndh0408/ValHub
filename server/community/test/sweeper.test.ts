@@ -159,10 +159,10 @@ describe('reports', () => {
     const r = await run();
     expect(r.reportsOrphaned).toBe(4);
     expect(e.db.prepare('SELECT target_type FROM reports').all()).toEqual([{ target_type: 'post' }]);
-    // Deleting the post makes its report an orphan too.
+    // An author delete takes the report with it: nothing left to sweep.
     await e.req('DELETE', `/v1/posts/${post}`, { token: a.token });
-    expect((await run()).reportsOrphaned).toBe(1);
     expect(e.db.prepare('SELECT COUNT(*) AS n FROM reports').get()).toEqual({ n: 0 });
+    expect((await run()).reportsOrphaned).toBe(0);
   });
 
   it('a hidden post stays hidden after its reports are purged', async () => {

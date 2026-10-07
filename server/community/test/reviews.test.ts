@@ -246,17 +246,25 @@ describe('deleting reviews', () => {
     const [a, b] = await users(2);
     const id = (await review(a!.token, SKIN_A, 5, 'x')).json.id;
     await e.req('PUT', `/v1/reviews/${id}/like`, { token: b!.token });
+    await e.req('POST', '/v1/reports', { token: b!.token, body: { targetType: 'review', targetId: id, reason: 'x' } });
+    expect(e.db.prepare('SELECT COUNT(*) AS n FROM reports').get()).toEqual({ n: 1 });
     expectError(await e.req('DELETE', `/v1/reviews/${id}`, { token: b!.token }), 403, 'forbidden');
     expect((await e.req('DELETE', `/v1/reviews/${id}`, { token: a!.token })).status).toBe(204);
     expectError(await e.req('DELETE', `/v1/reviews/${id}`, { token: a!.token }), 404, 'not_found');
     expect(e.db.prepare('SELECT COUNT(*) AS n FROM review_likes').get()).toEqual({ n: 0 });
+    expect(e.db.prepare('SELECT COUNT(*) AS n FROM reports').get()).toEqual({ n: 0 });
   });
 
   it('DELETE /v1/skins/{skin}/review removes the caller’s review', async () => {
     const [a, b] = await users(2);
     await review(a!.token, SKIN_A, 5, 'x');
-    await review(b!.token, SKIN_A, 1, 'y');
+    const mine = (await review(b!.token, SKIN_A, 1, 'y')).json.id;
+    const theirs = e.db.prepare('SELECT id FROM skin_reviews WHERE id <> ?').get(mine) as { id: string };
+    await e.req('POST', '/v1/reports', { token: b!.token, body: { targetType: 'review', targetId: theirs.id, reason: 'x' } });
+    await e.req('POST', '/v1/reports', { token: a!.token, body: { targetType: 'review', targetId: mine, reason: 'x' } });
     expect((await e.req('DELETE', `/v1/skins/${SKIN_A}/review`, { token: a!.token })).status).toBe(204);
+    // Only the report about the deleted review goes.
+    expect(e.db.prepare('SELECT target_id AS id FROM reports').all()).toEqual([{ id: mine }]);
     expect((await e.req('DELETE', `/v1/skins/${SKIN_A}/review`, { token: a!.token })).status).toBe(204);
     const s = await e.req('GET', `/v1/skins/${SKIN_A}/summary`, { token: a!.token });
     expect(s.json).toMatchObject({ ratingAvg: 1, ratingCount: 1, myReview: null });

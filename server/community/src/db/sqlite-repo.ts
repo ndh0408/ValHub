@@ -305,7 +305,16 @@ export class SqliteRepo implements Repo {
   }
 
   deleteLfg(id: string): void {
-    this.db.prepare('DELETE FROM lfg_posts WHERE id = ?').run(id);
+    // Its reports go in the same transaction, as for every author delete.
+    this.db.transaction(() => {
+      this.deleteReportsOf('lfg', id);
+      this.db.prepare('DELETE FROM lfg_posts WHERE id = ?').run(id);
+    })();
+  }
+
+  /** Reports about one item (they would otherwise wait for the sweeper). */
+  private deleteReportsOf(type: ReportTarget, id: string): void {
+    this.db.prepare('DELETE FROM reports WHERE target_type = ? AND target_id = ?').run(type, id);
   }
 
   joinLfg(id: string, userId: string, now: number): number {
@@ -680,13 +689,22 @@ export class SqliteRepo implements Repo {
   }
 
   deleteReview(id: string): void {
-    this.db.prepare('DELETE FROM skin_reviews WHERE id = ?').run(id);
+    this.db.transaction(() => {
+      this.deleteReportsOf('review', id);
+      this.db.prepare('DELETE FROM skin_reviews WHERE id = ?').run(id);
+    })();
   }
 
   deleteUserReview(userId: string, skinUuid: string): boolean {
-    return (
-      this.db.prepare('DELETE FROM skin_reviews WHERE user_id = ? AND skin_uuid = ?').run(userId, skinUuid).changes > 0
-    );
+    return this.db.transaction(() => {
+      const ids = this.db
+        .prepare('SELECT id FROM skin_reviews WHERE user_id = ? AND skin_uuid = ?')
+        .all(userId, skinUuid) as { id: string }[];
+      for (const { id } of ids) this.deleteReportsOf('review', id);
+      return (
+        this.db.prepare('DELETE FROM skin_reviews WHERE user_id = ? AND skin_uuid = ?').run(userId, skinUuid).changes > 0
+      );
+    })();
   }
 
   setReviewLike(reviewId: string, userId: string, liked: boolean, now: number): number {
@@ -801,8 +819,17 @@ export class SqliteRepo implements Repo {
   }
 
   deletePost(id: string): void {
-    // post_likes and comments cascade.
-    this.db.prepare('DELETE FROM posts WHERE id = ?').run(id);
+    // post_likes and comments cascade; the reports about the post and its
+    // comments go in the same transaction.
+    this.db.transaction(() => {
+      this.db
+        .prepare(
+          `DELETE FROM reports WHERE target_type = 'comment' AND target_id IN (SELECT id FROM comments WHERE post_id = ?)`,
+        )
+        .run(id);
+      this.deleteReportsOf('post', id);
+      this.db.prepare('DELETE FROM posts WHERE id = ?').run(id);
+    })();
   }
 
   setLike(postId: string, userId: string, liked: boolean, now: number): void {
@@ -892,7 +919,10 @@ export class SqliteRepo implements Repo {
   }
 
   deleteComment(id: string): void {
-    this.db.prepare('DELETE FROM comments WHERE id = ?').run(id);
+    this.db.transaction(() => {
+      this.deleteReportsOf('comment', id);
+      this.db.prepare('DELETE FROM comments WHERE id = ?').run(id);
+    })();
   }
 
   // ---- communities -----------------------------------------------------------

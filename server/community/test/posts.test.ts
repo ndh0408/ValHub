@@ -329,6 +329,38 @@ describe('reports', () => {
     expect((await e.req('GET', '/v1/lfg', { token: author.token })).json.items).toEqual([]);
   });
 
+  it('takes the reports of an item its author deletes with it', async () => {
+    const author = await e.login('author');
+    const reporter = await e.login('r1');
+    e.mature(reporter.user.id);
+    const report = (targetType: string, targetId: string) =>
+      e.req('POST', '/v1/reports', { token: reporter.token, body: { targetType, targetId, reason: 'x' } });
+    const reports = () => e.db.prepare('SELECT COUNT(*) AS n FROM reports').get();
+    const postId = (await e.req('POST', '/v1/posts', { token: author.token, body: { kind: 'text', body: 'x' } })).json.id;
+    const cid = (await e.req('POST', `/v1/posts/${postId}/comments`, { token: author.token, body: { body: 'a' } })).json.id;
+    const cid2 = (await e.req('POST', `/v1/posts/${postId}/comments`, { token: author.token, body: { body: 'b' } })).json
+      .id;
+    const lfgId = (
+      await e.req('POST', '/v1/lfg', {
+        token: author.token,
+        body: { region: 'ap', mode: 'unrated', partyCode: 'ABCDEF', slots: 1 },
+      })
+    ).json.id;
+    await report('post', postId);
+    await report('comment', cid);
+    await report('comment', cid2);
+    await report('lfg', lfgId);
+    expect(reports()).toEqual({ n: 4 });
+
+    expect((await e.req('DELETE', `/v1/comments/${cid}`, { token: author.token })).status).toBe(204);
+    expect(reports()).toEqual({ n: 3 });
+    expect((await e.req('DELETE', `/v1/lfg/${lfgId}`, { token: author.token })).status).toBe(204);
+    expect(reports()).toEqual({ n: 2 });
+    // The post's own report and those of its remaining comments.
+    expect((await e.req('DELETE', `/v1/posts/${postId}`, { token: author.token })).status).toBe(204);
+    expect(reports()).toEqual({ n: 0 });
+  });
+
   it('validates reports', async () => {
     const { token } = await e.login('a');
     const missing = '00000000-0000-4000-8000-000000000000';
