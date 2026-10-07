@@ -1,11 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/network/riot_exception.dart';
+import 'package:valvn/core/riot/riot_ids.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/util/json.dart';
 import 'package:valvn/features/collection/collection_strings.dart';
 import 'package:valvn/features/collection/ui/collection_screen.dart';
 
+import '../../../core/domain/loadout/loadout_fixtures.dart';
+import '../../../helpers/l10n.dart';
 import '../../../helpers/test_prefs.dart';
 import '../collection_test_harness.dart';
 
@@ -39,8 +43,9 @@ void main() {
     );
 
     expect(find.text('Bộ sưu tập'), findsOneWidget);
-    // Banner caption + "Đổi thẻ người chơi" row value.
-    expect(find.text('Thẻ Bộ Đôi Ngời Sáng'), findsNWidgets(2));
+    // The card's name once: the "Đổi thẻ người chơi" row value (no caption
+    // under the banner).
+    expect(find.text('Thẻ Bộ Đôi Ngời Sáng'), findsOneWidget);
     expect(
       find.bySemanticsLabel(RegExp(CollectionStrings.equippedCard)),
       findsOneWidget,
@@ -55,13 +60,55 @@ void main() {
     await scrollTo(tester, find.text(CollectionStrings.rowWishlist));
     expect(find.text(CollectionStrings.sectionBrowse), findsOneWidget);
     expect(find.text('Phụ kiện súng'), findsOneWidget);
+    // Browse has no player-card row: the loadout row opens the same grid.
+    expect(find.text(tl.collectionBrowseCards), findsNothing);
     expect(find.text('Trống'), findsOneWidget); // empty wishlist
 
-    await scrollTo(tester, find.text('GIÁ TRỊ BỘ SƯU TẬP'));
-    expect(find.text('GIÁ TRỊ BỘ SƯU TẬP'), findsOneWidget);
-    // No reward skin in the fixture: no "rewards not counted" line at all.
+    final valueLabel = tl.collectionCollectionValue.toUpperCase();
+    await scrollTo(tester, find.text(valueLabel));
+    expect(find.text(valueLabel), findsOneWidget);
+    // One line of fine print: store prices + the two reward skins left out
+    // (no owned-skin count, no "includes estimates" next to the "≈").
+    expect(
+      find.text(
+        tf.inlineFacts([
+          tl.collectionValueAtStorePrices,
+          tl.collectionValueRewardCount(2),
+        ]),
+      ),
+      findsOneWidget,
+    );
     expect(find.text(CollectionStrings.excludedRewards), findsNothing);
+    expect(find.textContaining(tl.collectionValueHasEstimates), findsNothing);
     expect(find.textContaining('VP'), findsWidgets);
+    expect(tester.takeException(), isNull);
+    await unmount(tester);
+  });
+
+  testWidgets('no skins: no "0 VP" value card', (tester) async {
+    when(() => riot.api.entitlements(any(), any())).thenAnswer((inv) async {
+      final type = inv.positionalArguments[1] as String;
+      if (type == ItemTypeIds.skinLevel) {
+        return {'ItemTypeID': type, 'Entitlements': <Object?>[]};
+      }
+      return entitlementsFor(type) ?? (throw const NotFoundException());
+    });
+    await pumpCollection(
+      tester,
+      const CollectionScreen(),
+      riot: riot,
+      prefs: prefs,
+    );
+    final incognito = find.widgetWithText(
+      SwitchListTile,
+      CollectionStrings.incognito,
+    );
+    await scrollTo(tester, incognito);
+    expect(
+      find.text(tl.collectionCollectionValue.toUpperCase()),
+      findsNothing,
+    );
+    expect(find.text(tl.collectionValueAtStorePrices), findsNothing);
     expect(tester.takeException(), isNull);
     await unmount(tester);
   });

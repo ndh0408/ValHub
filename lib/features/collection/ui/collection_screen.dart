@@ -40,9 +40,9 @@ import 'package:valvn/core/l10n/l10n.dart';
 /// TAB 3 "Bộ sưu tập" hub (S30). Route `/collection`.
 ///
 /// ValBuddy-style layout: the wide equipped player card as a rounded
-/// banner (name caption under it), then grouped rows with red outline
-/// icons ("Trang bị", "Hiển thị với người chơi khác", "Duyệt bộ sưu tập")
-/// and the collection value at store prices.
+/// banner (its name is the "Thẻ người chơi" row's value), then grouped rows
+/// with red outline icons ("Trang bị", "Duyệt bộ sưu tập", "Hiển thị với
+/// người chơi khác") and the collection value at store prices.
 class CollectionScreen extends ConsumerWidget {
   const CollectionScreen({super.key});
 
@@ -86,7 +86,6 @@ class _Header extends ConsumerWidget {
     final loadout = ref.watch(loadoutProvider(puuid));
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final snapshot = loadout.value;
-    final theme = Theme.of(context);
     if (snapshot == null) {
       if (loadout.hasError && !loadout.isLoading) {
         return ErrorView(
@@ -98,15 +97,9 @@ class _Header extends ConsumerWidget {
       }
       return const Padding(
         padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-        child: Column(
-          children: [
-            AspectRatio(
-              aspectRatio: _bannerRatio,
-              child: Skeleton(radius: ValRadius.card),
-            ),
-            SizedBox(height: 10),
-            Skeleton(width: 140, height: 12),
-          ],
+        child: AspectRatio(
+          aspectRatio: _bannerRatio,
+          child: Skeleton(radius: ValRadius.card),
         ),
       );
     }
@@ -115,6 +108,8 @@ class _Header extends ConsumerWidget {
         ? null
         : db.card(identity.playerCardId!);
     final cardName = card?.displayName ?? context.l10n.commonUnknownItem;
+    // The card's name is the "Thẻ người chơi" row's value just below; no
+    // caption repeats it here.
     return Column(
       children: [
         if (snapshot.isFromCache) const CachedLoadoutBanner(),
@@ -137,20 +132,6 @@ class _Header extends ConsumerWidget {
                 Haptics.selection();
                 unawaited(context.push(CollectionRoutes.card));
               },
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
-          child: ExcludeSemantics(
-            child: Text(
-              cardName,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
             ),
           ),
         ),
@@ -249,9 +230,6 @@ class _LoadoutSection extends ConsumerWidget {
         ? null
         : db.title(identity.titleOrNone)?.localizedText(context.l10n) ??
               context.l10n.collectionNoTitle;
-    final cardArt = identity?.playerCardId == null
-        ? null
-        : db.card(identity!.playerCardId!)?.smallArt;
     final weaponArt = firstImage(
       snapshot?.loadout.guns ?? const <GunLoadout>[],
       (g) => gunRender(g, db, weapon: db.weapon(g.weaponId)),
@@ -271,9 +249,9 @@ class _LoadoutSection extends ConsumerWidget {
           ),
         GroupedSection(
           children: [
+            // The banner above already shows the card art: name only here.
             HubRow(
               icon: Icons.flag_outlined,
-              image: cardArt,
               title: context.l10n.collectionPlayerCardTitle,
               value: cardName,
               onTap: () => go(CollectionRoutes.card),
@@ -593,14 +571,8 @@ class _BrowseSection extends ConsumerWidget {
                   ? null
                   : firstImage(ownedSprays(owned, db), (x) => x.image),
             ),
-            row(
-              CollectionBrowseType.card,
-              Icons.image_outlined,
-              count((o) => ownedCards(o, db).length),
-              image: owned == null
-                  ? null
-                  : firstImage(ownedCards(owned, db), (x) => x.smallArt),
-            ),
+            // No player-card row: "Thẻ người chơi" under "Trang bị" opens
+            // the same owned-card grid, with the count.
             row(
               CollectionBrowseType.title,
               Icons.text_fields,
@@ -644,6 +616,8 @@ class _ValueCard extends ConsumerWidget {
     VoidCallback? onTap;
     if (owned.value case final o?) {
       final value = ref.watch(priceServiceProvider).ownedCollectionValue(o);
+      // A new account (or no priced skin yet): no "0 VP" card at all.
+      if (value.totalVp <= 0) return const SizedBox.shrink();
       final amount = value.isEstimate
           ? context.fmt.estimatedVp(value.totalVp)
           : context.fmt.vp(value.totalVp);
@@ -675,32 +649,18 @@ class _ValueCard extends ConsumerWidget {
             style: theme.textTheme.bodyMedium,
             color: theme.colorScheme.onSurface,
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
+          // One line of fine print: how it is priced, and the reward skins
+          // left out when there are any. The skin count is the "Skin" row
+          // above; estimates already carry "≈" in the amount.
           Text(
             context.fmt.inlineFacts([
-              context.l10n.collectionOwnedSkinsStat(
-                o.ownedCollectibleSkins.length,
-              ),
               context.l10n.collectionValueAtStorePrices,
+              if (value.rewardCount > 0)
+                context.l10n.collectionValueRewardCount(value.rewardCount),
             ]),
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface,
-              fontWeight: FontWeight.w600,
-            ),
+            style: theme.textTheme.bodySmall?.copyWith(color: muted),
           ),
-          const SizedBox(height: 4),
-          // The reward skins left out are counted below when there are any;
-          // a separate "rewards not counted" line repeated it every time.
-          if (value.skinCount > 0)
-            Text(
-              context.fmt.inlineFacts([
-                context.l10n.collectionValueSkinCount(value.pricedCount),
-                if (value.rewardCount > 0)
-                  context.l10n.collectionValueRewardCount(value.rewardCount),
-                if (value.isEstimate) context.l10n.collectionValueHasEstimates,
-              ]),
-              style: theme.textTheme.bodySmall?.copyWith(color: muted),
-            ),
         ],
       );
     } else if (owned.hasError && !owned.isLoading) {
