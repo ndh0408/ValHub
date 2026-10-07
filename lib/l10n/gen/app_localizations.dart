@@ -9445,10 +9445,10 @@ abstract class AppLocalizations {
   /// **'Bạn'**
   String get socialYou;
 
-  /// A running game session is verified, but its party is not available yet.
+  /// Party page: the party could not be read from Riot right now; pull to refresh or tap Retry.
   ///
   /// In vi, this message translates to:
-  /// **'Chưa đồng bộ được tổ đội. Làm mới để thử lại.'**
+  /// **'Chưa tải được tổ đội. Làm mới để thử lại.'**
   String get socialPartyUnavailable;
 
   /// Confirmation before accepting a party invite while the player is in a party with other people (title: socialJoinConfirmTitle).

@@ -78,9 +78,8 @@ class SkinVoteButton extends ConsumerWidget {
         puuid != null &&
         avg == null &&
         (ref.watch(
-              ownedItemsProvider(
-                puuid,
-              ).select((owned) => owned.value?.isSkinOwned(id)),
+              ownedItemsProvider(puuid)
+                  .select((owned) => owned.value?.isSkinOwned(id)),
             ) ??
             false);
     return Padding(

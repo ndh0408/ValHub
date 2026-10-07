@@ -187,10 +187,7 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
       final p = key.puuid;
       final owns =
           p != null &&
-          (ref
-                  .watch(ownedItemsProvider(p))
-                  .value
-                  ?.isSkinOwned(key.skinUuid) ??
+          (ref.watch(ownedItemsProvider(p)).value?.isSkinOwned(key.skinUuid) ??
               false);
       return [
         SliverToBoxAdapter(

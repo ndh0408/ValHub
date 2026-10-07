@@ -6131,7 +6131,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get socialPartyUnavailable =>
-      'No se ha podido sincronizar el grupo. Actualiza para volver a intentarlo.';
+      'No se pudo cargar tu grupo. Actualiza para volver a intentarlo.';
 
   @override
   String get socialAcceptConfirmBody =>
@@ -8177,10 +8177,6 @@ class AppLocalizationsEsMx extends AppLocalizationsEs {
 
   @override
   String get socialSuggestionsItem1 => '¿Jugamos unas partidas?';
-
-  @override
-  String get socialPartyUnavailable =>
-      'No se pudo sincronizar el grupo. Actualiza para volver a intentarlo.';
 
   @override
   String get storeAddToWishlist => 'Agregar a la lista de deseos';

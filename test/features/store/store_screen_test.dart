@@ -5,6 +5,7 @@ import 'package:valvn/core/l10n/l10n.dart';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:valvn/features/store/ui/widgets/night_market_card.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -180,7 +181,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text(StoreStrings.nightMarketNote), findsOneWidget);
+    expect(find.byType(NightMarketCard), findsWidgets);
     // All three are owned in the entitlements fixture.
     expect(find.text(StoreStrings.ownedBadge), findsNWidgets(3));
 
@@ -205,7 +206,7 @@ void main() {
       initialSegment: StoreSegment.nightMarket,
     );
 
-    expect(find.text(StoreStrings.nightMarketNote), findsOneWidget);
+    expect(find.byType(NightMarketCard), findsWidgets);
     expect(
       prefs.getStringList(NightMarketSeenStore.key(Fx.puuid)),
       hasLength(3),

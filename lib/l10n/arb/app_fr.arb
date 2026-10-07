@@ -1551,7 +1551,7 @@
   "socialViewProfile": "Voir le profil",
   "socialWaitingForConnection": "Connexion… Vous pourrez envoyer des messages une fois connecté.",
   "socialYou": "Vous",
-  "socialPartyUnavailable": "Impossible de synchroniser le groupe. Actualisez pour réessayer.",
+  "socialPartyUnavailable": "Impossible de charger votre groupe. Actualisez pour réessayer.",
   "socialAcceptConfirmBody": "Vous allez quitter votre groupe actuel pour rejoindre le groupe qui vous a envoyé l'invitation.",
   "storeAccessoryEmpty": "La boutique d'accessoires est vide pour le moment.",
   "storeAccessoryEmptyTitle": "Aucun accessoire",

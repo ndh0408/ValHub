@@ -6086,7 +6086,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get socialPartyUnavailable =>
-      'Gruppe konnte nicht synchronisiert werden. Aktualisiere, um es erneut zu versuchen.';
+      'Gruppe konnte nicht geladen werden. Aktualisiere, um es erneut zu versuchen.';
 
   @override
   String get socialAcceptConfirmBody =>

@@ -6127,7 +6127,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get socialPartyUnavailable =>
-      'Não foi possível sincronizar o grupo. Atualize para tentar de novo.';
+      'Não foi possível carregar seu grupo. Atualize para tentar de novo.';
 
   @override
   String get socialAcceptConfirmBody =>

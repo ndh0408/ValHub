@@ -374,19 +374,23 @@ class _PriceSummary extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           cell(context.l10n.storeBundlePriceLabel, bundle.price, vnd: true),
-          const SizedBox(width: 12),
-          cell(
-            context.l10n.storeBundleBuySeparateLabel,
-            bundle.itemsTotal,
-            strike: bundle.savings > 0,
-          ),
-          const SizedBox(width: 12),
-          cell(
-            context.l10n.storeBundleSavingsLabel,
-            bundle.savings,
-            color: win,
-            vnd: true,
-          ),
+          // "Mua lẻ" and "Tiết kiệm" only say something when buying the
+          // bundle actually saves VP (no "Tiết kiệm 0 VP").
+          if (bundle.savings > 0) ...[
+            const SizedBox(width: 12),
+            cell(
+              context.l10n.storeBundleBuySeparateLabel,
+              bundle.itemsTotal,
+              strike: true,
+            ),
+            const SizedBox(width: 12),
+            cell(
+              context.l10n.storeBundleSavingsLabel,
+              bundle.savings,
+              color: win,
+              vnd: true,
+            ),
+          ],
         ],
       ),
     );

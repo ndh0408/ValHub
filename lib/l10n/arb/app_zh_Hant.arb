@@ -1551,7 +1551,7 @@
   "socialViewProfile": "查看個人檔案",
   "socialWaitingForConnection": "正在連線…連線完成後即可傳送訊息。",
   "socialYou": "你",
-  "socialPartyUnavailable": "無法同步隊伍。請重新整理再試一次。",
+  "socialPartyUnavailable": "無法載入你的隊伍。重新整理後再試一次。",
   "socialAcceptConfirmBody": "你將離開目前的隊伍，加入邀請你的隊伍。",
   "storeAccessoryEmpty": "配件商店目前沒有任何商品。",
   "storeAccessoryEmptyTitle": "尚無配件",

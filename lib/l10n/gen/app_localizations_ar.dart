@@ -6330,7 +6330,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get socialPartyUnavailable =>
-      'تعذّرت مزامنة فريقك. حدّث الصفحة لإعادة المحاولة.';
+      'تعذّر تحميل فريقك. حدّث الصفحة للمحاولة مجددًا.';
 
   @override
   String get socialAcceptConfirmBody =>

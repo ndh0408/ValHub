@@ -6074,7 +6074,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get socialPartyUnavailable =>
-      'Couldn\'t sync your party. Refresh to try again.';
+      'Couldn\'t load your party. Refresh to try again.';
 
   @override
   String get socialAcceptConfirmBody =>

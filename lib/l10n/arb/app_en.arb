@@ -1551,7 +1551,7 @@
   "socialViewProfile": "View profile",
   "socialWaitingForConnection": "Connecting… You can send messages once connected.",
   "socialYou": "You",
-  "socialPartyUnavailable": "Couldn't sync your party. Refresh to try again.",
+  "socialPartyUnavailable": "Couldn't load your party. Refresh to try again.",
   "socialAcceptConfirmBody": "You'll leave your current party to join the party that invited you.",
   "storeAccessoryEmpty": "The accessory store is empty right now.",
   "storeAccessoryEmptyTitle": "No accessories yet",

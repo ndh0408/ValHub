@@ -1551,7 +1551,7 @@
   "socialViewProfile": "Profil ansehen",
   "socialWaitingForConnection": "Verbinde … Du kannst Nachrichten senden, sobald die Verbindung steht.",
   "socialYou": "Du",
-  "socialPartyUnavailable": "Gruppe konnte nicht synchronisiert werden. Aktualisiere, um es erneut zu versuchen.",
+  "socialPartyUnavailable": "Gruppe konnte nicht geladen werden. Aktualisiere, um es erneut zu versuchen.",
   "socialAcceptConfirmBody": "Du verlässt deine aktuelle Gruppe, um der Gruppe beizutreten, die dich eingeladen hat.",
   "storeAccessoryEmpty": "Im Zubehörshop gibt es gerade nichts.",
   "storeAccessoryEmptyTitle": "Noch kein Zubehör",

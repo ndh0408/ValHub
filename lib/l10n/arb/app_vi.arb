@@ -9398,9 +9398,10 @@
     "description": "SocialStrings.you — party",
     "x-context": "lib/features/social/social_strings.dart"
   },
-  "socialPartyUnavailable": "Chưa đồng bộ được tổ đội. Làm mới để thử lại.",
+  "socialPartyUnavailable": "Chưa tải được tổ đội. Làm mới để thử lại.",
   "@socialPartyUnavailable": {
-    "description": "A running game session is verified, but its party is not available yet."
+    "description": "Party page: the party could not be read from Riot right now; pull to refresh or tap Retry.",
+    "x-context": "lib/features/social/ui/party_screen.dart"
   },
   "socialAcceptConfirmBody": "Bạn sẽ rời tổ đội hiện tại để vào tổ đội đã mời bạn.",
   "@socialAcceptConfirmBody": {

@@ -2,6 +2,7 @@ import 'package:valvn/core/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:valvn/features/store/ui/widgets/night_market_card.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/theme/app_theme.dart';
@@ -81,7 +82,7 @@ void main() {
       ),
     );
     await settle(tester);
-    expect(find.text(StoreStrings.nightMarketNote), findsOneWidget);
+    expect(find.byType(NightMarketCard), findsWidgets);
     await unmount(tester);
 
     // A notification tap on the daily shop ("Cửa hàng đã làm mới").

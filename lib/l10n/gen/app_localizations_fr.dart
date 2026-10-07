@@ -6130,7 +6130,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get socialPartyUnavailable =>
-      'Impossible de synchroniser le groupe. Actualisez pour réessayer.';
+      'Impossible de charger votre groupe. Actualisez pour réessayer.';
 
   @override
   String get socialAcceptConfirmBody =>

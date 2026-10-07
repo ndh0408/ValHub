@@ -5672,7 +5672,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get socialPartyUnavailable =>
-      'ซิงค์ปาร์ตี้ของคุณไม่ได้ รีเฟรชเพื่อลองอีกครั้ง';
+      'โหลดปาร์ตี้ไม่สำเร็จ รีเฟรชเพื่อลองอีกครั้ง';
 
   @override
   String get socialAcceptConfirmBody =>

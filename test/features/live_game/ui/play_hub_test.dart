@@ -87,7 +87,7 @@ void main() {
       await pumpHub(tester);
       expect(find.text('Đang ở sảnh chờ'), findsOneWidget);
       expect(
-        find.text('Chưa đồng bộ được tổ đội. Làm mới để thử lại.'),
+        find.text(tl.socialPartyUnavailable),
         findsOneWidget,
       );
       expect(

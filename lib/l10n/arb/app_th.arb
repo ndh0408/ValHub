@@ -1551,7 +1551,7 @@
   "socialViewProfile": "ดูโปรไฟล์",
   "socialWaitingForConnection": "กำลังเชื่อมต่อ… คุณส่งข้อความได้เมื่อเชื่อมต่อเสร็จ",
   "socialYou": "คุณ",
-  "socialPartyUnavailable": "ซิงค์ปาร์ตี้ของคุณไม่ได้ รีเฟรชเพื่อลองอีกครั้ง",
+  "socialPartyUnavailable": "โหลดปาร์ตี้ไม่สำเร็จ รีเฟรชเพื่อลองอีกครั้ง",
   "socialAcceptConfirmBody": "คุณจะออกจากปาร์ตี้ปัจจุบันเพื่อเข้าร่วมปาร์ตี้ที่เชิญคุณ",
   "storeAccessoryEmpty": "ร้านค้าอุปกรณ์เสริมว่างอยู่ในขณะนี้",
   "storeAccessoryEmptyTitle": "ยังไม่มีอุปกรณ์เสริม",

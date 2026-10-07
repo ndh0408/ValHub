@@ -5581,7 +5581,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get socialYou => 'あなた';
 
   @override
-  String get socialPartyUnavailable => 'パーティーを同期できませんでした。更新してもう一度お試しください。';
+  String get socialPartyUnavailable => 'パーティーを読み込めませんでした。更新してもう一度お試しください。';
 
   @override
   String get socialAcceptConfirmBody => '招待されたパーティーに参加するため、現在のパーティーから抜けます。';

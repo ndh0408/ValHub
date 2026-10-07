@@ -284,20 +284,20 @@ class ProfileHeader extends ConsumerWidget {
           xpLoading: xp.isLoading,
           copyText: name?.riotId,
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-          child: Text(
-            country == null
-                ? context.l10n.accountRiotCountryUnknown
-                : context.l10n.accountRiotCountry(
-                    '${countryFlag(country)} ${names?.name(country) ?? country}',
-                  ),
-            key: const ValueKey('profile-riot-country'),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+        // Only when Riot says it: "Chưa xác định" forever is just noise.
+        if (country != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Text(
+              context.l10n.accountRiotCountry(
+                '${countryFlag(country)} ${names?.name(country) ?? country}',
+              ),
+              key: const ValueKey('profile-riot-country'),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
-        ),
       ],
     );
   }

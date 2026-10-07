@@ -1551,7 +1551,7 @@
   "socialViewProfile": "Profili gör",
   "socialWaitingForConnection": "Bağlanılıyor… Bağlantı kurulunca mesaj gönderebilirsin.",
   "socialYou": "Sen",
-  "socialPartyUnavailable": "Grubun eşitlenemedi. Tekrar denemek için yenile.",
+  "socialPartyUnavailable": "Grubun yüklenemedi. Tekrar denemek için yenile.",
   "socialAcceptConfirmBody": "Seni davet eden gruba katılmak için mevcut grubundan ayrılacaksın.",
   "storeAccessoryEmpty": "Aksesuar mağazası şu anda boş.",
   "storeAccessoryEmptyTitle": "Henüz aksesuar yok",

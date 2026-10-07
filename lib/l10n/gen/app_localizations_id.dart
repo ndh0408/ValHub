@@ -5721,7 +5721,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get socialPartyUnavailable =>
-      'Gagal menyinkronkan party-mu. Muat ulang untuk mencoba lagi.';
+      'Party belum bisa dimuat. Muat ulang untuk mencoba lagi.';
 
   @override
   String get socialAcceptConfirmBody =>

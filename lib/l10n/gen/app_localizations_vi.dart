@@ -5690,7 +5690,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get socialPartyUnavailable =>
-      'Chưa đồng bộ được tổ đội. Làm mới để thử lại.';
+      'Chưa tải được tổ đội. Làm mới để thử lại.';
 
   @override
   String get socialAcceptConfirmBody =>

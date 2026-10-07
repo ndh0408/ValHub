@@ -6248,7 +6248,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get socialPartyUnavailable =>
-      'Не удалось синхронизировать группу. Обновите, чтобы повторить попытку.';
+      'Не удалось загрузить группу. Обновите, чтобы попробовать снова.';
 
   @override
   String get socialAcceptConfirmBody =>

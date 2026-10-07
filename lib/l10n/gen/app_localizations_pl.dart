@@ -6099,7 +6099,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get socialPartyUnavailable =>
-      'Nie udało się zsynchronizować drużyny. Odśwież, aby spróbować ponownie.';
+      'Nie udało się wczytać drużyny. Odśwież, aby spróbować ponownie.';
 
   @override
   String get socialAcceptConfirmBody =>

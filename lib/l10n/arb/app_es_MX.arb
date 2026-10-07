@@ -212,7 +212,6 @@
   "socialSendFailed": "No se pudo enviar el mensaje. Revisa tu conexión y vuelve a intentarlo.",
   "socialShootingRange": "En La Galería",
   "socialSuggestionsItem1": "¿Jugamos unas partidas?",
-  "socialPartyUnavailable": "No se pudo sincronizar el grupo. Actualiza para volver a intentarlo.",
   "storeAddToWishlist": "Agregar a la lista de deseos",
   "storeBundleEndsAt": "Expira: {wall}",
   "storeBundleNotFound": "No se encontró este lote. Es posible que haya expirado.",

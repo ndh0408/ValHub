@@ -567,9 +567,9 @@ class _PlayerSummary extends ConsumerWidget {
     final agent = player.characterId == null
         ? null
         : db.agent(player.characterId!);
-    final s =
-        details.statsFor(player.subject) ??
-        ScoreboardStats(subject: player.subject);
+    final known = details.statsFor(player.subject);
+    // Riot sent no stats for this player: dashes, never a fake 0/0/0.
+    final s = known ?? ScoreboardStats(subject: player.subject);
     final isOwn = ref.watch(
       accountProvider(player.subject).select((a) => a != null),
     );
@@ -670,11 +670,13 @@ class _PlayerSummary extends ConsumerWidget {
               tiles: [
                 StatTile(
                   label: context.l10n.profileKdaLabel,
-                  value: context.l10n.profileKdaValue(
-                    s.kills,
-                    s.deaths,
-                    s.assists,
-                  ),
+                  value: known == null
+                      ? context.l10n.competitiveNoValue
+                      : context.l10n.profileKdaValue(
+                          s.kills,
+                          s.deaths,
+                          s.assists,
+                        ),
                 ),
                 if (roundBased)
                   StatTile(
@@ -695,7 +697,9 @@ class _PlayerSummary extends ConsumerWidget {
                 if (roundBased) ...[
                   StatTile(
                     label: context.l10n.profileFirstDeaths,
-                    value: formatNumber(s.firstDeaths),
+                    value: known == null
+                        ? context.l10n.competitiveNoValue
+                        : formatNumber(s.firstDeaths),
                   ),
                   StatTile(
                     label: context.l10n.profileKast,
@@ -706,7 +710,9 @@ class _PlayerSummary extends ConsumerWidget {
                   ),
                   StatTile(
                     label: context.l10n.profileFirstBloods,
-                    value: formatNumber(s.firstBloods),
+                    value: known == null
+                        ? context.l10n.competitiveNoValue
+                        : formatNumber(s.firstBloods),
                   ),
                 ],
               ],

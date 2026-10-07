@@ -1551,7 +1551,7 @@
   "socialViewProfile": "Профиль",
   "socialWaitingForConnection": "Подключение… Отправлять сообщения можно будет после подключения.",
   "socialYou": "Вы",
-  "socialPartyUnavailable": "Не удалось синхронизировать группу. Обновите, чтобы повторить попытку.",
+  "socialPartyUnavailable": "Не удалось загрузить группу. Обновите, чтобы попробовать снова.",
   "socialAcceptConfirmBody": "Вы покинете текущую группу и вступите в группу, которая вас пригласила.",
   "storeAccessoryEmpty": "В магазине аксессуаров сейчас пусто.",
   "storeAccessoryEmptyTitle": "Аксессуаров пока нет",

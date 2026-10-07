@@ -5722,7 +5722,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get socialPartyUnavailable =>
-      'Grubun eşitlenemedi. Tekrar denemek için yenile.';
+      'Grubun yüklenemedi. Tekrar denemek için yenile.';
 
   @override
   String get socialAcceptConfirmBody =>

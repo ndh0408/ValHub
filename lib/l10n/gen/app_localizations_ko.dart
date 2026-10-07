@@ -5576,7 +5576,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get socialYou => '나';
 
   @override
-  String get socialPartyUnavailable => '파티를 동기화하지 못했습니다. 새로고침하여 다시 시도하세요.';
+  String get socialPartyUnavailable => '파티를 불러오지 못했습니다. 새로고침해서 다시 시도하세요.';
 
   @override
   String get socialAcceptConfirmBody => '현재 파티를 나가고 초대한 파티에 참가합니다.';
