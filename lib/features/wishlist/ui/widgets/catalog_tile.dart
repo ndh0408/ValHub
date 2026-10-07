@@ -81,7 +81,7 @@ class CatalogSkinTile extends ConsumerWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 6, 4, 10),
+          padding: const EdgeInsetsDirectional.fromSTEB(10, 6, 4, 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -120,7 +120,7 @@ class CatalogSkinTile extends ConsumerWidget {
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 0, 10, 6),
+                  padding: const EdgeInsetsDirectional.fromSTEB(4, 0, 10, 6),
                   child: NetImage(
                     facts.skin.image,
                     fit: BoxFit.contain,
@@ -142,7 +142,7 @@ class CatalogSkinTile extends ConsumerWidget {
               ),
               const SizedBox(height: 4),
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: SkinPriceText(
                   quote: quote,
                   textAlign: TextAlign.start,

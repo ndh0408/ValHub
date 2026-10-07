@@ -139,7 +139,7 @@ class PlayerLoadoutSheet extends ConsumerWidget {
                 ? context.l10n.liveGameLoadoutFromAgentSelect
                 : context.l10n.liveGameLoadoutFromMatch,
             leading: leading,
-            padding: const EdgeInsets.fromLTRB(20, 0, 12, 10),
+            padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 12, 10),
           ),
           // A failed refresh keeps the data and says so on top.
           if (staleError != null && viewer != null)

@@ -267,8 +267,8 @@ class _Scoreboard extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
           borderColor: outcomeColor.withValues(alpha: 0.55),
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: AlignmentDirectional.topStart,
+            end: AlignmentDirectional.bottomEnd,
             colors: [
               outcomeColor.withValues(alpha: 0.20),
               outcomeColor.withValues(alpha: 0),

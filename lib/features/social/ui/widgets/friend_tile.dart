@@ -106,7 +106,7 @@ class FriendTile extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 68),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 10, 8, 10),
+          padding: const EdgeInsetsDirectional.fromSTEB(14, 10, 8, 10),
           child: Row(
             children: [
               avatar,

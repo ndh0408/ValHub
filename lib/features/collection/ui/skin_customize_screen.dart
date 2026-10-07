@@ -558,7 +558,7 @@ class _LevelTile extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 56),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(14, 6, 4, 6),
+              padding: const EdgeInsetsDirectional.fromSTEB(14, 6, 4, 6),
               child: Row(
                 children: [
                   AnimatedSwitcher(

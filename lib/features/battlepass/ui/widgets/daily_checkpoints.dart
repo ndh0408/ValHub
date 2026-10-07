@@ -212,8 +212,8 @@ class CheckpointPip extends StatelessWidget {
                 if (complete)
                   Icon(Icons.check, size: 16, color: scheme.onPrimary),
                 if (milestone.bonusApplied)
-                  Positioned(
-                    right: -6,
+                  PositionedDirectional(
+                    end: -6,
                     top: -2,
                     child: BpBadge(
                       context.l10n.battlePassBonusBadge,
@@ -361,7 +361,7 @@ class _DailyTicketNotReadyState extends ConsumerState<DailyTicketNotReady> {
             if (canRenew) ...[
               const SizedBox(height: 12),
               Align(
-                alignment: Alignment.centerRight,
+                alignment: AlignmentDirectional.centerEnd,
                 child: OutlinedButton.icon(
                   onPressed: _busy ? null : () => unawaited(_renew()),
                   icon: _busy

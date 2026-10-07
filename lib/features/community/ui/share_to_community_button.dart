@@ -72,7 +72,7 @@ class ShareToCommunityButton extends ConsumerWidget {
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+              padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 12, 12),
               child: Row(
                 children: [
                   Container(

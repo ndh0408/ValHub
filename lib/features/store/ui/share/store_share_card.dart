@@ -73,8 +73,8 @@ class StoreShareCard extends StatelessWidget {
         child: Stack(
           children: [
             // Faint watermark in the bottom-right corner.
-            Positioned(
-              right: -6,
+            PositionedDirectional(
+              end: -6,
               bottom: 34,
               child: Text(
                 context.l10n.storeShareCardWatermark,
@@ -213,7 +213,7 @@ class _Header extends StatelessWidget {
               borderRadius: BorderRadius.circular(ValRadius.pill),
             ),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 5, 12, 5),
+              padding: const EdgeInsetsDirectional.fromSTEB(8, 5, 12, 5),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -273,8 +273,8 @@ class _Logo extends StatelessWidget {
 BoxDecoration _tile(Color tier) => BoxDecoration(
   color: Color.alphaBlend(tier.withValues(alpha: 0.2), _Ink.surface),
   gradient: LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
     colors: [tier.withValues(alpha: 0.22), tier.withValues(alpha: 0)],
   ),
   borderRadius: BorderRadius.circular(14),
@@ -337,7 +337,7 @@ class _DailyRow extends StatelessWidget {
     return Container(
       height: 96,
       decoration: _tile(item.tierColor),
-      padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
+      padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 8, 10),
       child: Row(
         children: [
           Expanded(

@@ -317,7 +317,7 @@ class _FriendsSkeleton extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Padding(
-              padding: EdgeInsets.fromLTRB(4, 4, 0, 10),
+              padding: EdgeInsetsDirectional.fromSTEB(4, 4, 0, 10),
               child: Skeleton(width: 110, height: 12, shimmer: false),
             ),
             DecoratedBox(

@@ -294,8 +294,8 @@ class SkinRow extends ConsumerWidget {
           child: Ink(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
+                begin: AlignmentDirectional.centerStart,
+                end: AlignmentDirectional.centerEnd,
                 colors: [
                   color.withValues(alpha: dark ? 0.24 : 0.14),
                   color.withValues(alpha: 0),
@@ -307,7 +307,7 @@ class SkinRow extends ConsumerWidget {
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 12, 8, 12),
+              padding: const EdgeInsetsDirectional.fromSTEB(10, 12, 8, 12),
               child: Row(
                 children: [
                   SizedBox(

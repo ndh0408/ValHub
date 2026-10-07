@@ -462,8 +462,8 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
     return ValCard(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
       gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
         colors: [
           accent.withValues(
             alpha: theme.brightness == Brightness.dark ? 0.20 : 0.10,
@@ -840,7 +840,7 @@ class _PartyScreenState extends ConsumerState<_PartyAccountScreen> {
       );
     } else {
       content = Padding(
-        padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 12, 14),
         child: Row(
           children: [
             Icon(Icons.qr_code_2_rounded, color: muted),
@@ -1133,7 +1133,7 @@ class _InviteRow extends ConsumerWidget {
         ? null
         : ref.watch(playerNameProvider(from)).value;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 12, 12, 8),
+      padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 12, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1168,7 +1168,7 @@ class _InviteRow extends ConsumerWidget {
             ],
           ),
           Align(
-            alignment: Alignment.centerRight,
+            alignment: AlignmentDirectional.centerEnd,
             child: Wrap(
               spacing: 8,
               children: [
@@ -1205,7 +1205,7 @@ class _RequestRow extends ConsumerWidget {
     final by = request.requestedBy;
     final name = by == null ? null : ref.watch(playerNameProvider(by)).value;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 8, 8),
       child: Row(
         children: [
           Icon(
@@ -1266,7 +1266,7 @@ class _LastMatchOrStatus extends ConsumerWidget {
       padding: EdgeInsets.zero,
       onTap: () => unawaited(context.push(ProfileRoutes.match(ended.matchId))),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 8, 12),
         child: Row(
           children: [
             Icon(
@@ -1391,7 +1391,7 @@ class _PartySkeleton extends StatelessWidget {
           children: [
             const Skeleton(height: 150, radius: ValRadius.card, shimmer: false),
             const Padding(
-              padding: EdgeInsets.fromLTRB(4, 24, 0, 10),
+              padding: EdgeInsetsDirectional.fromSTEB(4, 24, 0, 10),
               child: Skeleton(width: 120, height: 12, shimmer: false),
             ),
             DecoratedBox(
@@ -1399,7 +1399,7 @@ class _PartySkeleton extends StatelessWidget {
               child: Column(children: [member(), member()]),
             ),
             const Padding(
-              padding: EdgeInsets.fromLTRB(4, 24, 0, 10),
+              padding: EdgeInsetsDirectional.fromSTEB(4, 24, 0, 10),
               child: Skeleton(width: 90, height: 12, shimmer: false),
             ),
             const Skeleton(height: 104, radius: ValRadius.card, shimmer: false),

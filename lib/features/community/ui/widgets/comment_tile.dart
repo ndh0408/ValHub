@@ -22,7 +22,7 @@ class CommunityCommentTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 8, 12),
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 8, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

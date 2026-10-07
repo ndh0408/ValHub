@@ -44,8 +44,8 @@ class SkinPriceText extends StatelessWidget {
     return FittedBox(
       fit: BoxFit.scaleDown,
       alignment: textAlign == TextAlign.start
-          ? Alignment.centerLeft
-          : Alignment.centerRight,
+          ? AlignmentDirectional.centerStart
+          : AlignmentDirectional.centerEnd,
       child: CurrencyAmount.vp(
         vp,
         estimate: quote.isEstimate,

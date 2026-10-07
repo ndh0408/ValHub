@@ -226,8 +226,8 @@ class _CardArt extends StatelessWidget {
   static const _placeholder = DecoratedBox(
     decoration: BoxDecoration(
       gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
         colors: [Color(0xFFE8404F), Color(0xFF5C1A26)],
       ),
     ),

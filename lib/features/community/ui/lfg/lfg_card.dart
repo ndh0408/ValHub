@@ -77,12 +77,12 @@ class LfgCard extends ConsumerWidget {
         : '';
 
     final card = ValCard(
-      padding: const EdgeInsets.fromLTRB(16, 14, 8, 16),
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 8, 16),
       borderColor: isMine ? ValColors.red.withValues(alpha: 0.55) : null,
       gradient: isMine
           ? LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
               colors: [
                 ValColors.red.withValues(alpha: 0.14),
                 ValColors.red.withValues(alpha: 0),

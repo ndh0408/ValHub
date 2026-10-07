@@ -90,8 +90,8 @@ class FriendAvatar extends ConsumerWidget {
       child: Stack(
         children: [
           image,
-          Positioned(
-            right: 0,
+          PositionedDirectional(
+            end: 0,
             bottom: 0,
             child: Container(
               width: dot,
@@ -177,7 +177,7 @@ class ConnectionBanner extends StatelessWidget {
           border: Border.all(color: tint.withValues(alpha: 0.25)),
         ),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
+          padding: const EdgeInsetsDirectional.fromSTEB(14, 8, 8, 8),
           child: Row(
             children: [
               if (busy)

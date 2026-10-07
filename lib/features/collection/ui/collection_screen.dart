@@ -453,7 +453,7 @@ class _IdentitySection extends ConsumerWidget {
           color: theme.colorScheme.onSurfaceVariant,
         ),
       ),
-      contentPadding: const EdgeInsets.fromLTRB(14, 4, 12, 4),
+      contentPadding: const EdgeInsetsDirectional.fromSTEB(14, 4, 12, 4),
       value: value,
       onChanged: enabled
           ? (v) {
@@ -641,7 +641,7 @@ class _ValueCard extends ConsumerWidget {
           const SizedBox(height: 6),
           FittedBox(
             fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
+            alignment: AlignmentDirectional.centerStart,
             child: Text(amount, style: ValText.display(34, color: gold)),
           ),
           PriceEstimate(
@@ -703,8 +703,8 @@ class _ValueCard extends ConsumerWidget {
               // Gold-bordered value card with a faint gold wash.
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                  begin: AlignmentDirectional.topStart,
+                  end: AlignmentDirectional.bottomEnd,
                   colors: [
                     gold.withValues(alpha: 0.16),
                     gold.withValues(alpha: 0),

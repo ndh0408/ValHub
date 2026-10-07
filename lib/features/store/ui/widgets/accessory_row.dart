@@ -50,8 +50,8 @@ class AccessoryRow extends ConsumerWidget {
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: AlignmentDirectional.topStart,
+                end: AlignmentDirectional.bottomEnd,
                 colors: [
                   CurrencyColors.kc.withValues(alpha: 0.16),
                   theme.colorScheme.surfaceContainerHigh,

@@ -189,7 +189,7 @@ class _PermissionWarning extends ConsumerWidget {
         color: warning.withValues(alpha: 0.10),
         border: BorderDirectional(start: BorderSide(color: warning, width: 4)),
       ),
-      padding: const EdgeInsets.fromLTRB(12, 12, 8, 4),
+      padding: const EdgeInsetsDirectional.fromSTEB(12, 12, 8, 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

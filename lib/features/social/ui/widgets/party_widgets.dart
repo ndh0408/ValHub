@@ -364,7 +364,7 @@ class PartyMemberTile extends ConsumerWidget {
     final small = theme.textTheme.bodySmall?.copyWith(color: muted);
 
     final row = Padding(
-      padding: const EdgeInsets.fromLTRB(14, 12, 6, 12),
+      padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 6, 12),
       child: Row(
         children: [
           // Green ring = ready (the leader is always ready).
@@ -473,7 +473,7 @@ class PartyMemberTile extends ConsumerWidget {
       background: ColoredBox(
         color: theme.colorScheme.error,
         child: Align(
-          alignment: Alignment.centerRight,
+          alignment: AlignmentDirectional.centerEnd,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -615,8 +615,8 @@ class InviteStrip extends StatelessWidget {
                           name: f.name?.gameName,
                           size: 50,
                         ),
-                        Positioned(
-                          right: -3,
+                        PositionedDirectional(
+                          end: -3,
                           bottom: -3,
                           child: AnimatedContainer(
                             duration: ValMotion.medium,

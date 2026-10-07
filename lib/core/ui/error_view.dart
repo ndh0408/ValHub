@@ -128,7 +128,7 @@ class ErrorView extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
         child: Container(
-          padding: const EdgeInsets.fromLTRB(14, 10, 8, 10),
+          padding: const EdgeInsetsDirectional.fromSTEB(14, 10, 8, 10),
           decoration: BoxDecoration(
             color: error.withValues(alpha: 0.10),
             borderRadius: BorderRadius.circular(ValRadius.small),

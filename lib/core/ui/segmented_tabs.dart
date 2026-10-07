@@ -494,7 +494,7 @@ class GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
         : null,
     child: SizedBox(
       height: height,
-      child: Align(alignment: Alignment.centerLeft, child: child),
+      child: Align(alignment: AlignmentDirectional.centerStart, child: child),
     ),
   );
 

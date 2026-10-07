@@ -51,7 +51,7 @@ class PostCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 4, 0),
+            padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 4, 0),
             child: AuthorRow(
               author: post.author,
               createdAt: post.createdAt,

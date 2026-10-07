@@ -377,7 +377,7 @@ class _DismissibleRow extends StatelessWidget {
       direction: DismissDirection.endToStart,
       onDismissed: (_) => onRemove(),
       background: Container(
-        alignment: Alignment.centerRight,
+        alignment: AlignmentDirectional.centerEnd,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
           color: theme.colorScheme.error,
@@ -449,7 +449,7 @@ class _SummaryStrip extends StatelessWidget {
             children: [
               Expanded(
                 child: Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: CurrencyAmount.vp(

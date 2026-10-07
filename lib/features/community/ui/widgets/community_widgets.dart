@@ -111,8 +111,8 @@ class GlassSegmentedControl<T> extends StatelessWidget {
                         Radius.circular(ValRadius.pill),
                       ),
                       gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                        begin: AlignmentDirectional.topStart,
+                        end: AlignmentDirectional.bottomEnd,
                         colors: [Color(0xFFFF5A67), Color(0xFFE23445)],
                       ),
                       boxShadow: [
@@ -317,8 +317,8 @@ class CommunityAvatar extends ConsumerWidget {
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           colors: [Color(0xFFFF4655), Color(0xFF8A1E2A)],
         ),
       ),

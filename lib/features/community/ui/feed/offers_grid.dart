@@ -81,8 +81,8 @@ class OffersGrid extends ConsumerWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(ValRadius.small + 2),
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           colors: [
             accent.withValues(alpha: 0.16),
             theme.colorScheme.surfaceContainerHigh.withValues(alpha: 0.4),
@@ -199,8 +199,8 @@ class _OfferTile extends StatelessWidget {
             height: 118,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: AlignmentDirectional.topStart,
+                end: AlignmentDirectional.bottomEnd,
                 colors: [
                   tint.withValues(alpha: 0.32),
                   theme.colorScheme.surfaceContainer.withValues(alpha: 0),
@@ -223,9 +223,9 @@ class _OfferTile extends StatelessWidget {
                           ),
                         ),
                         if (nightMarket && percent != null && percent > 0)
-                          Positioned(
+                          PositionedDirectional(
                             top: 0,
-                            right: 0,
+                            end: 0,
                             child: ValBadge(
                               formatDiscountPercent(percent),
                               color: valColorsOf(context).win,

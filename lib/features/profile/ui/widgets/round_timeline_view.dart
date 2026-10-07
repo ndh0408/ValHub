@@ -414,7 +414,7 @@ class _RoundLineState extends ConsumerState<_RoundLine> {
                     setState(() => _expanded = !_expanded);
                   },
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                    padding: const EdgeInsetsDirectional.fromSTEB(10, 8, 8, 8),
                     child: header,
                   ),
                 ),
@@ -654,7 +654,7 @@ class _KillRow extends StatelessWidget {
               width: 36,
               child: FittedBox(
                 fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: Text(
                   time,
                   maxLines: 1,

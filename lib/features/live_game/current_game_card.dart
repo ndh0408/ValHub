@@ -131,7 +131,7 @@ class CurrentGameCard extends ConsumerWidget {
             ),
           ],
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 4, 12),
+            padding: const EdgeInsetsDirectional.fromSTEB(12, 12, 4, 12),
             child: Row(
               children: [
                 _Leading(

@@ -225,7 +225,7 @@ class RewardsSkeleton extends StatelessWidget {
             for (var c = 0; c < 2; c++) ...[
               const SizedBox(height: 24),
               const Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: Skeleton(width: 120, height: 18, shimmer: false),
               ),
               const SizedBox(height: 8),

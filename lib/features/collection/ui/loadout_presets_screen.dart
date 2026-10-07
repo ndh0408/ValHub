@@ -145,7 +145,7 @@ class _PresetsBody extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(ValRadius.card),
                       ),
                       child: const Align(
-                        alignment: Alignment.centerRight,
+                        alignment: AlignmentDirectional.centerEnd,
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           child: Icon(
@@ -433,7 +433,7 @@ class PresetCard extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
+                padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 4, 10),
                 child: Row(
                   children: [
                     ClipRRect(

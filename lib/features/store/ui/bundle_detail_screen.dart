@@ -342,7 +342,7 @@ class _PriceSummary extends StatelessWidget {
             const SizedBox(height: 4),
             FittedBox(
               fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: CurrencyAmount(
                 currencyId: bundle.currencyId,
                 amount: amount,
@@ -443,7 +443,7 @@ class _BundleItemTile extends ConsumerWidget {
             )
           : null,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 10, 8, 10),
+        padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 8, 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

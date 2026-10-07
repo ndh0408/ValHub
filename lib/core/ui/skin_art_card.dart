@@ -157,8 +157,8 @@ class SkinArtCard extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
               colors: [
                 tint.withValues(alpha: dark ? 0.22 : 0.12),
                 surface.withValues(alpha: 0),

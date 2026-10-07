@@ -560,7 +560,12 @@ class _TableRow extends StatelessWidget {
               ? BorderDirectional(start: BorderSide(color: accent, width: 3))
               : null,
         ),
-        padding: EdgeInsets.fromLTRB(highlighted ? 13 : 16, 11, 16, 11),
+        padding: EdgeInsetsDirectional.fromSTEB(
+          highlighted ? 13 : 16,
+          11,
+          16,
+          11,
+        ),
         child: Row(
           children: [
             Expanded(child: Text(left, style: style)),

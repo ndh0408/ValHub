@@ -291,7 +291,7 @@ class _Cell extends StatelessWidget {
     width: width,
     child: FittedBox(
       fit: BoxFit.scaleDown,
-      alignment: Alignment.centerRight,
+      alignment: AlignmentDirectional.centerEnd,
       child: Text(text, maxLines: 1, style: style),
     ),
   );
@@ -357,7 +357,12 @@ class _PlayerRow extends ConsumerWidget {
                   ),
                 )
               : null,
-          padding: EdgeInsets.fromLTRB(highlighted ? 9 : 12, 6, 12, 6),
+          padding: EdgeInsetsDirectional.fromSTEB(
+            highlighted ? 9 : 12,
+            6,
+            12,
+            6,
+          ),
           child: Row(
             children: [
               if (place != null)
@@ -390,8 +395,8 @@ class _PlayerRow extends ConsumerWidget {
                       ),
                     ),
                     if (player.competitiveTier > 2)
-                      Positioned(
-                        right: 0,
+                      PositionedDirectional(
+                        end: 0,
                         bottom: 0,
                         child: RankBadge(
                           tier: player.competitiveTier,

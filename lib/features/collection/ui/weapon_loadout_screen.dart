@@ -252,7 +252,7 @@ class WeaponTile extends ConsumerWidget {
                   : Border(bottom: BorderSide(color: color, width: 3)),
             ),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 10, 8),
+              padding: const EdgeInsetsDirectional.fromSTEB(12, 8, 10, 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

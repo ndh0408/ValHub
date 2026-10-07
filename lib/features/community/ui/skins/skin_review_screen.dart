@@ -356,8 +356,8 @@ class _Hero extends StatelessWidget {
                         : NetImage(media.render ?? skin?.image),
                   ),
                   if (video != null)
-                    Positioned(
-                      right: 10,
+                    PositionedDirectional(
+                      end: 10,
                       bottom: 10,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
@@ -784,7 +784,7 @@ class ReviewTile extends ConsumerWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
     final accent = review.liked ? ValColors.red : muted;
     return ValCard(
-      padding: const EdgeInsets.fromLTRB(14, 12, 4, 6),
+      padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 4, 6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -550,7 +550,7 @@ class _Bubble extends StatelessWidget {
     // indent of the same width before the others.
     final Widget row;
     if (mine) {
-      row = Align(alignment: Alignment.centerRight, child: bubble);
+      row = Align(alignment: AlignmentDirectional.centerEnd, child: bubble);
     } else {
       row = Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -567,7 +567,10 @@ class _Bubble extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: Align(alignment: Alignment.centerLeft, child: bubble),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: bubble,
+            ),
           ),
         ],
       );
@@ -584,7 +587,7 @@ class _Bubble extends StatelessWidget {
           row,
           if (item.lastInGroup || failed)
             Padding(
-              padding: EdgeInsets.fromLTRB(
+              padding: EdgeInsetsDirectional.fromSTEB(
                 mine ? 0 : _avatar + 12,
                 3,
                 mine ? 4 : 0,
@@ -658,7 +661,7 @@ class _Composer extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+          padding: const EdgeInsetsDirectional.fromSTEB(12, 8, 8, 8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -739,10 +742,15 @@ class _ChatSkeleton extends StatelessWidget {
           for (var i = 0; i < 6; i++)
             Align(
               alignment: i.isEven
-                  ? Alignment.centerLeft
-                  : Alignment.centerRight,
+                  ? AlignmentDirectional.centerStart
+                  : AlignmentDirectional.centerEnd,
               child: Padding(
-                padding: EdgeInsets.fromLTRB(i.isEven ? 36 : 0, 6, 0, 6),
+                padding: EdgeInsetsDirectional.fromSTEB(
+                  i.isEven ? 36 : 0,
+                  6,
+                  0,
+                  6,
+                ),
                 child: Skeleton(
                   width: 120.0 + (i * 37) % 110,
                   height: 38,

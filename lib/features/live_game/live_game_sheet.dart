@@ -64,7 +64,7 @@ class LiveGameSheet extends ConsumerWidget {
           children: [
             SheetHeader(
               title: context.l10n.liveGameSheetTitle,
-              padding: EdgeInsets.fromLTRB(20, 0, 12, 10),
+              padding: EdgeInsetsDirectional.fromSTEB(20, 0, 12, 10),
             ),
             Expanded(
               child: EmptyView(

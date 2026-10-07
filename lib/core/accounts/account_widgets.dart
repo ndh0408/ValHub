@@ -110,7 +110,12 @@ class AccountChip extends ConsumerWidget {
                 shape: const StadiumBorder(),
               ),
               child: Padding(
-                padding: EdgeInsets.fromLTRB(4, 4, showName ? 12 : 4, 4),
+                padding: EdgeInsetsDirectional.fromSTEB(
+                  4,
+                  4,
+                  showName ? 12 : 4,
+                  4,
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -625,8 +630,8 @@ class _StatusDot extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         child,
-        Positioned(
-          right: -1,
+        PositionedDirectional(
+          end: -1,
           bottom: -1,
           child: Container(
             width: 14,

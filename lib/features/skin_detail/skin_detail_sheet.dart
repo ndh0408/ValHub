@@ -558,7 +558,12 @@ class _Media extends StatelessWidget {
                           ),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                            8,
+                            6,
+                            12,
+                            6,
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

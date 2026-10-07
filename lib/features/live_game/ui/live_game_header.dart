@@ -71,7 +71,7 @@ class LiveSheetHeader extends ConsumerWidget {
               const SizedBox(width: 8),
             ],
           ],
-          padding: const EdgeInsets.fromLTRB(20, 0, 12, 10),
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 12, 10),
         ),
         if (status != null)
           Padding(
@@ -146,8 +146,8 @@ class LiveMapBanner extends StatelessWidget {
               const DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                    begin: AlignmentDirectional.topStart,
+                    end: AlignmentDirectional.bottomEnd,
                     colors: [ValColors.liveTeal, ValColors.nearBlack],
                   ),
                 ),
@@ -202,7 +202,7 @@ class LiveMapBanner extends StatelessWidget {
                     children: [
                       FittedBox(
                         fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
+                        alignment: AlignmentDirectional.centerStart,
                         child: Text(
                           name,
                           maxLines: 1,

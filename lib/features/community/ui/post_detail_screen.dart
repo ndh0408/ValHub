@@ -262,7 +262,7 @@ class _PostAccountScreenState extends ConsumerState<_PostAccountScreen> {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+          padding: const EdgeInsetsDirectional.fromSTEB(12, 8, 8, 8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [

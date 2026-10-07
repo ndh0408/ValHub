@@ -242,9 +242,9 @@ class _ComposerAccountScreenState
                 payload: draft.payload!,
                 interactive: false,
               ),
-              Positioned(
+              PositionedDirectional(
                 top: 4,
-                right: 4,
+                end: 4,
                 child: _RemoveButton(
                   tooltip: context.l10n.communityRemoveAttachment,
                   onTap: () => setState(() => _draft = null),
@@ -288,7 +288,7 @@ class _ComposerAccountScreenState
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 16, 4),
+          padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 16, 4),
           child: Row(
             children: [
               TextButton.icon(
@@ -446,9 +446,9 @@ class _Thumb extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
+          PositionedDirectional(
             top: 4,
-            right: 4,
+            end: 4,
             child: _RemoveButton(
               tooltip: context.l10n.communityRemovePhoto,
               onTap: onRemove,

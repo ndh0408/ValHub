@@ -53,8 +53,8 @@ class _IconPainter extends CustomPainter {
       rect,
       Paint()
         ..shader = const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           stops: [0, 0.35, 1],
           colors: [_navy, _sheen, _navy],
         ).createShader(rect),

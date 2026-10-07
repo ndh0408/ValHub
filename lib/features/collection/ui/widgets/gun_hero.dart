@@ -86,9 +86,9 @@ class GunHero extends StatelessWidget {
         ),
         Padding(padding: EdgeInsets.fromLTRB(32, top + 4, 32, 30), child: art),
         if (bottomStart != null)
-          Positioned(left: 16, bottom: 10, child: bottomStart!),
+          PositionedDirectional(start: 16, bottom: 10, child: bottomStart!),
         if (bottomEnd != null)
-          Positioned(right: 12, bottom: 6, child: bottomEnd!),
+          PositionedDirectional(end: 12, bottom: 6, child: bottomEnd!),
       ],
     );
   }

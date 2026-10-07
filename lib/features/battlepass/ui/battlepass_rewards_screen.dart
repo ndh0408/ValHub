@@ -370,8 +370,8 @@ class _SummaryCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         gradient: premium == true
             ? LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: AlignmentDirectional.topStart,
+                end: AlignmentDirectional.bottomEnd,
                 colors: [
                   gold.withValues(alpha: 0.16),
                   gold.withValues(alpha: 0),

@@ -223,8 +223,8 @@ class _Summary extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       borderColor: color.withValues(alpha: 0.35),
       gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
         colors: [color.withValues(alpha: 0.16), color.withValues(alpha: 0.02)],
       ),
       child: Row(

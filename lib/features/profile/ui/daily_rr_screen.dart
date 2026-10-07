@@ -333,7 +333,7 @@ class _DayCard extends ConsumerWidget {
           data: theme.copyWith(dividerColor: Colors.transparent),
           child: ExpansionTile(
             initiallyExpanded: initiallyExpanded,
-            tilePadding: const EdgeInsets.fromLTRB(12, 6, 10, 6),
+            tilePadding: const EdgeInsetsDirectional.fromSTEB(12, 6, 10, 6),
             childrenPadding: const EdgeInsets.only(bottom: 8),
             shape: const Border(),
             collapsedShape: const Border(),

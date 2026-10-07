@@ -22,7 +22,7 @@ class EconomyCard extends StatelessWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
     return ValCard(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 8, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

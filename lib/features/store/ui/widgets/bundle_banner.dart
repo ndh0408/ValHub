@@ -75,9 +75,9 @@ class BundleBanner extends ConsumerWidget {
                   ),
                 ),
                 if (bundle.discountPercent > 0)
-                  Positioned(
+                  PositionedDirectional(
                     top: 10,
-                    left: 10,
+                    start: 10,
                     child: StoreBadge(
                       formatDiscountPercent(bundle.discountPercent),
                       color: ValColors.red,

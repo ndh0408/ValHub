@@ -170,8 +170,8 @@ class RewardTile extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(8, 26, 8, 8),
                       child: _RewardArt(reward: reward, dimmed: !unlocked),
                     ),
-                    Positioned(
-                      left: 6,
+                    PositionedDirectional(
+                      start: 6,
                       top: 6,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -192,14 +192,14 @@ class RewardTile extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Positioned(
-                      right: 5,
+                    PositionedDirectional(
+                      end: 5,
                       top: 5,
                       child: _StateIcon(state: state),
                     ),
                     if (tier.isFree)
-                      Positioned(
-                        left: 6,
+                      PositionedDirectional(
+                        start: 6,
                         bottom: 6,
                         child: BpBadge(
                           context.l10n.battlePassFree,
@@ -208,8 +208,8 @@ class RewardTile extends StatelessWidget {
                         ),
                       )
                     else if (isNext)
-                      Positioned(
-                        left: 6,
+                      PositionedDirectional(
+                        start: 6,
                         bottom: 6,
                         child: BpBadge(
                           context.l10n.battlePassNextReward,

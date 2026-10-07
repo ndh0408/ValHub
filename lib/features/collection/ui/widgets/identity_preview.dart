@@ -75,8 +75,8 @@ class IdentityPreview extends StatelessWidget {
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
+                          begin: AlignmentDirectional.centerStart,
+                          end: AlignmentDirectional.centerEnd,
                           stops: [0, 0.55, 0.9],
                           colors: [
                             Color(0xB3000000),

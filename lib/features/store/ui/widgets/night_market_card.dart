@@ -76,7 +76,7 @@ class NightMarketCard extends ConsumerWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 8, 8, 10),
+        padding: const EdgeInsetsDirectional.fromSTEB(10, 8, 8, 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

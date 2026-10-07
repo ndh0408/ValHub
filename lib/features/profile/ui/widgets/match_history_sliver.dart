@@ -436,6 +436,7 @@ class _MapTile extends StatelessWidget {
                       child: NetImage(
                         img,
                         fit: BoxFit.cover,
+                        // Where the map art is focused (not text).
                         alignment: Alignment.centerRight,
                         showSkeleton: false,
                         opacity: 0.85,

@@ -273,7 +273,7 @@ class StoreActionPill extends StatelessWidget {
                 onTap();
               },
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
+                padding: const EdgeInsetsDirectional.fromSTEB(10, 6, 12, 6),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -564,8 +564,8 @@ class TierCard extends StatelessWidget {
           child: Ink(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: AlignmentDirectional.topStart,
+                end: AlignmentDirectional.bottomEnd,
                 colors: [
                   solid.withValues(alpha: dark ? 0.16 : 0.08),
                   solid.withValues(alpha: 0),

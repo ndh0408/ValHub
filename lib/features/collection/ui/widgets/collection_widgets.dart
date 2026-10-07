@@ -498,7 +498,7 @@ class HubRow extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 54),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
+          padding: const EdgeInsetsDirectional.fromSTEB(14, 10, 10, 10),
           child: Row(
             children: [
               leading ??
@@ -711,9 +711,9 @@ class ArtTile extends StatelessWidget {
                                   ),
                           ),
                           if (selected)
-                            const Positioned(
+                            const PositionedDirectional(
                               top: 6,
-                              right: 6,
+                              end: 6,
                               child: _CheckDot(),
                             ),
                         ],

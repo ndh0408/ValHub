@@ -78,8 +78,8 @@ class WishlistRow extends ConsumerWidget {
                     ),
                   ),
                   if (owned)
-                    Positioned(
-                      left: 0,
+                    PositionedDirectional(
+                      start: 0,
                       top: 0,
                       child: SmallBadge(
                         context.l10n.wishlistOwned,
@@ -163,7 +163,7 @@ class _PriceColumn extends StatelessWidget {
         children: [
           FittedBox(
             fit: BoxFit.scaleDown,
-            alignment: Alignment.centerRight,
+            alignment: AlignmentDirectional.centerEnd,
             child: CurrencyAmount.vp(
               price,
               iconSize: 14,
@@ -176,7 +176,7 @@ class _PriceColumn extends StatelessWidget {
             const SizedBox(height: 2),
             FittedBox(
               fit: BoxFit.scaleDown,
-              alignment: Alignment.centerRight,
+              alignment: AlignmentDirectional.centerEnd,
               child: CurrencyAmount.vp(
                 base,
                 iconSize: 12,
@@ -230,7 +230,7 @@ class _HitBar extends ConsumerWidget {
           borderRadius: BorderRadius.circular(ValRadius.small),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 6, 10),
+            padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 6, 10),
             child: Row(
               children: [
                 Icon(Icons.local_fire_department, size: 18, color: accent),

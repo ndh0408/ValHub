@@ -113,7 +113,7 @@ class WeeklyMissionTile extends StatelessWidget {
       fontFeatures: const [FontFeature.tabularFigures()],
     );
     return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 12, 16, 14),
+      padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 16, 14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -224,8 +224,8 @@ class MissionsDoneCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(ValRadius.card),
         border: Border.all(color: gold.withValues(alpha: 0.45)),
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           colors: [
             gold.withValues(alpha: 0.22),
             theme.colorScheme.surfaceContainer,

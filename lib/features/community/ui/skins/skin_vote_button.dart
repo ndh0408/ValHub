@@ -90,7 +90,7 @@ class SkinVoteButton extends ConsumerWidget {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.fromLTRB(4, 2, 12, 2),
+            padding: const EdgeInsetsDirectional.fromSTEB(4, 2, 12, 2),
             decoration: BoxDecoration(
               color: ValColors.red.withValues(alpha: vote.voted ? 0.14 : 0.06),
               borderRadius: BorderRadius.circular(ValRadius.pill),

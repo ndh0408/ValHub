@@ -357,7 +357,7 @@ class _MatchHero extends ConsumerWidget {
                       flex: 2,
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
-                        alignment: Alignment.bottomRight,
+                        alignment: AlignmentDirectional.bottomEnd,
                         child: Text(
                           score,
                           maxLines: 1,
@@ -430,7 +430,7 @@ class _HeroSkeleton extends StatelessWidget {
     return ColoredBox(
       color: ValColors.surfaceHigh,
       child: Align(
-        alignment: Alignment.bottomLeft,
+        alignment: AlignmentDirectional.bottomStart,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(

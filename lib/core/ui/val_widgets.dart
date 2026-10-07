@@ -189,7 +189,12 @@ class GroupedRow extends StatelessWidget {
     final tap = onTap;
     final strip = accentStrip;
     Widget row = Padding(
-      padding: EdgeInsets.fromLTRB(16, dense ? 10 : 14, 12, dense ? 10 : 14),
+      padding: EdgeInsetsDirectional.fromSTEB(
+        16,
+        dense ? 10 : 14,
+        12,
+        dense ? 10 : 14,
+      ),
       child: Row(
         children: [
           if (leading != null) ...[
@@ -540,8 +545,8 @@ class CurrencyPill extends StatelessWidget {
 BoxDecoration redAvatarGradient() => const BoxDecoration(
   shape: BoxShape.circle,
   gradient: LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
     colors: [Color(0xFFFF4655), Color(0xFF8A1E2A)],
   ),
 );

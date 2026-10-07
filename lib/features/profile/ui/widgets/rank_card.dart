@@ -362,7 +362,7 @@ class _RankUpHint extends ConsumerWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 12, 12),
           child: Row(
             children: [
               Icon(

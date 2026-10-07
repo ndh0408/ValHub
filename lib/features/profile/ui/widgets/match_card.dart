@@ -219,8 +219,8 @@ class _MapArt extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            left: 10,
+          PositionedDirectional(
+            start: 10,
             top: 10,
             child: SizedBox(
               width: 44,
@@ -261,8 +261,8 @@ class _MapArt extends StatelessWidget {
             ),
           ),
           if (rr != null)
-            Positioned(
-              right: 10,
+            PositionedDirectional(
+              end: 10,
               top: 10,
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -438,7 +438,7 @@ class _FallbackBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 8, 4, 8),
+      padding: const EdgeInsetsDirectional.fromSTEB(14, 8, 4, 8),
       child: Row(
         children: [
           Expanded(

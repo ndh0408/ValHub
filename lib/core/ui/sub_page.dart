@@ -475,7 +475,7 @@ class SheetHeader extends StatelessWidget {
     this.leading,
     this.actions = const [],
     this.showClose = true,
-    this.padding = const EdgeInsets.fromLTRB(20, 0, 12, 12),
+    this.padding = const EdgeInsetsDirectional.fromSTEB(20, 0, 12, 12),
   });
 
   final String title;
