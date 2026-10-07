@@ -1,9 +1,11 @@
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:valvn/core/ui/val_widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/theme/app_theme.dart';
-import 'package:valvn/core/ui/segmented_tabs.dart';
 import 'package:valvn/features/profile/profile_strings.dart';
 import 'package:valvn/features/profile/providers/profile_providers.dart';
 import 'package:valvn/features/profile/ui/match_detail_screen.dart';
@@ -11,6 +13,16 @@ import 'package:valvn/features/profile/ui/profile_screen.dart';
 import 'package:valvn/features/profile/ui/widgets/match_card.dart';
 
 import '../profile_test_env.dart';
+
+/// Opens "Chế độ: …" and picks [name] in the sheet.
+Future<void> _pickMode(WidgetTester tester, String name) async {
+  final chip = find.text(tl.profilePerformanceQueueChip(tl.profileFilterAll));
+  await tester.ensureVisible(chip);
+  await tester.tap(chip);
+  await settle(tester);
+  await tester.tap(find.widgetWithText(GroupedRow, name).last);
+  await settle(tester);
+}
 
 void main() {
   setUpAll(registerProfileFallbacks);
@@ -41,13 +53,7 @@ void main() {
     await pumpProfile(tester, env, screen, height: 2600);
     await settle(tester);
 
-    final chip = find.descendant(
-      of: find.byType(SegmentedTabs<String?>),
-      matching: find.text('Sinh Tử'),
-    );
-    await tester.ensureVisible(chip);
-    await tester.tap(chip);
-    await settle(tester);
+    await _pickMode(tester, 'Sinh Tử');
     expect(
       env.prefs.getString(PrefKeys.ui(MatchFilterNotifier.modeKey)),
       'deathmatch',

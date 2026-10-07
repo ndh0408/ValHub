@@ -15,7 +15,6 @@ import '../../../../core/ui/error_view.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/section_header.dart';
 import '../../../../core/ui/filter_bar.dart';
-import '../../../../core/ui/segmented_tabs.dart';
 import '../../../../core/ui/sub_page.dart';
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/clock.dart';
@@ -162,24 +161,75 @@ class _Filters extends ConsumerWidget {
     final mapName = map?.displayName ?? context.l10n.profileFilterAll;
     final accent = theme.colorScheme.primary;
     final thumb = map?.listViewIcon;
+    final queue = filter.queue;
+    // The modes recently played (unfiltered page) decide which event modes
+    // the sheet offers; the chip replaces a 15-pill bar.
+    final played = [
+      for (final e
+          in ref
+                  .watch(matchHistoryProvider((puuid: puuid, queue: null)))
+                  .value
+                  ?.items ??
+              const <MatchHistoryEntry>[])
+        e.queueId,
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SegmentedTabs<String?>(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          tabs: [
-            SegmentedTab(value: null, label: context.l10n.profileFilterAll),
-            for (final q in kProfileQueueFilters)
-              SegmentedTab(value: q, label: db.queueShortName(context.l10n, q)),
-          ],
-          selected: filter.queue,
-          onChanged: notifier.setQueue,
-        ),
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: FilterChipBar(
-            onClear: filter.hasMap ? () => notifier.setMap(null) : null,
+            onClear: filter.hasMap || queue != null
+                ? () {
+                    notifier
+                      ..setQueue(null)
+                      ..setMap(null);
+                  }
+                : null,
             children: [
+              ActionChip(
+                avatar: Icon(
+                  Icons.sports_esports_outlined,
+                  size: 18,
+                  color: queue == null ? null : accent,
+                ),
+                shape: const StadiumBorder(),
+                visualDensity: VisualDensity.compact,
+                backgroundColor: queue == null
+                    ? theme.colorScheme.surfaceContainer
+                    : accent.withValues(alpha: 0.14),
+                side: BorderSide(
+                  color: queue == null
+                      ? valColorsOf(context).hairline
+                      : accent.withValues(alpha: 0.7),
+                ),
+                label: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        context.l10n.profilePerformanceQueueChip(
+                          queue == null
+                              ? context.l10n.profileFilterAll
+                              : db.queueName(context.l10n, queue),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const Icon(Icons.arrow_drop_down, size: 18),
+                  ],
+                ),
+                onPressed: () => unawaited(
+                  _pickQueue(
+                    context,
+                    db,
+                    filterQueuesFor(played),
+                    queue,
+                    notifier.setQueue,
+                  ),
+                ),
+              ),
               ActionChip(
                 avatar: thumb == null
                     ? Icon(
@@ -230,6 +280,53 @@ class _Filters extends ConsumerWidget {
       ],
     );
   }
+}
+
+/// "Lọc theo chế độ": every offered mode in one sheet (like Hiệu suất).
+Future<void> _pickQueue(
+  BuildContext context,
+  ContentDb db,
+  List<String> queues,
+  String? selected,
+  void Function(String?) onPicked,
+) async {
+  final l10n = context.l10n;
+  final picked = await showValSheet<({String? queue})>(
+    context,
+    title: l10n.profilePerformanceChooseQueue,
+    scrollable: true,
+    initialSize: 0.6,
+    maxSize: 0.92,
+    builder: (context, controller) => ListView(
+      controller: controller,
+      padding: EdgeInsets.fromLTRB(
+        0,
+        0,
+        0,
+        16 + MediaQuery.paddingOf(context).bottom,
+      ),
+      children: [
+        GroupedSection(
+          children: [
+            for (final q in <String?>[null, ...queues])
+              GroupedRow(
+                title: q == null
+                    ? context.l10n.profileFilterAll
+                    : db.queueName(context.l10n, q),
+                trailing: q == selected
+                    ? Icon(
+                        Icons.check_circle,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : null,
+                onTap: () => Navigator.of(context).pop((queue: q)),
+              ),
+          ],
+        ),
+      ],
+    ),
+  );
+  if (picked != null) onPicked(picked.queue);
 }
 
 DateTime? _dayOf(DateTime? t) {

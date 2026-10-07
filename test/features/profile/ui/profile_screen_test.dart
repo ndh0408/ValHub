@@ -1,6 +1,9 @@
+import '../../../helpers/l10n.dart';
+
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:valvn/core/ui/val_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
@@ -8,7 +11,6 @@ import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/util/json.dart';
 import 'package:valvn/core/ui/error_view.dart';
-import 'package:valvn/core/ui/segmented_tabs.dart';
 import 'package:valvn/features/live_game/current_game_card.dart';
 import 'package:valvn/features/profile/profile_strings.dart';
 import 'package:valvn/features/profile/ui/profile_screen.dart';
@@ -17,6 +19,16 @@ import 'package:valvn/features/profile/ui/widgets/profile_widgets.dart';
 import 'package:valvn/features/profile/ui/widgets/rr_trend_chart.dart';
 
 import '../profile_test_env.dart';
+
+/// Opens "Chế độ: …" and picks [name] in the sheet.
+Future<void> _pickMode(WidgetTester tester, String name) async {
+  final chip = find.text(tl.profilePerformanceQueueChip(tl.profileFilterAll));
+  await tester.ensureVisible(chip);
+  await tester.tap(chip);
+  await settle(tester);
+  await tester.tap(find.widgetWithText(GroupedRow, name).last);
+  await settle(tester);
+}
 
 void main() {
   setUpAll(registerProfileFallbacks);
@@ -86,7 +98,10 @@ void main() {
 
     // Match history: filter chips and three resolved cards.
     expect(find.text(ProfileStrings.matchHistory), findsOneWidget);
-    expect(find.byType(SegmentedTabs<String?>), findsOneWidget);
+    expect(
+      find.text(tl.profilePerformanceQueueChip(tl.profileFilterAll)),
+      findsOneWidget,
+    );
     expect(find.byType(MatchCard), findsNWidgets(3));
     expect(find.text(ProfileStrings.kda(3, 1, 0)), findsOneWidget);
     expect(find.text(ProfileStrings.score(2, 1)), findsWidgets);
@@ -100,14 +115,7 @@ void main() {
     await pumpProfile(tester, env, screen, height: 2600);
     await settle(tester);
 
-    // The mode chip (match cards also show their mode).
-    final chip = find.descendant(
-      of: find.byType(SegmentedTabs<String?>),
-      matching: find.text('Sinh Tử'),
-    );
-    await tester.ensureVisible(chip);
-    await tester.tap(chip);
-    await settle(tester);
+    await _pickMode(tester, 'Sinh Tử');
 
     verify(
       () => env.api.matchHistory(

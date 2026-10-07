@@ -2,8 +2,9 @@ import 'package:flutter/foundation.dart';
 
 import '../../../core/content/content_db.dart';
 
-/// Queue ids offered as match-history filter chips after "Tất cả" (VF §6.5,
-/// §8.9). They are PC ids; console accounts get `console_*` automatically.
+/// Queue ids the match-history filter knows (VF §6.5, §8.9; a remembered
+/// filter must be one of them). They are PC ids; console accounts get
+/// `console_*` automatically.
 const kProfileQueueFilters = <String>[
   'competitive',
   'unrated',
@@ -20,6 +21,29 @@ const kProfileQueueFilters = <String>[
   'dodgeball',
   'fortcollins',
 ];
+
+/// The modes always offered by the filter sheet; event modes
+/// ([kProfileQueueFilters]) are offered only once the history has one.
+const kProfileCoreQueues = <String>[
+  'competitive',
+  'unrated',
+  'swiftplay',
+  'spikerush',
+  'deathmatch',
+  'hurm',
+  'premier',
+];
+
+/// The modes of the filter sheet: [kProfileCoreQueues], then the other
+/// known modes that appear in [played] (the player's recent history).
+List<String> filterQueuesFor(Iterable<String> played) {
+  final seen = {for (final q in played) q.trim().toLowerCase()};
+  return [
+    ...kProfileCoreQueues,
+    for (final q in kProfileQueueFilters)
+      if (!kProfileCoreQueues.contains(q) && seen.contains(q)) q,
+  ];
+}
 
 /// Selected queue and map of a match-history list.
 @immutable
