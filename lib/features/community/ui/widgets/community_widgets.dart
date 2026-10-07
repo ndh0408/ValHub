@@ -552,10 +552,17 @@ class HeartButton extends StatefulWidget {
     this.semanticsOn,
     this.semanticsOff,
     this.dense = false,
+    this.icon = Icons.favorite_border,
+    this.activeIcon = Icons.favorite_rounded,
   });
 
   final bool active;
   final VoidCallback? onTap;
+
+  /// The glyph; a heart unless the screen already uses one for something
+  /// else (the skin sheet's wishlist ♥ next to the vote).
+  final IconData icon;
+  final IconData activeIcon;
   final int? count;
   final double size;
   final String? semanticsOn;
@@ -629,7 +636,7 @@ class _HeartButtonState extends State<HeartButton>
           duration: const Duration(milliseconds: 160),
           transitionBuilder: (c, a) => ScaleTransition(scale: a, child: c),
           child: Icon(
-            widget.active ? Icons.favorite_rounded : Icons.favorite_border,
+            widget.active ? widget.activeIcon : widget.icon,
             key: ValueKey(widget.active),
             size: widget.size,
             color: color,

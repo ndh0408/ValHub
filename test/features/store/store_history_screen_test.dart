@@ -73,6 +73,24 @@ void main() {
     await unmount(tester);
   });
 
+  testWidgets('the clean-up sits on this page and asks first', (tester) async {
+    await pump(
+      tester,
+      StoreHistory(
+        days: [
+          _day(26, [Fx.aresPrismL1, Fx.magepunkL1]),
+        ],
+      ),
+    );
+    expect(find.byTooltip(tl.skinDetailHistoryDelete), findsOneWidget);
+    await tester.tap(find.byTooltip(tl.skinDetailHistoryDelete));
+    await settle(tester);
+    expect(find.text(tl.skinDetailHistoryDeleteBody), findsOneWidget);
+    await tester.tap(find.text(tl.commonCancel));
+    await settle(tester);
+    await unmount(tester);
+  });
+
   testWidgets('nothing recorded yet explains where the history comes from', (
     tester,
   ) async {

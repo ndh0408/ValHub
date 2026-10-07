@@ -65,6 +65,14 @@ class NightMarketCard extends ConsumerWidget {
           context,
           skinOrLevelUuid: offer.skinLevelUuid,
           mode: SkinDetailMode.store,
+          // The sheet shows the Night Market price, not the catalogue one.
+          offer: discounted == null || base == null
+              ? null
+              : SkinOfferPrice(
+                  vp: discounted,
+                  baseVp: base,
+                  percent: offer.discountPercent,
+                ),
         ),
       ),
       child: Padding(

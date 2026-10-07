@@ -5009,6 +5009,36 @@ class AppLocalizationsZh extends AppLocalizations {
   String get skinDetailVideoError => '无法播放视频。请检查网络后重试。';
 
   @override
+  String skinDetailSeenDaily(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '在你的商店出现 $nString 次',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skinDetailSeenNight(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '夜市 $nString 次',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get socialPresenceInMatch => '对局中';
 
   @override
@@ -11517,6 +11547,36 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get skinDetailVideoError => '無法播放影片。請檢查網路後再試一次。';
+
+  @override
+  String skinDetailSeenDaily(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '在你的商店出現 $nString 次',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skinDetailSeenNight(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '夜市 $nString 次',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get socialPresenceInMatch => '對戰中';

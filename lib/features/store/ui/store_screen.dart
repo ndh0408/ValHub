@@ -27,6 +27,9 @@ import 'widgets/store_skeletons.dart';
 import 'widgets/wallet_pill.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
+
+import '../store_routes.dart';
 
 /// Store segments (VF §6.2). The Night Market segment appears only while
 /// `BonusStore` exists.
@@ -185,7 +188,14 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
     return TabPageScaffold(
       title: context.l10n.storeTitle,
       showAccountChip: false,
-      actions: [AccountChip(showName: roomy)],
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.favorite_border),
+          tooltip: context.l10n.wishlistTitle,
+          onPressed: () => unawaited(context.push(StoreRoutes.wishlist)),
+        ),
+        AccountChip(showName: roomy),
+      ],
       onRefresh: () => _refresh(puuid),
       slivers: [
         SliverToBoxAdapter(child: WalletPill(puuid: puuid)),

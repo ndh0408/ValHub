@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "アップグレード",
   "skinDetailVariants": "バリエーション",
   "skinDetailVideoError": "動画を再生できません。ネットワークを確認してもう一度お試しください。",
+  "skinDetailSeenDaily": "{n, plural, other{あなたのストアに{n}回登場}}",
+  "skinDetailSeenNight": "{n, plural, other{ナイトマーケット{n}回}}",
   "socialPresenceInMatch": "試合中",
   "socialPresenceAgentSelect": "エージェント選択中",
   "socialPresenceQueue": "マッチング中",

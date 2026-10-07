@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "Улучшения",
   "skinDetailVariants": "Варианты",
   "skinDetailVideoError": "Не удалось воспроизвести видео. Проверьте подключение и повторите попытку.",
+  "skinDetailSeenDaily": "{n, plural, one{В вашем магазине {n} раз} few{В вашем магазине {n} раза} many{В вашем магазине {n} раз} other{В вашем магазине {n} раза}}",
+  "skinDetailSeenNight": "{n, plural, one{Ночной рынок {n} раз} few{Ночной рынок {n} раза} many{Ночной рынок {n} раз} other{Ночной рынок {n} раза}}",
   "socialPresenceInMatch": "В матче",
   "socialPresenceAgentSelect": "Выбирает агента",
   "socialPresenceQueue": "В очереди",

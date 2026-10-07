@@ -5078,6 +5078,36 @@ class AppLocalizationsJa extends AppLocalizations {
   String get skinDetailVideoError => '動画を再生できません。ネットワークを確認してもう一度お試しください。';
 
   @override
+  String skinDetailSeenDaily(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'あなたのストアに$nString回登場',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skinDetailSeenNight(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'ナイトマーケット$nString回',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get socialPresenceInMatch => '試合中';
 
   @override

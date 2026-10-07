@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "الترقيات",
   "skinDetailVariants": "التنويعات",
   "skinDetailVideoError": "تعذّر تشغيل الفيديو. يُرجى التحقق من الاتصال والمحاولة مجددًا.",
+  "skinDetailSeenDaily": "{n, plural, zero{ظهر في متجرك {n} مرة} one{ظهر في متجرك {n} مرة} two{ظهر في متجرك {n} مرة} few{ظهر في متجرك {n} مرات} many{ظهر في متجرك {n} مرة} other{ظهر في متجرك {n} مرة}}",
+  "skinDetailSeenNight": "{n, plural, zero{السوق الليلي {n} مرة} one{السوق الليلي {n} مرة} two{السوق الليلي {n} مرة} few{السوق الليلي {n} مرات} many{السوق الليلي {n} مرة} other{السوق الليلي {n} مرة}}",
   "socialPresenceInMatch": "في مباراة",
   "socialPresenceAgentSelect": "في اختيار العميل",
   "socialPresenceQueue": "في قائمة الانتظار",

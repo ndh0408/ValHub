@@ -1,3 +1,5 @@
+import '../../helpers/l10n.dart';
+
 import 'package:valvn/core/l10n/l10n.dart';
 
 import 'dart:async';
@@ -8,8 +10,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/accounts/account.dart';
 import 'package:valvn/core/accounts/account_providers.dart';
 import 'package:valvn/core/domain/economy/store_history.dart';
-import 'package:valvn/core/l10n/common_strings.dart';
-import 'package:valvn/features/skin_detail/skin_detail_strings.dart';
 import 'package:valvn/features/skin_detail/store_history_line.dart';
 
 import '../../core/domain/economy/economy_fixtures.dart';
@@ -38,65 +38,69 @@ class RecordingHistory extends StoreHistoryStore {
 }
 
 void main() {
-  testWidgets(
-    'only stored observations appear; deletion is confirmed and account-scoped',
-    (tester) async {
-      final skin = economyContent().skinByAnyUuid(Fx.reaverVandal)!;
-      final now = DateTime.utc(2026, 9, 28);
-      final store = RecordingHistory(
-        StoreHistory(
-          days: [
-            StoreHistoryDay(
-              key: 'utc:2026-09-28',
-              firstSeen: now,
-              lastSeen: now,
-              daily: [HistoryDailyOffer(skinLevelUuid: skin.levels.first.uuid)],
-            ),
-          ],
-        ),
-      );
-      addTearDown(store.events.close);
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            storeHistoryStoreProvider.overrideWithValue(store),
-            accountProvider.overrideWith(
-              (ref, id) => id == 'me'
-                  ? const Account(
-                      puuid: 'me',
-                      gameName: 'Tôi',
-                      tagLine: '1',
-                      region: 'ap',
-                      shard: 'ap',
-                    )
-                  : null,
-            ),
-          ],
-          child: MaterialApp(
-            localizationsDelegates: appLocalizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            home: Scaffold(
-              body: StoreHistoryLine(puuid: 'me', skin: skin),
-            ),
+  Future<RecordingHistory> pumpLine(WidgetTester tester, StoreHistory h) async {
+    final skin = economyContent().skinByAnyUuid(Fx.reaverVandal)!;
+    final store = RecordingHistory(h);
+    addTearDown(store.events.close);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          storeHistoryStoreProvider.overrideWithValue(store),
+          accountProvider.overrideWith(
+            (ref, id) => id == 'me'
+                ? const Account(
+                    puuid: 'me',
+                    gameName: 'Tôi',
+                    tagLine: '1',
+                    region: 'ap',
+                    shard: 'ap',
+                  )
+                : null,
+          ),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: StoreHistoryLine(puuid: 'me', skin: skin),
           ),
         ),
-      );
-      await tester.pump();
-      await tester.pump();
-      expect(
-        find.textContaining('Trong cửa hàng của bạn: 1 lần'),
-        findsOneWidget,
-      );
-      await tester.tap(find.text(SkinDetailStrings.historyDelete));
-      await tester.pumpAndSettle();
-      expect(store.erasedAccount, isNull);
-      await tester.tap(find.text(CommonStrings.delete));
-      await tester.pumpAndSettle();
-      expect(store.erasedAccount, 'me');
-      expect(find.textContaining('Trong cửa hàng của bạn:'), findsNothing);
-      await tester.pumpWidget(const SizedBox.shrink());
-    },
-  );
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+    return store;
+  }
+
+  testWidgets("one quiet line when the skin was in the account's shops", (
+    tester,
+  ) async {
+    final skin = economyContent().skinByAnyUuid(Fx.reaverVandal)!;
+    final now = DateTime.utc(2026, 9, 28);
+    await pumpLine(
+      tester,
+      StoreHistory(
+        days: [
+          StoreHistoryDay(
+            key: 'utc:2026-09-28',
+            firstSeen: now,
+            lastSeen: now,
+            daily: [HistoryDailyOffer(skinLevelUuid: skin.levels.first.uuid)],
+          ),
+        ],
+      ),
+    );
+    expect(find.text(tl.skinDetailSeenDaily(1)), findsOneWidget);
+    // No clean-up from a skin sheet: it lives on the history page.
+    expect(find.text(tl.skinDetailHistoryDelete), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('nothing at all when the skin never showed up', (tester) async {
+    await pumpLine(tester, StoreHistory());
+    expect(find.byType(InkWell), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 
   test('another player cannot read a retained store history file', () async {
     final store = RecordingHistory(StoreHistory());

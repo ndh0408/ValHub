@@ -5790,6 +5790,46 @@ class AppLocalizationsAr extends AppLocalizations {
       'تعذّر تشغيل الفيديو. يُرجى التحقق من الاتصال والمحاولة مجددًا.';
 
   @override
+  String skinDetailSeenDaily(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'ظهر في متجرك $nString مرة',
+      many: 'ظهر في متجرك $nString مرة',
+      few: 'ظهر في متجرك $nString مرات',
+      two: 'ظهر في متجرك $nString مرة',
+      one: 'ظهر في متجرك $nString مرة',
+      zero: 'ظهر في متجرك $nString مرة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skinDetailSeenNight(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'السوق الليلي $nString مرة',
+      many: 'السوق الليلي $nString مرة',
+      few: 'السوق الليلي $nString مرات',
+      two: 'السوق الليلي $nString مرة',
+      one: 'السوق الليلي $nString مرة',
+      zero: 'السوق الليلي $nString مرة',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get socialPresenceInMatch => 'في مباراة';
 
   @override

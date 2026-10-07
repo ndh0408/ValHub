@@ -336,16 +336,40 @@ class StoreStatChip extends StatelessWidget {
     required this.icon,
     required this.label,
     this.color,
+    this.onTap,
   });
 
   final IconData icon;
   final String label;
   final Color? color;
 
+  /// Makes the chip a link (with a chevron), e.g. "2 trong wishlist".
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final c = color ?? theme.colorScheme.onSurfaceVariant;
+    final tap = onTap;
+    if (tap != null) {
+      return Semantics(
+        button: true,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(ValRadius.pill),
+          onTap: tap,
+          child: _chip(context, theme, c, link: true),
+        ),
+      );
+    }
+    return _chip(context, theme, c);
+  }
+
+  Widget _chip(
+    BuildContext context,
+    ThemeData theme,
+    Color c, {
+    bool link = false,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
@@ -368,6 +392,12 @@ class StoreStatChip extends StatelessWidget {
               ),
             ),
           ),
+          if (link)
+            Icon(
+              Icons.chevron_right,
+              size: 16,
+              color: legibleAccent(context, c, min: 3.5),
+            ),
         ],
       ),
     );

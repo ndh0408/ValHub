@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "升級",
   "skinDetailVariants": "色彩",
   "skinDetailVideoError": "無法播放影片。請檢查網路後再試一次。",
+  "skinDetailSeenDaily": "{n, plural, other{在你的商店出現 {n} 次}}",
+  "skinDetailSeenNight": "{n, plural, other{夜市 {n} 次}}",
   "socialPresenceInMatch": "對戰中",
   "socialPresenceAgentSelect": "選擇特務中",
   "socialPresenceQueue": "配對中",

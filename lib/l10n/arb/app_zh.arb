@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "升级",
   "skinDetailVariants": "炫彩",
   "skinDetailVideoError": "无法播放视频。请检查网络后重试。",
+  "skinDetailSeenDaily": "{n, plural, other{在你的商店出现 {n} 次}}",
+  "skinDetailSeenNight": "{n, plural, other{夜市 {n} 次}}",
   "socialPresenceInMatch": "对局中",
   "socialPresenceAgentSelect": "英雄选择中",
   "socialPresenceQueue": "匹配中",

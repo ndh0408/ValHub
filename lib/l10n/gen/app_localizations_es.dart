@@ -5597,6 +5597,38 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se ha podido reproducir el vídeo. Revisa tu conexión y vuelve a intentarlo.';
 
   @override
+  String skinDetailSeenDaily(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'En tu tienda $nString veces',
+      one: 'En tu tienda $nString vez',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skinDetailSeenNight(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Mercado nocturno $nString veces',
+      one: 'Mercado nocturno $nString vez',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get socialPresenceInMatch => 'En partida';
 
   @override

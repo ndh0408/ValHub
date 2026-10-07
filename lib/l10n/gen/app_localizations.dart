@@ -8635,6 +8635,18 @@ abstract class AppLocalizations {
   /// **'Không phát được video. Kiểm tra mạng rồi thử lại.'**
   String get skinDetailVideoError;
 
+  /// Skin sheet line: how many recorded daily shops of the active account offered this skin (only shown when 1 or more). Opens Store history.
+  ///
+  /// In vi, this message translates to:
+  /// **'{n, plural, other{Lên cửa hàng của bạn {n} lần}}'**
+  String skinDetailSeenDaily(int n);
+
+  /// Skin sheet line, after skinDetailSeenDaily: how many recorded Night Market runs offered this skin (only when 1 or more). Night Market = the game's official name.
+  ///
+  /// In vi, this message translates to:
+  /// **'{n, plural, other{Chợ Đêm {n} lần}}'**
+  String skinDetailSeenNight(int n);
+
   /// Render-time friend presence copy, preserving existing Vietnamese status semantics.
   ///
   /// In vi, this message translates to:

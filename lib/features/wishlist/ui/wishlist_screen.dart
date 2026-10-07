@@ -43,13 +43,22 @@ import 'package:valvn/core/l10n/l10n.dart';
 /// storefront (W2), swipe → "Xóa khỏi wishlist" with undo, "+" → S3B, and
 /// the "Thông báo wishlist" switch. Pull-to-refresh reloads the storefront.
 class WishlistScreen extends ConsumerStatefulWidget {
-  const WishlistScreen({super.key, this.initialSkinUuid, this.linkNonce});
+  const WishlistScreen({
+    super.key,
+    this.initialSkinUuid,
+    this.linkNonce,
+    this.catalogPath = WishlistRoutes.catalog,
+  });
 
   /// Skin (any skin / level / chroma uuid) whose sheet opens on arrival.
   final String? initialSkinUuid;
 
   /// Changes on every notification tap: the same skin's sheet reopens.
   final String? linkNonce;
+
+  /// Where "Tất cả skin" goes: under the tab that opened the wishlist, so
+  /// the tab bar does not jump (Cửa hàng or Bộ sưu tập).
+  final String catalogPath;
 
   @override
   ConsumerState<WishlistScreen> createState() => _WishlistScreenState();
@@ -162,7 +171,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
     _memory.save(next, previous: previous);
   }
 
-  void _openCatalog() => unawaited(context.push(WishlistRoutes.catalog));
+  void _openCatalog() => unawaited(context.push(widget.catalogPath));
 
   void _openSkin(WishlistEntry entry) => unawaited(
     showSkinDetailSheet(

@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "Yükseltmeler",
   "skinDetailVariants": "Varyantlar",
   "skinDetailVideoError": "Video oynatılamadı. Bağlantını kontrol edip tekrar dene.",
+  "skinDetailSeenDaily": "{n, plural, one{Mağazanda {n} kez} other{Mağazanda {n} kez}}",
+  "skinDetailSeenNight": "{n, plural, one{Gece Pazarı {n} kez} other{Gece Pazarı {n} kez}}",
   "socialPresenceInMatch": "Maçta",
   "socialPresenceAgentSelect": "Ajan seçiminde",
   "socialPresenceQueue": "Sırada",

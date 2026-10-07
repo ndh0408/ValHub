@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "Melhorias",
   "skinDetailVariants": "Variantes",
   "skinDetailVideoError": "Não foi possível reproduzir o vídeo. Verifique sua conexão e tente de novo.",
+  "skinDetailSeenDaily": "{n, plural, one{Na sua loja {n} vez} other{Na sua loja {n} vezes}}",
+  "skinDetailSeenNight": "{n, plural, one{Mercado Noturno {n} vez} other{Mercado Noturno {n} vezes}}",
   "socialPresenceInMatch": "Em partida",
   "socialPresenceAgentSelect": "Na seleção de agentes",
   "socialPresenceQueue": "Na fila",

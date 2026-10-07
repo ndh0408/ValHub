@@ -14,6 +14,7 @@ import '../../core/content/content_db.dart';
 import '../../core/content/content_repository.dart';
 import '../../core/domain/economy/economy.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/util/format.dart';
 import '../../core/ui/adaptive.dart';
 import '../../core/ui/content_tier_badge.dart';
 import '../../core/ui/currency_amount.dart';
@@ -52,13 +53,36 @@ Future<void> showSkinDetailSheet(
   BuildContext context, {
   required String skinOrLevelUuid,
   SkinDetailMode mode = SkinDetailMode.store,
+  SkinOfferPrice? offer,
 }) => showModalBottomSheet<void>(
   context: context,
   isScrollControlled: true,
   useSafeArea: true,
   showDragHandle: true,
-  builder: (_) => SkinDetailSheet(skinOrLevelUuid: skinOrLevelUuid, mode: mode),
+  builder: (_) => SkinDetailSheet(
+    skinOrLevelUuid: skinOrLevelUuid,
+    mode: mode,
+    offer: offer,
+  ),
 );
+
+/// The price the skin is offered at right now when it differs from the
+/// catalogue (a Night Market card): the sheet shows it, with the usual
+/// price struck through.
+@immutable
+class SkinOfferPrice {
+  const SkinOfferPrice({
+    required this.vp,
+    required this.baseVp,
+    required this.percent,
+  });
+
+  final int vp;
+  final int baseVp;
+
+  /// Whole percent off (`40`).
+  final int percent;
+}
 
 /// The media shown for [chroma] of [skin]: its full render, and the video
 /// of that variant (the base variant falls back to the skin's best level
@@ -82,10 +106,14 @@ class SkinDetailSheet extends ConsumerStatefulWidget {
     super.key,
     required this.skinOrLevelUuid,
     this.mode = SkinDetailMode.store,
+    this.offer,
   });
 
   final String skinOrLevelUuid;
   final SkinDetailMode mode;
+
+  /// Overrides the catalogue price (Night Market).
+  final SkinOfferPrice? offer;
 
   @override
   ConsumerState<SkinDetailSheet> createState() => _SkinDetailSheetState();
@@ -129,6 +157,7 @@ class _SkinDetailSheetState extends ConsumerState<SkinDetailSheet> {
       body = _SkinBody(
         skin: skin,
         mode: widget.mode,
+        offer: widget.offer,
         chroma: _selectedChroma(skin),
         onChromaSelected: (c) => setState(() => _chromaUuid = c.uuid),
       );
@@ -222,10 +251,12 @@ class _SkinBody extends ConsumerWidget {
     required this.mode,
     required this.chroma,
     required this.onChromaSelected,
+    this.offer,
   });
 
   final WeaponSkin skin;
   final SkinDetailMode mode;
+  final SkinOfferPrice? offer;
   final SkinChroma? chroma;
   final ValueChanged<SkinChroma> onChromaSelected;
 
@@ -284,7 +315,7 @@ class _SkinBody extends ConsumerWidget {
                     iconSize: 20,
                     style: theme.textTheme.titleSmall,
                   ),
-                  _PriceLabel(quote: quote),
+                  _PriceLabel(quote: quote, offer: offer),
                 ],
               ),
               if (reward != null) ...[
@@ -521,9 +552,10 @@ class _Media extends StatelessWidget {
 
 /// Price or reward-source label (VF §6.2 S15, C9).
 class _PriceLabel extends StatelessWidget {
-  const _PriceLabel({required this.quote});
+  const _PriceLabel({required this.quote, this.offer});
 
   final PriceQuote quote;
+  final SkinOfferPrice? offer;
 
   @override
   Widget build(BuildContext context) {
@@ -531,6 +563,39 @@ class _PriceLabel extends StatelessWidget {
     final style = theme.textTheme.titleMedium?.copyWith(
       fontWeight: FontWeight.w700,
     );
+    final deal = offer;
+    if (deal != null) {
+      final muted = theme.colorScheme.onSurfaceVariant;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (deal.percent > 0) ...[
+                ValBadge(
+                  formatDiscountPercent(deal.percent),
+                  color: valColorsOf(context).win,
+                  soft: true,
+                ),
+                const SizedBox(width: 8),
+              ],
+              CurrencyAmount.vp(deal.vp, iconSize: 18, style: style),
+            ],
+          ),
+          if (deal.baseVp > deal.vp)
+            Text(
+              context.fmt.vp(deal.baseVp),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: muted,
+                decoration: TextDecoration.lineThrough,
+              ),
+            ),
+          PriceEstimate(deal.vp),
+        ],
+      );
+    }
     final caption = quote.caption(context.l10n);
     if (caption != null) {
       return Text(

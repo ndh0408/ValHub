@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "Améliorations",
   "skinDetailVariants": "Variantes",
   "skinDetailVideoError": "Lecture de la vidéo impossible. Vérifiez votre connexion et réessayez.",
+  "skinDetailSeenDaily": "{n, plural, one{Dans votre boutique {n} fois} other{Dans votre boutique {n} fois}}",
+  "skinDetailSeenNight": "{n, plural, one{Marché nocturne {n} fois} other{Marché nocturne {n} fois}}",
   "socialPresenceInMatch": "En partie",
   "socialPresenceAgentSelect": "Sélection d'agent",
   "socialPresenceQueue": "Recherche de partie",

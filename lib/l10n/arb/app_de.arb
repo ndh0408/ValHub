@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "Upgrades",
   "skinDetailVariants": "Varianten",
   "skinDetailVideoError": "Video kann nicht abgespielt werden. Prüf deine Verbindung und versuch es erneut.",
+  "skinDetailSeenDaily": "{n, plural, one{{n}-mal in deinem Shop} other{{n}-mal in deinem Shop}}",
+  "skinDetailSeenNight": "{n, plural, one{Nachtmarkt: {n}-mal} other{Nachtmarkt: {n}-mal}}",
   "socialPresenceInMatch": "Im Match",
   "socialPresenceAgentSelect": "In der Agentenauswahl",
   "socialPresenceQueue": "In der Warteschlange",

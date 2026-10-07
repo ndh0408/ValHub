@@ -5202,6 +5202,36 @@ class AppLocalizationsId extends AppLocalizations {
       'Gagal memutar video. Periksa koneksimu lalu coba lagi.';
 
   @override
+  String skinDetailSeenDaily(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Muncul di toko kamu $nString kali',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skinDetailSeenNight(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Night Market $nString kali',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get socialPresenceInMatch => 'Sedang bertanding';
 
   @override

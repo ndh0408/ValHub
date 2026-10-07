@@ -5591,6 +5591,38 @@ class AppLocalizationsFr extends AppLocalizations {
       'Lecture de la vidéo impossible. Vérifiez votre connexion et réessayez.';
 
   @override
+  String skinDetailSeenDaily(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Dans votre boutique $nString fois',
+      one: 'Dans votre boutique $nString fois',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skinDetailSeenNight(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Marché nocturne $nString fois',
+      one: 'Marché nocturne $nString fois',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get socialPresenceInMatch => 'En partie';
 
   @override

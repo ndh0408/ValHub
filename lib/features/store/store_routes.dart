@@ -2,6 +2,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/config/app_constants.dart';
 
+import '../wishlist/ui/catalog_screen.dart';
+import '../wishlist/ui/wishlist_screen.dart';
+import '../wishlist/wishlist_routes.dart';
 import 'ui/bundle_detail_screen.dart';
 import 'ui/store_history_screen.dart';
 import 'ui/store_screen.dart';
@@ -18,6 +21,12 @@ abstract final class StoreRoutes {
 
   /// The daily shops this device recorded for the active account.
   static const history = '$root/history';
+
+  /// The wishlist and its skin catalogue inside the Store tab (the ♡ of the
+  /// header), so the tab bar stays on Cửa hàng. The same screens also live
+  /// under Bộ sưu tập ([WishlistRoutes]).
+  static const wishlist = '$root/wishlist';
+  static const catalog = '$root/catalog';
 }
 
 /// Branch 0 of the tab shell: `/store` + sub-routes. The store feature may
@@ -38,6 +47,18 @@ List<RouteBase> get storeBranchRoutes => [
       GoRoute(
         path: 'history',
         builder: (context, state) => const StoreHistoryScreen(),
+      ),
+      GoRoute(
+        path: 'wishlist',
+        builder: (context, state) => WishlistScreen(
+          initialSkinUuid: state.uri.queryParameters[WishlistRoutes.skinParam],
+          linkNonce: state.uri.queryParameters[AppConstants.linkNonceParam],
+          catalogPath: StoreRoutes.catalog,
+        ),
+      ),
+      GoRoute(
+        path: 'catalog',
+        builder: (context, state) => const CatalogScreen(),
       ),
     ],
   ),

@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "Upgrade",
   "skinDetailVariants": "Varian",
   "skinDetailVideoError": "Gagal memutar video. Periksa koneksimu lalu coba lagi.",
+  "skinDetailSeenDaily": "{n, plural, other{Muncul di toko kamu {n} kali}}",
+  "skinDetailSeenNight": "{n, plural, other{Night Market {n} kali}}",
   "socialPresenceInMatch": "Sedang bertanding",
   "socialPresenceAgentSelect": "Sedang memilih agen",
   "socialPresenceQueue": "Dalam antrean",

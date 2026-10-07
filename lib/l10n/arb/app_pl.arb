@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "Ulepszenia",
   "skinDetailVariants": "Warianty",
   "skinDetailVideoError": "Nie udało się odtworzyć filmu. Sprawdź połączenie i spróbuj ponownie.",
+  "skinDetailSeenDaily": "{n, plural, one{W twoim sklepie {n} raz} few{W twoim sklepie {n} razy} many{W twoim sklepie {n} razy} other{W twoim sklepie {n} razy}}",
+  "skinDetailSeenNight": "{n, plural, one{Nocny Targ {n} raz} few{Nocny Targ {n} razy} many{Nocny Targ {n} razy} other{Nocny Targ {n} razy}}",
   "socialPresenceInMatch": "W meczu",
   "socialPresenceAgentSelect": "Wybór agenta",
   "socialPresenceQueue": "W kolejce",

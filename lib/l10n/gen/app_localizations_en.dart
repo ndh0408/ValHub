@@ -5557,6 +5557,38 @@ class AppLocalizationsEn extends AppLocalizations {
       'Couldn\'t play the video. Check your connection and try again.';
 
   @override
+  String skinDetailSeenDaily(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'In your store $nString times',
+      one: 'In your store $nString time',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skinDetailSeenNight(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Night Market $nString times',
+      one: 'Night Market $nString time',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get socialPresenceInMatch => 'In match';
 
   @override

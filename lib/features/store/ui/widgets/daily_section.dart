@@ -20,6 +20,9 @@ import 'daily_offer_card.dart';
 import 'store_ui_bits.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../store_routes.dart';
 
 /// S10 body: "Làm mới sau …" countdown with the local reset time and the
 /// "Tổng" total (+ VND estimate), what is already owned / wishlisted,
@@ -114,6 +117,7 @@ class DailySection extends ConsumerWidget {
                   icon: Icons.favorite,
                   label: context.l10n.storeWishlistCount(wishCount),
                   color: ValColors.red,
+                  onTap: () => unawaited(context.push(StoreRoutes.wishlist)),
                 ),
             ],
             action: StoreActionPill(

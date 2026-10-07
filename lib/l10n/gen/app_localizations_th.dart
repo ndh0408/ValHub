@@ -5160,6 +5160,36 @@ class AppLocalizationsTh extends AppLocalizations {
       'เล่นวิดีโอไม่ได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง';
 
   @override
+  String skinDetailSeenDaily(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'อยู่ในร้านค้าของคุณ $nString ครั้ง',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skinDetailSeenNight(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'ไนท์มาร์เก็ต $nString ครั้ง',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get socialPresenceInMatch => 'อยู่ในแมตช์';
 
   @override

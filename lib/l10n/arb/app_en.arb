@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "Upgrades",
   "skinDetailVariants": "Variants",
   "skinDetailVideoError": "Couldn't play the video. Check your connection and try again.",
+  "skinDetailSeenDaily": "{n, plural, one{In your store {n} time} other{In your store {n} times}}",
+  "skinDetailSeenNight": "{n, plural, one{Night Market {n} time} other{Night Market {n} times}}",
   "socialPresenceInMatch": "In match",
   "socialPresenceAgentSelect": "In agent select",
   "socialPresenceQueue": "In queue",

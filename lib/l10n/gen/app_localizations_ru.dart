@@ -5716,6 +5716,42 @@ class AppLocalizationsRu extends AppLocalizations {
       'Не удалось воспроизвести видео. Проверьте подключение и повторите попытку.';
 
   @override
+  String skinDetailSeenDaily(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'В вашем магазине $nString раза',
+      many: 'В вашем магазине $nString раз',
+      few: 'В вашем магазине $nString раза',
+      one: 'В вашем магазине $nString раз',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skinDetailSeenNight(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Ночной рынок $nString раза',
+      many: 'Ночной рынок $nString раз',
+      few: 'Ночной рынок $nString раза',
+      one: 'Ночной рынок $nString раз',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get socialPresenceInMatch => 'В матче';
 
   @override

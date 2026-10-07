@@ -5587,6 +5587,42 @@ class AppLocalizationsPl extends AppLocalizations {
       'Nie udało się odtworzyć filmu. Sprawdź połączenie i spróbuj ponownie.';
 
   @override
+  String skinDetailSeenDaily(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'W twoim sklepie $nString razy',
+      many: 'W twoim sklepie $nString razy',
+      few: 'W twoim sklepie $nString razy',
+      one: 'W twoim sklepie $nString raz',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skinDetailSeenNight(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Nocny Targ $nString razy',
+      many: 'Nocny Targ $nString razy',
+      few: 'Nocny Targ $nString razy',
+      one: 'Nocny Targ $nString raz',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get socialPresenceInMatch => 'W meczu';
 
   @override

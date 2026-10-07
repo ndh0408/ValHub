@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "Potenziamenti",
   "skinDetailVariants": "Varianti",
   "skinDetailVideoError": "Impossibile riprodurre il video. Controlla la connessione e riprova.",
+  "skinDetailSeenDaily": "{n, plural, one{Nel tuo negozio {n} volta} other{Nel tuo negozio {n} volte}}",
+  "skinDetailSeenNight": "{n, plural, one{Mercato notturno {n} volta} other{Mercato notturno {n} volte}}",
   "socialPresenceInMatch": "In partita",
   "socialPresenceAgentSelect": "Selezione agente",
   "socialPresenceQueue": "In coda",

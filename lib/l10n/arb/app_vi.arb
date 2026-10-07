@@ -8543,6 +8543,28 @@
     "description": "SkinDetailStrings.videoError — ",
     "x-context": "lib/features/skin_detail/skin_detail_strings.dart"
   },
+  "skinDetailSeenDaily": "{n, plural, other{Lên cửa hàng của bạn {n} lần}}",
+  "@skinDetailSeenDaily": {
+    "description": "Skin sheet line: how many recorded daily shops of the active account offered this skin (only shown when 1 or more). Opens Store history.",
+    "placeholders": {
+      "n": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    },
+    "x-context": "lib/features/skin_detail/store_history_line.dart"
+  },
+  "skinDetailSeenNight": "{n, plural, other{Chợ Đêm {n} lần}}",
+  "@skinDetailSeenNight": {
+    "description": "Skin sheet line, after skinDetailSeenDaily: how many recorded Night Market runs offered this skin (only when 1 or more). Night Market = the game's official name.",
+    "placeholders": {
+      "n": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    },
+    "x-context": "lib/features/skin_detail/store_history_line.dart"
+  },
   "socialPresenceInMatch": "Đang đấu",
   "@socialPresenceInMatch": {
     "description": "Render-time friend presence copy, preserving existing Vietnamese status semantics."

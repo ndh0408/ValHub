@@ -10,6 +10,7 @@ import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/domain/economy/store_history.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/content_tier_badge.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
@@ -51,6 +52,14 @@ class StoreHistoryScreen extends ConsumerWidget {
               formatDate(since.toLocal()),
               history!.daysRecorded,
             ),
+      actions: [
+        if (history != null && !history.isEmpty)
+          IconButton(
+            icon: const Icon(Icons.delete_outline),
+            tooltip: context.l10n.skinDetailHistoryDelete,
+            onPressed: () => unawaited(_delete(context, ref, puuid)),
+          ),
+      ],
       onRefresh: () => ref
           .refresh(storeHistoryProvider(puuid).future)
           .then<void>((_) {}, onError: (Object _) {}),
@@ -92,6 +101,23 @@ class StoreHistoryScreen extends ConsumerWidget {
       ],
     );
   }
+}
+
+/// "Xóa lịch sử cửa hàng": every recorded day of [puuid] on this device,
+/// after a confirmation.
+Future<void> _delete(BuildContext context, WidgetRef ref, String puuid) async {
+  final l10n = context.l10n;
+  final store = ref.read(storeHistoryStoreProvider);
+  final confirmed = await showConfirmDialog(
+    context,
+    title: l10n.skinDetailHistoryDelete,
+    message: l10n.skinDetailHistoryDeleteBody,
+    confirmLabel: l10n.commonDelete,
+    destructive: true,
+  );
+  if (!confirmed) return;
+  await store.delete(puuid);
+  ref.invalidate(storeHistoryProvider(puuid));
 }
 
 void _openSkin(BuildContext context, String levelUuid) => unawaited(

@@ -96,6 +96,9 @@ class SkinVoteButton extends ConsumerWidget {
                   active: vote.voted,
                   count: vote.votes,
                   dense: true,
+                  // The sheet's ♥ is the wishlist: the vote is a thumb here.
+                  icon: Icons.thumb_up_outlined,
+                  activeIcon: Icons.thumb_up_rounded,
                   semanticsOff: context.l10n.communityVote,
                   semanticsOn: context.l10n.communityUnvote,
                   onTap: puuid == null

@@ -18,6 +18,9 @@ import 'night_market_card.dart';
 import 'store_ui_bits.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../store_routes.dart';
 
 /// S11 body: countdown (+ local end time), "Chia sẻ ảnh", up to 6 cards,
 /// total-savings footer (+ VND estimate), info note.
@@ -86,6 +89,7 @@ class NightMarketSection extends ConsumerWidget {
                   icon: Icons.favorite,
                   label: context.l10n.storeWishlistCount(wishCount),
                   color: ValColors.red,
+                  onTap: () => unawaited(context.push(StoreRoutes.wishlist)),
                 ),
             ],
             action: StoreActionPill(

@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "การอัปเกรด",
   "skinDetailVariants": "รูปแบบสี",
   "skinDetailVideoError": "เล่นวิดีโอไม่ได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง",
+  "skinDetailSeenDaily": "{n, plural, other{อยู่ในร้านค้าของคุณ {n} ครั้ง}}",
+  "skinDetailSeenNight": "{n, plural, other{ไนท์มาร์เก็ต {n} ครั้ง}}",
   "socialPresenceInMatch": "อยู่ในแมตช์",
   "socialPresenceAgentSelect": "กำลังเลือกเอเจนท์",
   "socialPresenceQueue": "กำลังหาแมตช์",

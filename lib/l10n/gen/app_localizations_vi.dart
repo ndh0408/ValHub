@@ -5177,6 +5177,36 @@ class AppLocalizationsVi extends AppLocalizations {
       'Không phát được video. Kiểm tra mạng rồi thử lại.';
 
   @override
+  String skinDetailSeenDaily(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Lên cửa hàng của bạn $nString lần',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skinDetailSeenNight(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Chợ Đêm $nString lần',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get socialPresenceInMatch => 'Đang đấu';
 
   @override

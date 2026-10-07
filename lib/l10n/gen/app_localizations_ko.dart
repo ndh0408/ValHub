@@ -5072,6 +5072,36 @@ class AppLocalizationsKo extends AppLocalizations {
   String get skinDetailVideoError => '영상을 재생할 수 없습니다. 네트워크를 확인하고 다시 시도하세요.';
 
   @override
+  String skinDetailSeenDaily(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '내 상점에 $nString회 등장',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skinDetailSeenNight(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '야시장 $nString회',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get socialPresenceInMatch => '게임 중';
 
   @override

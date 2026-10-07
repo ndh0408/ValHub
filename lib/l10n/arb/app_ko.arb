@@ -1416,6 +1416,8 @@
   "skinDetailUpgrades": "업그레이드",
   "skinDetailVariants": "색상 변형",
   "skinDetailVideoError": "영상을 재생할 수 없습니다. 네트워크를 확인하고 다시 시도하세요.",
+  "skinDetailSeenDaily": "{n, plural, other{내 상점에 {n}회 등장}}",
+  "skinDetailSeenNight": "{n, plural, other{야시장 {n}회}}",
   "socialPresenceInMatch": "게임 중",
   "socialPresenceAgentSelect": "요원 선택 중",
   "socialPresenceQueue": "대기열",

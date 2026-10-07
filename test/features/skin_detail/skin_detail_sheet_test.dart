@@ -25,18 +25,23 @@ const _friend = Account(
 
 /// Opens the sheet from a button, the way the app does.
 class _Harness extends StatelessWidget {
-  const _Harness({required this.uuid, required this.mode});
+  const _Harness({required this.uuid, required this.mode, this.offer});
 
   final String uuid;
   final SkinDetailMode mode;
+  final SkinOfferPrice? offer;
 
   @override
   Widget build(BuildContext context) => Scaffold(
     body: Center(
       child: Builder(
         builder: (context) => TextButton(
-          onPressed: () =>
-              showSkinDetailSheet(context, skinOrLevelUuid: uuid, mode: mode),
+          onPressed: () => showSkinDetailSheet(
+            context,
+            skinOrLevelUuid: uuid,
+            mode: mode,
+            offer: offer,
+          ),
           child: const Text('open'),
         ),
       ),
@@ -50,6 +55,7 @@ Future<void> _open(
   SkinDetailMode mode = SkinDetailMode.store,
   List<Override> Function(Prefs prefs)? overrides,
   Size size = const Size(360, 740),
+  SkinOfferPrice? offer,
 }) async {
   usePhoneViewport(tester, size: size);
   final prefs = await createTestPrefs();
@@ -58,7 +64,7 @@ Future<void> _open(
       overrides:
           overrides?.call(prefs) ??
           storeOverrides(api: fixtureApi(), prefs: prefs),
-      home: _Harness(uuid: uuid, mode: mode),
+      home: _Harness(uuid: uuid, mode: mode, offer: offer),
     ),
   );
   await settle(tester);
@@ -82,6 +88,19 @@ Future<void> _scrollTo(WidgetTester tester, Finder finder) async {
 }
 
 void main() {
+  testWidgets('a Night Market card shows its own price, not the catalogue', (
+    tester,
+  ) async {
+    await _open(
+      tester,
+      offer: const SkinOfferPrice(vp: 1065, baseVp: 1775, percent: 40),
+    );
+    expect(find.text('-40%'), findsOneWidget);
+    expect(find.textContaining('1.065'), findsWidgets);
+    final struck = tester.widget<Text>(find.text('1.775 VP'));
+    expect(struck.style?.decoration, TextDecoration.lineThrough);
+  });
+
   final db = economyContent();
 
   test('skinMedia: base variant uses the best level video', () {
