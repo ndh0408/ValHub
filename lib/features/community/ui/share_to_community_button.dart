@@ -119,16 +119,36 @@ class ShareToCommunityButton extends ConsumerWidget {
     );
   }
 
-  void _open(BuildContext context, WidgetRef ref) {
-    final db = ref.read(contentProvider).value ?? ContentDb.empty();
-    final now = ref.read(clockProvider).now();
-    final d = daily;
-    final nm = nightMarket;
-    final draft = nm != null
-        ? ComposeDraft.fromNightMarket(nm, db: db, now: now)
-        : (d == null ? null : ComposeDraft.fromDaily(d, db: db, now: now));
-    if (draft == null) return;
-    // Writing needs a session: the consent sheet comes first when needed.
-    unawaited(openComposer(context, draft: draft));
-  }
+  void _open(BuildContext context, WidgetRef ref) => shareStoreToCommunity(
+    context,
+    ref,
+    daily: daily,
+    nightMarket: nightMarket,
+  );
+}
+
+/// Whether the store can be posted to the Community right now (it is on and
+/// an account is signed in).
+bool canShareStoreToCommunity(WidgetRef ref) =>
+    ref.read(communityEnabledProvider) &&
+    ref.read(activeAccountProvider) != null;
+
+/// Opens the composer with the daily shop or the Night Market as a draft
+/// (the consent sheet comes first when needed).
+void shareStoreToCommunity(
+  BuildContext context,
+  WidgetRef ref, {
+  DailyStore? daily,
+  NightMarket? nightMarket,
+}) {
+  final db = ref.read(contentProvider).value ?? ContentDb.empty();
+  final now = ref.read(clockProvider).now();
+  final draft = nightMarket != null
+      ? ComposeDraft.fromNightMarket(nightMarket, db: db, now: now)
+      : (daily == null
+            ? null
+            : ComposeDraft.fromDaily(daily, db: db, now: now));
+  if (draft == null) return;
+  // Writing needs a session: the consent sheet comes first when needed.
+  unawaited(openComposer(context, draft: draft));
 }

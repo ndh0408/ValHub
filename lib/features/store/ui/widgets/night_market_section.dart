@@ -92,17 +92,24 @@ class NightMarketSection extends ConsumerWidget {
                   onTap: () => unawaited(context.push(StoreRoutes.wishlist)),
                 ),
             ],
+            // One share entry: an image, or a post on the Community.
             action: StoreActionPill(
               icon: isCupertino(context) ? Icons.ios_share : Icons.share,
-              label: context.l10n.storeShareImage,
+              label: context.l10n.commonShare,
               onTap: () => unawaited(
-                showStoreShareSheet(
+                _share(
                   context,
-                  data: shareDataForNightMarket(
-                    nm,
-                    db,
-                    ref.read(clockProvider).now(),
+                  ref,
+                  image: () => showStoreShareSheet(
+                    context,
+                    data: shareDataForNightMarket(
+                      nm,
+                      db,
+                      ref.read(clockProvider).now(),
+                    ),
                   ),
+                  community: () =>
+                      shareStoreToCommunity(context, ref, nightMarket: nm),
                 ),
               ),
             ),
@@ -118,7 +125,6 @@ class NightMarketSection extends ConsumerWidget {
               ),
           ],
         ),
-        ShareToCommunityButton.nightMarket(nm),
         if (nm.totalSavings > 0)
           Container(
             margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -182,4 +188,34 @@ class NightMarketSection extends ConsumerWidget {
       ],
     );
   }
+}
+
+/// "Chia sẻ": straight to the image when the Community is off, else a choice
+/// between the image and a Community post.
+Future<void> _share(
+  BuildContext context,
+  WidgetRef ref, {
+  required Future<void> Function() image,
+  required void Function() community,
+}) async {
+  if (!canShareStoreToCommunity(ref)) return image();
+  final l10n = context.l10n;
+  final choice = await showActionSheet<String>(
+    context,
+    actions: [
+      SheetAction(
+        value: 'image',
+        label: l10n.storeShareImage,
+        icon: Icons.image_outlined,
+      ),
+      SheetAction(
+        value: 'community',
+        label: l10n.communityShareStore,
+        icon: Icons.forum_outlined,
+      ),
+    ],
+  );
+  if (!context.mounted) return;
+  if (choice == 'image') await image();
+  if (choice == 'community') community();
 }
