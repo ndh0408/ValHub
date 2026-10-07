@@ -76,6 +76,47 @@ class BuddyOption {
   );
 }
 
+/// A buddy choice made in S36 and not saved yet: the customize page (S35)
+/// keeps it with the variant and level and saves them together with
+/// "Trang bị".
+@immutable
+sealed class BuddyPick {
+  const BuddyPick();
+
+  /// The change that saves this pick on [weaponId].
+  LoadoutChange changeFor(String weaponId);
+
+  /// Whether [gun] already shows this pick (nothing to save).
+  bool isSavedOn(GunLoadout? gun);
+}
+
+/// Attach [copy] of [option]'s buddy.
+final class BuddyPickEquip extends BuddyPick {
+  const BuddyPickEquip(this.option, this.copy);
+
+  final BuddyOption option;
+  final BuddyCopy copy;
+
+  @override
+  LoadoutChange changeFor(String weaponId) => option.equipOn(weaponId, copy);
+
+  @override
+  bool isSavedOn(GunLoadout? gun) =>
+      gun != null &&
+      gun.charmInstanceId == copy.instanceId.trim().toLowerCase();
+}
+
+/// Take the buddy off the gun.
+final class BuddyPickRemove extends BuddyPick {
+  const BuddyPickRemove();
+
+  @override
+  LoadoutChange changeFor(String weaponId) => RemoveBuddy(weaponId: weaponId);
+
+  @override
+  bool isSavedOn(GunLoadout? gun) => !(gun?.hasBuddy ?? false);
+}
+
 /// Every owned buddy (content order unknown → sorted by name), with copies
 /// marked by the gun they are on in [loadout]. Buddies missing from
 /// [db] are skipped.

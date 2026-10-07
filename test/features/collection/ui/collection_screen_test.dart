@@ -104,10 +104,7 @@ void main() {
       CollectionStrings.incognito,
     );
     await scrollTo(tester, incognito);
-    expect(
-      find.text(tl.collectionCollectionValue.toUpperCase()),
-      findsNothing,
-    );
+    expect(find.text(tl.collectionCollectionValue.toUpperCase()), findsNothing);
     expect(find.text(tl.collectionValueAtStorePrices), findsNothing);
     expect(tester.takeException(), isNull);
     await unmount(tester);

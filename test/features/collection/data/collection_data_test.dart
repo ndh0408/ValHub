@@ -191,6 +191,33 @@ void main() {
       final copy = neo.copyFor(Lx.ghost)!;
       expect(copy.equippedOn, isNotNull);
     });
+
+    test(
+      'a pending pick: its change, and whether the gun already shows it',
+      () {
+        final neo = buddyOptions(
+          owned,
+          db,
+          loadout,
+        ).firstWhere((o) => o.buddy.uuid == Fx.neoFrontierBuddy);
+        final vandal = loadout.gun(Lx.vandal);
+        final phantom = loadout.gun(Lx.phantom);
+
+        final onVandal = BuddyPickEquip(neo, neo.copyFor(Lx.vandal)!);
+        expect(onVandal.isSavedOn(vandal), isTrue);
+        final toPhantom = BuddyPickEquip(neo, neo.copyFor(Lx.phantom)!);
+        expect(toPhantom.isSavedOn(phantom), isFalse);
+        expect(
+          (toPhantom.changeFor(Lx.phantom) as EquipBuddy).instanceId,
+          Lx.buddyInstanceB,
+        );
+
+        const remove = BuddyPickRemove();
+        expect(remove.isSavedOn(vandal), isFalse);
+        expect(remove.isSavedOn(phantom), isTrue);
+        expect(remove.changeFor(Lx.vandal), isA<RemoveBuddy>());
+      },
+    );
   });
 
   group('owned cosmetics', () {

@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:valvn/core/domain/loadout/loadout.dart';
 import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/util/json.dart';
 import 'package:valvn/features/collection/collection_strings.dart';
+import 'package:valvn/features/collection/data/buddy_options.dart';
 import 'package:valvn/features/collection/ui/buddy_picker_sheet.dart';
 import 'package:valvn/features/collection/ui/skin_customize_screen.dart';
 import 'package:valvn/features/collection/ui/weapon_loadout_screen.dart';
@@ -12,6 +14,7 @@ import 'package:valvn/features/collection/ui/weapon_skins_screen.dart';
 
 import '../../../core/domain/economy/economy_fixtures.dart';
 import '../../../core/domain/loadout/loadout_fixtures.dart';
+import '../../../helpers/l10n.dart';
 import '../../../helpers/test_prefs.dart';
 import '../collection_test_harness.dart';
 
@@ -19,17 +22,21 @@ JsonMap gunOf(JsonMap raw, String weaponId) =>
     asMapList(raw['Guns']).firstWhere((g) => lowerUuid(g['ID']) == weaponId);
 
 class _BuddyHost extends StatelessWidget {
-  const _BuddyHost({required this.weaponId});
+  const _BuddyHost({required this.weaponId, required this.picks});
 
   final String weaponId;
+
+  /// What each opening of the sheet returned.
+  final List<BuddyPick?> picks;
 
   @override
   Widget build(BuildContext context) => Scaffold(
     body: Center(
       child: Builder(
         builder: (context) => TextButton(
-          onPressed: () =>
-              unawaited(showBuddyPickerSheet(context, weaponId: weaponId)),
+          onPressed: () => unawaited(
+            showBuddyPickerSheet(context, weaponId: weaponId).then(picks.add),
+          ),
           child: const Text('open'),
         ),
       ),
@@ -175,13 +182,22 @@ void main() {
     await tester.tap(find.text(CollectionStrings.equip));
     await settle(tester);
     expect(riot.puts, isEmpty);
+    // Nothing to save the buddy with: the slot does not open the picker.
+    final row = find.text(tl.collectionChangeBuddy);
+    await tester.scrollUntilVisible(row, 200, scrollable: _mainScrollable);
+    await tester.tap(row);
+    await settle(tester);
+    expect(find.text(tl.collectionBuddyPickerTitle), findsNothing);
     await unmount(tester);
   });
 
-  testWidgets('S36 buddy picker: "Còn 1/2", equip a free copy', (tester) async {
+  testWidgets('S36 buddy picker: "Còn 1/2", a pick is returned, not saved', (
+    tester,
+  ) async {
+    final picks = <BuddyPick?>[];
     await pumpCollection(
       tester,
-      const _BuddyHost(weaponId: Lx.phantom),
+      _BuddyHost(weaponId: Lx.phantom, picks: picks),
       riot: riot,
       prefs: prefs,
     );
@@ -194,13 +210,12 @@ void main() {
 
     await tester.tap(find.text('Phụ Kiện Neo Frontier'));
     await settle(tester);
-    final phantom = gunOf(riot.lastPut, Lx.phantom);
-    expect(phantom['CharmInstanceID'], Lx.buddyInstanceB);
-    expect(
-      gunOf(riot.lastPut, Lx.vandal)['CharmInstanceID'],
-      Lx.buddyInstanceA,
-    );
     expect(find.text(CollectionStrings.buddyPickerTitle), findsNothing);
+    expect(riot.puts, isEmpty);
+    final pick = picks.single! as BuddyPickEquip;
+    expect(pick.copy.instanceId, Lx.buddyInstanceB); // the free copy
+    final change = pick.changeFor(Lx.phantom) as EquipBuddy;
+    expect(change.weaponId, Lx.phantom);
     await unmount(tester);
   });
 
@@ -213,9 +228,10 @@ void main() {
       ..['CharmInstanceID'] = Lx.buddyInstanceB
       ..['CharmID'] = Fx.neoFrontierBuddy
       ..['CharmLevelID'] = Fx.neoFrontierBuddyL1;
+    final picks = <BuddyPick?>[];
     await pumpCollection(
       tester,
-      const _BuddyHost(weaponId: Lx.ghost),
+      _BuddyHost(weaponId: Lx.ghost, picks: picks),
       riot: riot,
       prefs: prefs,
     );
@@ -227,15 +243,16 @@ void main() {
     expect(find.text(CollectionStrings.moveBuddyTitle), findsOneWidget);
     await tester.tap(find.text(CollectionStrings.move));
     await settle(tester);
-    expect(riot.puts, hasLength(1));
-    expect(gunOf(riot.lastPut, Lx.ghost)['CharmInstanceID'], isNotNull);
+    expect(riot.puts, isEmpty);
+    expect((picks.single! as BuddyPickEquip).copy.equippedOn, isNotNull);
     await unmount(tester);
 
     // Remove from the Vandal.
     riot = FakeRiot();
+    picks.clear();
     await pumpCollection(
       tester,
-      const _BuddyHost(weaponId: Lx.vandal),
+      _BuddyHost(weaponId: Lx.vandal, picks: picks),
       riot: riot,
       prefs: prefs,
     );
@@ -243,11 +260,63 @@ void main() {
     await settle(tester);
     await tester.tap(find.text(CollectionStrings.removeBuddy));
     await settle(tester);
-    expect(
-      gunOf(riot.lastPut, Lx.vandal).containsKey('CharmInstanceID'),
-      isFalse,
+    expect(riot.puts, isEmpty);
+    expect(picks.single, isA<BuddyPickRemove>());
+    await unmount(tester);
+  });
+
+  testWidgets('S35 buddy waits for "Trang bị", like the variant and level', (
+    tester,
+  ) async {
+    await pumpCollection(
+      tester,
+      const SkinCustomizeScreen(weaponId: Lx.vandal, skinId: Fx.reaverVandal),
+      riot: riot,
+      prefs: prefs,
     );
-    expect(find.text(CollectionStrings.buddyRemoved), findsOneWidget);
+    Future<void> openBuddy() async {
+      // Let a "Đã trang bị" snackbar leave the slot uncovered.
+      tester
+          .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
+          .hideCurrentSnackBar();
+      await settle(tester);
+      final row = find.text(tl.collectionChangeBuddy);
+      await tester.scrollUntilVisible(row, 200, scrollable: _mainScrollable);
+      await tester.tap(row);
+      await settle(tester);
+    }
+
+    // Take the buddy off: shown at once, saved only by "Trang bị".
+    await openBuddy();
+    await tester.tap(find.text(tl.collectionRemoveBuddy));
+    await settle(tester);
+    expect(riot.puts, isEmpty);
+    expect(find.text(tl.collectionNoBuddy), findsOneWidget);
+    await tester.tap(find.text(tl.collectionEquip));
+    await settle(tester);
+    expect(riot.puts, hasLength(1));
+    var vandal = gunOf(riot.lastPut, Lx.vandal);
+    expect(vandal['SkinID'], Fx.reaverVandal);
+    expect(vandal.containsKey('CharmInstanceID'), isFalse);
+    expect(find.text(tl.collectionEquipped), findsOneWidget);
+
+    // Skin already on: a buddy pick alone turns "Trang bị" back on.
+    await openBuddy();
+    await tester.tap(find.text('Phụ Kiện Neo Frontier'));
+    await settle(tester);
+    expect(riot.puts, hasLength(1));
+    expect(find.text(tl.collectionEquip), findsOneWidget);
+    await tester.tap(find.text(tl.collectionEquip));
+    await settle(tester);
+    expect(riot.puts, hasLength(2));
+    vandal = gunOf(riot.lastPut, Lx.vandal);
+    expect(vandal['CharmInstanceID'], isNotNull);
+    expect(
+      find.text(tl.collectionEquippedItem('Phụ Kiện Neo Frontier')),
+      findsOneWidget,
+    );
+    expect(find.text(tl.collectionEquipped), findsOneWidget);
+    expect(tester.takeException(), isNull);
     await unmount(tester);
   });
 }

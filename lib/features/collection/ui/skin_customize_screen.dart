@@ -22,6 +22,7 @@ import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../skin_detail/skin_video_view.dart';
+import '../data/buddy_options.dart';
 import '../data/loadout_view.dart';
 import '../providers/collection_providers.dart';
 import 'buddy_picker_sheet.dart';
@@ -123,7 +124,62 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
   String? _levelUuid;
   String? _chromaUuid;
 
+  /// Buddy picked in S36, saved with the variant and level by "Trang bị".
+  BuddyPick? _buddyPick;
+
   String get _weaponId => widget.weaponId.trim().toLowerCase();
+
+  Future<void> _pickBuddy(GunLoadout? gun) async {
+    final pick = await showBuddyPickerSheet(
+      context,
+      weaponId: _weaponId,
+      pending: _buddyPick,
+    );
+    if (pick == null || !mounted) return;
+    // Picking what the gun already wears drops the pending change.
+    setState(() => _buddyPick = pick.isSavedOn(gun) ? null : pick);
+  }
+
+  Future<void> _equip({
+    required String puuid,
+    required WeaponSkin skin,
+    required _Selection sel,
+  }) async {
+    Haptics.light();
+    final l10n = context.l10n;
+    final buddy = _buddyPick;
+    final changes = <LoadoutChange>[
+      if (!sel.isEquipped)
+        EquipSkin(
+          weaponId: _weaponId,
+          skinId: skin.uuid,
+          skinLevelId: sel.levelId!,
+          chromaId: sel.chromaId!,
+        ),
+      ?buddy?.changeFor(_weaponId),
+    ];
+    if (changes.isEmpty) return;
+    final ok = await applyLoadoutChange(
+      context,
+      ref,
+      puuid: puuid,
+      change: changes.length == 1 ? changes.single : LoadoutChange.all(changes),
+      successMessage: switch (buddy) {
+        _ when !sel.isEquipped => l10n.collectionEquippedItem(
+          skin.equippedLabel(l10n),
+        ),
+        BuddyPickEquip(:final option) => l10n.collectionEquippedItem(
+          option.buddy.displayName,
+        ),
+        _ => l10n.collectionBuddyRemoved,
+      },
+    );
+    if (!ok) return;
+    Haptics.medium();
+    if (mounted && identical(_buddyPick, buddy)) {
+      setState(() => _buddyPick = null);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,13 +216,14 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
     );
     final isOwned = owned?.isSkinOwned(skin.uuid) ?? false;
     final pending = snapshot?.isPending ?? false;
+    final unsaved = !sel.isEquipped || _buddyPick != null;
     final canEquip =
         snapshot != null &&
         isOwned &&
         gun != null &&
         sel.levelId != null &&
         sel.chromaId != null &&
-        !sel.isEquipped &&
+        unsaved &&
         !pending;
     final hasTier = !skin.isStandard && skin.contentTierUuid != null;
     final weapon = db.weapon(skin.weaponUuid) ?? db.weapon(_weaponId);
@@ -209,32 +266,15 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
       bottomBar: FilledButton.icon(
         style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
         onPressed: canEquip
-            ? () async {
-                Haptics.light();
-                final ok = await applyLoadoutChange(
-                  context,
-                  ref,
-                  puuid: puuid,
-                  change: EquipSkin(
-                    weaponId: _weaponId,
-                    skinId: skin.uuid,
-                    skinLevelId: sel.levelId!,
-                    chromaId: sel.chromaId!,
-                  ),
-                  successMessage: context.l10n.collectionEquippedItem(
-                    skin.equippedLabel(context.l10n),
-                  ),
-                );
-                if (ok) Haptics.medium();
-              }
+            ? () => unawaited(_equip(puuid: puuid, skin: skin, sel: sel))
             : null,
-        icon: Icon(sel.isEquipped ? Icons.check : Icons.done_all),
+        icon: Icon(unsaved ? Icons.done_all : Icons.check),
         label: Text(
           pending
               ? context.l10n.collectionSaving
-              : (sel.isEquipped
-                    ? context.l10n.collectionEquipped
-                    : context.l10n.collectionEquip),
+              : (unsaved
+                    ? context.l10n.collectionEquip
+                    : context.l10n.collectionEquipped),
         ),
       ),
       slivers: loadoutSlivers(
@@ -253,7 +293,14 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
                 margin: EdgeInsets.fromLTRB(16, 4, 16, 0),
               ),
             ),
-          ..._body(context, sel, owned, gun, snapshot.isPending),
+          ..._body(
+            context,
+            sel,
+            owned,
+            gun,
+            pending: snapshot.isPending,
+            isOwned: isOwned,
+          ),
         ],
       ),
     );
@@ -263,15 +310,21 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
     BuildContext context,
     _Selection sel,
     OwnedItems owned,
-    GunLoadout? gun,
-    bool pending,
-  ) {
+    GunLoadout? gun, {
+    required bool pending,
+    required bool isOwned,
+  }) {
     final theme = Theme.of(context);
     final skin = sel.skin;
     final ownedLevels = owned.ownedLevels(skin);
     final ownedChromas = owned.ownedChromas(skin);
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
-    final buddy = equippedBuddy(gun, db);
+    // The picked buddy until "Trang bị" saves it, else what the gun wears.
+    final buddy = switch (_buddyPick) {
+      BuddyPickEquip(:final option) => option.buddy,
+      BuddyPickRemove() => null,
+      null => equippedBuddy(gun, db),
+    };
     final isMelee = gun?.isMelee ?? _weaponId == SpecialIds.melee;
     final chroma = sel.chroma;
     return [
@@ -379,14 +432,11 @@ class _SkinCustomizeScreenState extends ConsumerState<SkinCustomizeScreen> {
                       title:
                           buddy?.displayName ?? context.l10n.collectionNoBuddy,
                       value: context.l10n.collectionChangeBuddy,
-                      onTap: pending
+                      // Saved with the skin by "Trang bị", so only for a
+                      // skin the account owns.
+                      onTap: pending || !isOwned
                           ? null
-                          : () => unawaited(
-                              showBuddyPickerSheet(
-                                context,
-                                weaponId: _weaponId,
-                              ),
-                            ),
+                          : () => unawaited(_pickBuddy(gun)),
                     ),
                   ],
                 ),

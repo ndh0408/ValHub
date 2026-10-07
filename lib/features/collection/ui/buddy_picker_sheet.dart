@@ -5,7 +5,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
-import '../../../core/domain/loadout/loadout.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/empty_view.dart';
@@ -23,17 +22,21 @@ import 'package:valvn/core/l10n/l10n.dart';
 const _buddyMaxExtent = 120.0;
 const _buddyArtHeight = 64.0;
 
-/// Opens S36 "Chọn phụ kiện súng" for [weaponId].
-Future<void> showBuddyPickerSheet(
+/// Opens S36 "Chọn phụ kiện súng" for [weaponId] and returns the player's
+/// choice (`null` when dismissed). Nothing is saved here: the customize page
+/// saves the choice with "Trang bị". [pending] is the page's unsaved choice,
+/// shown as the gun's buddy.
+Future<BuddyPick?> showBuddyPickerSheet(
   BuildContext context, {
   required String weaponId,
+  BuddyPick? pending,
 }) {
   final id = weaponId.trim().toLowerCase();
   final weapon = ProviderScope.containerOf(
     context,
     listen: false,
   ).read(contentProvider).value?.weapon(id);
-  return showValSheet<void>(
+  return showValSheet<BuddyPick>(
     context,
     title: context.l10n.collectionBuddyPickerTitle,
     subtitle: weapon == null
@@ -42,18 +45,29 @@ Future<void> showBuddyPickerSheet(
     scrollable: true,
     initialSize: 0.85,
     minSize: 0.5,
-    builder: (context, controller) =>
-        BuddyPickerSheet(weaponId: weaponId, controller: controller),
+    builder: (context, controller) => BuddyPickerSheet(
+      weaponId: weaponId,
+      pending: pending,
+      controller: controller,
+    ),
   );
 }
 
 /// S36 body: search, the buddy on this gun with "Gỡ phụ kiện", then the
 /// owned buddies with their free copies ("Còn 2/3"). Taking the last copy
-/// from another gun asks first.
+/// from another gun asks first. A pick closes the sheet with it.
 class BuddyPickerSheet extends ConsumerStatefulWidget {
-  const BuddyPickerSheet({super.key, required this.weaponId, this.controller});
+  const BuddyPickerSheet({
+    super.key,
+    required this.weaponId,
+    this.pending,
+    this.controller,
+  });
 
   final String weaponId;
+
+  /// The unsaved choice shown as the gun's buddy, if any.
+  final BuddyPick? pending;
 
   /// Scroll controller of the draggable sheet.
   final ScrollController? controller;
@@ -97,7 +111,12 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
                 ),
                 data: (snapshot, owned, db) {
                   final gun = snapshot.loadout.gun(_weaponId);
-                  final current = equippedBuddy(gun, db);
+                  // The page's unsaved choice, else what the gun wears.
+                  final (current, hasBuddy) = switch (widget.pending) {
+                    BuddyPickEquip(:final option) => (option.buddy, true),
+                    BuddyPickRemove() => (null, false),
+                    null => (equippedBuddy(gun, db), gun?.hasBuddy ?? false),
+                  };
                   final all = buddyOptions(owned, db, snapshot.loadout);
                   final options = [
                     for (final o in all)
@@ -108,7 +127,7 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
                     SliverToBoxAdapter(
                       child: SavingBar(visible: snapshot.isPending),
                     ),
-                    if (gun?.hasBuddy ?? false)
+                    if (hasBuddy)
                       SliverToBoxAdapter(
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 12),
@@ -126,9 +145,11 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
                                   ),
                                   onPressed: snapshot.isPending
                                       ? null
-                                      : () => unawaited(
-                                          _remove(context, account.puuid),
-                                        ),
+                                      : () {
+                                          Haptics.light();
+                                          Navigator.of(context)
+                                              .pop(const BuddyPickRemove());
+                                        },
                                   icon: const Icon(Icons.link_off, size: 18),
                                   label: Text(
                                     context.l10n.collectionRemoveBuddy,
@@ -172,7 +193,8 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
                           itemCount: options.length,
                           itemBuilder: (context, i) {
                             final o = options[i];
-                            final on = o.isOn(_weaponId);
+                            final on =
+                                hasBuddy && o.buddy.uuid == current?.uuid;
                             final available = context.l10n
                                 .collectionBuddyAvailable(o.free, o.total);
                             return ArtTile(
@@ -193,9 +215,7 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
                               ),
                               onTap: on || snapshot.isPending
                                   ? null
-                                  : () => unawaited(
-                                      _equip(context, account.puuid, o, db),
-                                    ),
+                                  : () => unawaited(_pick(context, o, db)),
                             );
                           },
                         ),
@@ -210,24 +230,10 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
     );
   }
 
-  Future<void> _remove(BuildContext context, String puuid) async {
-    final l10nBeforeAwait = context.l10n;
-
-    final navigator = Navigator.of(context);
-    final ok = await applyLoadoutChange(
-      context,
-      ref,
-      puuid: puuid,
-      change: RemoveBuddy(weaponId: _weaponId),
-      successMessage: l10nBeforeAwait.collectionBuddyRemoved,
-    );
-    if (ok) Haptics.light();
-    if (ok && navigator.mounted) navigator.pop();
-  }
-
-  Future<void> _equip(
+  /// Closes the sheet with [option] (a copy taken from another gun asks
+  /// first, as it moves when the page saves).
+  Future<void> _pick(
     BuildContext context,
-    String puuid,
     BuddyOption option,
     ContentDb db,
   ) async {
@@ -257,17 +263,7 @@ class _BuddyPickerSheetState extends ConsumerState<BuddyPickerSheet> {
       );
       if (!confirmed || !context.mounted) return;
     }
-    final ok = await applyLoadoutChange(
-      context,
-      ref,
-      puuid: puuid,
-      change: option.equipOn(_weaponId, copy),
-      successMessage: l10nBeforeAwait2.collectionEquippedItem(
-        option.buddy.displayName,
-      ),
-    );
-    if (ok) Haptics.medium();
-    if (ok && navigator.mounted) navigator.pop();
+    if (navigator.mounted) navigator.pop(BuddyPickEquip(option, copy));
   }
 }
 
