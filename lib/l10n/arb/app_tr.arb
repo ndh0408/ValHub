@@ -980,6 +980,7 @@
   "communityLfgEmptyRankBody": "Rütbeni kabul etmeyen ilanlar gizleniyor.",
   "communityLfgShowAllRanks": "Tüm rütbeleri göster",
   "communityRankingCatalogWeaponTitle": "Tüm {weapon} kaplamaları",
+  "communityPostGoneTitle": "Bu gönderi artık yok",
   "liveGamePlayerStatistics": "Sen: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "Ajan seçimi",

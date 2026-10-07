@@ -980,6 +980,7 @@
   "communityLfgEmptyRankBody": "不接受你段位的帖子已被隐藏。",
   "communityLfgShowAllRanks": "查看所有段位",
   "communityRankingCatalogWeaponTitle": "全部{weapon}皮肤",
+  "communityPostGoneTitle": "此帖子已不存在",
   "liveGamePlayerStatistics": "你：{kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "英雄选择中",

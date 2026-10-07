@@ -980,6 +980,7 @@
   "communityLfgEmptyRankBody": "不接受你牌位的貼文已隱藏。",
   "communityLfgShowAllRanks": "查看所有牌位",
   "communityRankingCatalogWeaponTitle": "所有{weapon}造型",
+  "communityPostGoneTitle": "此貼文已不存在",
   "liveGamePlayerStatistics": "你：{kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "特務選擇",

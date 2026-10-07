@@ -62,9 +62,12 @@ ErrorDescription describeCommunityError(AppLocalizations l10n, Object error) {
       icon: Icons.cloud_off_outlined,
       canRetry: false,
     ),
+    // The copy asks to sign in to Riot again: offer exactly that.
     CommunityException.riotRejected => ErrorDescription(
       message: l10n.communityErrorRiotRejected,
       icon: Icons.verified_user_outlined,
+      needsLogin: true,
+      canRetry: false,
     ),
     CommunityException.unauthorized => ErrorDescription(
       message: l10n.communityErrorUnauthorized,

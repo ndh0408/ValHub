@@ -6008,6 +6008,12 @@ abstract class AppLocalizations {
   /// **'Tất cả skin {weapon}'**
   String communityRankingCatalogWeaponTitle(String weapon);
 
+  /// Title of the post page when the post was deleted or hidden (the message below says which may have happened).
+  ///
+  /// In vi, this message translates to:
+  /// **'Bài viết không còn nữa'**
+  String get communityPostGoneTitle;
+
   /// Explicit render-time message, preserving existing VI behavior.
   ///
   /// In vi, this message translates to:

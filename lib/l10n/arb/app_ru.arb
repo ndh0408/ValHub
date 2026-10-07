@@ -980,6 +980,7 @@
   "communityLfgEmptyRankBody": "Объявления, которые не принимают ваш ранг, скрыты.",
   "communityLfgShowAllRanks": "Показать все ранги",
   "communityRankingCatalogWeaponTitle": "Все скины: {weapon}",
+  "communityPostGoneTitle": "Этого поста больше нет",
   "liveGamePlayerStatistics": "Вы: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "Выбор агента",

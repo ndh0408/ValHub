@@ -110,7 +110,7 @@ class _PostAccountScreenState extends ConsumerState<_PostAccountScreen> {
         return gone
             ? CommunityEmptyState(
                 icon: Icons.delete_sweep_outlined,
-                title: context.l10n.communityErrorTitle,
+                title: context.l10n.communityPostGoneTitle,
                 message: context.l10n.communityPostNotFound,
               )
             : Center(

@@ -11,6 +11,7 @@ import 'package:valvn/features/community/data/community_models.dart';
 import 'package:valvn/features/community/ui/feed/media_grid.dart';
 import 'package:valvn/features/community/ui/post_detail_screen.dart';
 
+import '../../../helpers/l10n.dart';
 import '../community_test_env.dart';
 
 void main() {
@@ -148,7 +149,9 @@ void main() {
     }, status: 404);
     await pumpCommunity(tester, env, const PostDetailScreen(postId: 'gone'));
     await settle(tester);
+    expect(find.text(tl.communityPostGoneTitle), findsOneWidget);
     expect(find.text(CommunityStrings.postNotFound), findsOneWidget);
+    expect(find.text(tl.communityErrorTitle), findsNothing);
     await unmount(tester);
 
     env.server

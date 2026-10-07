@@ -980,6 +980,7 @@
   "communityLfgEmptyRankBody": "Posts that don't accept your rank are hidden.",
   "communityLfgShowAllRanks": "Show all ranks",
   "communityRankingCatalogWeaponTitle": "All {weapon} skins",
+  "communityPostGoneTitle": "This post is gone",
   "liveGamePlayerStatistics": "You: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "Agent select",

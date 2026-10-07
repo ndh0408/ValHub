@@ -980,6 +980,7 @@
   "communityLfgEmptyRankBody": "ซ่อนโพสต์ที่ไม่รับแรงก์ของคุณอยู่",
   "communityLfgShowAllRanks": "ดูทุกแรงก์",
   "communityRankingCatalogWeaponTitle": "สกิน {weapon} ทั้งหมด",
+  "communityPostGoneTitle": "โพสต์นี้ไม่มีแล้ว",
   "liveGamePlayerStatistics": "คุณ: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "เลือกเอเจนท์",

@@ -980,6 +980,7 @@
   "communityLfgEmptyRankBody": "Ogłoszenia, które nie przyjmują twojej rangi, są ukryte.",
   "communityLfgShowAllRanks": "Pokaż wszystkie rangi",
   "communityRankingCatalogWeaponTitle": "Wszystkie skiny: {weapon}",
+  "communityPostGoneTitle": "Tego posta już nie ma",
   "liveGamePlayerStatistics": "Ty: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "Wybór agenta",

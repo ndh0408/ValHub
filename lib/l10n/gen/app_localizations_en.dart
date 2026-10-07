@@ -3683,6 +3683,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get communityPostGoneTitle => 'This post is gone';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart' hide ErrorDescription;
 
+import '../../../../core/accounts/account_providers.dart';
 import '../../../../core/auth/auth_routes.dart';
 import '../../../../core/content/content_repository.dart';
 import '../../../../core/geo/countries.dart';
@@ -822,7 +823,15 @@ class CommunityErrorState extends StatelessWidget {
     final button = d.needsLogin
         ? FilledButton(
             onPressed: () => context.push(
-              AuthRoutes.loginPath(reauthPuuid: d.puuid ?? puuid),
+              AuthRoutes.loginPath(
+                reauthPuuid:
+                    d.puuid ??
+                    puuid ??
+                    ProviderScope.containerOf(
+                      context,
+                      listen: false,
+                    ).read(activeAccountProvider)?.puuid,
+              ),
             ),
             child: Text(context.l10n.commonSignInAgain),
           )
@@ -862,7 +871,8 @@ class CommunityErrorState extends StatelessWidget {
   }
 }
 
-/// Snackbar with the Vietnamese message of [error].
+/// Snackbar with the localized message of [error], with "Đăng nhập lại"
+/// (active account) when the Riot session must be renewed.
 void showCommunityError(BuildContext context, Object error) {
   if (error is CommunityException &&
       error.code == CommunityException.consentRequired) {
@@ -870,12 +880,29 @@ void showCommunityError(BuildContext context, Object error) {
     unawaited(promptConsentFromContext(context));
     return;
   }
+  final d = describeCommunityError(context.l10n, error);
+  final router = GoRouter.maybeOf(context);
+  final reauth = d.needsLogin
+      ? d.puuid ??
+            ProviderScope.containerOf(
+              context,
+              listen: false,
+            ).read(activeAccountProvider)?.puuid
+      : null;
   final messenger = ScaffoldMessenger.maybeOf(context);
   messenger
     ?..hideCurrentSnackBar()
     ..showSnackBar(
       SnackBar(
-        content: Text(describeCommunityError(context.l10n, error).message),
+        content: Text(d.message),
+        action: router == null || reauth == null
+            ? null
+            : SnackBarAction(
+                label: context.l10n.commonSignInAgain,
+                onPressed: () => unawaited(
+                  router.push<void>(AuthRoutes.loginPath(reauthPuuid: reauth)),
+                ),
+              ),
       ),
     );
 }

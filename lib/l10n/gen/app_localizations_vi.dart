@@ -3477,6 +3477,9 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get communityPostGoneTitle => 'Bài viết không còn nữa';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

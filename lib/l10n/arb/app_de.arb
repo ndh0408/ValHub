@@ -980,6 +980,7 @@
   "communityLfgEmptyRankBody": "Suchen, die deinen Rang nicht annehmen, sind ausgeblendet.",
   "communityLfgShowAllRanks": "Alle Ränge zeigen",
   "communityRankingCatalogWeaponTitle": "Alle {weapon}-Skins",
+  "communityPostGoneTitle": "Beitrag nicht mehr verfügbar",
   "liveGamePlayerStatistics": "Du: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "In der Agentenauswahl",

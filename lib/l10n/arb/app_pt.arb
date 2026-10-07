@@ -980,6 +980,7 @@
   "communityLfgEmptyRankBody": "Os anúncios que não aceitam o seu ranque estão ocultos.",
   "communityLfgShowAllRanks": "Ver todos os ranques",
   "communityRankingCatalogWeaponTitle": "Todas as skins de {weapon}",
+  "communityPostGoneTitle": "Esta publicação não existe mais",
   "liveGamePlayerStatistics": "Você: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "Seleção de agentes",

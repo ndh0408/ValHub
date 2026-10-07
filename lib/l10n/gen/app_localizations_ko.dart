@@ -3413,6 +3413,9 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get communityPostGoneTitle => '더 이상 볼 수 없는 게시물';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

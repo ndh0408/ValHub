@@ -980,6 +980,7 @@
   "communityLfgEmptyRankBody": "내 랭크를 받지 않는 글은 숨겨져 있습니다.",
   "communityLfgShowAllRanks": "모든 랭크 보기",
   "communityRankingCatalogWeaponTitle": "{weapon} 스킨 전체",
+  "communityPostGoneTitle": "더 이상 볼 수 없는 게시물",
   "liveGamePlayerStatistics": "나: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "요원 선택",

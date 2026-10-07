@@ -3369,6 +3369,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get communityPostGoneTitle => '此帖子已不存在';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',
@@ -9902,6 +9905,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String communityRankingCatalogWeaponTitle(String weapon) {
     return '所有$weapon造型';
   }
+
+  @override
+  String get communityPostGoneTitle => '此貼文已不存在';
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

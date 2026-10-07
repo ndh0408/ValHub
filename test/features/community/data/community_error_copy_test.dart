@@ -69,6 +69,16 @@ void main() {
     );
   });
 
+  test('Riot refusing the account asks to sign in again, not to retry', () {
+    final error = CommunityException.fromResponse(401, {
+      'error': {'code': 'riot_rejected'},
+    });
+    final d = describeCommunityError(tl, error);
+    expect(d.message, tl.communityErrorRiotRejected);
+    expect(d.needsLogin, isTrue);
+    expect(d.canRetry, isFalse);
+  });
+
   test('a known reason wins over the code that carries it', () {
     final notOwned = CommunityException.fromResponse(403, {
       'error': {

@@ -980,6 +980,7 @@
   "communityLfgEmptyRankBody": "المنشورات التي لا تقبل رتبتك مخفية.",
   "communityLfgShowAllRanks": "عرض كل الرتب",
   "communityRankingCatalogWeaponTitle": "جميع مظاهر {weapon}",
+  "communityPostGoneTitle": "لم يعد هذا المنشور متاحًا",
   "liveGamePlayerStatistics": "أنت: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "اختيار العميل",

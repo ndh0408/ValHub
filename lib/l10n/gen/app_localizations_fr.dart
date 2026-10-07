@@ -3696,6 +3696,9 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get communityPostGoneTitle => 'Cette publication n\'existe plus';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

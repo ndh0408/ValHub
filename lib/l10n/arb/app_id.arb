@@ -980,6 +980,7 @@
   "communityLfgEmptyRankBody": "Postingan yang tidak menerima rank-mu disembunyikan.",
   "communityLfgShowAllRanks": "Lihat semua rank",
   "communityRankingCatalogWeaponTitle": "Semua skin {weapon}",
+  "communityPostGoneTitle": "Postingan ini sudah tidak ada",
   "liveGamePlayerStatistics": "Kamu: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "Pemilihan agen",

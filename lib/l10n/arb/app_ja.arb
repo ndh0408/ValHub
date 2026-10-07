@@ -980,6 +980,7 @@
   "communityLfgEmptyRankBody": "あなたのランクを受け付けない募集は非表示になっています。",
   "communityLfgShowAllRanks": "すべてのランクを表示",
   "communityRankingCatalogWeaponTitle": "{weapon}のすべてのスキン",
+  "communityPostGoneTitle": "この投稿はもうありません",
   "liveGamePlayerStatistics": "あなた：{kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "liveGameAcs": "ACS",
   "liveGameAgentSelect": "エージェント選択中",
