@@ -4684,7 +4684,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String settingsGeoMismatch(String region) {
-    return 'Koneksi manual berbeda dari region Riot-mu: $region. Beralih ke otomatis?';
+    return 'Kamu memilih server yang berbeda dari server akunmu ($region). Pakai server akun?';
   }
 
   @override

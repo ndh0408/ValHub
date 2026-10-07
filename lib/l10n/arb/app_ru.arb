@@ -1274,7 +1274,7 @@
   "settingsGeoManualConfirm": "Вы выбрали: {manual}, но Riot определяет регион вашего аккаунта как {detected}. Продолжить проверку этого подключения?",
   "settingsGeoUnverified": "Не удалось проверить подключение из-за неполадок на сервере или в сети. Сохранить этот выбор и проверить позже?",
   "settingsGeoContinue": "Продолжить",
-  "settingsGeoMismatch": "Ручное подключение отличается от вашего региона Riot: {region}. Перейти на автоматический выбор?",
+  "settingsGeoMismatch": "Вы выбрали сервер, отличный от сервера вашего аккаунта ({region}). Использовать сервер аккаунта?",
   "settingsGeoUseAuto": "Автоматически",
   "settingsGeoKeepManual": "Оставить вручную",
   "settingsGeoReviewConnection": "Подключение",

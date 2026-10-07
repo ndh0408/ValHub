@@ -4583,7 +4583,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String settingsGeoMismatch(String region) {
-    return '手動で選んだ接続先がRiotの地域（$region）と異なります。自動の地域を使いますか？';
+    return 'アカウントのサーバー（$region）とは別のサーバーを選んでいます。アカウントのサーバーを使いますか？';
   }
 
   @override

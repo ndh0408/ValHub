@@ -5148,7 +5148,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String settingsGeoMismatch(String region) {
-    return 'Ручное подключение отличается от вашего региона Riot: $region. Перейти на автоматический выбор?';
+    return 'Вы выбрали сервер, отличный от сервера вашего аккаунта ($region). Использовать сервер аккаунта?';
   }
 
   @override

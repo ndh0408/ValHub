@@ -4684,7 +4684,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String settingsGeoMismatch(String region) {
-    return 'Elle seçtiğin bağlantı Riot bölgenden farklı: $region. Otomatik moda geçilsin mi?';
+    return 'Hesabının sunucusundan ($region) farklı bir sunucu seçtin. Hesabın sunucusu kullanılsın mı?';
   }
 
   @override

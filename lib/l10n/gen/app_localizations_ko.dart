@@ -4579,7 +4579,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String settingsGeoMismatch(String region) {
-    return '직접 선택한 연결이 Riot 지역과 다릅니다: $region. 자동으로 전환할까요?';
+    return '계정 서버($region)와 다른 서버를 선택했습니다. 계정 서버를 사용할까요?';
   }
 
   @override

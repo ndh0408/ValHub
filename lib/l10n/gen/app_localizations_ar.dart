@@ -5217,7 +5217,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String settingsGeoMismatch(String region) {
-    return 'يختلف اتصالك اليدوي عن منطقة Riot الخاصة بك: $region. هل تريد التبديل إلى الوضع التلقائي؟';
+    return 'اخترت خادمًا مختلفًا عن خادم حسابك ($region). هل تريد استخدام خادم الحساب؟';
   }
 
   @override

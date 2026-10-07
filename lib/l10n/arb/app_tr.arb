@@ -1274,7 +1274,7 @@
   "settingsGeoManualConfirm": "Seçtiğin bölge: {manual}. Ancak Riot hesabını şu bölgede gösteriyor: {detected}. Bu bağlantıyı kontrol etmeye devam edilsin mi?",
   "settingsGeoUnverified": "Sunucu veya ağ sorun yaşadığı için bağlantı doğrulanamadı. Bu seçim kaydedilip daha sonra tekrar denensin mi?",
   "settingsGeoContinue": "Devam et",
-  "settingsGeoMismatch": "Elle seçtiğin bağlantı Riot bölgenden farklı: {region}. Otomatik moda geçilsin mi?",
+  "settingsGeoMismatch": "Hesabının sunucusundan ({region}) farklı bir sunucu seçtin. Hesabın sunucusu kullanılsın mı?",
   "settingsGeoUseAuto": "Otomatik kullan",
   "settingsGeoKeepManual": "Elle seçileni koru",
   "settingsGeoReviewConnection": "Bağlantıyı gör",

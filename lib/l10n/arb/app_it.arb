@@ -1274,7 +1274,7 @@
   "settingsGeoManualConfirm": "Hai scelto {manual}, ma Riot colloca il tuo account in {detected}. Continuare a controllare questa connessione?",
   "settingsGeoUnverified": "Impossibile verificare la connessione perché il server o la rete hanno problemi. Salvare questa scelta e riprovare più tardi?",
   "settingsGeoContinue": "Continua",
-  "settingsGeoMismatch": "La connessione manuale è diversa dalla tua regione Riot: {region}. Passare alla modalità automatica?",
+  "settingsGeoMismatch": "Hai scelto un server diverso da quello del tuo account ({region}). Usare il server dell'account?",
   "settingsGeoUseAuto": "Usa automatica",
   "settingsGeoKeepManual": "Mantieni manuale",
   "settingsGeoReviewConnection": "Vedi connessione",

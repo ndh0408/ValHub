@@ -1274,7 +1274,7 @@
   "settingsGeoManualConfirm": "{manual}が選択されていますが、Riotはアカウントの地域を{detected}と判定しています。この接続の確認を続けますか？",
   "settingsGeoUnverified": "サーバーまたはネットワークの問題により、接続を確認できませんでした。この設定を保存して後でもう一度お試しになりますか？",
   "settingsGeoContinue": "続ける",
-  "settingsGeoMismatch": "手動で選んだ接続先がRiotの地域（{region}）と異なります。自動の地域を使いますか？",
+  "settingsGeoMismatch": "アカウントのサーバー（{region}）とは別のサーバーを選んでいます。アカウントのサーバーを使いますか？",
   "settingsGeoUseAuto": "自動を使用",
   "settingsGeoKeepManual": "手動のまま",
   "settingsGeoReviewConnection": "接続を確認",

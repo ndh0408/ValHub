@@ -5035,7 +5035,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String settingsGeoMismatch(String region) {
-    return 'La conexión manual no coincide con la región de Riot: $region. ¿Quieres usar la región automática?';
+    return 'Elegiste un servidor distinto al de tu cuenta ($region). ¿Usar el servidor de tu cuenta?';
   }
 
   @override

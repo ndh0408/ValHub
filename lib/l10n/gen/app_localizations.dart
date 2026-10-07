@@ -7778,10 +7778,10 @@ abstract class AppLocalizations {
   /// **'Tiếp tục'**
   String get settingsGeoContinue;
 
-  /// Country and Riot connection settings: settingsGeoMismatch
+  /// Banner when the player picked a server by hand that differs from the one Riot gives the account; {region} is the account's server name. Offers to switch back to it.
   ///
   /// In vi, this message translates to:
-  /// **'Kết nối thủ công khác với khu vực Riot: {region}. Bạn muốn dùng khu vực tự động?'**
+  /// **'Bạn đang chọn máy chủ khác với máy chủ của tài khoản ({region}). Dùng máy chủ của tài khoản?'**
   String settingsGeoMismatch(String region);
 
   /// Country and Riot connection settings: settingsGeoUseAuto

@@ -4521,7 +4521,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String settingsGeoMismatch(String region) {
-    return '你手动选择的连接与 Riot 区域不同：$region。要改用自动选择吗？';
+    return '你选择的服务器与账号的服务器（$region）不同。要使用账号的服务器吗？';
   }
 
   @override
@@ -11038,7 +11038,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String settingsGeoMismatch(String region) {
-    return '手動連線與你的 Riot 地區（$region）不同。要改用自動設定嗎？';
+    return '你選擇的伺服器與帳號的伺服器（$region）不同。要使用帳號的伺服器嗎？';
   }
 
   @override

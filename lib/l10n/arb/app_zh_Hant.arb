@@ -1274,7 +1274,7 @@
   "settingsGeoManualConfirm": "你選擇了{manual}，但 Riot 判定你的帳號位於{detected}。要繼續檢查此連線嗎？",
   "settingsGeoUnverified": "伺服器或網路發生問題，無法驗證連線。要先儲存此選項，稍後再試嗎？",
   "settingsGeoContinue": "繼續",
-  "settingsGeoMismatch": "手動連線與你的 Riot 地區（{region}）不同。要改用自動設定嗎？",
+  "settingsGeoMismatch": "你選擇的伺服器與帳號的伺服器（{region}）不同。要使用帳號的伺服器嗎？",
   "settingsGeoUseAuto": "使用自動",
   "settingsGeoKeepManual": "保留手動",
   "settingsGeoReviewConnection": "查看連線",

@@ -5043,7 +5043,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String settingsGeoMismatch(String region) {
-    return 'Twoje ręczne połączenie różni się od regionu Riot: $region. Przełączyć na automatyczne?';
+    return 'Wybrano inny serwer niż serwer twojego konta ($region). Użyć serwera konta?';
   }
 
   @override

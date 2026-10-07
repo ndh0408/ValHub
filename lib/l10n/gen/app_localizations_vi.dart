@@ -4664,7 +4664,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String settingsGeoMismatch(String region) {
-    return 'Kết nối thủ công khác với khu vực Riot: $region. Bạn muốn dùng khu vực tự động?';
+    return 'Bạn đang chọn máy chủ khác với máy chủ của tài khoản ($region). Dùng máy chủ của tài khoản?';
   }
 
   @override

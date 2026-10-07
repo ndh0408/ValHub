@@ -7697,14 +7697,16 @@
   "@settingsGeoContinue": {
     "description": "Country and Riot connection settings: settingsGeoContinue"
   },
-  "settingsGeoMismatch": "Kết nối thủ công khác với khu vực Riot: {region}. Bạn muốn dùng khu vực tự động?",
+  "settingsGeoMismatch": "Bạn đang chọn máy chủ khác với máy chủ của tài khoản ({region}). Dùng máy chủ của tài khoản?",
   "@settingsGeoMismatch": {
-    "description": "Country and Riot connection settings: settingsGeoMismatch",
+    "description": "Banner when the player picked a server by hand that differs from the one Riot gives the account; {region} is the account's server name. Offers to switch back to it.",
     "placeholders": {
       "region": {
+        "example": "Châu Á - Thái Bình Dương",
         "type": "String"
       }
-    }
+    },
+    "x-context": "lib/core/geo/region_mismatch_banner.dart"
   },
   "settingsGeoUseAuto": "Dùng tự động",
   "@settingsGeoUseAuto": {

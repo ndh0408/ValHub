@@ -1274,7 +1274,7 @@
   "settingsGeoManualConfirm": "اخترت {manual}، لكن Riot تحدد حسابك في {detected}. هل تريد متابعة التحقق من هذا الاتصال؟",
   "settingsGeoUnverified": "تعذّر التحقق من الاتصال بسبب مشكلة في الخادم أو الشبكة. هل تريد حفظ هذا الخيار والمحاولة لاحقًا؟",
   "settingsGeoContinue": "متابعة",
-  "settingsGeoMismatch": "يختلف اتصالك اليدوي عن منطقة Riot الخاصة بك: {region}. هل تريد التبديل إلى الوضع التلقائي؟",
+  "settingsGeoMismatch": "اخترت خادمًا مختلفًا عن خادم حسابك ({region}). هل تريد استخدام خادم الحساب؟",
   "settingsGeoUseAuto": "استخدام التلقائي",
   "settingsGeoKeepManual": "الإبقاء على اليدوي",
   "settingsGeoReviewConnection": "عرض الاتصال",

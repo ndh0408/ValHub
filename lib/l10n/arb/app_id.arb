@@ -1274,7 +1274,7 @@
   "settingsGeoManualConfirm": "Kamu memilih {manual}, tapi Riot menempatkan akunmu di {detected}. Lanjutkan pemeriksaan koneksi ini?",
   "settingsGeoUnverified": "Koneksi belum bisa diverifikasi karena server atau jaringan sedang bermasalah. Simpan pilihan ini dan coba lagi nanti?",
   "settingsGeoContinue": "Lanjutkan",
-  "settingsGeoMismatch": "Koneksi manual berbeda dari region Riot-mu: {region}. Beralih ke otomatis?",
+  "settingsGeoMismatch": "Kamu memilih server yang berbeda dari server akunmu ({region}). Pakai server akun?",
   "settingsGeoUseAuto": "Pakai otomatis",
   "settingsGeoKeepManual": "Tetap manual",
   "settingsGeoReviewConnection": "Lihat koneksi",

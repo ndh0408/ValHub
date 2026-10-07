@@ -1274,7 +1274,7 @@
   "settingsGeoManualConfirm": "Wybrano: {manual}, ale Riot przypisuje twoje konto do: {detected}. Kontynuować sprawdzanie tego połączenia?",
   "settingsGeoUnverified": "Nie udało się sprawdzić połączenia, bo serwer lub sieć mają problemy. Zapisać ten wybór i spróbować później?",
   "settingsGeoContinue": "Kontynuuj",
-  "settingsGeoMismatch": "Twoje ręczne połączenie różni się od regionu Riot: {region}. Przełączyć na automatyczne?",
+  "settingsGeoMismatch": "Wybrano inny serwer niż serwer twojego konta ({region}). Użyć serwera konta?",
   "settingsGeoUseAuto": "Użyj automatycznego",
   "settingsGeoKeepManual": "Zostaw ręczne",
   "settingsGeoReviewConnection": "Zobacz połączenie",
