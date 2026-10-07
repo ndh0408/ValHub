@@ -30,9 +30,12 @@ import 'package:valvn/core/l10n/l10n.dart';
 ///   ledger of your own account, and stays hidden on other players' profiles.
 /// - Hidden until at least one match is available.
 class RecentFormCard extends ConsumerWidget {
-  const RecentFormCard({super.key, required this.puuid});
+  const RecentFormCard({super.key, required this.puuid, this.onTap});
 
   final String puuid;
+
+  /// Opens the full analysis ("Hiệu suất"), on the player's own profile.
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -78,6 +81,7 @@ class RecentFormCard extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: _FormBody(
+        onTap: onTap,
         form: form,
         scope: context.fmt.inlineFacts([
           queue ?? context.l10n.profileAllModes,
@@ -90,9 +94,15 @@ class RecentFormCard extends ConsumerWidget {
 }
 
 class _FormBody extends StatelessWidget {
-  const _FormBody({required this.form, required this.scope, this.pending = 0});
+  const _FormBody({
+    required this.form,
+    required this.scope,
+    this.pending = 0,
+    this.onTap,
+  });
 
   final RecentForm form;
+  final VoidCallback? onTap;
 
   /// "Mọi chế độ" / "Xếp hạng · Ascent": which matches the card counts.
   final String scope;
@@ -113,6 +123,7 @@ class _FormBody extends StatelessWidget {
         : formatDecimal(v, decimals);
     return ValCard(
       padding: const EdgeInsets.all(16),
+      onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

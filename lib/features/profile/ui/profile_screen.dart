@@ -8,6 +8,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/accounts/account.dart';
 import '../../../core/accounts/account_providers.dart';
+import '../../../core/accounts/account_widgets.dart';
 import '../../../core/domain/competitive/competitive.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/tab_page_scaffold.dart';
@@ -53,10 +54,15 @@ class ProfileScreen extends ConsumerWidget {
       );
     }
     final puuid = account.puuid;
+    final roomy = MediaQuery.sizeOf(context).width >= 360;
     return TabPageScaffold(
       title: context.l10n.profileTitle,
       showAccountChip: false,
-      actions: const [SettingsGearButton()],
+      // Same header as Trang chủ: whose profile this is, and ⚙.
+      actions: [
+        AccountChip(showName: roomy),
+        const SettingsGearButton(),
+      ],
       onRefresh: () => _refresh(ref, account),
       slivers: [
         SliverToBoxAdapter(child: ProfileHeader(account: account)),
@@ -71,18 +77,11 @@ class ProfileScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               PlaySessionCard(puuid: puuid),
-              RecentFormCard(puuid: puuid),
-              _DailyRrRow(puuid: puuid),
-              ValCard(
-                padding: EdgeInsets.zero,
-                child: ProfileNavRow(
-                  icon: Icons.insights_outlined,
-                  title: context.l10n.profilePerformanceTitle,
-                  onTap: () =>
-                      unawaited(context.push(ProfileRoutes.performance)),
-                ),
+              // The form card leads to the full analysis.
+              RecentFormCard(
+                puuid: puuid,
+                onTap: () => unawaited(context.push(ProfileRoutes.performance)),
               ),
-              const SizedBox(height: 12),
               currentGameCard ??
                   CurrentGameCard(
                     title: context.l10n.profilePlayHubTitle,
@@ -90,10 +89,20 @@ class ProfileScreen extends ConsumerWidget {
                     onOpen: () => unawaited(context.push(SocialRoutes.party)),
                   ),
               const SizedBox(height: 12),
+              // Every way out of the profile in one group, not four cards.
               ValCard(
                 padding: EdgeInsets.zero,
                 child: Column(
                   children: [
+                    _DailyRrRow(puuid: puuid),
+                    const Divider(indent: 66, height: 1),
+                    ProfileNavRow(
+                      icon: Icons.insights_outlined,
+                      title: context.l10n.profilePerformanceTitle,
+                      onTap: () =>
+                          unawaited(context.push(ProfileRoutes.performance)),
+                    ),
+                    const Divider(indent: 66, height: 1),
                     ProfileNavRow(
                       icon: Icons.military_tech_outlined,
                       title: context.l10n.commonTabBattlePass,
@@ -152,30 +161,27 @@ class _DailyRrRow extends ConsumerWidget {
     // behind, so the row then stays without a claim.
     final updates = ref.watch(competitiveUpdatesProvider(puuid));
     final checkedToday = updates.hasValue && !updates.hasError;
-    return ValCard(
-      padding: EdgeInsets.zero,
-      child: ProfileNavRow(
-        icon: Icons.calendar_month_rounded,
-        title: context.l10n.profileDailyRrTitle,
-        subtitle: days == null || (today == null && !checkedToday)
-            ? null
-            : Text(
-                today == null
-                    ? context.l10n.profileTodayNone
-                    : context.l10n.profileToday(
-                        context.l10n.winLossSummary(
-                          today.wins,
-                          today.losses,
-                          today.draws,
-                          today.unknown,
-                        ),
+    return ProfileNavRow(
+      icon: Icons.calendar_month_rounded,
+      title: context.l10n.profileDailyRrTitle,
+      subtitle: days == null || (today == null && !checkedToday)
+          ? null
+          : Text(
+              today == null
+                  ? context.l10n.profileTodayNone
+                  : context.l10n.profileToday(
+                      context.l10n.winLossSummary(
+                        today.wins,
+                        today.losses,
+                        today.draws,
+                        today.unknown,
                       ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-        trailing: today == null ? null : RrPill(today.netRr),
-        onTap: () => unawaited(context.push(ProfileRoutes.dailyRr)),
-      ),
+                    ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+      trailing: today == null ? null : RrPill(today.netRr),
+      onTap: () => unawaited(context.push(ProfileRoutes.dailyRr)),
     );
   }
 }

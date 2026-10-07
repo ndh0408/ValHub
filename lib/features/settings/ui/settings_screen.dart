@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/riot/platform_status.dart';
-import '../../../core/ui/tab_page_scaffold.dart';
+import '../../../core/ui/sub_page.dart';
 import '../../community/ui/data_rights/community_data_section.dart';
 import '../providers/settings_providers.dart';
 import 'sections/accounts_section.dart';
@@ -31,7 +31,10 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return TabPageScaffold(
+    // A pushed page (from the ⚙ of Trang chủ and Hồ sơ): back button and
+    // the sub-page header like every other one; the accounts are the first
+    // group, so no account chip here.
+    return SubPageScaffold(
       title: context.l10n.settingsTitle,
       onRefresh: () async {
         final region = ref.read(activeAccountProvider)?.region;
