@@ -49,11 +49,14 @@ enum SkinDetailMode {
 ///
 /// [skinOrLevelUuid] may be a skin, level or chroma uuid (resolved with
 /// `ContentDb.skinByAnyUuid`); a chroma uuid preselects that variant.
+/// [ownedAction] adds a button under an owned skin (the collection's
+/// "Trang bị", which opens the customize page).
 Future<void> showSkinDetailSheet(
   BuildContext context, {
   required String skinOrLevelUuid,
   SkinDetailMode mode = SkinDetailMode.store,
   SkinOfferPrice? offer,
+  SkinSheetAction? ownedAction,
 }) => showModalBottomSheet<void>(
   context: context,
   isScrollControlled: true,
@@ -63,8 +66,24 @@ Future<void> showSkinDetailSheet(
     skinOrLevelUuid: skinOrLevelUuid,
     mode: mode,
     offer: offer,
+    ownedAction: ownedAction,
   ),
 );
+
+/// A button the opener adds under a skin the account owns. Tapping it
+/// closes the sheet first, then runs [onPressed] (e.g. a navigation).
+@immutable
+class SkinSheetAction {
+  const SkinSheetAction({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+}
 
 /// The price the skin is offered at right now when it differs from the
 /// catalogue (a Night Market card): the sheet shows it, with the usual
@@ -107,6 +126,7 @@ class SkinDetailSheet extends ConsumerStatefulWidget {
     required this.skinOrLevelUuid,
     this.mode = SkinDetailMode.store,
     this.offer,
+    this.ownedAction,
   });
 
   final String skinOrLevelUuid;
@@ -114,6 +134,9 @@ class SkinDetailSheet extends ConsumerStatefulWidget {
 
   /// Overrides the catalogue price (Night Market).
   final SkinOfferPrice? offer;
+
+  /// Shown only when the account owns the skin.
+  final SkinSheetAction? ownedAction;
 
   @override
   ConsumerState<SkinDetailSheet> createState() => _SkinDetailSheetState();
@@ -158,6 +181,7 @@ class _SkinDetailSheetState extends ConsumerState<SkinDetailSheet> {
         skin: skin,
         mode: widget.mode,
         offer: widget.offer,
+        ownedAction: widget.ownedAction,
         chroma: _selectedChroma(skin),
         onChromaSelected: (c) => setState(() => _chromaUuid = c.uuid),
       );
@@ -252,11 +276,13 @@ class _SkinBody extends ConsumerWidget {
     required this.chroma,
     required this.onChromaSelected,
     this.offer,
+    this.ownedAction,
   });
 
   final WeaponSkin skin;
   final SkinDetailMode mode;
   final SkinOfferPrice? offer;
+  final SkinSheetAction? ownedAction;
   final SkinChroma? chroma;
   final ValueChanged<SkinChroma> onChromaSelected;
 
@@ -353,6 +379,20 @@ class _SkinBody extends ConsumerWidget {
             ],
           ),
         ),
+        if (ownedAction case final action? when isOwned) ...[
+          const SizedBox(height: 12),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+              action.onPressed();
+            },
+            icon: Icon(action.icon),
+            label: Text(action.label),
+          ),
+        ],
         const SizedBox(height: 8),
         SkinVoteButton(skinUuid: skin.uuid, weaponUuid: skin.weaponUuid),
         if (puuid != null) StoreHistoryLine(puuid: puuid, skin: skin),

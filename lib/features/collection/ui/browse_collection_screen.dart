@@ -4,11 +4,13 @@ import 'package:valvn/core/l10n/labels/economy_labels.dart';
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/content/content_db.dart';
 import '../../../core/accounts/account_providers.dart';
 import '../../../core/domain/economy/economy.dart';
+import '../../../core/domain/loadout/loadout.dart';
 import '../../../core/storage/ui_memory.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
@@ -21,6 +23,7 @@ import '../../../core/ui/skin_art_card.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../skin_detail/skin_detail_sheet.dart';
+import '../collection_routes.dart';
 import '../data/buddy_options.dart';
 import '../data/collection_items.dart';
 import '../data/collection_search.dart';
@@ -518,9 +521,30 @@ class SkinGridTile extends ConsumerWidget {
             context,
             skinOrLevelUuid: skin.uuid,
             mode: SkinDetailMode.owned,
+            ownedAction: _equipAction(context, ref),
           ),
         );
       },
+    );
+  }
+
+  /// The sheet's way to equip: the skin's customize page in the weapon
+  /// loadout flow (variant, level, buddy, then "Trang bị" there). Already
+  /// on its gun: "Tùy chỉnh skin" instead.
+  SkinSheetAction _equipAction(BuildContext context, WidgetRef ref) {
+    final puuid = ref.read(activeAccountProvider)?.puuid;
+    final gun = puuid == null
+        ? null
+        : ref.read(loadoutProvider(puuid)).value?.loadout.gun(skin.weaponUuid);
+    final onGun = gun?.skinId == skin.uuid;
+    return SkinSheetAction(
+      label: onGun
+          ? context.l10n.collectionSkinCustomizeTitle
+          : context.l10n.collectionEquip,
+      icon: onGun ? Icons.tune : Icons.done_all,
+      onPressed: () => unawaited(
+        context.push(CollectionRoutes.weaponSkin(skin.weaponUuid, skin.uuid)),
+      ),
     );
   }
 }

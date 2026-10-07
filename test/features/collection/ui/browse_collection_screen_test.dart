@@ -6,7 +6,9 @@ import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/features/collection/collection_routes.dart';
 import 'package:valvn/features/collection/collection_strings.dart';
 import 'package:valvn/features/collection/ui/browse_collection_screen.dart';
+import 'package:valvn/features/collection/ui/skin_customize_screen.dart';
 
+import '../../../helpers/l10n.dart';
 import '../../../helpers/test_prefs.dart';
 import '../collection_test_harness.dart';
 
@@ -60,6 +62,29 @@ void main() {
     await tester.tap(find.text(CollectionStrings.clearFilters));
     await settle(tester);
     expect(find.textContaining('5 skin · '), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await unmount(tester);
+  });
+
+  testWidgets('an owned skin sheet leads to its customize page', (
+    tester,
+  ) async {
+    await pumpCollection(
+      tester,
+      const BrowseCollectionScreen(type: CollectionBrowseType.skin),
+      riot: riot,
+      prefs: prefs,
+    );
+    await tester.tap(find.text('Vandal Reaver'));
+    await settle(tester);
+    final equip = find.widgetWithText(FilledButton, tl.collectionEquip);
+    expect(equip, findsOneWidget);
+    await tester.tap(equip);
+    await settle(tester);
+    // The sheet closed; "Trang bị" on the customize page saves.
+    expect(find.byType(SkinCustomizeScreen), findsOneWidget);
+    expect(find.text(tl.collectionVariants), findsOneWidget);
+    expect(riot.puts, isEmpty);
     expect(tester.takeException(), isNull);
     await unmount(tester);
   });

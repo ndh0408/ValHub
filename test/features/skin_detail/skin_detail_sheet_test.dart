@@ -25,11 +25,17 @@ const _friend = Account(
 
 /// Opens the sheet from a button, the way the app does.
 class _Harness extends StatelessWidget {
-  const _Harness({required this.uuid, required this.mode, this.offer});
+  const _Harness({
+    required this.uuid,
+    required this.mode,
+    this.offer,
+    this.ownedAction,
+  });
 
   final String uuid;
   final SkinDetailMode mode;
   final SkinOfferPrice? offer;
+  final SkinSheetAction? ownedAction;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -41,6 +47,7 @@ class _Harness extends StatelessWidget {
             skinOrLevelUuid: uuid,
             mode: mode,
             offer: offer,
+            ownedAction: ownedAction,
           ),
           child: const Text('open'),
         ),
@@ -56,6 +63,7 @@ Future<void> _open(
   List<Override> Function(Prefs prefs)? overrides,
   Size size = const Size(360, 740),
   SkinOfferPrice? offer,
+  SkinSheetAction? ownedAction,
 }) async {
   usePhoneViewport(tester, size: size);
   final prefs = await createTestPrefs();
@@ -64,7 +72,12 @@ Future<void> _open(
       overrides:
           overrides?.call(prefs) ??
           storeOverrides(api: fixtureApi(), prefs: prefs),
-      home: _Harness(uuid: uuid, mode: mode, offer: offer),
+      home: _Harness(
+        uuid: uuid,
+        mode: mode,
+        offer: offer,
+        ownedAction: ownedAction,
+      ),
     ),
   );
   await settle(tester);
@@ -211,6 +224,35 @@ void main() {
     expect(find.text(SkinDetailStrings.addToWishlist), findsNothing);
     expect(find.text(SkinDetailStrings.inWishlist), findsNothing);
 
+    await unmount(tester);
+  });
+
+  testWidgets('owned action: closes the sheet, then runs; owned skins only', (
+    tester,
+  ) async {
+    var ran = 0;
+    final action = SkinSheetAction(
+      label: 'equip-action',
+      icon: Icons.done_all,
+      onPressed: () => ran++,
+    );
+    await _open(tester, mode: SkinDetailMode.owned, ownedAction: action);
+    await tester.tap(find.text('equip-action'));
+    await settle(tester);
+    await tester.pump(const Duration(seconds: 1));
+    expect(ran, 1);
+    expect(find.byType(SkinDetailSheet), findsNothing);
+    await unmount(tester);
+
+    // Not owned: no button.
+    await _open(
+      tester,
+      uuid: Fx.phantomTocChien,
+      mode: SkinDetailMode.owned,
+      ownedAction: action,
+    );
+    expect(find.byType(SkinDetailSheet), findsOneWidget);
+    expect(find.text('equip-action'), findsNothing);
     await unmount(tester);
   });
 
