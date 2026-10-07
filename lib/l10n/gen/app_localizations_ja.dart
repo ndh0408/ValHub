@@ -2611,7 +2611,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String communityDeleteDataConfirmBody(String riotId) {
-    return 'ValHubコミュニティ上の$riotIdのすべての投稿、コメント、スキン評価、いいね、投票、チームメイト募集、写真が完全に削除され、復元できなくなります。匿名閲覧モードに戻り、再び参加するには改めて同意が必要です。\n\nRiotアカウントとゲーム内データには影響しません。コピーを残したい場合は、先にデータをダウンロードしてください。';
+    return 'ValHubコミュニティ上の$riotIdのすべての投稿、コメント、スキン評価、いいね、投票、チームメイト募集、写真が完全に削除され、復元できなくなります。このアカウントでValHubを使い続けるには、改めて同意が必要です。別のアカウントに切り替えるか、このアカウントからログアウトすることもできます。\n\nRiotアカウントとゲーム内データには影響しません。コピーを残したい場合は、先にデータをダウンロードしてください。';
   }
 
   @override
@@ -3370,7 +3370,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String communityWithdrawConfirmBody(String riotId) {
-    return 'ValHubは$riotIdでのコミュニティ利用を停止します。この端末のコミュニティ接続は削除され、匿名閲覧モードに戻ります。\n\n投稿済みの投稿、コメント、評価、投票、チームメイト募集はコミュニティに残り、個別に削除するか「コミュニティデータを削除」を選択するまで、あなたのRiot IDが表示されたままになります。いつでも再参加できます。';
+    return 'ValHubは$riotIdでのコミュニティ利用を停止し、この端末のコミュニティ接続を削除します。このアカウントでValHubを使い続けるには、改めて同意が必要です。別のアカウントに切り替えるか、このアカウントからログアウトすることもできます。\n\n投稿済みの投稿、コメント、評価、投票、チームメイト募集はコミュニティに残り、個別に削除するか「コミュニティデータを削除」を選択するまで、あなたのRiot IDが表示されたままになります。';
   }
 
   @override

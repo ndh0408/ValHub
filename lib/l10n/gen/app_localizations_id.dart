@@ -2665,7 +2665,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String communityDeleteDataConfirmBody(String riotId) {
-    return 'Semua postingan, komentar, ulasan skin, suka, suara, postingan cari rekan tim, dan foto dari $riotId di Komunitas ValHub akan dihapus permanen dan tidak bisa dipulihkan. Kamu akan kembali ke mode menjelajah anonim dan perlu menyetujui lagi jika ingin bergabung kembali.\n\nAkun Riot dan data di dalam game tidak terpengaruh. Unduh datamu terlebih dahulu jika ingin menyimpan salinannya.';
+    return 'Semua postingan, komentar, ulasan skin, suka, suara, postingan cari rekan tim, dan foto dari $riotId di Komunitas ValHub akan dihapus permanen dan tidak bisa dipulihkan. Untuk tetap memakai akun ini di ValHub, kamu perlu menyetujui lagi; kamu tetap bisa beralih ke akun lain atau logout dari akun ini.\n\nAkun Riot dan data di dalam game tidak terpengaruh. Unduh datamu terlebih dahulu jika ingin menyimpan salinannya.';
   }
 
   @override
@@ -3448,7 +3448,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String communityWithdrawConfirmBody(String riotId) {
-    return 'ValHub akan berhenti memakai Komunitas dengan $riotId: koneksi Komunitas di perangkat ini dihapus dan kamu kembali ke mode menjelajah anonim.\n\nPostingan, komentar, ulasan, suara, dan postingan cari rekan tim yang sudah kamu terbitkan tetap ada di Komunitas dan tetap menampilkan Riot ID-mu sampai kamu menghapusnya satu per satu, atau memilih \"Hapus data Komunitas saya\". Kamu bisa bergabung lagi kapan saja.';
+    return 'ValHub akan berhenti memakai Komunitas dengan $riotId dan menghapus koneksi Komunitas di perangkat ini. Untuk tetap memakai akun ini di ValHub, kamu perlu menyetujui lagi; kamu tetap bisa beralih ke akun lain atau logout dari akun ini.\n\nPostingan, komentar, ulasan, suara, dan postingan cari rekan tim yang sudah kamu terbitkan tetap ada di Komunitas dan tetap menampilkan Riot ID-mu sampai kamu menghapusnya satu per satu, atau memilih \"Hapus data Komunitas saya\".';
   }
 
   @override

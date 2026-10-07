@@ -2810,7 +2810,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String communityDeleteDataConfirmBody(String riotId) {
-    return 'Todas as publicações, comentários, avaliações de skins, curtidas, votos, anúncios de grupo e fotos de $riotId na Comunidade ValHub serão excluídos permanentemente e não poderão ser recuperados. Você volta ao modo de visualização anônima e precisará concordar de novo se quiser participar outra vez.\n\nSua conta Riot e seus dados no jogo não são afetados. Baixe seus dados antes se quiser guardar uma cópia.';
+    return 'Todas as publicações, comentários, avaliações de skins, curtidas, votos, anúncios de grupo e fotos de $riotId na Comunidade ValHub serão excluídos permanentemente e não poderão ser recuperados. Para continuar usando esta conta no ValHub, você precisará concordar de novo; ainda dá para trocar para outra conta ou desconectar esta.\n\nSua conta Riot e seus dados no jogo não são afetados. Baixe seus dados antes se quiser guardar uma cópia.';
   }
 
   @override
@@ -3652,7 +3652,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String communityWithdrawConfirmBody(String riotId) {
-    return 'O ValHub vai parar de usar a Comunidade com $riotId: a conexão com a Comunidade neste dispositivo será removida e você voltará ao modo de visualização anônima.\n\nPublicações, comentários, avaliações, votos e anúncios de grupo já publicados continuam na Comunidade e mostram seu Riot ID até você excluí-los um por um ou escolher “Excluir meus dados da Comunidade”. Você pode participar de novo a qualquer momento.';
+    return 'O ValHub vai parar de usar a Comunidade com $riotId e remover a conexão com a Comunidade neste dispositivo. Para continuar usando esta conta no ValHub, você precisará concordar de novo; ainda dá para trocar para outra conta ou desconectar esta.\n\nPublicações, comentários, avaliações, votos e anúncios de grupo já publicados continuam na Comunidade e mostram seu Riot ID até você excluí-los um por um ou escolher “Excluir meus dados da Comunidade”.';
   }
 
   @override

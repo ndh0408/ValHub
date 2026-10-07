@@ -2803,7 +2803,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String communityDeleteDataConfirmBody(String riotId) {
-    return 'All posts, comments, skin reviews, likes, votes, LFG posts and photos from $riotId on ValHub Community will be permanently deleted and can\'t be recovered. You\'ll go back to browsing anonymously and need to agree again if you want to rejoin.\n\nYour Riot account and in-game data aren\'t affected. Download your data first if you want to keep a copy.';
+    return 'All posts, comments, skin reviews, likes, votes, LFG posts and photos from $riotId on ValHub Community will be permanently deleted and can\'t be recovered. To keep using this account in ValHub you\'ll need to agree again; you can still switch to another account or sign this one out.\n\nYour Riot account and in-game data aren\'t affected. Download your data first if you want to keep a copy.';
   }
 
   @override
@@ -3641,7 +3641,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String communityWithdrawConfirmBody(String riotId) {
-    return 'ValHub will stop using Community with $riotId: the Community connection on this device is removed and you go back to browsing anonymously.\n\nPosts, comments, reviews, votes and LFG posts you\'ve published stay on Community and keep showing your Riot ID until you delete them one by one, or choose \"Delete my Community data\". You can rejoin at any time.';
+    return 'ValHub will stop using Community with $riotId and remove the Community connection on this device. To keep using this account in ValHub you\'ll need to agree again; you can still switch to another account or sign this one out.\n\nPosts, comments, reviews, votes and LFG posts you\'ve published stay on Community and keep showing your Riot ID until you delete them one by one, or choose \"Delete my Community data\".';
   }
 
   @override

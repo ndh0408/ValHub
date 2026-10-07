@@ -2574,7 +2574,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String communityDeleteDataConfirmBody(String riotId) {
-    return '$riotId在 ValHub 社区的所有帖子、评论、皮肤评价、点赞、投票、组队帖和图片都将被永久删除，且无法恢复。你将回到匿名浏览模式，如需再次加入需要重新同意。\n\n你的 Riot 账号和游戏内数据不受影响。如果想保留副本，请先下载你的数据。';
+    return '$riotId在 ValHub 社区的所有帖子、评论、皮肤评价、点赞、投票、组队帖和图片都将被永久删除，且无法恢复。如需继续在 ValHub 中使用此账号，你需要重新同意；你也可以切换到其他账号或登出此账号。\n\n你的 Riot 账号和游戏内数据不受影响。如果想保留副本，请先下载你的数据。';
   }
 
   @override
@@ -3324,7 +3324,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String communityWithdrawConfirmBody(String riotId) {
-    return 'ValHub 将停止以$riotId使用社区：此设备上的社区连接将被移除，你将回到匿名浏览模式。\n\n你已发布的帖子、评论、评价、投票和组队帖仍会保留在社区中并显示你的 Riot ID，直到你逐条删除，或选择“删除我的社区数据”。你可以随时重新加入。';
+    return 'ValHub 将停止以$riotId使用社区，并移除此设备上的社区连接。如需继续在 ValHub 中使用此账号，你需要重新同意；你也可以切换到其他账号或登出此账号。\n\n你已发布的帖子、评论、评价、投票和组队帖仍会保留在社区中并显示你的 Riot ID，直到你逐条删除，或选择“删除我的社区数据”。';
   }
 
   @override
@@ -9086,7 +9086,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String communityDeleteDataConfirmBody(String riotId) {
-    return '$riotId 在 ValHub 社群的所有貼文、留言、造型評論、按讚、投票、找隊友貼文與相片都將被永久刪除，且無法復原。你會回到匿名瀏覽模式，若想再次加入需要重新同意。\n\nRiot 帳號與遊戲內資料不受影響。如果想保留一份副本，請先下載你的資料。';
+    return '$riotId 在 ValHub 社群的所有貼文、留言、造型評論、按讚、投票、找隊友貼文與相片都將被永久刪除，且無法復原。如要繼續在 ValHub 中使用此帳號，你需要重新同意；你也可以切換到其他帳號或登出此帳號。\n\nRiot 帳號與遊戲內資料不受影響。如果想保留一份副本，請先下載你的資料。';
   }
 
   @override
@@ -9836,7 +9836,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String communityWithdrawConfirmBody(String riotId) {
-    return 'ValHub 將停止以 $riotId 使用社群：這台裝置上的社群連線會被移除，你將回到匿名瀏覽模式。\n\n你已發布的貼文、留言、評論、投票與找隊友貼文仍會保留在社群上，並繼續顯示你的 Riot ID，直到你逐一刪除，或選擇「刪除我的社群資料」為止。你隨時可以重新加入。';
+    return 'ValHub 將停止以 $riotId 使用社群，並移除這台裝置上的社群連線。如要繼續在 ValHub 中使用此帳號，你需要重新同意；你也可以切換到其他帳號或登出此帳號。\n\n你已發布的貼文、留言、評論、投票與找隊友貼文仍會保留在社群上，並繼續顯示你的 Riot ID，直到你逐一刪除，或選擇「刪除我的社群資料」為止。';
   }
 
   @override

@@ -2843,7 +2843,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String communityDeleteDataConfirmBody(String riotId) {
-    return 'Wszystkie posty, komentarze, recenzje skinów, polubienia, głosy, ogłoszenia o szukaniu drużyny i zdjęcia konta $riotId w Społeczności ValHub zostaną trwale usunięte bez możliwości odzyskania. Wrócisz do przeglądania anonimowego i aby dołączyć ponownie, trzeba będzie znów wyrazić zgodę.\n\nTwoje konto Riot i dane w grze pozostaną nienaruszone. Jeśli chcesz zachować kopię, najpierw pobierz dane.';
+    return 'Wszystkie posty, komentarze, recenzje skinów, polubienia, głosy, ogłoszenia o szukaniu drużyny i zdjęcia konta $riotId w Społeczności ValHub zostaną trwale usunięte bez możliwości odzyskania. Aby dalej używać tego konta w ValHub, trzeba będzie ponownie wyrazić zgodę; możesz też przełączyć się na inne konto lub wylogować to.\n\nTwoje konto Riot i dane w grze pozostaną nienaruszone. Jeśli chcesz zachować kopię, najpierw pobierz dane.';
   }
 
   @override
@@ -3699,7 +3699,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String communityWithdrawConfirmBody(String riotId) {
-    return 'ValHub przestanie korzystać ze Społeczności przy użyciu konta $riotId: połączenie ze Społecznością na tym urządzeniu zostanie usunięte, a ty wrócisz do przeglądania anonimowego.\n\nOpublikowane posty, komentarze, recenzje, głosy i ogłoszenia o szukaniu drużyny pozostaną w Społeczności i nadal będą pokazywać twój Riot ID, dopóki nie usuniesz ich pojedynczo lub nie wybierzesz opcji „Usuń moje dane Społeczności”. Możesz dołączyć ponownie w dowolnej chwili.';
+    return 'ValHub przestanie korzystać ze Społeczności przy użyciu konta $riotId i usunie połączenie ze Społecznością na tym urządzeniu. Aby dalej używać tego konta w ValHub, trzeba będzie ponownie wyrazić zgodę; możesz też przełączyć się na inne konto lub wylogować to.\n\nOpublikowane posty, komentarze, recenzje, głosy i ogłoszenia o szukaniu drużyny pozostaną w Społeczności i nadal będą pokazywać twój Riot ID, dopóki nie usuniesz ich pojedynczo lub nie wybierzesz opcji „Usuń moje dane Społeczności”.';
   }
 
   @override

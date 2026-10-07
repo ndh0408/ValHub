@@ -548,8 +548,9 @@ abstract final class CommunityStrings {
   static String deleteDataConfirmBody(String riotId) =>
       'Toàn bộ bài viết, bình luận, đánh giá skin, lượt thích, bình chọn, '
       'tin tìm đồng đội và ảnh của $riotId trên Cộng đồng ValHub sẽ bị xóa '
-      'vĩnh viễn và không thể khôi phục. Bạn quay lại chế độ xem ẩn danh và '
-      'cần đồng ý lại nếu muốn tham gia lần nữa.\n\n'
+      'vĩnh viễn và không thể khôi phục. Muốn dùng tiếp tài khoản này trong '
+      'ValHub, bạn cần đồng ý lại; bạn vẫn có thể chuyển sang tài khoản khác '
+      'hoặc đăng xuất tài khoản này.\n\n'
       'Tài khoản Riot và dữ liệu trong game không bị ảnh hưởng. Hãy tải dữ '
       'liệu về trước nếu bạn muốn giữ một bản sao.';
   static const deleteDataConfirm = 'Xóa vĩnh viễn';
@@ -560,13 +561,14 @@ abstract final class CommunityStrings {
       'Ngừng dùng Cộng đồng bằng tài khoản này. Bài đã đăng vẫn được giữ.';
   static const withdrawConfirmTitle = 'Rút lại đồng ý?';
   static String withdrawConfirmBody(String riotId) =>
-      'ValHub sẽ ngừng dùng Cộng đồng bằng $riotId: kết nối Cộng đồng trên '
-      'thiết bị này bị xóa và bạn quay lại chế độ xem ẩn danh.\n\n'
+      'ValHub sẽ ngừng dùng Cộng đồng bằng $riotId và xóa kết nối Cộng đồng '
+      'trên thiết bị này. Muốn dùng tiếp tài khoản này trong ValHub, bạn cần '
+      'đồng ý lại; bạn vẫn có thể chuyển sang tài khoản khác hoặc đăng xuất '
+      'tài khoản này.\n\n'
       'Bài viết, bình luận, đánh giá, bình chọn và tin tìm đồng đội đã đăng '
       'vẫn còn trên '
       'Cộng đồng và vẫn hiện Riot ID của bạn cho đến khi bạn xóa chúng từng '
-      'cái, hoặc chọn "Xóa dữ liệu Cộng đồng của tôi". Bạn có thể tham gia '
-      'lại bất cứ lúc nào.';
+      'cái, hoặc chọn "Xóa dữ liệu Cộng đồng của tôi".';
   static const withdrawConfirm = 'Rút lại';
   static const consentWithdrawn =
       'Đã rút lại đồng ý. Cần đồng ý lại để tiếp tục sử dụng app.';

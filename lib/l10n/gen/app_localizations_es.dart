@@ -2814,7 +2814,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String communityDeleteDataConfirmBody(String riotId) {
-    return 'Todas las publicaciones, comentarios, reseñas de skins, me gusta, votos, anuncios de búsqueda de compañeros y fotos de $riotId en la Comunidad de ValHub se eliminarán para siempre y no se podrán recuperar. Volverás al modo de navegación anónima y tendrás que volver a aceptar si quieres participar de nuevo.\n\nTu cuenta de Riot y tus datos del juego no se verán afectados. Descarga tus datos antes si quieres conservar una copia.';
+    return 'Todas las publicaciones, comentarios, reseñas de skins, me gusta, votos, anuncios de búsqueda de compañeros y fotos de $riotId en la Comunidad de ValHub se eliminarán para siempre y no se podrán recuperar. Para seguir usando esta cuenta en ValHub tendrás que volver a aceptar; aun así puedes cambiar a otra cuenta o cerrar la sesión de esta.\n\nTu cuenta de Riot y tus datos del juego no se verán afectados. Descarga tus datos antes si quieres conservar una copia.';
   }
 
   @override
@@ -3647,7 +3647,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String communityWithdrawConfirmBody(String riotId) {
-    return 'ValHub dejará de usar la Comunidad con $riotId: se borrará la conexión con la Comunidad en este dispositivo y volverás al modo de navegación anónima.\n\nLas publicaciones, comentarios, reseñas, votos y anuncios de búsqueda de compañeros que ya hayas publicado seguirán en la Comunidad mostrando tu Riot ID hasta que los elimines uno a uno o elijas \"Eliminar mis datos de la Comunidad\". Puedes volver a unirte cuando quieras.';
+    return 'ValHub dejará de usar la Comunidad con $riotId y borrará la conexión con la Comunidad en este dispositivo. Para seguir usando esta cuenta en ValHub tendrás que volver a aceptar; aun así puedes cambiar a otra cuenta o cerrar la sesión de esta.\n\nLas publicaciones, comentarios, reseñas, votos y anuncios de búsqueda de compañeros que ya hayas publicado seguirán en la Comunidad mostrando tu Riot ID hasta que los elimines uno a uno o elijas \"Eliminar mis datos de la Comunidad\".';
   }
 
   @override

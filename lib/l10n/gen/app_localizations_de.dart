@@ -2809,7 +2809,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String communityDeleteDataConfirmBody(String riotId) {
-    return 'Alle Beiträge, Kommentare, Skin-Bewertungen, Likes, Stimmen, Mitspielersuchen und Fotos von $riotId in der ValHub-Community werden endgültig gelöscht und können nicht wiederhergestellt werden. Du kehrst zur anonymen Ansicht zurück und musst erneut zustimmen, wenn du wieder mitmachen willst.\n\nDein Riot-Konto und deine Spieldaten sind nicht betroffen. Lade deine Daten vorher herunter, wenn du eine Kopie behalten willst.';
+    return 'Alle Beiträge, Kommentare, Skin-Bewertungen, Likes, Stimmen, Mitspielersuchen und Fotos von $riotId in der ValHub-Community werden endgültig gelöscht und können nicht wiederhergestellt werden. Um dieses Konto in ValHub weiter zu nutzen, musst du erneut zustimmen; du kannst aber zu einem anderen Konto wechseln oder dieses abmelden.\n\nDein Riot-Konto und deine Spieldaten sind nicht betroffen. Lade deine Daten vorher herunter, wenn du eine Kopie behalten willst.';
   }
 
   @override
@@ -3633,7 +3633,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String communityWithdrawConfirmBody(String riotId) {
-    return 'ValHub nutzt die Community nicht mehr mit $riotId: Die Community-Verbindung auf diesem Gerät wird entfernt und du kehrst zur anonymen Ansicht zurück.\n\nBereits gepostete Beiträge, Kommentare, Bewertungen, Stimmen und Mitspielersuchen bleiben in der Community und zeigen weiterhin deine Riot ID, bis du sie einzeln löschst oder „Meine Community-Daten löschen“ wählst. Du kannst jederzeit wieder beitreten.';
+    return 'ValHub nutzt die Community nicht mehr mit $riotId und entfernt die Community-Verbindung auf diesem Gerät. Um dieses Konto in ValHub weiter zu nutzen, musst du erneut zustimmen; du kannst aber zu einem anderen Konto wechseln oder dieses abmelden.\n\nBereits gepostete Beiträge, Kommentare, Bewertungen, Stimmen und Mitspielersuchen bleiben in der Community und zeigen weiterhin deine Riot ID, bis du sie einzeln löschst oder „Meine Community-Daten löschen“ wählst.';
   }
 
   @override

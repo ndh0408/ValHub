@@ -2610,7 +2610,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String communityDeleteDataConfirmBody(String riotId) {
-    return 'ValHub 커뮤니티에 있는 $riotId의 모든 게시물, 댓글, 스킨 리뷰, 좋아요, 투표, 팀원 찾기 글, 사진이 영구적으로 삭제되며 복구할 수 없습니다. 익명 보기 상태로 돌아가며, 다시 참여하려면 다시 동의해야 합니다.\n\nRiot 계정과 게임 내 데이터에는 영향이 없습니다. 사본을 보관하려면 먼저 데이터를 다운로드하세요.';
+    return 'ValHub 커뮤니티에 있는 $riotId의 모든 게시물, 댓글, 스킨 리뷰, 좋아요, 투표, 팀원 찾기 글, 사진이 영구적으로 삭제되며 복구할 수 없습니다. 이 계정으로 ValHub를 계속 사용하려면 다시 동의해야 합니다. 다른 계정으로 전환하거나 이 계정에서 로그아웃할 수도 있습니다.\n\nRiot 계정과 게임 내 데이터에는 영향이 없습니다. 사본을 보관하려면 먼저 데이터를 다운로드하세요.';
   }
 
   @override
@@ -3368,7 +3368,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String communityWithdrawConfirmBody(String riotId) {
-    return 'ValHub에서 $riotId(으)로 커뮤니티를 더 이상 사용하지 않습니다. 이 기기의 커뮤니티 연결이 삭제되며 익명 보기 상태로 돌아갑니다.\n\n게시한 게시물, 댓글, 리뷰, 투표, 팀원 찾기 글은 하나씩 삭제하거나 \"내 커뮤니티 데이터 삭제\"를 선택하기 전까지 커뮤니티에 남아 Riot ID가 계속 표시됩니다. 언제든지 다시 참여할 수 있습니다.';
+    return 'ValHub에서 $riotId(으)로 커뮤니티를 더 이상 사용하지 않으며 이 기기의 커뮤니티 연결을 삭제합니다. 이 계정으로 ValHub를 계속 사용하려면 다시 동의해야 합니다. 다른 계정으로 전환하거나 이 계정에서 로그아웃할 수도 있습니다.\n\n게시한 게시물, 댓글, 리뷰, 투표, 팀원 찾기 글은 하나씩 삭제하거나 \"내 커뮤니티 데이터 삭제\"를 선택하기 전까지 커뮤니티에 남아 Riot ID가 계속 표시됩니다.';
   }
 
   @override

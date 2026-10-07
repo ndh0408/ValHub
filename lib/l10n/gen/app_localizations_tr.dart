@@ -2672,7 +2672,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String communityDeleteDataConfirmBody(String riotId) {
-    return '$riotId hesabının ValHub Topluluğu\'ndaki tüm gönderileri, yorumları, kaplama incelemeleri, beğenileri, oyları, takım arkadaşı ilanları ve fotoğrafları kalıcı olarak silinecek ve geri getirilemeyecek. Anonim göz atma moduna döneceksin ve tekrar katılmak istersen yeniden onay vermen gerekecek.\n\nRiot hesabın ve oyun içi verilerin etkilenmez. Bir kopyasını saklamak istiyorsan önce verilerini indir.';
+    return '$riotId hesabının ValHub Topluluğu\'ndaki tüm gönderileri, yorumları, kaplama incelemeleri, beğenileri, oyları, takım arkadaşı ilanları ve fotoğrafları kalıcı olarak silinecek ve geri getirilemeyecek. Bu hesabı ValHub\'da kullanmaya devam etmek için yeniden onay vermen gerekir; başka bir hesaba geçebilir veya bu hesaptan çıkış yapabilirsin.\n\nRiot hesabın ve oyun içi verilerin etkilenmez. Bir kopyasını saklamak istiyorsan önce verilerini indir.';
   }
 
   @override
@@ -3451,7 +3451,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String communityWithdrawConfirmBody(String riotId) {
-    return 'ValHub, Topluluk\'u $riotId hesabıyla kullanmayı bırakacak: bu cihazdaki Topluluk bağlantısı kaldırılır ve anonim göz atma moduna dönersin.\n\nPaylaştığın gönderiler, yorumlar, incelemeler, oylar ve takım arkadaşı ilanları Topluluk\'ta kalır ve sen onları tek tek silene veya \"Topluluk verilerimi sil\" seçeneğini seçene kadar Riot ID\'ni göstermeye devam eder. İstediğin zaman tekrar katılabilirsin.';
+    return 'ValHub, Topluluk\'u $riotId hesabıyla kullanmayı bırakacak ve bu cihazdaki Topluluk bağlantısını kaldıracak. Bu hesabı ValHub\'da kullanmaya devam etmek için yeniden onay vermen gerekir; başka bir hesaba geçebilir veya bu hesaptan çıkış yapabilirsin.\n\nPaylaştığın gönderiler, yorumlar, incelemeler, oylar ve takım arkadaşı ilanları Topluluk\'ta kalır ve sen onları tek tek silene veya \"Topluluk verilerimi sil\" seçeneğini seçene kadar Riot ID\'ni göstermeye devam eder.';
   }
 
   @override
