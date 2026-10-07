@@ -10701,6 +10701,24 @@ abstract class AppLocalizations {
   /// **'Cửa hàng đã đổi. ValHub chưa tải được cửa hàng mới.'**
   String get homeStoreOutdated;
 
+  /// Title of the single banner at the top of Home while the device has no network.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có mạng'**
+  String get homeOfflineTitle;
+
+  /// Body of the Home offline banner: cards show their saved copies and refresh by themselves once the network is back.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang hiển thị bản đã lưu trên máy. ValHub tự cập nhật khi có mạng lại.'**
+  String get homeOfflineBody;
+
+  /// Inside a Home card that has nothing saved yet while offline (the banner above explains the rest).
+  ///
+  /// In vi, this message translates to:
+  /// **'Sẽ hiện khi có mạng.'**
+  String get homeCardOffline;
+
   /// CommunityStrings.errorConsent — consent
   ///
   /// In vi, this message translates to:

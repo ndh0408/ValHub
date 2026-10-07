@@ -6562,6 +6562,16 @@ class AppLocalizationsVi extends AppLocalizations {
       'Cửa hàng đã đổi. ValHub chưa tải được cửa hàng mới.';
 
   @override
+  String get homeOfflineTitle => 'Không có mạng';
+
+  @override
+  String get homeOfflineBody =>
+      'Đang hiển thị bản đã lưu trên máy. ValHub tự cập nhật khi có mạng lại.';
+
+  @override
+  String get homeCardOffline => 'Sẽ hiện khi có mạng.';
+
+  @override
   String get communityErrorConsent =>
       'Hãy đồng ý chia sẻ Riot ID với Cộng đồng để tiếp tục.';
 

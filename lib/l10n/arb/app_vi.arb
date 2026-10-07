@@ -10901,6 +10901,21 @@
     "description": "Home store card: the saved daily store already reset and the new one could not be loaded (expired sign-in, offline, maintenance). Replaces the skins and the countdown.",
     "x-context": "lib/features/home/ui/cards/store_home_card.dart"
   },
+  "homeOfflineTitle": "Không có mạng",
+  "@homeOfflineTitle": {
+    "description": "Title of the single banner at the top of Home while the device has no network.",
+    "x-context": "lib/features/home/ui/home_screen.dart"
+  },
+  "homeOfflineBody": "Đang hiển thị bản đã lưu trên máy. ValHub tự cập nhật khi có mạng lại.",
+  "@homeOfflineBody": {
+    "description": "Body of the Home offline banner: cards show their saved copies and refresh by themselves once the network is back.",
+    "x-context": "lib/features/home/ui/home_screen.dart"
+  },
+  "homeCardOffline": "Sẽ hiện khi có mạng.",
+  "@homeCardOffline": {
+    "description": "Inside a Home card that has nothing saved yet while offline (the banner above explains the rest).",
+    "x-context": "lib/features/home/ui/home_card_frame.dart"
+  },
   "communityErrorConsent": "Hãy đồng ý chia sẻ Riot ID với Cộng đồng để tiếp tục.",
   "@communityErrorConsent": {
     "description": "CommunityStrings.errorConsent — consent",

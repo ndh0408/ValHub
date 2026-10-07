@@ -6610,6 +6610,16 @@ class AppLocalizationsTr extends AppLocalizations {
       'Mağaza yenilendi. ValHub yeni mağazayı henüz yükleyemedi.';
 
   @override
+  String get homeOfflineTitle => 'Çevrim dışısın';
+
+  @override
+  String get homeOfflineBody =>
+      'Cihazda kayıtlı veriler gösteriliyor. Bağlantı geri geldiğinde ValHub her şeyi günceller.';
+
+  @override
+  String get homeCardOffline => 'Bağlandığında görünecek.';
+
+  @override
   String get communityErrorConsent =>
       'Devam etmek için Riot ID\'ni Topluluk ile paylaşmayı kabul et.';
 

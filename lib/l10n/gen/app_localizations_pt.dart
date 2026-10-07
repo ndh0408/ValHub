@@ -7150,6 +7150,16 @@ class AppLocalizationsPt extends AppLocalizations {
       'A loja mudou. O ValHub ainda não conseguiu carregar a nova.';
 
   @override
+  String get homeOfflineTitle => 'Sem conexão';
+
+  @override
+  String get homeOfflineBody =>
+      'Mostrando o que está salvo no aparelho. O ValHub atualiza tudo quando a conexão voltar.';
+
+  @override
+  String get homeCardOffline => 'Aparece quando a conexão voltar.';
+
+  @override
   String get communityErrorConsent =>
       'Concorde em compartilhar seu Riot ID com a Comunidade para continuar.';
 

@@ -6,6 +6,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/accounts/account_providers.dart';
 import 'package:valvn/core/accounts/account_widgets.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
+import 'package:valvn/core/network/reachability.dart';
+import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/util/format.dart';
 import 'package:valvn/core/ui/maintenance_banner.dart';
 import 'package:valvn/features/community/community_previews.dart';
@@ -211,6 +213,46 @@ void main() {
   });
 
   group('session and status', () {
+    testWidgets('offline: one banner, cards without a copy just wait', (
+      tester,
+    ) async {
+      final env = await HomeTestEnv.create();
+      final reach = NetworkReachability()..unreachable();
+      await pumpHomeScreen(
+        tester,
+        env,
+        overrides: [
+          networkReachabilityProvider.overrideWithValue(reach),
+          ...vmWith(
+            store: AsyncData(homeStoreSummary(cache: true)),
+            rank: AsyncError(
+              const TransientException(reason: 'network'),
+              StackTrace.empty,
+            ),
+            bp: AsyncError(
+              const TransientException(reason: 'timeout'),
+              StackTrace.empty,
+            ),
+          ),
+        ],
+      );
+      await homePastGate(tester);
+
+      expect(find.text(tl.homeOfflineTitle), findsOneWidget);
+      expect(find.text(tl.homeOfflineBody), findsOneWidget);
+      expect(find.text(tl.homeCardOffline), findsNWidgets(2));
+      expect(find.text(tl.commonErrorNetwork), findsNothing);
+      expect(_card(HomeCardId.store), findsOneWidget);
+
+      // Back online: the banner goes, the cards show their own errors.
+      reach.reached();
+      await homeSettle(tester);
+      expect(find.text(tl.homeOfflineTitle), findsNothing);
+      expect(find.text(tl.homeCardOffline), findsNothing);
+      expect(find.text(tl.commonErrorNetwork), findsOneWidget);
+      await homeUnmount(tester);
+    });
+
     testWidgets(
       'needs login: one banner, Riot cards hidden, the rest still shown',
       (tester) async {

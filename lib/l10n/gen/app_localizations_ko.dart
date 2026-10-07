@@ -6430,6 +6430,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeStoreOutdated => '상점이 바뀌었습니다. ValHub가 아직 새 상점을 불러오지 못했습니다.';
 
   @override
+  String get homeOfflineTitle => '오프라인 상태';
+
+  @override
+  String get homeOfflineBody =>
+      '기기에 저장된 데이터를 표시하고 있습니다. 다시 연결되면 ValHub가 자동으로 업데이트합니다.';
+
+  @override
+  String get homeCardOffline => '연결되면 표시됩니다.';
+
+  @override
   String get communityErrorConsent => '계속하려면 커뮤니티와 Riot ID 공유에 동의하세요.';
 
   @override

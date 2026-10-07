@@ -6365,6 +6365,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeStoreOutdated => '商店已刷新。ValHub 暂时无法加载新的商店。';
 
   @override
+  String get homeOfflineTitle => '网络未连接';
+
+  @override
+  String get homeOfflineBody => '正在显示设备上保存的数据。网络恢复后 ValHub 会自动更新。';
+
+  @override
+  String get homeCardOffline => '联网后显示。';
+
+  @override
   String get communityErrorConsent => '请同意与社区分享你的 Riot ID 以继续。';
 
   @override
@@ -12801,6 +12810,15 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get homeStoreOutdated => '商店已更新。ValHub 暫時無法載入新的商店。';
+
+  @override
+  String get homeOfflineTitle => '目前離線';
+
+  @override
+  String get homeOfflineBody => '正在顯示裝置上儲存的資料。恢復連線後 ValHub 會自動更新。';
+
+  @override
+  String get homeCardOffline => '連線後顯示。';
 
   @override
   String get communityErrorConsent => '請同意與社群分享你的 Riot ID 以繼續。';

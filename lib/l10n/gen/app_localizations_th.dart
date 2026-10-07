@@ -6548,6 +6548,16 @@ class AppLocalizationsTh extends AppLocalizations {
       'ร้านค้าเปลี่ยนแล้ว ValHub ยังโหลดร้านค้าใหม่ไม่ได้';
 
   @override
+  String get homeOfflineTitle => 'ออฟไลน์อยู่';
+
+  @override
+  String get homeOfflineBody =>
+      'กำลังแสดงข้อมูลที่บันทึกไว้ในเครื่อง ValHub จะอัปเดตเองเมื่อกลับมาออนไลน์';
+
+  @override
+  String get homeCardOffline => 'จะแสดงเมื่อออนไลน์';
+
+  @override
   String get communityErrorConsent =>
       'ยอมรับการแชร์ Riot ID กับชุมชนเพื่อดำเนินการต่อ';
 

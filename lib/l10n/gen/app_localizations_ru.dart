@@ -7323,6 +7323,16 @@ class AppLocalizationsRu extends AppLocalizations {
       'Магазин обновился. ValHub пока не смог загрузить новый.';
 
   @override
+  String get homeOfflineTitle => 'Нет сети';
+
+  @override
+  String get homeOfflineBody =>
+      'Показаны данные, сохраненные на устройстве. ValHub обновит их, когда сеть появится.';
+
+  @override
+  String get homeCardOffline => 'Появится, когда будет сеть.';
+
+  @override
   String get communityErrorConsent =>
       'Чтобы продолжить, разрешите показывать ваш Riot ID в сообществе.';
 

@@ -5,6 +5,7 @@ import '../auth/session_manager.dart';
 import '../config/app_constants.dart';
 import '../logging/session_log.dart';
 import 'error_classifier.dart';
+import 'reachability.dart';
 import 'riot_exception.dart';
 
 /// `RequestOptions.extra` keys understood by ValHub interceptors.
@@ -35,7 +36,10 @@ Dio createBaseDio({
     ),
   );
   // First in the chain: a request that would leak the Riot token never leaves.
-  dio.interceptors.add(TokenEgressGuard());
+  dio.interceptors
+    ..add(TokenEgressGuard())
+    // Every answer (or its absence) tells the UI whether there is a network.
+    ..add(ReachabilityInterceptor());
   if (log != null) dio.interceptors.add(SessionLogInterceptor(log));
   return dio;
 }

@@ -6603,6 +6603,16 @@ class AppLocalizationsId extends AppLocalizations {
       'Toko sudah berganti. ValHub belum bisa memuat toko yang baru.';
 
   @override
+  String get homeOfflineTitle => 'Kamu sedang offline';
+
+  @override
+  String get homeOfflineBody =>
+      'Menampilkan data yang tersimpan di perangkat. ValHub akan memperbarui sendiri saat kamu online lagi.';
+
+  @override
+  String get homeCardOffline => 'Akan muncul saat kamu online.';
+
+  @override
   String get communityErrorConsent =>
       'Setujui untuk membagikan Riot ID-mu ke Komunitas agar bisa melanjutkan.';
 

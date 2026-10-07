@@ -7146,6 +7146,16 @@ class AppLocalizationsFr extends AppLocalizations {
       'La boutique a changé. ValHub n\'a pas encore pu charger la nouvelle.';
 
   @override
+  String get homeOfflineTitle => 'Hors ligne';
+
+  @override
+  String get homeOfflineBody =>
+      'Affichage des données enregistrées sur l\'appareil. ValHub se met à jour dès le retour de la connexion.';
+
+  @override
+  String get homeCardOffline => 'S\'affichera dès le retour de la connexion.';
+
+  @override
   String get communityErrorConsent =>
       'Acceptez de partager votre Riot ID avec la Communauté pour continuer.';
 

@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/auth/auth_routes.dart';
+import '../../../core/network/reachability.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/error_view.dart';
@@ -308,8 +309,9 @@ class HomeCardSkeleton extends StatelessWidget {
 }
 
 /// Compact error inside a card: the message and "Thử lại" (or "Đăng nhập
-/// lại" when the session died).
-class HomeCardError extends StatelessWidget {
+/// lại" when the session died). Without a network the Home banner already
+/// says so (and retries): the card only says it fills in once online.
+class HomeCardError extends ConsumerWidget {
   const HomeCardError({
     super.key,
     required this.error,
@@ -322,10 +324,25 @@ class HomeCardError extends StatelessWidget {
   final VoidCallback? onRetry;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final d = describeError(context.l10n, error);
     final retry = onRetry;
+    if (!ref.watch(networkOnlineProvider) && isNetworkError(error)) {
+      final muted = theme.colorScheme.onSurfaceVariant;
+      return Row(
+        children: [
+          Icon(Icons.cloud_off_outlined, size: 20, color: muted),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              context.l10n.homeCardOffline,
+              style: theme.textTheme.bodyMedium?.copyWith(color: muted),
+            ),
+          ),
+        ],
+      );
+    }
     return Row(
       children: [
         Icon(d.icon, size: 22, color: theme.colorScheme.error),

@@ -6436,6 +6436,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get homeStoreOutdated => 'ストアが更新されました。ValHubはまだ新しいストアを読み込めていません。';
 
   @override
+  String get homeOfflineTitle => 'オフライン';
+
+  @override
+  String get homeOfflineBody => '端末に保存されたデータを表示中です。オンラインに戻るとValHubが自動で更新します。';
+
+  @override
+  String get homeCardOffline => 'オンラインになると表示されます。';
+
+  @override
   String get communityErrorConsent => '続けるには、コミュニティとのRiot IDの共有に同意してください。';
 
   @override

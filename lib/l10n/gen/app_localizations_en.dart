@@ -7075,6 +7075,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'The store has refreshed. ValHub couldn\'t load the new one yet.';
 
   @override
+  String get homeOfflineTitle => 'You\'re offline';
+
+  @override
+  String get homeOfflineBody =>
+      'Showing what\'s saved on this device. ValHub updates everything once you\'re back online.';
+
+  @override
+  String get homeCardOffline => 'Shows up once you\'re online.';
+
+  @override
   String get communityErrorConsent =>
       'Agree to share your Riot ID with Community to continue.';
 

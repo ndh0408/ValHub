@@ -7130,6 +7130,16 @@ class AppLocalizationsPl extends AppLocalizations {
       'Sklep się zmienił. ValHub nie zdołał jeszcze wczytać nowego.';
 
   @override
+  String get homeOfflineTitle => 'Jesteś offline';
+
+  @override
+  String get homeOfflineBody =>
+      'Pokazujemy dane zapisane na urządzeniu. ValHub zaktualizuje je, gdy wrócisz do sieci.';
+
+  @override
+  String get homeCardOffline => 'Pojawi się, gdy będziesz online.';
+
+  @override
   String get communityErrorConsent =>
       'Aby kontynuować, zgódź się na udostępnienie Riot ID Społeczności.';
 

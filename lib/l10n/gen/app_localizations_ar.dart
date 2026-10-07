@@ -7427,6 +7427,16 @@ class AppLocalizationsAr extends AppLocalizations {
       'تم تحديث المتجر. لم يتمكن ValHub بعد من تحميل المتجر الجديد.';
 
   @override
+  String get homeOfflineTitle => 'لا يوجد اتصال';
+
+  @override
+  String get homeOfflineBody =>
+      'يتم عرض البيانات المحفوظة على الجهاز. سيحدّث ValHub كل شيء عند عودة الاتصال.';
+
+  @override
+  String get homeCardOffline => 'سيظهر عند عودة الاتصال.';
+
+  @override
   String get communityErrorConsent =>
       'وافق على مشاركة Riot ID مع المجتمع للمتابعة.';
 

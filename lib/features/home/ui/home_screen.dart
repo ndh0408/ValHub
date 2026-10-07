@@ -16,6 +16,7 @@ import '../../../core/accounts/account_providers.dart';
 import '../../../core/accounts/account_widgets.dart';
 import '../../../core/auth/auth_routes.dart';
 import '../../../core/geo/region_mismatch_banner.dart';
+import '../../../core/network/reachability.dart';
 import '../../../core/riot/platform_status.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/empty_view.dart';
@@ -43,6 +44,9 @@ import 'home_card_frame.dart';
 import 'home_columns.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
+
+/// How often the offline banner tries again by itself.
+const kHomeOfflineRetry = Duration(seconds: 30);
 
 /// How long a `?focus=` link waits for its card to have data.
 const kHomeFocusWait = Duration(seconds: 5);
@@ -239,6 +243,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final regionMismatch = ref.watch(
       activeAccountProvider.select((a) => a?.showRegionMismatch ?? false),
     );
+    final online = ref.watch(networkOnlineProvider);
     _onAccountChanged(puuid);
 
     // Coming back after a while: the community previews and the server
@@ -312,6 +317,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         RegionMismatchBanner(puuid: puuid),
                       if (needsLogin) ...[
                         _NeedsLoginBanner(puuid: puuid),
+                        const SizedBox(height: kHomeCardGap),
+                      ] else if (!online) ...[
+                        _OfflineBanner(
+                          onRetry: () => refreshHome(
+                            ref,
+                            puuid: puuid,
+                            shown: arrangement,
+                          ),
+                        ),
                         const SizedBox(height: kHomeCardGap),
                       ],
                       // Full width: a blocking maintenance, then a live match.
@@ -401,6 +415,90 @@ class _CardSlot extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// One banner under the header while the device has no network, instead of
+/// the same error in every card: cards keep their saved copies, the others
+/// wait. Retries by itself every [kHomeOfflineRetry] while shown.
+class _OfflineBanner extends StatefulWidget {
+  const _OfflineBanner({required this.onRetry});
+
+  final Future<void> Function() onRetry;
+
+  @override
+  State<_OfflineBanner> createState() => _OfflineBannerState();
+}
+
+class _OfflineBannerState extends State<_OfflineBanner> {
+  bool _busy = false;
+
+  Future<void> _retry() async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      await widget.onRetry();
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tint = theme.colorScheme.onSurfaceVariant;
+    return HomeCardPoller(
+      every: kHomeOfflineRetry,
+      onTick: () => unawaited(_retry()),
+      child: Semantics(
+        liveRegion: true,
+        child: Material(
+          color: valColorsOf(context).surface2,
+          borderRadius: BorderRadius.circular(ValRadius.card),
+          child: Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 8, 12),
+            child: Row(
+              children: [
+                Icon(Icons.cloud_off_outlined, color: tint),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        context.l10n.homeOfflineTitle,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        context.l10n.homeOfflineBody,
+                        style: theme.textTheme.bodySmall?.copyWith(color: tint),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                if (_busy)
+                  const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: SizedBox.square(
+                      dimension: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  )
+                else
+                  TextButton(
+                    onPressed: () => unawaited(_retry()),
+                    child: Text(context.l10n.commonRetry),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
