@@ -46,8 +46,17 @@ class _RankUpCalculatorScreenState
       );
     }
     final puuid = account.puuid;
+    // The current rank is one line under the title (the Profile tab shows
+    // it large): the answer is what this page is for.
+    final current = ref.watch(rankSummaryProvider(puuid)).value?.current;
     return SubPageScaffold(
       title: context.l10n.profileRankUpTitle,
+      subtitle: current == null || current.isUnranked
+          ? null
+          : context.fmt.inlineFacts([
+              current.displayLabel(context.fmt),
+              context.fmt.rr(current.rr),
+            ]),
       onRefresh: () async {
         ref.invalidate(competitiveUpdatesProvider(puuid));
         await ref
@@ -124,14 +133,9 @@ class _RankUpCalculatorScreenState
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SectionLabel(
-              context.l10n.profileYourRank,
-              padding: EdgeInsets.fromLTRB(20, 4, 20, 8),
+              context.l10n.profileTargetRank,
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _CurrentRankCard(rank: current),
-            ),
-            SectionLabel(context.l10n.profileTargetRank),
             _TargetPicker(
               targets: targets,
               actUuid: current.actUuid,
@@ -189,78 +193,6 @@ class _CalculatorSkeleton extends StatelessWidget {
 
 /// Big rank icon on a soft glow, the tier name in its color, the RR and a
 /// bar to the next tier.
-class _CurrentRankCard extends StatelessWidget {
-  const _CurrentRankCard({required this.rank});
-
-  final RankInfo rank;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final muted = theme.colorScheme.onSurfaceVariant;
-    final color = rank.color;
-    final showBar = rank.rr >= 0 && rank.rr <= 100;
-    return ValCard(
-      padding: const EdgeInsets.fromLTRB(14, 14, 16, 14),
-      gradient: LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        colors: [color.withValues(alpha: 0.16), color.withValues(alpha: 0)],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 68,
-            height: 68,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  color.withValues(alpha: 0.35),
-                  color.withValues(alpha: 0),
-                ],
-              ),
-            ),
-            alignment: Alignment.center,
-            child: NetImage(rank.largeIcon, width: 56, height: 56),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  rank.displayLabel(context.fmt),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: legibleAccent(context, color, min: 3.5),
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  context.fmt.rr(rank.rr),
-                  style: theme.textTheme.bodyMedium?.copyWith(color: muted),
-                ),
-                if (showBar) ...[
-                  const SizedBox(height: 8),
-                  ValProgressBar(
-                    value: rank.rr / 100,
-                    height: 5,
-                    semanticsLabel: context.l10n.profileRrToNext(rank.rr),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Grid of rank icons from the next tier up to Bất Tử 1.
 class _TargetPicker extends ConsumerWidget {
   const _TargetPicker({
     required this.targets,
@@ -278,79 +210,77 @@ class _TargetPicker extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          const gap = 8.0;
-          final columns = (constraints.maxWidth / 84).floor().clamp(3, 6);
-          final width = (constraints.maxWidth - gap * (columns - 1)) / columns;
-          return Wrap(
-            spacing: gap,
-            runSpacing: gap,
-            children: [
-              for (final t in targets)
-                () {
-                  final rank = RankInfo.resolve(db, tier: t, actUuid: actUuid);
-                  final isSelected = t == selected;
-                  final accent = theme.colorScheme.primary;
-                  return SizedBox(
-                    width: width,
-                    child: Semantics(
-                      selected: isSelected,
-                      button: true,
-                      label: rank.displayLabel(context.fmt),
-                      excludeSemantics: true,
-                      child: Material(
+    // One scrolling row (the next ranks first) so the answer below stays
+    // on screen; a wrap of every rank pushed it below the fold.
+    const width = 84.0;
+    final height = 76 + 32 * MediaQuery.textScalerOf(context).scale(1);
+    return SizedBox(
+      height: height,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [
+          for (final t in targets)
+            () {
+              final rank = RankInfo.resolve(db, tier: t, actUuid: actUuid);
+              final isSelected = t == selected;
+              final accent = theme.colorScheme.primary;
+              return Container(
+                width: width,
+                margin: const EdgeInsetsDirectional.only(end: 8),
+                child: Semantics(
+                  selected: isSelected,
+                  button: true,
+                  label: rank.displayLabel(context.fmt),
+                  excludeSemantics: true,
+                  child: Material(
+                    color: isSelected
+                        ? accent.withValues(alpha: 0.14)
+                        : theme.colorScheme.surfaceContainer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(
                         color: isSelected
-                            ? accent.withValues(alpha: 0.14)
-                            : theme.colorScheme.surfaceContainer,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          side: BorderSide(
-                            color: isSelected
-                                ? accent
-                                : valColorsOf(context).hairline,
-                            width: isSelected ? 2 : 1,
-                          ),
+                            ? accent
+                            : valColorsOf(context).hairline,
+                        width: isSelected ? 2 : 1,
+                      ),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: () {
+                        if (t != selected) Haptics.selection();
+                        onSelected(t);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 4,
                         ),
-                        clipBehavior: Clip.antiAlias,
-                        child: InkWell(
-                          onTap: () {
-                            if (t != selected) Haptics.selection();
-                            onSelected(t);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 8,
-                              horizontal: 4,
+                        child: Column(
+                          children: [
+                            NetImage(rank.icon, width: 36, height: 36),
+                            const SizedBox(height: 4),
+                            Text(
+                              rank.displayLabel(context.fmt),
+                              maxLines: 2,
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                fontWeight: isSelected
+                                    ? FontWeight.w800
+                                    : FontWeight.w500,
+                              ),
                             ),
-                            child: Column(
-                              children: [
-                                NetImage(rank.icon, width: 36, height: 36),
-                                const SizedBox(height: 4),
-                                Text(
-                                  rank.displayLabel(context.fmt),
-                                  maxLines: 2,
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: theme.textTheme.labelSmall?.copyWith(
-                                    fontWeight: isSelected
-                                        ? FontWeight.w800
-                                        : FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          ],
                         ),
                       ),
                     ),
-                  );
-                }(),
-            ],
-          );
-        },
+                  ),
+                ),
+              );
+            }(),
+        ],
       ),
     );
   }

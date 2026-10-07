@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/domain/competitive/competitive.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
@@ -32,7 +33,8 @@ void main() {
     await pump(tester);
 
     expect(find.text(ProfileStrings.rankUpTitle), findsOneWidget);
-    expect(find.text('Kim Cương 1'), findsOneWidget);
+    // The current rank is the page's subtitle; the answer comes first.
+    expect(find.textContaining('Kim Cương 1 ·'), findsOneWidget);
     expect(find.text(ProfileStrings.rrLeft('94')), findsOneWidget);
     expect(find.text(ProfileStrings.aboutMatches(11)), findsOneWidget);
     expect(find.text(ProfileStrings.bestCase(5)), findsOneWidget);
@@ -48,8 +50,24 @@ void main() {
   testWidgets('picking a higher target recomputes', (tester) async {
     await pump(tester);
 
-    // Targets go up to Bất Tử 1 (tier 24 of the current table).
+    // One scrolling row of targets, up to Bất Tử 1 (tier 24 of the table).
+    await tester.scrollUntilVisible(
+      find.text('Bất Tử 1'),
+      200,
+      scrollable: find.byWidgetPredicate(
+        (w) => w is Scrollable && w.axisDirection == AxisDirection.right,
+      ),
+    );
     expect(find.text('Bất Tử 1'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Kim Cương 3'),
+      -200,
+      scrollable: find.byWidgetPredicate(
+        (w) => w is Scrollable && w.axisDirection == AxisDirection.right,
+      ),
+    );
+    await tester.ensureVisible(find.text('Kim Cương 3'));
+    await settle(tester);
     await tester.tap(find.text('Kim Cương 3'));
     await settle(tester);
     // (20 − 18) × 100 − 6 = 194 RR; 194 / (⅔·22 − ⅓·18) → 23 matches.
