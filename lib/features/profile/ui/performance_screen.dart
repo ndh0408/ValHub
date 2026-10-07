@@ -15,6 +15,7 @@ import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/filter_bar.dart';
 import '../../../core/ui/net_image.dart';
 import '../../../core/ui/segmented_tabs.dart';
+import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
@@ -135,9 +136,24 @@ class _PerformanceScreenState extends ConsumerState<PerformanceScreen> {
             child: EmptyView(message: context.l10n.commonErrorNoAccount),
           )
         else if (view == null)
-          const SliverFillRemaining(
-            hasScrollBody: false,
-            child: Center(child: CircularProgressIndicator.adaptive()),
+          // The shape of the page (overview, chart, cards), like the other
+          // profile pages, rather than a bare spinner.
+          const SliverToBoxAdapter(
+            child: SkeletonShimmer(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Skeleton(height: 132, radius: 16, shimmer: false),
+                    SizedBox(height: 12),
+                    Skeleton(height: 180, radius: 16, shimmer: false),
+                    SizedBox(height: 12),
+                    Skeleton(height: 96, radius: 16, shimmer: false),
+                  ],
+                ),
+              ),
+            ),
           )
         else if (view.isEmpty)
           SliverToBoxAdapter(

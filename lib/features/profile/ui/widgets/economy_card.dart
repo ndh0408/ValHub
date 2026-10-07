@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/l10n/l10n.dart';
 
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/ui/error_view.dart' show showAppSnackBar;
+import '../../../../core/ui/sub_page.dart' show showValSheet;
 import '../../../../core/ui/val_widgets.dart';
 import '../../../../core/util/format.dart';
 import '../../data/round_economy.dart';
@@ -41,10 +41,25 @@ class EconomyCard extends StatelessWidget {
                 ),
               ),
               IconButton(
-                tooltip: context.l10n.profileEconomyHint,
+                tooltip: context.l10n.profileEconomyTitle,
                 icon: Icon(Icons.info_outline_rounded, color: muted),
-                onPressed: () =>
-                    showAppSnackBar(context, context.l10n.profileEconomyHint),
+                // A sheet to read at leisure, not a 4-second snackbar.
+                onPressed: () => showValSheet<void>(
+                  context,
+                  title: context.l10n.profileEconomyTitle,
+                  builder: (context, _) => Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      20,
+                      0,
+                      20,
+                      24 + MediaQuery.paddingOf(context).bottom,
+                    ),
+                    child: Text(
+                      context.l10n.profileEconomyHint,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

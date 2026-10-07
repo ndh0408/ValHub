@@ -14,6 +14,7 @@ import '../../../core/ui/adaptive.dart';
 import '../../../core/ui/content_tier_badge.dart';
 import '../../../core/ui/empty_view.dart';
 import '../../../core/ui/error_view.dart';
+import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/skin_art_card.dart';
 import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
@@ -74,9 +75,39 @@ class StoreHistoryScreen extends ConsumerWidget {
             ),
           )
         else if (history == null)
-          const SliverFillRemaining(
-            hasScrollBody: false,
-            child: Center(child: CircularProgressIndicator.adaptive()),
+          // A day header and two rows of skin tiles, not a bare spinner.
+          const SliverToBoxAdapter(
+            child: SkeletonShimmer(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Skeleton(width: 120, height: 12, shimmer: false),
+                    SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Skeleton(
+                            height: 156,
+                            radius: 16,
+                            shimmer: false,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Skeleton(
+                            height: 156,
+                            radius: 16,
+                            shimmer: false,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
           )
         else if (history.isEmpty)
           SliverFillRemaining(
