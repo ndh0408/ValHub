@@ -22,9 +22,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get commonAppName => 'ValHub';
 
   @override
-  String get commonBack => '뒤로';
-
-  @override
   String get commonCancel => '취소';
 
   @override
@@ -37,16 +34,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get commonClose => '닫기';
 
   @override
-  String get commonConfirm => '확인';
-
-  @override
   String get commonCopied => '복사됨';
-
-  @override
-  String get commonCopy => '복사';
-
-  @override
-  String get commonDaily => '매일';
 
   @override
   String get commonDash => '–';
@@ -63,9 +51,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get commonDelete => '삭제';
-
-  @override
-  String get commonDone => '완료';
 
   @override
   String get commonEmptyGeneric => '아직 아무것도 없습니다.';
@@ -115,9 +100,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get commonEstimatePrefix => '≈';
 
   @override
-  String get commonFilter => '필터';
-
-  @override
   String get commonGoHome => '홈으로';
 
   @override
@@ -162,9 +144,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String commonOfflineCached(String time) {
     return '오프라인 상태입니다 — 저장된 데이터를 표시합니다($time).';
   }
-
-  @override
-  String get commonOk => '확인';
 
   @override
   String get commonOpenSettings => '설정 열기';
@@ -266,12 +245,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get commonPullToRefresh => '당겨서 새로고침';
-
-  @override
-  String get commonRefresh => '새로고침';
-
-  @override
   String get commonRetry => '다시 시도';
 
   @override
@@ -290,9 +263,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get commonSeeAll => '모두 보기';
-
-  @override
   String get commonShare => '공유';
 
   @override
@@ -305,24 +275,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String commonSortBy(String option) {
     return '정렬: $option';
   }
-
-  @override
-  String get commonSortName => '이름순 A–Z';
-
-  @override
-  String get commonSortNewest => '최신순';
-
-  @override
-  String get commonSortPriceHigh => '높은 가격순';
-
-  @override
-  String get commonSortPriceLow => '낮은 가격순';
-
-  @override
-  String get commonSortRarity => '희귀도';
-
-  @override
-  String get commonSortWeapon => '무기';
 
   @override
   String get commonTabBattlePass => 'Battle Pass';
@@ -445,9 +397,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get contentCurrencyVpFull => '발로란트 포인트';
 
   @override
-  String get contentDefaultSkin => '기본';
-
-  @override
   String get contentItemAgent => '요원';
 
   @override
@@ -467,18 +416,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get contentItemFlex => '플렉스';
-
-  @override
-  String get contentItemLanguageEn => '영어';
-
-  @override
-  String get contentItemLanguageTitle => '아이템 이름';
-
-  @override
-  String get contentItemLanguageVi => '베트남어';
-
-  @override
-  String get contentItemLevelBorder => '레벨 테두리';
 
   @override
   String get contentItemSkin => '스킨';
@@ -544,12 +481,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get contentLevelItemLabelsFishAnimation => '물고기 애니메이션';
-
-  @override
-  String get contentLimitedEdition => '한정판';
-
-  @override
-  String get contentNoSpray => '없음';
 
   @override
   String get contentNoTitle => '칭호 없음';
@@ -677,11 +608,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get accountRiotCountryUnknown => 'Riot 계정 국가: 알 수 없음';
-
-  @override
-  String accountAccountCount(int count, int max) {
-    return '계정 $count/$max개';
-  }
 
   @override
   String accountAccountsHeader(int count, int max) {
@@ -863,9 +789,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get accountStatusUnknown => '상태 알 수 없음';
 
   @override
-  String get accountSwitchFailed => '계정을 전환하지 못했습니다. 다시 시도하세요.';
-
-  @override
   String accountSwitchTo(String account) {
     return '$account(으)로 전환';
   }
@@ -886,9 +809,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get accountUnlockLoginNote => '인증하여 Riot 로그인 정보 잠금 해제';
-
-  @override
-  String get authAccountAlreadyAdded => '이미 추가된 계정입니다';
 
   @override
   String get authAddAsNew => '새 계정으로 추가';
@@ -939,10 +859,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get authSignInCta => 'Riot 계정으로 로그인';
-
-  @override
-  String get authSignInNote =>
-      'Riot 공식 페이지에서 로그인합니다. ValHub는 로그인 정보 저장을 직접 선택한 경우에만 비밀번호를 저장하며, 로그인 데이터와 저장된 정보는 내 기기에만 보관됩니다.';
 
   @override
   String get authSocialLoginHint =>
@@ -1148,12 +1064,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get economyCollectionValue => '수집품 가치';
-
-  @override
-  String get economyExcludedRewards => '보상 스킨 제외';
-
-  @override
   String economyPlaceBundle(String name) {
     return '$name 번들';
   }
@@ -1183,12 +1093,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get economyPriceUnknown => '가격 알 수 없음';
 
   @override
-  String get economyValueHasEstimates => '예상 가격 포함 (≈)';
-
-  @override
-  String get economyWishlistValue => '위시리스트 총 가치';
-
-  @override
   String loadoutDefaultPresetName(int n) {
     return '장비 구성 $n';
   }
@@ -1202,9 +1106,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get loadoutSaveFailed => '장비 구성을 저장할 수 없습니다';
-
-  @override
-  String get battlePassActEnded => '이번 액트가 종료되었습니다';
 
   @override
   String battlePassActEndsIn(String time) {
@@ -1244,9 +1145,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String battlePassCharges(int charges, int needed) {
     return '$charges/$needed';
   }
-
-  @override
-  String get battlePassCheckpoint => '체크포인트';
 
   @override
   String get battlePassCheckpointHint => '라운드에서 승리해 체크포인트를 진행하세요(데스매치는 제외).';
@@ -1368,9 +1266,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String battlePassMissionsCompleted(int done, int total) {
     return '$done/$total 완료';
   }
-
-  @override
-  String get battlePassMissionsProgressLabel => '주간 임무 진행도';
 
   @override
   String battlePassNewMissionsAtWall(String wall) {
@@ -1558,9 +1453,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get collectionBannerTitlePrefix => '칭호: ';
-
-  @override
   String get collectionBrowseBuddies => '총기 장식';
 
   @override
@@ -1580,9 +1472,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get collectionBrowseSprays => '스프레이';
-
-  @override
-  String get collectionBrowseTitle => '수집품 둘러보기';
 
   @override
   String get collectionBrowseTitles => '칭호';
@@ -1631,12 +1520,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String collectionChromaCount(int owned, int total) {
     return '색상 변형 $owned/$total';
   }
-
-  @override
-  String get collectionClearFilters => '필터 해제';
-
-  @override
-  String get collectionClearSearch => '검색어 지우기';
 
   @override
   String get collectionClearTiers => '에디션 필터 해제';
@@ -1695,9 +1578,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get collectionExpressionsTitle => '표현 휠';
 
   @override
-  String get collectionFilterTiers => '에디션';
-
-  @override
   String get collectionHideAccountLevel => '계정 레벨 숨기기';
 
   @override
@@ -1710,20 +1590,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get collectionIncognitoHint => '게임에서 파티원이 아닌 플레이어에게 이름을 숨깁니다.';
 
   @override
-  String collectionItemsCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    return '아이템 $nString개';
-  }
-
-  @override
   String get collectionLevelBorderAuto => '레벨에 따라 자동';
-
-  @override
-  String get collectionLevelBorderEmpty => '현재 레벨에서 사용할 수 있는 레벨 테두리가 없습니다.';
 
   @override
   String collectionLevelBorderFrom(int level) {
@@ -1908,16 +1775,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get collectionPreview => '미리 보기';
 
   @override
-  String get collectionPreviewing => '미리 보는 중';
-
-  @override
   String get collectionRemoveBuddy => '총기 장식 해제';
 
   @override
   String get collectionRenamePreset => '이름 변경';
-
-  @override
-  String get collectionRowCard => '플레이어 카드';
 
   @override
   String get collectionRowExpressions => '표현 휠';
@@ -1927,9 +1788,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get collectionRowPresets => '저장된 장비 구성';
-
-  @override
-  String get collectionRowTitle => '칭호';
 
   @override
   String get collectionRowWeapons => '무기 장비';
@@ -1999,9 +1857,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get collectionSlotNamesItem3 => '왼쪽';
-
-  @override
-  String get collectionSortLabel => '정렬';
 
   @override
   String get collectionSortName => '이름';
@@ -2183,9 +2038,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityRankingClear => '무기 및 기간 필터 해제';
 
   @override
-  String get communityRankingPeriod => '기간';
-
-  @override
   String get communityRankingSort => '순위 기준';
 
   @override
@@ -2230,9 +2082,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityAddPhotos => '사진 추가';
 
   @override
-  String get communityAgentsPicked => '선택한 요원';
-
-  @override
   String get communityAllModes => '전체';
 
   @override
@@ -2252,9 +2101,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get communityApply => '적용';
-
-  @override
-  String get communityAutoRefresh => '20초마다 자동 새로고침';
 
   @override
   String get communityBackToMyCountry => '내 국가로 돌아가기';
@@ -2278,16 +2124,10 @@ class AppLocalizationsKo extends AppLocalizations {
       '파티 코드를 생성하지 못했습니다. VALORANT를 실행하거나 코드를 직접 입력하세요.';
 
   @override
-  String get communityCodeGenerated => '현재 파티에서 코드를 생성했습니다.';
-
-  @override
   String get communityCodeInvalid => '코드는 대문자 또는 숫자 정확히 6자리여야 합니다.';
 
   @override
   String get communityCodeRequired => '파티 코드를 입력하거나 생성하세요.';
-
-  @override
-  String get communityComment => '댓글';
 
   @override
   String get communityCommentHint => '댓글 작성…';
@@ -2372,12 +2212,6 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get communityConsentWithdrawn =>
       '동의를 철회했습니다. 앱을 계속 사용하려면 다시 동의해야 합니다.';
-
-  @override
-  String get communityCountriesEmpty => '일치하는 국가가 없습니다.';
-
-  @override
-  String get communityCountriesSearchHint => '국가 검색…';
 
   @override
   String get communityCountriesTitle => '국가별 커뮤니티';
@@ -2869,12 +2703,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityFilters => '필터';
 
   @override
-  String get communityGenerateCode => '파티 코드 생성';
-
-  @override
-  String get communityGeneratingCode => '코드 생성 중…';
-
-  @override
   String get communityGoogleDisclaimer =>
       'THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.';
 
@@ -2926,16 +2754,10 @@ class AppLocalizationsKo extends AppLocalizations {
       'PC 또는 콘솔에서 VALORANT를 실행한 후 다시 시도하세요.';
 
   @override
-  String get communityJoinInvalidCode => '파티 코드가 더 이상 유효하지 않거나 파티 인원이 가득 찼습니다.';
-
-  @override
   String get communityJoinParty => '파티 참가';
 
   @override
   String get communityJoinPartyFull => '이 파티는 인원이 가득 찼습니다.';
-
-  @override
-  String get communityJoined => '파티에 참가했습니다! VALORANT를 열어 함께 플레이하세요.';
 
   @override
   String get communityJoinedHint => '파티에 참가했습니다! VALORANT를 열어 함께 플레이하세요.';
@@ -2949,9 +2771,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
     return '참가 요청 $nString건';
   }
-
-  @override
-  String get communityKeepEditing => '계속 작성';
 
   @override
   String get communityKindNightMarket => '야시장';
@@ -3036,9 +2855,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityLfgExpiredRepost => '글이 만료되었습니다. 새 글을 작성해 팀원을 찾으세요.';
 
   @override
-  String get communityLfgExpiryNote => '글은 30분 후 자동으로 만료됩니다.';
-
-  @override
   String get communityLfgGateBody =>
       '참여하면(Riot ID 1회 인증) 같은 서버 플레이어의 글을 보고 내 팀원 찾기 글을 올릴 수 있습니다. 피드와 스킨 순위는 지금처럼 볼 수 있습니다.';
 
@@ -3071,28 +2887,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityLike => '좋아요';
 
   @override
-  String communityLikes(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    return '좋아요 $nString개';
-  }
-
-  @override
   String get communityLiveMembers => '파티원';
 
   @override
-  String get communityLoadMoreFailed => '게시물을 더 불러오지 못했습니다. 다시 시도하세요.';
-
-  @override
   String get communityMatchMyRank => '내 랭크에 맞춤';
-
-  @override
-  String communityMaxPhotos(int max) {
-    return '사진은 최대 $max장까지 가능합니다.';
-  }
 
   @override
   String communityMemberJoined(String name) {
@@ -3123,9 +2921,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityMuteAuthor => '이 플레이어 숨기기';
 
   @override
-  String get communityMyPost => '내 글';
-
-  @override
   String get communityNewPost => '게시';
 
   @override
@@ -3142,15 +2937,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get communityNoComments => '아직 댓글이 없습니다. 첫 댓글을 남겨 보세요!';
-
-  @override
-  String get communityNoParty =>
-      '파티를 찾을 수 없습니다. VALORANT를 실행한 후 다시 시도하거나 코드를 직접 입력하세요.';
-
-  @override
-  String communityNoPartyWithReason(String reason) {
-    return '파티를 찾을 수 없습니다. VALORANT를 실행한 후 다시 시도하거나 코드를 직접 입력하세요.\n$reason';
-  }
 
   @override
   String get communityNoRatings => '아직 평가 없음';
@@ -3205,21 +2991,9 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get communityPeriodAll => '전체';
-
-  @override
-  String get communityPeriodAllTime => '전체 기간';
-
-  @override
-  String get communityPeriodWeek => '이번 주';
-
-  @override
   String communityPhotoCount(int n, int max) {
     return '사진 $n/$max장';
   }
-
-  @override
-  String get communityPickRating => '별점을 선택하세요.';
 
   @override
   String get communityPlayVideo => '영상 보기';
@@ -3235,10 +3009,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get communityPosted => '게시했습니다!';
-
-  @override
-  String get communityPrivacyNote =>
-      'ValHub는 커뮤니티에 연결할 때 Riot ID를, 리뷰를 남길 때 스킨 보유 여부를 확인합니다. 커뮤니티는 비밀번호나 Riot 로그인 데이터를 저장하지 않습니다.';
 
   @override
   String get communityPublish => '게시';
@@ -3366,9 +3136,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityReported => '감사합니다! 신고가 접수되었습니다.';
 
   @override
-  String get communityRetry => '다시 시도';
-
-  @override
   String get communityReviewDeleted => '리뷰를 삭제했습니다.';
 
   @override
@@ -3390,9 +3157,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String communityReviewsHeader(String n) {
     return '리뷰 · $n';
   }
-
-  @override
-  String get communityReviewsSection => '리뷰';
 
   @override
   String communityRiotId(String name, String tag) {
@@ -3419,9 +3183,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get communityScopeRegion => '지역';
-
-  @override
-  String get communityScopeWorldwide => '전 세계';
 
   @override
   String get communitySectionFeed => '피드';
@@ -3463,12 +3224,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get communitySkinNotFound => '이 스킨을 찾을 수 없습니다.';
-
-  @override
-  String get communitySkinsEmptyBody => '가장 좋아하는 스킨에 하트를 눌러 순위를 올려 보세요!';
-
-  @override
-  String get communitySkinsEmptyTitle => '아직 투표 없음';
 
   @override
   String get communitySlots => '필요 인원';
@@ -3553,9 +3308,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityTranslateFailed => '번역하지 못했습니다. 다시 시도하세요.';
 
   @override
-  String get communityTranslateUnavailable => '이 기기는 아직 기기 내 번역을 지원하지 않습니다.';
-
-  @override
   String get communityTranslatedByGoogle => 'Google 자동 번역';
 
   @override
@@ -3582,12 +3334,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get communityUnvote => '하트 취소';
-
-  @override
-  String get communityUploading => '사진 업로드 중…';
-
-  @override
-  String get communityViewImage => '사진 보기';
 
   @override
   String get communityVote => '이 스킨에 하트 누르기';
@@ -3624,9 +3370,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityWriteFirstReview => '첫 리뷰 작성';
 
   @override
-  String get communityWritePost => '게시물 작성';
-
-  @override
   String get communityYou => '나';
 
   @override
@@ -3655,12 +3398,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get liveGameAutoRefreshNote => '게임 중일 때 자동으로 새로고침됩니다.';
-
-  @override
-  String get liveGameBuddy => '총기 장식';
-
-  @override
-  String get liveGameClose => '닫기';
 
   @override
   String get liveGameCurrentGame => '현재 게임';
@@ -3758,9 +3495,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String liveGamePeak(String rank) {
     return '최고: $rank';
   }
-
-  @override
-  String get liveGamePlayerCard => '플레이어 카드';
 
   @override
   String liveGamePlayerLoadoutOf(String name) {
@@ -3982,9 +3716,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get profileChooseMap => '맵으로 필터';
 
   @override
-  String get profileClearMap => '맵 필터 해제';
-
-  @override
   String get profileColA => 'A';
 
   @override
@@ -4026,14 +3757,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get profileDuration => '게임 시간';
-
-  @override
-  String profileDurationOf(String d) {
-    return '게임 시간 $d';
-  }
-
-  @override
   String get profileEndOfHistory => '모든 게임을 표시했습니다';
 
   @override
@@ -4044,9 +3767,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get profileFilterAll => '전체';
-
-  @override
-  String get profileFilterMap => '맵';
 
   @override
   String get profileFirstBloods => '첫 킬';
@@ -4077,11 +3797,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get profileFriendsRow => '친구 & 채팅';
-
-  @override
-  String profileGainPerWin(String rr) {
-    return '승리 시 $rr RR';
-  }
 
   @override
   String get profileHideKills => '처치 기록 숨기기';
@@ -4147,11 +3862,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get profileLevelHidden => '레벨 숨김';
 
   @override
-  String profileLossPerLoss(String rr) {
-    return '패배 시 $rr RR';
-  }
-
-  @override
   String profileLossStreak(int n) {
     return '$n연패';
   }
@@ -4209,15 +3919,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get profilePlayHubTitle => '게임 & 파티';
 
   @override
-  String get profilePartyRow => '파티 & 대기열';
-
-  @override
   String get profilePeakRank => '최고';
-
-  @override
-  String profilePeakRankOf(String actTitle) {
-    return '최고 · $actTitle';
-  }
 
   @override
   String get profilePerformanceAttack => '공격';
@@ -4228,9 +3930,6 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get profilePerformanceEmpty =>
       '이 기기에 기록된 게임이 아직 없습니다. 전적을 열어 플레이한 게임을 기록하세요.';
-
-  @override
-  String get profilePerformanceGames => '게임 수';
 
   @override
   String get profilePerformanceNoMatches => '선택한 기간에 게임이 없습니다.';
@@ -4256,13 +3955,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get profilePerformanceTitle => '성과';
-
-  @override
-  String get profilePerformanceTrendEmpty =>
-      '추세를 비교하려면 게임이 3판 이상인 기간이 최소 두 개 필요합니다.';
-
-  @override
-  String get profilePickTargetHint => '도달하고 싶은 랭크를 선택하세요';
 
   @override
   String profilePlacement(int n) {
@@ -4371,9 +4063,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get profileRoundsHint => '라운드를 탭하면 각 처치 기록을 볼 수 있습니다.';
-
-  @override
-  String get profileRr => 'RR';
 
   @override
   String profileRrLeft(String n) {
@@ -4685,9 +4374,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get legalContactHeader => '문의';
 
   @override
-  String get legalCreditsHeader => '데이터 출처 & 크레딧';
-
-  @override
   String legalEffectiveFrom(String date) {
     return '$date부터 시행';
   }
@@ -4786,9 +4472,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsGeoHintOnly => '국가는 조회와 추천에만 사용됩니다. 연결 지역은 Riot 계정을 따릅니다.';
-
-  @override
-  String get settingsGeoUnsupported => '아직 지원되지 않는 Riot 지역입니다. 설정에서 지역을 선택하세요.';
 
   @override
   String get settingsGeoSave => '확인 후 저장';
@@ -4891,33 +4574,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutCreditContent => 'valorant-api.com';
-
-  @override
-  String get settingsAboutCreditContentBody => '스킨, 요원, 맵, 랭크의 이름, 이미지, 정보.';
-
-  @override
-  String get settingsAboutCreditDocs => '커뮤니티 문서';
-
-  @override
-  String get settingsAboutCreditDocsBody =>
-      'techchrism/valorant-api-docs 프로젝트와 VALORANT 개발자 커뮤니티.';
-
-  @override
-  String get settingsAboutCreditRiot => 'Riot Games';
-
-  @override
-  String get settingsAboutCreditRiotBody =>
-      '상점, 지갑, 수집품, 게임 기록, 랭크는 로그인한 Riot 계정에서 직접 가져옵니다.';
-
-  @override
-  String get settingsAboutCreditsHeader => '데이터 출처';
-
-  @override
   String get settingsAboutHeader => '정보';
-
-  @override
-  String get settingsAboutLegalHeader => '법적 고지';
 
   @override
   String get settingsAboutRowSubtitle => '개인정보, 약관, 저작권 및 문의';
@@ -4951,22 +4608,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsClearCacheSubtitle => '기기에 다운로드된 이미지와 데이터(기록된 오류 보고 포함)';
 
   @override
-  String get settingsClearLog => '기록된 오류 보고 삭제';
-
-  @override
-  String get settingsClearLogConfirm => '이 기기에 기록된 오류 보고를 삭제할까요?';
-
-  @override
   String get settingsExportLog => 'ValHub에 오류 보고 보내기';
 
   @override
   String get settingsExportLogEmpty => '아직 보낼 내용이 없습니다. 앱을 잠시 사용한 후 다시 시도하세요.';
-
-  @override
-  String get settingsExportLogEmptyTitle => '보낼 내용 없음';
-
-  @override
-  String get settingsExportLogNote => '오류 보고에는 비밀번호나 Riot 로그인 데이터가 포함되지 않습니다.';
 
   @override
   String get settingsExportLogSubtitle =>
@@ -4982,9 +4627,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsItemLanguageEn => '영어';
 
   @override
-  String get settingsItemLanguageHint => '스킨, 요원, 맵 등의 이름이 이 언어로 표시됩니다.';
-
-  @override
   String get settingsItemLanguageLabel => '아이템 이름';
 
   @override
@@ -4994,52 +4636,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsItemLanguageVi => '베트남어';
 
   @override
-  String get settingsLegalNotice => '법적 고지';
-
-  @override
   String get settingsLinkOpenFailed => '링크를 열지 못했습니다. 다시 시도하세요.';
-
-  @override
-  String get settingsLogCleared => '오류 보고를 삭제했습니다';
-
-  @override
-  String settingsLogEntryCount(int count) {
-    return '$count개 항목';
-  }
-
-  @override
-  String settingsLogEntryShown(int shown, int total) {
-    return '$shown / $total개 항목';
-  }
 
   @override
   String settingsLogFileHeader(String appName, String version) {
     return '$appName $version — 오류 보고';
   }
-
-  @override
-  String get settingsLogFilterAll => '전체';
-
-  @override
-  String get settingsLogFilterAuth => '로그인';
-
-  @override
-  String get settingsLogFilterEmpty => '일치하는 항목이 없습니다. 필터를 해제하면 더 볼 수 있습니다.';
-
-  @override
-  String get settingsLogFilterErrors => '문제';
-
-  @override
-  String get settingsLogFilterHttp => '연결';
-
-  @override
-  String get settingsLogMore => '더 보기';
-
-  @override
-  String get settingsLogSearchEmpty => '일치하는 항목이 없습니다.';
-
-  @override
-  String get settingsLogSearchHint => '오류 보고에서 검색…';
 
   @override
   String get settingsLogShareFailed => '오류 보고를 보내지 못했습니다. 다시 시도하세요.';
@@ -5247,9 +4849,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String settingsStatusMoreUpdates(int n) {
     return '업데이트 $n개 더 보기';
   }
-
-  @override
-  String get settingsStatusRegionPicker => '서버';
 
   @override
   String get settingsStatusScheduled => '점검 예정';
@@ -5475,16 +5074,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get socialChangeQueue => '대기열 변경';
 
   @override
-  String get socialChatTitle => '채팅';
-
-  @override
   String get socialChatUnavailable => '채팅이 오프라인 상태입니다.';
 
   @override
   String get socialCloseParty => '파티 비공개';
-
-  @override
-  String get socialClosedState => '초대 전용';
 
   @override
   String get socialCodeInvalid => '파티 코드는 문자와 숫자로만 구성됩니다.';
@@ -5546,9 +5139,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get socialGenerateCode => '코드 생성';
-
-  @override
-  String get socialHistoryFailed => '이전 메시지를 불러오지 못했습니다. 다시 연결한 후 시도하세요.';
 
   @override
   String get socialIdleQueue => '대기열 참가 준비 완료';
@@ -5678,9 +5268,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get socialNoSearchResultsTitle => '결과 없음';
 
   @override
-  String get socialNotFriend => '친구 목록에 없는 플레이어입니다.';
-
-  @override
   String get socialNotReady => '준비 안 됨';
 
   @override
@@ -5707,9 +5294,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get socialOpenParty => '파티 공개';
-
-  @override
-  String get socialOpenState => '공개 파티';
 
   @override
   String get socialOtherGamesLeagueOfLegends => '리그 오브 레전드';
@@ -6052,17 +5636,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get storeRemoveFromWishlist => '위시리스트에서 삭제';
 
   @override
-  String storeResetNotificationBody(int skinCount, String account) {
-    String _temp0 = intl.Intl.pluralLogic(
-      skinCount,
-      locale: localeName,
-      other: '$account의 오늘의 새 스킨 $skinCount개를 확인하세요.',
-      zero: '$account의 오늘의 새 스킨을 확인하세요.',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get storeResetNotificationTitle => '상점이 초기화되었습니다';
 
   @override
@@ -6181,6 +5754,76 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get storeHistoryTitle => '상점 기록';
+
+  @override
+  String storeHistorySince(String date, int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$daysString일',
+    );
+    return '$date부터 이 기기에서 기록 · $_temp0';
+  }
+
+  @override
+  String get storeHistoryEmpty =>
+      '아직 기록된 날이 없습니다. ValHub는 앱을 열 때마다 일일 상점을 이 기기에만 저장합니다.';
+
+  @override
+  String get storeHistoryMostOffered => '가장 자주 등장';
+
+  @override
+  String storeHistoryTimes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString회',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryNightMarket(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '야시장 · 할인 $countString개',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryEntrySubtitle(int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '이 기기에서 $daysString일 기록됨',
+      zero: '오늘부터 기록 시작',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String wishlistNotifDailyBody(
     String skin,
     String account,
@@ -6289,9 +5932,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get wishlistClearFilters => '필터 해제';
 
   @override
-  String get wishlistClearSearch => '검색어 지우기';
-
-  @override
   String get wishlistEmpty => '위시리스트가 비어 있습니다. 아무 스킨에서나 ♡를 탭하여 추가하세요.';
 
   @override
@@ -6306,9 +5946,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get wishlistExcludedRewards => '보상 스킨 제외';
 
   @override
-  String get wishlistFilterTiers => '에디션';
-
-  @override
   String wishlistFiltered(int count, String value) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);
@@ -6316,15 +5953,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
     return '필터 적용: 스킨 $countString개 · $value';
   }
-
-  @override
-  String get wishlistHasEstimates => '예상 가격 포함 (≈)';
-
-  @override
-  String get wishlistInWishlist => '위시리스트에 있음';
-
-  @override
-  String get wishlistInWishlistLabel => '위시리스트에 있음';
 
   @override
   String get wishlistNoMatch => '일치하는 스킨이 없습니다. 필터를 해제하면 더 볼 수 있습니다.';
@@ -6404,14 +6032,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get wishlistSortBy => '정렬';
-
-  @override
-  String wishlistSortLabel(String sort) {
-    return '정렬: $sort';
-  }
-
-  @override
   String get wishlistSortName => '이름';
 
   @override
@@ -6422,12 +6042,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get wishlistSortWeapon => '무기';
-
-  @override
-  String get wishlistStoreCheckTitle => '상점을 확인하지 못했습니다';
-
-  @override
-  String get wishlistSubtitle => '노리는 스킨';
 
   @override
   String get wishlistTitle => '위시리스트';
@@ -6517,7 +6131,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeCardCommunity => '커뮤니티';
 
   @override
-  String get homeCardCommunityDesc => '내 랭크에 맞는 팀원 찾기와 이번 주 인기 스킨.';
+  String get homeCardCommunityDesc => '내 랭크에 맞는 팀원 찾기와 커뮤니티가 가장 좋아하는 스킨.';
 
   @override
   String get homeCardFriends => '플레이 중인 친구';

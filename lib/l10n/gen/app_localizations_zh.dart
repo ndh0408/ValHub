@@ -22,9 +22,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonAppName => 'ValHub';
 
   @override
-  String get commonBack => '返回';
-
-  @override
   String get commonCancel => '取消';
 
   @override
@@ -37,16 +34,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonClose => '关闭';
 
   @override
-  String get commonConfirm => '确认';
-
-  @override
   String get commonCopied => '已复制';
-
-  @override
-  String get commonCopy => '复制';
-
-  @override
-  String get commonDaily => '每日';
 
   @override
   String get commonDash => '–';
@@ -63,9 +51,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get commonDelete => '删除';
-
-  @override
-  String get commonDone => '完成';
 
   @override
   String get commonEmptyGeneric => '这里还什么都没有。';
@@ -112,9 +97,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonEstimatePrefix => '≈';
 
   @override
-  String get commonFilter => '筛选';
-
-  @override
   String get commonGoHome => '返回首页';
 
   @override
@@ -159,9 +141,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String commonOfflineCached(String time) {
     return '网络未连接——正在显示已保存的数据（$time）。';
   }
-
-  @override
-  String get commonOk => '确定';
 
   @override
   String get commonOpenSettings => '打开设置';
@@ -263,12 +242,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get commonPullToRefresh => '下拉刷新';
-
-  @override
-  String get commonRefresh => '刷新';
-
-  @override
   String get commonRetry => '重试';
 
   @override
@@ -287,9 +260,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get commonSeeAll => '查看全部';
-
-  @override
   String get commonShare => '分享';
 
   @override
@@ -302,24 +272,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String commonSortBy(String option) {
     return '排序：$option';
   }
-
-  @override
-  String get commonSortName => '名称 A–Z';
-
-  @override
-  String get commonSortNewest => '最新';
-
-  @override
-  String get commonSortPriceHigh => '价格从高到低';
-
-  @override
-  String get commonSortPriceLow => '价格从低到高';
-
-  @override
-  String get commonSortRarity => '稀有度';
-
-  @override
-  String get commonSortWeapon => '武器';
 
   @override
   String get commonTabBattlePass => '通行证';
@@ -442,9 +394,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get contentCurrencyVpFull => '无畏点券';
 
   @override
-  String get contentDefaultSkin => '标准';
-
-  @override
   String get contentItemAgent => '英雄';
 
   @override
@@ -464,18 +413,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get contentItemFlex => '展示道具';
-
-  @override
-  String get contentItemLanguageEn => '英语';
-
-  @override
-  String get contentItemLanguageTitle => '物品名称';
-
-  @override
-  String get contentItemLanguageVi => '越南语';
-
-  @override
-  String get contentItemLevelBorder => '等级边框';
 
   @override
   String get contentItemSkin => '皮肤';
@@ -541,12 +478,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get contentLevelItemLabelsFishAnimation => '鱼类动画';
-
-  @override
-  String get contentLimitedEdition => '限定版';
-
-  @override
-  String get contentNoSpray => '无';
 
   @override
   String get contentNoTitle => '无头衔';
@@ -674,11 +605,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get accountRiotCountryUnknown => 'Riot 账号所属国家/地区：未知';
-
-  @override
-  String accountAccountCount(int count, int max) {
-    return '$count/$max 个账号';
-  }
 
   @override
   String accountAccountsHeader(int count, int max) {
@@ -855,9 +781,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountStatusUnknown => '状态未知';
 
   @override
-  String get accountSwitchFailed => '无法切换账号，请重试。';
-
-  @override
   String accountSwitchTo(String account) {
     return '切换到 $account';
   }
@@ -878,9 +801,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get accountUnlockLoginNote => '验证身份以查看 Riot 登录信息';
-
-  @override
-  String get authAccountAlreadyAdded => '此账号已添加';
 
   @override
   String get authAddAsNew => '添加为新账号';
@@ -929,10 +849,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get authSignInCta => '使用 Riot 账号登录';
-
-  @override
-  String get authSignInNote =>
-      '你将在 Riot 官方页面登录。只有在你选择保存登录信息时，ValHub 才会保存密码；登录数据和已保存的信息只存储在你的设备上。';
 
   @override
   String get authSocialLoginHint =>
@@ -1134,12 +1050,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get economyCollectionValue => '收藏价值';
-
-  @override
-  String get economyExcludedRewards => '不含奖励皮肤';
-
-  @override
   String economyPlaceBundle(String name) {
     return '$name组合包';
   }
@@ -1169,12 +1079,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get economyPriceUnknown => '价格未知';
 
   @override
-  String get economyValueHasEstimates => '含估算价格（≈）';
-
-  @override
-  String get economyWishlistValue => '心愿单总价值';
-
-  @override
   String loadoutDefaultPresetName(int n) {
     return '配置$n';
   }
@@ -1187,9 +1091,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get loadoutSaveFailed => '无法保存配置';
-
-  @override
-  String get battlePassActEnded => '本幕已结束';
 
   @override
   String battlePassActEndsIn(String time) {
@@ -1229,9 +1130,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String battlePassCharges(int charges, int needed) {
     return '$charges/$needed';
   }
-
-  @override
-  String get battlePassCheckpoint => '检查点';
 
   @override
   String get battlePassCheckpointHint => '赢得回合即可推进检查点（乱斗模式不计入）。';
@@ -1349,9 +1247,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String battlePassMissionsCompleted(int done, int total) {
     return '已完成 $done/$total';
   }
-
-  @override
-  String get battlePassMissionsProgressLabel => '每周任务进度';
 
   @override
   String battlePassNewMissionsAtWall(String wall) {
@@ -1537,9 +1432,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get collectionBannerTitlePrefix => '头衔：';
-
-  @override
   String get collectionBrowseBuddies => '枪挂';
 
   @override
@@ -1559,9 +1451,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get collectionBrowseSprays => '喷漆';
-
-  @override
-  String get collectionBrowseTitle => '浏览收藏';
 
   @override
   String get collectionBrowseTitles => '玩家头衔';
@@ -1608,12 +1497,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String collectionChromaCount(int owned, int total) {
     return '$owned/$total 款炫彩';
   }
-
-  @override
-  String get collectionClearFilters => '清除筛选';
-
-  @override
-  String get collectionClearSearch => '清除搜索';
 
   @override
   String get collectionClearTiers => '清除版本筛选';
@@ -1672,9 +1555,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get collectionExpressionsTitle => '表情轮盘';
 
   @override
-  String get collectionFilterTiers => '版本';
-
-  @override
   String get collectionHideAccountLevel => '隐藏账号等级';
 
   @override
@@ -1687,20 +1567,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get collectionIncognitoHint => '在对局中向非队友玩家隐藏你的名字。';
 
   @override
-  String collectionItemsCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    return '$nString 件物品';
-  }
-
-  @override
   String get collectionLevelBorderAuto => '随等级自动切换';
-
-  @override
-  String get collectionLevelBorderEmpty => '你的等级暂无可用的等级边框。';
 
   @override
   String collectionLevelBorderFrom(int level) {
@@ -1883,16 +1750,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get collectionPreview => '预览';
 
   @override
-  String get collectionPreviewing => '预览中';
-
-  @override
   String get collectionRemoveBuddy => '移除枪挂';
 
   @override
   String get collectionRenamePreset => '重命名';
-
-  @override
-  String get collectionRowCard => '玩家卡片';
 
   @override
   String get collectionRowExpressions => '表情轮盘';
@@ -1902,9 +1763,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get collectionRowPresets => '已保存的配置';
-
-  @override
-  String get collectionRowTitle => '玩家头衔';
 
   @override
   String get collectionRowWeapons => '武器配置';
@@ -1974,9 +1832,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get collectionSlotNamesItem3 => '左';
-
-  @override
-  String get collectionSortLabel => '排序';
 
   @override
   String get collectionSortName => '名称';
@@ -2155,9 +2010,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityRankingClear => '清除武器和时间筛选';
 
   @override
-  String get communityRankingPeriod => '时间';
-
-  @override
   String get communityRankingSort => '排名依据';
 
   @override
@@ -2198,9 +2050,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityAddPhotos => '添加图片';
 
   @override
-  String get communityAgentsPicked => '已选英雄';
-
-  @override
   String get communityAllModes => '全部';
 
   @override
@@ -2220,9 +2069,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get communityApply => '应用';
-
-  @override
-  String get communityAutoRefresh => '每 20 秒自动刷新';
 
   @override
   String get communityBackToMyCountry => '返回我的国家/地区';
@@ -2245,16 +2091,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityCodeAutoFailed => '无法生成队伍码。请打开 VALORANT 或手动输入队伍码。';
 
   @override
-  String get communityCodeGenerated => '已根据你当前的队伍生成队伍码。';
-
-  @override
   String get communityCodeInvalid => '队伍码必须为 6 位大写字母或数字。';
 
   @override
   String get communityCodeRequired => '请输入或生成队伍码。';
-
-  @override
-  String get communityComment => '评论';
 
   @override
   String get communityCommentHint => '写评论…';
@@ -2336,12 +2176,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get communityConsentWithdrawn => '已撤回同意。需要重新同意才能继续使用本应用。';
-
-  @override
-  String get communityCountriesEmpty => '没有找到匹配的国家/地区。';
-
-  @override
-  String get communityCountriesSearchHint => '搜索国家/地区…';
 
   @override
   String get communityCountriesTitle => '各国家/地区社区';
@@ -2830,12 +2664,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityFilters => '筛选';
 
   @override
-  String get communityGenerateCode => '生成队伍码';
-
-  @override
-  String get communityGeneratingCode => '正在生成队伍码…';
-
-  @override
   String get communityGoogleDisclaimer =>
       'THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.';
 
@@ -2886,16 +2714,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityJoinGameNotRunning => '请在电脑或主机上打开 VALORANT 后重试。';
 
   @override
-  String get communityJoinInvalidCode => '队伍码已失效或队伍已满员。';
-
-  @override
   String get communityJoinParty => '加入队伍';
 
   @override
   String get communityJoinPartyFull => '此队伍已满员。';
-
-  @override
-  String get communityJoined => '已加入队伍！打开 VALORANT 一起游戏吧。';
 
   @override
   String get communityJoinedHint => '已加入队伍！打开 VALORANT 一起游戏吧。';
@@ -2909,9 +2731,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
     return '$nString 人申请加入';
   }
-
-  @override
-  String get communityKeepEditing => '继续编辑';
 
   @override
   String get communityKindNightMarket => '夜市';
@@ -2994,9 +2813,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityLfgExpiredRepost => '你的帖子已过期。请发布新帖寻找队友。';
 
   @override
-  String get communityLfgExpiryNote => '帖子将在 30 分钟后自动过期。';
-
-  @override
   String get communityLfgGateBody =>
       '加入社区（只需验证一次 Riot ID）即可查看同服务器玩家的组队帖并发布你自己的组队帖。你仍可照常浏览动态和皮肤排行。';
 
@@ -3029,28 +2845,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityLike => '点赞';
 
   @override
-  String communityLikes(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    return '$nString 个赞';
-  }
-
-  @override
   String get communityLiveMembers => '成员';
 
   @override
-  String get communityLoadMoreFailed => '无法加载更多帖子，请重试。';
-
-  @override
   String get communityMatchMyRank => '符合你的段位';
-
-  @override
-  String communityMaxPhotos(int max) {
-    return '最多$max张图片。';
-  }
 
   @override
   String communityMemberJoined(String name) {
@@ -3081,9 +2879,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityMuteAuthor => '隐藏此玩家';
 
   @override
-  String get communityMyPost => '你的帖子';
-
-  @override
   String get communityNewPost => '发帖';
 
   @override
@@ -3099,14 +2894,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get communityNoComments => '暂无评论，快来抢沙发吧！';
-
-  @override
-  String get communityNoParty => '找不到你的队伍。请打开 VALORANT 后重试，或手动输入队伍码。';
-
-  @override
-  String communityNoPartyWithReason(String reason) {
-    return '找不到你的队伍。请打开 VALORANT 后重试，或手动输入队伍码。\n$reason';
-  }
 
   @override
   String get communityNoRatings => '暂无评分';
@@ -3161,21 +2948,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get communityPeriodAll => '全部';
-
-  @override
-  String get communityPeriodAllTime => '历史总榜';
-
-  @override
-  String get communityPeriodWeek => '本周';
-
-  @override
   String communityPhotoCount(int n, int max) {
     return '$n/$max 张图片';
   }
-
-  @override
-  String get communityPickRating => '请选择星级。';
 
   @override
   String get communityPlayVideo => '观看视频';
@@ -3191,10 +2966,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get communityPosted => '已发布！';
-
-  @override
-  String get communityPrivacyNote =>
-      'ValHub 会在你连接社区时验证 Riot ID，并在你发表评价时验证皮肤拥有权。社区不会保存你的密码或 Riot 登录数据。';
 
   @override
   String get communityPublish => '发布';
@@ -3322,9 +3093,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityReported => '感谢你！举报已提交。';
 
   @override
-  String get communityRetry => '重试';
-
-  @override
   String get communityReviewDeleted => '已删除评价。';
 
   @override
@@ -3346,9 +3114,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String communityReviewsHeader(String n) {
     return '评价 · $n';
   }
-
-  @override
-  String get communityReviewsSection => '评价';
 
   @override
   String communityRiotId(String name, String tag) {
@@ -3375,9 +3140,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get communityScopeRegion => '区域';
-
-  @override
-  String get communityScopeWorldwide => '全球';
 
   @override
   String get communitySectionFeed => '动态';
@@ -3419,12 +3181,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get communitySkinNotFound => '找不到此皮肤。';
-
-  @override
-  String get communitySkinsEmptyBody => '为你最喜欢的皮肤点亮爱心，把它推上排行榜吧！';
-
-  @override
-  String get communitySkinsEmptyTitle => '暂无投票';
 
   @override
   String get communitySlots => '所需人数';
@@ -3509,9 +3265,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityTranslateFailed => '无法翻译，请重试。';
 
   @override
-  String get communityTranslateUnavailable => '此设备暂不支持本地翻译。';
-
-  @override
   String get communityTranslatedByGoogle => '由 Google 自动翻译';
 
   @override
@@ -3537,12 +3290,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get communityUnvote => '取消爱心';
-
-  @override
-  String get communityUploading => '正在上传图片…';
-
-  @override
-  String get communityViewImage => '查看图片';
 
   @override
   String get communityVote => '为此皮肤点亮爱心';
@@ -3578,9 +3325,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityWriteFirstReview => '撰写第一条评价';
 
   @override
-  String get communityWritePost => '写帖子';
-
-  @override
   String get communityYou => '你';
 
   @override
@@ -3609,12 +3353,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get liveGameAutoRefreshNote => '进入对局时自动刷新。';
-
-  @override
-  String get liveGameBuddy => '枪挂';
-
-  @override
-  String get liveGameClose => '关闭';
 
   @override
   String get liveGameCurrentGame => '当前对局';
@@ -3711,9 +3449,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String liveGamePeak(String rank) {
     return '最高：$rank';
   }
-
-  @override
-  String get liveGamePlayerCard => '玩家卡片';
 
   @override
   String liveGamePlayerLoadoutOf(String name) {
@@ -3932,9 +3667,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get profileChooseMap => '按地图筛选';
 
   @override
-  String get profileClearMap => '清除地图筛选';
-
-  @override
   String get profileColA => 'A';
 
   @override
@@ -3975,14 +3707,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get profileDuration => '时长';
-
-  @override
-  String profileDurationOf(String d) {
-    return '时长 $d';
-  }
-
-  @override
   String get profileEndOfHistory => '已显示所有对局';
 
   @override
@@ -3993,9 +3717,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get profileFilterAll => '全部';
-
-  @override
-  String get profileFilterMap => '地图';
 
   @override
   String get profileFirstBloods => '首杀';
@@ -4026,11 +3747,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get profileFriendsRow => '好友与聊天';
-
-  @override
-  String profileGainPerWin(String rr) {
-    return '胜利 $rr RR';
-  }
 
   @override
   String get profileHideKills => '隐藏击杀';
@@ -4096,11 +3812,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get profileLevelHidden => '等级已隐藏';
 
   @override
-  String profileLossPerLoss(String rr) {
-    return '失败 $rr RR';
-  }
-
-  @override
   String profileLossStreak(int n) {
     return '$n连败';
   }
@@ -4158,15 +3869,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get profilePlayHubTitle => '对局与队伍';
 
   @override
-  String get profilePartyRow => '队伍与匹配';
-
-  @override
   String get profilePeakRank => '最高';
-
-  @override
-  String profilePeakRankOf(String actTitle) {
-    return '最高 · $actTitle';
-  }
 
   @override
   String get profilePerformanceAttack => '进攻';
@@ -4176,9 +3879,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get profilePerformanceEmpty => '此设备上尚未记录任何对局。打开对战记录即可记录你玩过的对局。';
-
-  @override
-  String get profilePerformanceGames => '场数';
 
   @override
   String get profilePerformanceNoMatches => '所选时间范围内没有对局。';
@@ -4204,12 +3904,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get profilePerformanceTitle => '表现';
-
-  @override
-  String get profilePerformanceTrendEmpty => '至少需要两个各有 3 场以上对局的时段才能比较趋势。';
-
-  @override
-  String get profilePickTargetHint => '选择你想达到的段位';
 
   @override
   String profilePlacement(int n) {
@@ -4317,9 +4011,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get profileRoundsHint => '点按一个回合即可查看每次击杀。';
-
-  @override
-  String get profileRr => 'RR';
 
   @override
   String profileRrLeft(String n) {
@@ -4629,9 +4320,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get legalContactHeader => '联系我们';
 
   @override
-  String get legalCreditsHeader => '数据来源与致谢';
-
-  @override
   String legalEffectiveFrom(String date) {
     return '生效日期：$date';
   }
@@ -4727,9 +4415,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsGeoHintOnly => '国家/地区仅用于查询和推荐。连接区域以你的 Riot 账号为准。';
-
-  @override
-  String get settingsGeoUnsupported => '暂不支持此 Riot 区域。请在设置中选择区域。';
 
   @override
   String get settingsGeoSave => '检查并保存';
@@ -4831,32 +4516,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutCreditContent => 'valorant-api.com';
-
-  @override
-  String get settingsAboutCreditContentBody => '皮肤、英雄、地图和段位的名称、图片及信息。';
-
-  @override
-  String get settingsAboutCreditDocs => '社区文档';
-
-  @override
-  String get settingsAboutCreditDocsBody =>
-      'techchrism/valorant-api-docs 项目及 VALORANT 开发者社区。';
-
-  @override
-  String get settingsAboutCreditRiot => 'Riot Games';
-
-  @override
-  String get settingsAboutCreditRiotBody => '商店、钱包、收藏、对局和段位数据直接来自你登录的 Riot 账号。';
-
-  @override
-  String get settingsAboutCreditsHeader => '数据来源';
-
-  @override
   String get settingsAboutHeader => '信息';
-
-  @override
-  String get settingsAboutLegalHeader => '法律信息';
 
   @override
   String get settingsAboutRowSubtitle => '隐私、条款、版权和联系方式';
@@ -4890,22 +4550,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsClearCacheSubtitle => '已下载到设备的图片和数据，包括已记录的错误报告';
 
   @override
-  String get settingsClearLog => '清除已记录的错误报告';
-
-  @override
-  String get settingsClearLogConfirm => '要清除此设备上已记录的错误报告吗？';
-
-  @override
   String get settingsExportLog => '向 ValHub 发送错误报告';
 
   @override
   String get settingsExportLogEmpty => '暂无可发送的内容。请使用应用一段时间后再试。';
-
-  @override
-  String get settingsExportLogEmptyTitle => '暂无可发送的内容';
-
-  @override
-  String get settingsExportLogNote => '错误报告不包含你的密码或 Riot 登录数据。';
 
   @override
   String get settingsExportLogSubtitle => '错误报告不包含你的密码或 Riot 登录数据。';
@@ -4920,9 +4568,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsItemLanguageEn => '英语';
 
   @override
-  String get settingsItemLanguageHint => '皮肤、英雄、地图等名称将以此语言显示。';
-
-  @override
   String get settingsItemLanguageLabel => '物品名称';
 
   @override
@@ -4932,52 +4577,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsItemLanguageVi => '越南语';
 
   @override
-  String get settingsLegalNotice => '法律声明';
-
-  @override
   String get settingsLinkOpenFailed => '无法打开链接，请重试。';
-
-  @override
-  String get settingsLogCleared => '已清除错误报告';
-
-  @override
-  String settingsLogEntryCount(int count) {
-    return '$count条';
-  }
-
-  @override
-  String settingsLogEntryShown(int shown, int total) {
-    return '$shown / $total 条';
-  }
 
   @override
   String settingsLogFileHeader(String appName, String version) {
     return '$appName $version — 错误报告';
   }
-
-  @override
-  String get settingsLogFilterAll => '全部';
-
-  @override
-  String get settingsLogFilterAuth => '登录';
-
-  @override
-  String get settingsLogFilterEmpty => '没有匹配的条目。清除筛选可查看更多。';
-
-  @override
-  String get settingsLogFilterErrors => '问题';
-
-  @override
-  String get settingsLogFilterHttp => '连接';
-
-  @override
-  String get settingsLogMore => '更多选项';
-
-  @override
-  String get settingsLogSearchEmpty => '没有匹配的条目。';
-
-  @override
-  String get settingsLogSearchHint => '搜索错误报告…';
 
   @override
   String get settingsLogShareFailed => '无法发送错误报告，请重试。';
@@ -5182,9 +4787,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String settingsStatusMoreUpdates(int n) {
     return '查看另外$n条更新';
   }
-
-  @override
-  String get settingsStatusRegionPicker => '服务器';
 
   @override
   String get settingsStatusScheduled => '即将维护';
@@ -5409,16 +5011,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get socialChangeQueue => '更换模式';
 
   @override
-  String get socialChatTitle => '聊天';
-
-  @override
   String get socialChatUnavailable => '聊天处于离线状态。';
 
   @override
   String get socialCloseParty => '关闭队伍';
-
-  @override
-  String get socialClosedState => '仅限受邀';
 
   @override
   String get socialCodeInvalid => '队伍码只能包含字母和数字。';
@@ -5480,9 +5076,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get socialGenerateCode => '生成队伍码';
-
-  @override
-  String get socialHistoryFailed => '无法加载更早的消息。请重新连接后重试。';
 
   @override
   String get socialIdleQueue => '准备匹配';
@@ -5612,9 +5205,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get socialNoSearchResultsTitle => '未找到';
 
   @override
-  String get socialNotFriend => '此玩家不在你的好友列表中。';
-
-  @override
   String get socialNotReady => '未准备';
 
   @override
@@ -5641,9 +5231,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get socialOpenParty => '公开队伍';
-
-  @override
-  String get socialOpenState => '公开队伍';
 
   @override
   String get socialOtherGamesLeagueOfLegends => '英雄联盟';
@@ -5984,17 +5571,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get storeRemoveFromWishlist => '从心愿单中移除';
 
   @override
-  String storeResetNotificationBody(int skinCount, String account) {
-    String _temp0 = intl.Intl.pluralLogic(
-      skinCount,
-      locale: localeName,
-      other: '查看$account今日的$skinCount款新皮肤。',
-      zero: '查看$account今日的新皮肤。',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get storeResetNotificationTitle => '商店已刷新';
 
   @override
@@ -6113,6 +5689,76 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get storeHistoryTitle => '商店记录';
+
+  @override
+  String storeHistorySince(String date, int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$daysString天',
+    );
+    return '自$date起在此设备记录 · $_temp0';
+  }
+
+  @override
+  String get storeHistoryEmpty =>
+      '还没有记录任何一天。每次打开应用时，ValHub 都会保存你的每日商店，仅保存在此设备上。';
+
+  @override
+  String get storeHistoryMostOffered => '最常出现';
+
+  @override
+  String storeHistoryTimes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString次',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryNightMarket(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '夜市 · $countString个优惠',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryEntrySubtitle(int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '此设备已记录$daysString天',
+      zero: '今天开始记录',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String wishlistNotifDailyBody(
     String skin,
     String account,
@@ -6221,9 +5867,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get wishlistClearFilters => '清除筛选';
 
   @override
-  String get wishlistClearSearch => '清除搜索';
-
-  @override
   String get wishlistEmpty => '心愿单为空。在任意皮肤上点按 ♡ 即可添加。';
 
   @override
@@ -6238,9 +5881,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get wishlistExcludedRewards => '不含奖励皮肤';
 
   @override
-  String get wishlistFilterTiers => '版本';
-
-  @override
   String wishlistFiltered(int count, String value) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);
@@ -6248,15 +5888,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
     return '已筛选：$countString 款皮肤 · $value';
   }
-
-  @override
-  String get wishlistHasEstimates => '含估算价格（≈）';
-
-  @override
-  String get wishlistInWishlist => '已在心愿单中';
-
-  @override
-  String get wishlistInWishlistLabel => '已在心愿单中';
 
   @override
   String get wishlistNoMatch => '没有匹配的皮肤。清除筛选可查看更多。';
@@ -6336,14 +5967,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get wishlistSortBy => '排序';
-
-  @override
-  String wishlistSortLabel(String sort) {
-    return '排序：$sort';
-  }
-
-  @override
   String get wishlistSortName => '名称';
 
   @override
@@ -6354,12 +5977,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get wishlistSortWeapon => '武器';
-
-  @override
-  String get wishlistStoreCheckTitle => '无法检查商店';
-
-  @override
-  String get wishlistSubtitle => '你心仪的皮肤';
 
   @override
   String get wishlistTitle => '心愿单';
@@ -6449,7 +6066,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeCardCommunity => '社区';
 
   @override
-  String get homeCardCommunityDesc => '寻找段位相近的队友，以及本周最受喜爱的皮肤。';
+  String get homeCardCommunityDesc => '寻找段位相近的队友，以及社区最喜爱的皮肤。';
 
   @override
   String get homeCardFriends => '正在游戏的好友';
@@ -6843,9 +6460,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get commonAppName => 'ValHub';
 
   @override
-  String get commonBack => '返回';
-
-  @override
   String get commonCancel => '取消';
 
   @override
@@ -6858,16 +6472,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get commonClose => '關閉';
 
   @override
-  String get commonConfirm => '確認';
-
-  @override
   String get commonCopied => '已複製';
-
-  @override
-  String get commonCopy => '複製';
-
-  @override
-  String get commonDaily => '每日';
 
   @override
   String get commonDash => '–';
@@ -6884,9 +6489,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get commonDelete => '刪除';
-
-  @override
-  String get commonDone => '完成';
 
   @override
   String get commonEmptyGeneric => '這裡還沒有任何內容。';
@@ -6933,9 +6535,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get commonEstimatePrefix => '≈';
 
   @override
-  String get commonFilter => '篩選';
-
-  @override
   String get commonGoHome => '回到首頁';
 
   @override
@@ -6980,9 +6579,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String commonOfflineCached(String time) {
     return '目前離線 — 正在顯示已儲存的資料（$time）。';
   }
-
-  @override
-  String get commonOk => '確定';
 
   @override
   String get commonOpenSettings => '開啟設定';
@@ -7084,12 +6680,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get commonPullToRefresh => '下拉以重新整理';
-
-  @override
-  String get commonRefresh => '重新整理';
-
-  @override
   String get commonRetry => '重試';
 
   @override
@@ -7108,9 +6698,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get commonSeeAll => '查看全部';
-
-  @override
   String get commonShare => '分享';
 
   @override
@@ -7123,24 +6710,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String commonSortBy(String option) {
     return '排序：$option';
   }
-
-  @override
-  String get commonSortName => '名稱 A–Z';
-
-  @override
-  String get commonSortNewest => '最新';
-
-  @override
-  String get commonSortPriceHigh => '價格由高到低';
-
-  @override
-  String get commonSortPriceLow => '價格由低到高';
-
-  @override
-  String get commonSortRarity => '稀有度';
-
-  @override
-  String get commonSortWeapon => '武器';
 
   @override
   String get commonTabBattlePass => '戰鬥通行證';
@@ -7263,9 +6832,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get contentCurrencyVpFull => '特務幣';
 
   @override
-  String get contentDefaultSkin => '預設';
-
-  @override
   String get contentItemAgent => '特務';
 
   @override
@@ -7285,18 +6851,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get contentItemFlex => '炫耀道具';
-
-  @override
-  String get contentItemLanguageEn => '英文';
-
-  @override
-  String get contentItemLanguageTitle => '物品名稱';
-
-  @override
-  String get contentItemLanguageVi => '越南文';
-
-  @override
-  String get contentItemLevelBorder => '等級邊框';
 
   @override
   String get contentItemSkin => '造型';
@@ -7362,12 +6916,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get contentLevelItemLabelsFishAnimation => '魚類動畫';
-
-  @override
-  String get contentLimitedEdition => '限量版';
-
-  @override
-  String get contentNoSpray => '無';
 
   @override
   String get contentNoTitle => '無稱號';
@@ -7495,11 +7043,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get accountRiotCountryUnknown => 'Riot 帳號國家／地區：未確定';
-
-  @override
-  String accountAccountCount(int count, int max) {
-    return '$count/$max 個帳號';
-  }
 
   @override
   String accountAccountsHeader(int count, int max) {
@@ -7677,9 +7220,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get accountStatusUnknown => '狀態不明';
 
   @override
-  String get accountSwitchFailed => '無法切換帳號，請再試一次。';
-
-  @override
   String accountSwitchTo(String account) {
     return '切換至 $account';
   }
@@ -7700,9 +7240,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get accountUnlockLoginNote => '驗證身分以解鎖 Riot 登入資訊';
-
-  @override
-  String get authAccountAlreadyAdded => '此帳號已新增過';
 
   @override
   String get authAddAsNew => '新增為新帳號';
@@ -7751,10 +7288,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get authSignInCta => '使用 Riot 帳號登入';
-
-  @override
-  String get authSignInNote =>
-      '你會在 Riot 官方頁面登入。只有在你自行選擇儲存登入資訊時，ValHub 才會儲存密碼；登入資料與已儲存的資訊只會保留在你的裝置上。';
 
   @override
   String get authSocialLoginHint =>
@@ -7956,12 +7489,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get economyCollectionValue => '收藏庫價值';
-
-  @override
-  String get economyExcludedRewards => '不含獎勵造型';
-
-  @override
   String economyPlaceBundle(String name) {
     return '$name組合包';
   }
@@ -7991,12 +7518,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get economyPriceUnknown => '價格不明';
 
   @override
-  String get economyValueHasEstimates => '含估算價格（≈）';
-
-  @override
-  String get economyWishlistValue => '願望清單總價值';
-
-  @override
   String loadoutDefaultPresetName(int n) {
     return '裝備組合 $n';
   }
@@ -8009,9 +7530,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get loadoutSaveFailed => '無法儲存裝備';
-
-  @override
-  String get battlePassActEnded => '本章已結束';
 
   @override
   String battlePassActEndsIn(String time) {
@@ -8051,9 +7569,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String battlePassCharges(int charges, int needed) {
     return '$charges/$needed';
   }
-
-  @override
-  String get battlePassCheckpoint => '檢查點';
 
   @override
   String get battlePassCheckpointHint => '贏得回合即可推進檢查點（死鬥模式不計）。';
@@ -8171,9 +7686,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String battlePassMissionsCompleted(int done, int total) {
     return '已完成 $done/$total';
   }
-
-  @override
-  String get battlePassMissionsProgressLabel => '每週任務進度';
 
   @override
   String battlePassNewMissionsAtWall(String wall) {
@@ -8358,9 +7870,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get collectionBannerTitlePrefix => '稱號：';
-
-  @override
   String get collectionBrowseBuddies => '槍枝吊飾';
 
   @override
@@ -8380,9 +7889,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get collectionBrowseSprays => '噴漆';
-
-  @override
-  String get collectionBrowseTitle => '瀏覽收藏庫';
 
   @override
   String get collectionBrowseTitles => '玩家稱號';
@@ -8429,12 +7935,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String collectionChromaCount(int owned, int total) {
     return '$owned/$total 種色彩';
   }
-
-  @override
-  String get collectionClearFilters => '清除篩選';
-
-  @override
-  String get collectionClearSearch => '清除搜尋';
 
   @override
   String get collectionClearTiers => '清除版本篩選';
@@ -8493,9 +7993,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get collectionExpressionsTitle => '表情輪盤';
 
   @override
-  String get collectionFilterTiers => '版本';
-
-  @override
   String get collectionHideAccountLevel => '隱藏帳號等級';
 
   @override
@@ -8508,20 +8005,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get collectionIncognitoHint => '在對戰中對非隊伍成員的玩家隱藏你的名稱。';
 
   @override
-  String collectionItemsCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    return '$nString 件物品';
-  }
-
-  @override
   String get collectionLevelBorderAuto => '依等級自動';
-
-  @override
-  String get collectionLevelBorderEmpty => '你目前的等級還沒有可用的等級邊框。';
 
   @override
   String collectionLevelBorderFrom(int level) {
@@ -8704,16 +8188,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get collectionPreview => '預覽';
 
   @override
-  String get collectionPreviewing => '預覽中';
-
-  @override
   String get collectionRemoveBuddy => '卸下吊飾';
 
   @override
   String get collectionRenamePreset => '重新命名';
-
-  @override
-  String get collectionRowCard => '玩家卡片';
 
   @override
   String get collectionRowExpressions => '表情輪盤';
@@ -8723,9 +8201,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get collectionRowPresets => '已儲存的裝備組合';
-
-  @override
-  String get collectionRowTitle => '玩家稱號';
 
   @override
   String get collectionRowWeapons => '武器裝備';
@@ -8795,9 +8270,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get collectionSlotNamesItem3 => '左';
-
-  @override
-  String get collectionSortLabel => '排序';
 
   @override
   String get collectionSortName => '名稱';
@@ -8978,9 +8450,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityRankingClear => '清除武器與時間篩選';
 
   @override
-  String get communityRankingPeriod => '時間';
-
-  @override
   String get communityRankingSort => '排名依據';
 
   @override
@@ -9021,9 +8490,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityAddPhotos => '新增相片';
 
   @override
-  String get communityAgentsPicked => '已選擇的特務';
-
-  @override
   String get communityAllModes => '全部';
 
   @override
@@ -9043,9 +8509,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get communityApply => '套用';
-
-  @override
-  String get communityAutoRefresh => '每 20 秒自動重新整理';
 
   @override
   String get communityBackToMyCountry => '回到我的國家';
@@ -9068,16 +8531,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityCodeAutoFailed => '無法產生隊伍代碼。請開啟 VALORANT 或手動輸入代碼。';
 
   @override
-  String get communityCodeGenerated => '已依你目前的隊伍產生代碼。';
-
-  @override
   String get communityCodeInvalid => '代碼必須是 6 個大寫字母或數字。';
 
   @override
   String get communityCodeRequired => '請輸入或產生隊伍代碼。';
-
-  @override
-  String get communityComment => '留言';
 
   @override
   String get communityCommentHint => '撰寫留言…';
@@ -9159,12 +8616,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get communityConsentWithdrawn => '已撤回同意。需要再次同意才能繼續使用 App。';
-
-  @override
-  String get communityCountriesEmpty => '找不到符合的國家／地區。';
-
-  @override
-  String get communityCountriesSearchHint => '搜尋國家／地區…';
 
   @override
   String get communityCountriesTitle => '各國社群';
@@ -9653,12 +9104,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityFilters => '篩選';
 
   @override
-  String get communityGenerateCode => '產生隊伍代碼';
-
-  @override
-  String get communityGeneratingCode => '正在產生代碼…';
-
-  @override
   String get communityGoogleDisclaimer =>
       'THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.';
 
@@ -9709,16 +9154,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityJoinGameNotRunning => '請在電腦或主機上開啟 VALORANT 後再試一次。';
 
   @override
-  String get communityJoinInvalidCode => '隊伍代碼已失效，或隊伍已滿。';
-
-  @override
   String get communityJoinParty => '加入隊伍';
 
   @override
   String get communityJoinPartyFull => '此隊伍已滿。';
-
-  @override
-  String get communityJoined => '已加入隊伍！開啟 VALORANT 一起玩吧。';
 
   @override
   String get communityJoinedHint => '已加入隊伍！開啟 VALORANT 一起玩吧。';
@@ -9732,9 +9171,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
     return '$nString 人申請加入';
   }
-
-  @override
-  String get communityKeepEditing => '繼續撰寫';
 
   @override
   String get communityKindNightMarket => '夜市';
@@ -9817,9 +9253,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityLfgExpiredRepost => '你的貼文已過期。請發布新貼文來尋找隊友。';
 
   @override
-  String get communityLfgExpiryNote => '貼文會在 30 分鐘後自動過期。';
-
-  @override
   String get communityLfgGateBody =>
       '加入社群（只需驗證一次 Riot ID）即可查看同伺服器玩家的貼文，並發布你的找隊友貼文。你仍可照常瀏覽動態牆與造型排行榜。';
 
@@ -9852,28 +9285,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityLike => '讚';
 
   @override
-  String communityLikes(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    return '$nString 個讚';
-  }
-
-  @override
   String get communityLiveMembers => '成員';
 
   @override
-  String get communityLoadMoreFailed => '無法載入更多貼文，請再試一次。';
-
-  @override
   String get communityMatchMyRank => '符合你的牌位';
-
-  @override
-  String communityMaxPhotos(int max) {
-    return '最多 $max 張相片。';
-  }
 
   @override
   String communityMemberJoined(String name) {
@@ -9904,9 +9319,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityMuteAuthor => '隱藏此玩家';
 
   @override
-  String get communityMyPost => '你的貼文';
-
-  @override
   String get communityNewPost => '發文';
 
   @override
@@ -9922,14 +9334,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get communityNoComments => '還沒有留言。來搶頭香吧！';
-
-  @override
-  String get communityNoParty => '找不到隊伍。請開啟 VALORANT 後再試一次，或手動輸入代碼。';
-
-  @override
-  String communityNoPartyWithReason(String reason) {
-    return '找不到隊伍。請開啟 VALORANT 後再試一次，或手動輸入代碼。\n$reason';
-  }
 
   @override
   String get communityNoRatings => '尚無評分';
@@ -9984,21 +9388,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get communityPeriodAll => '全部';
-
-  @override
-  String get communityPeriodAllTime => '歷來';
-
-  @override
-  String get communityPeriodWeek => '本週';
-
-  @override
   String communityPhotoCount(int n, int max) {
     return '$n/$max 張相片';
   }
-
-  @override
-  String get communityPickRating => '請選擇星級。';
 
   @override
   String get communityPlayVideo => '觀看影片';
@@ -10014,10 +9406,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get communityPosted => '已發文！';
-
-  @override
-  String get communityPrivacyNote =>
-      'ValHub 會在你連線社群時驗證 Riot ID，並在你評論時驗證造型擁有權。社群絕不會儲存你的密碼或 Riot 登入資料。';
 
   @override
   String get communityPublish => '發布';
@@ -10145,9 +9533,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityReported => '感謝你！已送出檢舉。';
 
   @override
-  String get communityRetry => '重試';
-
-  @override
   String get communityReviewDeleted => '已刪除評論。';
 
   @override
@@ -10169,9 +9554,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String communityReviewsHeader(String n) {
     return '評論 · $n';
   }
-
-  @override
-  String get communityReviewsSection => '評論';
 
   @override
   String communityRiotId(String name, String tag) {
@@ -10198,9 +9580,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get communityScopeRegion => '地區';
-
-  @override
-  String get communityScopeWorldwide => '全球';
 
   @override
   String get communitySectionFeed => '動態牆';
@@ -10242,12 +9621,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get communitySkinNotFound => '找不到此造型。';
-
-  @override
-  String get communitySkinsEmptyBody => '為你最喜歡的造型按愛心，讓它登上排行榜！';
-
-  @override
-  String get communitySkinsEmptyTitle => '尚無投票';
 
   @override
   String get communitySlots => '需要人數';
@@ -10332,9 +9705,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityTranslateFailed => '無法翻譯，請再試一次。';
 
   @override
-  String get communityTranslateUnavailable => '此裝置尚不支援裝置端翻譯。';
-
-  @override
   String get communityTranslatedByGoogle => '由 Google 自動翻譯';
 
   @override
@@ -10360,12 +9730,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get communityUnvote => '取消愛心';
-
-  @override
-  String get communityUploading => '正在上傳相片…';
-
-  @override
-  String get communityViewImage => '查看相片';
 
   @override
   String get communityVote => '為此造型按愛心';
@@ -10401,9 +9765,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityWriteFirstReview => '撰寫第一則評論';
 
   @override
-  String get communityWritePost => '撰寫貼文';
-
-  @override
   String get communityYou => '你';
 
   @override
@@ -10432,12 +9793,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get liveGameAutoRefreshNote => '進入對戰時會自動重新整理。';
-
-  @override
-  String get liveGameBuddy => '槍枝吊飾';
-
-  @override
-  String get liveGameClose => '關閉';
 
   @override
   String get liveGameCurrentGame => '目前對戰';
@@ -10534,9 +9889,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String liveGamePeak(String rank) {
     return '最高：$rank';
   }
-
-  @override
-  String get liveGamePlayerCard => '玩家卡片';
 
   @override
   String liveGamePlayerLoadoutOf(String name) {
@@ -10755,9 +10107,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get profileChooseMap => '依地圖篩選';
 
   @override
-  String get profileClearMap => '清除地圖篩選';
-
-  @override
   String get profileColA => 'A';
 
   @override
@@ -10798,14 +10147,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get profileDuration => '時長';
-
-  @override
-  String profileDurationOf(String d) {
-    return '時長 $d';
-  }
-
-  @override
   String get profileEndOfHistory => '已顯示所有對戰';
 
   @override
@@ -10816,9 +10157,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get profileFilterAll => '全部';
-
-  @override
-  String get profileFilterMap => '地圖';
 
   @override
   String get profileFirstBloods => '首殺';
@@ -10849,11 +10187,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get profileFriendsRow => '好友與聊天';
-
-  @override
-  String profileGainPerWin(String rr) {
-    return '勝利時 $rr RR';
-  }
 
   @override
   String get profileHideKills => '隱藏擊殺';
@@ -10919,11 +10252,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get profileLevelHidden => '等級已隱藏';
 
   @override
-  String profileLossPerLoss(String rr) {
-    return '落敗時 $rr RR';
-  }
-
-  @override
   String profileLossStreak(int n) {
     return '$n 連敗';
   }
@@ -10981,15 +10309,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get profilePlayHubTitle => '對戰與隊伍';
 
   @override
-  String get profilePartyRow => '隊伍與配對';
-
-  @override
   String get profilePeakRank => '最高';
-
-  @override
-  String profilePeakRankOf(String actTitle) {
-    return '最高 · $actTitle';
-  }
 
   @override
   String get profilePerformanceAttack => '進攻';
@@ -10999,9 +10319,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get profilePerformanceEmpty => '這台裝置上尚未記錄任何對戰。開啟對戰紀錄即可記錄你玩過的對戰。';
-
-  @override
-  String get profilePerformanceGames => '場數';
 
   @override
   String get profilePerformanceNoMatches => '所選時間範圍內沒有對戰。';
@@ -11027,12 +10344,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get profilePerformanceTitle => '表現';
-
-  @override
-  String get profilePerformanceTrendEmpty => '至少需要兩個各有 3 場以上對戰的時段，才能比較趨勢。';
-
-  @override
-  String get profilePickTargetHint => '選擇你想達到的牌位';
 
   @override
   String profilePlacement(int n) {
@@ -11140,9 +10451,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get profileRoundsHint => '點一下回合即可查看每次擊殺。';
-
-  @override
-  String get profileRr => 'RR';
 
   @override
   String profileRrLeft(String n) {
@@ -11452,9 +10760,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get legalContactHeader => '聯絡方式';
 
   @override
-  String get legalCreditsHeader => '資料來源與致謝';
-
-  @override
   String legalEffectiveFrom(String date) {
     return '自 $date 起生效';
   }
@@ -11550,9 +10855,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsGeoHintOnly => '國家／地區僅用於查詢與建議。連線地區依你的 Riot 帳號而定。';
-
-  @override
-  String get settingsGeoUnsupported => '尚未支援此 Riot 地區。請在設定中選擇地區。';
 
   @override
   String get settingsGeoSave => '檢查並儲存';
@@ -11652,33 +10954,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get settingsAboutCreditContent => 'valorant-api.com';
-
-  @override
-  String get settingsAboutCreditContentBody => '造型、特務、地圖與牌位的名稱、圖片與資訊。';
-
-  @override
-  String get settingsAboutCreditDocs => '社群文件';
-
-  @override
-  String get settingsAboutCreditDocsBody =>
-      'techchrism/valorant-api-docs 專案與 VALORANT 開發者社群。';
-
-  @override
-  String get settingsAboutCreditRiot => 'Riot Games';
-
-  @override
-  String get settingsAboutCreditRiotBody =>
-      '商店、錢包、收藏庫、對戰與牌位資料直接取自你登入的 Riot 帳號。';
-
-  @override
-  String get settingsAboutCreditsHeader => '資料來源';
-
-  @override
   String get settingsAboutHeader => '資訊';
-
-  @override
-  String get settingsAboutLegalHeader => '法律資訊';
 
   @override
   String get settingsAboutRowSubtitle => '隱私權、條款、著作權與聯絡方式';
@@ -11712,22 +10988,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsClearCacheSubtitle => '已下載到裝置的圖片與資料，包括已記錄的錯誤回報';
 
   @override
-  String get settingsClearLog => '清除已記錄的錯誤回報';
-
-  @override
-  String get settingsClearLogConfirm => '要清除這台裝置上已記錄的錯誤回報嗎？';
-
-  @override
   String get settingsExportLog => '向 ValHub 傳送錯誤回報';
 
   @override
   String get settingsExportLogEmpty => '目前沒有可傳送的內容。請先使用 App 一段時間後再試一次。';
-
-  @override
-  String get settingsExportLogEmptyTitle => '目前沒有可傳送的內容';
-
-  @override
-  String get settingsExportLogNote => '錯誤回報不含你的密碼或 Riot 登入資料。';
 
   @override
   String get settingsExportLogSubtitle => '錯誤回報不含你的密碼或 Riot 登入資料。';
@@ -11742,9 +11006,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsItemLanguageEn => '英文';
 
   @override
-  String get settingsItemLanguageHint => '造型、特務、地圖等名稱會以此語言顯示。';
-
-  @override
   String get settingsItemLanguageLabel => '物品名稱';
 
   @override
@@ -11754,52 +11015,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsItemLanguageVi => '越南文';
 
   @override
-  String get settingsLegalNotice => '法律聲明';
-
-  @override
   String get settingsLinkOpenFailed => '無法開啟連結，請再試一次。';
-
-  @override
-  String get settingsLogCleared => '已清除錯誤回報';
-
-  @override
-  String settingsLogEntryCount(int count) {
-    return '$count 個項目';
-  }
-
-  @override
-  String settingsLogEntryShown(int shown, int total) {
-    return '$shown / $total 個項目';
-  }
 
   @override
   String settingsLogFileHeader(String appName, String version) {
     return '$appName $version — 錯誤回報';
   }
-
-  @override
-  String get settingsLogFilterAll => '全部';
-
-  @override
-  String get settingsLogFilterAuth => '登入';
-
-  @override
-  String get settingsLogFilterEmpty => '沒有符合的項目。清除篩選即可查看更多。';
-
-  @override
-  String get settingsLogFilterErrors => '問題';
-
-  @override
-  String get settingsLogFilterHttp => '連線';
-
-  @override
-  String get settingsLogMore => '更多選項';
-
-  @override
-  String get settingsLogSearchEmpty => '沒有符合的項目。';
-
-  @override
-  String get settingsLogSearchHint => '搜尋錯誤回報…';
 
   @override
   String get settingsLogShareFailed => '無法傳送錯誤回報，請再試一次。';
@@ -12004,9 +11225,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String settingsStatusMoreUpdates(int n) {
     return '查看其他 $n 則更新';
   }
-
-  @override
-  String get settingsStatusRegionPicker => '伺服器';
 
   @override
   String get settingsStatusScheduled => '即將進行維護';
@@ -12231,16 +11449,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get socialChangeQueue => '更換模式';
 
   @override
-  String get socialChatTitle => '聊天';
-
-  @override
   String get socialChatUnavailable => '聊天目前離線。';
 
   @override
   String get socialCloseParty => '關閉隊伍';
-
-  @override
-  String get socialClosedState => '僅限受邀者';
 
   @override
   String get socialCodeInvalid => '隊伍代碼只能包含字母與數字。';
@@ -12302,9 +11514,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get socialGenerateCode => '產生代碼';
-
-  @override
-  String get socialHistoryFailed => '無法載入舊訊息。請重新連線後再試一次。';
 
   @override
   String get socialIdleQueue => '準備配對';
@@ -12434,9 +11643,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get socialNoSearchResultsTitle => '找不到結果';
 
   @override
-  String get socialNotFriend => '此玩家不在你的好友清單中。';
-
-  @override
   String get socialNotReady => '未準備';
 
   @override
@@ -12463,9 +11669,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get socialOpenParty => '開放隊伍';
-
-  @override
-  String get socialOpenState => '開放隊伍';
 
   @override
   String get socialOtherGamesLeagueOfLegends => '英雄聯盟';
@@ -12806,17 +12009,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get storeRemoveFromWishlist => '從願望清單移除';
 
   @override
-  String storeResetNotificationBody(int skinCount, String account) {
-    String _temp0 = intl.Intl.pluralLogic(
-      skinCount,
-      locale: localeName,
-      other: '查看 $account 今天的 $skinCount 款新造型。',
-      zero: '查看 $account 今天的新造型。',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get storeResetNotificationTitle => '商店已更新';
 
   @override
@@ -12935,6 +12127,76 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
+  String get storeHistoryTitle => '商店紀錄';
+
+  @override
+  String storeHistorySince(String date, int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$daysString 天',
+    );
+    return '自 $date 起在此裝置記錄 · $_temp0';
+  }
+
+  @override
+  String get storeHistoryEmpty =>
+      '尚未記錄任何一天。每次開啟 App 時，ValHub 都會儲存你的每日商店，僅保存在此裝置上。';
+
+  @override
+  String get storeHistoryMostOffered => '最常出現';
+
+  @override
+  String storeHistoryTimes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString 次',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryNightMarket(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '夜市 · $countString 個優惠',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryEntrySubtitle(int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '此裝置已記錄 $daysString 天',
+      zero: '今天開始記錄',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String wishlistNotifDailyBody(
     String skin,
     String account,
@@ -13043,9 +12305,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get wishlistClearFilters => '清除篩選';
 
   @override
-  String get wishlistClearSearch => '清除搜尋';
-
-  @override
   String get wishlistEmpty => '願望清單是空的。在任何造型上點選 ♡ 即可加入。';
 
   @override
@@ -13060,9 +12319,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get wishlistExcludedRewards => '不含獎勵造型';
 
   @override
-  String get wishlistFilterTiers => '版本';
-
-  @override
   String wishlistFiltered(int count, String value) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);
@@ -13070,15 +12326,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
     return '篩選中：$countString 款造型 · $value';
   }
-
-  @override
-  String get wishlistHasEstimates => '含估算價格（≈）';
-
-  @override
-  String get wishlistInWishlist => '已在願望清單中';
-
-  @override
-  String get wishlistInWishlistLabel => '已在願望清單中';
 
   @override
   String get wishlistNoMatch => '沒有符合的造型。清除篩選即可查看更多。';
@@ -13158,14 +12405,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get wishlistSortBy => '排序';
-
-  @override
-  String wishlistSortLabel(String sort) {
-    return '排序：$sort';
-  }
-
-  @override
   String get wishlistSortName => '名稱';
 
   @override
@@ -13176,12 +12415,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get wishlistSortWeapon => '武器';
-
-  @override
-  String get wishlistStoreCheckTitle => '無法檢查商店';
-
-  @override
-  String get wishlistSubtitle => '你想要的造型';
 
   @override
   String get wishlistTitle => '願望清單';
@@ -13271,7 +12504,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeCardCommunity => '社群';
 
   @override
-  String get homeCardCommunityDesc => '尋找牌位相近的隊友，以及本週最受喜愛的造型。';
+  String get homeCardCommunityDesc => '尋找牌位相近的隊友，以及社群最喜愛的造型。';
 
   @override
   String get homeCardFriends => '遊戲中的好友';

@@ -28,9 +28,6 @@ void main() {
   test('commonAppName', () {
     expect(l10n.commonAppName, CommonStrings.appName);
   });
-  test('commonBack', () {
-    expect(l10n.commonBack, CommonStrings.back);
-  });
   test('commonCancel', () {
     expect(l10n.commonCancel, CommonStrings.cancel);
   });
@@ -43,17 +40,8 @@ void main() {
   test('commonClose', () {
     expect(l10n.commonClose, CommonStrings.close);
   });
-  test('commonConfirm', () {
-    expect(l10n.commonConfirm, CommonStrings.confirm);
-  });
   test('commonCopied', () {
     expect(l10n.commonCopied, CommonStrings.copied);
-  });
-  test('commonCopy', () {
-    expect(l10n.commonCopy, CommonStrings.copy);
-  });
-  test('commonDaily', () {
-    expect(l10n.commonDaily, CommonStrings.daily);
   });
   test('commonDash', () {
     expect(l10n.commonDash, CommonStrings.dash);
@@ -74,9 +62,6 @@ void main() {
   });
   test('commonDelete', () {
     expect(l10n.commonDelete, CommonStrings.delete);
-  });
-  test('commonDone', () {
-    expect(l10n.commonDone, CommonStrings.done);
   });
   test('commonEmptyGeneric', () {
     expect(l10n.commonEmptyGeneric, CommonStrings.emptyGeneric);
@@ -137,9 +122,6 @@ void main() {
   test('commonEstimatePrefix', () {
     expect(l10n.commonEstimatePrefix, CommonStrings.estimatePrefix);
   });
-  test('commonFilter', () {
-    expect(l10n.commonFilter, CommonStrings.filter);
-  });
   test('commonGoHome', () {
     expect(l10n.commonGoHome, CommonStrings.goHome);
   });
@@ -199,9 +181,6 @@ void main() {
       l10n.commonOfflineCached('{value}\n!'),
       CommonStrings.offlineCached('{value}\n!'),
     );
-  });
-  test('commonOk', () {
-    expect(l10n.commonOk, CommonStrings.ok);
   });
   test('commonOpenSettings', () {
     expect(l10n.commonOpenSettings, CommonStrings.openSettings);
@@ -391,12 +370,6 @@ void main() {
       CommonStrings.priceUpdated('{value}\n!'),
     );
   });
-  test('commonPullToRefresh', () {
-    expect(l10n.commonPullToRefresh, CommonStrings.pullToRefresh);
-  });
-  test('commonRefresh', () {
-    expect(l10n.commonRefresh, CommonStrings.refresh);
-  });
   test('commonRetry', () {
     expect(l10n.commonRetry, CommonStrings.retry);
   });
@@ -416,9 +389,6 @@ void main() {
     expect(l10n.commonSeconds(5), CommonStrings.seconds(5));
     expect(l10n.commonSeconds(99), CommonStrings.seconds(99));
   });
-  test('commonSeeAll', () {
-    expect(l10n.commonSeeAll, CommonStrings.seeAll);
-  });
   test('commonShare', () {
     expect(l10n.commonShare, CommonStrings.share);
   });
@@ -435,24 +405,6 @@ void main() {
       CommonStrings.sortBy('Nguyễn Văn A'),
     );
     expect(l10n.commonSortBy('{value}\n!'), CommonStrings.sortBy('{value}\n!'));
-  });
-  test('commonSortName', () {
-    expect(l10n.commonSortName, CommonStrings.sortName);
-  });
-  test('commonSortNewest', () {
-    expect(l10n.commonSortNewest, CommonStrings.sortNewest);
-  });
-  test('commonSortPriceHigh', () {
-    expect(l10n.commonSortPriceHigh, CommonStrings.sortPriceHigh);
-  });
-  test('commonSortPriceLow', () {
-    expect(l10n.commonSortPriceLow, CommonStrings.sortPriceLow);
-  });
-  test('commonSortRarity', () {
-    expect(l10n.commonSortRarity, CommonStrings.sortRarity);
-  });
-  test('commonSortWeapon', () {
-    expect(l10n.commonSortWeapon, CommonStrings.sortWeapon);
   });
   test('commonTabBattlePass', () {
     expect(l10n.commonTabBattlePass, CommonStrings.tabBattlePass);
@@ -605,9 +557,6 @@ void main() {
   test('contentCurrencyVpFull', () {
     expect(l10n.contentCurrencyVpFull, ContentStrings.currencyVpFull);
   });
-  test('contentDefaultSkin', () {
-    expect(l10n.contentDefaultSkin, ContentStrings.defaultSkin);
-  });
   test('contentItemAgent', () {
     expect(l10n.contentItemAgent, ContentStrings.itemAgent);
   });
@@ -628,18 +577,6 @@ void main() {
   });
   test('contentItemFlex', () {
     expect(l10n.contentItemFlex, ContentStrings.itemFlex);
-  });
-  test('contentItemLanguageEn', () {
-    expect(l10n.contentItemLanguageEn, ContentStrings.itemLanguageEn);
-  });
-  test('contentItemLanguageTitle', () {
-    expect(l10n.contentItemLanguageTitle, ContentStrings.itemLanguageTitle);
-  });
-  test('contentItemLanguageVi', () {
-    expect(l10n.contentItemLanguageVi, ContentStrings.itemLanguageVi);
-  });
-  test('contentItemLevelBorder', () {
-    expect(l10n.contentItemLevelBorder, ContentStrings.itemLevelBorder);
   });
   test('contentItemSkin', () {
     expect(l10n.contentItemSkin, ContentStrings.itemSkin);
@@ -755,12 +692,6 @@ void main() {
       l10n.contentLevelItemLabelsFishAnimation,
       ContentStrings.levelItemLabels['FishAnimation'],
     );
-  });
-  test('contentLimitedEdition', () {
-    expect(l10n.contentLimitedEdition, ContentStrings.limitedEdition);
-  });
-  test('contentNoSpray', () {
-    expect(l10n.contentNoSpray, ContentStrings.noSpray);
   });
   test('contentNoTitle', () {
     expect(l10n.contentNoTitle, ContentStrings.noTitle);
@@ -937,36 +868,6 @@ void main() {
   });
   test('contentUnranked', () {
     expect(l10n.contentUnranked, ContentStrings.unranked);
-  });
-  test('accountAccountCount', () {
-    expect(l10n.accountAccountCount(0, 0), AccountStrings.accountCount(0, 0));
-    expect(l10n.accountAccountCount(0, 1), AccountStrings.accountCount(0, 1));
-    expect(l10n.accountAccountCount(0, 2), AccountStrings.accountCount(0, 2));
-    expect(l10n.accountAccountCount(0, 5), AccountStrings.accountCount(0, 5));
-    expect(l10n.accountAccountCount(0, 99), AccountStrings.accountCount(0, 99));
-    expect(l10n.accountAccountCount(1, 0), AccountStrings.accountCount(1, 0));
-    expect(l10n.accountAccountCount(1, 1), AccountStrings.accountCount(1, 1));
-    expect(l10n.accountAccountCount(1, 2), AccountStrings.accountCount(1, 2));
-    expect(l10n.accountAccountCount(1, 5), AccountStrings.accountCount(1, 5));
-    expect(l10n.accountAccountCount(1, 99), AccountStrings.accountCount(1, 99));
-    expect(l10n.accountAccountCount(2, 0), AccountStrings.accountCount(2, 0));
-    expect(l10n.accountAccountCount(2, 1), AccountStrings.accountCount(2, 1));
-    expect(l10n.accountAccountCount(2, 2), AccountStrings.accountCount(2, 2));
-    expect(l10n.accountAccountCount(2, 5), AccountStrings.accountCount(2, 5));
-    expect(l10n.accountAccountCount(2, 99), AccountStrings.accountCount(2, 99));
-    expect(l10n.accountAccountCount(5, 0), AccountStrings.accountCount(5, 0));
-    expect(l10n.accountAccountCount(5, 1), AccountStrings.accountCount(5, 1));
-    expect(l10n.accountAccountCount(5, 2), AccountStrings.accountCount(5, 2));
-    expect(l10n.accountAccountCount(5, 5), AccountStrings.accountCount(5, 5));
-    expect(l10n.accountAccountCount(5, 99), AccountStrings.accountCount(5, 99));
-    expect(l10n.accountAccountCount(99, 0), AccountStrings.accountCount(99, 0));
-    expect(l10n.accountAccountCount(99, 1), AccountStrings.accountCount(99, 1));
-    expect(l10n.accountAccountCount(99, 2), AccountStrings.accountCount(99, 2));
-    expect(l10n.accountAccountCount(99, 5), AccountStrings.accountCount(99, 5));
-    expect(
-      l10n.accountAccountCount(99, 99),
-      AccountStrings.accountCount(99, 99),
-    );
   });
   test('accountAccountsHeader', () {
     expect(
@@ -1285,9 +1186,6 @@ void main() {
   test('accountStatusUnknown', () {
     expect(l10n.accountStatusUnknown, AccountStrings.statusUnknown);
   });
-  test('accountSwitchFailed', () {
-    expect(l10n.accountSwitchFailed, AccountStrings.switchFailed);
-  });
   test('accountSwitchTo', () {
     expect(l10n.accountSwitchTo(''), AccountStrings.switchTo(''));
     expect(
@@ -1413,9 +1311,6 @@ void main() {
   test('accountUnlockLoginNote', () {
     expect(l10n.accountUnlockLoginNote, AccountStrings.unlockLoginNote);
   });
-  test('authAccountAlreadyAdded', () {
-    expect(l10n.authAccountAlreadyAdded, AuthStrings.accountAlreadyAdded);
-  });
   test('authAddAsNew', () {
     expect(l10n.authAddAsNew, AuthStrings.addAsNew);
   });
@@ -1463,9 +1358,6 @@ void main() {
   });
   test('authSignInCta', () {
     expect(l10n.authSignInCta, AuthStrings.signInCta);
-  });
-  test('authSignInNote', () {
-    expect(l10n.authSignInNote, AuthStrings.signInNote);
   });
   test('authSocialLoginHint', () {
     expect(l10n.authSocialLoginHint, AuthStrings.socialLoginHint);
@@ -1784,12 +1676,6 @@ void main() {
       EconomyStrings.availableNow('{value}\n!'),
     );
   });
-  test('economyCollectionValue', () {
-    expect(l10n.economyCollectionValue, EconomyStrings.collectionValue);
-  });
-  test('economyExcludedRewards', () {
-    expect(l10n.economyExcludedRewards, EconomyStrings.excludedRewards);
-  });
   test('economyPlaceBundle', () {
     expect(l10n.economyPlaceBundle(''), EconomyStrings.placeBundle(''));
     expect(
@@ -1825,12 +1711,6 @@ void main() {
   test('economyPriceUnknown', () {
     expect(l10n.economyPriceUnknown, EconomyStrings.priceUnknown);
   });
-  test('economyValueHasEstimates', () {
-    expect(l10n.economyValueHasEstimates, EconomyStrings.valueHasEstimates);
-  });
-  test('economyWishlistValue', () {
-    expect(l10n.economyWishlistValue, EconomyStrings.wishlistValue);
-  });
   test('loadoutDefaultPresetName', () {
     expect(
       l10n.loadoutDefaultPresetName(0),
@@ -1861,9 +1741,6 @@ void main() {
   });
   test('loadoutSaveFailed', () {
     expect(l10n.loadoutSaveFailed, LoadoutStrings.saveFailed);
-  });
-  test('battlePassActEnded', () {
-    expect(l10n.battlePassActEnded, BattlePassStrings.actEnded);
   });
   test('battlePassActEndsIn', () {
     expect(l10n.battlePassActEndsIn(''), BattlePassStrings.actEndsIn(''));
@@ -2037,9 +1914,6 @@ void main() {
     expect(l10n.battlePassCharges(99, 2), BattlePassStrings.charges(99, 2));
     expect(l10n.battlePassCharges(99, 5), BattlePassStrings.charges(99, 5));
     expect(l10n.battlePassCharges(99, 99), BattlePassStrings.charges(99, 99));
-  });
-  test('battlePassCheckpoint', () {
-    expect(l10n.battlePassCheckpoint, BattlePassStrings.checkpoint);
   });
   test('battlePassCheckpointHint', () {
     expect(l10n.battlePassCheckpointHint, BattlePassStrings.checkpointHint);
@@ -2930,12 +2804,6 @@ void main() {
       BattlePassStrings.missionsCompleted(99, 99),
     );
   });
-  test('battlePassMissionsProgressLabel', () {
-    expect(
-      l10n.battlePassMissionsProgressLabel,
-      BattlePassStrings.missionsProgressLabel,
-    );
-  });
   test('battlePassNewMissionsAtWall', () {
     expect(
       l10n.battlePassNewMissionsAtWall(''),
@@ -3335,12 +3203,6 @@ void main() {
       CollectionStrings.applyPresetTitle('{value}\n!'),
     );
   });
-  test('collectionBannerTitlePrefix', () {
-    expect(
-      l10n.collectionBannerTitlePrefix,
-      CollectionStrings.bannerTitlePrefix,
-    );
-  });
   test('collectionBrowseBuddies', () {
     expect(l10n.collectionBrowseBuddies, CollectionStrings.browseBuddies);
   });
@@ -3361,9 +3223,6 @@ void main() {
   });
   test('collectionBrowseSprays', () {
     expect(l10n.collectionBrowseSprays, CollectionStrings.browseSprays);
-  });
-  test('collectionBrowseTitle', () {
-    expect(l10n.collectionBrowseTitle, CollectionStrings.browseTitle);
   });
   test('collectionBrowseTitles', () {
     expect(l10n.collectionBrowseTitles, CollectionStrings.browseTitles);
@@ -3601,12 +3460,6 @@ void main() {
       CollectionStrings.chromaCount(99, 99),
     );
   });
-  test('collectionClearFilters', () {
-    expect(l10n.collectionClearFilters, CollectionStrings.clearFilters);
-  });
-  test('collectionClearSearch', () {
-    expect(l10n.collectionClearSearch, CollectionStrings.clearSearch);
-  });
   test('collectionClearTiers', () {
     expect(l10n.collectionClearTiers, CollectionStrings.clearTiers);
   });
@@ -3686,9 +3539,6 @@ void main() {
   test('collectionExpressionsTitle', () {
     expect(l10n.collectionExpressionsTitle, CollectionStrings.expressionsTitle);
   });
-  test('collectionFilterTiers', () {
-    expect(l10n.collectionFilterTiers, CollectionStrings.filterTiers);
-  });
   test('collectionHideAccountLevel', () {
     expect(l10n.collectionHideAccountLevel, CollectionStrings.hideAccountLevel);
   });
@@ -3706,9 +3556,6 @@ void main() {
   });
   test('collectionLevelBorderAuto', () {
     expect(l10n.collectionLevelBorderAuto, CollectionStrings.levelBorderAuto);
-  });
-  test('collectionLevelBorderEmpty', () {
-    expect(l10n.collectionLevelBorderEmpty, CollectionStrings.levelBorderEmpty);
   });
   test('collectionLevelBorderFrom', () {
     expect(
@@ -4320,17 +4167,11 @@ void main() {
   test('collectionPreview', () {
     expect(l10n.collectionPreview, CollectionStrings.preview);
   });
-  test('collectionPreviewing', () {
-    expect(l10n.collectionPreviewing, CollectionStrings.previewing);
-  });
   test('collectionRemoveBuddy', () {
     expect(l10n.collectionRemoveBuddy, CollectionStrings.removeBuddy);
   });
   test('collectionRenamePreset', () {
     expect(l10n.collectionRenamePreset, CollectionStrings.renamePreset);
-  });
-  test('collectionRowCard', () {
-    expect(l10n.collectionRowCard, CollectionStrings.rowCard);
   });
   test('collectionRowExpressions', () {
     expect(l10n.collectionRowExpressions, CollectionStrings.rowExpressions);
@@ -4340,9 +4181,6 @@ void main() {
   });
   test('collectionRowPresets', () {
     expect(l10n.collectionRowPresets, CollectionStrings.rowPresets);
-  });
-  test('collectionRowTitle', () {
-    expect(l10n.collectionRowTitle, CollectionStrings.rowTitle);
   });
   test('collectionRowWeapons', () {
     expect(l10n.collectionRowWeapons, CollectionStrings.rowWeapons);
@@ -4415,9 +4253,6 @@ void main() {
   });
   test('collectionSlotNamesItem3', () {
     expect(l10n.collectionSlotNamesItem3, CollectionStrings.slotNames[3]);
-  });
-  test('collectionSortLabel', () {
-    expect(l10n.collectionSortLabel, CollectionStrings.sortLabel);
   });
   test('collectionSortName', () {
     expect(l10n.collectionSortName, CollectionStrings.sortName);
@@ -4871,9 +4706,6 @@ void main() {
   test('communityAddPhotos', () {
     expect(l10n.communityAddPhotos, CommunityStrings.addPhotos);
   });
-  test('communityAgentsPicked', () {
-    expect(l10n.communityAgentsPicked, CommunityStrings.agentsPicked);
-  });
   test('communityAllModes', () {
     expect(l10n.communityAllModes, CommunityStrings.allModes);
   });
@@ -4894,9 +4726,6 @@ void main() {
   });
   test('communityApply', () {
     expect(l10n.communityApply, CommunityStrings.apply);
-  });
-  test('communityAutoRefresh', () {
-    expect(l10n.communityAutoRefresh, CommunityStrings.autoRefresh);
   });
   test('communityBackToMyCountry', () {
     expect(l10n.communityBackToMyCountry, CommunityStrings.backToMyCountry);
@@ -4948,17 +4777,11 @@ void main() {
   test('communityCodeAutoFailed', () {
     expect(l10n.communityCodeAutoFailed, CommunityStrings.codeAutoFailed);
   });
-  test('communityCodeGenerated', () {
-    expect(l10n.communityCodeGenerated, CommunityStrings.codeGenerated);
-  });
   test('communityCodeInvalid', () {
     expect(l10n.communityCodeInvalid, CommunityStrings.codeInvalid);
   });
   test('communityCodeRequired', () {
     expect(l10n.communityCodeRequired, CommunityStrings.codeRequired);
-  });
-  test('communityComment', () {
-    expect(l10n.communityComment, CommunityStrings.comment);
   });
   test('communityCommentHint', () {
     expect(l10n.communityCommentHint, CommunityStrings.commentHint);
@@ -5070,15 +4893,6 @@ void main() {
   });
   test('communityConsentWithdrawn', () {
     expect(l10n.communityConsentWithdrawn, CommunityStrings.consentWithdrawn);
-  });
-  test('communityCountriesEmpty', () {
-    expect(l10n.communityCountriesEmpty, CommunityStrings.countriesEmpty);
-  });
-  test('communityCountriesSearchHint', () {
-    expect(
-      l10n.communityCountriesSearchHint,
-      CommunityStrings.countriesSearchHint,
-    );
   });
   test('communityCountriesTitle', () {
     expect(l10n.communityCountriesTitle, CommunityStrings.countriesTitle);
@@ -5693,12 +5507,6 @@ void main() {
   test('communityFilters', () {
     expect(l10n.communityFilters, CommunityStrings.filters);
   });
-  test('communityGenerateCode', () {
-    expect(l10n.communityGenerateCode, CommunityStrings.generateCode);
-  });
-  test('communityGeneratingCode', () {
-    expect(l10n.communityGeneratingCode, CommunityStrings.generatingCode);
-  });
   test('communityGoogleDisclaimer', () {
     expect(l10n.communityGoogleDisclaimer, CommunityStrings.googleDisclaimer);
   });
@@ -5793,23 +5601,14 @@ void main() {
       CommunityStrings.joinGameNotRunning,
     );
   });
-  test('communityJoinInvalidCode', () {
-    expect(l10n.communityJoinInvalidCode, CommunityStrings.joinInvalidCode);
-  });
   test('communityJoinParty', () {
     expect(l10n.communityJoinParty, CommunityStrings.joinParty);
   });
   test('communityJoinPartyFull', () {
     expect(l10n.communityJoinPartyFull, CommunityStrings.joinPartyFull);
   });
-  test('communityJoined', () {
-    expect(l10n.communityJoined, CommunityStrings.joined);
-  });
   test('communityJoinedHint', () {
     expect(l10n.communityJoinedHint, CommunityStrings.joinedHint);
-  });
-  test('communityKeepEditing', () {
-    expect(l10n.communityKeepEditing, CommunityStrings.keepEditing);
   });
   test('communityKindNightMarket', () {
     expect(l10n.communityKindNightMarket, CommunityStrings.kindNightMarket);
@@ -5917,9 +5716,6 @@ void main() {
   test('communityLfgExpiredRepost', () {
     expect(l10n.communityLfgExpiredRepost, CommunityStrings.lfgExpiredRepost);
   });
-  test('communityLfgExpiryNote', () {
-    expect(l10n.communityLfgExpiryNote, CommunityStrings.lfgExpiryNote);
-  });
   test('communityLfgGateBody', () {
     expect(l10n.communityLfgGateBody, CommunityStrings.lfgGateBody);
   });
@@ -5972,18 +5768,8 @@ void main() {
   test('communityLiveMembers', () {
     expect(l10n.communityLiveMembers, CommunityStrings.liveMembers);
   });
-  test('communityLoadMoreFailed', () {
-    expect(l10n.communityLoadMoreFailed, CommunityStrings.loadMoreFailed);
-  });
   test('communityMatchMyRank', () {
     expect(l10n.communityMatchMyRank, CommunityStrings.matchMyRank);
-  });
-  test('communityMaxPhotos', () {
-    expect(l10n.communityMaxPhotos(0), CommunityStrings.maxPhotos(0));
-    expect(l10n.communityMaxPhotos(1), CommunityStrings.maxPhotos(1));
-    expect(l10n.communityMaxPhotos(2), CommunityStrings.maxPhotos(2));
-    expect(l10n.communityMaxPhotos(5), CommunityStrings.maxPhotos(5));
-    expect(l10n.communityMaxPhotos(99), CommunityStrings.maxPhotos(99));
   });
   test('communityMemberJoined', () {
     expect(l10n.communityMemberJoined(''), CommunityStrings.memberJoined(''));
@@ -6021,9 +5807,6 @@ void main() {
   test('communityMuteAuthor', () {
     expect(l10n.communityMuteAuthor, CommunityStrings.muteAuthor);
   });
-  test('communityMyPost', () {
-    expect(l10n.communityMyPost, CommunityStrings.myPost);
-  });
   test('communityNewPost', () {
     expect(l10n.communityNewPost, CommunityStrings.newPost);
   });
@@ -6046,23 +5829,6 @@ void main() {
   });
   test('communityNoComments', () {
     expect(l10n.communityNoComments, CommunityStrings.noComments);
-  });
-  test('communityNoParty', () {
-    expect(l10n.communityNoParty, CommunityStrings.noParty);
-  });
-  test('communityNoPartyWithReason', () {
-    expect(
-      l10n.communityNoPartyWithReason(''),
-      CommunityStrings.noPartyWithReason(''),
-    );
-    expect(
-      l10n.communityNoPartyWithReason('Nguyễn Văn A'),
-      CommunityStrings.noPartyWithReason('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.communityNoPartyWithReason('{value}\n!'),
-      CommunityStrings.noPartyWithReason('{value}\n!'),
-    );
   });
   test('communityNoRatings', () {
     expect(l10n.communityNoRatings, CommunityStrings.noRatings);
@@ -6199,15 +5965,6 @@ void main() {
       CommunityStrings.partySizeValue(99),
     );
   });
-  test('communityPeriodAll', () {
-    expect(l10n.communityPeriodAll, CommunityStrings.periodAll);
-  });
-  test('communityPeriodAllTime', () {
-    expect(l10n.communityPeriodAllTime, CommunityStrings.periodAllTime);
-  });
-  test('communityPeriodWeek', () {
-    expect(l10n.communityPeriodWeek, CommunityStrings.periodWeek);
-  });
   test('communityPhotoCount', () {
     expect(l10n.communityPhotoCount(0, 0), CommunityStrings.photoCount(0, 0));
     expect(l10n.communityPhotoCount(0, 1), CommunityStrings.photoCount(0, 1));
@@ -6238,9 +5995,6 @@ void main() {
       CommunityStrings.photoCount(99, 99),
     );
   });
-  test('communityPickRating', () {
-    expect(l10n.communityPickRating, CommunityStrings.pickRating);
-  });
   test('communityPlayVideo', () {
     expect(l10n.communityPlayVideo, CommunityStrings.playVideo);
   });
@@ -6255,9 +6009,6 @@ void main() {
   });
   test('communityPosted', () {
     expect(l10n.communityPosted, CommunityStrings.posted);
-  });
-  test('communityPrivacyNote', () {
-    expect(l10n.communityPrivacyNote, CommunityStrings.privacyNote);
   });
   test('communityPublish', () {
     expect(l10n.communityPublish, CommunityStrings.publish);
@@ -6454,9 +6205,6 @@ void main() {
   test('communityReported', () {
     expect(l10n.communityReported, CommunityStrings.reported);
   });
-  test('communityRetry', () {
-    expect(l10n.communityRetry, CommunityStrings.retry);
-  });
   test('communityReviewDeleted', () {
     expect(l10n.communityReviewDeleted, CommunityStrings.reviewDeleted);
   });
@@ -6485,9 +6233,6 @@ void main() {
       l10n.communityReviewsHeader('{value}\n!'),
       CommunityStrings.reviewsHeader('{value}\n!'),
     );
-  });
-  test('communityReviewsSection', () {
-    expect(l10n.communityReviewsSection, CommunityStrings.reviewsSection);
   });
   test('communityRiotId', () {
     expect(l10n.communityRiotId('', ''), CommunityStrings.riotId('', ''));
@@ -6548,9 +6293,6 @@ void main() {
   test('communityScopeRegion', () {
     expect(l10n.communityScopeRegion, CommunityStrings.scopeRegion);
   });
-  test('communityScopeWorldwide', () {
-    expect(l10n.communityScopeWorldwide, CommunityStrings.scopeWorldwide);
-  });
   test('communitySectionFeed', () {
     expect(l10n.communitySectionFeed, CommunityStrings.sectionFeed);
   });
@@ -6603,12 +6345,6 @@ void main() {
   });
   test('communitySkinNotFound', () {
     expect(l10n.communitySkinNotFound, CommunityStrings.skinNotFound);
-  });
-  test('communitySkinsEmptyBody', () {
-    expect(l10n.communitySkinsEmptyBody, CommunityStrings.skinsEmptyBody);
-  });
-  test('communitySkinsEmptyTitle', () {
-    expect(l10n.communitySkinsEmptyTitle, CommunityStrings.skinsEmptyTitle);
   });
   test('communitySlots', () {
     expect(l10n.communitySlots, CommunityStrings.slots);
@@ -6905,12 +6641,6 @@ void main() {
   test('communityTranslateFailed', () {
     expect(l10n.communityTranslateFailed, CommunityStrings.translateFailed);
   });
-  test('communityTranslateUnavailable', () {
-    expect(
-      l10n.communityTranslateUnavailable,
-      CommunityStrings.translateUnavailable,
-    );
-  });
   test('communityTranslatedByGoogle', () {
     expect(
       l10n.communityTranslatedByGoogle,
@@ -6940,12 +6670,6 @@ void main() {
   });
   test('communityUnvote', () {
     expect(l10n.communityUnvote, CommunityStrings.unvote);
-  });
-  test('communityUploading', () {
-    expect(l10n.communityUploading, CommunityStrings.uploading);
-  });
-  test('communityViewImage', () {
-    expect(l10n.communityViewImage, CommunityStrings.viewImage);
   });
   test('communityVote', () {
     expect(l10n.communityVote, CommunityStrings.vote);
@@ -6982,9 +6706,6 @@ void main() {
   test('communityWriteFirstReview', () {
     expect(l10n.communityWriteFirstReview, CommunityStrings.writeFirstReview);
   });
-  test('communityWritePost', () {
-    expect(l10n.communityWritePost, CommunityStrings.writePost);
-  });
   test('communityYou', () {
     expect(l10n.communityYou, CommunityStrings.you);
   });
@@ -7005,12 +6726,6 @@ void main() {
   });
   test('liveGameAutoRefreshNote', () {
     expect(l10n.liveGameAutoRefreshNote, LiveGameStrings.autoRefreshNote);
-  });
-  test('liveGameBuddy', () {
-    expect(l10n.liveGameBuddy, LiveGameStrings.buddy);
-  });
-  test('liveGameClose', () {
-    expect(l10n.liveGameClose, LiveGameStrings.close);
   });
   test('liveGameCurrentGame', () {
     expect(l10n.liveGameCurrentGame, LiveGameStrings.currentGame);
@@ -7150,9 +6865,6 @@ void main() {
       LiveGameStrings.peak('Nguyễn Văn A'),
     );
     expect(l10n.liveGamePeak('{value}\n!'), LiveGameStrings.peak('{value}\n!'));
-  });
-  test('liveGamePlayerCard', () {
-    expect(l10n.liveGamePlayerCard, LiveGameStrings.playerCard);
   });
   test('liveGamePlayerLoadoutOf', () {
     expect(
@@ -7646,9 +7358,6 @@ void main() {
   test('profileChooseMap', () {
     expect(l10n.profileChooseMap, ProfileStrings.chooseMap);
   });
-  test('profileClearMap', () {
-    expect(l10n.profileClearMap, ProfileStrings.clearMap);
-  });
   test('profileColA', () {
     expect(l10n.profileColA, ProfileStrings.colA);
   });
@@ -7697,20 +7406,6 @@ void main() {
     expect(l10n.profileDaysPlayed(5), ProfileStrings.daysPlayed(5));
     expect(l10n.profileDaysPlayed(99), ProfileStrings.daysPlayed(99));
   });
-  test('profileDuration', () {
-    expect(l10n.profileDuration, ProfileStrings.duration);
-  });
-  test('profileDurationOf', () {
-    expect(l10n.profileDurationOf(''), ProfileStrings.durationOf(''));
-    expect(
-      l10n.profileDurationOf('Nguyễn Văn A'),
-      ProfileStrings.durationOf('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.profileDurationOf('{value}\n!'),
-      ProfileStrings.durationOf('{value}\n!'),
-    );
-  });
   test('profileEndOfHistory', () {
     expect(l10n.profileEndOfHistory, ProfileStrings.endOfHistory);
   });
@@ -7722,9 +7417,6 @@ void main() {
   });
   test('profileFilterAll', () {
     expect(l10n.profileFilterAll, ProfileStrings.filterAll);
-  });
-  test('profileFilterMap', () {
-    expect(l10n.profileFilterMap, ProfileStrings.filterMap);
   });
   test('profileFirstBloods', () {
     expect(l10n.profileFirstBloods, ProfileStrings.firstBloods);
@@ -8352,17 +8044,6 @@ void main() {
   test('profileFriendsRow', () {
     expect(l10n.profileFriendsRow, ProfileStrings.friendsRow);
   });
-  test('profileGainPerWin', () {
-    expect(l10n.profileGainPerWin(''), ProfileStrings.gainPerWin(''));
-    expect(
-      l10n.profileGainPerWin('Nguyễn Văn A'),
-      ProfileStrings.gainPerWin('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.profileGainPerWin('{value}\n!'),
-      ProfileStrings.gainPerWin('{value}\n!'),
-    );
-  });
   test('profileHideKills', () {
     expect(l10n.profileHideKills, ProfileStrings.hideKills);
   });
@@ -8593,17 +8274,6 @@ void main() {
   test('profileLevelHidden', () {
     expect(l10n.profileLevelHidden, ProfileStrings.levelHidden);
   });
-  test('profileLossPerLoss', () {
-    expect(l10n.profileLossPerLoss(''), ProfileStrings.lossPerLoss(''));
-    expect(
-      l10n.profileLossPerLoss('Nguyễn Văn A'),
-      ProfileStrings.lossPerLoss('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.profileLossPerLoss('{value}\n!'),
-      ProfileStrings.lossPerLoss('{value}\n!'),
-    );
-  });
   test('profileLossStreak', () {
     expect(l10n.profileLossStreak(0), ProfileStrings.lossStreak(0));
     expect(l10n.profileLossStreak(1), ProfileStrings.lossStreak(1));
@@ -8668,22 +8338,8 @@ void main() {
   test('profileOvertime', () {
     expect(l10n.profileOvertime, ProfileStrings.overtime);
   });
-  test('profilePartyRow', () {
-    expect(l10n.profilePartyRow, ProfileStrings.partyRow);
-  });
   test('profilePeakRank', () {
     expect(l10n.profilePeakRank, ProfileStrings.peakRank);
-  });
-  test('profilePeakRankOf', () {
-    expect(l10n.profilePeakRankOf(''), ProfileStrings.peakRankOf(''));
-    expect(
-      l10n.profilePeakRankOf('Nguyễn Văn A'),
-      ProfileStrings.peakRankOf('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.profilePeakRankOf('{value}\n!'),
-      ProfileStrings.peakRankOf('{value}\n!'),
-    );
   });
   test('profilePerformanceAttack', () {
     expect(l10n.profilePerformanceAttack, ProfileStrings.performanceAttack);
@@ -8693,9 +8349,6 @@ void main() {
   });
   test('profilePerformanceEmpty', () {
     expect(l10n.profilePerformanceEmpty, ProfileStrings.performanceEmpty);
-  });
-  test('profilePerformanceGames', () {
-    expect(l10n.profilePerformanceGames, ProfileStrings.performanceGames);
   });
   test('profilePerformanceNoMatches', () {
     expect(
@@ -8846,15 +8499,6 @@ void main() {
   });
   test('profilePerformanceTitle', () {
     expect(l10n.profilePerformanceTitle, ProfileStrings.performanceTitle);
-  });
-  test('profilePerformanceTrendEmpty', () {
-    expect(
-      l10n.profilePerformanceTrendEmpty,
-      ProfileStrings.performanceTrendEmpty,
-    );
-  });
-  test('profilePickTargetHint', () {
-    expect(l10n.profilePickTargetHint, ProfileStrings.pickTargetHint);
   });
   test('profilePlacement', () {
     expect(l10n.profilePlacement(0), ProfileStrings.placement(0));
@@ -9596,9 +9240,6 @@ void main() {
   test('profileRoundsHint', () {
     expect(l10n.profileRoundsHint, ProfileStrings.roundsHint);
   });
-  test('profileRr', () {
-    expect(l10n.profileRr, ProfileStrings.rr);
-  });
   test('profileRrLeft', () {
     expect(l10n.profileRrLeft(''), ProfileStrings.rrLeft(''));
     expect(
@@ -9824,9 +9465,6 @@ void main() {
   test('legalContactHeader', () {
     expect(l10n.legalContactHeader, LegalStrings.contactHeader);
   });
-  test('legalCreditsHeader', () {
-    expect(l10n.legalCreditsHeader, LegalStrings.creditsHeader);
-  });
   test('legalEffectiveFrom', () {
     expect(l10n.legalEffectiveFrom(''), LegalStrings.effectiveFrom(''));
     expect(
@@ -9864,41 +9502,8 @@ void main() {
     );
     expect(l10n.legalVersion('{value}\n!'), LegalStrings.version('{value}\n!'));
   });
-  test('settingsAboutCreditContent', () {
-    expect(l10n.settingsAboutCreditContent, SettingsStrings.aboutCreditContent);
-  });
-  test('settingsAboutCreditContentBody', () {
-    expect(
-      l10n.settingsAboutCreditContentBody,
-      SettingsStrings.aboutCreditContentBody,
-    );
-  });
-  test('settingsAboutCreditDocs', () {
-    expect(l10n.settingsAboutCreditDocs, SettingsStrings.aboutCreditDocs);
-  });
-  test('settingsAboutCreditDocsBody', () {
-    expect(
-      l10n.settingsAboutCreditDocsBody,
-      SettingsStrings.aboutCreditDocsBody,
-    );
-  });
-  test('settingsAboutCreditRiot', () {
-    expect(l10n.settingsAboutCreditRiot, SettingsStrings.aboutCreditRiot);
-  });
-  test('settingsAboutCreditRiotBody', () {
-    expect(
-      l10n.settingsAboutCreditRiotBody,
-      SettingsStrings.aboutCreditRiotBody,
-    );
-  });
-  test('settingsAboutCreditsHeader', () {
-    expect(l10n.settingsAboutCreditsHeader, SettingsStrings.aboutCreditsHeader);
-  });
   test('settingsAboutHeader', () {
     expect(l10n.settingsAboutHeader, SettingsStrings.aboutHeader);
-  });
-  test('settingsAboutLegalHeader', () {
-    expect(l10n.settingsAboutLegalHeader, SettingsStrings.aboutLegalHeader);
   });
   test('settingsAboutRowSubtitle', () {
     expect(l10n.settingsAboutRowSubtitle, SettingsStrings.aboutRowSubtitle);
@@ -9943,26 +9548,11 @@ void main() {
   test('settingsClearCacheSubtitle', () {
     expect(l10n.settingsClearCacheSubtitle, SettingsStrings.clearCacheSubtitle);
   });
-  test('settingsClearLog', () {
-    expect(l10n.settingsClearLog, SettingsStrings.clearLog);
-  });
-  test('settingsClearLogConfirm', () {
-    expect(l10n.settingsClearLogConfirm, SettingsStrings.clearLogConfirm);
-  });
   test('settingsExportLog', () {
     expect(l10n.settingsExportLog, SettingsStrings.exportLog);
   });
   test('settingsExportLogEmpty', () {
     expect(l10n.settingsExportLogEmpty, SettingsStrings.exportLogEmpty);
-  });
-  test('settingsExportLogEmptyTitle', () {
-    expect(
-      l10n.settingsExportLogEmptyTitle,
-      SettingsStrings.exportLogEmptyTitle,
-    );
-  });
-  test('settingsExportLogNote', () {
-    expect(l10n.settingsExportLogNote, SettingsStrings.exportLogNote);
   });
   test('settingsExportLogSubtitle', () {
     expect(l10n.settingsExportLogSubtitle, SettingsStrings.exportLogSubtitle);
@@ -9976,9 +9566,6 @@ void main() {
   test('settingsItemLanguageEn', () {
     expect(l10n.settingsItemLanguageEn, SettingsStrings.itemLanguageEn);
   });
-  test('settingsItemLanguageHint', () {
-    expect(l10n.settingsItemLanguageHint, SettingsStrings.itemLanguageHint);
-  });
   test('settingsItemLanguageLabel', () {
     expect(l10n.settingsItemLanguageLabel, SettingsStrings.itemLanguageLabel);
   });
@@ -9991,123 +9578,8 @@ void main() {
   test('settingsItemLanguageVi', () {
     expect(l10n.settingsItemLanguageVi, SettingsStrings.itemLanguageVi);
   });
-  test('settingsLegalNotice', () {
-    expect(l10n.settingsLegalNotice, SettingsStrings.legalNotice);
-  });
   test('settingsLinkOpenFailed', () {
     expect(l10n.settingsLinkOpenFailed, SettingsStrings.linkOpenFailed);
-  });
-  test('settingsLogCleared', () {
-    expect(l10n.settingsLogCleared, SettingsStrings.logCleared);
-  });
-  test('settingsLogEntryCount', () {
-    expect(l10n.settingsLogEntryCount(0), SettingsStrings.logEntryCount(0));
-    expect(l10n.settingsLogEntryCount(1), SettingsStrings.logEntryCount(1));
-    expect(l10n.settingsLogEntryCount(2), SettingsStrings.logEntryCount(2));
-    expect(l10n.settingsLogEntryCount(5), SettingsStrings.logEntryCount(5));
-    expect(l10n.settingsLogEntryCount(99), SettingsStrings.logEntryCount(99));
-  });
-  test('settingsLogEntryShown', () {
-    expect(
-      l10n.settingsLogEntryShown(0, 0),
-      SettingsStrings.logEntryShown(0, 0),
-    );
-    expect(
-      l10n.settingsLogEntryShown(0, 1),
-      SettingsStrings.logEntryShown(0, 1),
-    );
-    expect(
-      l10n.settingsLogEntryShown(0, 2),
-      SettingsStrings.logEntryShown(0, 2),
-    );
-    expect(
-      l10n.settingsLogEntryShown(0, 5),
-      SettingsStrings.logEntryShown(0, 5),
-    );
-    expect(
-      l10n.settingsLogEntryShown(0, 99),
-      SettingsStrings.logEntryShown(0, 99),
-    );
-    expect(
-      l10n.settingsLogEntryShown(1, 0),
-      SettingsStrings.logEntryShown(1, 0),
-    );
-    expect(
-      l10n.settingsLogEntryShown(1, 1),
-      SettingsStrings.logEntryShown(1, 1),
-    );
-    expect(
-      l10n.settingsLogEntryShown(1, 2),
-      SettingsStrings.logEntryShown(1, 2),
-    );
-    expect(
-      l10n.settingsLogEntryShown(1, 5),
-      SettingsStrings.logEntryShown(1, 5),
-    );
-    expect(
-      l10n.settingsLogEntryShown(1, 99),
-      SettingsStrings.logEntryShown(1, 99),
-    );
-    expect(
-      l10n.settingsLogEntryShown(2, 0),
-      SettingsStrings.logEntryShown(2, 0),
-    );
-    expect(
-      l10n.settingsLogEntryShown(2, 1),
-      SettingsStrings.logEntryShown(2, 1),
-    );
-    expect(
-      l10n.settingsLogEntryShown(2, 2),
-      SettingsStrings.logEntryShown(2, 2),
-    );
-    expect(
-      l10n.settingsLogEntryShown(2, 5),
-      SettingsStrings.logEntryShown(2, 5),
-    );
-    expect(
-      l10n.settingsLogEntryShown(2, 99),
-      SettingsStrings.logEntryShown(2, 99),
-    );
-    expect(
-      l10n.settingsLogEntryShown(5, 0),
-      SettingsStrings.logEntryShown(5, 0),
-    );
-    expect(
-      l10n.settingsLogEntryShown(5, 1),
-      SettingsStrings.logEntryShown(5, 1),
-    );
-    expect(
-      l10n.settingsLogEntryShown(5, 2),
-      SettingsStrings.logEntryShown(5, 2),
-    );
-    expect(
-      l10n.settingsLogEntryShown(5, 5),
-      SettingsStrings.logEntryShown(5, 5),
-    );
-    expect(
-      l10n.settingsLogEntryShown(5, 99),
-      SettingsStrings.logEntryShown(5, 99),
-    );
-    expect(
-      l10n.settingsLogEntryShown(99, 0),
-      SettingsStrings.logEntryShown(99, 0),
-    );
-    expect(
-      l10n.settingsLogEntryShown(99, 1),
-      SettingsStrings.logEntryShown(99, 1),
-    );
-    expect(
-      l10n.settingsLogEntryShown(99, 2),
-      SettingsStrings.logEntryShown(99, 2),
-    );
-    expect(
-      l10n.settingsLogEntryShown(99, 5),
-      SettingsStrings.logEntryShown(99, 5),
-    );
-    expect(
-      l10n.settingsLogEntryShown(99, 99),
-      SettingsStrings.logEntryShown(99, 99),
-    );
   });
   test('settingsLogFileHeader', () {
     expect(
@@ -10146,30 +9618,6 @@ void main() {
       l10n.settingsLogFileHeader('{value}\n!', '{value}\n!'),
       SettingsStrings.logFileHeader('{value}\n!', '{value}\n!'),
     );
-  });
-  test('settingsLogFilterAll', () {
-    expect(l10n.settingsLogFilterAll, SettingsStrings.logFilterAll);
-  });
-  test('settingsLogFilterAuth', () {
-    expect(l10n.settingsLogFilterAuth, SettingsStrings.logFilterAuth);
-  });
-  test('settingsLogFilterEmpty', () {
-    expect(l10n.settingsLogFilterEmpty, SettingsStrings.logFilterEmpty);
-  });
-  test('settingsLogFilterErrors', () {
-    expect(l10n.settingsLogFilterErrors, SettingsStrings.logFilterErrors);
-  });
-  test('settingsLogFilterHttp', () {
-    expect(l10n.settingsLogFilterHttp, SettingsStrings.logFilterHttp);
-  });
-  test('settingsLogMore', () {
-    expect(l10n.settingsLogMore, SettingsStrings.logMore);
-  });
-  test('settingsLogSearchEmpty', () {
-    expect(l10n.settingsLogSearchEmpty, SettingsStrings.logSearchEmpty);
-  });
-  test('settingsLogSearchHint', () {
-    expect(l10n.settingsLogSearchHint, SettingsStrings.logSearchHint);
   });
   test('settingsLogShareFailed', () {
     expect(l10n.settingsLogShareFailed, SettingsStrings.logShareFailed);
@@ -10584,9 +10032,6 @@ void main() {
       l10n.settingsStatusMoreUpdates(99),
       SettingsStrings.statusMoreUpdates(99),
     );
-  });
-  test('settingsStatusRegionPicker', () {
-    expect(l10n.settingsStatusRegionPicker, SettingsStrings.statusRegionPicker);
   });
   test('settingsStatusScheduled', () {
     expect(l10n.settingsStatusScheduled, SettingsStrings.statusScheduled);
@@ -11212,17 +10657,11 @@ void main() {
   test('socialChangeQueue', () {
     expect(l10n.socialChangeQueue, SocialStrings.changeQueue);
   });
-  test('socialChatTitle', () {
-    expect(l10n.socialChatTitle, SocialStrings.chatTitle);
-  });
   test('socialChatUnavailable', () {
     expect(l10n.socialChatUnavailable, SocialStrings.chatUnavailable);
   });
   test('socialCloseParty', () {
     expect(l10n.socialCloseParty, SocialStrings.closeParty);
-  });
-  test('socialClosedState', () {
-    expect(l10n.socialClosedState, SocialStrings.closedState);
   });
   test('socialCodeInvalid', () {
     expect(l10n.socialCodeInvalid, SocialStrings.codeInvalid);
@@ -11331,9 +10770,6 @@ void main() {
   });
   test('socialGenerateCode', () {
     expect(l10n.socialGenerateCode, SocialStrings.generateCode);
-  });
-  test('socialHistoryFailed', () {
-    expect(l10n.socialHistoryFailed, SocialStrings.historyFailed);
   });
   test('socialIdleQueue', () {
     expect(l10n.socialIdleQueue, SocialStrings.idleQueue);
@@ -11549,9 +10985,6 @@ void main() {
   test('socialNoSearchResultsTitle', () {
     expect(l10n.socialNoSearchResultsTitle, SocialStrings.noSearchResultsTitle);
   });
-  test('socialNotFriend', () {
-    expect(l10n.socialNotFriend, SocialStrings.notFriend);
-  });
   test('socialNotReady', () {
     expect(l10n.socialNotReady, SocialStrings.notReady);
   });
@@ -11583,9 +11016,6 @@ void main() {
   });
   test('socialOpenParty', () {
     expect(l10n.socialOpenParty, SocialStrings.openParty);
-  });
-  test('socialOpenState', () {
-    expect(l10n.socialOpenState, SocialStrings.openState);
   });
   test('socialOtherGamesLeagueOfLegends', () {
     expect(
@@ -12253,68 +11683,6 @@ void main() {
   test('storeRemoveFromWishlist', () {
     expect(l10n.storeRemoveFromWishlist, StoreStrings.removeFromWishlist);
   });
-  test('storeResetNotificationBody', () {
-    expect(
-      l10n.storeResetNotificationBody(0, ''),
-      StoreStrings.resetNotificationBody(0, ''),
-    );
-    expect(
-      l10n.storeResetNotificationBody(0, 'Nguyễn Văn A'),
-      StoreStrings.resetNotificationBody(0, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.storeResetNotificationBody(0, '{value}\n!'),
-      StoreStrings.resetNotificationBody(0, '{value}\n!'),
-    );
-    expect(
-      l10n.storeResetNotificationBody(1, ''),
-      StoreStrings.resetNotificationBody(1, ''),
-    );
-    expect(
-      l10n.storeResetNotificationBody(1, 'Nguyễn Văn A'),
-      StoreStrings.resetNotificationBody(1, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.storeResetNotificationBody(1, '{value}\n!'),
-      StoreStrings.resetNotificationBody(1, '{value}\n!'),
-    );
-    expect(
-      l10n.storeResetNotificationBody(2, ''),
-      StoreStrings.resetNotificationBody(2, ''),
-    );
-    expect(
-      l10n.storeResetNotificationBody(2, 'Nguyễn Văn A'),
-      StoreStrings.resetNotificationBody(2, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.storeResetNotificationBody(2, '{value}\n!'),
-      StoreStrings.resetNotificationBody(2, '{value}\n!'),
-    );
-    expect(
-      l10n.storeResetNotificationBody(5, ''),
-      StoreStrings.resetNotificationBody(5, ''),
-    );
-    expect(
-      l10n.storeResetNotificationBody(5, 'Nguyễn Văn A'),
-      StoreStrings.resetNotificationBody(5, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.storeResetNotificationBody(5, '{value}\n!'),
-      StoreStrings.resetNotificationBody(5, '{value}\n!'),
-    );
-    expect(
-      l10n.storeResetNotificationBody(99, ''),
-      StoreStrings.resetNotificationBody(99, ''),
-    );
-    expect(
-      l10n.storeResetNotificationBody(99, 'Nguyễn Văn A'),
-      StoreStrings.resetNotificationBody(99, 'Nguyễn Văn A'),
-    );
-    expect(
-      l10n.storeResetNotificationBody(99, '{value}\n!'),
-      StoreStrings.resetNotificationBody(99, '{value}\n!'),
-    );
-  });
   test('storeResetNotificationTitle', () {
     expect(
       l10n.storeResetNotificationTitle,
@@ -12645,9 +12013,6 @@ void main() {
   test('wishlistClearFilters', () {
     expect(l10n.wishlistClearFilters, WishlistStrings.clearFilters);
   });
-  test('wishlistClearSearch', () {
-    expect(l10n.wishlistClearSearch, WishlistStrings.clearSearch);
-  });
   test('wishlistEmpty', () {
     expect(l10n.wishlistEmpty, WishlistStrings.empty);
   });
@@ -12667,18 +12032,6 @@ void main() {
   });
   test('wishlistExcludedRewards', () {
     expect(l10n.wishlistExcludedRewards, WishlistStrings.excludedRewards);
-  });
-  test('wishlistFilterTiers', () {
-    expect(l10n.wishlistFilterTiers, WishlistStrings.filterTiers);
-  });
-  test('wishlistHasEstimates', () {
-    expect(l10n.wishlistHasEstimates, WishlistStrings.hasEstimates);
-  });
-  test('wishlistInWishlist', () {
-    expect(l10n.wishlistInWishlist, WishlistStrings.inWishlist);
-  });
-  test('wishlistInWishlistLabel', () {
-    expect(l10n.wishlistInWishlistLabel, WishlistStrings.inWishlistLabel);
   });
   test('wishlistNoMatch', () {
     expect(l10n.wishlistNoMatch, WishlistStrings.noMatch);
@@ -12782,20 +12135,6 @@ void main() {
   test('wishlistSearchHint', () {
     expect(l10n.wishlistSearchHint, WishlistStrings.searchHint);
   });
-  test('wishlistSortBy', () {
-    expect(l10n.wishlistSortBy, WishlistStrings.sortBy);
-  });
-  test('wishlistSortLabel', () {
-    expect(l10n.wishlistSortLabel(''), WishlistStrings.sortLabel(''));
-    expect(
-      l10n.wishlistSortLabel('Nguyễn Văn A'),
-      WishlistStrings.sortLabel('Nguyễn Văn A'),
-    );
-    expect(
-      l10n.wishlistSortLabel('{value}\n!'),
-      WishlistStrings.sortLabel('{value}\n!'),
-    );
-  });
   test('wishlistSortName', () {
     expect(l10n.wishlistSortName, WishlistStrings.sortName);
   });
@@ -12807,12 +12146,6 @@ void main() {
   });
   test('wishlistSortWeapon', () {
     expect(l10n.wishlistSortWeapon, WishlistStrings.sortWeapon);
-  });
-  test('wishlistStoreCheckTitle', () {
-    expect(l10n.wishlistStoreCheckTitle, WishlistStrings.storeCheckTitle);
-  });
-  test('wishlistSubtitle', () {
-    expect(l10n.wishlistSubtitle, WishlistStrings.subtitle);
   });
   test('wishlistTitle', () {
     expect(l10n.wishlistTitle, WishlistStrings.title);

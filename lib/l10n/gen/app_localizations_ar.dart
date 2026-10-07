@@ -23,9 +23,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonAppName => 'ValHub';
 
   @override
-  String get commonBack => 'رجوع';
-
-  @override
   String get commonCancel => 'إلغاء';
 
   @override
@@ -38,16 +35,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonClose => 'إغلاق';
 
   @override
-  String get commonConfirm => 'تأكيد';
-
-  @override
   String get commonCopied => 'تم النسخ';
-
-  @override
-  String get commonCopy => 'نسخ';
-
-  @override
-  String get commonDaily => 'يوميًا';
 
   @override
   String get commonDash => '–';
@@ -84,9 +72,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get commonDelete => 'حذف';
-
-  @override
-  String get commonDone => 'تم';
 
   @override
   String get commonEmptyGeneric => 'لا يوجد شيء هنا بعد.';
@@ -138,9 +123,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get commonEstimatePrefix => '≈';
-
-  @override
-  String get commonFilter => 'تصفية';
 
   @override
   String get commonGoHome => 'إلى الرئيسية';
@@ -227,9 +209,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String commonOfflineCached(String time) {
     return 'لا يوجد اتصال — يتم عرض البيانات المحفوظة ($time).';
   }
-
-  @override
-  String get commonOk => 'موافق';
 
   @override
   String get commonOpenSettings => 'فتح الإعدادات';
@@ -333,12 +312,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get commonPullToRefresh => 'اسحب للتحديث';
-
-  @override
-  String get commonRefresh => 'تحديث';
-
-  @override
   String get commonRetry => 'إعادة المحاولة';
 
   @override
@@ -367,9 +340,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get commonSeeAll => 'عرض الكل';
-
-  @override
   String get commonShare => 'مشاركة';
 
   @override
@@ -382,24 +352,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String commonSortBy(String option) {
     return 'الترتيب: $option';
   }
-
-  @override
-  String get commonSortName => 'الاسم A–Z';
-
-  @override
-  String get commonSortNewest => 'الأحدث';
-
-  @override
-  String get commonSortPriceHigh => 'السعر: من الأعلى للأقل';
-
-  @override
-  String get commonSortPriceLow => 'السعر: من الأقل للأعلى';
-
-  @override
-  String get commonSortRarity => 'الندرة';
-
-  @override
-  String get commonSortWeapon => 'السلاح';
 
   @override
   String get commonTabBattlePass => 'Battle Pass';
@@ -522,9 +474,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contentCurrencyVpFull => 'نقاط VALORANT';
 
   @override
-  String get contentDefaultSkin => 'قياسي';
-
-  @override
   String get contentItemAgent => 'عميل';
 
   @override
@@ -544,18 +493,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get contentItemFlex => 'Flex';
-
-  @override
-  String get contentItemLanguageEn => 'الإنجليزية';
-
-  @override
-  String get contentItemLanguageTitle => 'أسماء العناصر';
-
-  @override
-  String get contentItemLanguageVi => 'الفيتنامية';
-
-  @override
-  String get contentItemLevelBorder => 'إطار المستوى';
 
   @override
   String get contentItemSkin => 'مظهر';
@@ -623,12 +560,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get contentLevelItemLabelsFishAnimation => 'حركة السمكة';
-
-  @override
-  String get contentLimitedEdition => 'إصدار محدود';
-
-  @override
-  String get contentNoSpray => 'لا شيء';
 
   @override
   String get contentNoTitle => 'بلا لقب';
@@ -758,11 +689,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get accountRiotCountryUnknown => 'دولة حساب Riot: غير معروفة';
-
-  @override
-  String accountAccountCount(int count, int max) {
-    return 'الحسابات: $count/$max';
-  }
 
   @override
   String accountAccountsHeader(int count, int max) {
@@ -949,10 +875,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountStatusUnknown => 'الحالة غير معروفة';
 
   @override
-  String get accountSwitchFailed =>
-      'تعذّر تبديل الحساب. يُرجى المحاولة مجددًا.';
-
-  @override
   String accountSwitchTo(String account) {
     return 'التبديل إلى $account';
   }
@@ -974,9 +896,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get accountUnlockLoginNote =>
       'تحقّق من هويتك لفتح معلومات تسجيل الدخول إلى Riot';
-
-  @override
-  String get authAccountAlreadyAdded => 'تمت إضافة هذا الحساب مسبقًا';
 
   @override
   String get authAddAsNew => 'إضافة كحساب جديد';
@@ -1031,10 +950,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get authSignInCta => 'تسجيل الدخول بحساب Riot';
-
-  @override
-  String get authSignInNote =>
-      'يتم تسجيل الدخول عبر صفحة Riot الرسمية. لا يحفظ ValHub كلمة المرور إلا إذا اخترت حفظ معلومات تسجيل الدخول؛ وتبقى بيانات تسجيل الدخول والمعلومات المحفوظة على جهازك فقط.';
 
   @override
   String get authSocialLoginHint =>
@@ -1260,12 +1175,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get economyCollectionValue => 'قيمة المجموعة';
-
-  @override
-  String get economyExcludedRewards => 'لا تشمل مظاهر الجوائز';
-
-  @override
   String economyPlaceBundle(String name) {
     return 'باقة $name';
   }
@@ -1295,12 +1204,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get economyPriceUnknown => 'السعر غير معروف';
 
   @override
-  String get economyValueHasEstimates => 'تشمل أسعارًا تقديرية (≈)';
-
-  @override
-  String get economyWishlistValue => 'إجمالي قيمة قائمة الأمنيات';
-
-  @override
   String loadoutDefaultPresetName(int n) {
     return 'التجهيزة $n';
   }
@@ -1315,9 +1218,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get loadoutSaveFailed => 'تعذّر حفظ التجهيزات';
-
-  @override
-  String get battlePassActEnded => 'انتهى هذا المشهد';
 
   @override
   String battlePassActEndsIn(String time) {
@@ -1367,9 +1267,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String battlePassCharges(int charges, int needed) {
     return '$charges/$needed';
   }
-
-  @override
-  String get battlePassCheckpoint => 'مرحلة';
 
   @override
   String get battlePassCheckpointHint =>
@@ -1512,9 +1409,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String battlePassMissionsCompleted(int done, int total) {
     return 'المكتمل: $done/$total';
   }
-
-  @override
-  String get battlePassMissionsProgressLabel => 'تقدّم المهام الأسبوعية';
 
   @override
   String battlePassNewMissionsAtWall(String wall) {
@@ -1704,9 +1598,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get collectionBannerTitlePrefix => 'اللقب: ';
-
-  @override
   String get collectionBrowseBuddies => 'تعليقات السلاح';
 
   @override
@@ -1726,9 +1617,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get collectionBrowseSprays => 'الرذاذات';
-
-  @override
-  String get collectionBrowseTitle => 'تصفّح المجموعة';
 
   @override
   String get collectionBrowseTitles => 'ألقاب اللاعب';
@@ -1789,12 +1677,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get collectionClearFilters => 'مسح عوامل التصفية';
-
-  @override
-  String get collectionClearSearch => 'مسح البحث';
-
-  @override
   String get collectionClearTiers => 'مسح تصفية الإصدار';
 
   @override
@@ -1851,9 +1733,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get collectionExpressionsTitle => 'عجلة التعبيرات';
 
   @override
-  String get collectionFilterTiers => 'الإصدار';
-
-  @override
   String get collectionHideAccountLevel => 'إخفاء مستوى الحساب';
 
   @override
@@ -1868,31 +1747,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'إخفاء اسمك عن اللاعبين من خارج فريقك في المباريات.';
 
   @override
-  String collectionItemsCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    String _temp0 = intl.Intl.pluralLogic(
-      n,
-      locale: localeName,
-      other: '$nString عنصر',
-      many: '$nString عنصرًا',
-      few: '$nString عناصر',
-      two: '$nString عنصر',
-      one: '$nString عنصر',
-      zero: '$nString عنصر',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get collectionLevelBorderAuto => 'تلقائي حسب المستوى';
-
-  @override
-  String get collectionLevelBorderEmpty =>
-      'لا توجد إطارات مستوى متاحة لمستواك بعد.';
 
   @override
   String collectionLevelBorderFrom(int level) {
@@ -2109,16 +1964,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get collectionPreview => 'معاينة';
 
   @override
-  String get collectionPreviewing => 'قيد المعاينة';
-
-  @override
   String get collectionRemoveBuddy => 'إزالة تعليقة السلاح';
 
   @override
   String get collectionRenamePreset => 'إعادة تسمية';
-
-  @override
-  String get collectionRowCard => 'بطاقة اللاعب';
 
   @override
   String get collectionRowExpressions => 'عجلة التعبيرات';
@@ -2128,9 +1977,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get collectionRowPresets => 'التجهيزات المحفوظة';
-
-  @override
-  String get collectionRowTitle => 'لقب اللاعب';
 
   @override
   String get collectionRowWeapons => 'تجهيزات الأسلحة';
@@ -2201,9 +2047,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get collectionSlotNamesItem3 => 'يسار';
-
-  @override
-  String get collectionSortLabel => 'ترتيب';
 
   @override
   String get collectionSortName => 'الاسم';
@@ -2442,9 +2285,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityRankingClear => 'مسح تصفية السلاح والوقت';
 
   @override
-  String get communityRankingPeriod => 'الوقت';
-
-  @override
   String get communityRankingSort => 'الترتيب حسب';
 
   @override
@@ -2491,9 +2331,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityAddPhotos => 'إضافة صور';
 
   @override
-  String get communityAgentsPicked => 'العملاء المختارون';
-
-  @override
   String get communityAllModes => 'الكل';
 
   @override
@@ -2513,9 +2350,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communityApply => 'تطبيق';
-
-  @override
-  String get communityAutoRefresh => 'تحديث تلقائي كل 20 ثانية';
 
   @override
   String get communityBackToMyCountry => 'العودة إلى بلدي';
@@ -2540,17 +2374,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'تعذّر إنشاء رمز الفريق. افتح VALORANT أو أدخل الرمز يدويًا.';
 
   @override
-  String get communityCodeGenerated => 'تم إنشاء الرمز من فريقك الحالي.';
-
-  @override
   String get communityCodeInvalid =>
       'يجب أن يتكون الرمز من 6 أحرف كبيرة أو أرقام بالضبط.';
 
   @override
   String get communityCodeRequired => 'أدخل رمز الفريق أو أنشئه.';
-
-  @override
-  String get communityComment => 'تعليق';
 
   @override
   String get communityCommentHint => 'اكتب تعليقًا…';
@@ -2655,12 +2483,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get communityConsentWithdrawn =>
       'تم سحب الموافقة. يلزم الموافقة مجددًا لمواصلة استخدام التطبيق.';
-
-  @override
-  String get communityCountriesEmpty => 'لا توجد دول مطابقة.';
-
-  @override
-  String get communityCountriesSearchHint => 'ابحث عن دولة…';
 
   @override
   String get communityCountriesTitle => 'المجتمعات حسب الدولة';
@@ -3157,12 +2979,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityFilters => 'عوامل التصفية';
 
   @override
-  String get communityGenerateCode => 'إنشاء رمز الفريق';
-
-  @override
-  String get communityGeneratingCode => 'جارٍ إنشاء الرمز…';
-
-  @override
   String get communityGoogleDisclaimer =>
       'THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.';
 
@@ -3215,17 +3031,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'افتح VALORANT على الكمبيوتر أو جهاز الألعاب ثم حاول مجددًا.';
 
   @override
-  String get communityJoinInvalidCode =>
-      'رمز الفريق لم يعد صالحًا أو أن الفريق مكتمل.';
-
-  @override
   String get communityJoinParty => 'الانضمام إلى الفريق';
 
   @override
   String get communityJoinPartyFull => 'هذا الفريق مكتمل.';
-
-  @override
-  String get communityJoined => 'انضممت إلى الفريق! افتح VALORANT للعب معًا.';
 
   @override
   String get communityJoinedHint =>
@@ -3250,9 +3059,6 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get communityKeepEditing => 'متابعة الكتابة';
 
   @override
   String get communityKindNightMarket => 'السوق الليلي';
@@ -3348,10 +3154,6 @@ class AppLocalizationsAr extends AppLocalizations {
       'انتهت صلاحية منشورك. أنشئ منشورًا جديدًا للبحث عن زملاء.';
 
   @override
-  String get communityLfgExpiryNote =>
-      'تنتهي صلاحية المنشورات تلقائيًا بعد 30 دقيقة.';
-
-  @override
   String get communityLfgGateBody =>
       'انضم (بالتحقق من Riot ID مرة واحدة) لرؤية منشورات اللاعبين على خادمك ونشر طلب البحث عن زملاء الخاص بك. لا يزال بإمكانك تصفّح الموجز وترتيب المظاهر كالمعتاد.';
 
@@ -3385,39 +3187,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityLike => 'إعجاب';
 
   @override
-  String communityLikes(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    String _temp0 = intl.Intl.pluralLogic(
-      n,
-      locale: localeName,
-      other: '$nString إعجاب',
-      many: '$nString إعجابًا',
-      few: '$nString إعجابات',
-      two: '$nString إعجاب',
-      one: '$nString إعجاب',
-      zero: '$nString إعجاب',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get communityLiveMembers => 'الأعضاء';
 
   @override
-  String get communityLoadMoreFailed =>
-      'تعذّر تحميل المزيد من المنشورات. يُرجى المحاولة مجددًا.';
-
-  @override
   String get communityMatchMyRank => 'يناسب رتبتك';
-
-  @override
-  String communityMaxPhotos(int max) {
-    return 'الحد الأقصى للصور: $max.';
-  }
 
   @override
   String communityMemberJoined(String name) {
@@ -3449,9 +3222,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityMuteAuthor => 'إخفاء هذا اللاعب';
 
   @override
-  String get communityMyPost => 'منشورك';
-
-  @override
   String get communityNewPost => 'نشر';
 
   @override
@@ -3468,15 +3238,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communityNoComments => 'لا توجد تعليقات بعد. كن أول من يعلّق!';
-
-  @override
-  String get communityNoParty =>
-      'تعذّر العثور على فريقك. افتح VALORANT وحاول مجددًا، أو أدخل الرمز يدويًا.';
-
-  @override
-  String communityNoPartyWithReason(String reason) {
-    return 'تعذّر العثور على فريقك. افتح VALORANT وحاول مجددًا، أو أدخل الرمز يدويًا.\n$reason';
-  }
 
   @override
   String get communityNoRatings => 'لا توجد تقييمات بعد';
@@ -3542,21 +3303,9 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get communityPeriodAll => 'الكل';
-
-  @override
-  String get communityPeriodAllTime => 'كل الأوقات';
-
-  @override
-  String get communityPeriodWeek => 'هذا الأسبوع';
-
-  @override
   String communityPhotoCount(int n, int max) {
     return 'الصور: $n/$max';
   }
-
-  @override
-  String get communityPickRating => 'اختر عدد النجوم.';
 
   @override
   String get communityPlayVideo => 'مشاهدة الفيديو';
@@ -3572,10 +3321,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communityPosted => 'تم النشر!';
-
-  @override
-  String get communityPrivacyNote =>
-      'يتحقق ValHub من Riot ID عند الاتصال بالمجتمع، ومن امتلاكك للمظهر عند كتابة مراجعة. لا يحفظ المجتمع أبدًا كلمة المرور أو بيانات تسجيل الدخول إلى Riot.';
 
   @override
   String get communityPublish => 'نشر';
@@ -3726,9 +3471,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityReported => 'شكرًا لك! تم إرسال البلاغ.';
 
   @override
-  String get communityRetry => 'إعادة المحاولة';
-
-  @override
   String get communityReviewDeleted => 'تم حذف المراجعة.';
 
   @override
@@ -3751,9 +3493,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String communityReviewsHeader(String n) {
     return 'المراجعات · $n';
   }
-
-  @override
-  String get communityReviewsSection => 'المراجعات';
 
   @override
   String communityRiotId(String name, String tag) {
@@ -3780,9 +3519,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communityScopeRegion => 'المنطقة';
-
-  @override
-  String get communityScopeWorldwide => 'عالمي';
 
   @override
   String get communitySectionFeed => 'الموجز';
@@ -3825,13 +3561,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communitySkinNotFound => 'تعذّر العثور على هذا المظهر.';
-
-  @override
-  String get communitySkinsEmptyBody =>
-      'امنح قلبًا لمظاهرك المفضلة لترفعها في الترتيب!';
-
-  @override
-  String get communitySkinsEmptyTitle => 'لا توجد أصوات بعد';
 
   @override
   String get communitySlots => 'عدد اللاعبين المطلوب';
@@ -3958,10 +3687,6 @@ class AppLocalizationsAr extends AppLocalizations {
       'تعذّرت الترجمة. يُرجى المحاولة مجددًا.';
 
   @override
-  String get communityTranslateUnavailable =>
-      'لا يدعم هذا الجهاز الترجمة على الجهاز بعد.';
-
-  @override
   String get communityTranslatedByGoogle => 'ترجمة تلقائية من Google';
 
   @override
@@ -3988,12 +3713,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communityUnvote => 'إزالة القلب';
-
-  @override
-  String get communityUploading => 'جارٍ رفع الصور…';
-
-  @override
-  String get communityViewImage => 'عرض الصورة';
 
   @override
   String get communityVote => 'امنح قلبًا لهذا المظهر';
@@ -4040,9 +3759,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityWriteFirstReview => 'اكتب أول مراجعة';
 
   @override
-  String get communityWritePost => 'كتابة منشور';
-
-  @override
   String get communityYou => 'أنت';
 
   @override
@@ -4072,12 +3788,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get liveGameAutoRefreshNote =>
       'يتم التحديث تلقائيًا عندما تكون في مباراة.';
-
-  @override
-  String get liveGameBuddy => 'تعليقة سلاح';
-
-  @override
-  String get liveGameClose => 'إغلاق';
 
   @override
   String get liveGameCurrentGame => 'المباراة الحالية';
@@ -4177,9 +3887,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String liveGamePeak(String rank) {
     return 'الأعلى: $rank';
   }
-
-  @override
-  String get liveGamePlayerCard => 'بطاقة اللاعب';
 
   @override
   String liveGamePlayerLoadoutOf(String name) {
@@ -4480,9 +4187,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileChooseMap => 'التصفية حسب الخريطة';
 
   @override
-  String get profileClearMap => 'مسح تصفية الخريطة';
-
-  @override
   String get profileColA => 'A';
 
   @override
@@ -4535,14 +4239,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get profileDuration => 'المدة';
-
-  @override
-  String profileDurationOf(String d) {
-    return 'المدة $d';
-  }
-
-  @override
   String get profileEndOfHistory => 'تم عرض جميع المباريات';
 
   @override
@@ -4553,9 +4249,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileFilterAll => 'الكل';
-
-  @override
-  String get profileFilterMap => 'الخريطة';
 
   @override
   String get profileFirstBloods => 'أول إقصاء';
@@ -4627,11 +4320,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileFriendsRow => 'الأصدقاء والدردشة';
-
-  @override
-  String profileGainPerWin(String rr) {
-    return '$rr RR لكل فوز';
-  }
 
   @override
   String get profileHideKills => 'إخفاء الإقصاءات';
@@ -4718,11 +4406,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileLevelHidden => 'المستوى مخفي';
 
   @override
-  String profileLossPerLoss(String rr) {
-    return '$rr RR لكل خسارة';
-  }
-
-  @override
   String profileLossStreak(int n) {
     return 'سلسلة خسارات: $n';
   }
@@ -4791,15 +4474,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profilePlayHubTitle => 'المباراة والفريق';
 
   @override
-  String get profilePartyRow => 'الفريق وقائمة الانتظار';
-
-  @override
   String get profilePeakRank => 'الأعلى';
-
-  @override
-  String profilePeakRankOf(String actTitle) {
-    return 'الأعلى · $actTitle';
-  }
 
   @override
   String get profilePerformanceAttack => 'الهجوم';
@@ -4810,9 +4485,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get profilePerformanceEmpty =>
       'لم تُسجَّل أي مباريات على هذا الجهاز بعد. افتح سجل المباريات لتسجيل المباريات التي لعبتها.';
-
-  @override
-  String get profilePerformanceGames => 'المباريات';
 
   @override
   String get profilePerformanceNoMatches =>
@@ -4849,13 +4521,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profilePerformanceTitle => 'الأداء';
-
-  @override
-  String get profilePerformanceTrendEmpty =>
-      'يتطلب الاتجاه فترتين على الأقل تضم كل منهما 3 مباريات أو أكثر.';
-
-  @override
-  String get profilePickTargetHint => 'اختر الرتبة التي تريد الوصول إليها';
 
   @override
   String profilePlacement(int n) {
@@ -5011,9 +4676,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileRoundsHint => 'المس جولة لعرض كل إقصاء.';
-
-  @override
-  String get profileRr => 'RR';
 
   @override
   String profileRrLeft(String n) {
@@ -5336,9 +4998,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get legalContactHeader => 'التواصل';
 
   @override
-  String get legalCreditsHeader => 'مصادر البيانات والإشادات';
-
-  @override
   String legalEffectiveFrom(String date) {
     return 'ساري المفعول اعتبارًا من $date';
   }
@@ -5441,10 +5100,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get settingsGeoHintOnly =>
       'تُستخدم الدولة للبحث والاقتراحات فقط. تتبع منطقة الاتصال حساب Riot الخاص بك.';
-
-  @override
-  String get settingsGeoUnsupported =>
-      'منطقة Riot هذه غير مدعومة بعد. يُرجى اختيار منطقة من الإعدادات.';
 
   @override
   String get settingsGeoSave => 'تحقّق واحفظ';
@@ -5553,34 +5208,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutCreditContent => 'valorant-api.com';
-
-  @override
-  String get settingsAboutCreditContentBody =>
-      'أسماء وصور ومعلومات المظاهر والعملاء والخرائط والرتب.';
-
-  @override
-  String get settingsAboutCreditDocs => 'توثيق المجتمع';
-
-  @override
-  String get settingsAboutCreditDocsBody =>
-      'مشروع techchrism/valorant-api-docs ومجتمع مطوري VALORANT.';
-
-  @override
-  String get settingsAboutCreditRiot => 'Riot Games';
-
-  @override
-  String get settingsAboutCreditRiotBody =>
-      'يأتي المتجر والمحفظة والمجموعة والمباريات والرتب مباشرةً من حساب Riot الذي تسجّل الدخول به.';
-
-  @override
-  String get settingsAboutCreditsHeader => 'مصادر البيانات';
-
-  @override
   String get settingsAboutHeader => 'معلومات';
-
-  @override
-  String get settingsAboutLegalHeader => 'المعلومات القانونية';
 
   @override
   String get settingsAboutRowSubtitle =>
@@ -5617,25 +5245,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'الصور والبيانات التي تم تنزيلها على جهازك، بما في ذلك تقارير الأخطاء المسجلة';
 
   @override
-  String get settingsClearLog => 'مسح تقارير الأخطاء المسجلة';
-
-  @override
-  String get settingsClearLogConfirm =>
-      'هل تريد مسح تقارير الأخطاء المسجلة على هذا الجهاز؟';
-
-  @override
   String get settingsExportLog => 'إرسال تقرير خطأ إلى ValHub';
 
   @override
   String get settingsExportLogEmpty =>
       'لا يوجد ما يُرسل بعد. استخدم التطبيق لبعض الوقت ثم حاول مجددًا.';
-
-  @override
-  String get settingsExportLogEmptyTitle => 'لا يوجد ما يُرسل بعد';
-
-  @override
-  String get settingsExportLogNote =>
-      'لا تتضمن تقارير الأخطاء كلمة المرور أو بيانات تسجيل الدخول إلى Riot.';
 
   @override
   String get settingsExportLogSubtitle =>
@@ -5651,10 +5265,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsItemLanguageEn => 'الإنجليزية';
 
   @override
-  String get settingsItemLanguageHint =>
-      'تظهر أسماء المظاهر والعملاء والخرائط… بهذه اللغة.';
-
-  @override
   String get settingsItemLanguageLabel => 'أسماء العناصر';
 
   @override
@@ -5664,64 +5274,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsItemLanguageVi => 'الفيتنامية';
 
   @override
-  String get settingsLegalNotice => 'إشعار قانوني';
-
-  @override
   String get settingsLinkOpenFailed =>
       'تعذّر فتح الرابط. يُرجى المحاولة مجددًا.';
-
-  @override
-  String get settingsLogCleared => 'تم مسح تقارير الأخطاء';
-
-  @override
-  String settingsLogEntryCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count إدخال',
-      many: '$count إدخالًا',
-      few: '$count إدخالات',
-      two: '$count إدخالان',
-      one: '$count إدخال',
-      zero: '$count إدخال',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String settingsLogEntryShown(int shown, int total) {
-    return 'الإدخالات: $shown / $total';
-  }
 
   @override
   String settingsLogFileHeader(String appName, String version) {
     return '$appName $version — تقرير خطأ';
   }
-
-  @override
-  String get settingsLogFilterAll => 'الكل';
-
-  @override
-  String get settingsLogFilterAuth => 'تسجيل الدخول';
-
-  @override
-  String get settingsLogFilterEmpty =>
-      'لا توجد إدخالات مطابقة. امسح عامل التصفية لعرض المزيد.';
-
-  @override
-  String get settingsLogFilterErrors => 'المشكلات';
-
-  @override
-  String get settingsLogFilterHttp => 'الاتصال';
-
-  @override
-  String get settingsLogMore => 'خيارات أخرى';
-
-  @override
-  String get settingsLogSearchEmpty => 'لا توجد إدخالات مطابقة.';
-
-  @override
-  String get settingsLogSearchHint => 'ابحث في تقارير الأخطاء…';
 
   @override
   String get settingsLogShareFailed =>
@@ -5967,9 +5526,6 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get settingsStatusRegionPicker => 'الخادم';
 
   @override
   String get settingsStatusScheduled => 'صيانة قادمة';
@@ -6231,16 +5787,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get socialChangeQueue => 'تغيير قائمة الانتظار';
 
   @override
-  String get socialChatTitle => 'الدردشة';
-
-  @override
   String get socialChatUnavailable => 'الدردشة غير متصلة.';
 
   @override
   String get socialCloseParty => 'إغلاق الفريق';
-
-  @override
-  String get socialClosedState => 'بالدعوة فقط';
 
   @override
   String get socialCodeInvalid => 'تتكون رموز الفريق من أحرف وأرقام فقط.';
@@ -6313,10 +5863,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get socialGenerateCode => 'إنشاء رمز';
-
-  @override
-  String get socialHistoryFailed =>
-      'تعذّر تحميل الرسائل الأقدم. أعد الاتصال وحاول مجددًا.';
 
   @override
   String get socialIdleQueue => 'جاهز للبحث';
@@ -6455,9 +6001,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get socialNoSearchResultsTitle => 'لم يتم العثور على شيء';
 
   @override
-  String get socialNotFriend => 'هذا اللاعب ليس في قائمة أصدقائك.';
-
-  @override
   String get socialNotReady => 'غير جاهز';
 
   @override
@@ -6485,9 +6028,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get socialOpenParty => 'فتح الفريق';
-
-  @override
-  String get socialOpenState => 'فريق مفتوح';
 
   @override
   String get socialOtherGamesLeagueOfLegends => 'ليج أوف ليجندز';
@@ -6872,21 +6412,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get storeRemoveFromWishlist => 'إزالة من قائمة الأمنيات';
 
   @override
-  String storeResetNotificationBody(int skinCount, String account) {
-    String _temp0 = intl.Intl.pluralLogic(
-      skinCount,
-      locale: localeName,
-      other: 'اطّلع على $skinCount مظهر جديد اليوم لـ $account.',
-      many: 'اطّلع على $skinCount مظهرًا جديدًا اليوم لـ $account.',
-      few: 'اطّلع على $skinCount مظاهر جديدة اليوم لـ $account.',
-      two: 'اطّلع على $skinCount مظهرين جديدين اليوم لـ $account.',
-      one: 'اطّلع على $skinCount مظهر جديد اليوم لـ $account.',
-      zero: 'اطّلع على مظاهر اليوم الجديدة لـ $account.',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get storeResetNotificationTitle => 'تجدد متجرك';
 
   @override
@@ -7003,6 +6528,95 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String storeWishlistCount(int n) {
     return 'في قائمة الأمنيات: $n';
+  }
+
+  @override
+  String get storeHistoryTitle => 'سجل المتجر';
+
+  @override
+  String storeHistorySince(String date, int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$daysString يوم',
+      many: '$daysString يومًا',
+      few: '$daysString أيام',
+      two: '$daysString يومان',
+      one: '$daysString يوم',
+      zero: '$daysString يوم',
+    );
+    return 'يُسجَّل على هذا الجهاز منذ $date · $_temp0';
+  }
+
+  @override
+  String get storeHistoryEmpty =>
+      'لم يُسجَّل أي يوم بعد. يحفظ ValHub متجرك اليومي في كل مرة تفتح فيها التطبيق، على هذا الجهاز فقط.';
+
+  @override
+  String get storeHistoryMostOffered => 'الأكثر ظهورًا';
+
+  @override
+  String storeHistoryTimes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString مرة',
+      many: '$nString مرة',
+      few: '$nString مرات',
+      two: '$nString مرتان',
+      one: '$nString مرة',
+      zero: '$nString مرة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryNightMarket(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'السوق الليلي · $countString عرض',
+      many: 'السوق الليلي · $countString عرضًا',
+      few: 'السوق الليلي · $countString عروض',
+      two: 'السوق الليلي · $countString عرضان',
+      one: 'السوق الليلي · $countString عرض',
+      zero: 'السوق الليلي · $countString عرض',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryEntrySubtitle(int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'سُجِّل على هذا الجهاز: $daysString يوم',
+      many: 'سُجِّل على هذا الجهاز: $daysString يومًا',
+      few: 'سُجِّل على هذا الجهاز: $daysString أيام',
+      two: 'سُجِّل على هذا الجهاز: $daysString يومان',
+      one: 'سُجِّل على هذا الجهاز: $daysString يوم',
+      zero: 'بدأ التسجيل اليوم',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -7129,9 +6743,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wishlistClearFilters => 'مسح عوامل التصفية';
 
   @override
-  String get wishlistClearSearch => 'مسح البحث';
-
-  @override
   String get wishlistEmpty =>
       'قائمة الأمنيات فارغة. المس ♡ على أي مظهر لإضافته.';
 
@@ -7145,9 +6756,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wishlistExcludedRewards => 'لا تشمل مظاهر الجوائز';
-
-  @override
-  String get wishlistFilterTiers => 'الإصدار';
 
   @override
   String wishlistFiltered(int count, String value) {
@@ -7167,15 +6775,6 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return 'حسب التصفية: $_temp0 · $value';
   }
-
-  @override
-  String get wishlistHasEstimates => 'تشمل أسعارًا تقديرية (≈)';
-
-  @override
-  String get wishlistInWishlist => 'في قائمة الأمنيات';
-
-  @override
-  String get wishlistInWishlistLabel => 'في قائمة الأمنيات';
 
   @override
   String get wishlistNoMatch =>
@@ -7283,14 +6882,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get wishlistSortBy => 'ترتيب';
-
-  @override
-  String wishlistSortLabel(String sort) {
-    return 'الترتيب: $sort';
-  }
-
-  @override
   String get wishlistSortName => 'الاسم';
 
   @override
@@ -7301,12 +6892,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wishlistSortWeapon => 'السلاح';
-
-  @override
-  String get wishlistStoreCheckTitle => 'تعذّر التحقق من المتجر';
-
-  @override
-  String get wishlistSubtitle => 'المظاهر التي تبحث عنها';
 
   @override
   String get wishlistTitle => 'قائمة الأمنيات';
@@ -7446,7 +7031,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homeCardCommunityDesc =>
-      'ابحث عن زملاء في مستوى رتبتك وتعرّف على المظاهر الأكثر تفضيلًا هذا الأسبوع.';
+      'ابحث عن زملاء في مستوى رتبتك وتعرّف على المظاهر الأكثر تفضيلًا لدى المجتمع.';
 
   @override
   String get homeCardFriends => 'أصدقاء يلعبون';

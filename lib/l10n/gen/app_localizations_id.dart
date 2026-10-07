@@ -23,9 +23,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get commonAppName => 'ValHub';
 
   @override
-  String get commonBack => 'Kembali';
-
-  @override
   String get commonCancel => 'Batal';
 
   @override
@@ -38,16 +35,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get commonClose => 'Tutup';
 
   @override
-  String get commonConfirm => 'Konfirmasi';
-
-  @override
   String get commonCopied => 'Disalin';
-
-  @override
-  String get commonCopy => 'Salin';
-
-  @override
-  String get commonDaily => 'harian';
 
   @override
   String get commonDash => '–';
@@ -64,9 +52,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get commonDelete => 'Hapus';
-
-  @override
-  String get commonDone => 'Selesai';
 
   @override
   String get commonEmptyGeneric => 'Belum ada apa-apa di sini.';
@@ -120,9 +105,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get commonEstimatePrefix => '≈';
 
   @override
-  String get commonFilter => 'Filter';
-
-  @override
   String get commonGoHome => 'Ke Beranda';
 
   @override
@@ -167,9 +149,6 @@ class AppLocalizationsId extends AppLocalizations {
   String commonOfflineCached(String time) {
     return 'Kamu sedang offline — menampilkan data tersimpan ($time).';
   }
-
-  @override
-  String get commonOk => 'OK';
 
   @override
   String get commonOpenSettings => 'Buka pengaturan';
@@ -275,12 +254,6 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get commonPullToRefresh => 'Tarik untuk memuat ulang';
-
-  @override
-  String get commonRefresh => 'Muat ulang';
-
-  @override
   String get commonRetry => 'Coba lagi';
 
   @override
@@ -299,9 +272,6 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get commonSeeAll => 'Lihat semua';
-
-  @override
   String get commonShare => 'Bagikan';
 
   @override
@@ -314,24 +284,6 @@ class AppLocalizationsId extends AppLocalizations {
   String commonSortBy(String option) {
     return 'Urutkan: $option';
   }
-
-  @override
-  String get commonSortName => 'Nama A–Z';
-
-  @override
-  String get commonSortNewest => 'Terbaru';
-
-  @override
-  String get commonSortPriceHigh => 'Harga: tertinggi';
-
-  @override
-  String get commonSortPriceLow => 'Harga: terendah';
-
-  @override
-  String get commonSortRarity => 'Kelangkaan';
-
-  @override
-  String get commonSortWeapon => 'Senjata';
 
   @override
   String get commonTabBattlePass => 'Battle Pass';
@@ -454,9 +406,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get contentCurrencyVpFull => 'VALORANT Point';
 
   @override
-  String get contentDefaultSkin => 'Standar';
-
-  @override
   String get contentItemAgent => 'Agen';
 
   @override
@@ -476,18 +425,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get contentItemFlex => 'Flex';
-
-  @override
-  String get contentItemLanguageEn => 'Bahasa Inggris';
-
-  @override
-  String get contentItemLanguageTitle => 'Nama item';
-
-  @override
-  String get contentItemLanguageVi => 'Bahasa Vietnam';
-
-  @override
-  String get contentItemLevelBorder => 'Bingkai Level';
 
   @override
   String get contentItemSkin => 'Skin';
@@ -555,12 +492,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get contentLevelItemLabelsFishAnimation => 'Animasi Ikan';
-
-  @override
-  String get contentLimitedEdition => 'Limited Edition';
-
-  @override
-  String get contentNoSpray => 'Tidak ada';
 
   @override
   String get contentNoTitle => 'Tanpa gelar';
@@ -688,11 +619,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get accountRiotCountryUnknown => 'Negara akun Riot: Tidak diketahui';
-
-  @override
-  String accountAccountCount(int count, int max) {
-    return '$count/$max akun';
-  }
 
   @override
   String accountAccountsHeader(int count, int max) {
@@ -879,9 +805,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get accountStatusUnknown => 'Status tidak diketahui';
 
   @override
-  String get accountSwitchFailed => 'Gagal berganti akun. Coba lagi.';
-
-  @override
   String accountSwitchTo(String account) {
     return 'Ganti ke $account';
   }
@@ -903,9 +826,6 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get accountUnlockLoginNote =>
       'Verifikasi untuk membuka info login Riot';
-
-  @override
-  String get authAccountAlreadyAdded => 'Akun ini sudah ditambahkan';
 
   @override
   String get authAddAsNew => 'Tambah sebagai akun baru';
@@ -959,10 +879,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get authSignInCta => 'Login dengan akun Riot';
-
-  @override
-  String get authSignInNote =>
-      'Kamu login di halaman resmi Riot. ValHub hanya menyimpan kata sandimu jika kamu memilih untuk menyimpan info login; data login dan info tersimpan hanya ada di perangkatmu.';
 
   @override
   String get authSocialLoginHint =>
@@ -1181,12 +1097,6 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get economyCollectionValue => 'Nilai koleksi';
-
-  @override
-  String get economyExcludedRewards => 'Tidak termasuk skin hadiah';
-
-  @override
   String economyPlaceBundle(String name) {
     return 'bundle $name';
   }
@@ -1216,12 +1126,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get economyPriceUnknown => 'Harga tidak diketahui';
 
   @override
-  String get economyValueHasEstimates => 'Termasuk perkiraan (≈)';
-
-  @override
-  String get economyWishlistValue => 'Total nilai wishlist';
-
-  @override
   String loadoutDefaultPresetName(int n) {
     return 'Loadout $n';
   }
@@ -1236,9 +1140,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get loadoutSaveFailed => 'Gagal menyimpan loadout';
-
-  @override
-  String get battlePassActEnded => 'Act ini sudah berakhir';
 
   @override
   String battlePassActEndsIn(String time) {
@@ -1278,9 +1179,6 @@ class AppLocalizationsId extends AppLocalizations {
   String battlePassCharges(int charges, int needed) {
     return '$charges/$needed';
   }
-
-  @override
-  String get battlePassCheckpoint => 'Checkpoint';
 
   @override
   String get battlePassCheckpointHint =>
@@ -1403,9 +1301,6 @@ class AppLocalizationsId extends AppLocalizations {
   String battlePassMissionsCompleted(int done, int total) {
     return '$done/$total selesai';
   }
-
-  @override
-  String get battlePassMissionsProgressLabel => 'Progres misi mingguan';
 
   @override
   String battlePassNewMissionsAtWall(String wall) {
@@ -1596,9 +1491,6 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get collectionBannerTitlePrefix => 'Gelar: ';
-
-  @override
   String get collectionBrowseBuddies => 'Gun Buddy';
 
   @override
@@ -1618,9 +1510,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get collectionBrowseSprays => 'Spray';
-
-  @override
-  String get collectionBrowseTitle => 'Jelajahi koleksi';
 
   @override
   String get collectionBrowseTitles => 'Gelar Pemain';
@@ -1669,12 +1558,6 @@ class AppLocalizationsId extends AppLocalizations {
   String collectionChromaCount(int owned, int total) {
     return '$owned/$total varian';
   }
-
-  @override
-  String get collectionClearFilters => 'Hapus filter';
-
-  @override
-  String get collectionClearSearch => 'Hapus pencarian';
 
   @override
   String get collectionClearTiers => 'Hapus filter edisi';
@@ -1734,9 +1617,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get collectionExpressionsTitle => 'Expression wheel';
 
   @override
-  String get collectionFilterTiers => 'Edisi';
-
-  @override
   String get collectionHideAccountLevel => 'Sembunyikan level akun';
 
   @override
@@ -1751,21 +1631,7 @@ class AppLocalizationsId extends AppLocalizations {
       'Sembunyikan namamu dari pemain di luar party-mu saat bertanding.';
 
   @override
-  String collectionItemsCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    return '$nString item';
-  }
-
-  @override
   String get collectionLevelBorderAuto => 'Otomatis sesuai level';
-
-  @override
-  String get collectionLevelBorderEmpty =>
-      'Belum ada Bingkai Level untuk levelmu.';
 
   @override
   String collectionLevelBorderFrom(int level) {
@@ -1955,16 +1821,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get collectionPreview => 'Pratinjau';
 
   @override
-  String get collectionPreviewing => 'Sedang dilihat';
-
-  @override
   String get collectionRemoveBuddy => 'Lepas Gun Buddy';
 
   @override
   String get collectionRenamePreset => 'Ganti nama';
-
-  @override
-  String get collectionRowCard => 'Kartu Pemain';
 
   @override
   String get collectionRowExpressions => 'Expression wheel';
@@ -1974,9 +1834,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get collectionRowPresets => 'Loadout tersimpan';
-
-  @override
-  String get collectionRowTitle => 'Gelar Pemain';
 
   @override
   String get collectionRowWeapons => 'Loadout senjata';
@@ -2046,9 +1903,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get collectionSlotNamesItem3 => 'Kiri';
-
-  @override
-  String get collectionSortLabel => 'Urutkan';
 
   @override
   String get collectionSortName => 'Nama';
@@ -2233,9 +2087,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get communityRankingClear => 'Hapus filter senjata dan waktu';
 
   @override
-  String get communityRankingPeriod => 'Waktu';
-
-  @override
   String get communityRankingSort => 'Urutkan peringkat';
 
   @override
@@ -2282,9 +2133,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get communityAddPhotos => 'Tambah foto';
 
   @override
-  String get communityAgentsPicked => 'Agen yang dipilih';
-
-  @override
   String get communityAllModes => 'Semua';
 
   @override
@@ -2304,9 +2152,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get communityApply => 'Terapkan';
-
-  @override
-  String get communityAutoRefresh => 'Dimuat ulang otomatis setiap 20 detik';
 
   @override
   String get communityBackToMyCountry => 'Kembali ke negaramu';
@@ -2331,17 +2176,11 @@ class AppLocalizationsId extends AppLocalizations {
       'Gagal membuat kode party. Buka VALORANT atau masukkan kode secara manual.';
 
   @override
-  String get communityCodeGenerated => 'Kode dibuat dari party-mu saat ini.';
-
-  @override
   String get communityCodeInvalid =>
       'Kode harus terdiri dari tepat 6 huruf kapital atau angka.';
 
   @override
   String get communityCodeRequired => 'Masukkan atau buat kode party.';
-
-  @override
-  String get communityComment => 'Komentar';
 
   @override
   String get communityCommentHint => 'Tulis komentar…';
@@ -2427,12 +2266,6 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get communityConsentWithdrawn =>
       'Persetujuan ditarik. Kamu perlu menyetujui lagi untuk terus memakai aplikasi.';
-
-  @override
-  String get communityCountriesEmpty => 'Tidak ada negara yang cocok.';
-
-  @override
-  String get communityCountriesSearchHint => 'Cari negara…';
 
   @override
   String get communityCountriesTitle => 'Komunitas per negara';
@@ -2931,12 +2764,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get communityFilters => 'Filter';
 
   @override
-  String get communityGenerateCode => 'Buat kode party';
-
-  @override
-  String get communityGeneratingCode => 'Membuat kode…';
-
-  @override
   String get communityGoogleDisclaimer =>
       'THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.';
 
@@ -2990,18 +2817,10 @@ class AppLocalizationsId extends AppLocalizations {
       'Buka VALORANT di PC atau konsolmu lalu coba lagi.';
 
   @override
-  String get communityJoinInvalidCode =>
-      'Kode party tidak berlaku lagi atau party sudah penuh.';
-
-  @override
   String get communityJoinParty => 'Gabung party';
 
   @override
   String get communityJoinPartyFull => 'Party ini sudah penuh.';
-
-  @override
-  String get communityJoined =>
-      'Kamu sudah bergabung ke party! Buka VALORANT untuk main bareng.';
 
   @override
   String get communityJoinedHint =>
@@ -3016,9 +2835,6 @@ class AppLocalizationsId extends AppLocalizations {
 
     return '$nString permintaan bergabung';
   }
-
-  @override
-  String get communityKeepEditing => 'Lanjut menulis';
 
   @override
   String get communityKindNightMarket => 'Night Market';
@@ -3104,10 +2920,6 @@ class AppLocalizationsId extends AppLocalizations {
       'Postinganmu sudah kedaluwarsa. Buat postingan baru untuk mencari rekan tim.';
 
   @override
-  String get communityLfgExpiryNote =>
-      'Postingan otomatis kedaluwarsa setelah 30 menit.';
-
-  @override
   String get communityLfgGateBody =>
       'Gabung (verifikasi Riot ID sekali saja) untuk melihat postingan pemain di server yang sama dan memposting pencarian rekan timmu sendiri. Kamu tetap bisa menjelajahi Feed dan Peringkat skin seperti biasa.';
 
@@ -3141,29 +2953,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get communityLike => 'Suka';
 
   @override
-  String communityLikes(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    return '$nString suka';
-  }
-
-  @override
   String get communityLiveMembers => 'Anggota';
 
   @override
-  String get communityLoadMoreFailed =>
-      'Gagal memuat postingan lainnya. Coba lagi.';
-
-  @override
   String get communityMatchMyRank => 'Sesuai rank-mu';
-
-  @override
-  String communityMaxPhotos(int max) {
-    return 'Maksimal $max foto.';
-  }
 
   @override
   String communityMemberJoined(String name) {
@@ -3195,9 +2988,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get communityMuteAuthor => 'Sembunyikan pemain ini';
 
   @override
-  String get communityMyPost => 'Postinganmu';
-
-  @override
   String get communityNewPost => 'Posting';
 
   @override
@@ -3215,15 +3005,6 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get communityNoComments =>
       'Belum ada komentar. Jadilah yang pertama berkomentar!';
-
-  @override
-  String get communityNoParty =>
-      'Party-mu tidak ditemukan. Buka VALORANT lalu coba lagi, atau masukkan kode secara manual.';
-
-  @override
-  String communityNoPartyWithReason(String reason) {
-    return 'Party-mu tidak ditemukan. Buka VALORANT lalu coba lagi, atau masukkan kode secara manual.\n$reason';
-  }
 
   @override
   String get communityNoRatings => 'Belum ada penilaian';
@@ -3280,21 +3061,9 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get communityPeriodAll => 'Semua';
-
-  @override
-  String get communityPeriodAllTime => 'Sepanjang masa';
-
-  @override
-  String get communityPeriodWeek => 'Minggu ini';
-
-  @override
   String communityPhotoCount(int n, int max) {
     return '$n/$max foto';
   }
-
-  @override
-  String get communityPickRating => 'Pilih jumlah bintang.';
 
   @override
   String get communityPlayVideo => 'Tonton video';
@@ -3311,10 +3080,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get communityPosted => 'Berhasil diposting!';
-
-  @override
-  String get communityPrivacyNote =>
-      'ValHub memverifikasi Riot ID saat kamu terhubung ke Komunitas dan kepemilikan skin saat kamu memberi ulasan. Komunitas tidak pernah menyimpan kata sandi atau data login Riot-mu.';
 
   @override
   String get communityPublish => 'Posting';
@@ -3445,9 +3210,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get communityReported => 'Terima kasih! Laporanmu sudah dikirim.';
 
   @override
-  String get communityRetry => 'Coba lagi';
-
-  @override
   String get communityReviewDeleted => 'Ulasan dihapus.';
 
   @override
@@ -3471,9 +3233,6 @@ class AppLocalizationsId extends AppLocalizations {
   String communityReviewsHeader(String n) {
     return 'Ulasan · $n';
   }
-
-  @override
-  String get communityReviewsSection => 'Ulasan';
 
   @override
   String communityRiotId(String name, String tag) {
@@ -3500,9 +3259,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get communityScopeRegion => 'Region';
-
-  @override
-  String get communityScopeWorldwide => 'Seluruh dunia';
 
   @override
   String get communitySectionFeed => 'Feed';
@@ -3546,13 +3302,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get communitySkinNotFound => 'Skin ini tidak ditemukan.';
-
-  @override
-  String get communitySkinsEmptyBody =>
-      'Beri hati untuk skin favoritmu agar naik di peringkat!';
-
-  @override
-  String get communitySkinsEmptyTitle => 'Belum ada suara';
 
   @override
   String get communitySlots => 'Jumlah pemain yang dibutuhkan';
@@ -3638,10 +3387,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get communityTranslateFailed => 'Gagal menerjemahkan. Coba lagi.';
 
   @override
-  String get communityTranslateUnavailable =>
-      'Perangkat ini belum mendukung terjemahan di perangkat.';
-
-  @override
   String get communityTranslatedByGoogle =>
       'Diterjemahkan otomatis oleh Google';
 
@@ -3669,12 +3414,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get communityUnvote => 'Hapus hati';
-
-  @override
-  String get communityUploading => 'Mengunggah foto…';
-
-  @override
-  String get communityViewImage => 'Lihat foto';
 
   @override
   String get communityVote => 'Beri hati untuk skin ini';
@@ -3711,9 +3450,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get communityWriteFirstReview => 'Tulis ulasan pertama';
 
   @override
-  String get communityWritePost => 'Tulis postingan';
-
-  @override
   String get communityYou => 'Kamu';
 
   @override
@@ -3743,12 +3479,6 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get liveGameAutoRefreshNote =>
       'Dimuat ulang otomatis saat kamu sedang bertanding.';
-
-  @override
-  String get liveGameBuddy => 'Gun Buddy';
-
-  @override
-  String get liveGameClose => 'Tutup';
 
   @override
   String get liveGameCurrentGame => 'Pertandingan saat ini';
@@ -3848,9 +3578,6 @@ class AppLocalizationsId extends AppLocalizations {
   String liveGamePeak(String rank) {
     return 'Tertinggi: $rank';
   }
-
-  @override
-  String get liveGamePlayerCard => 'Kartu Pemain';
 
   @override
   String liveGamePlayerLoadoutOf(String name) {
@@ -4074,9 +3801,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get profileChooseMap => 'Filter berdasarkan map';
 
   @override
-  String get profileClearMap => 'Hapus filter map';
-
-  @override
   String get profileColA => 'A';
 
   @override
@@ -4119,14 +3843,6 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get profileDuration => 'Durasi';
-
-  @override
-  String profileDurationOf(String d) {
-    return 'Durasi $d';
-  }
-
-  @override
   String get profileEndOfHistory => 'Semua pertandingan sudah ditampilkan';
 
   @override
@@ -4137,9 +3853,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get profileFilterAll => 'Semua';
-
-  @override
-  String get profileFilterMap => 'Map';
 
   @override
   String get profileFirstBloods => 'First blood';
@@ -4171,11 +3884,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get profileFriendsRow => 'Teman & chat';
-
-  @override
-  String profileGainPerWin(String rr) {
-    return '$rr RR saat menang';
-  }
 
   @override
   String get profileHideKills => 'Sembunyikan kill';
@@ -4242,11 +3950,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get profileLevelHidden => 'Level disembunyikan';
 
   @override
-  String profileLossPerLoss(String rr) {
-    return '$rr RR saat kalah';
-  }
-
-  @override
   String profileLossStreak(int n) {
     return '$n kekalahan beruntun';
   }
@@ -4307,15 +4010,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get profilePlayHubTitle => 'Pertandingan & party';
 
   @override
-  String get profilePartyRow => 'Party & antrean';
-
-  @override
   String get profilePeakRank => 'Tertinggi';
-
-  @override
-  String profilePeakRankOf(String actTitle) {
-    return 'Tertinggi · $actTitle';
-  }
 
   @override
   String get profilePerformanceAttack => 'Menyerang';
@@ -4326,9 +4021,6 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get profilePerformanceEmpty =>
       'Belum ada pertandingan yang tercatat di perangkat ini. Buka riwayat pertandingan untuk mencatat pertandingan yang sudah kamu mainkan.';
-
-  @override
-  String get profilePerformanceGames => 'Pertandingan';
 
   @override
   String get profilePerformanceNoMatches =>
@@ -4355,13 +4047,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get profilePerformanceTitle => 'Performa';
-
-  @override
-  String get profilePerformanceTrendEmpty =>
-      'Tren butuh minimal dua periode dengan masing-masing 3 pertandingan atau lebih.';
-
-  @override
-  String get profilePickTargetHint => 'Pilih rank yang ingin kamu capai';
 
   @override
   String profilePlacement(int n) {
@@ -4473,9 +4158,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get profileRoundsHint => 'Ketuk ronde untuk melihat setiap kill.';
-
-  @override
-  String get profileRr => 'RR';
 
   @override
   String profileRrLeft(String n) {
@@ -4793,9 +4475,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get legalContactHeader => 'KONTAK';
 
   @override
-  String get legalCreditsHeader => 'SUMBER DATA & KREDIT';
-
-  @override
   String legalEffectiveFrom(String date) {
     return 'Berlaku sejak $date';
   }
@@ -4900,10 +4579,6 @@ class AppLocalizationsId extends AppLocalizations {
       'Negara hanya dipakai untuk pencarian dan saran. Region koneksi mengikuti akun Riot-mu.';
 
   @override
-  String get settingsGeoUnsupported =>
-      'Region Riot ini belum didukung. Pilih region di Pengaturan.';
-
-  @override
   String get settingsGeoSave => 'Periksa dan simpan';
 
   @override
@@ -5005,34 +4680,7 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutCreditContent => 'valorant-api.com';
-
-  @override
-  String get settingsAboutCreditContentBody =>
-      'Nama, gambar, dan info skin, agen, map, serta rank.';
-
-  @override
-  String get settingsAboutCreditDocs => 'Dokumentasi komunitas';
-
-  @override
-  String get settingsAboutCreditDocsBody =>
-      'Proyek techchrism/valorant-api-docs dan komunitas developer VALORANT.';
-
-  @override
-  String get settingsAboutCreditRiot => 'Riot Games';
-
-  @override
-  String get settingsAboutCreditRiotBody =>
-      'Toko, dompet, koleksi, pertandingan, dan rank diambil langsung dari akun Riot yang kamu pakai untuk login.';
-
-  @override
-  String get settingsAboutCreditsHeader => 'SUMBER DATA';
-
-  @override
   String get settingsAboutHeader => 'INFO';
-
-  @override
-  String get settingsAboutLegalHeader => 'LEGAL';
 
   @override
   String get settingsAboutRowSubtitle =>
@@ -5069,25 +4717,11 @@ class AppLocalizationsId extends AppLocalizations {
       'Gambar dan data yang diunduh ke perangkatmu, termasuk laporan bug yang tercatat';
 
   @override
-  String get settingsClearLog => 'Hapus laporan bug yang tercatat';
-
-  @override
-  String get settingsClearLogConfirm =>
-      'Hapus laporan bug yang tercatat di perangkat ini?';
-
-  @override
   String get settingsExportLog => 'Kirim laporan bug ke ValHub';
 
   @override
   String get settingsExportLogEmpty =>
       'Belum ada yang bisa dikirim. Pakai aplikasi sebentar lalu coba lagi.';
-
-  @override
-  String get settingsExportLogEmptyTitle => 'Belum ada yang bisa dikirim';
-
-  @override
-  String get settingsExportLogNote =>
-      'Laporan bug tidak berisi kata sandi atau data login Riot-mu.';
 
   @override
   String get settingsExportLogSubtitle =>
@@ -5103,10 +4737,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get settingsItemLanguageEn => 'Bahasa Inggris';
 
   @override
-  String get settingsItemLanguageHint =>
-      'Nama skin, agen, map… ditampilkan dalam bahasa ini.';
-
-  @override
   String get settingsItemLanguageLabel => 'Nama item';
 
   @override
@@ -5116,53 +4746,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get settingsItemLanguageVi => 'Bahasa Vietnam';
 
   @override
-  String get settingsLegalNotice => 'Pemberitahuan legal';
-
-  @override
   String get settingsLinkOpenFailed => 'Gagal membuka tautan. Coba lagi.';
-
-  @override
-  String get settingsLogCleared => 'Laporan bug dihapus';
-
-  @override
-  String settingsLogEntryCount(int count) {
-    return '$count entri';
-  }
-
-  @override
-  String settingsLogEntryShown(int shown, int total) {
-    return '$shown / $total entri';
-  }
 
   @override
   String settingsLogFileHeader(String appName, String version) {
     return '$appName $version — Laporan bug';
   }
-
-  @override
-  String get settingsLogFilterAll => 'Semua';
-
-  @override
-  String get settingsLogFilterAuth => 'Login';
-
-  @override
-  String get settingsLogFilterEmpty =>
-      'Tidak ada entri yang cocok. Hapus filter untuk melihat lebih banyak.';
-
-  @override
-  String get settingsLogFilterErrors => 'Masalah';
-
-  @override
-  String get settingsLogFilterHttp => 'Koneksi';
-
-  @override
-  String get settingsLogMore => 'Opsi lainnya';
-
-  @override
-  String get settingsLogSearchEmpty => 'Tidak ada entri yang cocok.';
-
-  @override
-  String get settingsLogSearchHint => 'Cari di laporan bug…';
 
   @override
   String get settingsLogShareFailed => 'Gagal mengirim laporan bug. Coba lagi.';
@@ -5383,9 +4972,6 @@ class AppLocalizationsId extends AppLocalizations {
   String settingsStatusMoreUpdates(int n) {
     return 'Tampilkan $n pembaruan lagi';
   }
-
-  @override
-  String get settingsStatusRegionPicker => 'Server';
 
   @override
   String get settingsStatusScheduled => 'Pemeliharaan akan datang';
@@ -5618,16 +5204,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get socialChangeQueue => 'Ganti antrean';
 
   @override
-  String get socialChatTitle => 'Chat';
-
-  @override
   String get socialChatUnavailable => 'Chat sedang offline.';
 
   @override
   String get socialCloseParty => 'Tutup party';
-
-  @override
-  String get socialClosedState => 'Hanya undangan';
 
   @override
   String get socialCodeInvalid => 'Kode party hanya berisi huruf dan angka.';
@@ -5689,10 +5269,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get socialGenerateCode => 'Buat kode';
-
-  @override
-  String get socialHistoryFailed =>
-      'Gagal memuat pesan lama. Sambungkan ulang lalu coba lagi.';
 
   @override
   String get socialIdleQueue => 'Siap masuk antrean';
@@ -5832,9 +5408,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get socialNoSearchResultsTitle => 'Tidak ditemukan';
 
   @override
-  String get socialNotFriend => 'Pemain ini tidak ada di daftar temanmu.';
-
-  @override
   String get socialNotReady => 'Belum siap';
 
   @override
@@ -5862,9 +5435,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get socialOpenParty => 'Buka party';
-
-  @override
-  String get socialOpenState => 'Party terbuka';
 
   @override
   String get socialOtherGamesLeagueOfLegends => 'League of Legends';
@@ -6217,17 +5787,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get storeRemoveFromWishlist => 'Hapus dari wishlist';
 
   @override
-  String storeResetNotificationBody(int skinCount, String account) {
-    String _temp0 = intl.Intl.pluralLogic(
-      skinCount,
-      locale: localeName,
-      other: 'Lihat $skinCount skin baru hari ini untuk $account.',
-      zero: 'Lihat skin baru hari ini untuk $account.',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get storeResetNotificationTitle => 'Tokomu sudah diperbarui';
 
   @override
@@ -6349,6 +5908,76 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String get storeHistoryTitle => 'Riwayat toko';
+
+  @override
+  String storeHistorySince(String date, int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$daysString hari',
+    );
+    return 'Dicatat di perangkat ini sejak $date · $_temp0';
+  }
+
+  @override
+  String get storeHistoryEmpty =>
+      'Belum ada hari yang tercatat. ValHub menyimpan toko harianmu setiap kali kamu membuka aplikasi, hanya di perangkat ini.';
+
+  @override
+  String get storeHistoryMostOffered => 'Paling sering muncul';
+
+  @override
+  String storeHistoryTimes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString kali',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryNightMarket(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Night Market · $countString penawaran',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryEntrySubtitle(int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$daysString hari tercatat di perangkat ini',
+      zero: 'Mulai dicatat hari ini',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String wishlistNotifDailyBody(
     String skin,
     String account,
@@ -6459,9 +6088,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get wishlistClearFilters => 'Hapus filter';
 
   @override
-  String get wishlistClearSearch => 'Hapus pencarian';
-
-  @override
   String get wishlistEmpty =>
       'Wishlist-mu kosong. Ketuk ♡ di skin mana pun untuk menambahkannya.';
 
@@ -6477,9 +6103,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get wishlistExcludedRewards => 'Tidak termasuk skin hadiah';
 
   @override
-  String get wishlistFilterTiers => 'Edisi';
-
-  @override
   String wishlistFiltered(int count, String value) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);
@@ -6487,15 +6110,6 @@ class AppLocalizationsId extends AppLocalizations {
 
     return 'Difilter: $countString skin · $value';
   }
-
-  @override
-  String get wishlistHasEstimates => 'Termasuk perkiraan (≈)';
-
-  @override
-  String get wishlistInWishlist => 'Ada di wishlist';
-
-  @override
-  String get wishlistInWishlistLabel => 'ada di wishlist';
 
   @override
   String get wishlistNoMatch =>
@@ -6581,14 +6195,6 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get wishlistSortBy => 'Urutkan';
-
-  @override
-  String wishlistSortLabel(String sort) {
-    return 'Urutkan: $sort';
-  }
-
-  @override
   String get wishlistSortName => 'Nama';
 
   @override
@@ -6599,12 +6205,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get wishlistSortWeapon => 'Senjata';
-
-  @override
-  String get wishlistStoreCheckTitle => 'Gagal memeriksa toko';
-
-  @override
-  String get wishlistSubtitle => 'Skin incaranmu';
 
   @override
   String get wishlistTitle => 'Wishlist';
@@ -6697,7 +6297,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get homeCardCommunityDesc =>
-      'Cari rekan tim yang sesuai rank-mu dan skin paling disukai minggu ini.';
+      'Cari rekan tim yang sesuai rank-mu dan skin paling disukai komunitas.';
 
   @override
   String get homeCardFriends => 'Teman yang sedang main';

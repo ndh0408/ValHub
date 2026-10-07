@@ -23,9 +23,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get commonAppName => 'ValHub';
 
   @override
-  String get commonBack => 'Geri';
-
-  @override
   String get commonCancel => 'İptal';
 
   @override
@@ -38,16 +35,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get commonClose => 'Kapat';
 
   @override
-  String get commonConfirm => 'Onayla';
-
-  @override
   String get commonCopied => 'Kopyalandı';
-
-  @override
-  String get commonCopy => 'Kopyala';
-
-  @override
-  String get commonDaily => 'günlük';
 
   @override
   String get commonDash => '–';
@@ -64,9 +52,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get commonDelete => 'Sil';
-
-  @override
-  String get commonDone => 'Tamam';
 
   @override
   String get commonEmptyGeneric => 'Burada henüz bir şey yok.';
@@ -120,9 +105,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get commonEstimatePrefix => '≈';
 
   @override
-  String get commonFilter => 'Filtrele';
-
-  @override
   String get commonGoHome => 'Ana Sayfa\'ya dön';
 
   @override
@@ -167,9 +149,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String commonOfflineCached(String time) {
     return 'Çevrim dışısın — kayıtlı veriler gösteriliyor ($time).';
   }
-
-  @override
-  String get commonOk => 'Tamam';
 
   @override
   String get commonOpenSettings => 'Ayarları aç';
@@ -273,12 +252,6 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get commonPullToRefresh => 'Yenilemek için çek';
-
-  @override
-  String get commonRefresh => 'Yenile';
-
-  @override
   String get commonRetry => 'Tekrar dene';
 
   @override
@@ -297,9 +270,6 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get commonSeeAll => 'Tümünü gör';
-
-  @override
   String get commonShare => 'Paylaş';
 
   @override
@@ -312,24 +282,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String commonSortBy(String option) {
     return 'Sırala: $option';
   }
-
-  @override
-  String get commonSortName => 'Ad A–Z';
-
-  @override
-  String get commonSortNewest => 'En yeni';
-
-  @override
-  String get commonSortPriceHigh => 'Fiyat: yüksekten düşüğe';
-
-  @override
-  String get commonSortPriceLow => 'Fiyat: düşükten yükseğe';
-
-  @override
-  String get commonSortRarity => 'Nadirlik';
-
-  @override
-  String get commonSortWeapon => 'Silah';
 
   @override
   String get commonTabBattlePass => 'Savaş Bileti';
@@ -452,9 +404,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get contentCurrencyVpFull => 'VALORANT Puanı';
 
   @override
-  String get contentDefaultSkin => 'Standart';
-
-  @override
   String get contentItemAgent => 'Ajan';
 
   @override
@@ -474,18 +423,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get contentItemFlex => 'Flex';
-
-  @override
-  String get contentItemLanguageEn => 'İngilizce';
-
-  @override
-  String get contentItemLanguageTitle => 'Öğe adları';
-
-  @override
-  String get contentItemLanguageVi => 'Vietnamca';
-
-  @override
-  String get contentItemLevelBorder => 'Seviye Çerçevesi';
 
   @override
   String get contentItemSkin => 'Kaplama';
@@ -554,12 +491,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get contentLevelItemLabelsFishAnimation => 'Balık Animasyonu';
-
-  @override
-  String get contentLimitedEdition => 'Sınırlı Sayıda';
-
-  @override
-  String get contentNoSpray => 'Yok';
 
   @override
   String get contentNoTitle => 'Unvan yok';
@@ -690,11 +621,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get accountRiotCountryUnknown => 'Riot hesabı ülkesi: Bilinmiyor';
-
-  @override
-  String accountAccountCount(int count, int max) {
-    return '$count/$max hesap';
-  }
 
   @override
   String accountAccountsHeader(int count, int max) {
@@ -881,9 +807,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get accountStatusUnknown => 'Durum bilinmiyor';
 
   @override
-  String get accountSwitchFailed => 'Hesap değiştirilemedi. Tekrar dene.';
-
-  @override
   String accountSwitchTo(String account) {
     return 'Geçiş yap: $account';
   }
@@ -905,9 +828,6 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get accountUnlockLoginNote =>
       'Riot giriş bilgilerinin kilidini açmak için doğrula';
-
-  @override
-  String get authAccountAlreadyAdded => 'Bu hesap zaten eklenmiş';
 
   @override
   String get authAddAsNew => 'Yeni hesap olarak ekle';
@@ -962,10 +882,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get authSignInCta => 'Riot hesabıyla giriş yap';
-
-  @override
-  String get authSignInNote =>
-      'Riot\'un resmî sayfasında giriş yaparsın. ValHub şifreni yalnızca giriş bilgilerini kaydetmeyi seçersen saklar; giriş verilerin ve kayıtlı bilgilerin yalnızca cihazında kalır.';
 
   @override
   String get authSocialLoginHint =>
@@ -1182,12 +1098,6 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get economyCollectionValue => 'Koleksiyon değeri';
-
-  @override
-  String get economyExcludedRewards => 'Ödül kaplamaları hariç';
-
-  @override
   String economyPlaceBundle(String name) {
     return '$name paketi';
   }
@@ -1217,12 +1127,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get economyPriceUnknown => 'Fiyat bilinmiyor';
 
   @override
-  String get economyValueHasEstimates => 'Tahminler dahil (≈)';
-
-  @override
-  String get economyWishlistValue => 'İstek listesi toplam değeri';
-
-  @override
   String loadoutDefaultPresetName(int n) {
     return 'Kuşanım $n';
   }
@@ -1237,9 +1141,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get loadoutSaveFailed => 'Kuşanım kaydedilemedi';
-
-  @override
-  String get battlePassActEnded => 'Bu kısım sona erdi';
 
   @override
   String battlePassActEndsIn(String time) {
@@ -1279,9 +1180,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String battlePassCharges(int charges, int needed) {
     return '$charges/$needed';
   }
-
-  @override
-  String get battlePassCheckpoint => 'Kontrol noktası';
 
   @override
   String get battlePassCheckpointHint =>
@@ -1405,9 +1303,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String battlePassMissionsCompleted(int done, int total) {
     return '$done/$total tamamlandı';
   }
-
-  @override
-  String get battlePassMissionsProgressLabel => 'Haftalık görev ilerlemesi';
 
   @override
   String battlePassNewMissionsAtWall(String wall) {
@@ -1598,9 +1493,6 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get collectionBannerTitlePrefix => 'Unvan: ';
-
-  @override
   String get collectionBrowseBuddies => 'Silah Aksesuarları';
 
   @override
@@ -1620,9 +1512,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get collectionBrowseSprays => 'Spreyler';
-
-  @override
-  String get collectionBrowseTitle => 'Koleksiyona göz at';
 
   @override
   String get collectionBrowseTitles => 'Oyuncu Unvanları';
@@ -1671,12 +1560,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String collectionChromaCount(int owned, int total) {
     return '$owned/$total varyant';
   }
-
-  @override
-  String get collectionClearFilters => 'Filtreleri temizle';
-
-  @override
-  String get collectionClearSearch => 'Aramayı temizle';
 
   @override
   String get collectionClearTiers => 'Seri filtresini temizle';
@@ -1736,9 +1619,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get collectionExpressionsTitle => 'İfade çarkı';
 
   @override
-  String get collectionFilterTiers => 'Seri';
-
-  @override
   String get collectionHideAccountLevel => 'Hesap seviyesini gizle';
 
   @override
@@ -1753,21 +1633,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'Maçlarda adını grubunda olmayan oyunculardan gizle.';
 
   @override
-  String collectionItemsCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    return '$nString öğe';
-  }
-
-  @override
   String get collectionLevelBorderAuto => 'Seviyeye göre otomatik';
-
-  @override
-  String get collectionLevelBorderEmpty =>
-      'Seviyen için henüz seviye çerçevesi yok.';
 
   @override
   String collectionLevelBorderFrom(int level) {
@@ -1959,16 +1825,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get collectionPreview => 'Önizle';
 
   @override
-  String get collectionPreviewing => 'Önizleniyor';
-
-  @override
   String get collectionRemoveBuddy => 'Silah aksesuarını çıkar';
 
   @override
   String get collectionRenamePreset => 'Yeniden adlandır';
-
-  @override
-  String get collectionRowCard => 'Oyuncu Kartı';
 
   @override
   String get collectionRowExpressions => 'İfade çarkı';
@@ -1978,9 +1838,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get collectionRowPresets => 'Kayıtlı kuşanım setleri';
-
-  @override
-  String get collectionRowTitle => 'Oyuncu Unvanı';
 
   @override
   String get collectionRowWeapons => 'Silah kuşanımı';
@@ -2051,9 +1908,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get collectionSlotNamesItem3 => 'Sol';
-
-  @override
-  String get collectionSortLabel => 'Sırala';
 
   @override
   String get collectionSortName => 'Ad';
@@ -2240,9 +2094,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get communityRankingClear => 'Silah ve zaman filtrelerini temizle';
 
   @override
-  String get communityRankingPeriod => 'Zaman';
-
-  @override
   String get communityRankingSort => 'Sıralama ölçütü';
 
   @override
@@ -2290,9 +2141,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get communityAddPhotos => 'Fotoğraf ekle';
 
   @override
-  String get communityAgentsPicked => 'Seçilen ajanlar';
-
-  @override
   String get communityAllModes => 'Tümü';
 
   @override
@@ -2312,9 +2160,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get communityApply => 'Uygula';
-
-  @override
-  String get communityAutoRefresh => '20 saniyede bir otomatik yenilenir';
 
   @override
   String get communityBackToMyCountry => 'Ülkeme dön';
@@ -2339,17 +2184,11 @@ class AppLocalizationsTr extends AppLocalizations {
       'Grup kodu oluşturulamadı. VALORANT\'ı aç veya kodu elle gir.';
 
   @override
-  String get communityCodeGenerated => 'Kod mevcut grubundan oluşturuldu.';
-
-  @override
   String get communityCodeInvalid =>
       'Kod tam olarak 6 büyük harf veya rakamdan oluşmalı.';
 
   @override
   String get communityCodeRequired => 'Bir grup kodu gir veya oluştur.';
-
-  @override
-  String get communityComment => 'Yorum yap';
 
   @override
   String get communityCommentHint => 'Yorum yaz…';
@@ -2435,12 +2274,6 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get communityConsentWithdrawn =>
       'Onay geri çekildi. Uygulamayı kullanmaya devam etmek için tekrar onay vermen gerekir.';
-
-  @override
-  String get communityCountriesEmpty => 'Eşleşen ülke yok.';
-
-  @override
-  String get communityCountriesSearchHint => 'Ülke ara…';
 
   @override
   String get communityCountriesTitle => 'Ülkelere göre topluluklar';
@@ -2938,12 +2771,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get communityFilters => 'Filtreler';
 
   @override
-  String get communityGenerateCode => 'Grup kodu oluştur';
-
-  @override
-  String get communityGeneratingCode => 'Kod oluşturuluyor…';
-
-  @override
   String get communityGoogleDisclaimer =>
       'THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.';
 
@@ -2997,18 +2824,10 @@ class AppLocalizationsTr extends AppLocalizations {
       'VALORANT\'ı bilgisayarında veya konsolunda açıp tekrar dene.';
 
   @override
-  String get communityJoinInvalidCode =>
-      'Grup kodu artık geçerli değil veya grup dolu.';
-
-  @override
   String get communityJoinParty => 'Gruba katıl';
 
   @override
   String get communityJoinPartyFull => 'Bu grup dolu.';
-
-  @override
-  String get communityJoined =>
-      'Gruba katıldın! Birlikte oynamak için VALORANT\'ı aç.';
 
   @override
   String get communityJoinedHint =>
@@ -3023,9 +2842,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
     return '$nString katılma isteği';
   }
-
-  @override
-  String get communityKeepEditing => 'Yazmaya devam et';
 
   @override
   String get communityKindNightMarket => 'Gece Pazarı';
@@ -3111,10 +2927,6 @@ class AppLocalizationsTr extends AppLocalizations {
       'İlanının süresi doldu. Takım arkadaşı bulmak için yeni bir ilan oluştur.';
 
   @override
-  String get communityLfgExpiryNote =>
-      'İlanların süresi 30 dakika sonra otomatik olarak dolar.';
-
-  @override
   String get communityLfgGateBody =>
       'Sunucundaki oyuncuların ilanlarını görmek ve kendi takım arkadaşı ilanını vermek için katıl (Riot ID\'ni bir kez doğrula). Akış\'a ve Kaplama sıralamalarına her zamanki gibi göz atabilirsin.';
 
@@ -3148,29 +2960,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get communityLike => 'Beğen';
 
   @override
-  String communityLikes(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    return '$nString beğeni';
-  }
-
-  @override
   String get communityLiveMembers => 'Üyeler';
 
   @override
-  String get communityLoadMoreFailed =>
-      'Daha fazla gönderi yüklenemedi. Tekrar dene.';
-
-  @override
   String get communityMatchMyRank => 'Rütbene uygun';
-
-  @override
-  String communityMaxPhotos(int max) {
-    return 'En fazla $max fotoğraf.';
-  }
 
   @override
   String communityMemberJoined(String name) {
@@ -3202,9 +2995,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get communityMuteAuthor => 'Bu oyuncuyu gizle';
 
   @override
-  String get communityMyPost => 'İlanın';
-
-  @override
   String get communityNewPost => 'Paylaş';
 
   @override
@@ -3221,15 +3011,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get communityNoComments => 'Henüz yorum yok. İlk yorumu sen yap!';
-
-  @override
-  String get communityNoParty =>
-      'Grubun bulunamadı. VALORANT\'ı açıp tekrar dene veya kodu elle gir.';
-
-  @override
-  String communityNoPartyWithReason(String reason) {
-    return 'Grubun bulunamadı. VALORANT\'ı açıp tekrar dene veya kodu elle gir.\n$reason';
-  }
 
   @override
   String get communityNoRatings => 'Henüz puan yok';
@@ -3285,21 +3066,9 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get communityPeriodAll => 'Tümü';
-
-  @override
-  String get communityPeriodAllTime => 'Tüm zamanlar';
-
-  @override
-  String get communityPeriodWeek => 'Bu hafta';
-
-  @override
   String communityPhotoCount(int n, int max) {
     return '$n/$max fotoğraf';
   }
-
-  @override
-  String get communityPickRating => 'Bir yıldız puanı seç.';
 
   @override
   String get communityPlayVideo => 'Videoyu izle';
@@ -3315,10 +3084,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get communityPosted => 'Paylaşıldı!';
-
-  @override
-  String get communityPrivacyNote =>
-      'ValHub, Topluluk\'a bağlandığında Riot ID\'ni, inceleme yaptığında da kaplama sahipliğini doğrular. Topluluk şifreni veya Riot giriş verilerini asla saklamaz.';
 
   @override
   String get communityPublish => 'Paylaş';
@@ -3449,9 +3214,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get communityReported => 'Teşekkürler! Bildirimin gönderildi.';
 
   @override
-  String get communityRetry => 'Tekrar dene';
-
-  @override
   String get communityReviewDeleted => 'İnceleme silindi.';
 
   @override
@@ -3474,9 +3236,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String communityReviewsHeader(String n) {
     return 'İncelemeler · $n';
   }
-
-  @override
-  String get communityReviewsSection => 'İncelemeler';
 
   @override
   String communityRiotId(String name, String tag) {
@@ -3503,9 +3262,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get communityScopeRegion => 'Bölge';
-
-  @override
-  String get communityScopeWorldwide => 'Küresel';
 
   @override
   String get communitySectionFeed => 'Akış';
@@ -3548,13 +3304,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get communitySkinNotFound => 'Bu kaplama bulunamadı.';
-
-  @override
-  String get communitySkinsEmptyBody =>
-      'En sevdiğin kaplamaları sıralamada yükseltmek için onlara kalp bırak!';
-
-  @override
-  String get communitySkinsEmptyTitle => 'Henüz oy yok';
 
   @override
   String get communitySlots => 'Gereken oyuncu';
@@ -3641,10 +3390,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get communityTranslateFailed => 'Çevrilemedi. Tekrar dene.';
 
   @override
-  String get communityTranslateUnavailable =>
-      'Bu cihaz henüz cihaz içi çeviriyi desteklemiyor.';
-
-  @override
   String get communityTranslatedByGoogle =>
       'Google tarafından otomatik çevrildi';
 
@@ -3672,12 +3417,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get communityUnvote => 'Kalbi kaldır';
-
-  @override
-  String get communityUploading => 'Fotoğraflar yükleniyor…';
-
-  @override
-  String get communityViewImage => 'Fotoğrafı gör';
 
   @override
   String get communityVote => 'Bu kaplamaya kalp bırak';
@@ -3714,9 +3453,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get communityWriteFirstReview => 'İlk incelemeyi yaz';
 
   @override
-  String get communityWritePost => 'Gönderi yaz';
-
-  @override
   String get communityYou => 'Sen';
 
   @override
@@ -3745,12 +3481,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get liveGameAutoRefreshNote => 'Maçtayken otomatik olarak yenilenir.';
-
-  @override
-  String get liveGameBuddy => 'Silah Aksesuarı';
-
-  @override
-  String get liveGameClose => 'Kapat';
 
   @override
   String get liveGameCurrentGame => 'Mevcut maç';
@@ -3850,9 +3580,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String liveGamePeak(String rank) {
     return 'En yüksek: $rank';
   }
-
-  @override
-  String get liveGamePlayerCard => 'Oyuncu Kartı';
 
   @override
   String liveGamePlayerLoadoutOf(String name) {
@@ -4077,9 +3804,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get profileChooseMap => 'Haritaya göre filtrele';
 
   @override
-  String get profileClearMap => 'Harita filtresini temizle';
-
-  @override
   String get profileColA => 'A';
 
   @override
@@ -4122,14 +3846,6 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get profileDuration => 'Süre';
-
-  @override
-  String profileDurationOf(String d) {
-    return 'Süre: $d';
-  }
-
-  @override
   String get profileEndOfHistory => 'Tüm maçlar gösterildi';
 
   @override
@@ -4140,9 +3856,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get profileFilterAll => 'Tümü';
-
-  @override
-  String get profileFilterMap => 'Harita';
 
   @override
   String get profileFirstBloods => 'İlk kan';
@@ -4174,11 +3887,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get profileFriendsRow => 'Arkadaşlar ve sohbet';
-
-  @override
-  String profileGainPerWin(String rr) {
-    return 'Galibiyet başına $rr RR';
-  }
 
   @override
   String get profileHideKills => 'Leşleri gizle';
@@ -4245,11 +3953,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get profileLevelHidden => 'Seviye gizli';
 
   @override
-  String profileLossPerLoss(String rr) {
-    return 'Mağlubiyet başına $rr RR';
-  }
-
-  @override
   String profileLossStreak(int n) {
     return '$n maçlık mağlubiyet serisi';
   }
@@ -4308,15 +4011,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get profilePlayHubTitle => 'Maç ve grup';
 
   @override
-  String get profilePartyRow => 'Grup ve sıra';
-
-  @override
   String get profilePeakRank => 'En yüksek';
-
-  @override
-  String profilePeakRankOf(String actTitle) {
-    return 'En yüksek · $actTitle';
-  }
 
   @override
   String get profilePerformanceAttack => 'Saldırı';
@@ -4327,9 +4022,6 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get profilePerformanceEmpty =>
       'Bu cihaza henüz maç kaydedilmedi. Oynadığın maçları kaydetmek için maç geçmişini aç.';
-
-  @override
-  String get profilePerformanceGames => 'Maçlar';
 
   @override
   String get profilePerformanceNoMatches => 'Seçilen zaman aralığında maç yok.';
@@ -4355,13 +4047,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get profilePerformanceTitle => 'Performans';
-
-  @override
-  String get profilePerformanceTrendEmpty =>
-      'Eğilimleri karşılaştırmak için her birinde en az 3 maç olan en az iki dönem gerekir.';
-
-  @override
-  String get profilePickTargetHint => 'Ulaşmak istediğin rütbeyi seç';
 
   @override
   String profilePlacement(int n) {
@@ -4474,9 +4159,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get profileRoundsHint => 'Her leşi görmek için bir raunda dokun.';
-
-  @override
-  String get profileRr => 'RR';
 
   @override
   String profileRrLeft(String n) {
@@ -4792,9 +4474,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get legalContactHeader => 'İLETİŞİM';
 
   @override
-  String get legalCreditsHeader => 'VERİ KAYNAKLARI VE EMEĞİ GEÇENLER';
-
-  @override
   String legalEffectiveFrom(String date) {
     return 'Yürürlük tarihi: $date';
   }
@@ -4899,10 +4578,6 @@ class AppLocalizationsTr extends AppLocalizations {
       'Ülke yalnızca arama ve öneriler için kullanılır. Bağlantı bölgen Riot hesabına göre belirlenir.';
 
   @override
-  String get settingsGeoUnsupported =>
-      'Bu Riot bölgesi henüz desteklenmiyor. Ayarlar\'dan bir bölge seç.';
-
-  @override
   String get settingsGeoSave => 'Kontrol et ve kaydet';
 
   @override
@@ -5004,34 +4679,7 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutCreditContent => 'valorant-api.com';
-
-  @override
-  String get settingsAboutCreditContentBody =>
-      'Kaplamalar, ajanlar, haritalar ve rütbeler için adlar, görseller ve bilgiler.';
-
-  @override
-  String get settingsAboutCreditDocs => 'Topluluk belgeleri';
-
-  @override
-  String get settingsAboutCreditDocsBody =>
-      'techchrism/valorant-api-docs projesi ve VALORANT geliştirici topluluğu.';
-
-  @override
-  String get settingsAboutCreditRiot => 'Riot Games';
-
-  @override
-  String get settingsAboutCreditRiotBody =>
-      'Mağaza, cüzdan, koleksiyon, maçlar ve sıralamalar doğrudan giriş yaptığın Riot hesabından gelir.';
-
-  @override
-  String get settingsAboutCreditsHeader => 'VERİ KAYNAKLARI';
-
-  @override
   String get settingsAboutHeader => 'BİLGİ';
-
-  @override
-  String get settingsAboutLegalHeader => 'YASAL';
 
   @override
   String get settingsAboutRowSubtitle =>
@@ -5068,25 +4716,11 @@ class AppLocalizationsTr extends AppLocalizations {
       'Cihazına indirilen görseller ve veriler, kaydedilen hata raporları dahil';
 
   @override
-  String get settingsClearLog => 'Kaydedilen hata raporlarını temizle';
-
-  @override
-  String get settingsClearLogConfirm =>
-      'Bu cihazda kaydedilen hata raporları temizlensin mi?';
-
-  @override
   String get settingsExportLog => 'ValHub\'a hata raporu gönder';
 
   @override
   String get settingsExportLogEmpty =>
       'Henüz gönderilecek bir şey yok. Uygulamayı bir süre kullanıp tekrar dene.';
-
-  @override
-  String get settingsExportLogEmptyTitle => 'Henüz gönderilecek bir şey yok';
-
-  @override
-  String get settingsExportLogNote =>
-      'Hata raporları şifreni veya Riot giriş verilerini içermez.';
 
   @override
   String get settingsExportLogSubtitle =>
@@ -5103,10 +4737,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsItemLanguageEn => 'İngilizce';
 
   @override
-  String get settingsItemLanguageHint =>
-      'Kaplama, ajan, harita adları… bu dilde gösterilir.';
-
-  @override
   String get settingsItemLanguageLabel => 'Öğe adları';
 
   @override
@@ -5116,53 +4746,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsItemLanguageVi => 'Vietnamca';
 
   @override
-  String get settingsLegalNotice => 'Yasal uyarı';
-
-  @override
   String get settingsLinkOpenFailed => 'Bağlantı açılamadı. Tekrar dene.';
-
-  @override
-  String get settingsLogCleared => 'Hata raporları temizlendi';
-
-  @override
-  String settingsLogEntryCount(int count) {
-    return '$count kayıt';
-  }
-
-  @override
-  String settingsLogEntryShown(int shown, int total) {
-    return '$shown / $total kayıt';
-  }
 
   @override
   String settingsLogFileHeader(String appName, String version) {
     return '$appName $version — Hata raporu';
   }
-
-  @override
-  String get settingsLogFilterAll => 'Tümü';
-
-  @override
-  String get settingsLogFilterAuth => 'Giriş';
-
-  @override
-  String get settingsLogFilterEmpty =>
-      'Eşleşen kayıt yok. Daha fazlasını görmek için filtreyi temizle.';
-
-  @override
-  String get settingsLogFilterErrors => 'Sorunlar';
-
-  @override
-  String get settingsLogFilterHttp => 'Bağlantı';
-
-  @override
-  String get settingsLogMore => 'Diğer seçenekler';
-
-  @override
-  String get settingsLogSearchEmpty => 'Eşleşen kayıt yok.';
-
-  @override
-  String get settingsLogSearchHint => 'Hata raporlarında ara…';
 
   @override
   String get settingsLogShareFailed =>
@@ -5384,9 +4973,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String settingsStatusMoreUpdates(int n) {
     return '$n güncelleme daha göster';
   }
-
-  @override
-  String get settingsStatusRegionPicker => 'Sunucu';
 
   @override
   String get settingsStatusScheduled => 'Yaklaşan bakım';
@@ -5618,16 +5204,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get socialChangeQueue => 'Sırayı değiştir';
 
   @override
-  String get socialChatTitle => 'Sohbet';
-
-  @override
   String get socialChatUnavailable => 'Sohbet çevrim dışı.';
 
   @override
   String get socialCloseParty => 'Grubu kapat';
-
-  @override
-  String get socialClosedState => 'Yalnızca davetle';
 
   @override
   String get socialCodeInvalid => 'Grup kodları yalnızca harf ve rakam içerir.';
@@ -5690,10 +5270,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get socialGenerateCode => 'Kod oluştur';
-
-  @override
-  String get socialHistoryFailed =>
-      'Eski mesajlar yüklenemedi. Yeniden bağlanıp tekrar dene.';
 
   @override
   String get socialIdleQueue => 'Sıraya girmeye hazır';
@@ -5831,9 +5407,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get socialNoSearchResultsTitle => 'Hiçbir şey bulunamadı';
 
   @override
-  String get socialNotFriend => 'Bu oyuncu arkadaş listende değil.';
-
-  @override
   String get socialNotReady => 'Hazır değil';
 
   @override
@@ -5861,9 +5434,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get socialOpenParty => 'Grubu aç';
-
-  @override
-  String get socialOpenState => 'Açık grup';
 
   @override
   String get socialOtherGamesLeagueOfLegends => 'League of Legends';
@@ -6215,18 +5785,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get storeRemoveFromWishlist => 'İstek listesinden çıkar';
 
   @override
-  String storeResetNotificationBody(int skinCount, String account) {
-    String _temp0 = intl.Intl.pluralLogic(
-      skinCount,
-      locale: localeName,
-      other: '$account için bugünün $skinCount yeni kaplamasına göz at.',
-      one: '$account için bugünün $skinCount yeni kaplamasına göz at.',
-      zero: '$account için bugünün yeni kaplamalarına göz at.',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get storeResetNotificationTitle => 'Mağazan yenilendi';
 
   @override
@@ -6349,6 +5907,80 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String get storeHistoryTitle => 'Mağaza geçmişi';
+
+  @override
+  String storeHistorySince(String date, int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$daysString gün',
+      one: '$daysString gün',
+    );
+    return 'Bu cihazda kayıt başlangıcı: $date · $_temp0';
+  }
+
+  @override
+  String get storeHistoryEmpty =>
+      'Henüz kaydedilmiş gün yok. ValHub, uygulamayı her açtığında günlük mağazanı yalnızca bu cihaza kaydeder.';
+
+  @override
+  String get storeHistoryMostOffered => 'En sık çıkanlar';
+
+  @override
+  String storeHistoryTimes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString kez',
+      one: '$nString kez',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryNightMarket(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Gece Pazarı · $countString teklif',
+      one: 'Gece Pazarı · $countString teklif',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryEntrySubtitle(int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Bu cihazda $daysString gün kaydedildi',
+      one: 'Bu cihazda $daysString gün kaydedildi',
+      zero: 'Kayıt bugün başladı',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String wishlistNotifDailyBody(
     String skin,
     String account,
@@ -6460,9 +6092,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get wishlistClearFilters => 'Filtreleri temizle';
 
   @override
-  String get wishlistClearSearch => 'Aramayı temizle';
-
-  @override
   String get wishlistEmpty =>
       'İstek listen boş. Eklemek için herhangi bir kaplamadaki ♡ simgesine dokun.';
 
@@ -6478,9 +6107,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get wishlistExcludedRewards => 'Ödül kaplamaları hariç';
 
   @override
-  String get wishlistFilterTiers => 'Seri';
-
-  @override
   String wishlistFiltered(int count, String value) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);
@@ -6488,15 +6114,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
     return 'Filtrelenen: $countString kaplama · $value';
   }
-
-  @override
-  String get wishlistHasEstimates => 'Tahminler dahil (≈)';
-
-  @override
-  String get wishlistInWishlist => 'İstek listende';
-
-  @override
-  String get wishlistInWishlistLabel => 'istek listesinde';
 
   @override
   String get wishlistNoMatch =>
@@ -6582,14 +6199,6 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get wishlistSortBy => 'Sırala';
-
-  @override
-  String wishlistSortLabel(String sort) {
-    return 'Sırala: $sort';
-  }
-
-  @override
   String get wishlistSortName => 'Ad';
 
   @override
@@ -6600,12 +6209,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get wishlistSortWeapon => 'Silah';
-
-  @override
-  String get wishlistStoreCheckTitle => 'Mağaza kontrol edilemedi';
-
-  @override
-  String get wishlistSubtitle => 'Peşinde olduğun kaplamalar';
 
   @override
   String get wishlistTitle => 'İstek listesi';
@@ -6700,7 +6303,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get homeCardCommunityDesc =>
-      'Rütbene uygun takım arkadaşları ve haftanın en sevilen kaplamaları.';
+      'Rütbene uygun takım arkadaşları ve topluluğun en sevdiği kaplamalar.';
 
   @override
   String get homeCardFriends => 'Oynayan arkadaşlar';

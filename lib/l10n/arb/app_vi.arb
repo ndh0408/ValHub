@@ -18,11 +18,6 @@
     "description": "CommonStrings.appName — ",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
-  "commonBack": "Quay lại",
-  "@commonBack": {
-    "description": "CommonStrings.back — Actions",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
   "commonCancel": "Hủy",
   "@commonCancel": {
     "description": "CommonStrings.cancel — Actions",
@@ -43,24 +38,9 @@
     "description": "CommonStrings.close — Actions",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
-  "commonConfirm": "Xác nhận",
-  "@commonConfirm": {
-    "description": "CommonStrings.confirm — Actions",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
   "commonCopied": "Đã sao chép",
   "@commonCopied": {
     "description": "CommonStrings.copied — States",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
-  "commonCopy": "Sao chép",
-  "@commonCopy": {
-    "description": "CommonStrings.copy — Actions",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
-  "commonDaily": "hằng ngày",
-  "@commonDaily": {
-    "description": "CommonStrings.daily — Time (VF §8.0 rule 7)",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonDash": "–",
@@ -91,11 +71,6 @@
   "commonDelete": "Xóa",
   "@commonDelete": {
     "description": "CommonStrings.delete — Actions",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
-  "commonDone": "Xong",
-  "@commonDone": {
-    "description": "CommonStrings.done — Actions",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonEmptyGeneric": "Chưa có gì ở đây.",
@@ -171,11 +146,6 @@
   "commonEstimatePrefix": "≈",
   "@commonEstimatePrefix": {
     "description": "CommonStrings.estimatePrefix — States",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
-  "commonFilter": "Lọc",
-  "@commonFilter": {
-    "description": "CommonStrings.filter — Actions",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonGoHome": "Về Trang chủ",
@@ -261,11 +231,6 @@
         "type": "String"
       }
     },
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
-  "commonOk": "OK",
-  "@commonOk": {
-    "description": "CommonStrings.ok — Actions",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonOpenSettings": "Mở cài đặt",
@@ -439,16 +404,6 @@
     },
     "x-context": "lib/core/l10n/common_strings.dart"
   },
-  "commonPullToRefresh": "Kéo để làm mới",
-  "@commonPullToRefresh": {
-    "description": "CommonStrings.pullToRefresh — States",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
-  "commonRefresh": "Làm mới",
-  "@commonRefresh": {
-    "description": "CommonStrings.refresh — Actions",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
   "commonRetry": "Thử lại",
   "@commonRetry": {
     "description": "CommonStrings.retry — Actions",
@@ -479,11 +434,6 @@
     },
     "x-context": "lib/core/l10n/common_strings.dart"
   },
-  "commonSeeAll": "Xem tất cả",
-  "@commonSeeAll": {
-    "description": "CommonStrings.seeAll — Actions",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
   "commonShare": "Chia sẻ",
   "@commonShare": {
     "description": "CommonStrings.share — Actions",
@@ -507,36 +457,6 @@
         "type": "String"
       }
     },
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
-  "commonSortName": "Tên A–Z",
-  "@commonSortName": {
-    "description": "CommonStrings.sortName — Sort options shared by the skin / item lists",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
-  "commonSortNewest": "Mới nhất",
-  "@commonSortNewest": {
-    "description": "CommonStrings.sortNewest — Sort options shared by the skin / item lists",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
-  "commonSortPriceHigh": "Giá giảm dần",
-  "@commonSortPriceHigh": {
-    "description": "CommonStrings.sortPriceHigh — Sort options shared by the skin / item lists",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
-  "commonSortPriceLow": "Giá tăng dần",
-  "@commonSortPriceLow": {
-    "description": "CommonStrings.sortPriceLow — Sort options shared by the skin / item lists",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
-  "commonSortRarity": "Độ hiếm",
-  "@commonSortRarity": {
-    "description": "CommonStrings.sortRarity — Sort options shared by the skin / item lists",
-    "x-context": "lib/core/l10n/common_strings.dart"
-  },
-  "commonSortWeapon": "Vũ khí",
-  "@commonSortWeapon": {
-    "description": "CommonStrings.sortWeapon — Sort options shared by the skin / item lists",
     "x-context": "lib/core/l10n/common_strings.dart"
   },
   "commonTabBattlePass": "Battle Pass",
@@ -747,11 +667,6 @@
     "description": "ContentStrings.currencyVpFull — Currencies (VF §8.3). valorant-api's vi names are re-cased English.",
     "x-context": "lib/core/l10n/content_strings.dart"
   },
-  "contentDefaultSkin": "Mặc định",
-  "@contentDefaultSkin": {
-    "description": "ContentStrings.defaultSkin — Defaults / placeholders",
-    "x-context": "lib/core/l10n/content_strings.dart"
-  },
   "contentItemAgent": "Đặc vụ",
   "@contentItemAgent": {
     "description": "ContentStrings.itemAgent — Item types (VF §8.2)",
@@ -785,26 +700,6 @@
   "contentItemFlex": "Flex",
   "@contentItemFlex": {
     "description": "ContentStrings.itemFlex — Item types (VF §8.2)",
-    "x-context": "lib/core/l10n/content_strings.dart"
-  },
-  "contentItemLanguageEn": "Tiếng Anh",
-  "@contentItemLanguageEn": {
-    "description": "ContentStrings.itemLanguageEn — Item-name language setting (VF §6.8)",
-    "x-context": "lib/core/l10n/content_strings.dart"
-  },
-  "contentItemLanguageTitle": "Tên vật phẩm",
-  "@contentItemLanguageTitle": {
-    "description": "ContentStrings.itemLanguageTitle — Item-name language setting (VF §6.8)",
-    "x-context": "lib/core/l10n/content_strings.dart"
-  },
-  "contentItemLanguageVi": "Tiếng Việt",
-  "@contentItemLanguageVi": {
-    "description": "ContentStrings.itemLanguageVi — Item-name language setting (VF §6.8)",
-    "x-context": "lib/core/l10n/content_strings.dart"
-  },
-  "contentItemLevelBorder": "Khung cấp",
-  "@contentItemLevelBorder": {
-    "description": "ContentStrings.itemLevelBorder — Item types (VF §8.2)",
     "x-context": "lib/core/l10n/content_strings.dart"
   },
   "contentItemSkin": "Skin",
@@ -915,16 +810,6 @@
   "contentLevelItemLabelsFishAnimation": "Hoạt ảnh cá",
   "@contentLevelItemLabelsFishAnimation": {
     "description": "ContentStrings.levelItemLabels — Skin level types keyed by `EEquippableSkinLevelItem::*` (VF §8.4)",
-    "x-context": "lib/core/l10n/content_strings.dart"
-  },
-  "contentLimitedEdition": "Phiên bản giới hạn",
-  "@contentLimitedEdition": {
-    "description": "ContentStrings.limitedEdition — Content tiers, short badge form (SUMMARY §7.3) and full form (VF §8.3).",
-    "x-context": "lib/core/l10n/content_strings.dart"
-  },
-  "contentNoSpray": "Không có",
-  "@contentNoSpray": {
-    "description": "ContentStrings.noSpray — Defaults / placeholders",
     "x-context": "lib/core/l10n/content_strings.dart"
   },
   "contentNoTitle": "Không có danh hiệu",
@@ -1140,19 +1025,6 @@
   "@accountRiotCountryUnknown": {
     "description": "Profile country unavailable; never infer it from region, device location or language.",
     "x-manual": true
-  },
-  "accountAccountCount": "{count}/{max} tài khoản",
-  "@accountAccountCount": {
-    "description": "AccountStrings.accountCount — Switcher sheet (S05)",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      },
-      "max": {
-        "type": "int"
-      }
-    },
-    "x-context": "lib/core/l10n/account_strings.dart"
   },
   "accountAccountsHeader": "TÀI KHOẢN ({count}/{max})",
   "@accountAccountsHeader": {
@@ -1460,11 +1332,6 @@
     "description": "AccountStrings.statusUnknown — Live activity of each account in the lists (VF §8: online / offline)",
     "x-context": "lib/core/l10n/account_strings.dart"
   },
-  "accountSwitchFailed": "Chưa chuyển được tài khoản. Hãy thử lại.",
-  "@accountSwitchFailed": {
-    "description": "AccountStrings.switchFailed — ",
-    "x-context": "lib/core/l10n/account_strings.dart"
-  },
   "accountSwitchTo": "Chuyển sang {account}",
   "@accountSwitchTo": {
     "description": "AccountStrings.switchTo — ",
@@ -1507,11 +1374,6 @@
   "@accountUnlockLoginNote": {
     "description": "AccountStrings.unlockLoginNote — Login note: the user's own Riot username / password per account",
     "x-context": "lib/core/l10n/account_strings.dart"
-  },
-  "authAccountAlreadyAdded": "Tài khoản này đã được thêm",
-  "@authAccountAlreadyAdded": {
-    "description": "AuthStrings.accountAlreadyAdded — ",
-    "x-context": "lib/core/l10n/auth_strings.dart"
   },
   "authAddAsNew": "Thêm tài khoản mới",
   "@authAddAsNew": {
@@ -1591,11 +1453,6 @@
   "authSignInCta": "Đăng nhập bằng tài khoản Riot",
   "@authSignInCta": {
     "description": "AuthStrings.signInCta — ",
-    "x-context": "lib/core/l10n/auth_strings.dart"
-  },
-  "authSignInNote": "Bạn đăng nhập trên trang chính thức của Riot. ValHub chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập; dữ liệu đăng nhập và thông tin đã lưu chỉ nằm trên thiết bị của bạn.",
-  "@authSignInNote": {
-    "description": "AuthStrings.signInNote — ",
     "x-context": "lib/core/l10n/auth_strings.dart"
   },
   "authSocialLoginHint": "Nếu đăng nhập bằng Google hoặc Facebook không được, hãy dùng tên đăng nhập Riot.",
@@ -1943,16 +1800,6 @@
     },
     "x-context": "lib/core/domain/economy/economy_strings.dart"
   },
-  "economyCollectionValue": "Giá trị bộ sưu tập",
-  "@economyCollectionValue": {
-    "description": "EconomyStrings.collectionValue — Collection value (VF §8.6).",
-    "x-context": "lib/core/domain/economy/economy_strings.dart"
-  },
-  "economyExcludedRewards": "Không tính skin phần thưởng",
-  "@economyExcludedRewards": {
-    "description": "EconomyStrings.excludedRewards — Collection value (VF §8.6).",
-    "x-context": "lib/core/domain/economy/economy_strings.dart"
-  },
   "economyPlaceBundle": "bundle {name}",
   "@economyPlaceBundle": {
     "description": "EconomyStrings.placeBundle — placeBundle).",
@@ -2003,16 +1850,6 @@
     "description": "EconomyStrings.priceUnknown — Price sources (tooltip / caption under a price, B9).",
     "x-context": "lib/core/domain/economy/economy_strings.dart"
   },
-  "economyValueHasEstimates": "Có giá ước tính (≈)",
-  "@economyValueHasEstimates": {
-    "description": "EconomyStrings.valueHasEstimates — Collection value (VF §8.6).",
-    "x-context": "lib/core/domain/economy/economy_strings.dart"
-  },
-  "economyWishlistValue": "Tổng giá trị wishlist",
-  "@economyWishlistValue": {
-    "description": "EconomyStrings.wishlistValue — Collection value (VF §8.6).",
-    "x-context": "lib/core/domain/economy/economy_strings.dart"
-  },
   "loadoutDefaultPresetName": "Bộ trang bị {n}",
   "@loadoutDefaultPresetName": {
     "description": "Default preset name (\"Bộ trang bị 3\").",
@@ -2037,11 +1874,6 @@
   "@loadoutSaveFailed": {
     "description": "Error of any failed save (U8).",
     "x-context": "lib/core/domain/loadout/loadout_strings.dart"
-  },
-  "battlePassActEnded": "Phần này đã kết thúc",
-  "@battlePassActEnded": {
-    "description": "BattlePassStrings.actEnded — Pass card (S20)",
-    "x-context": "lib/features/battlepass/battlepass_strings.dart"
   },
   "battlePassActEndsIn": "Phần kết thúc sau {time}",
   "@battlePassActEndsIn": {
@@ -2122,11 +1954,6 @@
         "type": "int"
       }
     },
-    "x-context": "lib/features/battlepass/battlepass_strings.dart"
-  },
-  "battlePassCheckpoint": "Cột mốc",
-  "@battlePassCheckpoint": {
-    "description": "BattlePassStrings.checkpoint — Daily checkpoints (P4)",
     "x-context": "lib/features/battlepass/battlepass_strings.dart"
   },
   "battlePassCheckpointHint": "Thắng vòng để tiến tới cột mốc (Sinh Tử không tính).",
@@ -2354,11 +2181,6 @@
         "type": "int"
       }
     },
-    "x-context": "lib/features/battlepass/battlepass_strings.dart"
-  },
-  "battlePassMissionsProgressLabel": "Tiến độ nhiệm vụ tuần",
-  "@battlePassMissionsProgressLabel": {
-    "description": "BattlePassStrings.missionsProgressLabel — Rewards filter (remembered)",
     "x-context": "lib/features/battlepass/battlepass_strings.dart"
   },
   "battlePassNewMissionsAtWall": "Nhiệm vụ mới lúc {wall}",
@@ -2684,11 +2506,6 @@
     },
     "x-context": "lib/features/collection/collection_strings.dart"
   },
-  "collectionBannerTitlePrefix": "Danh hiệu: ",
-  "@collectionBannerTitlePrefix": {
-    "description": "Prefix of the equipped title on the hub banner (\"Danh hiệu: …\").",
-    "x-context": "lib/features/collection/collection_strings.dart"
-  },
   "collectionBrowseBuddies": "Phụ kiện súng",
   "@collectionBrowseBuddies": {
     "description": "CollectionStrings.browseBuddies — S39 browse",
@@ -2722,11 +2539,6 @@
   "collectionBrowseSprays": "Hình phun sơn",
   "@collectionBrowseSprays": {
     "description": "CollectionStrings.browseSprays — S39 browse",
-    "x-context": "lib/features/collection/collection_strings.dart"
-  },
-  "collectionBrowseTitle": "Duyệt bộ sưu tập",
-  "@collectionBrowseTitle": {
-    "description": "CollectionStrings.browseTitle — S39 browse",
     "x-context": "lib/features/collection/collection_strings.dart"
   },
   "collectionBrowseTitles": "Danh hiệu",
@@ -2809,16 +2621,6 @@
         "type": "int"
       }
     },
-    "x-context": "lib/features/collection/collection_strings.dart"
-  },
-  "collectionClearFilters": "Bỏ lọc",
-  "@collectionClearFilters": {
-    "description": "CollectionStrings.clearFilters — S33 / S34 weapons",
-    "x-context": "lib/features/collection/collection_strings.dart"
-  },
-  "collectionClearSearch": "Xóa tìm kiếm",
-  "@collectionClearSearch": {
-    "description": "CollectionStrings.clearSearch — S31 / S32 pickers",
     "x-context": "lib/features/collection/collection_strings.dart"
   },
   "collectionClearTiers": "Bỏ lọc phiên bản",
@@ -2921,11 +2723,6 @@
     "description": "CollectionStrings.expressionsTitle — S37 expressions",
     "x-context": "lib/features/collection/collection_strings.dart"
   },
-  "collectionFilterTiers": "Phiên bản",
-  "@collectionFilterTiers": {
-    "description": "CollectionStrings.filterTiers — S33 / S34 weapons",
-    "x-context": "lib/features/collection/collection_strings.dart"
-  },
   "collectionHideAccountLevel": "Ẩn cấp tài khoản",
   "@collectionHideAccountLevel": {
     "description": "CollectionStrings.hideAccountLevel — S30 hub",
@@ -2946,25 +2743,9 @@
     "description": "CollectionStrings.incognitoHint — S30 hub",
     "x-context": "lib/features/collection/collection_strings.dart"
   },
-  "collectionItemsCount": "{n} món",
-  "@collectionItemsCount": {
-    "description": "Browse tile count (\"142 món\").",
-    "placeholders": {
-      "n": {
-        "format": "decimalPattern",
-        "type": "int"
-      }
-    },
-    "x-context": "lib/features/collection/collection_strings.dart"
-  },
   "collectionLevelBorderAuto": "Tự động theo cấp",
   "@collectionLevelBorderAuto": {
     "description": "CollectionStrings.levelBorderAuto — S30 hub",
-    "x-context": "lib/features/collection/collection_strings.dart"
-  },
-  "collectionLevelBorderEmpty": "Chưa có khung cấp nào cho cấp của bạn.",
-  "@collectionLevelBorderEmpty": {
-    "description": "CollectionStrings.levelBorderEmpty — level border",
     "x-context": "lib/features/collection/collection_strings.dart"
   },
   "collectionLevelBorderFrom": "Từ cấp {level}",
@@ -3278,11 +3059,6 @@
     "description": "CollectionStrings.preview — S31 / S32 pickers",
     "x-context": "lib/features/collection/collection_strings.dart"
   },
-  "collectionPreviewing": "Đang xem",
-  "@collectionPreviewing": {
-    "description": "CollectionStrings.previewing — S39 browse",
-    "x-context": "lib/features/collection/collection_strings.dart"
-  },
   "collectionRemoveBuddy": "Gỡ phụ kiện",
   "@collectionRemoveBuddy": {
     "description": "CollectionStrings.removeBuddy — S36 buddies",
@@ -3291,11 +3067,6 @@
   "collectionRenamePreset": "Đổi tên",
   "@collectionRenamePreset": {
     "description": "CollectionStrings.renamePreset — S38 presets",
-    "x-context": "lib/features/collection/collection_strings.dart"
-  },
-  "collectionRowCard": "Thẻ người chơi",
-  "@collectionRowCard": {
-    "description": "CollectionStrings.rowCard — S30 hub",
     "x-context": "lib/features/collection/collection_strings.dart"
   },
   "collectionRowExpressions": "Tổ hợp cảm xúc",
@@ -3311,11 +3082,6 @@
   "collectionRowPresets": "Bộ trang bị đã lưu",
   "@collectionRowPresets": {
     "description": "CollectionStrings.rowPresets — S30 hub",
-    "x-context": "lib/features/collection/collection_strings.dart"
-  },
-  "collectionRowTitle": "Danh hiệu",
-  "@collectionRowTitle": {
-    "description": "CollectionStrings.rowTitle — S30 hub",
     "x-context": "lib/features/collection/collection_strings.dart"
   },
   "collectionRowWeapons": "Trang bị vũ khí",
@@ -3431,11 +3197,6 @@
   "collectionSlotNamesItem3": "Trái",
   "@collectionSlotNamesItem3": {
     "description": "CollectionStrings.slotNames — S37 expressions",
-    "x-context": "lib/features/collection/collection_strings.dart"
-  },
-  "collectionSortLabel": "Sắp xếp",
-  "@collectionSortLabel": {
-    "description": "CollectionStrings.sortLabel — S33 / S34 weapons",
     "x-context": "lib/features/collection/collection_strings.dart"
   },
   "collectionSortName": "Tên",
@@ -3699,11 +3460,6 @@
     "description": "Skin ranking discovery and compact filters; actual community data only.",
     "x-manual": true
   },
-  "communityRankingPeriod": "Thời gian",
-  "@communityRankingPeriod": {
-    "description": "Skin ranking discovery and compact filters; actual community data only.",
-    "x-manual": true
-  },
   "communityRankingSort": "Xếp hạng theo",
   "@communityRankingSort": {
     "description": "Skin ranking discovery and compact filters; actual community data only.",
@@ -3768,11 +3524,6 @@
     "description": "CommunityStrings.addPhotos — feed",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityAgentsPicked": "Đặc vụ đã chọn",
-  "@communityAgentsPicked": {
-    "description": "CommunityStrings.agentsPicked — LFG v2",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
   "communityAllModes": "Tất cả",
   "@communityAllModes": {
     "description": "CommunityStrings.allModes — LFG",
@@ -3806,11 +3557,6 @@
   "communityApply": "Áp dụng",
   "@communityApply": {
     "description": "CommunityStrings.apply — scopes (v3)",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityAutoRefresh": "Tự làm mới mỗi 20 giây",
-  "@communityAutoRefresh": {
-    "description": "CommunityStrings.autoRefresh — LFG",
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communityBackToMyCountry": "Về nước bạn",
@@ -3851,11 +3597,6 @@
     "description": "CommunityStrings.codeAutoFailed — LFG v2",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityCodeGenerated": "Đã tạo mã từ tổ đội hiện tại của bạn.",
-  "@communityCodeGenerated": {
-    "description": "CommunityStrings.codeGenerated — Create LFG sheet",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
   "communityCodeInvalid": "Mã gồm đúng 6 chữ cái in hoa hoặc chữ số.",
   "@communityCodeInvalid": {
     "description": "CommunityStrings.codeInvalid — Create LFG sheet",
@@ -3864,11 +3605,6 @@
   "communityCodeRequired": "Hãy nhập hoặc tạo mã tổ đội.",
   "@communityCodeRequired": {
     "description": "CommunityStrings.codeRequired — Create LFG sheet",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityComment": "Bình luận",
-  "@communityComment": {
-    "description": "CommunityStrings.comment — feed",
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communityCommentHint": "Viết bình luận…",
@@ -3999,16 +3735,6 @@
   "communityConsentWithdrawn": "Đã rút lại đồng ý. Cần đồng ý lại để tiếp tục sử dụng app.",
   "@communityConsentWithdrawn": {
     "description": "CommunityStrings.consentWithdrawn — data rights (Settings)",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityCountriesEmpty": "Không tìm thấy quốc gia phù hợp.",
-  "@communityCountriesEmpty": {
-    "description": "CommunityStrings.countriesEmpty — scopes (v3)",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityCountriesSearchHint": "Tìm quốc gia…",
-  "@communityCountriesSearchHint": {
-    "description": "CommunityStrings.countriesSearchHint — scopes (v3)",
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communityCountriesTitle": "Cộng đồng các nước",
@@ -4826,16 +4552,6 @@
     "description": "CommunityStrings.filters — LFG v2",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityGenerateCode": "Tạo mã tổ đội",
-  "@communityGenerateCode": {
-    "description": "CommunityStrings.generateCode — Create LFG sheet",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityGeneratingCode": "Đang tạo mã…",
-  "@communityGeneratingCode": {
-    "description": "CommunityStrings.generatingCode — Create LFG sheet",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
   "communityGoogleDisclaimer": "THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.",
   "@communityGoogleDisclaimer": {
     "description": "CommunityStrings.googleDisclaimer — translation",
@@ -4925,11 +4641,6 @@
     "description": "CommunityStrings.joinGameNotRunning — LFG",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityJoinInvalidCode": "Mã tổ đội không còn hiệu lực hoặc tổ đội đã đủ người.",
-  "@communityJoinInvalidCode": {
-    "description": "CommunityStrings.joinInvalidCode — LFG",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
   "communityJoinParty": "Vào tổ đội",
   "@communityJoinParty": {
     "description": "CommunityStrings.joinParty — LFG",
@@ -4938,11 +4649,6 @@
   "communityJoinPartyFull": "Tổ đội này đã đủ người.",
   "@communityJoinPartyFull": {
     "description": "CommunityStrings.joinPartyFull — LFG v2",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityJoined": "Đã vào tổ đội! Mở VALORANT để chơi cùng nhau.",
-  "@communityJoined": {
-    "description": "CommunityStrings.joined — LFG",
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communityJoinedHint": "Đã vào tổ đội! Mở VALORANT để chơi cùng nhau.",
@@ -4959,11 +4665,6 @@
         "type": "int"
       }
     },
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityKeepEditing": "Viết tiếp",
-  "@communityKeepEditing": {
-    "description": "CommunityStrings.keepEditing — feed",
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communityKindNightMarket": "Chợ Đêm",
@@ -5118,11 +4819,6 @@
     "description": "CommunityStrings.lfgExpiredRepost — LFG v2",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityLfgExpiryNote": "Tin tự hết hạn sau 30 phút.",
-  "@communityLfgExpiryNote": {
-    "description": "CommunityStrings.lfgExpiryNote — Create LFG sheet",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
   "communityLfgGateBody": "Tham gia (xác minh Riot ID một lần) để xem tin của người chơi cùng máy chủ và đăng tin tìm đồng đội của bạn. Bạn vẫn xem Bảng tin và Xếp hạng skin bình thường.",
   "@communityLfgGateBody": {
     "description": "CommunityStrings.lfgGateBody — consent",
@@ -5178,40 +4874,14 @@
     "description": "CommunityStrings.like — feed",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityLikes": "{n} lượt thích",
-  "@communityLikes": {
-    "description": "CommunityStrings.likes — feed",
-    "placeholders": {
-      "n": {
-        "format": "decimalPattern",
-        "type": "int"
-      }
-    },
-    "x-context": "lib/features/community/community_strings.dart"
-  },
   "communityLiveMembers": "Thành viên",
   "@communityLiveMembers": {
     "description": "CommunityStrings.liveMembers — LFG v2",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityLoadMoreFailed": "Chưa tải thêm được bài. Hãy thử lại.",
-  "@communityLoadMoreFailed": {
-    "description": "CommunityStrings.loadMoreFailed — general states",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
   "communityMatchMyRank": "Phù hợp rank của bạn",
   "@communityMatchMyRank": {
     "description": "CommunityStrings.matchMyRank — LFG v2",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityMaxPhotos": "Tối đa {max} ảnh.",
-  "@communityMaxPhotos": {
-    "description": "CommunityStrings.maxPhotos — feed",
-    "placeholders": {
-      "max": {
-        "type": "int"
-      }
-    },
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communityMemberJoined": "{name} đã vào tổ đội",
@@ -5264,11 +4934,6 @@
     "description": "CommunityStrings.muteAuthor — consent",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityMyPost": "Tin của bạn",
-  "@communityMyPost": {
-    "description": "CommunityStrings.myPost — LFG",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
   "communityNewPost": "Đăng bài",
   "@communityNewPost": {
     "description": "CommunityStrings.newPost — feed",
@@ -5297,21 +4962,6 @@
   "communityNoComments": "Chưa có bình luận. Hãy mở lời trước nhé!",
   "@communityNoComments": {
     "description": "CommunityStrings.noComments — comments",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityNoParty": "Không tìm thấy tổ đội. Hãy mở VALORANT rồi thử lại, hoặc nhập mã thủ công.",
-  "@communityNoParty": {
-    "description": "CommunityStrings.noParty — Create LFG sheet",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityNoPartyWithReason": "Không tìm thấy tổ đội. Hãy mở VALORANT rồi thử lại, hoặc nhập mã thủ công.\n{reason}",
-  "@communityNoPartyWithReason": {
-    "description": "CommunityStrings.noPartyWithReason — LFG",
-    "placeholders": {
-      "reason": {
-        "type": "String"
-      }
-    },
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communityNoRatings": "Chưa có đánh giá",
@@ -5415,21 +5065,6 @@
     },
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityPeriodAll": "Tất cả",
-  "@communityPeriodAll": {
-    "description": "CommunityStrings.periodAll — skin votes",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityPeriodAllTime": "Từ trước tới giờ",
-  "@communityPeriodAllTime": {
-    "description": "CommunityStrings.periodAllTime — skin reviews",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityPeriodWeek": "Tuần này",
-  "@communityPeriodWeek": {
-    "description": "CommunityStrings.periodWeek — skin votes",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
   "communityPhotoCount": "{n}/{max} ảnh",
   "@communityPhotoCount": {
     "description": "CommunityStrings.photoCount — feed",
@@ -5441,11 +5076,6 @@
         "type": "int"
       }
     },
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityPickRating": "Hãy chọn số sao.",
-  "@communityPickRating": {
-    "description": "CommunityStrings.pickRating — skin reviews",
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communityPlayVideo": "Xem video",
@@ -5471,11 +5101,6 @@
   "communityPosted": "Đã đăng bài!",
   "@communityPosted": {
     "description": "CommunityStrings.posted — feed",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityPrivacyNote": "ValHub xác minh Riot ID khi kết nối Cộng đồng và quyền sở hữu skin khi bạn đánh giá. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.",
-  "@communityPrivacyNote": {
-    "description": "CommunityStrings.privacyNote — general states",
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communityPublish": "Đăng",
@@ -5689,11 +5314,6 @@
     "description": "CommunityStrings.reported — feed",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityRetry": "Thử lại",
-  "@communityRetry": {
-    "description": "CommunityStrings.retry — general states",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
   "communityReviewDeleted": "Đã xóa đánh giá.",
   "@communityReviewDeleted": {
     "description": "CommunityStrings.reviewDeleted — skin reviews",
@@ -5732,11 +5352,6 @@
         "type": "String"
       }
     },
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityReviewsSection": "Đánh giá",
-  "@communityReviewsSection": {
-    "description": "CommunityStrings.reviewsSection — skin reviews",
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communityRiotId": "{name}#{tag}",
@@ -5785,11 +5400,6 @@
   "communityScopeRegion": "Khu vực",
   "@communityScopeRegion": {
     "description": "CommunityStrings.scopeRegion — scopes (v3)",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityScopeWorldwide": "Toàn cầu",
-  "@communityScopeWorldwide": {
-    "description": "CommunityStrings.scopeWorldwide — scopes (v3)",
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communitySectionFeed": "Bảng tin",
@@ -5860,16 +5470,6 @@
   "communitySkinNotFound": "Không tìm thấy skin này.",
   "@communitySkinNotFound": {
     "description": "CommunityStrings.skinNotFound — skin reviews",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communitySkinsEmptyBody": "Thả tim cho skin bạn thích nhất để đưa nó lên bảng xếp hạng!",
-  "@communitySkinsEmptyBody": {
-    "description": "CommunityStrings.skinsEmptyBody — skin votes",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communitySkinsEmptyTitle": "Chưa có lượt bình chọn",
-  "@communitySkinsEmptyTitle": {
-    "description": "CommunityStrings.skinsEmptyTitle — skin votes",
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communitySlots": "Số người cần",
@@ -6028,11 +5628,6 @@
     "description": "CommunityStrings.translateFailed — translation",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityTranslateUnavailable": "Thiết bị này chưa hỗ trợ dịch trên máy.",
-  "@communityTranslateUnavailable": {
-    "description": "CommunityStrings.translateUnavailable — translation",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
   "communityTranslatedByGoogle": "Dịch tự động bởi Google",
   "@communityTranslatedByGoogle": {
     "description": "CommunityStrings.translatedByGoogle — translation",
@@ -6076,16 +5671,6 @@
   "communityUnvote": "Bỏ tim",
   "@communityUnvote": {
     "description": "CommunityStrings.unvote — skin votes",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityUploading": "Đang tải ảnh lên…",
-  "@communityUploading": {
-    "description": "CommunityStrings.uploading — feed",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
-  "communityViewImage": "Xem ảnh",
-  "@communityViewImage": {
-    "description": "CommunityStrings.viewImage — feed",
     "x-context": "lib/features/community/community_strings.dart"
   },
   "communityVote": "Thả tim cho skin này",
@@ -6139,11 +5724,6 @@
     "description": "CommunityStrings.writeFirstReview — skin reviews",
     "x-context": "lib/features/community/community_strings.dart"
   },
-  "communityWritePost": "Viết bài",
-  "@communityWritePost": {
-    "description": "CommunityStrings.writePost — feed",
-    "x-context": "lib/features/community/community_strings.dart"
-  },
   "communityYou": "Bạn",
   "@communityYou": {
     "description": "CommunityStrings.you — general states",
@@ -6193,16 +5773,6 @@
   "liveGameAutoRefreshNote": "Tự động làm mới khi có trận.",
   "@liveGameAutoRefreshNote": {
     "description": "LiveGameStrings.autoRefreshNote — Current game card (R7) / idle states",
-    "x-context": "lib/features/live_game/live_game_strings.dart"
-  },
-  "liveGameBuddy": "Phụ kiện súng",
-  "@liveGameBuddy": {
-    "description": "LiveGameStrings.buddy — Player loadout (S51)",
-    "x-context": "lib/features/live_game/live_game_strings.dart"
-  },
-  "liveGameClose": "Đóng",
-  "@liveGameClose": {
-    "description": "LiveGameStrings.close — Sheet (S50)",
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
   "liveGameCurrentGame": "Trận hiện tại",
@@ -6370,11 +5940,6 @@
         "type": "String"
       }
     },
-    "x-context": "lib/features/live_game/live_game_strings.dart"
-  },
-  "liveGamePlayerCard": "Thẻ người chơi",
-  "@liveGamePlayerCard": {
-    "description": "LiveGameStrings.playerCard — Player loadout (S51)",
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
   "liveGamePlayerLoadoutOf": "Trang bị của {name}",
@@ -6735,11 +6300,6 @@
     "description": "ProfileStrings.chooseMap — Match history (S40.6)",
     "x-context": "lib/features/profile/profile_strings.dart"
   },
-  "profileClearMap": "Bỏ lọc bản đồ",
-  "@profileClearMap": {
-    "description": "ProfileStrings.clearMap — Match history (redesign)",
-    "x-context": "lib/features/profile/profile_strings.dart"
-  },
   "profileColA": "A",
   "@profileColA": {
     "description": "ProfileStrings.colA — Match detail (S43)",
@@ -6810,21 +6370,6 @@
     },
     "x-context": "lib/features/profile/profile_strings.dart"
   },
-  "profileDuration": "Thời lượng",
-  "@profileDuration": {
-    "description": "ProfileStrings.duration — Match detail (S43)",
-    "x-context": "lib/features/profile/profile_strings.dart"
-  },
-  "profileDurationOf": "Thời lượng {d}",
-  "@profileDurationOf": {
-    "description": "\"Thời lượng 38 phút\".",
-    "placeholders": {
-      "d": {
-        "type": "String"
-      }
-    },
-    "x-context": "lib/features/profile/profile_strings.dart"
-  },
   "profileEndOfHistory": "Đã hiển thị tất cả trận đấu",
   "@profileEndOfHistory": {
     "description": "ProfileStrings.endOfHistory — Match history (S40.6)",
@@ -6843,11 +6388,6 @@
   "profileFilterAll": "Tất cả",
   "@profileFilterAll": {
     "description": "ProfileStrings.filterAll — Match history (S40.6)",
-    "x-context": "lib/features/profile/profile_strings.dart"
-  },
-  "profileFilterMap": "Bản đồ",
-  "@profileFilterMap": {
-    "description": "ProfileStrings.filterMap — Match history (S40.6)",
     "x-context": "lib/features/profile/profile_strings.dart"
   },
   "profileFirstBloods": "First blood",
@@ -6912,16 +6452,6 @@
   "profileFriendsRow": "Bạn bè & trò chuyện",
   "@profileFriendsRow": {
     "description": "ProfileStrings.friendsRow — Social rows (S40.5)",
-    "x-context": "lib/features/profile/profile_strings.dart"
-  },
-  "profileGainPerWin": "{rr} RR khi thắng",
-  "@profileGainPerWin": {
-    "description": "\"+22 RR khi thắng\".",
-    "placeholders": {
-      "rr": {
-        "type": "String"
-      }
-    },
     "x-context": "lib/features/profile/profile_strings.dart"
   },
   "profileHideKills": "Ẩn pha hạ gục",
@@ -7048,16 +6578,6 @@
     "description": "ProfileStrings.levelHidden — Player profile (S44)",
     "x-context": "lib/features/profile/profile_strings.dart"
   },
-  "profileLossPerLoss": "{rr} RR khi thua",
-  "@profileLossPerLoss": {
-    "description": "\"−18 RR khi thua\".",
-    "placeholders": {
-      "rr": {
-        "type": "String"
-      }
-    },
-    "x-context": "lib/features/profile/profile_strings.dart"
-  },
   "profileLossStreak": "Chuỗi {n} trận thua",
   "@profileLossStreak": {
     "description": "\"Chuỗi 2 trận thua\".",
@@ -7157,24 +6677,9 @@
   "@profilePlayHubTitle": {
     "description": "Combined entry and page title for current match, party and matchmaking."
   },
-  "profilePartyRow": "Tổ đội & hàng chờ",
-  "@profilePartyRow": {
-    "description": "ProfileStrings.partyRow — Social rows (S40.5)",
-    "x-context": "lib/features/profile/profile_strings.dart"
-  },
   "profilePeakRank": "Cao nhất",
   "@profilePeakRank": {
     "description": "ProfileStrings.peakRank — Rank card (S40.2)",
-    "x-context": "lib/features/profile/profile_strings.dart"
-  },
-  "profilePeakRankOf": "Cao nhất · {actTitle}",
-  "@profilePeakRankOf": {
-    "description": "\"Cao nhất · V26 // Phần I\".",
-    "placeholders": {
-      "actTitle": {
-        "type": "String"
-      }
-    },
     "x-context": "lib/features/profile/profile_strings.dart"
   },
   "profilePerformanceAttack": "Tấn công",
@@ -7190,11 +6695,6 @@
   "profilePerformanceEmpty": "Chưa có trận nào được ghi trên thiết bị này. Mở lịch sử trận để ghi lại những trận bạn đã chơi.",
   "@profilePerformanceEmpty": {
     "description": "ProfileStrings.performanceEmpty — ",
-    "x-context": "lib/features/profile/profile_strings.dart"
-  },
-  "profilePerformanceGames": "Số trận",
-  "@profilePerformanceGames": {
-    "description": "ProfileStrings.performanceGames — ",
     "x-context": "lib/features/profile/profile_strings.dart"
   },
   "profilePerformanceNoMatches": "Không có trận trong khoảng thời gian đã chọn.",
@@ -7243,16 +6743,6 @@
   "profilePerformanceTitle": "Hiệu suất",
   "@profilePerformanceTitle": {
     "description": "ProfileStrings.performanceTitle — ",
-    "x-context": "lib/features/profile/profile_strings.dart"
-  },
-  "profilePerformanceTrendEmpty": "Cần ít nhất hai giai đoạn có từ 3 trận để so sánh xu hướng.",
-  "@profilePerformanceTrendEmpty": {
-    "description": "ProfileStrings.performanceTrendEmpty — ",
-    "x-context": "lib/features/profile/profile_strings.dart"
-  },
-  "profilePickTargetHint": "Chọn hạng bạn muốn đạt",
-  "@profilePickTargetHint": {
-    "description": "ProfileStrings.pickTargetHint — Rank-Up Calculator",
     "x-context": "lib/features/profile/profile_strings.dart"
   },
   "profilePlacement": "Hạng {n}",
@@ -7456,11 +6946,6 @@
   "profileRoundsHint": "Chạm vào một vòng để xem từng pha hạ gục.",
   "@profileRoundsHint": {
     "description": "ProfileStrings.roundsHint — Round timeline: kill feed per round",
-    "x-context": "lib/features/profile/profile_strings.dart"
-  },
-  "profileRr": "RR",
-  "@profileRr": {
-    "description": "ProfileStrings.rr — Match detail (S43)",
     "x-context": "lib/features/profile/profile_strings.dart"
   },
   "profileRrLeft": "Còn thiếu {n} RR",
@@ -7930,11 +7415,6 @@
     "description": "LegalStrings.contactHeader — About hub",
     "x-context": "lib/features/settings/legal/legal_strings.dart"
   },
-  "legalCreditsHeader": "NGUỒN DỮ LIỆU & GHI CÔNG",
-  "@legalCreditsHeader": {
-    "description": "LegalStrings.creditsHeader — About hub",
-    "x-context": "lib/features/settings/legal/legal_strings.dart"
-  },
   "legalEffectiveFrom": "Hiệu lực từ {date}",
   "@legalEffectiveFrom": {
     "description": "LegalStrings.effectiveFrom — Document screen",
@@ -8078,10 +7558,6 @@
   "@settingsGeoHintOnly": {
     "description": "Country and Riot connection settings: settingsGeoHintOnly"
   },
-  "settingsGeoUnsupported": "Khu vực Riot chưa được hỗ trợ. Hãy chọn khu vực trong Cài đặt.",
-  "@settingsGeoUnsupported": {
-    "description": "Country and Riot connection settings: settingsGeoUnsupported"
-  },
   "settingsGeoSave": "Kiểm tra và lưu",
   "@settingsGeoSave": {
     "description": "Country and Riot connection settings: settingsGeoSave"
@@ -8223,49 +7699,9 @@
     },
     "x-manual": true
   },
-  "settingsAboutCreditContent": "valorant-api.com",
-  "@settingsAboutCreditContent": {
-    "description": "SettingsStrings.aboutCreditContent — About screen (S72)",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsAboutCreditContentBody": "Tên, hình ảnh và thông tin về skin, đặc vụ, bản đồ và rank.",
-  "@settingsAboutCreditContentBody": {
-    "description": "SettingsStrings.aboutCreditContentBody — About screen (S72)",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsAboutCreditDocs": "Tài liệu cộng đồng",
-  "@settingsAboutCreditDocs": {
-    "description": "SettingsStrings.aboutCreditDocs — About screen (S72)",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsAboutCreditDocsBody": "Dự án techchrism/valorant-api-docs và cộng đồng nhà phát triển VALORANT.",
-  "@settingsAboutCreditDocsBody": {
-    "description": "SettingsStrings.aboutCreditDocsBody — About screen (S72)",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsAboutCreditRiot": "Riot Games",
-  "@settingsAboutCreditRiot": {
-    "description": "SettingsStrings.aboutCreditRiot — About screen (S72)",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsAboutCreditRiotBody": "Cửa hàng, ví, bộ sưu tập, trận đấu và xếp hạng lấy trực tiếp từ tài khoản Riot bạn đăng nhập.",
-  "@settingsAboutCreditRiotBody": {
-    "description": "SettingsStrings.aboutCreditRiotBody — About screen (S72)",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsAboutCreditsHeader": "NGUỒN DỮ LIỆU",
-  "@settingsAboutCreditsHeader": {
-    "description": "SettingsStrings.aboutCreditsHeader — About screen (S72)",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
   "settingsAboutHeader": "THÔNG TIN",
   "@settingsAboutHeader": {
     "description": "SettingsStrings.aboutHeader — Section headers (S70)",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsAboutLegalHeader": "PHÁP LÝ",
-  "@settingsAboutLegalHeader": {
-    "description": "SettingsStrings.aboutLegalHeader — About screen (S72)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsAboutRowSubtitle": "Quyền riêng tư, điều khoản, bản quyền và liên hệ",
@@ -8323,16 +7759,6 @@
     "description": "SettingsStrings.clearCacheSubtitle — NÂNG CAO (the version lives on the About screen only)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
-  "settingsClearLog": "Xóa báo lỗi đã ghi",
-  "@settingsClearLog": {
-    "description": "SettingsStrings.clearLog — They do not restore the retired log viewer or any route to it.",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsClearLogConfirm": "Xóa báo lỗi đã ghi trên thiết bị này?",
-  "@settingsClearLogConfirm": {
-    "description": "SettingsStrings.clearLogConfirm — They do not restore the retired log viewer or any route to it.",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
   "settingsExportLog": "Gửi báo lỗi cho ValHub",
   "@settingsExportLog": {
     "description": "Row that builds the bug-report file and opens the share sheet.",
@@ -8341,16 +7767,6 @@
   "settingsExportLogEmpty": "Chưa có gì để gửi. Hãy dùng ứng dụng một lúc rồi thử lại.",
   "@settingsExportLogEmpty": {
     "description": "Snackbar when nothing has been recorded yet.",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsExportLogEmptyTitle": "Chưa có gì để gửi",
-  "@settingsExportLogEmptyTitle": {
-    "description": "SettingsStrings.exportLogEmptyTitle — They do not restore the retired log viewer or any route to it.",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsExportLogNote": "Báo lỗi không chứa mật khẩu hay dữ liệu đăng nhập Riot của bạn.",
-  "@settingsExportLogNote": {
-    "description": "SettingsStrings.exportLogNote — They do not restore the retired log viewer or any route to it.",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsExportLogSubtitle": "Báo lỗi không chứa mật khẩu hay dữ liệu đăng nhập Riot của bạn.",
@@ -8373,11 +7789,6 @@
     "description": "SettingsStrings.itemLanguageEn — GIAO DIỆN",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
-  "settingsItemLanguageHint": "Tên skin, đặc vụ, bản đồ… hiển thị theo ngôn ngữ này.",
-  "@settingsItemLanguageHint": {
-    "description": "SettingsStrings.itemLanguageHint — GIAO DIỆN",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
   "settingsItemLanguageLabel": "Tên vật phẩm",
   "@settingsItemLanguageLabel": {
     "description": "SettingsStrings.itemLanguageLabel — GIAO DIỆN",
@@ -8393,42 +7804,9 @@
     "description": "SettingsStrings.itemLanguageVi — GIAO DIỆN",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
-  "settingsLegalNotice": "Thông báo pháp lý",
-  "@settingsLegalNotice": {
-    "description": "SettingsStrings.legalNotice — Welcome (S01)",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
   "settingsLinkOpenFailed": "Chưa mở được liên kết. Hãy thử lại.",
   "@settingsLinkOpenFailed": {
     "description": "SettingsStrings.linkOpenFailed — HỖ TRỢ",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsLogCleared": "Đã xóa báo lỗi",
-  "@settingsLogCleared": {
-    "description": "SettingsStrings.logCleared — They do not restore the retired log viewer or any route to it.",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsLogEntryCount": "{count} mục",
-  "@settingsLogEntryCount": {
-    "description": "SettingsStrings.logEntryCount — They do not restore the retired log viewer or any route to it.",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    },
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsLogEntryShown": "{shown} / {total} mục",
-  "@settingsLogEntryShown": {
-    "description": "SettingsStrings.logEntryShown — They do not restore the retired log viewer or any route to it.",
-    "placeholders": {
-      "shown": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    },
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsLogFileHeader": "{appName} {version} — Báo lỗi",
@@ -8442,46 +7820,6 @@
         "type": "String"
       }
     },
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsLogFilterAll": "Tất cả",
-  "@settingsLogFilterAll": {
-    "description": "SettingsStrings.logFilterAll — They do not restore the retired log viewer or any route to it.",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsLogFilterAuth": "Đăng nhập",
-  "@settingsLogFilterAuth": {
-    "description": "SettingsStrings.logFilterAuth — They do not restore the retired log viewer or any route to it.",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsLogFilterEmpty": "Không có mục phù hợp. Hãy bỏ lọc để xem thêm.",
-  "@settingsLogFilterEmpty": {
-    "description": "SettingsStrings.logFilterEmpty — They do not restore the retired log viewer or any route to it.",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsLogFilterErrors": "Sự cố",
-  "@settingsLogFilterErrors": {
-    "description": "SettingsStrings.logFilterErrors — They do not restore the retired log viewer or any route to it.",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsLogFilterHttp": "Kết nối",
-  "@settingsLogFilterHttp": {
-    "description": "SettingsStrings.logFilterHttp — They do not restore the retired log viewer or any route to it.",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsLogMore": "Tùy chọn khác",
-  "@settingsLogMore": {
-    "description": "SettingsStrings.logMore — They do not restore the retired log viewer or any route to it.",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsLogSearchEmpty": "Không có mục phù hợp.",
-  "@settingsLogSearchEmpty": {
-    "description": "SettingsStrings.logSearchEmpty — They do not restore the retired log viewer or any route to it.",
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsLogSearchHint": "Tìm trong báo lỗi…",
-  "@settingsLogSearchHint": {
-    "description": "SettingsStrings.logSearchHint — They do not restore the retired log viewer or any route to it.",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsLogShareFailed": "Chưa gửi được báo lỗi. Hãy thử lại.",
@@ -8838,11 +8176,6 @@
         "type": "int"
       }
     },
-    "x-context": "lib/features/settings/settings_strings.dart"
-  },
-  "settingsStatusRegionPicker": "Máy chủ",
-  "@settingsStatusRegionPicker": {
-    "description": "SettingsStrings.statusRegionPicker — Server status screen (ValHub extra, X-1)",
     "x-context": "lib/features/settings/settings_strings.dart"
   },
   "settingsStatusScheduled": "Sắp có bảo trì",
@@ -9238,11 +8571,6 @@
     "description": "SocialStrings.changeQueue — party",
     "x-context": "lib/features/social/social_strings.dart"
   },
-  "socialChatTitle": "Trò chuyện",
-  "@socialChatTitle": {
-    "description": "SocialStrings.chatTitle — ",
-    "x-context": "lib/features/social/social_strings.dart"
-  },
   "socialChatUnavailable": "Trò chuyện đang ngoại tuyến.",
   "@socialChatUnavailable": {
     "description": "SocialStrings.chatUnavailable — friends",
@@ -9251,11 +8579,6 @@
   "socialCloseParty": "Đóng tổ đội",
   "@socialCloseParty": {
     "description": "SocialStrings.closeParty — party",
-    "x-context": "lib/features/social/social_strings.dart"
-  },
-  "socialClosedState": "Chỉ người được mời",
-  "@socialClosedState": {
-    "description": "SocialStrings.closedState — party",
     "x-context": "lib/features/social/social_strings.dart"
   },
   "socialCodeInvalid": "Mã tổ đội chỉ gồm chữ cái và chữ số.",
@@ -9359,11 +8682,6 @@
   "socialGenerateCode": "Tạo mã",
   "@socialGenerateCode": {
     "description": "SocialStrings.generateCode — party",
-    "x-context": "lib/features/social/social_strings.dart"
-  },
-  "socialHistoryFailed": "Chưa tải được tin nhắn cũ. Hãy kết nối lại rồi thử lại.",
-  "@socialHistoryFailed": {
-    "description": "SocialStrings.historyFailed — chat",
     "x-context": "lib/features/social/social_strings.dart"
   },
   "socialIdleQueue": "Sẵn sàng tìm trận",
@@ -9594,11 +8912,6 @@
     "description": "SocialStrings.noSearchResultsTitle — friends",
     "x-context": "lib/features/social/social_strings.dart"
   },
-  "socialNotFriend": "Người này không có trong danh sách bạn bè.",
-  "@socialNotFriend": {
-    "description": "SocialStrings.notFriend — chat",
-    "x-context": "lib/features/social/social_strings.dart"
-  },
   "socialNotReady": "Chưa sẵn sàng",
   "@socialNotReady": {
     "description": "SocialStrings.notReady — party",
@@ -9647,11 +8960,6 @@
   "socialOpenParty": "Mở tổ đội",
   "@socialOpenParty": {
     "description": "SocialStrings.openParty — party",
-    "x-context": "lib/features/social/social_strings.dart"
-  },
-  "socialOpenState": "Tổ đội mở",
-  "@socialOpenState": {
-    "description": "SocialStrings.openState — party",
     "x-context": "lib/features/social/social_strings.dart"
   },
   "socialOtherGamesLeagueOfLegends": "Liên Minh Huyền Thoại",
@@ -10267,19 +9575,6 @@
     "description": "StoreStrings.removeFromWishlist — Shared badges and actions.",
     "x-context": "lib/features/store/store_strings.dart"
   },
-  "storeResetNotificationBody": "{skinCount, plural, =0{Xem skin mới hôm nay của {account}.} other{Xem {skinCount} skin mới hôm nay của {account}.}}",
-  "@storeResetNotificationBody": {
-    "description": "\"Xem 4 skin mới hôm nay của Tên#TAG.\"",
-    "placeholders": {
-      "skinCount": {
-        "type": "int"
-      },
-      "account": {
-        "type": "String"
-      }
-    },
-    "x-context": "lib/features/store/store_strings.dart"
-  },
   "storeResetNotificationTitle": "Cửa hàng đã làm mới",
   "@storeResetNotificationTitle": {
     "description": "StoreStrings.resetNotificationTitle — Store-reset local notification (B8, VF §6.9).",
@@ -10497,6 +9792,68 @@
     },
     "x-context": "lib/features/store/store_strings.dart"
   },
+  "storeHistoryTitle": "Lịch sử cửa hàng",
+  "@storeHistoryTitle": {
+    "description": "Screen and entry title: the daily shops of the active account that this device recorded.",
+    "x-context": "lib/features/store/ui/store_history_screen.dart"
+  },
+  "storeHistorySince": "Ghi trên máy này từ {date} · {days, plural, other{{days} ngày}}",
+  "@storeHistorySince": {
+    "description": "Subtitle: since when and how many daily shops were recorded (\"Ghi trên máy này từ 24/09/2026 · 12 ngày\").",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    },
+    "x-context": "lib/features/store/ui/store_history_screen.dart"
+  },
+  "storeHistoryEmpty": "Chưa có ngày nào được ghi. ValHub lưu cửa hàng hằng ngày của bạn mỗi khi bạn mở app, chỉ trên máy này.",
+  "@storeHistoryEmpty": {
+    "description": "Store history with no recorded day yet. Riot keeps no past stores, so the history starts with the app.",
+    "x-context": "lib/features/store/ui/store_history_screen.dart"
+  },
+  "storeHistoryMostOffered": "Hay xuất hiện nhất",
+  "@storeHistoryMostOffered": {
+    "description": "Section: the skins your daily shop offered most often in the recorded days.",
+    "x-context": "lib/features/store/ui/store_history_screen.dart"
+  },
+  "storeHistoryTimes": "{n, plural, other{{n} lần}}",
+  "@storeHistoryTimes": {
+    "description": "How many recorded daily shops offered the skin (\"3 lần\").",
+    "placeholders": {
+      "n": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    },
+    "x-context": "lib/features/store/ui/store_history_screen.dart"
+  },
+  "storeHistoryNightMarket": "{count, plural, other{Chợ Đêm · {count} ưu đãi}}",
+  "@storeHistoryNightMarket": {
+    "description": "A recorded day had a Night Market with this many offers.",
+    "placeholders": {
+      "count": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    },
+    "x-context": "lib/features/store/ui/store_history_screen.dart"
+  },
+  "storeHistoryEntrySubtitle": "{days, plural, =0{Bắt đầu ghi từ hôm nay} other{{days} ngày đã ghi trên máy này}}",
+  "@storeHistoryEntrySubtitle": {
+    "description": "Row under the daily shop that opens the store history.",
+    "placeholders": {
+      "days": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    },
+    "x-context": "lib/features/store/ui/store_history_screen.dart"
+  },
   "wishlistNotifDailyBody": "{hasTime, select, yes {{skin} đang có trong cửa hàng của {account} — còn {left}.} other {{skin} đang có trong cửa hàng của {account}.}}",
   "@wishlistNotifDailyBody": {
     "description": "Wishlist daily store alert; left is a localized coarse duration, absent when expiry is unknown.",
@@ -10656,11 +10013,6 @@
     "description": "WishlistStrings.clearFilters — search, filter, sort",
     "x-context": "lib/features/wishlist/wishlist_strings.dart"
   },
-  "wishlistClearSearch": "Xóa tìm kiếm",
-  "@wishlistClearSearch": {
-    "description": "WishlistStrings.clearSearch — search, filter, sort",
-    "x-context": "lib/features/wishlist/wishlist_strings.dart"
-  },
   "wishlistEmpty": "Wishlist trống. Chạm ♡ ở bất kỳ skin nào để thêm.",
   "@wishlistEmpty": {
     "description": "WishlistStrings.empty — S3A wishlist",
@@ -10686,11 +10038,6 @@
     "description": "WishlistStrings.excludedRewards — S3A wishlist",
     "x-context": "lib/features/wishlist/wishlist_strings.dart"
   },
-  "wishlistFilterTiers": "Phiên bản",
-  "@wishlistFilterTiers": {
-    "description": "WishlistStrings.filterTiers — search, filter, sort",
-    "x-context": "lib/features/wishlist/wishlist_strings.dart"
-  },
   "wishlistFiltered": "Đang lọc: {count} skin · {value}",
   "@wishlistFiltered": {
     "description": "\"Đang lọc: 3 skin · 5.325 VP\" (VF §8.6 filteredValue).",
@@ -10703,21 +10050,6 @@
         "type": "String"
       }
     },
-    "x-context": "lib/features/wishlist/wishlist_strings.dart"
-  },
-  "wishlistHasEstimates": "Có giá ước tính (≈)",
-  "@wishlistHasEstimates": {
-    "description": "WishlistStrings.hasEstimates — S3A wishlist",
-    "x-context": "lib/features/wishlist/wishlist_strings.dart"
-  },
-  "wishlistInWishlist": "Đã có trong wishlist",
-  "@wishlistInWishlist": {
-    "description": "WishlistStrings.inWishlist — S3B catalog",
-    "x-context": "lib/features/wishlist/wishlist_strings.dart"
-  },
-  "wishlistInWishlistLabel": "đã có trong wishlist",
-  "@wishlistInWishlistLabel": {
-    "description": "WishlistStrings.inWishlistLabel — S3B catalog",
     "x-context": "lib/features/wishlist/wishlist_strings.dart"
   },
   "wishlistNoMatch": "Không có skin phù hợp. Bỏ lọc để xem thêm.",
@@ -10841,21 +10173,6 @@
     },
     "x-context": "lib/features/wishlist/wishlist_strings.dart"
   },
-  "wishlistSortBy": "Sắp xếp",
-  "@wishlistSortBy": {
-    "description": "WishlistStrings.sortBy — search, filter, sort",
-    "x-context": "lib/features/wishlist/wishlist_strings.dart"
-  },
-  "wishlistSortLabel": "Sắp xếp: {sort}",
-  "@wishlistSortLabel": {
-    "description": "WishlistStrings.sortLabel — search, filter, sort",
-    "placeholders": {
-      "sort": {
-        "type": "String"
-      }
-    },
-    "x-context": "lib/features/wishlist/wishlist_strings.dart"
-  },
   "wishlistSortName": "Tên",
   "@wishlistSortName": {
     "description": "WishlistStrings.sortName — search, filter, sort",
@@ -10874,16 +10191,6 @@
   "wishlistSortWeapon": "Vũ khí",
   "@wishlistSortWeapon": {
     "description": "WishlistStrings.sortWeapon — search, filter, sort",
-    "x-context": "lib/features/wishlist/wishlist_strings.dart"
-  },
-  "wishlistStoreCheckTitle": "Chưa kiểm tra được cửa hàng",
-  "@wishlistStoreCheckTitle": {
-    "description": "WishlistStrings.storeCheckTitle — S3A wishlist",
-    "x-context": "lib/features/wishlist/wishlist_strings.dart"
-  },
-  "wishlistSubtitle": "Skin bạn đang săn",
-  "@wishlistSubtitle": {
-    "description": "WishlistStrings.subtitle — titles",
     "x-context": "lib/features/wishlist/wishlist_strings.dart"
   },
   "wishlistTitle": "Wishlist",

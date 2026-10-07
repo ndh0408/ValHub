@@ -23,9 +23,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get commonAppName => 'ValHub';
 
   @override
-  String get commonBack => 'Retour';
-
-  @override
   String get commonCancel => 'Annuler';
 
   @override
@@ -38,16 +35,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get commonClose => 'Fermer';
 
   @override
-  String get commonConfirm => 'Confirmer';
-
-  @override
   String get commonCopied => 'Copié';
-
-  @override
-  String get commonCopy => 'Copier';
-
-  @override
-  String get commonDaily => 'chaque jour';
 
   @override
   String get commonDash => '–';
@@ -76,9 +64,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get commonDelete => 'Supprimer';
-
-  @override
-  String get commonDone => 'Terminé';
 
   @override
   String get commonEmptyGeneric => 'Rien à afficher ici.';
@@ -130,9 +115,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get commonEstimatePrefix => '≈';
-
-  @override
-  String get commonFilter => 'Filtrer';
 
   @override
   String get commonGoHome => 'Retour à l\'accueil';
@@ -203,9 +185,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String commonOfflineCached(String time) {
     return 'Hors ligne : affichage de la version enregistrée ($time).';
   }
-
-  @override
-  String get commonOk => 'OK';
 
   @override
   String get commonOpenSettings => 'Ouvrir les paramètres';
@@ -311,12 +290,6 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get commonPullToRefresh => 'Tirez pour actualiser';
-
-  @override
-  String get commonRefresh => 'Actualiser';
-
-  @override
   String get commonRetry => 'Réessayer';
 
   @override
@@ -341,9 +314,6 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get commonSeeAll => 'Tout voir';
-
-  @override
   String get commonShare => 'Partager';
 
   @override
@@ -356,24 +326,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String commonSortBy(String option) {
     return 'Tri : $option';
   }
-
-  @override
-  String get commonSortName => 'Nom (A–Z)';
-
-  @override
-  String get commonSortNewest => 'Plus récents';
-
-  @override
-  String get commonSortPriceHigh => 'Prix décroissant';
-
-  @override
-  String get commonSortPriceLow => 'Prix croissant';
-
-  @override
-  String get commonSortRarity => 'Rareté';
-
-  @override
-  String get commonSortWeapon => 'Arme';
 
   @override
   String get commonTabBattlePass => 'Battle Pass';
@@ -496,9 +448,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get contentCurrencyVpFull => 'VALORANT Points';
 
   @override
-  String get contentDefaultSkin => 'Par défaut';
-
-  @override
   String get contentItemAgent => 'Agent';
 
   @override
@@ -518,18 +467,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get contentItemFlex => 'Flex';
-
-  @override
-  String get contentItemLanguageEn => 'Anglais';
-
-  @override
-  String get contentItemLanguageTitle => 'Nom des objets';
-
-  @override
-  String get contentItemLanguageVi => 'Vietnamien';
-
-  @override
-  String get contentItemLevelBorder => 'Bordure de niveau';
 
   @override
   String get contentItemSkin => 'Skin';
@@ -598,12 +535,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get contentLevelItemLabelsFishAnimation => 'Animation de poisson';
-
-  @override
-  String get contentLimitedEdition => 'Édition limitée';
-
-  @override
-  String get contentNoSpray => 'Aucun';
 
   @override
   String get contentNoTitle => 'Aucun titre';
@@ -733,11 +664,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get accountRiotCountryUnknown => 'Pays du compte Riot : inconnu';
-
-  @override
-  String accountAccountCount(int count, int max) {
-    return 'Comptes : $count/$max';
-  }
 
   @override
   String accountAccountsHeader(int count, int max) {
@@ -930,10 +856,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get accountStatusUnknown => 'Statut inconnu';
 
   @override
-  String get accountSwitchFailed =>
-      'Impossible de changer de compte. Réessayez.';
-
-  @override
   String accountSwitchTo(String account) {
     return 'Passer à $account';
   }
@@ -955,9 +877,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get accountUnlockLoginNote =>
       'Authentifiez-vous pour afficher vos identifiants Riot';
-
-  @override
-  String get authAccountAlreadyAdded => 'Ce compte a déjà été ajouté';
 
   @override
   String get authAddAsNew => 'Ajouter comme nouveau compte';
@@ -1012,10 +931,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get authSignInCta => 'Se connecter avec un compte Riot';
-
-  @override
-  String get authSignInNote =>
-      'Vous vous connectez sur la page officielle de Riot. ValHub n\'enregistre votre mot de passe que si vous choisissez d\'enregistrer vos identifiants ; vos données de connexion et informations enregistrées restent uniquement sur votre appareil.';
 
   @override
   String get authSocialLoginHint =>
@@ -1240,12 +1155,6 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get economyCollectionValue => 'Valeur de la collection';
-
-  @override
-  String get economyExcludedRewards => 'Skins de récompense non comptés';
-
-  @override
   String economyPlaceBundle(String name) {
     return 'bundle $name';
   }
@@ -1275,12 +1184,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get economyPriceUnknown => 'Prix inconnu';
 
   @override
-  String get economyValueHasEstimates => 'Inclut des prix estimés (≈)';
-
-  @override
-  String get economyWishlistValue => 'Valeur totale de la wishlist';
-
-  @override
   String loadoutDefaultPresetName(int n) {
     return 'Configuration $n';
   }
@@ -1295,9 +1198,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get loadoutSaveFailed => 'Impossible d\'enregistrer l\'équipement';
-
-  @override
-  String get battlePassActEnded => 'Cet acte est terminé';
 
   @override
   String battlePassActEndsIn(String time) {
@@ -1344,9 +1244,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String battlePassCharges(int charges, int needed) {
     return '$charges/$needed';
   }
-
-  @override
-  String get battlePassCheckpoint => 'Palier';
 
   @override
   String get battlePassCheckpointHint =>
@@ -1481,10 +1378,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String battlePassMissionsCompleted(int done, int total) {
     return 'Terminées : $done/$total';
   }
-
-  @override
-  String get battlePassMissionsProgressLabel =>
-      'Progression des missions hebdo';
 
   @override
   String battlePassNewMissionsAtWall(String wall) {
@@ -1677,9 +1570,6 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get collectionBannerTitlePrefix => 'Titre : ';
-
-  @override
   String get collectionBrowseBuddies => 'Breloques';
 
   @override
@@ -1700,9 +1590,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get collectionBrowseSprays => 'Tags';
-
-  @override
-  String get collectionBrowseTitle => 'Parcourir la collection';
 
   @override
   String get collectionBrowseTitles => 'Titres';
@@ -1757,12 +1644,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String collectionChromaCount(int owned, int total) {
     return 'Variantes : $owned/$total';
   }
-
-  @override
-  String get collectionClearFilters => 'Effacer les filtres';
-
-  @override
-  String get collectionClearSearch => 'Effacer la recherche';
 
   @override
   String get collectionClearTiers => 'Effacer le filtre d\'édition';
@@ -1822,9 +1703,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get collectionExpressionsTitle => 'Roue d\'expressions';
 
   @override
-  String get collectionFilterTiers => 'Édition';
-
-  @override
   String get collectionHideAccountLevel => 'Masquer le niveau du compte';
 
   @override
@@ -1839,27 +1717,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Masque votre nom aux joueurs hors de votre groupe pendant les parties.';
 
   @override
-  String collectionItemsCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    String _temp0 = intl.Intl.pluralLogic(
-      n,
-      locale: localeName,
-      other: '$nString objets',
-      one: '$nString objet',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get collectionLevelBorderAuto => 'Automatique selon le niveau';
-
-  @override
-  String get collectionLevelBorderEmpty =>
-      'Aucune bordure de niveau disponible pour votre niveau.';
 
   @override
   String collectionLevelBorderFrom(int level) {
@@ -2063,16 +1921,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get collectionPreview => 'Aperçu';
 
   @override
-  String get collectionPreviewing => 'Aperçu';
-
-  @override
   String get collectionRemoveBuddy => 'Retirer la breloque';
 
   @override
   String get collectionRenamePreset => 'Renommer';
-
-  @override
-  String get collectionRowCard => 'Carte de joueur';
 
   @override
   String get collectionRowExpressions => 'Roue d\'expressions';
@@ -2082,9 +1934,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get collectionRowPresets => 'Configurations enregistrées';
-
-  @override
-  String get collectionRowTitle => 'Titre';
 
   @override
   String get collectionRowWeapons => 'Équipement des armes';
@@ -2155,9 +2004,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get collectionSlotNamesItem3 => 'Gauche';
-
-  @override
-  String get collectionSortLabel => 'Trier';
 
   @override
   String get collectionSortName => 'Nom';
@@ -2380,9 +2226,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'Effacer les filtres d\'arme et de période';
 
   @override
-  String get communityRankingPeriod => 'Période';
-
-  @override
   String get communityRankingSort => 'Classer par';
 
   @override
@@ -2429,9 +2272,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityAddPhotos => 'Ajouter des photos';
 
   @override
-  String get communityAgentsPicked => 'Agents choisis';
-
-  @override
   String get communityAllModes => 'Tous';
 
   @override
@@ -2451,10 +2291,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get communityApply => 'Appliquer';
-
-  @override
-  String get communityAutoRefresh =>
-      'Actualisation auto toutes les 20 secondes';
 
   @override
   String get communityBackToMyCountry => 'Mon pays';
@@ -2479,18 +2315,11 @@ class AppLocalizationsFr extends AppLocalizations {
       'Impossible de créer le code de groupe. Ouvrez VALORANT ou saisissez le code manuellement.';
 
   @override
-  String get communityCodeGenerated =>
-      'Code créé à partir de votre groupe actuel.';
-
-  @override
   String get communityCodeInvalid =>
       'Le code fait exactement 6 lettres majuscules ou chiffres.';
 
   @override
   String get communityCodeRequired => 'Saisissez ou créez un code de groupe.';
-
-  @override
-  String get communityComment => 'Commenter';
 
   @override
   String get communityCommentHint => 'Écrire un commentaire…';
@@ -2588,12 +2417,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get communityConsentWithdrawn =>
       'Consentement retiré. Vous devez accepter de nouveau pour continuer à utiliser l\'app.';
-
-  @override
-  String get communityCountriesEmpty => 'Aucun pays correspondant.';
-
-  @override
-  String get communityCountriesSearchHint => 'Rechercher un pays…';
 
   @override
   String get communityCountriesTitle => 'Communautés par pays';
@@ -3097,12 +2920,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityFilters => 'Filtres';
 
   @override
-  String get communityGenerateCode => 'Créer un code de groupe';
-
-  @override
-  String get communityGeneratingCode => 'Création du code…';
-
-  @override
   String get communityGoogleDisclaimer =>
       'THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.';
 
@@ -3156,18 +2973,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Lancez VALORANT sur votre PC ou votre console, puis réessayez.';
 
   @override
-  String get communityJoinInvalidCode =>
-      'Le code de groupe n\'est plus valide ou le groupe est complet.';
-
-  @override
   String get communityJoinParty => 'Rejoindre le groupe';
 
   @override
   String get communityJoinPartyFull => 'Ce groupe est complet.';
-
-  @override
-  String get communityJoined =>
-      'Vous avez rejoint le groupe ! Ouvrez VALORANT pour jouer ensemble.';
 
   @override
   String get communityJoinedHint =>
@@ -3188,9 +2997,6 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get communityKeepEditing => 'Continuer';
 
   @override
   String get communityKindNightMarket => 'Marché nocturne';
@@ -3282,10 +3088,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'Votre annonce a expiré. Publiez-en une nouvelle pour trouver des coéquipiers.';
 
   @override
-  String get communityLfgExpiryNote =>
-      'L\'annonce expire automatiquement après 30 minutes.';
-
-  @override
   String get communityLfgGateBody =>
       'Rejoignez la Communauté (vérification unique du Riot ID) pour voir les annonces des joueurs de votre serveur et publier la vôtre. Le fil et le classement des skins restent accessibles.';
 
@@ -3321,35 +3123,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityLike => 'J\'aime';
 
   @override
-  String communityLikes(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    return '$nString J\'aime';
-  }
-
-  @override
   String get communityLiveMembers => 'Membres';
 
   @override
-  String get communityLoadMoreFailed =>
-      'Impossible de charger plus de publications. Réessayez.';
-
-  @override
   String get communityMatchMyRank => 'Adapté à votre rang';
-
-  @override
-  String communityMaxPhotos(int max) {
-    String _temp0 = intl.Intl.pluralLogic(
-      max,
-      locale: localeName,
-      other: '$max photos maximum.',
-      one: '$max photo maximum.',
-    );
-    return '$_temp0';
-  }
 
   @override
   String communityMemberJoined(String name) {
@@ -3381,9 +3158,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityMuteAuthor => 'Masquer ce joueur';
 
   @override
-  String get communityMyPost => 'Votre annonce';
-
-  @override
   String get communityNewPost => 'Publier';
 
   @override
@@ -3400,15 +3174,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get communityNoComments => 'Aucun commentaire. Lancez la discussion !';
-
-  @override
-  String get communityNoParty =>
-      'Aucun groupe trouvé. Ouvrez VALORANT et réessayez, ou saisissez le code manuellement.';
-
-  @override
-  String communityNoPartyWithReason(String reason) {
-    return 'Aucun groupe trouvé. Ouvrez VALORANT et réessayez, ou saisissez le code manuellement.\n$reason';
-  }
 
   @override
   String get communityNoRatings => 'Aucun avis';
@@ -3470,21 +3235,9 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get communityPeriodAll => 'Tout';
-
-  @override
-  String get communityPeriodAllTime => 'Depuis toujours';
-
-  @override
-  String get communityPeriodWeek => 'Cette semaine';
-
-  @override
   String communityPhotoCount(int n, int max) {
     return 'Photos : $n/$max';
   }
-
-  @override
-  String get communityPickRating => 'Choisissez une note.';
 
   @override
   String get communityPlayVideo => 'Voir la vidéo';
@@ -3501,10 +3254,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get communityPosted => 'Publication en ligne !';
-
-  @override
-  String get communityPrivacyNote =>
-      'ValHub vérifie votre Riot ID quand vous rejoignez la Communauté et la possession d\'un skin quand vous l\'évaluez. La Communauté n\'enregistre ni votre mot de passe ni vos données de connexion Riot.';
 
   @override
   String get communityPublish => 'Publier';
@@ -3635,9 +3384,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityReported => 'Merci ! Votre signalement a été envoyé.';
 
   @override
-  String get communityRetry => 'Réessayer';
-
-  @override
   String get communityReviewDeleted => 'Avis supprimé.';
 
   @override
@@ -3661,9 +3407,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String communityReviewsHeader(String n) {
     return 'Avis · $n';
   }
-
-  @override
-  String get communityReviewsSection => 'Avis';
 
   @override
   String communityRiotId(String name, String tag) {
@@ -3690,9 +3433,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get communityScopeRegion => 'Région';
-
-  @override
-  String get communityScopeWorldwide => 'Mondial';
 
   @override
   String get communitySectionFeed => 'Fil';
@@ -3737,13 +3477,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get communitySkinNotFound => 'Skin introuvable.';
-
-  @override
-  String get communitySkinsEmptyBody =>
-      'Mettez un cœur à votre skin préféré pour le faire grimper au classement !';
-
-  @override
-  String get communitySkinsEmptyTitle => 'Aucun vote pour l\'instant';
 
   @override
   String get communitySlots => 'Joueurs recherchés';
@@ -3853,10 +3586,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityTranslateFailed => 'Traduction impossible. Réessayez.';
 
   @override
-  String get communityTranslateUnavailable =>
-      'Cet appareil ne prend pas en charge la traduction hors ligne.';
-
-  @override
   String get communityTranslatedByGoogle =>
       'Traduit automatiquement par Google';
 
@@ -3884,12 +3613,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get communityUnvote => 'Retirer le cœur';
-
-  @override
-  String get communityUploading => 'Envoi des photos…';
-
-  @override
-  String get communityViewImage => 'Voir l\'image';
 
   @override
   String get communityVote => 'Mettre un cœur à ce skin';
@@ -3932,9 +3655,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityWriteFirstReview => 'Écrire le premier avis';
 
   @override
-  String get communityWritePost => 'Écrire';
-
-  @override
   String get communityYou => 'Vous';
 
   @override
@@ -3964,12 +3684,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get liveGameAutoRefreshNote =>
       'Actualisation automatique dès qu\'une partie est trouvée.';
-
-  @override
-  String get liveGameBuddy => 'Breloque';
-
-  @override
-  String get liveGameClose => 'Fermer';
 
   @override
   String get liveGameCurrentGame => 'Partie en cours';
@@ -4070,9 +3784,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String liveGamePeak(String rank) {
     return 'Meilleur rang : $rank';
   }
-
-  @override
-  String get liveGamePlayerCard => 'Carte de joueur';
 
   @override
   String liveGamePlayerLoadoutOf(String name) {
@@ -4340,9 +4051,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileChooseMap => 'Filtrer par carte';
 
   @override
-  String get profileClearMap => 'Retirer le filtre de carte';
-
-  @override
   String get profileColA => 'A';
 
   @override
@@ -4391,14 +4099,6 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get profileDuration => 'Durée';
-
-  @override
-  String profileDurationOf(String d) {
-    return 'Durée : $d';
-  }
-
-  @override
   String get profileEndOfHistory => 'Toutes les parties sont affichées';
 
   @override
@@ -4409,9 +4109,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get profileFilterAll => 'Tout';
-
-  @override
-  String get profileFilterMap => 'Carte';
 
   @override
   String get profileFirstBloods => 'First blood';
@@ -4462,11 +4159,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get profileFriendsRow => 'Amis et discussion';
-
-  @override
-  String profileGainPerWin(String rr) {
-    return '$rr RR par victoire';
-  }
 
   @override
   String get profileHideKills => 'Masquer les éliminations';
@@ -4545,11 +4237,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileLevelHidden => 'Niveau masqué';
 
   @override
-  String profileLossPerLoss(String rr) {
-    return '$rr RR par défaite';
-  }
-
-  @override
   String profileLossStreak(int n) {
     String _temp0 = intl.Intl.pluralLogic(
       n,
@@ -4621,15 +4308,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profilePlayHubTitle => 'Partie et groupe';
 
   @override
-  String get profilePartyRow => 'Groupe et file';
-
-  @override
   String get profilePeakRank => 'Meilleur rang';
-
-  @override
-  String profilePeakRankOf(String actTitle) {
-    return 'Meilleur rang · $actTitle';
-  }
 
   @override
   String get profilePerformanceAttack => 'Attaque';
@@ -4640,9 +4319,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get profilePerformanceEmpty =>
       'Aucune partie enregistrée sur cet appareil. Ouvrez l\'historique des parties pour enregistrer celles que vous avez jouées.';
-
-  @override
-  String get profilePerformanceGames => 'Parties';
 
   @override
   String get profilePerformanceNoMatches =>
@@ -4675,13 +4351,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get profilePerformanceTitle => 'Performances';
-
-  @override
-  String get profilePerformanceTrendEmpty =>
-      'Il faut au moins deux périodes d\'au moins 3 parties pour comparer la tendance.';
-
-  @override
-  String get profilePickTargetHint => 'Choisissez le rang à atteindre';
 
   @override
   String profilePlacement(int n) {
@@ -4825,9 +4494,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get profileRoundsHint =>
       'Touchez une manche pour voir chaque élimination.';
-
-  @override
-  String get profileRr => 'RR';
 
   @override
   String profileRrLeft(String n) {
@@ -5162,9 +4828,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get legalContactHeader => 'CONTACT';
 
   @override
-  String get legalCreditsHeader => 'SOURCES DES DONNÉES ET CRÉDITS';
-
-  @override
   String legalEffectiveFrom(String date) {
     return 'En vigueur depuis le $date';
   }
@@ -5269,10 +4932,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'Le pays ne sert qu\'aux recherches et suggestions. La région de connexion dépend de votre compte Riot.';
 
   @override
-  String get settingsGeoUnsupported =>
-      'Cette région Riot n\'est pas encore prise en charge. Choisissez une région dans les Paramètres.';
-
-  @override
   String get settingsGeoSave => 'Vérifier et enregistrer';
 
   @override
@@ -5375,34 +5034,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutCreditContent => 'valorant-api.com';
-
-  @override
-  String get settingsAboutCreditContentBody =>
-      'Noms, images et infos des skins, agents, cartes et rangs.';
-
-  @override
-  String get settingsAboutCreditDocs => 'Documentation communautaire';
-
-  @override
-  String get settingsAboutCreditDocsBody =>
-      'Le projet techchrism/valorant-api-docs et la communauté des développeurs VALORANT.';
-
-  @override
-  String get settingsAboutCreditRiot => 'Riot Games';
-
-  @override
-  String get settingsAboutCreditRiotBody =>
-      'Boutique, portefeuille, collection, parties et rangs proviennent directement du compte Riot avec lequel vous êtes connecté.';
-
-  @override
-  String get settingsAboutCreditsHeader => 'SOURCES DES DONNÉES';
-
-  @override
   String get settingsAboutHeader => 'INFORMATIONS';
-
-  @override
-  String get settingsAboutLegalHeader => 'MENTIONS LÉGALES';
 
   @override
   String get settingsAboutRowSubtitle =>
@@ -5439,25 +5071,11 @@ class AppLocalizationsFr extends AppLocalizations {
       'Images et données téléchargées sur l\'appareil, y compris les rapports de bug enregistrés';
 
   @override
-  String get settingsClearLog => 'Effacer les rapports de bug enregistrés';
-
-  @override
-  String get settingsClearLogConfirm =>
-      'Effacer les rapports de bug enregistrés sur cet appareil ?';
-
-  @override
   String get settingsExportLog => 'Envoyer un rapport de bug à ValHub';
 
   @override
   String get settingsExportLogEmpty =>
       'Rien à envoyer pour l\'instant. Utilisez l\'app un moment puis réessayez.';
-
-  @override
-  String get settingsExportLogEmptyTitle => 'Rien à envoyer';
-
-  @override
-  String get settingsExportLogNote =>
-      'Le rapport de bug ne contient ni votre mot de passe ni vos données de connexion Riot.';
 
   @override
   String get settingsExportLogSubtitle =>
@@ -5474,10 +5092,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsItemLanguageEn => 'Anglais';
 
   @override
-  String get settingsItemLanguageHint =>
-      'Les noms des skins, agents, cartes… s\'affichent dans cette langue.';
-
-  @override
   String get settingsItemLanguageLabel => 'Nom des objets';
 
   @override
@@ -5487,60 +5101,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsItemLanguageVi => 'Vietnamien';
 
   @override
-  String get settingsLegalNotice => 'Mentions légales';
-
-  @override
   String get settingsLinkOpenFailed =>
       'Impossible d\'ouvrir le lien. Réessayez.';
-
-  @override
-  String get settingsLogCleared => 'Rapports de bug effacés';
-
-  @override
-  String settingsLogEntryCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count entrées',
-      one: '$count entrée',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String settingsLogEntryShown(int shown, int total) {
-    return 'Entrées : $shown / $total';
-  }
 
   @override
   String settingsLogFileHeader(String appName, String version) {
     return '$appName $version — Rapport de bug';
   }
-
-  @override
-  String get settingsLogFilterAll => 'Tout';
-
-  @override
-  String get settingsLogFilterAuth => 'Connexion';
-
-  @override
-  String get settingsLogFilterEmpty =>
-      'Aucune entrée correspondante. Retirez le filtre pour en voir plus.';
-
-  @override
-  String get settingsLogFilterErrors => 'Incidents';
-
-  @override
-  String get settingsLogFilterHttp => 'Réseau';
-
-  @override
-  String get settingsLogMore => 'Plus d\'options';
-
-  @override
-  String get settingsLogSearchEmpty => 'Aucune entrée correspondante.';
-
-  @override
-  String get settingsLogSearchHint => 'Rechercher dans le rapport…';
 
   @override
   String get settingsLogShareFailed =>
@@ -5780,9 +5347,6 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get settingsStatusRegionPicker => 'Serveur';
 
   @override
   String get settingsStatusScheduled => 'Maintenance à venir';
@@ -6027,16 +5591,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get socialChangeQueue => 'Changer de file';
 
   @override
-  String get socialChatTitle => 'Discussion';
-
-  @override
   String get socialChatUnavailable => 'La discussion est hors ligne.';
 
   @override
   String get socialCloseParty => 'Fermer le groupe';
-
-  @override
-  String get socialClosedState => 'Sur invitation';
 
   @override
   String get socialCodeInvalid =>
@@ -6107,10 +5665,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get socialGenerateCode => 'Créer un code';
-
-  @override
-  String get socialHistoryFailed =>
-      'Impossible de charger les anciens messages. Reconnectez-vous et réessayez.';
 
   @override
   String get socialIdleQueue => 'Prêt à chercher une partie';
@@ -6249,10 +5803,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get socialNoSearchResultsTitle => 'Aucun résultat';
 
   @override
-  String get socialNotFriend =>
-      'Ce joueur n\'est pas dans votre liste d\'amis.';
-
-  @override
   String get socialNotReady => 'Pas prêt';
 
   @override
@@ -6280,9 +5830,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get socialOpenParty => 'Ouvrir le groupe';
-
-  @override
-  String get socialOpenState => 'Groupe ouvert';
 
   @override
   String get socialOtherGamesLeagueOfLegends => 'League of Legends';
@@ -6659,20 +6206,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get storeRemoveFromWishlist => 'Retirer de la wishlist';
 
   @override
-  String storeResetNotificationBody(int skinCount, String account) {
-    String _temp0 = intl.Intl.pluralLogic(
-      skinCount,
-      locale: localeName,
-      other:
-          'Découvrez $skinCount nouveaux skins du jour dans la boutique de $account.',
-      one:
-          'Découvrez $skinCount nouveau skin du jour dans la boutique de $account.',
-      zero: 'Découvrez les nouveautés du jour dans la boutique de $account.',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get storeResetNotificationTitle => 'La boutique a été renouvelée';
 
   @override
@@ -6795,6 +6328,80 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get storeHistoryTitle => 'Historique de la boutique';
+
+  @override
+  String storeHistorySince(String date, int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$daysString jours',
+      one: '$daysString jour',
+    );
+    return 'Enregistré sur cet appareil depuis le $date · $_temp0';
+  }
+
+  @override
+  String get storeHistoryEmpty =>
+      'Aucun jour enregistré pour l\'instant. ValHub sauvegarde votre boutique quotidienne chaque fois que vous ouvrez l\'app, uniquement sur cet appareil.';
+
+  @override
+  String get storeHistoryMostOffered => 'Les plus proposés';
+
+  @override
+  String storeHistoryTimes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString fois',
+      one: '$nString fois',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryNightMarket(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Marché nocturne · $countString offres',
+      one: 'Marché nocturne · $countString offre',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryEntrySubtitle(int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$daysString jours enregistrés sur cet appareil',
+      one: '$daysString jour enregistré sur cet appareil',
+      zero: 'Enregistrement commencé aujourd\'hui',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String wishlistNotifDailyBody(
     String skin,
     String account,
@@ -6914,9 +6521,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wishlistClearFilters => 'Effacer les filtres';
 
   @override
-  String get wishlistClearSearch => 'Effacer la recherche';
-
-  @override
   String get wishlistEmpty =>
       'Votre wishlist est vide. Touchez ♡ sur n\'importe quel skin pour l\'ajouter.';
 
@@ -6932,9 +6536,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wishlistExcludedRewards => 'Skins de récompense non comptés';
 
   @override
-  String get wishlistFilterTiers => 'Édition';
-
-  @override
   String wishlistFiltered(int count, String value) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);
@@ -6948,15 +6549,6 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return 'Avec filtres : $_temp0 · $value';
   }
-
-  @override
-  String get wishlistHasEstimates => 'Inclut des prix estimés (≈)';
-
-  @override
-  String get wishlistInWishlist => 'Dans la wishlist';
-
-  @override
-  String get wishlistInWishlistLabel => 'dans la wishlist';
 
   @override
   String get wishlistNoMatch =>
@@ -7055,14 +6647,6 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get wishlistSortBy => 'Trier';
-
-  @override
-  String wishlistSortLabel(String sort) {
-    return 'Tri : $sort';
-  }
-
-  @override
   String get wishlistSortName => 'Nom';
 
   @override
@@ -7073,12 +6657,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wishlistSortWeapon => 'Arme';
-
-  @override
-  String get wishlistStoreCheckTitle => 'Impossible de vérifier la boutique';
-
-  @override
-  String get wishlistSubtitle => 'Les skins que vous visez';
 
   @override
   String get wishlistTitle => 'Wishlist';
@@ -7197,7 +6775,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get homeCardCommunityDesc =>
-      'Coéquipiers de votre rang et skins préférés de la semaine.';
+      'Coéquipiers de votre rang et skins préférés de la communauté.';
 
   @override
   String get homeCardFriends => 'Amis en jeu';

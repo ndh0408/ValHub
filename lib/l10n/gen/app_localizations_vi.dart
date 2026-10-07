@@ -23,9 +23,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonAppName => 'ValHub';
 
   @override
-  String get commonBack => 'Quay lại';
-
-  @override
   String get commonCancel => 'Hủy';
 
   @override
@@ -38,16 +35,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonClose => 'Đóng';
 
   @override
-  String get commonConfirm => 'Xác nhận';
-
-  @override
   String get commonCopied => 'Đã sao chép';
-
-  @override
-  String get commonCopy => 'Sao chép';
-
-  @override
-  String get commonDaily => 'hằng ngày';
 
   @override
   String get commonDash => '–';
@@ -64,9 +52,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get commonDelete => 'Xóa';
-
-  @override
-  String get commonDone => 'Xong';
 
   @override
   String get commonEmptyGeneric => 'Chưa có gì ở đây.';
@@ -119,9 +104,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonEstimatePrefix => '≈';
 
   @override
-  String get commonFilter => 'Lọc';
-
-  @override
   String get commonGoHome => 'Về Trang chủ';
 
   @override
@@ -166,9 +148,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String commonOfflineCached(String time) {
     return 'Không có mạng — đang hiển thị bản đã lưu ($time).';
   }
-
-  @override
-  String get commonOk => 'OK';
 
   @override
   String get commonOpenSettings => 'Mở cài đặt';
@@ -271,12 +250,6 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get commonPullToRefresh => 'Kéo để làm mới';
-
-  @override
-  String get commonRefresh => 'Làm mới';
-
-  @override
   String get commonRetry => 'Thử lại';
 
   @override
@@ -295,9 +268,6 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get commonSeeAll => 'Xem tất cả';
-
-  @override
   String get commonShare => 'Chia sẻ';
 
   @override
@@ -310,24 +280,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String commonSortBy(String option) {
     return 'Sắp xếp: $option';
   }
-
-  @override
-  String get commonSortName => 'Tên A–Z';
-
-  @override
-  String get commonSortNewest => 'Mới nhất';
-
-  @override
-  String get commonSortPriceHigh => 'Giá giảm dần';
-
-  @override
-  String get commonSortPriceLow => 'Giá tăng dần';
-
-  @override
-  String get commonSortRarity => 'Độ hiếm';
-
-  @override
-  String get commonSortWeapon => 'Vũ khí';
 
   @override
   String get commonTabBattlePass => 'Battle Pass';
@@ -450,9 +402,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get contentCurrencyVpFull => 'VALORANT Point';
 
   @override
-  String get contentDefaultSkin => 'Mặc định';
-
-  @override
   String get contentItemAgent => 'Đặc vụ';
 
   @override
@@ -472,18 +421,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get contentItemFlex => 'Flex';
-
-  @override
-  String get contentItemLanguageEn => 'Tiếng Anh';
-
-  @override
-  String get contentItemLanguageTitle => 'Tên vật phẩm';
-
-  @override
-  String get contentItemLanguageVi => 'Tiếng Việt';
-
-  @override
-  String get contentItemLevelBorder => 'Khung cấp';
 
   @override
   String get contentItemSkin => 'Skin';
@@ -552,12 +489,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get contentLevelItemLabelsFishAnimation => 'Hoạt ảnh cá';
-
-  @override
-  String get contentLimitedEdition => 'Phiên bản giới hạn';
-
-  @override
-  String get contentNoSpray => 'Không có';
 
   @override
   String get contentNoTitle => 'Không có danh hiệu';
@@ -686,11 +617,6 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get accountRiotCountryUnknown =>
       'Quốc gia tài khoản Riot: Chưa xác định';
-
-  @override
-  String accountAccountCount(int count, int max) {
-    return '$count/$max tài khoản';
-  }
 
   @override
   String accountAccountsHeader(int count, int max) {
@@ -877,9 +803,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get accountStatusUnknown => 'Chưa rõ trạng thái';
 
   @override
-  String get accountSwitchFailed => 'Chưa chuyển được tài khoản. Hãy thử lại.';
-
-  @override
   String accountSwitchTo(String account) {
     return 'Chuyển sang $account';
   }
@@ -901,9 +824,6 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get accountUnlockLoginNote =>
       'Xác thực để mở thông tin đăng nhập Riot';
-
-  @override
-  String get authAccountAlreadyAdded => 'Tài khoản này đã được thêm';
 
   @override
   String get authAddAsNew => 'Thêm tài khoản mới';
@@ -958,10 +878,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get authSignInCta => 'Đăng nhập bằng tài khoản Riot';
-
-  @override
-  String get authSignInNote =>
-      'Bạn đăng nhập trên trang chính thức của Riot. ValHub chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập; dữ liệu đăng nhập và thông tin đã lưu chỉ nằm trên thiết bị của bạn.';
 
   @override
   String get authSocialLoginHint =>
@@ -1177,12 +1093,6 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get economyCollectionValue => 'Giá trị bộ sưu tập';
-
-  @override
-  String get economyExcludedRewards => 'Không tính skin phần thưởng';
-
-  @override
   String economyPlaceBundle(String name) {
     return 'bundle $name';
   }
@@ -1212,12 +1122,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get economyPriceUnknown => 'Chưa rõ giá';
 
   @override
-  String get economyValueHasEstimates => 'Có giá ước tính (≈)';
-
-  @override
-  String get economyWishlistValue => 'Tổng giá trị wishlist';
-
-  @override
   String loadoutDefaultPresetName(int n) {
     return 'Bộ trang bị $n';
   }
@@ -1232,9 +1136,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get loadoutSaveFailed => 'Không thể lưu trang bị';
-
-  @override
-  String get battlePassActEnded => 'Phần này đã kết thúc';
 
   @override
   String battlePassActEndsIn(String time) {
@@ -1275,9 +1176,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String battlePassCharges(int charges, int needed) {
     return '$charges/$needed';
   }
-
-  @override
-  String get battlePassCheckpoint => 'Cột mốc';
 
   @override
   String get battlePassCheckpointHint =>
@@ -1400,9 +1298,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String battlePassMissionsCompleted(int done, int total) {
     return '$done/$total hoàn thành';
   }
-
-  @override
-  String get battlePassMissionsProgressLabel => 'Tiến độ nhiệm vụ tuần';
 
   @override
   String battlePassNewMissionsAtWall(String wall) {
@@ -1593,9 +1488,6 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get collectionBannerTitlePrefix => 'Danh hiệu: ';
-
-  @override
   String get collectionBrowseBuddies => 'Phụ kiện súng';
 
   @override
@@ -1615,9 +1507,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get collectionBrowseSprays => 'Hình phun sơn';
-
-  @override
-  String get collectionBrowseTitle => 'Duyệt bộ sưu tập';
 
   @override
   String get collectionBrowseTitles => 'Danh hiệu';
@@ -1666,12 +1555,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String collectionChromaCount(int owned, int total) {
     return '$owned/$total biến thể';
   }
-
-  @override
-  String get collectionClearFilters => 'Bỏ lọc';
-
-  @override
-  String get collectionClearSearch => 'Xóa tìm kiếm';
 
   @override
   String get collectionClearTiers => 'Bỏ lọc phiên bản';
@@ -1731,9 +1614,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get collectionExpressionsTitle => 'Tổ hợp cảm xúc';
 
   @override
-  String get collectionFilterTiers => 'Phiên bản';
-
-  @override
   String get collectionHideAccountLevel => 'Ẩn cấp tài khoản';
 
   @override
@@ -1748,21 +1628,7 @@ class AppLocalizationsVi extends AppLocalizations {
       'Ẩn tên của bạn với người chơi không cùng tổ đội trong trận.';
 
   @override
-  String collectionItemsCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    return '$nString món';
-  }
-
-  @override
   String get collectionLevelBorderAuto => 'Tự động theo cấp';
-
-  @override
-  String get collectionLevelBorderEmpty =>
-      'Chưa có khung cấp nào cho cấp của bạn.';
 
   @override
   String collectionLevelBorderFrom(int level) {
@@ -1952,16 +1818,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get collectionPreview => 'Xem trước';
 
   @override
-  String get collectionPreviewing => 'Đang xem';
-
-  @override
   String get collectionRemoveBuddy => 'Gỡ phụ kiện';
 
   @override
   String get collectionRenamePreset => 'Đổi tên';
-
-  @override
-  String get collectionRowCard => 'Thẻ người chơi';
 
   @override
   String get collectionRowExpressions => 'Tổ hợp cảm xúc';
@@ -1971,9 +1831,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get collectionRowPresets => 'Bộ trang bị đã lưu';
-
-  @override
-  String get collectionRowTitle => 'Danh hiệu';
 
   @override
   String get collectionRowWeapons => 'Trang bị vũ khí';
@@ -2043,9 +1900,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get collectionSlotNamesItem3 => 'Trái';
-
-  @override
-  String get collectionSortLabel => 'Sắp xếp';
 
   @override
   String get collectionSortName => 'Tên';
@@ -2231,9 +2085,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityRankingClear => 'Bỏ lọc vũ khí và thời gian';
 
   @override
-  String get communityRankingPeriod => 'Thời gian';
-
-  @override
   String get communityRankingSort => 'Xếp hạng theo';
 
   @override
@@ -2280,9 +2131,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityAddPhotos => 'Thêm ảnh';
 
   @override
-  String get communityAgentsPicked => 'Đặc vụ đã chọn';
-
-  @override
   String get communityAllModes => 'Tất cả';
 
   @override
@@ -2302,9 +2150,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityApply => 'Áp dụng';
-
-  @override
-  String get communityAutoRefresh => 'Tự làm mới mỗi 20 giây';
 
   @override
   String get communityBackToMyCountry => 'Về nước bạn';
@@ -2329,17 +2174,11 @@ class AppLocalizationsVi extends AppLocalizations {
       'Không tạo được mã tổ đội. Hãy mở VALORANT hoặc nhập mã thủ công.';
 
   @override
-  String get communityCodeGenerated => 'Đã tạo mã từ tổ đội hiện tại của bạn.';
-
-  @override
   String get communityCodeInvalid =>
       'Mã gồm đúng 6 chữ cái in hoa hoặc chữ số.';
 
   @override
   String get communityCodeRequired => 'Hãy nhập hoặc tạo mã tổ đội.';
-
-  @override
-  String get communityComment => 'Bình luận';
 
   @override
   String get communityCommentHint => 'Viết bình luận…';
@@ -2424,12 +2263,6 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get communityConsentWithdrawn =>
       'Đã rút lại đồng ý. Cần đồng ý lại để tiếp tục sử dụng app.';
-
-  @override
-  String get communityCountriesEmpty => 'Không tìm thấy quốc gia phù hợp.';
-
-  @override
-  String get communityCountriesSearchHint => 'Tìm quốc gia…';
 
   @override
   String get communityCountriesTitle => 'Cộng đồng các nước';
@@ -2926,12 +2759,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityFilters => 'Bộ lọc';
 
   @override
-  String get communityGenerateCode => 'Tạo mã tổ đội';
-
-  @override
-  String get communityGeneratingCode => 'Đang tạo mã…';
-
-  @override
   String get communityGoogleDisclaimer =>
       'THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.';
 
@@ -2984,17 +2811,10 @@ class AppLocalizationsVi extends AppLocalizations {
       'Hãy mở VALORANT trên máy tính hoặc console rồi thử lại.';
 
   @override
-  String get communityJoinInvalidCode =>
-      'Mã tổ đội không còn hiệu lực hoặc tổ đội đã đủ người.';
-
-  @override
   String get communityJoinParty => 'Vào tổ đội';
 
   @override
   String get communityJoinPartyFull => 'Tổ đội này đã đủ người.';
-
-  @override
-  String get communityJoined => 'Đã vào tổ đội! Mở VALORANT để chơi cùng nhau.';
 
   @override
   String get communityJoinedHint =>
@@ -3009,9 +2829,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
     return '$nString người đã yêu cầu vào';
   }
-
-  @override
-  String get communityKeepEditing => 'Viết tiếp';
 
   @override
   String get communityKindNightMarket => 'Chợ Đêm';
@@ -3097,9 +2914,6 @@ class AppLocalizationsVi extends AppLocalizations {
       'Tin của bạn đã hết hạn. Hãy đăng tin mới để tìm đồng đội.';
 
   @override
-  String get communityLfgExpiryNote => 'Tin tự hết hạn sau 30 phút.';
-
-  @override
   String get communityLfgGateBody =>
       'Tham gia (xác minh Riot ID một lần) để xem tin của người chơi cùng máy chủ và đăng tin tìm đồng đội của bạn. Bạn vẫn xem Bảng tin và Xếp hạng skin bình thường.';
 
@@ -3133,28 +2947,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityLike => 'Thích';
 
   @override
-  String communityLikes(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String nString = nNumberFormat.format(n);
-
-    return '$nString lượt thích';
-  }
-
-  @override
   String get communityLiveMembers => 'Thành viên';
 
   @override
-  String get communityLoadMoreFailed => 'Chưa tải thêm được bài. Hãy thử lại.';
-
-  @override
   String get communityMatchMyRank => 'Phù hợp rank của bạn';
-
-  @override
-  String communityMaxPhotos(int max) {
-    return 'Tối đa $max ảnh.';
-  }
 
   @override
   String communityMemberJoined(String name) {
@@ -3186,9 +2982,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityMuteAuthor => 'Ẩn người này';
 
   @override
-  String get communityMyPost => 'Tin của bạn';
-
-  @override
   String get communityNewPost => 'Đăng bài';
 
   @override
@@ -3205,15 +2998,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityNoComments => 'Chưa có bình luận. Hãy mở lời trước nhé!';
-
-  @override
-  String get communityNoParty =>
-      'Không tìm thấy tổ đội. Hãy mở VALORANT rồi thử lại, hoặc nhập mã thủ công.';
-
-  @override
-  String communityNoPartyWithReason(String reason) {
-    return 'Không tìm thấy tổ đội. Hãy mở VALORANT rồi thử lại, hoặc nhập mã thủ công.\n$reason';
-  }
 
   @override
   String get communityNoRatings => 'Chưa có đánh giá';
@@ -3269,21 +3053,9 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get communityPeriodAll => 'Tất cả';
-
-  @override
-  String get communityPeriodAllTime => 'Từ trước tới giờ';
-
-  @override
-  String get communityPeriodWeek => 'Tuần này';
-
-  @override
   String communityPhotoCount(int n, int max) {
     return '$n/$max ảnh';
   }
-
-  @override
-  String get communityPickRating => 'Hãy chọn số sao.';
 
   @override
   String get communityPlayVideo => 'Xem video';
@@ -3299,10 +3071,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityPosted => 'Đã đăng bài!';
-
-  @override
-  String get communityPrivacyNote =>
-      'ValHub xác minh Riot ID khi kết nối Cộng đồng và quyền sở hữu skin khi bạn đánh giá. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.';
 
   @override
   String get communityPublish => 'Đăng';
@@ -3432,9 +3200,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityReported => 'Cảm ơn bạn! Báo cáo đã được gửi.';
 
   @override
-  String get communityRetry => 'Thử lại';
-
-  @override
   String get communityReviewDeleted => 'Đã xóa đánh giá.';
 
   @override
@@ -3458,9 +3223,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String communityReviewsHeader(String n) {
     return 'Đánh giá · $n';
   }
-
-  @override
-  String get communityReviewsSection => 'Đánh giá';
 
   @override
   String communityRiotId(String name, String tag) {
@@ -3487,9 +3249,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityScopeRegion => 'Khu vực';
-
-  @override
-  String get communityScopeWorldwide => 'Toàn cầu';
 
   @override
   String get communitySectionFeed => 'Bảng tin';
@@ -3532,13 +3291,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communitySkinNotFound => 'Không tìm thấy skin này.';
-
-  @override
-  String get communitySkinsEmptyBody =>
-      'Thả tim cho skin bạn thích nhất để đưa nó lên bảng xếp hạng!';
-
-  @override
-  String get communitySkinsEmptyTitle => 'Chưa có lượt bình chọn';
 
   @override
   String get communitySlots => 'Số người cần';
@@ -3623,10 +3375,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityTranslateFailed => 'Không dịch được. Hãy thử lại.';
 
   @override
-  String get communityTranslateUnavailable =>
-      'Thiết bị này chưa hỗ trợ dịch trên máy.';
-
-  @override
   String get communityTranslatedByGoogle => 'Dịch tự động bởi Google';
 
   @override
@@ -3653,12 +3401,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityUnvote => 'Bỏ tim';
-
-  @override
-  String get communityUploading => 'Đang tải ảnh lên…';
-
-  @override
-  String get communityViewImage => 'Xem ảnh';
 
   @override
   String get communityVote => 'Thả tim cho skin này';
@@ -3695,9 +3437,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityWriteFirstReview => 'Viết đánh giá đầu tiên';
 
   @override
-  String get communityWritePost => 'Viết bài';
-
-  @override
   String get communityYou => 'Bạn';
 
   @override
@@ -3726,12 +3465,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get liveGameAutoRefreshNote => 'Tự động làm mới khi có trận.';
-
-  @override
-  String get liveGameBuddy => 'Phụ kiện súng';
-
-  @override
-  String get liveGameClose => 'Đóng';
 
   @override
   String get liveGameCurrentGame => 'Trận hiện tại';
@@ -3832,9 +3565,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String liveGamePeak(String rank) {
     return 'Cao nhất: $rank';
   }
-
-  @override
-  String get liveGamePlayerCard => 'Thẻ người chơi';
 
   @override
   String liveGamePlayerLoadoutOf(String name) {
@@ -4057,9 +3787,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get profileChooseMap => 'Lọc theo bản đồ';
 
   @override
-  String get profileClearMap => 'Bỏ lọc bản đồ';
-
-  @override
   String get profileColA => 'A';
 
   @override
@@ -4102,14 +3829,6 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get profileDuration => 'Thời lượng';
-
-  @override
-  String profileDurationOf(String d) {
-    return 'Thời lượng $d';
-  }
-
-  @override
   String get profileEndOfHistory => 'Đã hiển thị tất cả trận đấu';
 
   @override
@@ -4120,9 +3839,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get profileFilterAll => 'Tất cả';
-
-  @override
-  String get profileFilterMap => 'Bản đồ';
 
   @override
   String get profileFirstBloods => 'First blood';
@@ -4154,11 +3870,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get profileFriendsRow => 'Bạn bè & trò chuyện';
-
-  @override
-  String profileGainPerWin(String rr) {
-    return '$rr RR khi thắng';
-  }
 
   @override
   String get profileHideKills => 'Ẩn pha hạ gục';
@@ -4225,11 +3936,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get profileLevelHidden => 'Cấp ẩn';
 
   @override
-  String profileLossPerLoss(String rr) {
-    return '$rr RR khi thua';
-  }
-
-  @override
   String profileLossStreak(int n) {
     return 'Chuỗi $n trận thua';
   }
@@ -4289,15 +3995,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get profilePlayHubTitle => 'Trận đấu & tổ đội';
 
   @override
-  String get profilePartyRow => 'Tổ đội & hàng chờ';
-
-  @override
   String get profilePeakRank => 'Cao nhất';
-
-  @override
-  String profilePeakRankOf(String actTitle) {
-    return 'Cao nhất · $actTitle';
-  }
 
   @override
   String get profilePerformanceAttack => 'Tấn công';
@@ -4308,9 +4006,6 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get profilePerformanceEmpty =>
       'Chưa có trận nào được ghi trên thiết bị này. Mở lịch sử trận để ghi lại những trận bạn đã chơi.';
-
-  @override
-  String get profilePerformanceGames => 'Số trận';
 
   @override
   String get profilePerformanceNoMatches =>
@@ -4337,13 +4032,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get profilePerformanceTitle => 'Hiệu suất';
-
-  @override
-  String get profilePerformanceTrendEmpty =>
-      'Cần ít nhất hai giai đoạn có từ 3 trận để so sánh xu hướng.';
-
-  @override
-  String get profilePickTargetHint => 'Chọn hạng bạn muốn đạt';
 
   @override
   String profilePlacement(int n) {
@@ -4455,9 +4143,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get profileRoundsHint => 'Chạm vào một vòng để xem từng pha hạ gục.';
-
-  @override
-  String get profileRr => 'RR';
 
   @override
   String profileRrLeft(String n) {
@@ -4770,9 +4455,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get legalContactHeader => 'LIÊN HỆ';
 
   @override
-  String get legalCreditsHeader => 'NGUỒN DỮ LIỆU & GHI CÔNG';
-
-  @override
   String legalEffectiveFrom(String date) {
     return 'Hiệu lực từ $date';
   }
@@ -4877,10 +4559,6 @@ class AppLocalizationsVi extends AppLocalizations {
       'Quốc gia chỉ dùng để tra cứu và gợi ý. Khu vực kết nối theo tài khoản Riot.';
 
   @override
-  String get settingsGeoUnsupported =>
-      'Khu vực Riot chưa được hỗ trợ. Hãy chọn khu vực trong Cài đặt.';
-
-  @override
   String get settingsGeoSave => 'Kiểm tra và lưu';
 
   @override
@@ -4982,34 +4660,7 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get settingsAboutCreditContent => 'valorant-api.com';
-
-  @override
-  String get settingsAboutCreditContentBody =>
-      'Tên, hình ảnh và thông tin về skin, đặc vụ, bản đồ và rank.';
-
-  @override
-  String get settingsAboutCreditDocs => 'Tài liệu cộng đồng';
-
-  @override
-  String get settingsAboutCreditDocsBody =>
-      'Dự án techchrism/valorant-api-docs và cộng đồng nhà phát triển VALORANT.';
-
-  @override
-  String get settingsAboutCreditRiot => 'Riot Games';
-
-  @override
-  String get settingsAboutCreditRiotBody =>
-      'Cửa hàng, ví, bộ sưu tập, trận đấu và xếp hạng lấy trực tiếp từ tài khoản Riot bạn đăng nhập.';
-
-  @override
-  String get settingsAboutCreditsHeader => 'NGUỒN DỮ LIỆU';
-
-  @override
   String get settingsAboutHeader => 'THÔNG TIN';
-
-  @override
-  String get settingsAboutLegalHeader => 'PHÁP LÝ';
 
   @override
   String get settingsAboutRowSubtitle =>
@@ -5046,24 +4697,11 @@ class AppLocalizationsVi extends AppLocalizations {
       'Ảnh và dữ liệu đã tải về máy, kể cả báo lỗi đã ghi';
 
   @override
-  String get settingsClearLog => 'Xóa báo lỗi đã ghi';
-
-  @override
-  String get settingsClearLogConfirm => 'Xóa báo lỗi đã ghi trên thiết bị này?';
-
-  @override
   String get settingsExportLog => 'Gửi báo lỗi cho ValHub';
 
   @override
   String get settingsExportLogEmpty =>
       'Chưa có gì để gửi. Hãy dùng ứng dụng một lúc rồi thử lại.';
-
-  @override
-  String get settingsExportLogEmptyTitle => 'Chưa có gì để gửi';
-
-  @override
-  String get settingsExportLogNote =>
-      'Báo lỗi không chứa mật khẩu hay dữ liệu đăng nhập Riot của bạn.';
 
   @override
   String get settingsExportLogSubtitle =>
@@ -5079,10 +4717,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsItemLanguageEn => 'Tiếng Anh';
 
   @override
-  String get settingsItemLanguageHint =>
-      'Tên skin, đặc vụ, bản đồ… hiển thị theo ngôn ngữ này.';
-
-  @override
   String get settingsItemLanguageLabel => 'Tên vật phẩm';
 
   @override
@@ -5092,53 +4726,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsItemLanguageVi => 'Tiếng Việt';
 
   @override
-  String get settingsLegalNotice => 'Thông báo pháp lý';
-
-  @override
   String get settingsLinkOpenFailed => 'Chưa mở được liên kết. Hãy thử lại.';
-
-  @override
-  String get settingsLogCleared => 'Đã xóa báo lỗi';
-
-  @override
-  String settingsLogEntryCount(int count) {
-    return '$count mục';
-  }
-
-  @override
-  String settingsLogEntryShown(int shown, int total) {
-    return '$shown / $total mục';
-  }
 
   @override
   String settingsLogFileHeader(String appName, String version) {
     return '$appName $version — Báo lỗi';
   }
-
-  @override
-  String get settingsLogFilterAll => 'Tất cả';
-
-  @override
-  String get settingsLogFilterAuth => 'Đăng nhập';
-
-  @override
-  String get settingsLogFilterEmpty =>
-      'Không có mục phù hợp. Hãy bỏ lọc để xem thêm.';
-
-  @override
-  String get settingsLogFilterErrors => 'Sự cố';
-
-  @override
-  String get settingsLogFilterHttp => 'Kết nối';
-
-  @override
-  String get settingsLogMore => 'Tùy chọn khác';
-
-  @override
-  String get settingsLogSearchEmpty => 'Không có mục phù hợp.';
-
-  @override
-  String get settingsLogSearchHint => 'Tìm trong báo lỗi…';
 
   @override
   String get settingsLogShareFailed => 'Chưa gửi được báo lỗi. Hãy thử lại.';
@@ -5355,9 +4948,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String settingsStatusMoreUpdates(int n) {
     return 'Xem thêm $n cập nhật';
   }
-
-  @override
-  String get settingsStatusRegionPicker => 'Máy chủ';
 
   @override
   String get settingsStatusScheduled => 'Sắp có bảo trì';
@@ -5589,16 +5179,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get socialChangeQueue => 'Đổi hàng chờ';
 
   @override
-  String get socialChatTitle => 'Trò chuyện';
-
-  @override
   String get socialChatUnavailable => 'Trò chuyện đang ngoại tuyến.';
 
   @override
   String get socialCloseParty => 'Đóng tổ đội';
-
-  @override
-  String get socialClosedState => 'Chỉ người được mời';
 
   @override
   String get socialCodeInvalid => 'Mã tổ đội chỉ gồm chữ cái và chữ số.';
@@ -5661,10 +5245,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get socialGenerateCode => 'Tạo mã';
-
-  @override
-  String get socialHistoryFailed =>
-      'Chưa tải được tin nhắn cũ. Hãy kết nối lại rồi thử lại.';
 
   @override
   String get socialIdleQueue => 'Sẵn sàng tìm trận';
@@ -5800,9 +5380,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get socialNoSearchResultsTitle => 'Không tìm thấy';
 
   @override
-  String get socialNotFriend => 'Người này không có trong danh sách bạn bè.';
-
-  @override
   String get socialNotReady => 'Chưa sẵn sàng';
 
   @override
@@ -5830,9 +5407,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get socialOpenParty => 'Mở tổ đội';
-
-  @override
-  String get socialOpenState => 'Tổ đội mở';
 
   @override
   String get socialOtherGamesLeagueOfLegends => 'Liên Minh Huyền Thoại';
@@ -6181,17 +5755,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get storeRemoveFromWishlist => 'Xóa khỏi wishlist';
 
   @override
-  String storeResetNotificationBody(int skinCount, String account) {
-    String _temp0 = intl.Intl.pluralLogic(
-      skinCount,
-      locale: localeName,
-      other: 'Xem $skinCount skin mới hôm nay của $account.',
-      zero: 'Xem skin mới hôm nay của $account.',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get storeResetNotificationTitle => 'Cửa hàng đã làm mới';
 
   @override
@@ -6312,6 +5875,76 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get storeHistoryTitle => 'Lịch sử cửa hàng';
+
+  @override
+  String storeHistorySince(String date, int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$daysString ngày',
+    );
+    return 'Ghi trên máy này từ $date · $_temp0';
+  }
+
+  @override
+  String get storeHistoryEmpty =>
+      'Chưa có ngày nào được ghi. ValHub lưu cửa hàng hằng ngày của bạn mỗi khi bạn mở app, chỉ trên máy này.';
+
+  @override
+  String get storeHistoryMostOffered => 'Hay xuất hiện nhất';
+
+  @override
+  String storeHistoryTimes(int n) {
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String nString = nNumberFormat.format(n);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$nString lần',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryNightMarket(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Chợ Đêm · $countString ưu đãi',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storeHistoryEntrySubtitle(int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String daysString = daysNumberFormat.format(days);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$daysString ngày đã ghi trên máy này',
+      zero: 'Bắt đầu ghi từ hôm nay',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String wishlistNotifDailyBody(
     String skin,
     String account,
@@ -6421,9 +6054,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get wishlistClearFilters => 'Bỏ lọc';
 
   @override
-  String get wishlistClearSearch => 'Xóa tìm kiếm';
-
-  @override
   String get wishlistEmpty =>
       'Wishlist trống. Chạm ♡ ở bất kỳ skin nào để thêm.';
 
@@ -6439,9 +6069,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get wishlistExcludedRewards => 'Không tính skin phần thưởng';
 
   @override
-  String get wishlistFilterTiers => 'Phiên bản';
-
-  @override
   String wishlistFiltered(int count, String value) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);
@@ -6449,15 +6076,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
     return 'Đang lọc: $countString skin · $value';
   }
-
-  @override
-  String get wishlistHasEstimates => 'Có giá ước tính (≈)';
-
-  @override
-  String get wishlistInWishlist => 'Đã có trong wishlist';
-
-  @override
-  String get wishlistInWishlistLabel => 'đã có trong wishlist';
 
   @override
   String get wishlistNoMatch => 'Không có skin phù hợp. Bỏ lọc để xem thêm.';
@@ -6540,14 +6158,6 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get wishlistSortBy => 'Sắp xếp';
-
-  @override
-  String wishlistSortLabel(String sort) {
-    return 'Sắp xếp: $sort';
-  }
-
-  @override
   String get wishlistSortName => 'Tên';
 
   @override
@@ -6558,12 +6168,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get wishlistSortWeapon => 'Vũ khí';
-
-  @override
-  String get wishlistStoreCheckTitle => 'Chưa kiểm tra được cửa hàng';
-
-  @override
-  String get wishlistSubtitle => 'Skin bạn đang săn';
 
   @override
   String get wishlistTitle => 'Wishlist';

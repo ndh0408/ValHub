@@ -152,12 +152,6 @@ abstract class AppLocalizations {
   /// **'ValHub'**
   String get commonAppName;
 
-  /// CommonStrings.back — Actions
-  ///
-  /// In vi, this message translates to:
-  /// **'Quay lại'**
-  String get commonBack;
-
   /// CommonStrings.cancel — Actions
   ///
   /// In vi, this message translates to:
@@ -182,29 +176,11 @@ abstract class AppLocalizations {
   /// **'Đóng'**
   String get commonClose;
 
-  /// CommonStrings.confirm — Actions
-  ///
-  /// In vi, this message translates to:
-  /// **'Xác nhận'**
-  String get commonConfirm;
-
   /// CommonStrings.copied — States
   ///
   /// In vi, this message translates to:
   /// **'Đã sao chép'**
   String get commonCopied;
-
-  /// CommonStrings.copy — Actions
-  ///
-  /// In vi, this message translates to:
-  /// **'Sao chép'**
-  String get commonCopy;
-
-  /// CommonStrings.daily — Time (VF §8.0 rule 7)
-  ///
-  /// In vi, this message translates to:
-  /// **'hằng ngày'**
-  String get commonDaily;
 
   /// CommonStrings.dash — States
   ///
@@ -229,12 +205,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Xóa'**
   String get commonDelete;
-
-  /// CommonStrings.done — Actions
-  ///
-  /// In vi, this message translates to:
-  /// **'Xong'**
-  String get commonDone;
 
   /// CommonStrings.emptyGeneric — States
   ///
@@ -320,12 +290,6 @@ abstract class AppLocalizations {
   /// **'≈'**
   String get commonEstimatePrefix;
 
-  /// CommonStrings.filter — Actions
-  ///
-  /// In vi, this message translates to:
-  /// **'Lọc'**
-  String get commonFilter;
-
   /// CommonStrings.goHome — status code (docs/design/VOICE.md §5.1).
   ///
   /// In vi, this message translates to:
@@ -397,12 +361,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Không có mạng — đang hiển thị bản đã lưu ({time}).'**
   String commonOfflineCached(String time);
-
-  /// CommonStrings.ok — Actions
-  ///
-  /// In vi, this message translates to:
-  /// **'OK'**
-  String get commonOk;
 
   /// CommonStrings.openSettings — Actions
   ///
@@ -578,18 +536,6 @@ abstract class AppLocalizations {
   /// **'Cập nhật bảng giá: {date}'**
   String commonPriceUpdated(String date);
 
-  /// CommonStrings.pullToRefresh — States
-  ///
-  /// In vi, this message translates to:
-  /// **'Kéo để làm mới'**
-  String get commonPullToRefresh;
-
-  /// CommonStrings.refresh — Actions
-  ///
-  /// In vi, this message translates to:
-  /// **'Làm mới'**
-  String get commonRefresh;
-
   /// CommonStrings.retry — Actions
   ///
   /// In vi, this message translates to:
@@ -620,12 +566,6 @@ abstract class AppLocalizations {
   /// **'{n} giây'**
   String commonSeconds(int n);
 
-  /// CommonStrings.seeAll — Actions
-  ///
-  /// In vi, this message translates to:
-  /// **'Xem tất cả'**
-  String get commonSeeAll;
-
   /// CommonStrings.share — Actions
   ///
   /// In vi, this message translates to:
@@ -649,42 +589,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Sắp xếp: {option}'**
   String commonSortBy(String option);
-
-  /// CommonStrings.sortName — Sort options shared by the skin / item lists
-  ///
-  /// In vi, this message translates to:
-  /// **'Tên A–Z'**
-  String get commonSortName;
-
-  /// CommonStrings.sortNewest — Sort options shared by the skin / item lists
-  ///
-  /// In vi, this message translates to:
-  /// **'Mới nhất'**
-  String get commonSortNewest;
-
-  /// CommonStrings.sortPriceHigh — Sort options shared by the skin / item lists
-  ///
-  /// In vi, this message translates to:
-  /// **'Giá giảm dần'**
-  String get commonSortPriceHigh;
-
-  /// CommonStrings.sortPriceLow — Sort options shared by the skin / item lists
-  ///
-  /// In vi, this message translates to:
-  /// **'Giá tăng dần'**
-  String get commonSortPriceLow;
-
-  /// CommonStrings.sortRarity — Sort options shared by the skin / item lists
-  ///
-  /// In vi, this message translates to:
-  /// **'Độ hiếm'**
-  String get commonSortRarity;
-
-  /// CommonStrings.sortWeapon — Sort options shared by the skin / item lists
-  ///
-  /// In vi, this message translates to:
-  /// **'Vũ khí'**
-  String get commonSortWeapon;
 
   /// CommonStrings.tabBattlePass — Navigation (VF §8.1)
   ///
@@ -914,12 +818,6 @@ abstract class AppLocalizations {
   /// **'VALORANT Point'**
   String get contentCurrencyVpFull;
 
-  /// ContentStrings.defaultSkin — Defaults / placeholders
-  ///
-  /// In vi, this message translates to:
-  /// **'Mặc định'**
-  String get contentDefaultSkin;
-
   /// ContentStrings.itemAgent — Item types (VF §8.2)
   ///
   /// In vi, this message translates to:
@@ -961,30 +859,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Flex'**
   String get contentItemFlex;
-
-  /// ContentStrings.itemLanguageEn — Item-name language setting (VF §6.8)
-  ///
-  /// In vi, this message translates to:
-  /// **'Tiếng Anh'**
-  String get contentItemLanguageEn;
-
-  /// ContentStrings.itemLanguageTitle — Item-name language setting (VF §6.8)
-  ///
-  /// In vi, this message translates to:
-  /// **'Tên vật phẩm'**
-  String get contentItemLanguageTitle;
-
-  /// ContentStrings.itemLanguageVi — Item-name language setting (VF §6.8)
-  ///
-  /// In vi, this message translates to:
-  /// **'Tiếng Việt'**
-  String get contentItemLanguageVi;
-
-  /// ContentStrings.itemLevelBorder — Item types (VF §8.2)
-  ///
-  /// In vi, this message translates to:
-  /// **'Khung cấp'**
-  String get contentItemLevelBorder;
 
   /// ContentStrings.itemSkin — Item types (VF §8.2)
   ///
@@ -1111,18 +985,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Hoạt ảnh cá'**
   String get contentLevelItemLabelsFishAnimation;
-
-  /// ContentStrings.limitedEdition — Content tiers, short badge form (SUMMARY §7.3) and full form (VF §8.3).
-  ///
-  /// In vi, this message translates to:
-  /// **'Phiên bản giới hạn'**
-  String get contentLimitedEdition;
-
-  /// ContentStrings.noSpray — Defaults / placeholders
-  ///
-  /// In vi, this message translates to:
-  /// **'Không có'**
-  String get contentNoSpray;
 
   /// ContentStrings.noTitle — Defaults / placeholders
   ///
@@ -1369,12 +1231,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Quốc gia tài khoản Riot: Chưa xác định'**
   String get accountRiotCountryUnknown;
-
-  /// AccountStrings.accountCount — Switcher sheet (S05)
-  ///
-  /// In vi, this message translates to:
-  /// **'{count}/{max} tài khoản'**
-  String accountAccountCount(int count, int max);
 
   /// AccountStrings.accountsHeader —
   ///
@@ -1700,12 +1556,6 @@ abstract class AppLocalizations {
   /// **'Chưa rõ trạng thái'**
   String get accountStatusUnknown;
 
-  /// AccountStrings.switchFailed —
-  ///
-  /// In vi, this message translates to:
-  /// **'Chưa chuyển được tài khoản. Hãy thử lại.'**
-  String get accountSwitchFailed;
-
   /// AccountStrings.switchTo —
   ///
   /// In vi, this message translates to:
@@ -1741,12 +1591,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Xác thực để mở thông tin đăng nhập Riot'**
   String get accountUnlockLoginNote;
-
-  /// AuthStrings.accountAlreadyAdded —
-  ///
-  /// In vi, this message translates to:
-  /// **'Tài khoản này đã được thêm'**
-  String get authAccountAlreadyAdded;
 
   /// AuthStrings.addAsNew —
   ///
@@ -1843,12 +1687,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Đăng nhập bằng tài khoản Riot'**
   String get authSignInCta;
-
-  /// AuthStrings.signInNote —
-  ///
-  /// In vi, this message translates to:
-  /// **'Bạn đăng nhập trên trang chính thức của Riot. ValHub chỉ lưu mật khẩu khi bạn tự chọn lưu thông tin đăng nhập; dữ liệu đăng nhập và thông tin đã lưu chỉ nằm trên thiết bị của bạn.'**
-  String get authSignInNote;
 
   /// AuthStrings.socialLoginHint —
   ///
@@ -2222,18 +2060,6 @@ abstract class AppLocalizations {
   /// **'Đang có trong {place}!'**
   String economyAvailableNow(String place);
 
-  /// EconomyStrings.collectionValue — Collection value (VF §8.6).
-  ///
-  /// In vi, this message translates to:
-  /// **'Giá trị bộ sưu tập'**
-  String get economyCollectionValue;
-
-  /// EconomyStrings.excludedRewards — Collection value (VF §8.6).
-  ///
-  /// In vi, this message translates to:
-  /// **'Không tính skin phần thưởng'**
-  String get economyExcludedRewards;
-
   /// EconomyStrings.placeBundle — placeBundle).
   ///
   /// In vi, this message translates to:
@@ -2288,18 +2114,6 @@ abstract class AppLocalizations {
   /// **'Chưa rõ giá'**
   String get economyPriceUnknown;
 
-  /// EconomyStrings.valueHasEstimates — Collection value (VF §8.6).
-  ///
-  /// In vi, this message translates to:
-  /// **'Có giá ước tính (≈)'**
-  String get economyValueHasEstimates;
-
-  /// EconomyStrings.wishlistValue — Collection value (VF §8.6).
-  ///
-  /// In vi, this message translates to:
-  /// **'Tổng giá trị wishlist'**
-  String get economyWishlistValue;
-
   /// Default preset name ("Bộ trang bị 3").
   ///
   /// In vi, this message translates to:
@@ -2323,12 +2137,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Không thể lưu trang bị'**
   String get loadoutSaveFailed;
-
-  /// BattlePassStrings.actEnded — Pass card (S20)
-  ///
-  /// In vi, this message translates to:
-  /// **'Phần này đã kết thúc'**
-  String get battlePassActEnded;
 
   /// "Phần kết thúc sau 11:54:37" (last day).
   ///
@@ -2383,12 +2191,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'{charges}/{needed}'**
   String battlePassCharges(int charges, int needed);
-
-  /// BattlePassStrings.checkpoint — Daily checkpoints (P4)
-  ///
-  /// In vi, this message translates to:
-  /// **'Cột mốc'**
-  String get battlePassCheckpoint;
 
   /// BattlePassStrings.checkpointHint — Daily checkpoints (P4)
   ///
@@ -2569,12 +2371,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'{done}/{total} hoàn thành'**
   String battlePassMissionsCompleted(int done, int total);
-
-  /// BattlePassStrings.missionsProgressLabel — Rewards filter (remembered)
-  ///
-  /// In vi, this message translates to:
-  /// **'Tiến độ nhiệm vụ tuần'**
-  String get battlePassMissionsProgressLabel;
 
   /// BattlePassStrings.newMissionsAtWall — thứ Hai 06/10", "Làm mới lúc 07:00 ngày mai".
   ///
@@ -2858,12 +2654,6 @@ abstract class AppLocalizations {
   /// **'Áp dụng “{name}”?'**
   String collectionApplyPresetTitle(String name);
 
-  /// Prefix of the equipped title on the hub banner ("Danh hiệu: …").
-  ///
-  /// In vi, this message translates to:
-  /// **'Danh hiệu: '**
-  String get collectionBannerTitlePrefix;
-
   /// CollectionStrings.browseBuddies — S39 browse
   ///
   /// In vi, this message translates to:
@@ -2905,12 +2695,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Hình phun sơn'**
   String get collectionBrowseSprays;
-
-  /// CollectionStrings.browseTitle — S39 browse
-  ///
-  /// In vi, this message translates to:
-  /// **'Duyệt bộ sưu tập'**
-  String get collectionBrowseTitle;
 
   /// CollectionStrings.browseTitles — S39 browse
   ///
@@ -2977,18 +2761,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'{owned}/{total} biến thể'**
   String collectionChromaCount(int owned, int total);
-
-  /// CollectionStrings.clearFilters — S33 / S34 weapons
-  ///
-  /// In vi, this message translates to:
-  /// **'Bỏ lọc'**
-  String get collectionClearFilters;
-
-  /// CollectionStrings.clearSearch — S31 / S32 pickers
-  ///
-  /// In vi, this message translates to:
-  /// **'Xóa tìm kiếm'**
-  String get collectionClearSearch;
 
   /// CollectionStrings.clearTiers — S39 browse
   ///
@@ -3086,12 +2858,6 @@ abstract class AppLocalizations {
   /// **'Tổ hợp cảm xúc'**
   String get collectionExpressionsTitle;
 
-  /// CollectionStrings.filterTiers — S33 / S34 weapons
-  ///
-  /// In vi, this message translates to:
-  /// **'Phiên bản'**
-  String get collectionFilterTiers;
-
   /// CollectionStrings.hideAccountLevel — S30 hub
   ///
   /// In vi, this message translates to:
@@ -3116,23 +2882,11 @@ abstract class AppLocalizations {
   /// **'Ẩn tên của bạn với người chơi không cùng tổ đội trong trận.'**
   String get collectionIncognitoHint;
 
-  /// Browse tile count ("142 món").
-  ///
-  /// In vi, this message translates to:
-  /// **'{n} món'**
-  String collectionItemsCount(int n);
-
   /// CollectionStrings.levelBorderAuto — S30 hub
   ///
   /// In vi, this message translates to:
   /// **'Tự động theo cấp'**
   String get collectionLevelBorderAuto;
-
-  /// CollectionStrings.levelBorderEmpty — level border
-  ///
-  /// In vi, this message translates to:
-  /// **'Chưa có khung cấp nào cho cấp của bạn.'**
-  String get collectionLevelBorderEmpty;
 
   /// CollectionStrings.levelBorderFrom — level border
   ///
@@ -3404,12 +3158,6 @@ abstract class AppLocalizations {
   /// **'Xem trước'**
   String get collectionPreview;
 
-  /// CollectionStrings.previewing — S39 browse
-  ///
-  /// In vi, this message translates to:
-  /// **'Đang xem'**
-  String get collectionPreviewing;
-
   /// CollectionStrings.removeBuddy — S36 buddies
   ///
   /// In vi, this message translates to:
@@ -3421,12 +3169,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Đổi tên'**
   String get collectionRenamePreset;
-
-  /// CollectionStrings.rowCard — S30 hub
-  ///
-  /// In vi, this message translates to:
-  /// **'Thẻ người chơi'**
-  String get collectionRowCard;
 
   /// CollectionStrings.rowExpressions — S30 hub
   ///
@@ -3445,12 +3187,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Bộ trang bị đã lưu'**
   String get collectionRowPresets;
-
-  /// CollectionStrings.rowTitle — S30 hub
-  ///
-  /// In vi, this message translates to:
-  /// **'Danh hiệu'**
-  String get collectionRowTitle;
 
   /// CollectionStrings.rowWeapons — S30 hub
   ///
@@ -3589,12 +3325,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Trái'**
   String get collectionSlotNamesItem3;
-
-  /// CollectionStrings.sortLabel — S33 / S34 weapons
-  ///
-  /// In vi, this message translates to:
-  /// **'Sắp xếp'**
-  String get collectionSortLabel;
 
   /// CollectionStrings.sortName — S33 / S34 weapons
   ///
@@ -3839,12 +3569,6 @@ abstract class AppLocalizations {
   /// Skin ranking discovery and compact filters; actual community data only.
   ///
   /// In vi, this message translates to:
-  /// **'Thời gian'**
-  String get communityRankingPeriod;
-
-  /// Skin ranking discovery and compact filters; actual community data only.
-  ///
-  /// In vi, this message translates to:
   /// **'Xếp hạng theo'**
   String get communityRankingSort;
 
@@ -3920,12 +3644,6 @@ abstract class AppLocalizations {
   /// **'Thêm ảnh'**
   String get communityAddPhotos;
 
-  /// CommunityStrings.agentsPicked — LFG v2
-  ///
-  /// In vi, this message translates to:
-  /// **'Đặc vụ đã chọn'**
-  String get communityAgentsPicked;
-
   /// CommunityStrings.allModes — LFG
   ///
   /// In vi, this message translates to:
@@ -3968,12 +3686,6 @@ abstract class AppLocalizations {
   /// **'Áp dụng'**
   String get communityApply;
 
-  /// CommunityStrings.autoRefresh — LFG
-  ///
-  /// In vi, this message translates to:
-  /// **'Tự làm mới mỗi 20 giây'**
-  String get communityAutoRefresh;
-
   /// CommunityStrings.backToMyCountry — scopes (v3)
   ///
   /// In vi, this message translates to:
@@ -4010,12 +3722,6 @@ abstract class AppLocalizations {
   /// **'Không tạo được mã tổ đội. Hãy mở VALORANT hoặc nhập mã thủ công.'**
   String get communityCodeAutoFailed;
 
-  /// CommunityStrings.codeGenerated — Create LFG sheet
-  ///
-  /// In vi, this message translates to:
-  /// **'Đã tạo mã từ tổ đội hiện tại của bạn.'**
-  String get communityCodeGenerated;
-
   /// CommunityStrings.codeInvalid — Create LFG sheet
   ///
   /// In vi, this message translates to:
@@ -4027,12 +3733,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Hãy nhập hoặc tạo mã tổ đội.'**
   String get communityCodeRequired;
-
-  /// CommunityStrings.comment — feed
-  ///
-  /// In vi, this message translates to:
-  /// **'Bình luận'**
-  String get communityComment;
 
   /// CommunityStrings.commentHint — comments
   ///
@@ -4153,18 +3853,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Đã rút lại đồng ý. Cần đồng ý lại để tiếp tục sử dụng app.'**
   String get communityConsentWithdrawn;
-
-  /// CommunityStrings.countriesEmpty — scopes (v3)
-  ///
-  /// In vi, this message translates to:
-  /// **'Không tìm thấy quốc gia phù hợp.'**
-  String get communityCountriesEmpty;
-
-  /// CommunityStrings.countriesSearchHint — scopes (v3)
-  ///
-  /// In vi, this message translates to:
-  /// **'Tìm quốc gia…'**
-  String get communityCountriesSearchHint;
 
   /// CommunityStrings.countriesTitle — scopes (v3)
   ///
@@ -5126,18 +4814,6 @@ abstract class AppLocalizations {
   /// **'Bộ lọc'**
   String get communityFilters;
 
-  /// CommunityStrings.generateCode — Create LFG sheet
-  ///
-  /// In vi, this message translates to:
-  /// **'Tạo mã tổ đội'**
-  String get communityGenerateCode;
-
-  /// CommunityStrings.generatingCode — Create LFG sheet
-  ///
-  /// In vi, this message translates to:
-  /// **'Đang tạo mã…'**
-  String get communityGeneratingCode;
-
   /// CommunityStrings.googleDisclaimer — translation
   ///
   /// In vi, this message translates to:
@@ -5222,12 +4898,6 @@ abstract class AppLocalizations {
   /// **'Hãy mở VALORANT trên máy tính hoặc console rồi thử lại.'**
   String get communityJoinGameNotRunning;
 
-  /// CommunityStrings.joinInvalidCode — LFG
-  ///
-  /// In vi, this message translates to:
-  /// **'Mã tổ đội không còn hiệu lực hoặc tổ đội đã đủ người.'**
-  String get communityJoinInvalidCode;
-
   /// CommunityStrings.joinParty — LFG
   ///
   /// In vi, this message translates to:
@@ -5240,12 +4910,6 @@ abstract class AppLocalizations {
   /// **'Tổ đội này đã đủ người.'**
   String get communityJoinPartyFull;
 
-  /// CommunityStrings.joined — LFG
-  ///
-  /// In vi, this message translates to:
-  /// **'Đã vào tổ đội! Mở VALORANT để chơi cùng nhau.'**
-  String get communityJoined;
-
   /// CommunityStrings.joinedHint — LFG v2
   ///
   /// In vi, this message translates to:
@@ -5257,12 +4921,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'{n} người đã yêu cầu vào'**
   String communityJoinsCount(int n);
-
-  /// CommunityStrings.keepEditing — feed
-  ///
-  /// In vi, this message translates to:
-  /// **'Viết tiếp'**
-  String get communityKeepEditing;
 
   /// CommunityStrings.kindNightMarket — feed
   ///
@@ -5420,12 +5078,6 @@ abstract class AppLocalizations {
   /// **'Tin của bạn đã hết hạn. Hãy đăng tin mới để tìm đồng đội.'**
   String get communityLfgExpiredRepost;
 
-  /// CommunityStrings.lfgExpiryNote — Create LFG sheet
-  ///
-  /// In vi, this message translates to:
-  /// **'Tin tự hết hạn sau 30 phút.'**
-  String get communityLfgExpiryNote;
-
   /// CommunityStrings.lfgGateBody — consent
   ///
   /// In vi, this message translates to:
@@ -5480,35 +5132,17 @@ abstract class AppLocalizations {
   /// **'Thích'**
   String get communityLike;
 
-  /// CommunityStrings.likes — feed
-  ///
-  /// In vi, this message translates to:
-  /// **'{n} lượt thích'**
-  String communityLikes(int n);
-
   /// CommunityStrings.liveMembers — LFG v2
   ///
   /// In vi, this message translates to:
   /// **'Thành viên'**
   String get communityLiveMembers;
 
-  /// CommunityStrings.loadMoreFailed — general states
-  ///
-  /// In vi, this message translates to:
-  /// **'Chưa tải thêm được bài. Hãy thử lại.'**
-  String get communityLoadMoreFailed;
-
   /// CommunityStrings.matchMyRank — LFG v2
   ///
   /// In vi, this message translates to:
   /// **'Phù hợp rank của bạn'**
   String get communityMatchMyRank;
-
-  /// CommunityStrings.maxPhotos — feed
-  ///
-  /// In vi, this message translates to:
-  /// **'Tối đa {max} ảnh.'**
-  String communityMaxPhotos(int max);
 
   /// CommunityStrings.memberJoined — LFG v2
   ///
@@ -5558,12 +5192,6 @@ abstract class AppLocalizations {
   /// **'Ẩn người này'**
   String get communityMuteAuthor;
 
-  /// CommunityStrings.myPost — LFG
-  ///
-  /// In vi, this message translates to:
-  /// **'Tin của bạn'**
-  String get communityMyPost;
-
   /// CommunityStrings.newPost — feed
   ///
   /// In vi, this message translates to:
@@ -5593,18 +5221,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chưa có bình luận. Hãy mở lời trước nhé!'**
   String get communityNoComments;
-
-  /// CommunityStrings.noParty — Create LFG sheet
-  ///
-  /// In vi, this message translates to:
-  /// **'Không tìm thấy tổ đội. Hãy mở VALORANT rồi thử lại, hoặc nhập mã thủ công.'**
-  String get communityNoParty;
-
-  /// CommunityStrings.noPartyWithReason — LFG
-  ///
-  /// In vi, this message translates to:
-  /// **'Không tìm thấy tổ đội. Hãy mở VALORANT rồi thử lại, hoặc nhập mã thủ công.\n{reason}'**
-  String communityNoPartyWithReason(String reason);
 
   /// CommunityStrings.noRatings — skin reviews
   ///
@@ -5690,35 +5306,11 @@ abstract class AppLocalizations {
   /// **'{n} người'**
   String communityPartySizeValue(int n);
 
-  /// CommunityStrings.periodAll — skin votes
-  ///
-  /// In vi, this message translates to:
-  /// **'Tất cả'**
-  String get communityPeriodAll;
-
-  /// CommunityStrings.periodAllTime — skin reviews
-  ///
-  /// In vi, this message translates to:
-  /// **'Từ trước tới giờ'**
-  String get communityPeriodAllTime;
-
-  /// CommunityStrings.periodWeek — skin votes
-  ///
-  /// In vi, this message translates to:
-  /// **'Tuần này'**
-  String get communityPeriodWeek;
-
   /// CommunityStrings.photoCount — feed
   ///
   /// In vi, this message translates to:
   /// **'{n}/{max} ảnh'**
   String communityPhotoCount(int n, int max);
-
-  /// CommunityStrings.pickRating — skin reviews
-  ///
-  /// In vi, this message translates to:
-  /// **'Hãy chọn số sao.'**
-  String get communityPickRating;
 
   /// CommunityStrings.playVideo — skin reviews
   ///
@@ -5749,12 +5341,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Đã đăng bài!'**
   String get communityPosted;
-
-  /// CommunityStrings.privacyNote — general states
-  ///
-  /// In vi, this message translates to:
-  /// **'ValHub xác minh Riot ID khi kết nối Cộng đồng và quyền sở hữu skin khi bạn đánh giá. Cộng đồng không lưu mật khẩu hay dữ liệu đăng nhập Riot của bạn.'**
-  String get communityPrivacyNote;
 
   /// CommunityStrings.publish — feed
   ///
@@ -5966,12 +5552,6 @@ abstract class AppLocalizations {
   /// **'Cảm ơn bạn! Báo cáo đã được gửi.'**
   String get communityReported;
 
-  /// CommunityStrings.retry — general states
-  ///
-  /// In vi, this message translates to:
-  /// **'Thử lại'**
-  String get communityRetry;
-
   /// CommunityStrings.reviewDeleted — skin reviews
   ///
   /// In vi, this message translates to:
@@ -6013,12 +5593,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Đánh giá · {n}'**
   String communityReviewsHeader(String n);
-
-  /// CommunityStrings.reviewsSection — skin reviews
-  ///
-  /// In vi, this message translates to:
-  /// **'Đánh giá'**
-  String get communityReviewsSection;
 
   /// CommunityStrings.riotId — general states
   ///
@@ -6067,12 +5641,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Khu vực'**
   String get communityScopeRegion;
-
-  /// CommunityStrings.scopeWorldwide — scopes (v3)
-  ///
-  /// In vi, this message translates to:
-  /// **'Toàn cầu'**
-  String get communityScopeWorldwide;
 
   /// CommunityStrings.sectionFeed — sections
   ///
@@ -6151,18 +5719,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Không tìm thấy skin này.'**
   String get communitySkinNotFound;
-
-  /// CommunityStrings.skinsEmptyBody — skin votes
-  ///
-  /// In vi, this message translates to:
-  /// **'Thả tim cho skin bạn thích nhất để đưa nó lên bảng xếp hạng!'**
-  String get communitySkinsEmptyBody;
-
-  /// CommunityStrings.skinsEmptyTitle — skin votes
-  ///
-  /// In vi, this message translates to:
-  /// **'Chưa có lượt bình chọn'**
-  String get communitySkinsEmptyTitle;
 
   /// CommunityStrings.slots — Create LFG sheet
   ///
@@ -6296,12 +5852,6 @@ abstract class AppLocalizations {
   /// **'Không dịch được. Hãy thử lại.'**
   String get communityTranslateFailed;
 
-  /// CommunityStrings.translateUnavailable — translation
-  ///
-  /// In vi, this message translates to:
-  /// **'Thiết bị này chưa hỗ trợ dịch trên máy.'**
-  String get communityTranslateUnavailable;
-
   /// CommunityStrings.translatedByGoogle — translation
   ///
   /// In vi, this message translates to:
@@ -6356,18 +5906,6 @@ abstract class AppLocalizations {
   /// **'Bỏ tim'**
   String get communityUnvote;
 
-  /// CommunityStrings.uploading — feed
-  ///
-  /// In vi, this message translates to:
-  /// **'Đang tải ảnh lên…'**
-  String get communityUploading;
-
-  /// CommunityStrings.viewImage — feed
-  ///
-  /// In vi, this message translates to:
-  /// **'Xem ảnh'**
-  String get communityViewImage;
-
   /// CommunityStrings.vote — skin votes
   ///
   /// In vi, this message translates to:
@@ -6416,12 +5954,6 @@ abstract class AppLocalizations {
   /// **'Viết đánh giá đầu tiên'**
   String get communityWriteFirstReview;
 
-  /// CommunityStrings.writePost — feed
-  ///
-  /// In vi, this message translates to:
-  /// **'Viết bài'**
-  String get communityWritePost;
-
   /// CommunityStrings.you — general states
   ///
   /// In vi, this message translates to:
@@ -6469,18 +6001,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Tự động làm mới khi có trận.'**
   String get liveGameAutoRefreshNote;
-
-  /// LiveGameStrings.buddy — Player loadout (S51)
-  ///
-  /// In vi, this message translates to:
-  /// **'Phụ kiện súng'**
-  String get liveGameBuddy;
-
-  /// LiveGameStrings.close — Sheet (S50)
-  ///
-  /// In vi, this message translates to:
-  /// **'Đóng'**
-  String get liveGameClose;
 
   /// LiveGameStrings.currentGame — Current game card (R7) / idle states
   ///
@@ -6649,12 +6169,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Cao nhất: {rank}'**
   String liveGamePeak(String rank);
-
-  /// LiveGameStrings.playerCard — Player loadout (S51)
-  ///
-  /// In vi, this message translates to:
-  /// **'Thẻ người chơi'**
-  String get liveGamePlayerCard;
 
   /// "Trang bị của Tên#TAG".
   ///
@@ -6962,12 +6476,6 @@ abstract class AppLocalizations {
   /// **'Lọc theo bản đồ'**
   String get profileChooseMap;
 
-  /// ProfileStrings.clearMap — Match history (redesign)
-  ///
-  /// In vi, this message translates to:
-  /// **'Bỏ lọc bản đồ'**
-  String get profileClearMap;
-
   /// ProfileStrings.colA — Match detail (S43)
   ///
   /// In vi, this message translates to:
@@ -7040,18 +6548,6 @@ abstract class AppLocalizations {
   /// **'{n} ngày có trận'**
   String profileDaysPlayed(int n);
 
-  /// ProfileStrings.duration — Match detail (S43)
-  ///
-  /// In vi, this message translates to:
-  /// **'Thời lượng'**
-  String get profileDuration;
-
-  /// "Thời lượng 38 phút".
-  ///
-  /// In vi, this message translates to:
-  /// **'Thời lượng {d}'**
-  String profileDurationOf(String d);
-
   /// ProfileStrings.endOfHistory — Match history (S40.6)
   ///
   /// In vi, this message translates to:
@@ -7075,12 +6571,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Tất cả'**
   String get profileFilterAll;
-
-  /// ProfileStrings.filterMap — Match history (S40.6)
-  ///
-  /// In vi, this message translates to:
-  /// **'Bản đồ'**
-  String get profileFilterMap;
 
   /// ProfileStrings.firstBloods — Match detail (S43)
   ///
@@ -7129,12 +6619,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Bạn bè & trò chuyện'**
   String get profileFriendsRow;
-
-  /// "+22 RR khi thắng".
-  ///
-  /// In vi, this message translates to:
-  /// **'{rr} RR khi thắng'**
-  String profileGainPerWin(String rr);
 
   /// ProfileStrings.hideKills — Round timeline: kill feed per round
   ///
@@ -7238,12 +6722,6 @@ abstract class AppLocalizations {
   /// **'Cấp ẩn'**
   String get profileLevelHidden;
 
-  /// "−18 RR khi thua".
-  ///
-  /// In vi, this message translates to:
-  /// **'{rr} RR khi thua'**
-  String profileLossPerLoss(String rr);
-
   /// "Chuỗi 2 trận thua".
   ///
   /// In vi, this message translates to:
@@ -7346,23 +6824,11 @@ abstract class AppLocalizations {
   /// **'Trận đấu & tổ đội'**
   String get profilePlayHubTitle;
 
-  /// ProfileStrings.partyRow — Social rows (S40.5)
-  ///
-  /// In vi, this message translates to:
-  /// **'Tổ đội & hàng chờ'**
-  String get profilePartyRow;
-
   /// ProfileStrings.peakRank — Rank card (S40.2)
   ///
   /// In vi, this message translates to:
   /// **'Cao nhất'**
   String get profilePeakRank;
-
-  /// "Cao nhất · V26 // Phần I".
-  ///
-  /// In vi, this message translates to:
-  /// **'Cao nhất · {actTitle}'**
-  String profilePeakRankOf(String actTitle);
 
   /// ProfileStrings.performanceAttack —
   ///
@@ -7381,12 +6847,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chưa có trận nào được ghi trên thiết bị này. Mở lịch sử trận để ghi lại những trận bạn đã chơi.'**
   String get profilePerformanceEmpty;
-
-  /// ProfileStrings.performanceGames —
-  ///
-  /// In vi, this message translates to:
-  /// **'Số trận'**
-  String get profilePerformanceGames;
 
   /// ProfileStrings.performanceNoMatches —
   ///
@@ -7423,18 +6883,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Hiệu suất'**
   String get profilePerformanceTitle;
-
-  /// ProfileStrings.performanceTrendEmpty —
-  ///
-  /// In vi, this message translates to:
-  /// **'Cần ít nhất hai giai đoạn có từ 3 trận để so sánh xu hướng.'**
-  String get profilePerformanceTrendEmpty;
-
-  /// ProfileStrings.pickTargetHint — Rank-Up Calculator
-  ///
-  /// In vi, this message translates to:
-  /// **'Chọn hạng bạn muốn đạt'**
-  String get profilePickTargetHint;
 
   /// Deathmatch placement "Hạng 3".
   ///
@@ -7597,12 +7045,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chạm vào một vòng để xem từng pha hạ gục.'**
   String get profileRoundsHint;
-
-  /// ProfileStrings.rr — Match detail (S43)
-  ///
-  /// In vi, this message translates to:
-  /// **'RR'**
-  String get profileRr;
 
   /// "Còn thiếu 164 RR".
   ///
@@ -8030,12 +7472,6 @@ abstract class AppLocalizations {
   /// **'LIÊN HỆ'**
   String get legalContactHeader;
 
-  /// LegalStrings.creditsHeader — About hub
-  ///
-  /// In vi, this message translates to:
-  /// **'NGUỒN DỮ LIỆU & GHI CÔNG'**
-  String get legalCreditsHeader;
-
   /// LegalStrings.effectiveFrom — Document screen
   ///
   /// In vi, this message translates to:
@@ -8216,12 +7652,6 @@ abstract class AppLocalizations {
   /// **'Quốc gia chỉ dùng để tra cứu và gợi ý. Khu vực kết nối theo tài khoản Riot.'**
   String get settingsGeoHintOnly;
 
-  /// Country and Riot connection settings: settingsGeoUnsupported
-  ///
-  /// In vi, this message translates to:
-  /// **'Khu vực Riot chưa được hỗ trợ. Hãy chọn khu vực trong Cài đặt.'**
-  String get settingsGeoUnsupported;
-
   /// Country and Riot connection settings: settingsGeoSave
   ///
   /// In vi, this message translates to:
@@ -8384,59 +7814,11 @@ abstract class AppLocalizations {
   /// **'Ngôn ngữ: {language}.'**
   String settingsLanguageChanged(String language);
 
-  /// SettingsStrings.aboutCreditContent — About screen (S72)
-  ///
-  /// In vi, this message translates to:
-  /// **'valorant-api.com'**
-  String get settingsAboutCreditContent;
-
-  /// SettingsStrings.aboutCreditContentBody — About screen (S72)
-  ///
-  /// In vi, this message translates to:
-  /// **'Tên, hình ảnh và thông tin về skin, đặc vụ, bản đồ và rank.'**
-  String get settingsAboutCreditContentBody;
-
-  /// SettingsStrings.aboutCreditDocs — About screen (S72)
-  ///
-  /// In vi, this message translates to:
-  /// **'Tài liệu cộng đồng'**
-  String get settingsAboutCreditDocs;
-
-  /// SettingsStrings.aboutCreditDocsBody — About screen (S72)
-  ///
-  /// In vi, this message translates to:
-  /// **'Dự án techchrism/valorant-api-docs và cộng đồng nhà phát triển VALORANT.'**
-  String get settingsAboutCreditDocsBody;
-
-  /// SettingsStrings.aboutCreditRiot — About screen (S72)
-  ///
-  /// In vi, this message translates to:
-  /// **'Riot Games'**
-  String get settingsAboutCreditRiot;
-
-  /// SettingsStrings.aboutCreditRiotBody — About screen (S72)
-  ///
-  /// In vi, this message translates to:
-  /// **'Cửa hàng, ví, bộ sưu tập, trận đấu và xếp hạng lấy trực tiếp từ tài khoản Riot bạn đăng nhập.'**
-  String get settingsAboutCreditRiotBody;
-
-  /// SettingsStrings.aboutCreditsHeader — About screen (S72)
-  ///
-  /// In vi, this message translates to:
-  /// **'NGUỒN DỮ LIỆU'**
-  String get settingsAboutCreditsHeader;
-
   /// SettingsStrings.aboutHeader — Section headers (S70)
   ///
   /// In vi, this message translates to:
   /// **'THÔNG TIN'**
   String get settingsAboutHeader;
-
-  /// SettingsStrings.aboutLegalHeader — About screen (S72)
-  ///
-  /// In vi, this message translates to:
-  /// **'PHÁP LÝ'**
-  String get settingsAboutLegalHeader;
 
   /// SettingsStrings.aboutRowSubtitle —
   ///
@@ -8492,18 +7874,6 @@ abstract class AppLocalizations {
   /// **'Ảnh và dữ liệu đã tải về máy, kể cả báo lỗi đã ghi'**
   String get settingsClearCacheSubtitle;
 
-  /// SettingsStrings.clearLog — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'Xóa báo lỗi đã ghi'**
-  String get settingsClearLog;
-
-  /// SettingsStrings.clearLogConfirm — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'Xóa báo lỗi đã ghi trên thiết bị này?'**
-  String get settingsClearLogConfirm;
-
   /// Row that builds the bug-report file and opens the share sheet.
   ///
   /// In vi, this message translates to:
@@ -8515,18 +7885,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chưa có gì để gửi. Hãy dùng ứng dụng một lúc rồi thử lại.'**
   String get settingsExportLogEmpty;
-
-  /// SettingsStrings.exportLogEmptyTitle — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'Chưa có gì để gửi'**
-  String get settingsExportLogEmptyTitle;
-
-  /// SettingsStrings.exportLogNote — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'Báo lỗi không chứa mật khẩu hay dữ liệu đăng nhập Riot của bạn.'**
-  String get settingsExportLogNote;
 
   /// SettingsStrings.exportLogSubtitle — NÂNG CAO (the version lives on the About screen only)
   ///
@@ -8552,12 +7910,6 @@ abstract class AppLocalizations {
   /// **'Tiếng Anh'**
   String get settingsItemLanguageEn;
 
-  /// SettingsStrings.itemLanguageHint — GIAO DIỆN
-  ///
-  /// In vi, this message translates to:
-  /// **'Tên skin, đặc vụ, bản đồ… hiển thị theo ngôn ngữ này.'**
-  String get settingsItemLanguageHint;
-
   /// SettingsStrings.itemLanguageLabel — GIAO DIỆN
   ///
   /// In vi, this message translates to:
@@ -8576,89 +7928,17 @@ abstract class AppLocalizations {
   /// **'Tiếng Việt'**
   String get settingsItemLanguageVi;
 
-  /// SettingsStrings.legalNotice — Welcome (S01)
-  ///
-  /// In vi, this message translates to:
-  /// **'Thông báo pháp lý'**
-  String get settingsLegalNotice;
-
   /// SettingsStrings.linkOpenFailed — HỖ TRỢ
   ///
   /// In vi, this message translates to:
   /// **'Chưa mở được liên kết. Hãy thử lại.'**
   String get settingsLinkOpenFailed;
 
-  /// SettingsStrings.logCleared — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'Đã xóa báo lỗi'**
-  String get settingsLogCleared;
-
-  /// SettingsStrings.logEntryCount — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'{count} mục'**
-  String settingsLogEntryCount(int count);
-
-  /// SettingsStrings.logEntryShown — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'{shown} / {total} mục'**
-  String settingsLogEntryShown(int shown, int total);
-
   /// First line of the bug-report file.
   ///
   /// In vi, this message translates to:
   /// **'{appName} {version} — Báo lỗi'**
   String settingsLogFileHeader(String appName, String version);
-
-  /// SettingsStrings.logFilterAll — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'Tất cả'**
-  String get settingsLogFilterAll;
-
-  /// SettingsStrings.logFilterAuth — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'Đăng nhập'**
-  String get settingsLogFilterAuth;
-
-  /// SettingsStrings.logFilterEmpty — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'Không có mục phù hợp. Hãy bỏ lọc để xem thêm.'**
-  String get settingsLogFilterEmpty;
-
-  /// SettingsStrings.logFilterErrors — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'Sự cố'**
-  String get settingsLogFilterErrors;
-
-  /// SettingsStrings.logFilterHttp — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'Kết nối'**
-  String get settingsLogFilterHttp;
-
-  /// SettingsStrings.logMore — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'Tùy chọn khác'**
-  String get settingsLogMore;
-
-  /// SettingsStrings.logSearchEmpty — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'Không có mục phù hợp.'**
-  String get settingsLogSearchEmpty;
-
-  /// SettingsStrings.logSearchHint — They do not restore the retired log viewer or any route to it.
-  ///
-  /// In vi, this message translates to:
-  /// **'Tìm trong báo lỗi…'**
-  String get settingsLogSearchHint;
 
   /// Failure of the share sheet of the bug report.
   ///
@@ -9026,12 +8306,6 @@ abstract class AppLocalizations {
   /// **'Xem thêm {n} cập nhật'**
   String settingsStatusMoreUpdates(int n);
 
-  /// SettingsStrings.statusRegionPicker — Server status screen (ValHub extra, X-1)
-  ///
-  /// In vi, this message translates to:
-  /// **'Máy chủ'**
-  String get settingsStatusRegionPicker;
-
   /// SettingsStrings.statusScheduled — Server status screen (ValHub extra, X-1)
   ///
   /// In vi, this message translates to:
@@ -9397,12 +8671,6 @@ abstract class AppLocalizations {
   /// **'Đổi hàng chờ'**
   String get socialChangeQueue;
 
-  /// SocialStrings.chatTitle —
-  ///
-  /// In vi, this message translates to:
-  /// **'Trò chuyện'**
-  String get socialChatTitle;
-
   /// SocialStrings.chatUnavailable — friends
   ///
   /// In vi, this message translates to:
@@ -9414,12 +8682,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Đóng tổ đội'**
   String get socialCloseParty;
-
-  /// SocialStrings.closedState — party
-  ///
-  /// In vi, this message translates to:
-  /// **'Chỉ người được mời'**
-  String get socialClosedState;
 
   /// SocialStrings.codeInvalid — party
   ///
@@ -9534,12 +8796,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Tạo mã'**
   String get socialGenerateCode;
-
-  /// SocialStrings.historyFailed — chat
-  ///
-  /// In vi, this message translates to:
-  /// **'Chưa tải được tin nhắn cũ. Hãy kết nối lại rồi thử lại.'**
-  String get socialHistoryFailed;
 
   /// SocialStrings.idleQueue — party
   ///
@@ -9763,12 +9019,6 @@ abstract class AppLocalizations {
   /// **'Không tìm thấy'**
   String get socialNoSearchResultsTitle;
 
-  /// SocialStrings.notFriend — chat
-  ///
-  /// In vi, this message translates to:
-  /// **'Người này không có trong danh sách bạn bè.'**
-  String get socialNotFriend;
-
   /// SocialStrings.notReady — party
   ///
   /// In vi, this message translates to:
@@ -9816,12 +9066,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Mở tổ đội'**
   String get socialOpenParty;
-
-  /// SocialStrings.openState — party
-  ///
-  /// In vi, this message translates to:
-  /// **'Tổ đội mở'**
-  String get socialOpenState;
 
   /// Other Riot games by `<games>` element name.
   ///
@@ -10369,12 +9613,6 @@ abstract class AppLocalizations {
   /// **'Xóa khỏi wishlist'**
   String get storeRemoveFromWishlist;
 
-  /// "Xem 4 skin mới hôm nay của Tên#TAG."
-  ///
-  /// In vi, this message translates to:
-  /// **'{skinCount, plural, =0{Xem skin mới hôm nay của {account}.} other{Xem {skinCount} skin mới hôm nay của {account}.}}'**
-  String storeResetNotificationBody(int skinCount, String account);
-
   /// StoreStrings.resetNotificationTitle — Store-reset local notification (B8, VF §6.9).
   ///
   /// In vi, this message translates to:
@@ -10579,6 +9817,48 @@ abstract class AppLocalizations {
   /// **'{n} trong wishlist'**
   String storeWishlistCount(int n);
 
+  /// Screen and entry title: the daily shops of the active account that this device recorded.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lịch sử cửa hàng'**
+  String get storeHistoryTitle;
+
+  /// Subtitle: since when and how many daily shops were recorded ("Ghi trên máy này từ 24/09/2026 · 12 ngày").
+  ///
+  /// In vi, this message translates to:
+  /// **'Ghi trên máy này từ {date} · {days, plural, other{{days} ngày}}'**
+  String storeHistorySince(String date, int days);
+
+  /// Store history with no recorded day yet. Riot keeps no past stores, so the history starts with the app.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có ngày nào được ghi. ValHub lưu cửa hàng hằng ngày của bạn mỗi khi bạn mở app, chỉ trên máy này.'**
+  String get storeHistoryEmpty;
+
+  /// Section: the skins your daily shop offered most often in the recorded days.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hay xuất hiện nhất'**
+  String get storeHistoryMostOffered;
+
+  /// How many recorded daily shops offered the skin ("3 lần").
+  ///
+  /// In vi, this message translates to:
+  /// **'{n, plural, other{{n} lần}}'**
+  String storeHistoryTimes(int n);
+
+  /// A recorded day had a Night Market with this many offers.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count, plural, other{Chợ Đêm · {count} ưu đãi}}'**
+  String storeHistoryNightMarket(int count);
+
+  /// Row under the daily shop that opens the store history.
+  ///
+  /// In vi, this message translates to:
+  /// **'{days, plural, =0{Bắt đầu ghi từ hôm nay} other{{days} ngày đã ghi trên máy này}}'**
+  String storeHistoryEntrySubtitle(int days);
+
   /// Wishlist daily store alert; left is a localized coarse duration, absent when expiry is unknown.
   ///
   /// In vi, this message translates to:
@@ -10697,12 +9977,6 @@ abstract class AppLocalizations {
   /// **'Bỏ lọc'**
   String get wishlistClearFilters;
 
-  /// WishlistStrings.clearSearch — search, filter, sort
-  ///
-  /// In vi, this message translates to:
-  /// **'Xóa tìm kiếm'**
-  String get wishlistClearSearch;
-
   /// WishlistStrings.empty — S3A wishlist
   ///
   /// In vi, this message translates to:
@@ -10727,35 +10001,11 @@ abstract class AppLocalizations {
   /// **'Không tính skin phần thưởng'**
   String get wishlistExcludedRewards;
 
-  /// WishlistStrings.filterTiers — search, filter, sort
-  ///
-  /// In vi, this message translates to:
-  /// **'Phiên bản'**
-  String get wishlistFilterTiers;
-
   /// "Đang lọc: 3 skin · 5.325 VP" (VF §8.6 filteredValue).
   ///
   /// In vi, this message translates to:
   /// **'Đang lọc: {count} skin · {value}'**
   String wishlistFiltered(int count, String value);
-
-  /// WishlistStrings.hasEstimates — S3A wishlist
-  ///
-  /// In vi, this message translates to:
-  /// **'Có giá ước tính (≈)'**
-  String get wishlistHasEstimates;
-
-  /// WishlistStrings.inWishlist — S3B catalog
-  ///
-  /// In vi, this message translates to:
-  /// **'Đã có trong wishlist'**
-  String get wishlistInWishlist;
-
-  /// WishlistStrings.inWishlistLabel — S3B catalog
-  ///
-  /// In vi, this message translates to:
-  /// **'đã có trong wishlist'**
-  String get wishlistInWishlistLabel;
 
   /// WishlistStrings.noMatch — search, filter, sort
   ///
@@ -10871,18 +10121,6 @@ abstract class AppLocalizations {
   /// **'{count} skin'**
   String wishlistSkinCount(int count);
 
-  /// WishlistStrings.sortBy — search, filter, sort
-  ///
-  /// In vi, this message translates to:
-  /// **'Sắp xếp'**
-  String get wishlistSortBy;
-
-  /// WishlistStrings.sortLabel — search, filter, sort
-  ///
-  /// In vi, this message translates to:
-  /// **'Sắp xếp: {sort}'**
-  String wishlistSortLabel(String sort);
-
   /// WishlistStrings.sortName — search, filter, sort
   ///
   /// In vi, this message translates to:
@@ -10906,18 +10144,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Vũ khí'**
   String get wishlistSortWeapon;
-
-  /// WishlistStrings.storeCheckTitle — S3A wishlist
-  ///
-  /// In vi, this message translates to:
-  /// **'Chưa kiểm tra được cửa hàng'**
-  String get wishlistStoreCheckTitle;
-
-  /// WishlistStrings.subtitle — titles
-  ///
-  /// In vi, this message translates to:
-  /// **'Skin bạn đang săn'**
-  String get wishlistSubtitle;
 
   /// WishlistStrings.title — titles
   ///
