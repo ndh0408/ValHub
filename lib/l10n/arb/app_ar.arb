@@ -1553,6 +1553,7 @@
   "socialYou": "أنت",
   "socialPartyUnavailable": "تعذّر تحميل فريقك. حدّث الصفحة للمحاولة مجددًا.",
   "socialAcceptConfirmBody": "ستغادر فريقك الحالي للانضمام إلى الفريق الذي دعاك.",
+  "socialResend": "إعادة الإرسال",
   "storeAccessoryEmpty": "متجر الإكسسوارات فارغ حاليًا.",
   "storeAccessoryEmptyTitle": "لا توجد إكسسوارات بعد",
   "storeAccessoryFrom": "من: {contract}",

@@ -1553,6 +1553,7 @@
   "socialYou": "Ty",
   "socialPartyUnavailable": "Nie udało się wczytać drużyny. Odśwież, aby spróbować ponownie.",
   "socialAcceptConfirmBody": "Opuścisz obecną drużynę, aby dołączyć do drużyny, która wysłała ci zaproszenie.",
+  "socialResend": "Wyślij ponownie",
   "storeAccessoryEmpty": "Sklep z akcesoriami jest teraz pusty.",
   "storeAccessoryEmptyTitle": "Brak akcesoriów",
   "storeAccessoryFrom": "Z: {contract}",

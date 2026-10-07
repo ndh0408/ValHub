@@ -31,14 +31,25 @@ void main() {
         riot: riot,
         prefs: prefs,
       );
+      final semantics = tester.ensureSemantics();
+      // The wheel is the only list of slots: each tile names its slot and
+      // its expression (the expression's name is also printed under it).
+      Finder slot(int i) => find.bySemanticsLabel(
+        RegExp('^${RegExp.escape(CollectionStrings.slotTitle(i))}:'),
+      );
       for (var i = 0; i < 4; i++) {
-        expect(find.text(CollectionStrings.slotTitle(i)), findsOneWidget);
+        expect(slot(i), findsOneWidget);
       }
       expect(find.text('Flex ORA by OneTap'), findsOneWidget);
-      expect(find.text(CollectionStrings.emptySlot), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(
+          RegExp(RegExp.escape(CollectionStrings.emptySlot)),
+        ),
+        findsOneWidget,
+      );
 
       // Slot 0 holds a Flex → the picker opens on the Flex tab.
-      await tester.tap(find.text(CollectionStrings.slotTitle(0)));
+      await tester.tap(slot(0));
       await settle(tester);
       expect(find.text('Flex STAT-COM'), findsOneWidget);
       await tester.tap(find.text('Flex STAT-COM'));
@@ -49,7 +60,7 @@ void main() {
       });
 
       // Slot 1 (spray) → spray tab, switch to the owned default spray.
-      await tester.tap(find.text(CollectionStrings.slotTitle(1)));
+      await tester.tap(slot(1));
       await settle(tester);
       expect(find.text(CollectionStrings.tabSprays), findsOneWidget);
       await tester.tap(
@@ -67,6 +78,7 @@ void main() {
       });
       expect(list[3]['AssetID'], Lx.sprayB, reason: 'other slots kept');
       expect(tester.takeException(), isNull);
+      semantics.dispose();
       await unmount(tester);
     });
   });

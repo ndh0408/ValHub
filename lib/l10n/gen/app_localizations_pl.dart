@@ -6106,6 +6106,9 @@ class AppLocalizationsPl extends AppLocalizations {
       'Opuścisz obecną drużynę, aby dołączyć do drużyny, która wysłała ci zaproszenie.';
 
   @override
+  String get socialResend => 'Wyślij ponownie';
+
+  @override
   String get storeAccessoryEmpty => 'Sklep z akcesoriami jest teraz pusty.';
 
   @override

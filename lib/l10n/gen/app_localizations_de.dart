@@ -6093,6 +6093,9 @@ class AppLocalizationsDe extends AppLocalizations {
       'Du verlässt deine aktuelle Gruppe, um der Gruppe beizutreten, die dich eingeladen hat.';
 
   @override
+  String get socialResend => 'Erneut senden';
+
+  @override
   String get storeAccessoryEmpty => 'Im Zubehörshop gibt es gerade nichts.';
 
   @override

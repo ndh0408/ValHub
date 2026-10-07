@@ -9408,6 +9408,11 @@
     "description": "Confirmation before accepting a party invite while the player is in a party with other people (title: socialJoinConfirmTitle).",
     "x-context": "lib/features/social/ui/party_screen.dart"
   },
+  "socialResend": "Gửi lại",
+  "@socialResend": {
+    "description": "Button next to a chat message that was not delivered: sends the same text again.",
+    "x-context": "lib/features/social/ui/chat_screen.dart"
+  },
   "storeAccessoryEmpty": "Cửa hàng phụ kiện hiện không có gì.",
   "@storeAccessoryEmpty": {
     "description": "StoreStrings.accessoryEmpty — Accessories (S12).",

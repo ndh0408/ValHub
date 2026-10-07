@@ -53,8 +53,9 @@ class _IconPainter extends CustomPainter {
       rect,
       Paint()
         ..shader = const LinearGradient(
-          begin: AlignmentDirectional.topStart,
-          end: AlignmentDirectional.bottomEnd,
+          // A painter has no reading direction: the logo's light is fixed.
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           stops: [0, 0.35, 1],
           colors: [_navy, _sheen, _navy],
         ).createShader(rect),

@@ -1553,6 +1553,7 @@
   "socialYou": "คุณ",
   "socialPartyUnavailable": "โหลดปาร์ตี้ไม่สำเร็จ รีเฟรชเพื่อลองอีกครั้ง",
   "socialAcceptConfirmBody": "คุณจะออกจากปาร์ตี้ปัจจุบันเพื่อเข้าร่วมปาร์ตี้ที่เชิญคุณ",
+  "socialResend": "ส่งอีกครั้ง",
   "storeAccessoryEmpty": "ร้านค้าอุปกรณ์เสริมว่างอยู่ในขณะนี้",
   "storeAccessoryEmptyTitle": "ยังไม่มีอุปกรณ์เสริม",
   "storeAccessoryFrom": "จาก: {contract}",

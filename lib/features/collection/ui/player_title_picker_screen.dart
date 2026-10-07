@@ -107,9 +107,11 @@ class _PlayerTitlePickerScreenState
                   title: equippedTitle == null || equippedTitle.isNoTitle
                       ? null
                       : equippedTitle.localizedText(context.l10n),
+                  // A pick is saved at once: this is what others see now,
+                  // not a preview.
                   badge: ArtPill(
-                    label: context.l10n.collectionPreview,
-                    icon: Icons.visibility_outlined,
+                    label: context.l10n.collectionEquipped,
+                    icon: Icons.check_circle_outline,
                   ),
                 ),
               ),

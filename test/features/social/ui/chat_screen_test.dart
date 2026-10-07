@@ -1,3 +1,5 @@
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -206,6 +208,29 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('a message Riot refused can be sent again', (tester) async {
+    await pumpSocial(tester, env, const ChatScreen(friendPuuid: friendOnline));
+    await settle(tester);
+    final failed = ChatMessage(
+      id: '${localMessagePrefix}x',
+      friendPuuid: friendOnline,
+      outgoing: true,
+      body: 'ez',
+      at: DateTime.utc(2026, 9, 28, 11),
+      status: ChatMessageStatus.failed,
+    );
+    env.xmpp.store.addLiveMessage(failed);
+    await settle(tester);
+    expect(find.text(tl.socialFailedBadge), findsOneWidget);
+
+    await tester.tap(find.text(tl.socialResend));
+    await settle(tester);
+    expect(env.xmpp.sent, [(friendOnline, 'ez')]);
+    // The failed copy is gone; the new one is there once.
+    expect(find.text(tl.socialFailedBadge), findsNothing);
+    expect(find.text('ez'), findsOneWidget);
+  });
 
   testWidgets('input is disabled while the chat is not connected', (
     tester,

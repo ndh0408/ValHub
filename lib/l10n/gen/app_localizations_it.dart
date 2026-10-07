@@ -6110,6 +6110,9 @@ class AppLocalizationsIt extends AppLocalizations {
       'Lascerai il tuo gruppo attuale per unirti al gruppo che ti ha mandato l\'invito.';
 
   @override
+  String get socialResend => 'Invia di nuovo';
+
+  @override
   String get storeAccessoryEmpty =>
       'Il negozio degli accessori è vuoto al momento.';
 

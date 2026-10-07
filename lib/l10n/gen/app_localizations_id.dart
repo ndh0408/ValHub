@@ -5728,6 +5728,9 @@ class AppLocalizationsId extends AppLocalizations {
       'Kamu akan keluar dari party saat ini untuk bergabung ke party yang mengundangmu.';
 
   @override
+  String get socialResend => 'Kirim ulang';
+
+  @override
   String get storeAccessoryEmpty => 'Toko aksesori sedang kosong.';
 
   @override

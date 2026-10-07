@@ -704,11 +704,7 @@ class RewardPreviewSheet extends StatelessWidget {
               title: context.l10n.battlePassRewardLevelLabel,
               value: context.l10n.battlePassLevelShort(tier.level),
             ),
-            GroupedRow(
-              icon: Icons.category_outlined,
-              title: context.l10n.battlePassRewardTypeLabel,
-              value: reward.typeLabel,
-            ),
+            // The type is the sheet's subtitle already.
             GroupedRow(
               icon: tier.isFree
                   ? Icons.card_giftcard

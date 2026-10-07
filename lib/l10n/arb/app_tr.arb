@@ -1553,6 +1553,7 @@
   "socialYou": "Sen",
   "socialPartyUnavailable": "Grubun yüklenemedi. Tekrar denemek için yenile.",
   "socialAcceptConfirmBody": "Seni davet eden gruba katılmak için mevcut grubundan ayrılacaksın.",
+  "socialResend": "Tekrar gönder",
   "storeAccessoryEmpty": "Aksesuar mağazası şu anda boş.",
   "storeAccessoryEmptyTitle": "Henüz aksesuar yok",
   "storeAccessoryFrom": "Kaynak: {contract}",

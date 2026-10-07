@@ -1553,6 +1553,7 @@
   "socialYou": "Du",
   "socialPartyUnavailable": "Gruppe konnte nicht geladen werden. Aktualisiere, um es erneut zu versuchen.",
   "socialAcceptConfirmBody": "Du verlässt deine aktuelle Gruppe, um der Gruppe beizutreten, die dich eingeladen hat.",
+  "socialResend": "Erneut senden",
   "storeAccessoryEmpty": "Im Zubehörshop gibt es gerade nichts.",
   "storeAccessoryEmptyTitle": "Noch kein Zubehör",
   "storeAccessoryFrom": "Aus: {contract}",

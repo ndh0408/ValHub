@@ -351,6 +351,14 @@ class XmppService {
     return message;
   }
 
+  /// "Gửi lại" on a message Riot refused (user action): sends its text
+  /// again and drops the failed copy once the new one is out.
+  Future<ChatMessage> resend(ChatMessage failed) async {
+    final sent = await sendMessage(failed.friendPuuid, failed.body);
+    store.removeMessage(failed.friendPuuid, failed.id);
+    return sent;
+  }
+
   void setActiveConversation(String? friendPuuid) =>
       store.setActiveConversation(friendPuuid);
 

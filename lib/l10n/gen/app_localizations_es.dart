@@ -6138,6 +6138,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Saldrás de tu grupo actual para unirte al grupo que te invitó.';
 
   @override
+  String get socialResend => 'Reenviar';
+
+  @override
   String get storeAccessoryEmpty =>
       'La tienda de accesorios no tiene nada ahora mismo.';
 

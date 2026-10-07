@@ -5518,6 +5518,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get socialAcceptConfirmBody => '你将离开当前队伍，加入邀请你的队伍。';
 
   @override
+  String get socialResend => '重新发送';
+
+  @override
   String get storeAccessoryEmpty => '配件商店目前没有商品。';
 
   @override
@@ -12052,6 +12055,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get socialAcceptConfirmBody => '你將離開目前的隊伍，加入邀請你的隊伍。';
+
+  @override
+  String get socialResend => '重新傳送';
 
   @override
   String get storeAccessoryEmpty => '配件商店目前沒有任何商品。';

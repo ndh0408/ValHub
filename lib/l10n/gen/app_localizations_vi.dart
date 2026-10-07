@@ -5697,6 +5697,9 @@ class AppLocalizationsVi extends AppLocalizations {
       'Bạn sẽ rời tổ đội hiện tại để vào tổ đội đã mời bạn.';
 
   @override
+  String get socialResend => 'Gửi lại';
+
+  @override
   String get storeAccessoryEmpty => 'Cửa hàng phụ kiện hiện không có gì.';
 
   @override

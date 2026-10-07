@@ -1553,6 +1553,7 @@
   "socialYou": "あなた",
   "socialPartyUnavailable": "パーティーを読み込めませんでした。更新してもう一度お試しください。",
   "socialAcceptConfirmBody": "招待されたパーティーに参加するため、現在のパーティーから抜けます。",
+  "socialResend": "再送信",
   "storeAccessoryEmpty": "アクセサリーストアには現在何もありません。",
   "storeAccessoryEmptyTitle": "アクセサリーはまだありません",
   "storeAccessoryFrom": "入手元：{contract}",

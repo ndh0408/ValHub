@@ -1553,6 +1553,7 @@
   "socialYou": "Kamu",
   "socialPartyUnavailable": "Party belum bisa dimuat. Muat ulang untuk mencoba lagi.",
   "socialAcceptConfirmBody": "Kamu akan keluar dari party saat ini untuk bergabung ke party yang mengundangmu.",
+  "socialResend": "Kirim ulang",
   "storeAccessoryEmpty": "Toko aksesori sedang kosong.",
   "storeAccessoryEmptyTitle": "Belum ada aksesori",
   "storeAccessoryFrom": "Dari: {contract}",

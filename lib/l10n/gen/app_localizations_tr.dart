@@ -5729,6 +5729,9 @@ class AppLocalizationsTr extends AppLocalizations {
       'Seni davet eden gruba katılmak için mevcut grubundan ayrılacaksın.';
 
   @override
+  String get socialResend => 'Tekrar gönder';
+
+  @override
   String get storeAccessoryEmpty => 'Aksesuar mağazası şu anda boş.';
 
   @override

@@ -484,7 +484,7 @@ class _DayHeader extends StatelessWidget {
   }
 }
 
-class _Bubble extends StatelessWidget {
+class _Bubble extends ConsumerWidget {
   const _Bubble({
     super.key,
     required this.item,
@@ -499,7 +499,7 @@ class _Bubble extends StatelessWidget {
   static const _avatar = 28.0;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final message = item.message;
     final mine = message.outgoing;
@@ -508,19 +508,20 @@ class _Bubble extends StatelessWidget {
     final fg = mine ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface;
     const big = Radius.circular(18);
     const small = Radius.circular(6);
-    // iMessage-style runs: the inner corners of a group are tighter.
+    // iMessage-style runs: the inner corners of a group are tighter (on
+    // the side of the screen edge, which flips in right-to-left).
     final radius = mine
-        ? BorderRadius.only(
-            topLeft: big,
-            bottomLeft: big,
-            topRight: item.firstInGroup ? big : small,
-            bottomRight: item.lastInGroup ? big : small,
+        ? BorderRadiusDirectional.only(
+            topStart: big,
+            bottomStart: big,
+            topEnd: item.firstInGroup ? big : small,
+            bottomEnd: item.lastInGroup ? big : small,
           )
-        : BorderRadius.only(
-            topRight: big,
-            bottomRight: big,
-            topLeft: item.firstInGroup ? big : small,
-            bottomLeft: item.lastInGroup ? big : small,
+        : BorderRadiusDirectional.only(
+            topEnd: big,
+            bottomEnd: big,
+            topStart: item.firstInGroup ? big : small,
+            bottomStart: item.lastInGroup ? big : small,
           );
     final muted = theme.colorScheme.onSurfaceVariant;
 
@@ -614,6 +615,26 @@ class _Bubble extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (mine)
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        onPressed: () async {
+                          final l10n = context.l10n;
+                          final service = ref.read(xmppServiceProvider);
+                          if (service == null) return;
+                          try {
+                            await service.resend(message);
+                          } on Object {
+                            if (context.mounted) {
+                              showAppSnackBar(context, l10n.socialSendFailed);
+                            }
+                          }
+                        },
+                        child: Text(context.l10n.socialResend),
+                      ),
                     const SizedBox(width: 6),
                   ],
                   Text(

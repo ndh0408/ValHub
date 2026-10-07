@@ -5679,6 +5679,9 @@ class AppLocalizationsTh extends AppLocalizations {
       'คุณจะออกจากปาร์ตี้ปัจจุบันเพื่อเข้าร่วมปาร์ตี้ที่เชิญคุณ';
 
   @override
+  String get socialResend => 'ส่งอีกครั้ง';
+
+  @override
   String get storeAccessoryEmpty => 'ร้านค้าอุปกรณ์เสริมว่างอยู่ในขณะนี้';
 
   @override

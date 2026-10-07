@@ -1553,6 +1553,7 @@
   "socialYou": "你",
   "socialPartyUnavailable": "未能加载你的队伍。刷新后重试。",
   "socialAcceptConfirmBody": "你将离开当前队伍，加入邀请你的队伍。",
+  "socialResend": "重新发送",
   "storeAccessoryEmpty": "配件商店目前没有商品。",
   "storeAccessoryEmptyTitle": "暂无配件",
   "storeAccessoryFrom": "来自：{contract}",

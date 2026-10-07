@@ -6255,6 +6255,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'Вы покинете текущую группу и вступите в группу, которая вас пригласила.';
 
   @override
+  String get socialResend => 'Отправить снова';
+
+  @override
   String get storeAccessoryEmpty => 'В магазине аксессуаров сейчас пусто.';
 
   @override

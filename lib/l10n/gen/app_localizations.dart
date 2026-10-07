@@ -9457,6 +9457,12 @@ abstract class AppLocalizations {
   /// **'Bạn sẽ rời tổ đội hiện tại để vào tổ đội đã mời bạn.'**
   String get socialAcceptConfirmBody;
 
+  /// Button next to a chat message that was not delivered: sends the same text again.
+  ///
+  /// In vi, this message translates to:
+  /// **'Gửi lại'**
+  String get socialResend;
+
   /// StoreStrings.accessoryEmpty — Accessories (S12).
   ///
   /// In vi, this message translates to:

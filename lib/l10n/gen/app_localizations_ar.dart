@@ -6337,6 +6337,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'ستغادر فريقك الحالي للانضمام إلى الفريق الذي دعاك.';
 
   @override
+  String get socialResend => 'إعادة الإرسال';
+
+  @override
   String get storeAccessoryEmpty => 'متجر الإكسسوارات فارغ حاليًا.';
 
   @override

@@ -1553,6 +1553,7 @@
   "socialYou": "Вы",
   "socialPartyUnavailable": "Не удалось загрузить группу. Обновите, чтобы попробовать снова.",
   "socialAcceptConfirmBody": "Вы покинете текущую группу и вступите в группу, которая вас пригласила.",
+  "socialResend": "Отправить снова",
   "storeAccessoryEmpty": "В магазине аксессуаров сейчас пусто.",
   "storeAccessoryEmptyTitle": "Аксессуаров пока нет",
   "storeAccessoryFrom": "Из: {contract}",

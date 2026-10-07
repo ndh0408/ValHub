@@ -17,7 +17,6 @@ import '../../../core/ui/net_image.dart';
 import '../../../core/ui/segmented_tabs.dart';
 import '../../../core/ui/skeleton.dart';
 import '../../../core/ui/sub_page.dart';
-import '../../../core/ui/val_widgets.dart';
 import '../data/collection_items.dart';
 import '../data/collection_search.dart';
 import '../providers/collection_providers.dart';
@@ -94,21 +93,9 @@ class ExpressionsScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: SectionLabel(context.l10n.collectionExpressionsSlots),
-            ),
-            SliverToBoxAdapter(
-              child: GroupedSection(
-                children: [
-                  for (var i = 0; i < kExpressionSlots; i++)
-                    _SlotRow(
-                      slot: i,
-                      view: _slotView(context.l10n, loadout.expression(i), db),
-                      onTap: snapshot.isPending ? null : () => open(i),
-                    ),
-                ],
-              ),
-            ),
+            // The wheel names each slot's expression; no second list of the
+            // same four slots below it.
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
           ];
         },
       ),
@@ -193,14 +180,31 @@ class _Wheel extends StatelessWidget {
                   child: InkWell(
                     onTap: onTap == null ? null : () => onTap!(i),
                     child: Padding(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(6),
                       child: slots[i].isEmpty
                           ? Icon(
                               Icons.add,
                               color: scheme.onSurfaceVariant,
                               size: tile * 0.35,
                             )
-                          : NetImage(slots[i].image, fit: BoxFit.contain),
+                          : Column(
+                              children: [
+                                Expanded(
+                                  child: NetImage(
+                                    slots[i].image,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  slots[i].name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                ),
+                              ],
+                            ),
                     ),
                   ),
                 ),
@@ -208,42 +212,6 @@ class _Wheel extends StatelessWidget {
             ),
         ],
       ),
-    );
-  }
-}
-
-class _SlotRow extends StatelessWidget {
-  const _SlotRow({required this.slot, required this.view, this.onTap});
-
-  final int slot;
-  final _SlotView view;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final muted = theme.colorScheme.onSurfaceVariant;
-    return ListTile(
-      onTap: onTap,
-      minTileHeight: 60,
-      leading: SizedBox(
-        width: 40,
-        height: 40,
-        child: view.isEmpty
-            ? Icon(Icons.add_box_outlined, color: muted)
-            : NetImage(view.image, fit: BoxFit.contain),
-      ),
-      title: Text(
-        context.l10n.slotCaption(context.fmt, slot),
-        style: const TextStyle(fontWeight: FontWeight.w600),
-      ),
-      subtitle: Text(
-        view.name,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(color: muted),
-      ),
-      trailing: Icon(Icons.chevron_right, color: muted, size: 20),
     );
   }
 }

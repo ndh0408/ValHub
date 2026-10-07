@@ -5587,6 +5587,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get socialAcceptConfirmBody => '招待されたパーティーに参加するため、現在のパーティーから抜けます。';
 
   @override
+  String get socialResend => '再送信';
+
+  @override
   String get storeAccessoryEmpty => 'アクセサリーストアには現在何もありません。';
 
   @override

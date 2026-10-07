@@ -1553,6 +1553,7 @@
   "socialYou": "Tu",
   "socialPartyUnavailable": "Impossibile caricare il gruppo. Aggiorna per riprovare.",
   "socialAcceptConfirmBody": "Lascerai il tuo gruppo attuale per unirti al gruppo che ti ha mandato l'invito.",
+  "socialResend": "Invia di nuovo",
   "storeAccessoryEmpty": "Il negozio degli accessori è vuoto al momento.",
   "storeAccessoryEmptyTitle": "Ancora nessun accessorio",
   "storeAccessoryFrom": "Da: {contract}",

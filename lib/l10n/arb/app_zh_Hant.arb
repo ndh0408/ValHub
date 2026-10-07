@@ -1553,6 +1553,7 @@
   "socialYou": "你",
   "socialPartyUnavailable": "無法載入你的隊伍。重新整理後再試一次。",
   "socialAcceptConfirmBody": "你將離開目前的隊伍，加入邀請你的隊伍。",
+  "socialResend": "重新傳送",
   "storeAccessoryEmpty": "配件商店目前沒有任何商品。",
   "storeAccessoryEmptyTitle": "尚無配件",
   "storeAccessoryFrom": "來源：{contract}",

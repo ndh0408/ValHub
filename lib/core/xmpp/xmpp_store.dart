@@ -295,6 +295,17 @@ class XmppStore {
     _changed();
   }
 
+  /// Drops one message (a failed send the user sent again).
+  void removeMessage(String friendPuuid, String messageId) {
+    final id = friendPuuid.toLowerCase();
+    final conv = conversation(id);
+    final list = conv.messages.where((m) => m.id != messageId).toList();
+    if (list.length == conv.messages.length) return;
+    _conversations[id] = conv.copyWith(messages: List.unmodifiable(list));
+    _dirtyConversations.add(id);
+    _changed();
+  }
+
   void updateConversation(
     String friendPuuid,
     Conversation Function(Conversation) update,

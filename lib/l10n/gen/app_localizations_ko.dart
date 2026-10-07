@@ -5582,6 +5582,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get socialAcceptConfirmBody => '현재 파티를 나가고 초대한 파티에 참가합니다.';
 
   @override
+  String get socialResend => '다시 보내기';
+
+  @override
   String get storeAccessoryEmpty => '현재 액세서리 상점에 아무것도 없습니다.';
 
   @override

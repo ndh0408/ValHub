@@ -6081,6 +6081,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'You\'ll leave your current party to join the party that invited you.';
 
   @override
+  String get socialResend => 'Resend';
+
+  @override
   String get storeAccessoryEmpty => 'The accessory store is empty right now.';
 
   @override
