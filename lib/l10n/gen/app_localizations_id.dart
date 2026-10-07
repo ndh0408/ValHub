@@ -3475,6 +3475,19 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String get communityLfgOtherServer => 'Bukan servermu';
+
+  @override
+  String get communityLfgEmptyRankTitle => 'Tidak ada postingan untuk rank-mu';
+
+  @override
+  String get communityLfgEmptyRankBody =>
+      'Postingan yang tidak menerima rank-mu disembunyikan.';
+
+  @override
+  String get communityLfgShowAllRanks => 'Lihat semua rank';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

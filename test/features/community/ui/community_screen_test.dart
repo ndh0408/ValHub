@@ -234,7 +234,7 @@ void main() {
     await _open(tester, env);
     await tester.tap(find.text(CommunityStrings.sectionLfg));
     await settle(tester);
-    expect(find.text(CommunityStrings.lfgEmptyTitle), findsOneWidget);
+    expect(find.text(tl.communityLfgEmptyRankTitle), findsOneWidget);
     await tester.tap(find.text(CommunityStrings.sectionSkins));
     await settle(tester);
     expect(find.text(tl.communityRankingEmptyTitle), findsOneWidget);

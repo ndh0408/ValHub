@@ -35,6 +35,7 @@ class LfgCard extends ConsumerWidget {
     this.joinDisabled = false,
     this.onExpired,
     this.outOfRange = false,
+    this.otherServer = false,
     this.live,
   });
 
@@ -50,6 +51,10 @@ class LfgCard extends ConsumerWidget {
 
   /// Dimmed with "Ngoài khoảng rank" (the viewer's rank is outside).
   final bool outOfRange;
+
+  /// The party is on another server than the viewer's account: Riot refuses
+  /// the join, so "Vào tổ đội" is off and says why.
+  final bool otherServer;
 
   /// Live party of the poster (own post only).
   final LfgPartySnapshot? live;
@@ -230,6 +235,7 @@ class LfgCard extends ConsumerWidget {
                     child: FilledButton.icon(
                       onPressed:
                           expired ||
+                              otherServer ||
                               joining ||
                               joinDisabled ||
                               post.status != LfgStatus.open
@@ -244,10 +250,16 @@ class LfgCard extends ConsumerWidget {
                                 color: Colors.white,
                               ),
                             )
-                          : const Icon(Icons.group_add_rounded),
+                          : Icon(
+                              otherServer && !expired
+                                  ? Icons.public_off_rounded
+                                  : Icons.group_add_rounded,
+                            ),
                       label: Text(
                         expired
                             ? context.l10n.communityExpired
+                            : otherServer
+                            ? context.l10n.communityLfgOtherServer
                             : context.l10n.communityJoinParty,
                       ),
                     ),

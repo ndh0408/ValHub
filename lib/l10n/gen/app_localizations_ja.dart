@@ -3399,6 +3399,18 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get communityLfgOtherServer => '別のサーバー';
+
+  @override
+  String get communityLfgEmptyRankTitle => 'あなたのランクに合う募集はありません';
+
+  @override
+  String get communityLfgEmptyRankBody => 'あなたのランクを受け付けない募集は非表示になっています。';
+
+  @override
+  String get communityLfgShowAllRanks => 'すべてのランクを表示';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

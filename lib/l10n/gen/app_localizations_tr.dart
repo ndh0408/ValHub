@@ -3479,6 +3479,19 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String get communityLfgOtherServer => 'Senin sunucun değil';
+
+  @override
+  String get communityLfgEmptyRankTitle => 'Rütbene uygun ilan yok';
+
+  @override
+  String get communityLfgEmptyRankBody =>
+      'Rütbeni kabul etmeyen ilanlar gizleniyor.';
+
+  @override
+  String get communityLfgShowAllRanks => 'Tüm rütbeleri göster';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

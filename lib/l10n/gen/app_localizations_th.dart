@@ -3451,6 +3451,18 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
+  String get communityLfgOtherServer => 'คนละเซิร์ฟเวอร์';
+
+  @override
+  String get communityLfgEmptyRankTitle => 'ไม่มีโพสต์ที่ตรงกับแรงก์ของคุณ';
+
+  @override
+  String get communityLfgEmptyRankBody => 'ซ่อนโพสต์ที่ไม่รับแรงก์ของคุณอยู่';
+
+  @override
+  String get communityLfgShowAllRanks => 'ดูทุกแรงก์';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

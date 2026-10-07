@@ -3750,6 +3750,19 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get communityLfgOtherServer => 'Не ваш сервер';
+
+  @override
+  String get communityLfgEmptyRankTitle => 'Нет объявлений под ваш ранг';
+
+  @override
+  String get communityLfgEmptyRankBody =>
+      'Объявления, которые не принимают ваш ранг, скрыты.';
+
+  @override
+  String get communityLfgShowAllRanks => 'Показать все ранги';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

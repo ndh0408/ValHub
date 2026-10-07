@@ -82,13 +82,14 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
     final remembered = ref.watch(myLfgProvider(account.puuid)).value;
     final live = ref.watch(lfgLivePartyProvider(account.puuid));
     final viewerRank = lfgViewerRank(account);
+    final myRegion = communityAccountRegion(account);
 
     // The shard the server really listed (`appliedScope`), else the asked one.
     final appliedRegion = async.value?.applied?.region;
     final header = _Filters(
       filter: filter,
       region: appliedRegion ?? query.region,
-      myRegion: communityAccountRegion(account),
+      myRegion: myRegion,
       hasRank: viewerRank != null,
     );
 
@@ -142,7 +143,20 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
             onExpired: () => setState(() {}),
           ),
         ),
-      if (others.isEmpty && mine == null)
+      // "Phù hợp rank" is on by default: say it is what hides the posts.
+      if (others.isEmpty && mine == null && query.rank != null)
+        CommunityEmptyState(
+          icon: Icons.groups_2_outlined,
+          title: context.l10n.communityLfgEmptyRankTitle,
+          message: context.l10n.communityLfgEmptyRankBody,
+          action: OutlinedButton(
+            key: const ValueKey('lfg-show-all-ranks'),
+            onPressed: () =>
+                ref.read(lfgFilterProvider.notifier).setMatchRank(false),
+            child: Text(context.l10n.communityLfgShowAllRanks),
+          ),
+        )
+      else if (others.isEmpty && mine == null)
         CommunityEmptyState(
           icon: Icons.groups_2_outlined,
           title: context.l10n.communityLfgEmptyTitle,
@@ -186,6 +200,7 @@ class _LfgSliverState extends ConsumerState<LfgSliver> {
                         !filter.matchRank &&
                         viewerRank != null &&
                         !p.acceptsRank(viewerRank),
+                    otherServer: myRegion.isNotEmpty && p.region != myRegion,
                     onJoin: () => unawaited(_join(p, query)),
                     onRemove: () {},
                     onExpired: () {
@@ -315,18 +330,21 @@ String joinErrorMessage(AppLocalizations l10n, Object error) {
   };
 }
 
-/// Opens the create sheet and shows a confirmation.
+/// Opens the create sheet and shows a confirmation. The post always goes to
+/// the account's own server, whichever server the list shows: only players
+/// there can join the party.
 Future<void> openCreateLfg(
   BuildContext context,
   Account account,
   LfgQuery query,
 ) async {
   final l10nBeforeAwait = context.l10n;
+  final own = communityAccountRegion(account);
 
   final post = await showCreateLfgSheet(
     context,
     account: account,
-    region: query.region,
+    region: own.isEmpty ? query.region : own,
     shownIn: query,
   );
   if (post != null && context.mounted) {

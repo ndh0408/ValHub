@@ -3397,6 +3397,18 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get communityLfgOtherServer => '다른 서버';
+
+  @override
+  String get communityLfgEmptyRankTitle => '내 랭크에 맞는 글이 없습니다';
+
+  @override
+  String get communityLfgEmptyRankBody => '내 랭크를 받지 않는 글은 숨겨져 있습니다.';
+
+  @override
+  String get communityLfgShowAllRanks => '모든 랭크 보기';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

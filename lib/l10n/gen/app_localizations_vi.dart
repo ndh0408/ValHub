@@ -3462,6 +3462,19 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get communityLfgOtherServer => 'Không cùng máy chủ';
+
+  @override
+  String get communityLfgEmptyRankTitle => 'Không có tin hợp rank của bạn';
+
+  @override
+  String get communityLfgEmptyRankBody =>
+      'Đang ẩn các tin không nhận rank của bạn.';
+
+  @override
+  String get communityLfgShowAllRanks => 'Xem mọi rank';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

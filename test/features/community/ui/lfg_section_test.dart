@@ -6,9 +6,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:valvn/core/network/riot_exception.dart';
+import 'package:valvn/core/storage/prefs.dart';
 import 'package:valvn/core/theme/app_theme.dart';
 import 'package:valvn/features/community/community_routes.dart';
 import 'package:valvn/features/community/community_strings.dart';
+import 'package:valvn/features/community/providers/lfg_providers.dart';
 import 'package:valvn/features/community/ui/lfg/lfg_section.dart';
 
 import '../community_test_env.dart';
@@ -389,11 +391,71 @@ void main() {
     await unmount(tester);
   });
 
-  testWidgets('empty list: friendly copy, FAB is the only CTA', (tester) async {
+  testWidgets('empty list: names the rank filter and offers every rank', (
+    tester,
+  ) async {
     env.server.json('GET /v1/lfg', page([]));
     await _open(tester, env);
+    expect(env.server.calls('GET /v1/lfg').last.query['rank'], '18');
+    expect(find.text(tl.communityLfgEmptyRankTitle), findsOneWidget);
+    expect(find.text(tl.communityLfgEmptyRankBody), findsOneWidget);
+    expect(find.text(CommunityStrings.lfgEmptyTitle), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('lfg-show-all-ranks')));
+    await settle(tester);
+
+    expect(
+      env.server.calls('GET /v1/lfg').last.query.containsKey('rank'),
+      isFalse,
+    );
     expect(find.text(CommunityStrings.lfgEmptyTitle), findsOneWidget);
+    expect(find.byKey(const ValueKey('lfg-show-all-ranks')), findsNothing);
     expect(find.text(CommunityStrings.createLfgShort), findsOneWidget);
+    await unmount(tester);
+  });
+
+  testWidgets('another server: join is off and says why; posts go home', (
+    tester,
+  ) async {
+    await env.prefs.setString(PrefKeys.ui(LfgMemoryKeys.region), 'na');
+    env.server
+      ..json(
+        'GET /v1/lfg',
+        page([
+          {...lfgJson('n1'), 'region': 'na'},
+        ]),
+      )
+      ..json('POST /v1/lfg', lfgJson('new', code: 'Q1W2E3'));
+    when(() => env.pvp.partyPlayer(any()))
+        .thenAnswer((_) async => throw const NotFoundException());
+    await _open(tester, env);
+    expect(env.server.calls('GET /v1/lfg').last.query['region'], 'na');
+
+    expect(find.text(CommunityStrings.joinParty), findsNothing);
+    final join = find.widgetWithText(FilledButton, tl.communityLfgOtherServer);
+    expect(tester.widget<FilledButton>(join).onPressed, isNull);
+    await tester.tap(join, warnIfMissed: false);
+    await settle(tester);
+    expect(find.text(CommunityStrings.joinConfirmTitle), findsNothing);
+    expect(env.server.calls('POST /v1/lfg/n1/join'), isEmpty);
+
+    // "Tạo tin" posts to the account's own server, not the one being viewed.
+    await tester.tap(find.text(CommunityStrings.createLfgShort));
+    await settle(tester);
+    expect(
+      find.text(tl.communityLfgSheetSubtitle(tl.communityRegionName('ap'))),
+      findsOneWidget,
+    );
+    await tester.enterText(find.byKey(const ValueKey('lfg-code')), 'q1w2e3');
+    final post = find.text(CommunityStrings.postLfg);
+    await tester.ensureVisible(post);
+    await tester.pump();
+    await tester.tap(post);
+    await settle(tester);
+    expect(
+      (env.server.calls('POST /v1/lfg').single.json! as Map)['region'],
+      'ap',
+    );
     await unmount(tester);
   });
 
@@ -454,6 +516,7 @@ void main() {
               'mic': true,
               'partySize': 3,
             },
+            {...lfgJson('l2', note: 'Khác máy chủ'), 'region': 'na'},
           ]),
         )
         ..json('GET /v1/lfg/mine', {
@@ -472,6 +535,7 @@ void main() {
       await settle(tester);
       expect(tester.takeException(), isNull);
       expect(find.text('Cần 1 Controller, có mic, vui vẻ'), findsOneWidget);
+      expect(find.text(tl.communityLfgOtherServer), findsOneWidget);
       expect(
         tester.getSize(find.byKey(const ValueKey('lfg-region'))).height,
         greaterThanOrEqualTo(48),

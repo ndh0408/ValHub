@@ -3789,6 +3789,18 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get communityLfgOtherServer => 'ليس خادمك';
+
+  @override
+  String get communityLfgEmptyRankTitle => 'لا توجد منشورات تناسب رتبتك';
+
+  @override
+  String get communityLfgEmptyRankBody => 'المنشورات التي لا تقبل رتبتك مخفية.';
+
+  @override
+  String get communityLfgShowAllRanks => 'عرض كل الرتب';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

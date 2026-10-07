@@ -3661,6 +3661,19 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get communityLfgOtherServer => 'Anderer Server';
+
+  @override
+  String get communityLfgEmptyRankTitle => 'Keine Suchen für deinen Rang';
+
+  @override
+  String get communityLfgEmptyRankBody =>
+      'Suchen, die deinen Rang nicht annehmen, sind ausgeblendet.';
+
+  @override
+  String get communityLfgShowAllRanks => 'Alle Ränge zeigen';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',

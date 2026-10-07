@@ -5756,6 +5756,26 @@
     },
     "x-context": "lib/features/community/ui/hidden_authors_sheet.dart"
   },
+  "communityLfgOtherServer": "Không cùng máy chủ",
+  "@communityLfgOtherServer": {
+    "description": "LFG card: label of the disabled join button on a post from a server other than the player's account (Riot only lets players of the same server join a party). Keep it short: it sits in a button.",
+    "x-context": "lib/features/community/ui/lfg/lfg_card.dart"
+  },
+  "communityLfgEmptyRankTitle": "Không có tin hợp rank của bạn",
+  "@communityLfgEmptyRankTitle": {
+    "description": "LFG empty state while the default 'Matches your rank' filter is on: nothing fits the player's rank.",
+    "x-context": "lib/features/community/ui/lfg/lfg_section.dart"
+  },
+  "communityLfgEmptyRankBody": "Đang ẩn các tin không nhận rank của bạn.",
+  "@communityLfgEmptyRankBody": {
+    "description": "LFG empty state body while the 'Matches your rank' filter is on: posts whose rank range excludes the player are hidden.",
+    "x-context": "lib/features/community/ui/lfg/lfg_section.dart"
+  },
+  "communityLfgShowAllRanks": "Xem mọi rank",
+  "@communityLfgShowAllRanks": {
+    "description": "LFG empty state action: turns off the 'Matches your rank' filter to list posts of every rank.",
+    "x-context": "lib/features/community/ui/lfg/lfg_section.dart"
+  },
   "liveGamePlayerStatistics": "Bạn: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "@liveGamePlayerStatistics": {
     "description": "Explicit render-time message, preserving existing VI behavior.",

@@ -5978,6 +5978,30 @@ abstract class AppLocalizations {
   /// **'{n, plural, other{Đã ẩn {n} người}}'**
   String communityHiddenAuthorsCount(int n);
 
+  /// LFG card: label of the disabled join button on a post from a server other than the player's account (Riot only lets players of the same server join a party). Keep it short: it sits in a button.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không cùng máy chủ'**
+  String get communityLfgOtherServer;
+
+  /// LFG empty state while the default 'Matches your rank' filter is on: nothing fits the player's rank.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có tin hợp rank của bạn'**
+  String get communityLfgEmptyRankTitle;
+
+  /// LFG empty state body while the 'Matches your rank' filter is on: posts whose rank range excludes the player are hidden.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang ẩn các tin không nhận rank của bạn.'**
+  String get communityLfgEmptyRankBody;
+
+  /// LFG empty state action: turns off the 'Matches your rank' filter to list posts of every rank.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem mọi rank'**
+  String get communityLfgShowAllRanks;
+
   /// Explicit render-time message, preserving existing VI behavior.
   ///
   /// In vi, this message translates to:

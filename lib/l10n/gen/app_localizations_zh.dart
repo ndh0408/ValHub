@@ -3352,6 +3352,18 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get communityLfgOtherServer => '不在你的服务器';
+
+  @override
+  String get communityLfgEmptyRankTitle => '没有符合你段位的帖子';
+
+  @override
+  String get communityLfgEmptyRankBody => '不接受你段位的帖子已被隐藏。';
+
+  @override
+  String get communityLfgShowAllRanks => '查看所有段位';
+
+  @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
     String _temp0 = intl.Intl.selectLogic(hasAcs, {
       'yes': ' · ACS $acs',
@@ -9868,6 +9880,18 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
     );
     return '$_temp0';
   }
+
+  @override
+  String get communityLfgOtherServer => '不在你的伺服器';
+
+  @override
+  String get communityLfgEmptyRankTitle => '沒有符合你牌位的貼文';
+
+  @override
+  String get communityLfgEmptyRankBody => '不接受你牌位的貼文已隱藏。';
+
+  @override
+  String get communityLfgShowAllRanks => '查看所有牌位';
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
