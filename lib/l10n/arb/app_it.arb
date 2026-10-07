@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "Ancora nessun giocatore.",
   "liveGameEnemyHiddenInAgentSelect": "La squadra nemica comparirà all'inizio della partita.",
   "liveGameEnemyLocked": "Squadra nemica: bloccati {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "I dati di questa partita in diretta non includono uccisioni/morti/assist. Il tabellone comparirà quando Riot pubblicherà i dati di fine partita.",
+  "liveGameLiveStatsUnavailable": "K/D/A e tabellone arrivano a fine partita.",
   "liveGameFinalScoreboard": "Tabellone finale",
   "liveGameFlex": "Flex",
   "liveGameInLobby": "Nella lobby",

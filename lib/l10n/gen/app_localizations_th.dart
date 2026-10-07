@@ -3488,7 +3488,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get liveGameLiveStatsUnavailable =>
-      'ข้อมูลแมตช์สดนี้ไม่มีค่าสังหาร/ตาย/ช่วยเหลือ กระดานคะแนนจะแสดงเมื่อ Riot เผยแพร่ข้อมูลหลังแมตช์';
+      'K/D/A และกระดานคะแนนจะแสดงหลังจบแมตช์';
 
   @override
   String get liveGameFinalScoreboard => 'กระดานคะแนนจบแมตช์';

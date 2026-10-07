@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "Aún no hay jugadores.",
   "liveGameEnemyHiddenInAgentSelect": "El equipo enemigo aparecerá cuando empiece la partida.",
   "liveGameEnemyLocked": "Agentes enemigos fijados: {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "Esta fuente de partidas en directo no ofrece bajas, muertes ni asistencias. La tabla de puntuación aparecerá cuando Riot publique los datos tras la partida.",
+  "liveGameLiveStatsUnavailable": "El K/D/A y el marcador aparecen al terminar la partida.",
   "liveGameFinalScoreboard": "Tabla de puntuación final",
   "liveGameFlex": "Flex",
   "liveGameInLobby": "En la sala",

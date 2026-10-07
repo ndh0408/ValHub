@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "Игроков пока нет.",
   "liveGameEnemyHiddenInAgentSelect": "Команда противника появится, когда начнется матч.",
   "liveGameEnemyLocked": "Противники зафиксировали: {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "В данных текущего матча нет убийств/смертей/помощи. Таблица счета появится, когда Riot опубликует данные после матча.",
+  "liveGameLiveStatsUnavailable": "K/D/A и таблица результатов появятся после матча.",
   "liveGameFinalScoreboard": "Итоговая таблица",
   "liveGameFlex": "Флекс",
   "liveGameInLobby": "В лобби",

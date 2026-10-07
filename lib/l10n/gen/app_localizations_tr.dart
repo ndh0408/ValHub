@@ -3516,7 +3516,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get liveGameLiveStatsUnavailable =>
-      'Bu canlı maç verisi Leş/Ölüm/Asist bilgisi sağlamıyor. Skor tablosu, Riot maç sonu verilerini yayınladığında görünür.';
+      'K/D/A ve skor tablosu maçtan sonra görünür.';
 
   @override
   String get liveGameFinalScoreboard => 'Maç sonu skor tablosu';

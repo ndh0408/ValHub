@@ -49,7 +49,7 @@ class AgentSelectInfo extends StatelessWidget {
               CountdownRing(
                 expiresAt: endsAt,
                 period: kAgentSelectPeriod,
-                size: 18,
+                size: 22,
                 color: colors.warning,
               ),
               const SizedBox(width: 6),
@@ -58,9 +58,9 @@ class AgentSelectInfo extends StatelessWidget {
                 format: (d) => formatMinutesSeconds(d, padMinutes: false),
                 builder: context.l10n.liveGameTimeLeft,
                 onExpired: onExpired,
-                style: theme.textTheme.titleSmall?.copyWith(
+                style: theme.textTheme.titleLarge?.copyWith(
                   color: colors.warning,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w800,
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
@@ -72,22 +72,8 @@ class AgentSelectInfo extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.sports_esports_outlined,
-                size: 18,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(context.l10n.liveGamePickInGame, style: muted),
-              ),
-            ],
-          ),
-          if (timer != null || enemySize > 0) ...[
-            const SizedBox(height: 10),
+          // The clock first: it is what a player checks in agent select.
+          if (timer != null || enemySize > 0)
             Wrap(
               spacing: 16,
               runSpacing: 6,
@@ -104,7 +90,6 @@ class AgentSelectInfo extends StatelessWidget {
                   ),
               ],
             ),
-          ],
           if (agent != null) ...[
             const SizedBox(height: 10),
             Row(
@@ -131,6 +116,9 @@ class AgentSelectInfo extends StatelessWidget {
               ],
             ),
           ],
+          // Why there is no pick button: one quiet line at the end.
+          const SizedBox(height: 10),
+          Text(context.l10n.liveGamePickInGame, style: muted),
         ],
       ),
     );

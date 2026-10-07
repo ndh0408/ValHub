@@ -3432,8 +3432,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get liveGameLiveStatsUnavailable =>
-      '이 실시간 게임 정보에는 처치/사망/지원 기록이 제공되지 않습니다. Riot에서 게임 후 데이터를 공개하면 점수판이 표시됩니다.';
+  String get liveGameLiveStatsUnavailable => 'K/D/A와 점수판은 경기가 끝난 뒤 표시됩니다.';
 
   @override
   String get liveGameFinalScoreboard => '최종 점수판';

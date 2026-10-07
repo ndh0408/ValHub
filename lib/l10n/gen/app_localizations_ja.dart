@@ -3434,8 +3434,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get liveGameLiveStatsUnavailable =>
-      'この試合のライブデータにはキル/デス/アシストが含まれていません。スコアボードは試合後にRiotがデータを公開すると表示されます。';
+  String get liveGameLiveStatsUnavailable => 'K/D/Aとスコアボードは試合終了後に表示されます。';
 
   @override
   String get liveGameFinalScoreboard => '最終スコアボード';

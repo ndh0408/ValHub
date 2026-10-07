@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "Belum ada pemain.",
   "liveGameEnemyHiddenInAgentSelect": "Tim musuh akan muncul saat pertandingan dimulai.",
   "liveGameEnemyLocked": "Tim musuh sudah mengunci {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "Data pertandingan langsung ini tidak menyediakan Kill/Death/Assist. Papan skor muncul setelah Riot merilis data pasca-pertandingan.",
+  "liveGameLiveStatsUnavailable": "K/D/A dan papan skor muncul setelah pertandingan selesai.",
   "liveGameFinalScoreboard": "Papan skor akhir",
   "liveGameFlex": "Flex",
   "liveGameInLobby": "Di lobi",

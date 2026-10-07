@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "Nenhum jogador ainda.",
   "liveGameEnemyHiddenInAgentSelect": "A equipe inimiga aparece quando a partida começar.",
   "liveGameEnemyLocked": "Inimigos confirmados: {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "Os dados ao vivo desta partida não incluem abates/mortes/assistências. O placar aparece quando a Riot publicar os dados após a partida.",
+  "liveGameLiveStatsUnavailable": "O K/D/A e o placar aparecem depois da partida.",
   "liveGameFinalScoreboard": "Placar final",
   "liveGameFlex": "Flex",
   "liveGameInLobby": "No saguão",

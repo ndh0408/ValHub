@@ -5820,9 +5820,10 @@
     },
     "x-context": "lib/features/live_game/live_game_strings.dart"
   },
-  "liveGameLiveStatsUnavailable": "Nguồn trận trực tiếp này chưa cung cấp Kill/Death/Assist. Bảng điểm hiện khi Riot công bố dữ liệu sau trận.",
+  "liveGameLiveStatsUnavailable": "K/D/A và bảng điểm có sau khi trận kết thúc.",
   "@liveGameLiveStatsUnavailable": {
-    "description": "Honest availability notice for current live roster data, which has no per-player KDA. Final published match details contain the scoreboard."
+    "description": "One short muted line over each team list during a running match: Riot's live data has no kills/deaths/assists; the scoreboard comes with the published match after it ends.",
+    "x-context": "lib/features/live_game/live_game_sheet.dart"
   },
   "liveGameFinalScoreboard": "Bảng điểm cuối trận",
   "@liveGameFinalScoreboard": {

@@ -3387,8 +3387,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get liveGameLiveStatsUnavailable =>
-      '此实时对局数据不提供击杀/死亡/助攻。Riot 发布赛后数据后将显示计分板。';
+  String get liveGameLiveStatsUnavailable => 'K/D/A 和计分板会在比赛结束后显示。';
 
   @override
   String get liveGameFinalScoreboard => '最终计分板';
@@ -9906,8 +9905,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get liveGameLiveStatsUnavailable =>
-      '此即時對戰資料未提供擊殺／死亡／助攻。Riot 公佈賽後資料後即會顯示計分板。';
+  String get liveGameLiveStatsUnavailable => 'K/D/A 與計分板會在比賽結束後顯示。';
 
   @override
   String get liveGameFinalScoreboard => '最終計分板';

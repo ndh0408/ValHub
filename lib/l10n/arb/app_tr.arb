@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "Henüz oyuncu yok.",
   "liveGameEnemyHiddenInAgentSelect": "Rakip takım maç başladığında görünür.",
   "liveGameEnemyLocked": "Rakip takım kilitledi: {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "Bu canlı maç verisi Leş/Ölüm/Asist bilgisi sağlamıyor. Skor tablosu, Riot maç sonu verilerini yayınladığında görünür.",
+  "liveGameLiveStatsUnavailable": "K/D/A ve skor tablosu maçtan sonra görünür.",
   "liveGameFinalScoreboard": "Maç sonu skor tablosu",
   "liveGameFlex": "Flex",
   "liveGameInLobby": "Lobide",

@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "아직 플레이어가 없습니다.",
   "liveGameEnemyHiddenInAgentSelect": "적 팀은 게임이 시작되면 표시됩니다.",
   "liveGameEnemyLocked": "적 팀 확정 {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "이 실시간 게임 정보에는 처치/사망/지원 기록이 제공되지 않습니다. Riot에서 게임 후 데이터를 공개하면 점수판이 표시됩니다.",
+  "liveGameLiveStatsUnavailable": "K/D/A와 점수판은 경기가 끝난 뒤 표시됩니다.",
   "liveGameFinalScoreboard": "최종 점수판",
   "liveGameFlex": "플렉스",
   "liveGameInLobby": "대기실",

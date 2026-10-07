@@ -148,7 +148,6 @@
   "communityTranslateFailed": "No se pudo traducir. Vuelve a intentarlo.",
   "communityUnavailableBody": "No se pudo conectar con la Comunidad de ValHub. Vuelve a intentarlo en unos minutos.",
   "communityUnavailableTitle": "No se pudo conectar con la Comunidad",
-  "liveGameLiveStatsUnavailable": "Esta fuente de partidas en vivo no ofrece bajas, muertes ni asistencias. La tabla de puntuación aparecerá cuando Riot publique los datos tras la partida.",
   "liveGameLiveScore": "Marcador en vivo",
   "liveGameQuitDone": "Abandonaste la partida.",
   "liveGameQuitFailed": "No se pudo abandonar la partida.",

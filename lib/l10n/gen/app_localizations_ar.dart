@@ -3827,7 +3827,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get liveGameLiveStatsUnavailable =>
-      'لا يوفّر مصدر المباراة المباشرة هذا القتلات/الوفيات/المساعدات. تظهر لوحة النتائج عندما تنشر Riot بيانات ما بعد المباراة.';
+      'تظهر K/D/A ولوحة النتائج بعد انتهاء المباراة.';
 
   @override
   String get liveGameFinalScoreboard => 'لوحة النتائج النهائية';

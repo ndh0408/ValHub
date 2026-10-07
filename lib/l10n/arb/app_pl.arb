@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "Brak graczy.",
   "liveGameEnemyHiddenInAgentSelect": "Drużyna przeciwna pojawi się po rozpoczęciu meczu.",
   "liveGameEnemyLocked": "Przeciwnicy zablokowali: {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "Ten podgląd meczu na żywo nie podaje zabójstw, zgonów ani asyst. Tablica wyników pojawi się, gdy Riot opublikuje dane po meczu.",
+  "liveGameLiveStatsUnavailable": "K/D/A i tablica wyników pojawią się po meczu.",
   "liveGameFinalScoreboard": "Końcowa tablica wyników",
   "liveGameFlex": "Flex",
   "liveGameInLobby": "W poczekalni",

@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "ยังไม่มีผู้เล่น",
   "liveGameEnemyHiddenInAgentSelect": "ทีมศัตรูจะแสดงเมื่อแมตช์เริ่ม",
   "liveGameEnemyLocked": "ทีมศัตรูล็อกแล้ว {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "ข้อมูลแมตช์สดนี้ไม่มีค่าสังหาร/ตาย/ช่วยเหลือ กระดานคะแนนจะแสดงเมื่อ Riot เผยแพร่ข้อมูลหลังแมตช์",
+  "liveGameLiveStatsUnavailable": "K/D/A และกระดานคะแนนจะแสดงหลังจบแมตช์",
   "liveGameFinalScoreboard": "กระดานคะแนนจบแมตช์",
   "liveGameFlex": "Flex",
   "liveGameInLobby": "อยู่ในล็อบบี้",

@@ -127,10 +127,7 @@ void main() {
       expect(container.read(liveGameSheetOpenProvider), 1);
       if (phase == 'INGAME') {
         expect(find.text('Đội địch'), findsOneWidget);
-        expect(
-          find.textContaining('chưa cung cấp Kill/Death/Assist'),
-          findsWidgets,
-        );
+        expect(find.text(tl.liveGameLiveStatsUnavailable), findsWidgets);
       } else {
         // Agent select is information only (no pick grid).
         expect(find.text(tl.liveGamePickInGame), findsOneWidget);

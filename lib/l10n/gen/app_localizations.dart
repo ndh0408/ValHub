@@ -6032,10 +6032,10 @@ abstract class AppLocalizations {
   /// **'Đội địch đã khóa {locked}/{size}'**
   String liveGameEnemyLocked(int locked, int size);
 
-  /// Honest availability notice for current live roster data, which has no per-player KDA. Final published match details contain the scoreboard.
+  /// One short muted line over each team list during a running match: Riot's live data has no kills/deaths/assists; the scoreboard comes with the published match after it ends.
   ///
   /// In vi, this message translates to:
-  /// **'Nguồn trận trực tiếp này chưa cung cấp Kill/Death/Assist. Bảng điểm hiện khi Riot công bố dữ liệu sau trận.'**
+  /// **'K/D/A và bảng điểm có sau khi trận kết thúc.'**
   String get liveGameLiveStatsUnavailable;
 
   /// LiveGameStrings.finalScoreboard — Ended (G11)

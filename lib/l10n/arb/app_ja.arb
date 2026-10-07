@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "プレイヤーがいません。",
   "liveGameEnemyHiddenInAgentSelect": "敵チームは試合開始時に表示されます。",
   "liveGameEnemyLocked": "敵チーム ロックイン {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "この試合のライブデータにはキル/デス/アシストが含まれていません。スコアボードは試合後にRiotがデータを公開すると表示されます。",
+  "liveGameLiveStatsUnavailable": "K/D/Aとスコアボードは試合終了後に表示されます。",
   "liveGameFinalScoreboard": "最終スコアボード",
   "liveGameFlex": "フレックス",
   "liveGameInLobby": "ロビーにいます",

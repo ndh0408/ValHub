@@ -3701,7 +3701,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get liveGameLiveStatsUnavailable =>
-      'I dati di questa partita in diretta non includono uccisioni/morti/assist. Il tabellone comparirà quando Riot pubblicherà i dati di fine partita.';
+      'K/D/A e tabellone arrivano a fine partita.';
 
   @override
   String get liveGameFinalScoreboard => 'Tabellone finale';

@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "No players yet.",
   "liveGameEnemyHiddenInAgentSelect": "The enemy team appears once the match starts.",
   "liveGameEnemyLocked": "Enemy team locked {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "This live match feed doesn't provide Kills/Deaths/Assists. The scoreboard appears once Riot publishes the post-match data.",
+  "liveGameLiveStatsUnavailable": "K/D/A and the scoreboard come after the match.",
   "liveGameFinalScoreboard": "Final scoreboard",
   "liveGameFlex": "Flex",
   "liveGameInLobby": "In lobby",

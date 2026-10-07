@@ -3513,7 +3513,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get liveGameLiveStatsUnavailable =>
-      'Data pertandingan langsung ini tidak menyediakan Kill/Death/Assist. Papan skor muncul setelah Riot merilis data pasca-pertandingan.';
+      'K/D/A dan papan skor muncul setelah pertandingan selesai.';
 
   @override
   String get liveGameFinalScoreboard => 'Papan skor akhir';

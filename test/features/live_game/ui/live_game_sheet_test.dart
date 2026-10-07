@@ -138,6 +138,11 @@ void main() {
       await settle(tester, frames: 12);
       expect(find.text('Tôi#VN1'), findsOneWidget);
       expect(find.text('Đồng Đội#VN1'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('Ẩn danh'),
+        120,
+        scrollable: find.byType(Scrollable).last,
+      );
       expect(find.text('Ẩn danh'), findsOneWidget);
       expect(find.text('Bí Mật#KIN'), findsNothing);
       expect(find.text('BẠN'), findsOneWidget);

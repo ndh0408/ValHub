@@ -3767,7 +3767,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get liveGameLiveStatsUnavailable =>
-      'Ten podgląd meczu na żywo nie podaje zabójstw, zgonów ani asyst. Tablica wyników pojawi się, gdy Riot opublikuje dane po meczu.';
+      'K/D/A i tablica wyników pojawią się po meczu.';
 
   @override
   String get liveGameFinalScoreboard => 'Końcowa tablica wyników';

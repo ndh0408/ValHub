@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "暂无玩家。",
   "liveGameEnemyHiddenInAgentSelect": "对局开始后将显示敌方队伍。",
   "liveGameEnemyLocked": "敌方已锁定 {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "此实时对局数据不提供击杀/死亡/助攻。Riot 发布赛后数据后将显示计分板。",
+  "liveGameLiveStatsUnavailable": "K/D/A 和计分板会在比赛结束后显示。",
   "liveGameFinalScoreboard": "最终计分板",
   "liveGameFlex": "展示道具",
   "liveGameInLobby": "在大厅中",

@@ -3707,7 +3707,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get liveGameLiveStatsUnavailable =>
-      'This live match feed doesn\'t provide Kills/Deaths/Assists. The scoreboard appears once Riot publishes the post-match data.';
+      'K/D/A and the scoreboard come after the match.';
 
   @override
   String get liveGameFinalScoreboard => 'Final scoreboard';

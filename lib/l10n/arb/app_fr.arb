@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "Aucun joueur pour l'instant.",
   "liveGameEnemyHiddenInAgentSelect": "L'équipe adverse apparaîtra au début de la partie.",
   "liveGameEnemyLocked": "Agents verrouillés par l'adversaire : {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "Les éliminations, morts et assistances ne sont pas disponibles en direct. Le tableau des scores s'affichera quand Riot publiera les données de fin de partie.",
+  "liveGameLiveStatsUnavailable": "Le K/D/A et le tableau des scores arrivent après la partie.",
   "liveGameFinalScoreboard": "Tableau des scores final",
   "liveGameFlex": "Flex",
   "liveGameInLobby": "Dans le salon",

@@ -3720,7 +3720,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get liveGameLiveStatsUnavailable =>
-      'Les éliminations, morts et assistances ne sont pas disponibles en direct. Le tableau des scores s\'affichera quand Riot publiera les données de fin de partie.';
+      'Le K/D/A et le tableau des scores arrivent après la partie.';
 
   @override
   String get liveGameFinalScoreboard => 'Tableau des scores final';

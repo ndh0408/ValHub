@@ -3788,7 +3788,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get liveGameLiveStatsUnavailable =>
-      'В данных текущего матча нет убийств/смертей/помощи. Таблица счета появится, когда Riot опубликует данные после матча.';
+      'K/D/A и таблица результатов появятся после матча.';
 
   @override
   String get liveGameFinalScoreboard => 'Итоговая таблица';

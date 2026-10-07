@@ -3699,7 +3699,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get liveGameLiveStatsUnavailable =>
-      'Diese Live-Match-Quelle liefert keine Kills/Tode/Assists. Die Anzeigetafel erscheint, sobald Riot die Daten nach dem Match veröffentlicht.';
+      'K/D/A und Scoreboard gibt es nach dem Match.';
 
   @override
   String get liveGameFinalScoreboard => 'Endstand-Anzeigetafel';

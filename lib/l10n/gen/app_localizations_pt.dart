@@ -3718,7 +3718,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get liveGameLiveStatsUnavailable =>
-      'Os dados ao vivo desta partida não incluem abates/mortes/assistências. O placar aparece quando a Riot publicar os dados após a partida.';
+      'O K/D/A e o placar aparecem depois da partida.';
 
   @override
   String get liveGameFinalScoreboard => 'Placar final';

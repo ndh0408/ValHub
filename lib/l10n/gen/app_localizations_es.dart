@@ -3712,7 +3712,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get liveGameLiveStatsUnavailable =>
-      'Esta fuente de partidas en directo no ofrece bajas, muertes ni asistencias. La tabla de puntuación aparecerá cuando Riot publique los datos tras la partida.';
+      'El K/D/A y el marcador aparecen al terminar la partida.';
 
   @override
   String get liveGameFinalScoreboard => 'Tabla de puntuación final';
@@ -7873,10 +7873,6 @@ class AppLocalizationsEsMx extends AppLocalizationsEs {
   @override
   String get communityUnavailableTitle =>
       'No se pudo conectar con la Comunidad';
-
-  @override
-  String get liveGameLiveStatsUnavailable =>
-      'Esta fuente de partidas en vivo no ofrece bajas, muertes ni asistencias. La tabla de puntuación aparecerá cuando Riot publique los datos tras la partida.';
 
   @override
   String get liveGameLiveScore => 'Marcador en vivo';

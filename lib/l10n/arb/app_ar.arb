@@ -984,7 +984,7 @@
   "liveGameEmptyTeam": "لا يوجد لاعبون بعد.",
   "liveGameEnemyHiddenInAgentSelect": "سيظهر الفريق الخصم عند بدء المباراة.",
   "liveGameEnemyLocked": "قفل الفريق الخصم {locked}/{size}",
-  "liveGameLiveStatsUnavailable": "لا يوفّر مصدر المباراة المباشرة هذا القتلات/الوفيات/المساعدات. تظهر لوحة النتائج عندما تنشر Riot بيانات ما بعد المباراة.",
+  "liveGameLiveStatsUnavailable": "تظهر K/D/A ولوحة النتائج بعد انتهاء المباراة.",
   "liveGameFinalScoreboard": "لوحة النتائج النهائية",
   "liveGameFlex": "Flex",
   "liveGameInLobby": "في الردهة",

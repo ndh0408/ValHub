@@ -3499,7 +3499,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get liveGameLiveStatsUnavailable =>
-      'Nguồn trận trực tiếp này chưa cung cấp Kill/Death/Assist. Bảng điểm hiện khi Riot công bố dữ liệu sau trận.';
+      'K/D/A và bảng điểm có sau khi trận kết thúc.';
 
   @override
   String get liveGameFinalScoreboard => 'Bảng điểm cuối trận';
