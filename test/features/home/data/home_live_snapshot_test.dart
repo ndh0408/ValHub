@@ -35,6 +35,36 @@ void main() {
     expect(homeLiveSnapshotOf(_state(LivePhase.lobby), db, self: me), isNull);
   });
 
+  test('the match just played stays 20 minutes, then the card goes', () {
+    final ended = LiveGameState(
+      phase: LivePhase.lobby,
+      receivedAt: _now,
+      ended: LiveEndedMatch(
+        matchId: 'm1',
+        endedAt: _now,
+        mapId: '/Game/Maps/Ascent/Ascent',
+        queueId: 'competitive',
+      ),
+    );
+    final snap = homeLiveSnapshotOf(
+      ended,
+      db,
+      self: me,
+      now: _now.add(const Duration(minutes: 5)),
+    )!;
+    expect(snap.isEnded, isTrue);
+    expect(snap.matchId, 'm1');
+    expect(
+      homeLiveSnapshotOf(
+        ended,
+        db,
+        self: me,
+        now: _now.add(kHomeEndedShownFor + const Duration(minutes: 1)),
+      ),
+      isNull,
+    );
+  });
+
   test('queueing carries the queue entry time and the mode', () {
     final party = LiveParty.fromJson(partyJson())!;
     final snap = homeLiveSnapshotOf(

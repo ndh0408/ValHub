@@ -6,12 +6,16 @@ library;
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/content/content_db.dart';
 import '../../../../core/content/content_repository.dart';
+import '../../../../core/domain/competitive/competitive.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/ui/adaptive.dart';
 import '../../../../core/ui/countdown_text.dart';
+import '../../../../core/ui/error_view.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/util/clock.dart';
 import '../../../../core/util/format.dart';
@@ -21,12 +25,16 @@ import '../../../live_game/data/live_game_models.dart';
 import '../../../live_game/live_game_sheet.dart';
 import '../../../live_game/providers/live_game_providers.dart';
 import '../../../live_game/ui/live_widgets.dart';
+import '../../../profile/profile_routes.dart';
+import '../../../profile/ui/widgets/profile_widgets.dart' show outcomeColor;
+import '../../../social/providers/party_providers.dart';
 import '../../data/home_card.dart';
 import '../../data/home_live.dart';
 import '../../providers/home_card_providers.dart';
 import '../home_card_frame.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
+import 'package:valvn/core/l10n/labels/competitive_labels.dart';
 
 class LiveHomeCard extends ConsumerWidget {
   const LiveHomeCard({super.key, required this.puuid});
@@ -41,10 +49,12 @@ class LiveHomeCard extends ConsumerWidget {
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
     final surface = theme.colorScheme.surfaceContainer;
     final phaseText = switch (snap.phase) {
+      _ when snap.isEnded => context.l10n.liveGameLastMatchTitle,
       LivePhase.queueing => context.l10n.liveGameInQueue,
       LivePhase.pregame => context.l10n.liveGameAgentSelect,
       _ => context.l10n.liveGameInMatch,
     };
+    final matchId = snap.matchId;
     final summary = context.fmt.nonEmptyFacts([
       phaseText,
       ?snap.mapName,
@@ -58,11 +68,17 @@ class LiveHomeCard extends ConsumerWidget {
     return HomeCardFrame(
       card: HomeCardId.live,
       semanticsLabel: summary,
-      onTap: () => unawaited(showLiveGameSheet(context)),
+      // The match just played opens its details (above the tab bar);
+      // anything live opens the live view.
+      onTap: snap.isEnded && matchId != null
+          ? () => unawaited(
+              context.push<Object?>(ProfileRoutes.matchFullScreen(matchId)),
+            )
+          : () => unawaited(showLiveGameSheet(context)),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          LiveRefreshRing(puuid: puuid, size: 48),
+          if (!snap.isEnded) LiveRefreshRing(puuid: puuid, size: 48),
           Icon(Icons.chevron_right, color: theme.colorScheme.onSurfaceVariant),
         ],
       ),
@@ -95,7 +111,8 @@ class LiveHomeCard extends ConsumerWidget {
               ],
             ),
       child: switch (snap.phase) {
-        LivePhase.queueing => _QueueBody(snap: snap),
+        _ when snap.isEnded => _EndedBody(snap: snap, puuid: puuid),
+        LivePhase.queueing => _QueueBody(snap: snap, puuid: puuid),
         LivePhase.pregame => _PregameBody(snap: snap, db: db),
         _ => _InGameBody(snap: snap),
       },
@@ -142,13 +159,94 @@ class _MatchTitle extends ConsumerWidget {
   }
 }
 
-class _QueueBody extends ConsumerWidget {
-  const _QueueBody({required this.snap});
+/// "Trận vừa rồi": the map, then the result and score once the match
+/// details are in (the history list loads the same summary).
+class _EndedBody extends ConsumerWidget {
+  const _EndedBody({required this.snap, required this.puuid});
 
   final HomeLiveSnapshot snap;
+  final String puuid;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final matchId = snap.matchId;
+    final result = matchId == null
+        ? null
+        : ref
+              .watch(matchSummaryProvider((matchId: matchId, puuid: puuid)))
+              .value
+              ?.result;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _MatchTitle(snap: snap),
+        if (result != null && result.outcome != MatchOutcome.unknown) ...[
+          const SizedBox(height: 6),
+          Text(
+            context.fmt.inlineFacts([
+              context.l10n.matchOutcome(result.outcome),
+              if (result.hasScore)
+                context.l10n.profileScore(result.myScore!, result.otherScore!),
+            ]),
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: legibleAccent(
+                context,
+                outcomeColor(context, result.outcome),
+              ),
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _QueueBody extends ConsumerStatefulWidget {
+  const _QueueBody({required this.snap, required this.puuid});
+
+  final HomeLiveSnapshot snap;
+  final String puuid;
+
+  @override
+  ConsumerState<_QueueBody> createState() => _QueueBodyState();
+}
+
+class _QueueBodyState extends ConsumerState<_QueueBody> {
+  bool _busy = false;
+
+  /// "Hủy tìm trận" right on the card (it took three taps before).
+  Future<void> _cancel() async {
+    final l10n = context.l10n;
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    setState(() => _busy = true);
+    // Keeps the party read alive while it loads (nothing else watches it
+    // on Home).
+    final keep = ref.listenManual(partyProvider(widget.puuid), (_, _) {});
+    try {
+      final party = ref.read(partyProvider(widget.puuid).notifier);
+      await ref.read(partyProvider(widget.puuid).future);
+      await party.cancelMatchmaking();
+      Haptics.medium();
+      unawaited(ref.read(liveGameProvider(widget.puuid).notifier).refresh());
+    } on Object catch (e) {
+      messenger?.showSnackBar(
+        SnackBar(
+          content: Text(
+            l10n.socialActionFailed(describeError(l10n, e).message),
+          ),
+        ),
+      );
+    } finally {
+      keep.close();
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final snap = widget.snap;
     final theme = Theme.of(context);
     final warning = valColorsOf(context).warning;
     final db = ref.watch(contentProvider).value ?? ContentDb.empty();
@@ -209,6 +307,14 @@ class _QueueBody extends ConsumerWidget {
           overflow: TextOverflow.ellipsis,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: TextButton.icon(
+            onPressed: _busy ? null : () => unawaited(_cancel()),
+            icon: const Icon(Icons.close_rounded, size: 18),
+            label: Text(context.l10n.socialCancelQueueShort),
           ),
         ),
       ],

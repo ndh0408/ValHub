@@ -48,7 +48,12 @@ final homeLiveSnapshotProvider = Provider.autoDispose
       final state = ref.watch(liveGameProvider(puuid)).value;
       if (state == null) return null;
       final db = ref.watch(contentProvider).value ?? ContentDb.empty();
-      return homeLiveSnapshotOf(state, db, self: puuid);
+      return homeLiveSnapshotOf(
+        state,
+        db,
+        self: puuid,
+        now: ref.watch(clockProvider).now(),
+      );
     });
 
 // ------------------------------------------------------------------ store

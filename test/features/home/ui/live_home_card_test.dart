@@ -1,5 +1,8 @@
+import '../../../helpers/l10n.dart';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:valvn/core/settings/app_settings.dart';
 import 'package:valvn/core/storage/prefs.dart';
@@ -69,6 +72,17 @@ void main() {
     env.clock.advance(const Duration(seconds: 1));
     await tester.pump(const Duration(seconds: 1));
     expect(find.text('Đang tìm trận · 01:33'), findsOneWidget);
+    await unmount(tester);
+  });
+
+  testWidgets('queueing: cancel right on the card', (tester) async {
+    env
+      ..loop = 'MENUS'
+      ..party = partyJson();
+    await pumpCard(tester);
+    await tester.tap(find.text(tl.socialCancelQueueShort));
+    await settle(tester);
+    verify(() => env.api.partyLeaveMatchmaking(me, any())).called(1);
     await unmount(tester);
   });
 

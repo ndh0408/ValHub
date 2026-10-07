@@ -142,10 +142,14 @@ final homeArrangementProvider = Provider.autoDispose
         return seen[id] = presence;
       }
 
+      // A live match is pinned on top; "Trận vừa rồi" stays in its place.
       final liveActive =
           !needsLogin &&
           !layout.isHidden(HomeCardId.live) &&
-          ref.watch(homeLiveSnapshotProvider(puuid).select((s) => s != null));
+          ref.watch(
+            homeLiveSnapshotProvider(puuid)
+                .select((s) => s != null && !s.isEnded),
+          );
 
       final arrangement = arrangeHomeCards(
         layout: layout,

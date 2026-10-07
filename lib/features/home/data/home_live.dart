@@ -41,6 +41,11 @@ class HomeLiveSnapshot {
   final bool myAgentLocked;
   final String? matchId;
 
+  /// The match is over: the card shows "Trận vừa rồi" for
+  /// [kHomeEndedShownFor] after it (the player is back in the lobby or
+  /// closed the game).
+  bool get isEnded => phase == LivePhase.lobby || phase == LivePhase.notRunning;
+
   @override
   bool operator ==(Object other) =>
       other is HomeLiveSnapshot &&
@@ -70,18 +75,36 @@ class HomeLiveSnapshot {
   );
 }
 
-/// The live card's snapshot; `null` unless the phase is queueing, pregame or
-/// ingame (lobby and "game not running" show nothing on Home). Never throws:
-/// an unknown map or agent just leaves the field empty.
+/// How long Home keeps "Trận vừa rồi" after a match ended.
+const kHomeEndedShownFor = Duration(minutes: 20);
+
+/// The live card's snapshot: queueing, agent select, a running match, or
+/// the match that just ended (for [kHomeEndedShownFor], given [now]);
+/// `null` otherwise. Never throws: an unknown map or agent just leaves the
+/// field empty.
 HomeLiveSnapshot? homeLiveSnapshotOf(
   LiveGameState state,
   ContentDb db, {
   required String self,
+  DateTime? now,
 }) {
   final match = state.match;
   switch (state.phase) {
     case LivePhase.notRunning || LivePhase.lobby:
-      return null;
+      final ended = state.ended;
+      if (ended == null ||
+          now == null ||
+          now.difference(ended.endedAt) > kHomeEndedShownFor) {
+        return null;
+      }
+      return HomeLiveSnapshot(
+        phase: state.phase,
+        queueId: ended.queueId,
+        modeId: ended.modeId,
+        mapName: liveMapName(db, ended.mapId),
+        mapSplash: db.mapByUrl(ended.mapId)?.splash,
+        matchId: ended.matchId,
+      );
     case LivePhase.queueing:
       return HomeLiveSnapshot(
         phase: LivePhase.queueing,
