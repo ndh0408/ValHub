@@ -91,7 +91,6 @@ class _SettingsNotificationsSectionState
   @override
   Widget build(BuildContext context) {
     final settings = ref.watch(appSettingsProvider);
-    final accounts = ref.watch(accountsProvider);
     final allowed = ref.watch(notificationsAllowedProvider).value;
     final active = ref.watch(activeAccountProvider);
     final savedStore = active == null
@@ -106,8 +105,11 @@ class _SettingsNotificationsSectionState
         (settings.storeResetNotifications ||
             settings.nightMarketNotifications ||
             anyNotificationEnabled(settings));
+    // Wishlist alerts belong to an account: only the active one's is here
+    // (switch accounts to change another's), named so it is clear whose.
     return SettingsGroup(
       title: context.l10n.settingsNotificationsHeader,
+      footer: Text(context.l10n.notificationBackgroundTimingHint),
       children: [
         if (showWarning) const _PermissionWarning(),
         for (final (toggle, icon, title, subtitle) in [
@@ -127,24 +129,6 @@ class _SettingsNotificationsSectionState
             context.l10n.settingsNotifNightMarket,
             context.l10n.settingsNotifNightMarketSubtitle,
           ),
-          (
-            NotificationToggle.battlePass,
-            Icons.notifications_outlined,
-            context.l10n.notificationChannelBattlePassName,
-            context.l10n.notificationLocalOnlyHint,
-          ),
-          (
-            NotificationToggle.rank,
-            Icons.notifications_outlined,
-            context.l10n.notificationChannelRankName,
-            context.l10n.notificationLocalOnlyHint,
-          ),
-          (
-            NotificationToggle.lfg,
-            Icons.notifications_outlined,
-            context.l10n.notificationChannelLfgName,
-            context.l10n.notificationLocalOnlyHint,
-          ),
         ])
           SettingsSwitchTile(
             icon: icon,
@@ -153,18 +137,40 @@ class _SettingsNotificationsSectionState
             value: toggle.valueIn(settings),
             onChanged: (v) => unawaited(_toggle(toggle, v)),
           ),
-        Padding(
-          padding: EdgeInsets.all(16),
-          child: Text(context.l10n.notificationBackgroundTimingHint),
-        ),
-        for (final account in accounts)
+        if (active != null)
           SettingsSwitchTile(
             icon: Icons.favorite_border,
             title: context.l10n.settingsNotifWishlist,
-            subtitle:
-                '${account.displayRiotId(context.l10n)} · ${context.l10n.settingsNotifWishlistSubtitle}',
-            value: settings.wishlistNotificationsFor(account.puuid),
-            onChanged: (v) => unawaited(_toggleWishlist(account.puuid, v)),
+            subtitle: active.displayRiotId(context.l10n),
+            value: settings.wishlistNotificationsFor(active.puuid),
+            onChanged: (v) => unawaited(_toggleWishlist(active.puuid, v)),
+          ),
+        for (final (toggle, icon, title, subtitle) in [
+          (
+            NotificationToggle.battlePass,
+            Icons.military_tech_outlined,
+            context.l10n.notificationChannelBattlePassName,
+            context.l10n.notificationChannelBattlePassDescription,
+          ),
+          (
+            NotificationToggle.rank,
+            Icons.trending_up_rounded,
+            context.l10n.notificationChannelRankName,
+            context.l10n.notificationChannelRankDescription,
+          ),
+          (
+            NotificationToggle.lfg,
+            Icons.group_add_outlined,
+            context.l10n.notificationChannelLfgName,
+            context.l10n.notificationChannelLfgDescription,
+          ),
+        ])
+          SettingsSwitchTile(
+            icon: icon,
+            title: title,
+            subtitle: subtitle,
+            value: toggle.valueIn(settings),
+            onChanged: (v) => unawaited(_toggle(toggle, v)),
           ),
       ],
     );

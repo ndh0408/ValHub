@@ -20,6 +20,7 @@ class RankBadge extends ConsumerWidget {
     this.rr,
     this.style,
     this.axis = Axis.horizontal,
+    this.singleLine = false,
   });
 
   final int tier;
@@ -31,6 +32,9 @@ class RankBadge extends ConsumerWidget {
   final int? rr;
   final TextStyle? style;
   final Axis axis;
+
+  /// Keeps the name on one line (ellipsis) in tight rows.
+  final bool singleLine;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -50,6 +54,8 @@ class RankBadge extends ConsumerWidget {
     if (!showName) return Tooltip(message: label, child: image);
     final text = Text(
       label,
+      maxLines: singleLine ? 1 : null,
+      overflow: singleLine ? TextOverflow.ellipsis : null,
       style: (style ?? Theme.of(context).textTheme.bodyMedium)?.copyWith(
         color: t == null || t.isUnranked
             ? null

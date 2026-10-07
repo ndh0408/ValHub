@@ -156,13 +156,13 @@ class SettingsSwitchTile extends StatelessWidget {
     required this.value,
     required this.onChanged,
     this.subtitle,
-    this.showIcon = false,
+    this.showIcon = true,
     this.onInfo,
     this.infoTooltip,
   });
 
-  /// Leading icon, drawn only when [showIcon] (preference rows are plain
-  /// title + switch by default).
+  /// Leading icon, drawn unless [showIcon] is false: every Settings row
+  /// carries one so the rows of a group line up.
   final IconData icon;
   final String title;
   final String? subtitle;

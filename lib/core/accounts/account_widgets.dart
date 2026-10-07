@@ -17,6 +17,7 @@ import '../ui/net_image.dart';
 import '../ui/rank_badge.dart';
 import '../ui/sub_page.dart';
 import '../ui/val_widgets.dart';
+import 'account_actions.dart';
 import 'account.dart';
 import 'account_providers.dart';
 import 'account_status.dart';
@@ -157,9 +158,10 @@ Future<void> showAccountSwitcherSheet(BuildContext context) =>
     );
 
 /// Account list in the shared sheet chrome: "Tài khoản (n/10)" with a close
-/// button and the online count, one grouped card of rows (active account =
-/// 4 px red bar + check, "Đăng nhập lại" badge when the session died) ending
-/// with "Thêm tài khoản". Scrolls when there are many accounts.
+/// button and the online count, one grouped card of [AccountTile]s (tap to
+/// switch, "Đăng nhập lại" when the session ended, ⋮ for the account's
+/// actions) ending with "Thêm tài khoản". Scrolls when there are many
+/// accounts.
 class AccountSwitcherSheet extends ConsumerWidget {
   const AccountSwitcherSheet({super.key});
 
@@ -220,30 +222,42 @@ class AccountSwitcherSheet extends ConsumerWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         for (final a in accounts) ...[
-                          _ActiveHighlight(
+                          AccountTile(
                             key: ValueKey(a.puuid),
-                            active: a.puuid == active,
-                            child: AccountTile(
-                              account: a,
-                              selected: a.puuid == active,
-                              onTap: () {
-                                final router = GoRouter.of(context);
-                                Navigator.of(context).pop();
-                                if (a.needsLogin) {
-                                  unawaited(
-                                    router.push(
-                                      AuthRoutes.loginPath(
-                                        reauthPuuid: a.puuid,
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  if (a.puuid != active) Haptics.selection();
-                                  ref
-                                      .read(activePuuidProvider.notifier)
-                                      .select(a.puuid);
-                                }
-                              },
+                            account: a,
+                            selected: a.puuid == active,
+                            onTap: () {
+                              final router = GoRouter.of(context);
+                              Navigator.of(context).pop();
+                              if (a.needsLogin) {
+                                unawaited(
+                                  router.push(
+                                    AuthRoutes.loginPath(reauthPuuid: a.puuid),
+                                  ),
+                                );
+                              } else {
+                                if (a.puuid != active) Haptics.selection();
+                                ref
+                                    .read(activePuuidProvider.notifier)
+                                    .select(a.puuid);
+                              }
+                            },
+                            onReauth: () {
+                              final router = GoRouter.of(context);
+                              Navigator.of(context).pop();
+                              unawaited(
+                                router.push(
+                                  AuthRoutes.loginPath(reauthPuuid: a.puuid),
+                                ),
+                              );
+                            },
+                            onMore: () => unawaited(
+                              showAccountActions(
+                                context,
+                                ref,
+                                a,
+                                onLeave: () => Navigator.of(context).pop(),
+                              ),
                             ),
                           ),
                           Divider(height: 1, thickness: 1, color: hairline),
@@ -259,16 +273,6 @@ class AccountSwitcherSheet extends ConsumerWidget {
                           },
                         ),
                       ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
-                    child: Text(
-                      context.l10n.accountManageHint,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
                     ),
                   ),
                 ],
@@ -360,62 +364,32 @@ class _AddAccountRow extends StatelessWidget {
   }
 }
 
-/// Active account marker in the switcher: 4 px accent strip and a faint
-/// accent wash behind the row.
-class _ActiveHighlight extends StatelessWidget {
-  const _ActiveHighlight({
-    super.key,
-    required this.active,
-    required this.child,
-  });
-
-  final bool active;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final accent = Theme.of(context).colorScheme.primary;
-    // A Material (not a colored box) so the ListTile ink stays visible.
-    return Material(
-      color: active ? accent.withValues(alpha: 0.08) : Colors.transparent,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: BorderDirectional(
-            start: BorderSide(
-              color: active ? accent : Colors.transparent,
-              width: 4,
-            ),
-          ),
-        ),
-        child: child,
-      ),
-    );
-  }
-}
-
-/// One account row (A4): avatar with a live status dot, Riot ID,
-/// "Đang đấu · AP · Cấp 222", current rank (icon + name), markers. Also usable in the settings
-/// account list.
+/// One account row (A4), the same in the account switcher and in Settings:
+/// avatar with the live status dot, the Riot ID, the current rank and level,
+/// then what the account is doing and its server (or "Cần đăng nhập lại").
+/// On the right, on the same line: the active check or a "Đăng nhập lại"
+/// chip, and the ⋮ menu ([onMore]). The active account has an accent wash
+/// and a 4 px accent bar.
 class AccountTile extends ConsumerWidget {
   const AccountTile({
     super.key,
     required this.account,
     this.selected = false,
     this.onTap,
-    this.trailing,
+    this.onReauth,
+    this.onMore,
     this.showActivity = true,
-    this.circleAvatar = true,
   });
 
   final Account account;
   final bool selected;
   final VoidCallback? onTap;
 
-  /// Round avatar (switcher) or the rounded-square player card (settings).
-  final bool circleAvatar;
+  /// The "Đăng nhập lại" chip of an account whose session ended.
+  final VoidCallback? onReauth;
 
-  /// Replaces the default check mark (e.g. a delete button in settings).
-  final Widget? trailing;
+  /// The ⋮ button (account actions); hidden when `null`.
+  final VoidCallback? onMore;
 
   /// Checks and shows what the account is doing right now.
   final bool showActivity;
@@ -423,7 +397,9 @@ class AccountTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final colors = valColorsOf(context);
     final muted = theme.colorScheme.onSurfaceVariant;
+    final accent = theme.colorScheme.primary;
     final live = showActivity && !account.needsLogin;
     final activity = live
         ? ref.watch(accountActivityProvider(account.puuid)).value
@@ -432,20 +408,60 @@ class AccountTile extends ConsumerWidget {
     // account, not only the ones already opened in the Profile tab.
     if (live) ref.watch(accountRankRefreshProvider(account.puuid));
     final tier = account.rankTier;
-    final meta = [
-      if (account.level != null) context.l10n.accountLevelShort(account.level!),
-    ].join(' · ');
+    final level = account.level;
     final small = theme.textTheme.bodySmall;
-    final Widget subtitle;
+    final region = context.l10n.riotRegionName(account.region);
+
+    // Rank and level: what players look at first after the name.
+    final rankLine = Row(
+      children: [
+        if (tier != null)
+          Flexible(
+            child: RankBadge(
+              tier: tier,
+              seasonId: account.rankSeasonId,
+              size: 18,
+              singleLine: true,
+              style: small?.copyWith(
+                color: theme.colorScheme.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        if (level != null)
+          Flexible(
+            child: Text(
+              tier == null
+                  ? context.l10n.accountLevelShort(level)
+                  : ' · ${context.l10n.accountLevelShort(level)}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: small?.copyWith(color: muted),
+            ),
+          ),
+      ],
+    );
+
+    final Widget statusLine;
     if (account.needsLogin) {
-      subtitle = Text(
+      statusLine = Text(
         context.l10n.accountNeedsLogin,
-        style: small?.copyWith(color: valColorsOf(context).warning),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: small?.copyWith(
+          color: legibleAccent(context, colors.warning),
+          fontWeight: FontWeight.w600,
+        ),
       );
     } else if (activity == null || activity == AccountActivity.unknown) {
-      subtitle = Text(meta, style: small?.copyWith(color: muted));
+      statusLine = Text(
+        region,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: small?.copyWith(color: muted),
+      );
     } else {
-      subtitle = Text.rich(
+      statusLine = Text.rich(
         TextSpan(
           children: [
             TextSpan(
@@ -455,106 +471,140 @@ class AccountTile extends ConsumerWidget {
                 fontWeight: activity.isOnline ? FontWeight.w700 : null,
               ),
             ),
-            if (meta.isNotEmpty) TextSpan(text: ' · $meta'),
+            TextSpan(text: ' · $region'),
           ],
         ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: small?.copyWith(color: muted),
       );
     }
-    final end =
-        trailing ??
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 132),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (selected)
-                Icon(
-                  Icons.check_circle,
-                  color: theme.colorScheme.primary,
-                  semanticLabel: context.l10n.accountActive,
-                ),
-              if (account.needsLogin) ...[
-                if (selected) const SizedBox(width: 8),
-                Flexible(
-                  child: Tooltip(
-                    message: context.l10n.commonSignInAgain,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: ValBadge(
-                        context.l10n.commonSignInAgain,
-                        color: valColorsOf(context).warning,
-                        soft: true,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        );
-    return Semantics(
-      selected: selected,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 12, 14),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _StatusDot(
-                activity: activity,
-                child: AccountAvatar(
-                  account: account,
-                  size: 44,
-                  circle: circleAvatar,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      account.displayRiotId(context.l10n),
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    subtitle,
-                    Text(
-                      context.l10n.riotRegionName(account.region),
-                      style: small?.copyWith(color: muted),
-                    ),
-                    if (tier != null) ...[
-                      const SizedBox(height: 6),
-                      RankBadge(
-                        tier: tier,
-                        seasonId: account.rankSeasonId,
-                        size: 20,
-                        style: small?.copyWith(
-                          color: theme.colorScheme.onSurface,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                    if (trailing != null) ...[const SizedBox(height: 8), end],
-                    if (account.showRegionMismatch && !account.needsLogin)
-                      TextButton.icon(
-                        onPressed: () => showRegionPicker(context, account),
-                        icon: const Icon(Icons.sync_problem, size: 18),
-                        label: Text(context.l10n.settingsGeoReviewConnection),
-                      ),
-                  ],
-                ),
-              ),
-              if (trailing == null) ...[const SizedBox(width: 8), end],
-            ],
+
+    final reauth = onReauth;
+    final more = onMore;
+    final trailing = <Widget>[
+      if (account.needsLogin && reauth != null)
+        _ReauthChip(onPressed: reauth)
+      else if (selected)
+        Padding(
+          padding: const EdgeInsetsDirectional.only(start: 4),
+          child: Icon(
+            Icons.check_circle,
+            color: accent,
+            semanticLabel: context.l10n.accountActive,
           ),
         ),
+      if (more != null)
+        IconButton(
+          icon: Icon(Icons.adaptive.more),
+          color: muted,
+          tooltip: context.l10n.accountMoreActions(
+            account.displayRiotId(context.l10n),
+          ),
+          onPressed: more,
+        ),
+    ];
+
+    return Semantics(
+      selected: selected,
+      // A Material (not a coloured box) so the ink stays visible.
+      child: Material(
+        color: selected ? accent.withValues(alpha: 0.08) : Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              border: BorderDirectional(
+                start: BorderSide(
+                  color: selected ? accent : Colors.transparent,
+                  width: 4,
+                ),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(
+                12,
+                12,
+                more == null ? 16 : 4,
+                12,
+              ),
+              child: Row(
+                children: [
+                  _StatusDot(
+                    activity: activity,
+                    child: AccountAvatar(
+                      account: account,
+                      size: 48,
+                      circle: true,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          account.displayRiotId(context.l10n),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0,
+                          ),
+                        ),
+                        if (tier != null || level != null) ...[
+                          const SizedBox(height: 3),
+                          rankLine,
+                        ],
+                        const SizedBox(height: 3),
+                        statusLine,
+                        if (account.showRegionMismatch && !account.needsLogin)
+                          TextButton.icon(
+                            onPressed: () => showRegionPicker(context, account),
+                            icon: const Icon(Icons.sync_problem, size: 18),
+                            label: Text(
+                              context.l10n.settingsGeoReviewConnection,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (trailing.isNotEmpty) ...[
+                    const SizedBox(width: 4),
+                    ...trailing,
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// "Đăng nhập lại" on an account row whose session ended: a compact
+/// warning-tinted icon (the status line already says why), so the Riot ID
+/// keeps its room.
+class _ReauthChip extends StatelessWidget {
+  const _ReauthChip({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final warning = valColorsOf(context).warning;
+    return IconButton(
+      onPressed: onPressed,
+      tooltip: context.l10n.commonSignInAgain,
+      icon: const Icon(Icons.login_rounded, size: 20),
+      color: legibleAccent(context, warning),
+      style: IconButton.styleFrom(
+        backgroundColor: warning.withValues(alpha: 0.16),
+        fixedSize: const Size.square(36),
+        minimumSize: const Size.square(36),
+        tapTargetSize: MaterialTapTargetSize.padded,
       ),
     );
   }

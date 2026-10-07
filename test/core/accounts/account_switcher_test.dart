@@ -1,3 +1,5 @@
+import '../../helpers/l10n.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -122,11 +124,39 @@ void main() {
     for (var i = 1; i <= 3; i++) {
       expect(find.text('Người Chơi Có Tên Dài $i#VN$i'), findsOneWidget);
     }
-    // The dead session says so, with the re-login badge.
+    // The dead session says so, with the re-login button.
     expect(find.text(AccountStrings.needsLogin), findsOneWidget);
-    expect(find.text(CommonStrings.signInAgain), findsOneWidget);
+    expect(find.byTooltip(CommonStrings.signInAgain), findsOneWidget);
     expect(find.text(AccountStrings.addAccount(3, 10)), findsOneWidget);
+    // Every account has its own ⋮ menu here too.
+    expect(
+      find.byTooltip(tl.accountMoreActions('Người Chơi Có Tên Dài 1#VN1')),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('⋮ offers the account actions; re-login closes the sheet', (
+    tester,
+  ) async {
+    await seed([_account(1), _account(2, needsLogin: true)]);
+    await pumpHost(tester);
+
+    await tester.tap(
+      find.byTooltip(tl.accountMoreActions('Người Chơi Có Tên Dài 2#VN2')),
+    );
+    await tester.pumpAndSettle();
+    for (final label in [
+      tl.commonSignInAgain,
+      tl.accountLoginNoteAdd,
+      tl.settingsGeoConnection,
+      tl.accountRemoveAccount,
+    ]) {
+      expect(find.text(label), findsOneWidget, reason: label);
+    }
+    await tester.tap(find.text(tl.commonSignInAgain));
+    await tester.pumpAndSettle();
+    expect(find.text(AccountStrings.switcherSubtitle), findsNothing);
   });
 
   testWidgets('tapping another account switches to it and closes', (

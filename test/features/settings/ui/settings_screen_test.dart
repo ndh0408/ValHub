@@ -134,10 +134,11 @@ void main() {
         findsOneWidget,
       );
       expect(find.byTooltip(AccountStrings.removeAccount), findsNothing);
-      expect(find.text('Player1#VN'), findsOneWidget);
+      // The active account also names its wishlist alert row.
+      expect(find.text('Player1#VN'), findsNWidgets(2));
       expect(find.text('Player2#VN'), findsOneWidget);
       // Exactly one active marker (the first account is active by default).
-      expect(find.byIcon(Icons.check), findsOneWidget);
+      expect(find.byIcon(Icons.check_circle), findsOneWidget);
       // The version and build live on the About screen only.
       expect(find.text(SettingsStrings.version('1.2.3')), findsNothing);
       expect(find.text(SettingsStrings.buildNumber('42')), findsNothing);
@@ -211,14 +212,15 @@ void main() {
 
       await tester.tap(find.text(CommonStrings.cancel));
       await tester.pumpAndSettle();
-      expect(find.text('Player1#VN'), findsOneWidget);
+      expect(find.text('Player1#VN'), findsNWidgets(2));
 
       await _openRemove(tester, 'Player1#VN');
       await tester.tap(find.text(CommonStrings.delete));
       await tester.pumpAndSettle();
 
       expect(find.text('Player1#VN'), findsNothing);
-      expect(find.text('Player2#VN'), findsOneWidget);
+      // Now active: its row and its wishlist alert row.
+      expect(find.text('Player2#VN'), findsNWidgets(2));
       expect(find.text(AccountStrings.accountsHeader(1, 10)), findsOneWidget);
       expect(
         find.text(SettingsStrings.removedAccount('Player1#VN')),
@@ -410,6 +412,25 @@ void main() {
         container.read(appSettingsProvider).storeResetNotifications,
         isFalse,
       );
+    });
+
+    testWidgets("one wishlist row: the active account's, named", (
+      tester,
+    ) async {
+      await pumpSettings(tester, accounts: [testAccount(1), testAccount(2)]);
+
+      expect(find.text(SettingsStrings.notifWishlist), findsOneWidget);
+      // The Riot ID is the row's subtitle; the account row shows it too.
+      expect(find.text('Player1#VN'), findsNWidgets(2));
+      expect(find.text(tl.settingsNotifWishlistSubtitle), findsNothing);
+      // One timing note for the whole group, not one per row.
+      expect(find.text(tl.notificationBackgroundTimingHint), findsOneWidget);
+      expect(find.text(tl.notificationLocalOnlyHint), findsNothing);
+
+      await tester.tap(find.text('Player2#VN'));
+      await tester.pumpAndSettle();
+      expect(find.text('Player2#VN'), findsNWidgets(2));
+      await _drainSnackBars(tester);
     });
 
     testWidgets('allowing notifications turns the switch on', (tester) async {
