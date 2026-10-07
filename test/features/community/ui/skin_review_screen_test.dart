@@ -118,7 +118,10 @@ void main() {
     expect(find.text('Vandal Reaver'), findsOneWidget);
     expect(find.text('4,6'), findsOneWidget);
     expect(find.text(CommunityStrings.ratingCount('128')), findsOneWidget);
-    expect(find.text('ĐÁNH GIÁ · 57'), findsOneWidget);
+    // The list holds every rating (text or not): the header counts the same
+    // 128 as the score, not the 57 with text.
+    expect(find.text('ĐÁNH GIÁ · 128'), findsOneWidget);
+    expect(find.text('ĐÁNH GIÁ · 57'), findsNothing);
     expect(find.text('Âm thanh bắn cực đã'), findsOneWidget);
     expect(find.text(CommunityStrings.helpfulCount('4')), findsOneWidget);
     expect(find.text(CommunityStrings.tapToRate), findsOneWidget);
@@ -252,7 +255,26 @@ void main() {
   testWidgets('no reviews: invite to be first', (tester) async {
     _serve(env, reviews: const []);
     await _pump(tester, env);
+    expect(find.text(CommunityStrings.reviewsEmptyTitle), findsOneWidget);
     expect(find.text(CommunityStrings.reviewsEmptyBody), findsOneWidget);
+    await unmount(tester);
+  });
+
+  testWidgets('no reviews, skin not owned: no invitation to be first', (
+    tester,
+  ) async {
+    env.extraOverrides = [
+      ownedItemsProvider(mePuuid).overrideWith(
+        (ref) async => OwnedItems.resolve(
+          Entitlements.fromRows([], receivedAt: now),
+          fixtureContent,
+        ),
+      ),
+    ];
+    _serve(env, reviews: const []);
+    await _pump(tester, env);
+    expect(find.text(CommunityStrings.reviewsEmptyTitle), findsOneWidget);
+    expect(find.text(CommunityStrings.reviewsEmptyBody), findsNothing);
     await unmount(tester);
   });
 

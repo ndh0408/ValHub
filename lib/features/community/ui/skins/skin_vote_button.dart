@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/accounts/account_providers.dart';
+import '../../../../core/domain/economy/economy.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../community_routes.dart';
 import '../../data/community_models.dart';
@@ -71,6 +72,17 @@ class SkinVoteButton extends ConsumerWidget {
     final rating = fetched.rating;
     final theme = Theme.of(context);
     final avg = rating.average;
+    // Only owners can rate: invite them to be first, tell anyone else
+    // (or while ownership is unknown) only that there is no rating yet.
+    final owns =
+        puuid != null &&
+        avg == null &&
+        (ref.watch(
+              ownedItemsProvider(
+                puuid,
+              ).select((owned) => owned.value?.isSkinOwned(id)),
+            ) ??
+            false);
     return Padding(
       padding: padding,
       child: Wrap(
@@ -156,7 +168,9 @@ class SkinVoteButton extends ConsumerWidget {
                       Flexible(
                         child: Text(
                           avg == null
-                              ? context.l10n.communityWriteFirstReview
+                              ? (owns
+                                    ? context.l10n.communityWriteFirstReview
+                                    : context.l10n.communityNoRatings)
                               : context.l10n.communityRatingSummary(
                                   formatRating(avg),
                                   rating.count,

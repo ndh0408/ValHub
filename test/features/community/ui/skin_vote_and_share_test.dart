@@ -196,4 +196,33 @@ void main() {
     expect(find.text(CommunityStrings.writeFirstReview), findsOneWidget);
     await unmount(tester);
   });
+
+  testWidgets('skin sheet: no ratings, skin not owned → no invitation', (
+    tester,
+  ) async {
+    env.extraOverrides = [
+      ownedItemsProvider(mePuuid).overrideWith(
+        (ref) async => OwnedItems.resolve(
+          Entitlements.fromRows([], receivedAt: now),
+          fixtureContent,
+        ),
+      ),
+    ];
+    env.server.json('GET /v1/skins/votes', {
+      'items': [
+        {'skinUuid': reaverSkin, 'votes': 0},
+      ],
+    });
+    await pumpCommunity(
+      tester,
+      env,
+      const Scaffold(body: SkinVoteButton(skinUuid: reaverSkin)),
+    );
+    await settle(tester);
+    expect(find.text(CommunityStrings.writeFirstReview), findsNothing);
+    expect(find.text(CommunityStrings.noRatings), findsOneWidget);
+    // Still opens the review page (reading needs no ownership).
+    expect(find.byKey(const ValueKey('skin-rating-link')), findsOneWidget);
+    await unmount(tester);
+  });
 }

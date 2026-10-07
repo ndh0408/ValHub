@@ -120,10 +120,12 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
                 weaponUuid: weaponUuid,
               ),
             ),
+            // The list below holds every rating, with or without text: count
+            // them all, like "n đánh giá" under the score.
             SliverToBoxAdapter(
               child: SectionLabel(
                 context.l10n.communityReviewsHeader(
-                  formatNumber(summary.value?.rating.reviewCount ?? 0),
+                  formatNumber(summary.value?.rating.count ?? 0),
                 ),
               ),
             ),
@@ -181,6 +183,15 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
     }
     final state = async.requireValue;
     if (state.items.isEmpty) {
+      // "Be the first" only for owners: nobody else can rate this skin.
+      final p = key.puuid;
+      final owns =
+          p != null &&
+          (ref
+                  .watch(ownedItemsProvider(p))
+                  .value
+                  ?.isSkinOwned(key.skinUuid) ??
+              false);
       return [
         SliverToBoxAdapter(
           child: Padding(
@@ -189,7 +200,7 @@ class _SkinReviewScreenState extends ConsumerState<SkinReviewScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(context.l10n.communityReviewsEmptyTitle),
-                Text(context.l10n.communityReviewsEmptyBody),
+                if (owns) Text(context.l10n.communityReviewsEmptyBody),
               ],
             ),
           ),
