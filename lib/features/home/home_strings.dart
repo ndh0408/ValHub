@@ -42,7 +42,7 @@ abstract final class HomeStrings {
   static const cardFriendsDesc = 'Bạn bè đang trong trận hoặc đang tìm trận.';
   static const cardCommunity = 'Cộng đồng';
   static const cardCommunityDesc =
-      'Tìm đồng đội hợp rank và skin được yêu thích trong tuần.';
+      'Tìm đồng đội hợp rank và skin được cộng đồng yêu thích nhất.';
   static const cardOtherAccounts = 'Tài khoản khác';
   static const cardOtherAccountsDesc =
       'Trạng thái và wishlist của các tài khoản còn lại.';

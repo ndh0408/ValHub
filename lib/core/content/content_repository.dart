@@ -110,9 +110,14 @@ class ContentRepository {
     if (!force && cached.containsKey(ContentEndpoints.weapons)) {
       final db = await _parser(cached, language, _versions.current.manifestId);
       if (!preferCache) {
+        // Only downloads what is due: a change is announced on [updates]
+        // and the listener parses it once; nothing changed costs no parse.
         unawaited(
-          refresh(language: language)
-              .then<void>((_) {}, onError: (Object _) {}),
+          _sync(
+            language,
+            force: false,
+            parse: false,
+          ).then<void>((_) {}, onError: (Object _) {}),
         );
       }
       return db;
@@ -122,21 +127,45 @@ class ContentRepository {
 
   final _updates = StreamController<String>.broadcast();
   Stream<String> get updates => _updates.stream;
-  final Map<String, Future<ContentDb>> _refreshing = {};
+  final Map<String, Future<ContentDb?>> _refreshing = {};
 
   /// Single flight per locale. Endpoint freshness and retry windows are
   /// independent: a failing optional endpoint never invalidates the others.
-  Future<ContentDb> refresh({String language = 'vi-VN', bool force = false}) {
+  Future<ContentDb> refresh({
+    String language = 'vi-VN',
+    bool force = false,
+  }) async => (await _sync(language, force: force, parse: true))!;
+
+  /// Downloads what is due and, when [parse], returns the parsed content.
+  /// Joins a sync already running for [language]; when that one did not
+  /// parse (the background check of [load]) the files it stored are parsed.
+  Future<ContentDb?> _sync(
+    String language, {
+    required bool force,
+    required bool parse,
+  }) async {
     final running = _refreshing[language];
-    if (running != null) return running;
-    final future = _refresh(language, force).whenComplete(() {
+    if (running != null) {
+      final db = await running;
+      if (db != null || !parse) return db;
+      final cached = await _readAll(language);
+      if (!cached.containsKey(ContentEndpoints.weapons)) {
+        throw const TransientException(reason: 'content_unavailable');
+      }
+      return _parser(cached, language, _versions.current.manifestId);
+    }
+    final future = _refresh(language, force, parse: parse).whenComplete(() {
       _refreshing.removeWhere((key, _) => key == language);
     });
     _refreshing[language] = future;
     return future;
   }
 
-  Future<ContentDb> _refresh(String language, bool force) async {
+  Future<ContentDb?> _refresh(
+    String language,
+    bool force, {
+    required bool parse,
+  }) async {
     final cached = await _readAll(language);
     final version = await _versions.refresh().timeout(
       const Duration(seconds: 5),
@@ -182,6 +211,10 @@ class ContentRepository {
     }
     if (!cached.containsKey(ContentEndpoints.weapons)) {
       throw const TransientException(reason: 'content_unavailable');
+    }
+    if (!parse) {
+      if (changed && !_updates.isClosed) _updates.add(language);
+      return null;
     }
     final db = await _parser(cached, language, version.manifestId);
     if (changed && !_updates.isClosed) _updates.add(language);

@@ -11022,7 +11022,7 @@ abstract class AppLocalizations {
   /// HomeStrings.cardCommunityDesc — Card catalogue (titles + one-line descriptions for "Tùy chỉnh")
   ///
   /// In vi, this message translates to:
-  /// **'Tìm đồng đội hợp rank và skin được yêu thích trong tuần.'**
+  /// **'Tìm đồng đội hợp rank và skin được cộng đồng yêu thích nhất.'**
   String get homeCardCommunityDesc;
 
   /// HomeStrings.cardFriends — Card catalogue (titles + one-line descriptions for "Tùy chỉnh")

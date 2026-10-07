@@ -151,6 +151,50 @@ void main() {
     },
   );
 
+  test(
+    'a cached launch parses once; the background check parses nothing',
+    () async {
+      await repo.load(); // fills the cache
+      var parses = 0;
+      final dio = Dio()..httpClientAdapter = vapi;
+      final counted = ContentRepository(
+        versions: ClientVersionRepository(
+          prefs: prefs,
+          remoteConfig: () => RemoteConfig.defaults,
+          dio: dio,
+          clock: clock,
+        ),
+        dio: dio,
+        cache: JsonFileCache(() async => tmp),
+        prefs: prefs,
+        clock: clock,
+        parser: (raw, language, manifestId) async {
+          parses++;
+          return ContentDb.parse(
+            raw,
+            language: language,
+            manifestId: manifestId,
+          );
+        },
+      );
+      addTearDown(counted.dispose);
+      final updates = <String>[];
+      final sub = counted.updates.listen(updates.add);
+      addTearDown(sub.cancel);
+
+      final db = await counted.load();
+      expect(db.weapons, isNotEmpty);
+      // Let the background check finish (version + freshness, nothing due).
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      expect(parses, 1, reason: 'the background check never parses');
+      expect(updates, isEmpty);
+
+      // An explicit refresh still returns parsed content.
+      expect((await counted.refresh()).weapons, isNotEmpty);
+      expect(parses, 2);
+    },
+  );
+
   test('nothing cached and offline → TransientException', () async {
     vapi.offline = true;
     await expectLater(repo.load(), throwsA(isA<TransientException>()));

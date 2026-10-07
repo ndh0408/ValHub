@@ -6654,7 +6654,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeCardCommunityDesc =>
-      'Tìm đồng đội hợp rank và skin được yêu thích trong tuần.';
+      'Tìm đồng đội hợp rank và skin được cộng đồng yêu thích nhất.';
 
   @override
   String get homeCardFriends => 'Bạn bè đang chơi';

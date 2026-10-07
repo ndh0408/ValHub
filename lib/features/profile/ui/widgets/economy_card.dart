@@ -71,41 +71,43 @@ class _BuyRow extends StatelessWidget {
     final color = rate >= 0.5 ? colors.win : colors.loss;
     return Padding(
       padding: const EdgeInsets.only(right: 8, top: 6, bottom: 6),
-      child: Row(
+      // Name and record on one line, the bar under them: nothing has a
+      // fixed width, so it fits any phone and text size.
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(
-            width: 92,
-            child: Text(
-              context.l10n.profileBuyType(type.name),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  context.l10n.profileBuyType(type.name),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 12),
+              Text(
+                context.l10n.profileEconomyWon(record.won, record.played),
+                maxLines: 1,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(3),
-              child: LinearProgressIndicator(
-                value: rate,
-                minHeight: 6,
-                color: color,
-                backgroundColor: colors.track,
-                semanticsLabel: context.l10n.profileBuyType(type.name),
-                semanticsValue: formatPercent(rate),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          SizedBox(
-            width: 76,
-            child: Text(
-              context.l10n.profileEconomyWon(record.won, record.played),
-              textAlign: TextAlign.end,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          const SizedBox(height: 6),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: LinearProgressIndicator(
+              value: rate,
+              minHeight: 6,
+              color: color,
+              backgroundColor: colors.track,
+              semanticsLabel: context.l10n.profileBuyType(type.name),
+              semanticsValue: formatPercent(rate),
             ),
           ),
         ],

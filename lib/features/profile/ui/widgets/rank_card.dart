@@ -80,9 +80,11 @@ class _RankCardBody extends ConsumerWidget {
     final current = summary.current;
     final peak = summary.peak;
     final peakAct = peak?.actUuid == null ? null : db.season(peak!.actUuid!);
-    final peakLabel = peakAct == null
-        ? context.l10n.profilePeakRank
-        : context.l10n.profilePeakRankOf(viTitleCase(db.actTitle(peakAct)));
+    // The act goes on its own line: "CAO NHẤT · V26 // PHẦN V" wrapped to
+    // a lone "V" on narrow phones.
+    final peakActTitle = peakAct == null
+        ? null
+        : viTitleCase(db.actTitle(peakAct));
     final updates = showTrend
         ? ref.watch(competitiveUpdatesProvider(puuid)).value?.items
         : null;
@@ -102,6 +104,7 @@ class _RankCardBody extends ConsumerWidget {
                   Expanded(
                     child: _RankColumn(
                       label: context.l10n.profileCurrentRank,
+                      reserveSubLabel: peakActTitle != null,
                       rank: current,
                       detail: current.isPlacement
                           ? current.placementLabel(context.fmt)
@@ -124,7 +127,8 @@ class _RankCardBody extends ConsumerWidget {
                             detail: context.l10n.profileNeverRanked,
                           )
                         : _RankColumn(
-                            label: peakLabel,
+                            label: context.l10n.profilePeakRank,
+                            subLabel: peakActTitle,
                             rank: peak.rank,
                             detail: peak.truePeakRr == null
                                 ? null
@@ -172,12 +176,19 @@ class _RankColumn extends StatelessWidget {
   const _RankColumn({
     required this.label,
     required this.rank,
+    this.subLabel,
+    this.reserveSubLabel = false,
     this.detail,
     this.caption,
     this.progress,
   });
 
   final String label;
+
+  /// One muted line under [label] (the act of a peak rank); with
+  /// [reserveSubLabel] an empty line keeps the two columns aligned.
+  final String? subLabel;
+  final bool reserveSubLabel;
   final RankInfo? rank;
   final String? detail;
   final String? caption;
@@ -197,11 +208,19 @@ class _RankColumn extends StatelessWidget {
         children: [
           Text(
             label.toUpperCase(),
-            maxLines: 2,
+            maxLines: 1,
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
             style: ValText.label.copyWith(color: muted, fontSize: 11),
           ),
+          if (subLabel != null || reserveSubLabel)
+            Text(
+              subLabel ?? '',
+              maxLines: 1,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelSmall?.copyWith(color: muted),
+            ),
           const SizedBox(height: 10),
           Container(
             width: 64,

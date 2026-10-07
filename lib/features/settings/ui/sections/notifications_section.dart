@@ -140,12 +140,6 @@ class _SettingsNotificationsSectionState
             context.l10n.notificationLocalOnlyHint,
           ),
           (
-            NotificationToggle.community,
-            Icons.notifications_outlined,
-            context.l10n.notificationChannelCommunityName,
-            context.l10n.notificationLocalOnlyHint,
-          ),
-          (
             NotificationToggle.lfg,
             Icons.notifications_outlined,
             context.l10n.notificationChannelLfgName,

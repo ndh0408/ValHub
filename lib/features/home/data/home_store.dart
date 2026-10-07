@@ -167,8 +167,9 @@ HomeStoreSummary? buildHomeStoreSummary(
       count: nm.offers.length,
       expiresAt: nm.expiresAt,
       best: best,
+      // Cards flipped in the game (Riot's `IsSeen`) are not waiting either.
       unseen: hasUnseenOffers(
-        nm.offers.map((o) => o.bonusOfferId),
+        nm.offers.where((o) => !o.isSeen).map((o) => o.bonusOfferId),
         nightMarketSeen,
       ),
     );

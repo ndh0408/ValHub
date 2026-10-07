@@ -138,7 +138,13 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
     final nm = store?.nightMarket;
     final seen = ref.watch(nightMarketSeenProvider(puuid));
     final nmIds = nm?.offers.map((o) => o.bonusOfferId) ?? const <String>[];
-    final hasUnseen = nm != null && hasUnseenOffers(nmIds, seen);
+    // Cards already flipped in the game (Riot's `IsSeen`) need no dot.
+    final hasUnseen =
+        nm != null &&
+        hasUnseenOffers(
+          nm.offers.where((o) => !o.isSeen).map((o) => o.bonusOfferId),
+          seen,
+        );
     final segment = effectiveStoreSegment(_segment, store);
     // Rebuild once the content arrives, to check the offers against it.
     ref.watch(contentProvider.select((c) => c.hasValue));

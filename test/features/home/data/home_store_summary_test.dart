@@ -288,4 +288,15 @@ void main() {
     expect(s.dailyExpired, isFalse);
     expect(s.daily, hasLength(4));
   });
+
+  test('Night Market cards flipped in the game are not waiting', () {
+    final json = economyFixture('storefront.json');
+    final bonus = json['BonusStore'] as Map<String, dynamic>;
+    for (final o in bonus['BonusStoreOffers'] as List<dynamic>) {
+      (o as Map<String, dynamic>)['IsSeen'] = true;
+    }
+    final s = _summary(_store(json: json))!;
+    expect(s.nightMarket!.unseen, isFalse);
+    expect(s.nightMarket!.best, isNotNull);
+  });
 }

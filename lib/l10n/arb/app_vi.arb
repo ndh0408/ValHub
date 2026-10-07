@@ -11015,7 +11015,7 @@
     "description": "HomeStrings.cardCommunity — Card catalogue (titles + one-line descriptions for \"Tùy chỉnh\")",
     "x-context": "lib/features/home/home_strings.dart"
   },
-  "homeCardCommunityDesc": "Tìm đồng đội hợp rank và skin được yêu thích trong tuần.",
+  "homeCardCommunityDesc": "Tìm đồng đội hợp rank và skin được cộng đồng yêu thích nhất.",
   "@homeCardCommunityDesc": {
     "description": "HomeStrings.cardCommunityDesc — Card catalogue (titles + one-line descriptions for \"Tùy chỉnh\")",
     "x-context": "lib/features/home/home_strings.dart"
