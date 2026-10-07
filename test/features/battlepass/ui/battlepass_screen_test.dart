@@ -5,15 +5,19 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:valvn/core/accounts/account_widgets.dart';
 import 'package:valvn/core/content/content_db.dart';
 import 'package:valvn/core/l10n/common_strings.dart';
 import 'package:valvn/core/network/riot_exception.dart';
 import 'package:valvn/core/theme/app_theme.dart';
+import 'package:valvn/core/ui/sub_page.dart';
+import 'package:valvn/core/ui/tab_page_scaffold.dart';
 import 'package:valvn/core/util/format.dart';
 import 'package:valvn/features/battlepass/battlepass_strings.dart';
 import 'package:valvn/features/battlepass/ui/battlepass_rewards_screen.dart';
 import 'package:valvn/features/battlepass/ui/widgets/daily_checkpoints.dart';
 import 'package:valvn/features/battlepass/ui/widgets/overview_bits.dart';
+import 'package:valvn/features/battlepass/ui/widgets/pass_card.dart';
 import 'package:valvn/features/battlepass/ui/widgets/weekly_missions.dart';
 
 import '../../../helpers/test_prefs.dart';
@@ -47,11 +51,13 @@ Future<void> _pump(
 Finder _rich(String text) => find.textContaining(text, findRichText: true);
 
 void main() {
-  testWidgets('S20 pass card, rewards row, estimate and event pass', (
-    tester,
-  ) async {
+  testWidgets('S20 pass card, estimate and event pass', (tester) async {
     await _pump(tester, bpApi());
 
+    // A pushed sub-page: no account chip, no maintenance banner.
+    expect(find.byType(SubPageScaffold), findsOneWidget);
+    expect(find.byType(TabPageScaffold), findsNothing);
+    expect(find.byType(AccountChip), findsNothing);
     expect(find.text('Battle Pass'), findsOneWidget);
     // Compact card: the pass name in bold, "Cấp 46 / 55" on the right.
     expect(find.text('Mùa 2026 // Phần V'), findsOneWidget);
@@ -59,22 +65,25 @@ void main() {
     expect(find.text('7.966 / 35.750 XP'), findsOneWidget);
     expect(find.text('840.466 / 1.162.500 XP'), findsOneWidget);
     expect(find.text(BattlePassStrings.premium.toUpperCase()), findsOneWidget);
+    // Time left once: the countdown on the card. No wall-clock end under
+    // it and no "Còn 16 ngày" tile in the estimate.
     expect(find.text('Phần kết thúc sau 15 ngày'), findsOneWidget);
     expect(
       find.text(
-        BattlePassStrings.endsAtWall(
+        tl.battlePassEndsAtWall(
           formatWallTime(DateTime.utc(2026, 10, 14), t0, messages: tl),
         ),
       ),
-      findsWidgets,
+      findsNothing,
     );
-    expect(find.text(BattlePassStrings.viewAllRewards), findsOneWidget);
-    expect(find.text('46/55 đã mở khóa'), findsOneWidget);
+    expect(find.text(tl.battlePassDaysLeft(16)), findsNothing);
+    // The card is the one entry to the rewards: no separate row.
+    expect(find.text(tl.battlePassViewAllRewards), findsNothing);
+    expect(find.text('46/55 đã mở khóa'), findsNothing);
     expect(_rich('Còn cần 322.034 XP'), findsOneWidget);
     expect(_rich('≈ 81 trận Đấu thường'), findsOneWidget);
     // XP pace: 322.034 XP over the 16 days (15.5 rounded up) left in the act.
     expect(find.text('20.128 XP / ngày'), findsOneWidget);
-    expect(find.text('Còn 16 ngày'), findsOneWidget);
     expect(find.textContaining('Nhiệm vụ tuần còn +'), findsOneWidget);
     // Active Champions event pass.
     expect(find.text('VÉ SỰ KIỆN'), findsOneWidget);
@@ -89,8 +98,16 @@ void main() {
     expect(find.text('Làm mới sau 03:39:37'), findsOneWidget);
     expect(find.byType(CheckpointPip), findsNWidgets(4));
     expect(find.text(BattlePassStrings.bonusBadge), findsOneWidget);
-    expect(_rich('Đã đạt 1/4 cột mốc'), findsOneWidget);
-    expect(_rich('Cột mốc tiếp theo: 3/4'), findsOneWidget);
+    // Under the pips only what they do not show: rewards and how to fill
+    // one. "1/4 reached" stays for screen readers.
+    expect(_rich('Đã đạt 1/4 cột mốc'), findsNothing);
+    expect(_rich('Cột mốc tiếp theo: 3/4'), findsNothing);
+    expect(find.text(tl.battlePassCheckpointRewards), findsOneWidget);
+    expect(find.text(tl.battlePassCheckpointHint), findsOneWidget);
+    expect(
+      find.bySemanticsLabel(RegExp(RegExp.escape('Đã đạt 1/4 cột mốc'))),
+      findsOneWidget,
+    );
 
     expect(find.text(BattlePassStrings.weeklyMissions), findsOneWidget);
     // Weekly reset (2026-09-30 00:00 UTC) also as local wall time.
@@ -123,6 +140,7 @@ void main() {
       ),
     );
     expect(find.text(BattlePassStrings.dailyAllDone), findsOneWidget);
+    expect(find.text(tl.battlePassCheckpointRewards), findsNothing);
     expect(find.text(BattlePassStrings.allMissionsDone), findsOneWidget);
     expect(find.text('Nhiệm vụ mới sau 1 ngày 12:00:00'), findsOneWidget);
     expect(
@@ -261,9 +279,16 @@ void main() {
     await unmount(tester);
   });
 
-  testWidgets('rewards row opens S21', (tester) async {
+  testWidgets('the pass card opens S21', (tester) async {
     await _pump(tester, bpApi());
-    await tester.tap(find.text(BattlePassStrings.viewAllRewards));
+    expect(
+      find.descendant(
+        of: find.byType(PassCard).first,
+        matching: find.byIcon(Icons.chevron_right),
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('Cấp 46 / 55'));
     await settle(tester);
     expect(find.byType(BattlePassRewardsScreen), findsOneWidget);
     expect(find.text(BattlePassStrings.rewardsTitle), findsOneWidget);

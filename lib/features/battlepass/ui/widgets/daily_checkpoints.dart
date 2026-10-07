@@ -68,7 +68,9 @@ class DailyCheckpointsSection extends ConsumerWidget {
   }
 }
 
-/// The four checkpoint pips and the progress sentence.
+/// The four checkpoint pips (each with its "3/4"), then only what they do
+/// not say: what a checkpoint gives and how to fill one, or that the day
+/// is done.
 class DailyCheckpointsCard extends StatelessWidget {
   const DailyCheckpointsCard({super.key, required this.ticket});
 
@@ -88,23 +90,31 @@ class DailyCheckpointsCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                for (var i = 0; i < ticket.milestones.length; i++) ...[
-                  if (i > 0)
-                    Expanded(
-                      child: BpProgressBar(
-                        value: ticket.milestones[i - 1].isComplete ? 1 : 0,
-                        height: 3,
+            // Screen readers still get the count the pips show.
+            Semantics(
+              container: true,
+              label: context.l10n.battlePassCheckpointsDone(
+                done,
+                kDailyCheckpointCount,
+              ),
+              child: Row(
+                children: [
+                  for (var i = 0; i < ticket.milestones.length; i++) ...[
+                    if (i > 0)
+                      Expanded(
+                        child: BpProgressBar(
+                          value: ticket.milestones[i - 1].isComplete ? 1 : 0,
+                          height: 3,
+                        ),
                       ),
+                    CheckpointPip(
+                      index: i + 1,
+                      milestone: ticket.milestones[i],
+                      isCurrent: i == current,
                     ),
-                  CheckpointPip(
-                    index: i + 1,
-                    milestone: ticket.milestones[i],
-                    isCurrent: i == current,
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
             const SizedBox(height: 14),
             if (ticket.isAllComplete)
@@ -123,38 +133,16 @@ class DailyCheckpointsCard extends StatelessWidget {
                   ),
                 ],
               )
-            else
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    context.l10n.battlePassCheckpointsDone(
-                      done,
-                      kDailyCheckpointCount,
-                    ),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    context.l10n.battlePassNextCheckpoint(
-                      ticket.currentCharges,
-                      kChargesPerCheckpoint,
-                    ),
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                ],
+            else ...[
+              Text(
+                context.l10n.battlePassCheckpointRewards,
+                style: theme.textTheme.bodySmall?.copyWith(color: muted),
               ),
-            const SizedBox(height: 4),
-            Text(
-              context.l10n.battlePassCheckpointRewards,
-              style: theme.textTheme.bodySmall?.copyWith(color: muted),
-            ),
-            if (!ticket.isAllComplete)
               Text(
                 context.l10n.battlePassCheckpointHint,
                 style: theme.textTheme.bodySmall?.copyWith(color: muted),
               ),
+            ],
             if (ticket.bonusMilestonesPending > 0) ...[
               const SizedBox(height: 4),
               Text(

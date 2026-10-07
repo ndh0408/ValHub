@@ -8,9 +8,10 @@ import 'bp_ui_bits.dart';
 import 'package:valvn/core/l10n/l10n.dart';
 
 /// P1 pass card (S20), compact ValBuddy layout: pass name (bold) with
-/// "Cấp 46 / 55" on the right, one thin red level bar, the level XP under
-/// its left end and the whole-pass XP under its right end, then the
-/// Premium badge and the act-end countdown.
+/// "Cấp 46 / 55" and "›" on the right, one thin red level bar, the level XP
+/// under its left end and the whole-pass XP under its right end, then the
+/// Premium badge and the act-end countdown (the page's only "time left").
+/// With [onTap] the whole card opens the pass's rewards.
 class PassCard extends StatelessWidget {
   const PassCard({
     super.key,
@@ -18,7 +19,6 @@ class PassCard extends StatelessWidget {
     this.isPremium,
     this.endsAt,
     this.endsAtFormatter,
-    this.endsAtWall,
     this.kicker,
     this.onTap,
     this.onExpired,
@@ -33,12 +33,10 @@ class PassCard extends StatelessWidget {
   /// Builds the whole end-of-pass sentence from the remaining time.
   final String Function(Duration remaining)? endsAtFormatter;
 
-  /// Wraps the local wall-clock time of the end ("Kết thúc lúc 23:59 thứ
-  /// Hai 06/10") shown under the countdown.
-  final String Function(String wall)? endsAtWall;
-
   /// Small caption above the name ("Vé sự kiện").
   final String? kicker;
+
+  /// Opens the rewards ("Xem tất cả phần thưởng", read as the hint).
   final VoidCallback? onTap;
   final VoidCallback? onExpired;
 
@@ -89,30 +87,40 @@ class PassCard extends StatelessWidget {
               ),
             ),
           // Name left, "Cấp 46 / 55" right; wraps under the name when the
-          // text is large.
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 12,
-            runSpacing: 2,
+          // text is large. "›" when the card opens the rewards.
+          Row(
             children: [
-              Text(
-                name,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
+              Expanded(
+                child: Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 12,
+                  runSpacing: 2,
+                  children: [
+                    Text(
+                      name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      levelText,
+                      maxLines: 1,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: muted,
+                        fontWeight: FontWeight.w600,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Text(
-                levelText,
-                maxLines: 1,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: muted,
-                  fontWeight: FontWeight.w600,
-                  fontFeatures: const [FontFeature.tabularFigures()],
-                ),
-              ),
+              if (onTap != null) ...[
+                const SizedBox(width: 2),
+                Icon(Icons.chevron_right, color: muted, size: 20),
+              ],
             ],
           ),
           const SizedBox(height: 12),
@@ -193,28 +201,24 @@ class PassCard extends StatelessWidget {
                   const Spacer(),
               ],
             ),
-            if (end != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 4, left: 21),
-                child: BpWallTimeText(
-                  at: end,
-                  builder: endsAtWall ?? context.l10n.battlePassEndsAtWall,
-                ),
-              ),
           ],
         ],
       ),
     );
-    return Material(
-      color: scheme.surfaceContainer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(ValRadius.card),
-        side: theme.brightness == Brightness.light
-            ? BorderSide(color: colors.hairline)
-            : BorderSide.none,
+    return Semantics(
+      button: onTap != null,
+      hint: onTap == null ? null : context.l10n.battlePassViewAllRewards,
+      child: Material(
+        color: scheme.surfaceContainer,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ValRadius.card),
+          side: theme.brightness == Brightness.light
+              ? BorderSide(color: colors.hairline)
+              : BorderSide.none,
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(onTap: onTap, child: content),
       ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(onTap: onTap, child: content),
     );
   }
 }

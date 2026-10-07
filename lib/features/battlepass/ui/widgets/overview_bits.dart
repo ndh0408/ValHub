@@ -9,65 +9,10 @@ import '../../data/xp_pace.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
-/// P2 row (ValBuddy style): red outline gift icon, "Xem tất cả phần
-/// thưởng", muted "46/55 đã mở khóa" and "›".
-class ViewRewardsRow extends StatelessWidget {
-  const ViewRewardsRow({
-    super.key,
-    required this.progress,
-    required this.onTap,
-  });
-
-  final PassProgress progress;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final muted = theme.colorScheme.onSurfaceVariant;
-    return ValCard(
-      onTap: onTap,
-      padding: const EdgeInsets.fromLTRB(16, 14, 10, 14),
-      child: Row(
-        children: [
-          Icon(
-            Icons.card_giftcard_outlined,
-            size: 22,
-            color: theme.colorScheme.primary,
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              context.l10n.battlePassViewAllRewards,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              context.l10n.battlePassUnlockedCount(
-                formatNumber(progress.unlockedLevels),
-                formatNumber(progress.levelCount),
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.end,
-              style: theme.textTheme.bodySmall?.copyWith(color: muted),
-            ),
-          ),
-          const SizedBox(width: 2),
-          Icon(Icons.chevron_right, color: muted, size: 20),
-        ],
-      ),
-    );
-  }
-}
-
 /// ValHub extra: "Còn cần 321.034 XP", "≈ 81 trận Đấu thường", and — when
-/// the act end is known — the XP needed per day and the days left, plus
-/// the XP still available from weekly missions.
+/// the act end is known — the XP needed per day (the days left are the
+/// pass card's countdown), plus the XP still available from weekly
+/// missions.
 class XpEstimateCard extends StatelessWidget {
   const XpEstimateCard({
     super.key,
@@ -138,22 +83,15 @@ class XpEstimateCard extends StatelessWidget {
           ),
           if (pace != null) ...[
             const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                PaceStat(
-                  icon: Icons.bolt,
-                  value: context.l10n.battlePassXpPerDay(
-                    formatNumber(pace.xpPerDay),
-                  ),
-                  caption: context.l10n.battlePassXpPerDayCaption,
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: PaceStat(
+                icon: Icons.bolt,
+                value: context.l10n.battlePassXpPerDay(
+                  formatNumber(pace.xpPerDay),
                 ),
-                PaceStat(
-                  icon: Icons.event,
-                  value: context.l10n.battlePassDaysLeft(pace.daysLeft),
-                ),
-              ],
+                caption: context.l10n.battlePassXpPerDayCaption,
+              ),
             ),
           ],
           if (weeklyXpLeft > 0) ...[
@@ -233,8 +171,8 @@ class PaceStat extends StatelessWidget {
   }
 }
 
-/// Loading skeleton of S20 (pass card, rewards row, estimate, missions),
-/// shaped like the final layout.
+/// Loading skeleton of S20 (pass card, estimate, missions), shaped like the
+/// final layout.
 class BattlePassSkeleton extends StatelessWidget {
   const BattlePassSkeleton({super.key});
 
@@ -246,9 +184,7 @@ class BattlePassSkeleton extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Skeleton(height: 132, radius: 16, shimmer: false),
-            SizedBox(height: 10),
-            Skeleton(height: 52, radius: 16, shimmer: false),
+            Skeleton(height: 116, radius: 16, shimmer: false),
             SizedBox(height: 10),
             Skeleton(height: 132, radius: 16, shimmer: false),
             SizedBox(height: 28),

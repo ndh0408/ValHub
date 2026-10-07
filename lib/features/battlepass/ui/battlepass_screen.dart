@@ -6,12 +6,11 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/ui/saved_copy_notice.dart';
 
 import '../../../core/accounts/account_providers.dart';
-import '../../../core/accounts/account_widgets.dart';
 import '../../../core/content/content_db.dart';
 import '../../../core/content/content_repository.dart';
 import '../../../core/ui/async_value_view.dart';
 import '../../../core/ui/empty_view.dart';
-import '../../../core/ui/tab_page_scaffold.dart';
+import '../../../core/ui/sub_page.dart';
 import '../../../core/ui/val_widgets.dart';
 import '../../../core/util/clock.dart';
 import '../battlepass_routes.dart';
@@ -28,10 +27,11 @@ import 'package:valvn/core/l10n/l10n.dart';
 /// Riot queue id of Unrated ("Đấu thường"), used by the XP estimate.
 const kUnratedQueueId = 'unrated';
 
-/// "Battle Pass" (S20), hosted by the Hồ sơ tab. Route `/battlepass`.
+/// "Battle Pass" (S20), pushed from the Hồ sơ tab (and the Home card), so a
+/// sub-page like its siblings. Route `/battlepass`.
 ///
-/// Pass card (P1), "Xem tất cả phần thưởng" (P2), the XP estimate, active
-/// event passes, daily checkpoints (P4) and weekly missions (P3/P5).
+/// Pass card (P1, opens the rewards P2), the XP estimate, active event
+/// passes, daily checkpoints (P4) and weekly missions (P3/P5).
 /// Pull-to-refresh refetches contracts, premium ownership and the daily
 /// ticket.
 class BattlePassScreen extends ConsumerWidget {
@@ -40,11 +40,8 @@ class BattlePassScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final account = ref.watch(activeAccountProvider);
-    // On narrow phones the chip shows only the avatar so the title fits.
-    // ("BATTLE PASS" is long, so the name needs a wider screen than Store.)
-    final roomy = MediaQuery.sizeOf(context).width >= 400;
     if (account == null) {
-      return TabPageScaffold(
+      return SubPageScaffold(
         title: context.l10n.battlePassTitle,
         body: EmptyView(
           message: context.l10n.commonErrorNoAccount,
@@ -54,10 +51,8 @@ class BattlePassScreen extends ConsumerWidget {
     }
     final puuid = account.puuid;
     final overview = ref.watch(battlePassOverviewProvider(puuid));
-    return TabPageScaffold(
+    return SubPageScaffold(
       title: context.l10n.battlePassTitle,
-      showAccountChip: false,
-      actions: [AccountChip(showName: roomy)],
       onRefresh: () => refreshBattlePass(ref, puuid),
       slivers: [
         SliverToBoxAdapter(
@@ -121,15 +116,11 @@ class BattlePassOverviewView extends ConsumerWidget {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // The card is the one way into the rewards ("›").
                     PassCard(
                       progress: bp,
                       isPremium: overview.isPremium,
                       endsAt: overview.actEndsAt,
-                      onTap: () => context.push(BattlePassRoutes.rewards),
-                    ),
-                    const SizedBox(height: 10),
-                    ViewRewardsRow(
-                      progress: bp,
                       onTap: () => context.push(BattlePassRoutes.rewards),
                     ),
                     if (!bp.isComplete && bp.xpRemaining > 0) ...[
@@ -154,7 +145,6 @@ class BattlePassOverviewView extends ConsumerWidget {
               endsAt: e.endsAt,
               endsAtFormatter: (d) =>
                   context.l10n.battlePassEventEndsIn(context.fmt.countdown(d)),
-              endsAtWall: context.l10n.battlePassEndsAtWall,
               onTap: () => context.push(
                 BattlePassRoutes.rewardsFor(e.progress.contract.uuid),
               ),
