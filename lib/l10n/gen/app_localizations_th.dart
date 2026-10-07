@@ -2059,16 +2059,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get communityRankingEmptyTitle => 'ยังไม่มีสกินในอันดับนี้';
 
   @override
-  String get communityRankingEmptyVotes =>
-      'ยังไม่มีการกดถูกใจที่ตรงกับขอบเขตและตัวกรองที่เลือก';
+  String get communityRankingEmptyVotes => 'ยังไม่มีการกดถูกใจ';
 
   @override
-  String get communityRankingEmptyRatings =>
-      'ยังไม่มีคะแนนดาวที่ตรงกับขอบเขตและตัวกรองที่เลือก';
+  String get communityRankingEmptyRatings => 'ยังไม่มีคะแนนดาว';
 
   @override
-  String get communityRankingEmptyReviews =>
-      'ยังไม่มีรีวิวที่ตรงกับขอบเขตและตัวกรองที่เลือก';
+  String get communityRankingEmptyReviews => 'ยังไม่มีรีวิว';
 
   @override
   String get communityRankingExplore => 'ค้นหาสกินเพื่อดูและให้คะแนน';
@@ -2078,7 +2075,7 @@ class AppLocalizationsTh extends AppLocalizations {
       'ค้นหาตามชื่อสกินหรืออาวุธ เฉพาะคะแนนจริงจากชุมชนเท่านั้นที่จะแสดงในอันดับ';
 
   @override
-  String get communityRankingClear => 'ล้างตัวกรองอาวุธและช่วงเวลา';
+  String get communityRankingClear => 'ล้างตัวกรองอาวุธ';
 
   @override
   String get communityRankingSort => 'จัดอันดับตาม';
@@ -2087,12 +2084,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get communityRankingWeapon => 'อาวุธ';
 
   @override
-  String get communityRankingNoSearch =>
-      'ไม่พบสกินที่ตรงกัน ลองชื่ออื่นหรือล้างตัวกรองอาวุธ';
+  String get communityRankingNoSearch => 'ไม่พบสกินที่ตรงกัน ลองชื่ออื่น';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      'โหลดรายการสกินไม่ได้ ปิดหน้านี้แล้วลองอีกครั้งเมื่อซิงค์ข้อมูลเสร็จ';
+      'โหลดรายการสกินไม่สำเร็จ ลองอีกครั้งภายหลัง';
 
   @override
   String get communityConsentExitAccount => 'ไม่ยอมรับ · ออกจากระบบบัญชีนี้';
@@ -3461,6 +3457,11 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => 'ดูทุกแรงก์';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return 'สกิน $weapon ทั้งหมด';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

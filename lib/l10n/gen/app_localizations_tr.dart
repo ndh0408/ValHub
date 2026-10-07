@@ -2075,16 +2075,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get communityRankingEmptyTitle => 'Bu sıralamada henüz kaplama yok';
 
   @override
-  String get communityRankingEmptyVotes =>
-      'Seçili kapsam ve filtrelerle eşleşen favori henüz yok.';
+  String get communityRankingEmptyVotes => 'Henüz favori yok.';
 
   @override
-  String get communityRankingEmptyRatings =>
-      'Seçili kapsam ve filtrelerle eşleşen yıldız puanı henüz yok.';
+  String get communityRankingEmptyRatings => 'Henüz yıldız puanı yok.';
 
   @override
-  String get communityRankingEmptyReviews =>
-      'Seçili kapsam ve filtrelerle eşleşen inceleme henüz yok.';
+  String get communityRankingEmptyReviews => 'Henüz inceleme yok.';
 
   @override
   String get communityRankingExplore =>
@@ -2095,7 +2092,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'Kaplama veya silah adına göre ara. Sıralamalarda yalnızca topluluğun gerçek puanları yer alır.';
 
   @override
-  String get communityRankingClear => 'Silah ve zaman filtrelerini temizle';
+  String get communityRankingClear => 'Silah filtresini temizle';
 
   @override
   String get communityRankingSort => 'Sıralama ölçütü';
@@ -2105,11 +2102,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get communityRankingNoSearch =>
-      'Eşleşen kaplama yok. Başka bir ad dene veya silah filtresini temizle.';
+      'Eşleşen kaplama yok. Başka bir ad dene.';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      'Kaplama listesi yüklenemedi. Bu paneli kapatıp veriler eşitlendikten sonra tekrar dene.';
+      'Kaplama kataloğu yüklenemedi. Daha sonra tekrar dene.';
 
   @override
   String get communityConsentExitAccount =>
@@ -3490,6 +3487,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => 'Tüm rütbeleri göster';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return 'Tüm $weapon kaplamaları';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

@@ -1998,13 +1998,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityRankingEmptyTitle => '此排行榜中暂无皮肤';
 
   @override
-  String get communityRankingEmptyVotes => '暂无符合所选范围和筛选条件的喜爱记录。';
+  String get communityRankingEmptyVotes => '暂无喜爱记录。';
 
   @override
-  String get communityRankingEmptyRatings => '暂无符合所选范围和筛选条件的星级评分。';
+  String get communityRankingEmptyRatings => '暂无星级评分。';
 
   @override
-  String get communityRankingEmptyReviews => '暂无符合所选范围和筛选条件的评价。';
+  String get communityRankingEmptyReviews => '暂无评价。';
 
   @override
   String get communityRankingExplore => '查找皮肤以查看和评分';
@@ -2013,7 +2013,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityRankingExploreHint => '按皮肤或武器名称搜索。只有社区的真实评分才会出现在排行榜中。';
 
   @override
-  String get communityRankingClear => '清除武器和时间筛选';
+  String get communityRankingClear => '清除武器筛选';
 
   @override
   String get communityRankingSort => '排名依据';
@@ -2022,10 +2022,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get communityRankingWeapon => '武器';
 
   @override
-  String get communityRankingNoSearch => '没有找到匹配的皮肤。请尝试其他名称或清除武器筛选。';
+  String get communityRankingNoSearch => '没有找到匹配的皮肤。请尝试其他名称。';
 
   @override
-  String get communityRankingCatalogUnavailable => '无法加载皮肤列表。请关闭此面板，待数据同步后重试。';
+  String get communityRankingCatalogUnavailable => '无法加载皮肤目录。请稍后再试。';
 
   @override
   String get communityConsentExitAccount => '不同意 · 登出此账号';
@@ -3362,6 +3362,11 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => '查看所有段位';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return '全部$weapon皮肤';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
@@ -8528,13 +8533,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityRankingEmptyTitle => '此排行榜還沒有造型';
 
   @override
-  String get communityRankingEmptyVotes => '目前沒有符合所選範圍與篩選條件的最愛投票。';
+  String get communityRankingEmptyVotes => '目前還沒有最愛投票。';
 
   @override
-  String get communityRankingEmptyRatings => '目前沒有符合所選範圍與篩選條件的星級評分。';
+  String get communityRankingEmptyRatings => '目前還沒有星級評分。';
 
   @override
-  String get communityRankingEmptyReviews => '目前沒有符合所選範圍與篩選條件的評論。';
+  String get communityRankingEmptyReviews => '目前還沒有評論。';
 
   @override
   String get communityRankingExplore => '尋找造型以查看與評分';
@@ -8543,7 +8548,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityRankingExploreHint => '可依造型或武器名稱搜尋。只有社群的真實評分才會出現在排行榜中。';
 
   @override
-  String get communityRankingClear => '清除武器與時間篩選';
+  String get communityRankingClear => '清除武器篩選';
 
   @override
   String get communityRankingSort => '排名依據';
@@ -8552,10 +8557,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get communityRankingWeapon => '武器';
 
   @override
-  String get communityRankingNoSearch => '找不到符合的造型。請試試其他名稱或清除武器篩選。';
+  String get communityRankingNoSearch => '找不到符合的造型。請試試其他名稱。';
 
   @override
-  String get communityRankingCatalogUnavailable => '無法載入造型清單。請關閉面板，待資料同步後再試一次。';
+  String get communityRankingCatalogUnavailable => '無法載入造型目錄。請稍後再試。';
 
   @override
   String get communityConsentExitAccount => '不同意 · 登出此帳號';
@@ -9892,6 +9897,11 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get communityLfgShowAllRanks => '查看所有牌位';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return '所有$weapon造型';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

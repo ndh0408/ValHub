@@ -2025,13 +2025,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get communityRankingEmptyTitle => 'このランキングにはまだスキンがありません';
 
   @override
-  String get communityRankingEmptyVotes => '選択中の範囲とフィルターに一致する「いいね」はまだありません。';
+  String get communityRankingEmptyVotes => 'まだ「いいね」はありません。';
 
   @override
-  String get communityRankingEmptyRatings => '選択中の範囲とフィルターに一致する星評価はまだありません。';
+  String get communityRankingEmptyRatings => 'まだ星評価はありません。';
 
   @override
-  String get communityRankingEmptyReviews => '選択中の範囲とフィルターに一致するレビューはまだありません。';
+  String get communityRankingEmptyReviews => 'まだレビューはありません。';
 
   @override
   String get communityRankingExplore => 'スキンを探して見る・評価する';
@@ -2041,7 +2041,7 @@ class AppLocalizationsJa extends AppLocalizations {
       'スキン名または武器名で検索します。ランキングにはコミュニティの実際の評価のみが表示されます。';
 
   @override
-  String get communityRankingClear => '武器と期間の絞り込みを解除';
+  String get communityRankingClear => '武器の絞り込みを解除';
 
   @override
   String get communityRankingSort => 'ランキング基準';
@@ -2050,12 +2050,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get communityRankingWeapon => '武器';
 
   @override
-  String get communityRankingNoSearch =>
-      '一致するスキンが見つかりません。別の名前を試すか、武器の絞り込みを解除してください。';
+  String get communityRankingNoSearch => '一致するスキンが見つかりません。別の名前を試してください。';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      'スキン一覧を読み込めませんでした。パネルを閉じ、データの同期後にもう一度お試しください。';
+      'スキンカタログを読み込めませんでした。しばらくしてからもう一度お試しください。';
 
   @override
   String get communityConsentExitAccount => '同意しない · このアカウントからログアウト';
@@ -3409,6 +3408,11 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => 'すべてのランクを表示';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return '$weaponのすべてのスキン';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

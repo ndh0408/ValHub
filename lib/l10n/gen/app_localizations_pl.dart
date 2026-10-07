@@ -2231,16 +2231,13 @@ class AppLocalizationsPl extends AppLocalizations {
   String get communityRankingEmptyTitle => 'Brak skinów w tym rankingu';
 
   @override
-  String get communityRankingEmptyVotes =>
-      'Brak polubień pasujących do wybranego zakresu i filtrów.';
+  String get communityRankingEmptyVotes => 'Na razie brak polubień.';
 
   @override
-  String get communityRankingEmptyRatings =>
-      'Brak ocen w gwiazdkach pasujących do wybranego zakresu i filtrów.';
+  String get communityRankingEmptyRatings => 'Na razie brak ocen w gwiazdkach.';
 
   @override
-  String get communityRankingEmptyReviews =>
-      'Brak recenzji pasujących do wybranego zakresu i filtrów.';
+  String get communityRankingEmptyReviews => 'Na razie brak recenzji.';
 
   @override
   String get communityRankingExplore => 'Znajdź skiny do obejrzenia i oceny';
@@ -2250,7 +2247,7 @@ class AppLocalizationsPl extends AppLocalizations {
       'Szukaj po nazwie skina lub broni. W rankingu pojawiają się tylko prawdziwe oceny społeczności.';
 
   @override
-  String get communityRankingClear => 'Wyczyść filtry broni i czasu';
+  String get communityRankingClear => 'Wyczyść filtr broni';
 
   @override
   String get communityRankingSort => 'Ranking według';
@@ -2260,11 +2257,11 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get communityRankingNoSearch =>
-      'Brak pasujących skinów. Spróbuj innej nazwy lub wyczyść filtr broni.';
+      'Brak pasujących skinów. Spróbuj innej nazwy.';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      'Nie udało się wczytać listy skinów. Zamknij panel i spróbuj ponownie po zsynchronizowaniu danych.';
+      'Nie udało się wczytać katalogu skinów. Spróbuj ponownie później.';
 
   @override
   String get communityConsentExitAccount =>
@@ -3740,6 +3737,11 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => 'Pokaż wszystkie rangi';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return 'Wszystkie skiny: $weapon';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

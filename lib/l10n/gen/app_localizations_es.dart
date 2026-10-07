@@ -2205,16 +2205,14 @@ class AppLocalizationsEs extends AppLocalizations {
       'Todavía no hay skins en esta clasificación';
 
   @override
-  String get communityRankingEmptyVotes =>
-      'Todavía no hay favoritos que coincidan con el alcance y los filtros seleccionados.';
+  String get communityRankingEmptyVotes => 'Todavía no hay favoritos.';
 
   @override
   String get communityRankingEmptyRatings =>
-      'Todavía no hay valoraciones con estrellas que coincidan con el alcance y los filtros seleccionados.';
+      'Todavía no hay valoraciones con estrellas.';
 
   @override
-  String get communityRankingEmptyReviews =>
-      'Todavía no hay reseñas que coincidan con el alcance y los filtros seleccionados.';
+  String get communityRankingEmptyReviews => 'Todavía no hay reseñas.';
 
   @override
   String get communityRankingExplore => 'Busca skins para verlas y valorarlas';
@@ -2224,7 +2222,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Busca por nombre de skin o de arma. En la clasificación solo aparecen valoraciones reales de la comunidad.';
 
   @override
-  String get communityRankingClear => 'Quitar filtros de arma y periodo';
+  String get communityRankingClear => 'Quitar filtro de arma';
 
   @override
   String get communityRankingSort => 'Clasificar por';
@@ -2234,11 +2232,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get communityRankingNoSearch =>
-      'No se han encontrado skins. Prueba con otro nombre o quita el filtro de arma.';
+      'No se han encontrado skins. Prueba con otro nombre.';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      'No se ha podido cargar el catálogo de skins. Cierra el panel y vuelve a intentarlo cuando se sincronicen los datos.';
+      'No se ha podido cargar el catálogo de skins. Inténtalo de nuevo más tarde.';
 
   @override
   String get communityConsentExitAccount =>
@@ -3685,6 +3683,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => 'Ver todos los rangos';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return 'Todas las skins de $weapon';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {
@@ -7719,11 +7722,11 @@ class AppLocalizationsEsMx extends AppLocalizationsEs {
 
   @override
   String get communityRankingNoSearch =>
-      'No se encontraron skins. Prueba con otro nombre o quita el filtro de arma.';
+      'No se encontraron skins. Prueba con otro nombre.';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      'No se pudo cargar el catálogo de skins. Cierra el panel y vuelve a intentarlo cuando se sincronicen los datos.';
+      'No se pudo cargar el catálogo de skins. Vuelve a intentarlo más tarde.';
 
   @override
   String get communityReviewOwnershipUnavailable =>

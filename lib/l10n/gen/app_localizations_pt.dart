@@ -2201,16 +2201,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get communityRankingEmptyTitle => 'Ainda não há skins neste ranking';
 
   @override
-  String get communityRankingEmptyVotes =>
-      'Ainda não há curtidas para o alcance e os filtros selecionados.';
+  String get communityRankingEmptyVotes => 'Ainda não há curtidas.';
 
   @override
   String get communityRankingEmptyRatings =>
-      'Ainda não há avaliações por estrelas para o alcance e os filtros selecionados.';
+      'Ainda não há avaliações por estrelas.';
 
   @override
   String get communityRankingEmptyReviews =>
-      'Ainda não há comentários de avaliação para o alcance e os filtros selecionados.';
+      'Ainda não há comentários de avaliação.';
 
   @override
   String get communityRankingExplore => 'Encontre skins para ver e avaliar';
@@ -2220,7 +2219,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'Busque pelo nome da skin ou da arma. Só avaliações reais da comunidade aparecem no ranking.';
 
   @override
-  String get communityRankingClear => 'Limpar filtros de arma e período';
+  String get communityRankingClear => 'Limpar filtro de arma';
 
   @override
   String get communityRankingSort => 'Classificar por';
@@ -2230,11 +2229,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get communityRankingNoSearch =>
-      'Nenhuma skin encontrada. Tente outro nome ou remova o filtro de arma.';
+      'Nenhuma skin encontrada. Tente outro nome.';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      'Não foi possível carregar o catálogo de skins. Feche e tente de novo depois que os dados forem sincronizados.';
+      'Não foi possível carregar o catálogo de skins. Tente novamente mais tarde.';
 
   @override
   String get communityConsentExitAccount => 'Não concordo · Sair desta conta';
@@ -3691,6 +3690,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => 'Ver todos os ranques';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return 'Todas as skins de $weapon';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

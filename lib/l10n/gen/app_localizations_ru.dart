@@ -2245,16 +2245,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get communityRankingEmptyTitle => 'В этом рейтинге пока нет скинов';
 
   @override
-  String get communityRankingEmptyVotes =>
-      'Пока нет отметок «Нравится» для выбранной области и фильтров.';
+  String get communityRankingEmptyVotes => 'Пока нет отметок «Нравится».';
 
   @override
-  String get communityRankingEmptyRatings =>
-      'Пока нет оценок в звездах для выбранной области и фильтров.';
+  String get communityRankingEmptyRatings => 'Пока нет оценок в звездах.';
 
   @override
-  String get communityRankingEmptyReviews =>
-      'Пока нет отзывов для выбранной области и фильтров.';
+  String get communityRankingEmptyReviews => 'Пока нет отзывов.';
 
   @override
   String get communityRankingExplore =>
@@ -2265,7 +2262,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Ищите по названию скина или оружия. В рейтинге появляются только реальные оценки сообщества.';
 
   @override
-  String get communityRankingClear => 'Сбросить фильтры оружия и времени';
+  String get communityRankingClear => 'Сбросить фильтр оружия';
 
   @override
   String get communityRankingSort => 'Рейтинг по';
@@ -2275,11 +2272,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get communityRankingNoSearch =>
-      'Подходящих скинов нет. Попробуйте другое название или сбросьте фильтр оружия.';
+      'Подходящих скинов нет. Попробуйте другое название.';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      'Не удалось загрузить список скинов. Закройте панель и повторите попытку после синхронизации данных.';
+      'Не удалось загрузить каталог скинов. Попробуйте позже.';
 
   @override
   String get communityConsentExitAccount =>
@@ -3761,6 +3758,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => 'Показать все ранги';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return 'Все скины: $weapon';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

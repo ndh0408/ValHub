@@ -3536,22 +3536,22 @@ abstract class AppLocalizations {
   /// **'Chưa có skin trong bảng xếp hạng này'**
   String get communityRankingEmptyTitle;
 
-  /// Skin ranking discovery and compact filters; actual community data only.
+  /// Skin ranking (global, all time, optional weapon filter) sorted by favorites is empty.
   ///
   /// In vi, this message translates to:
-  /// **'Chưa có lượt yêu thích phù hợp với phạm vi và bộ lọc đang chọn.'**
+  /// **'Chưa có lượt yêu thích nào.'**
   String get communityRankingEmptyVotes;
 
-  /// Skin ranking discovery and compact filters; actual community data only.
+  /// Skin ranking (global, all time, optional weapon filter) sorted by star rating is empty.
   ///
   /// In vi, this message translates to:
-  /// **'Chưa có đánh giá sao phù hợp với phạm vi và bộ lọc đang chọn.'**
+  /// **'Chưa có đánh giá sao nào.'**
   String get communityRankingEmptyRatings;
 
-  /// Skin ranking discovery and compact filters; actual community data only.
+  /// Skin ranking (global, all time, optional weapon filter) sorted by written reviews is empty.
   ///
   /// In vi, this message translates to:
-  /// **'Chưa có nhận xét phù hợp với phạm vi và bộ lọc đang chọn.'**
+  /// **'Chưa có nhận xét nào.'**
   String get communityRankingEmptyReviews;
 
   /// Skin ranking discovery and compact filters; actual community data only.
@@ -3566,10 +3566,10 @@ abstract class AppLocalizations {
   /// **'Tìm theo tên skin hoặc vũ khí. Chỉ đánh giá thực tế của cộng đồng mới xuất hiện trong bảng xếp hạng.'**
   String get communityRankingExploreHint;
 
-  /// Skin ranking discovery and compact filters; actual community data only.
+  /// Skin ranking empty state action: clears the weapon filter (the only filter of the ranking).
   ///
   /// In vi, this message translates to:
-  /// **'Bỏ lọc vũ khí và thời gian'**
+  /// **'Bỏ lọc vũ khí'**
   String get communityRankingClear;
 
   /// Skin ranking discovery and compact filters; actual community data only.
@@ -3584,16 +3584,16 @@ abstract class AppLocalizations {
   /// **'Vũ khí'**
   String get communityRankingWeapon;
 
-  /// Skin ranking discovery and compact filters; actual community data only.
+  /// Full skin list under the skin ranking: nothing matches the search. When a weapon filter is on, an 'All weapons' button sits next to the list title.
   ///
   /// In vi, this message translates to:
-  /// **'Không tìm thấy skin phù hợp. Thử tên khác hoặc bỏ lọc vũ khí.'**
+  /// **'Không tìm thấy skin phù hợp. Thử tên khác.'**
   String get communityRankingNoSearch;
 
-  /// Skin ranking discovery and compact filters; actual community data only.
+  /// Full skin list under the skin ranking: the game content (skins from valorant-api.com) is not available yet.
   ///
   /// In vi, this message translates to:
-  /// **'Chưa tải được danh mục skin. Đóng bảng và thử lại sau khi dữ liệu được đồng bộ.'**
+  /// **'Chưa tải được danh mục skin. Hãy thử lại sau.'**
   String get communityRankingCatalogUnavailable;
 
   /// Explicit decline alternative in mandatory account onboarding; signs out only the displayed account.
@@ -6001,6 +6001,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Xem mọi rank'**
   String get communityLfgShowAllRanks;
+
+  /// Title of the full skin list under the skin ranking while the page's weapon filter is on (weapon = localized weapon name from valorant-api.com).
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả skin {weapon}'**
+  String communityRankingCatalogWeaponTitle(String weapon);
 
   /// Explicit render-time message, preserving existing VI behavior.
   ///

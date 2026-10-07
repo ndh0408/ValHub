@@ -2208,16 +2208,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityRankingEmptyTitle => 'Aucun skin dans ce classement';
 
   @override
-  String get communityRankingEmptyVotes =>
-      'Aucun favori ne correspond à la portée et aux filtres choisis.';
+  String get communityRankingEmptyVotes => 'Aucun favori pour l\'instant.';
 
   @override
-  String get communityRankingEmptyRatings =>
-      'Aucune note ne correspond à la portée et aux filtres choisis.';
+  String get communityRankingEmptyRatings => 'Aucune note pour l\'instant.';
 
   @override
-  String get communityRankingEmptyReviews =>
-      'Aucun avis ne correspond à la portée et aux filtres choisis.';
+  String get communityRankingEmptyReviews => 'Aucun avis pour l\'instant.';
 
   @override
   String get communityRankingExplore => 'Trouver un skin à voir et à noter';
@@ -2227,8 +2224,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Cherchez par nom de skin ou d\'arme. Seules les vraies évaluations de la communauté apparaissent dans le classement.';
 
   @override
-  String get communityRankingClear =>
-      'Effacer les filtres d\'arme et de période';
+  String get communityRankingClear => 'Retirer le filtre d\'arme';
 
   @override
   String get communityRankingSort => 'Classer par';
@@ -2238,11 +2234,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get communityRankingNoSearch =>
-      'Aucun skin trouvé. Essayez un autre nom ou retirez le filtre d\'arme.';
+      'Aucun skin trouvé. Essayez un autre nom.';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      'Impossible de charger le catalogue des skins. Fermez ce panneau et réessayez une fois les données synchronisées.';
+      'Impossible de charger le catalogue de skins. Réessayez plus tard.';
 
   @override
   String get communityConsentExitAccount => 'Refuser · Déconnecter ce compte';
@@ -3693,6 +3689,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => 'Voir tous les rangs';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return 'Tous les skins $weapon';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

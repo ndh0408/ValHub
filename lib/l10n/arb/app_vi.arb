@@ -3441,20 +3441,20 @@
     "description": "Skin ranking discovery and compact filters; actual community data only.",
     "x-manual": true
   },
-  "communityRankingEmptyVotes": "Chưa có lượt yêu thích phù hợp với phạm vi và bộ lọc đang chọn.",
+  "communityRankingEmptyVotes": "Chưa có lượt yêu thích nào.",
   "@communityRankingEmptyVotes": {
-    "description": "Skin ranking discovery and compact filters; actual community data only.",
-    "x-manual": true
+    "description": "Skin ranking (global, all time, optional weapon filter) sorted by favorites is empty.",
+    "x-context": "lib/features/community/ui/skins/top_skins_section.dart"
   },
-  "communityRankingEmptyRatings": "Chưa có đánh giá sao phù hợp với phạm vi và bộ lọc đang chọn.",
+  "communityRankingEmptyRatings": "Chưa có đánh giá sao nào.",
   "@communityRankingEmptyRatings": {
-    "description": "Skin ranking discovery and compact filters; actual community data only.",
-    "x-manual": true
+    "description": "Skin ranking (global, all time, optional weapon filter) sorted by star rating is empty.",
+    "x-context": "lib/features/community/ui/skins/top_skins_section.dart"
   },
-  "communityRankingEmptyReviews": "Chưa có nhận xét phù hợp với phạm vi và bộ lọc đang chọn.",
+  "communityRankingEmptyReviews": "Chưa có nhận xét nào.",
   "@communityRankingEmptyReviews": {
-    "description": "Skin ranking discovery and compact filters; actual community data only.",
-    "x-manual": true
+    "description": "Skin ranking (global, all time, optional weapon filter) sorted by written reviews is empty.",
+    "x-context": "lib/features/community/ui/skins/top_skins_section.dart"
   },
   "communityRankingExplore": "Tìm skin để xem và đánh giá",
   "@communityRankingExplore": {
@@ -3466,10 +3466,10 @@
     "description": "Skin ranking discovery and compact filters; actual community data only.",
     "x-manual": true
   },
-  "communityRankingClear": "Bỏ lọc vũ khí và thời gian",
+  "communityRankingClear": "Bỏ lọc vũ khí",
   "@communityRankingClear": {
-    "description": "Skin ranking discovery and compact filters; actual community data only.",
-    "x-manual": true
+    "description": "Skin ranking empty state action: clears the weapon filter (the only filter of the ranking).",
+    "x-context": "lib/features/community/ui/skins/top_skins_section.dart"
   },
   "communityRankingSort": "Xếp hạng theo",
   "@communityRankingSort": {
@@ -3481,15 +3481,15 @@
     "description": "Skin ranking discovery and compact filters; actual community data only.",
     "x-manual": true
   },
-  "communityRankingNoSearch": "Không tìm thấy skin phù hợp. Thử tên khác hoặc bỏ lọc vũ khí.",
+  "communityRankingNoSearch": "Không tìm thấy skin phù hợp. Thử tên khác.",
   "@communityRankingNoSearch": {
-    "description": "Skin ranking discovery and compact filters; actual community data only.",
-    "x-manual": true
+    "description": "Full skin list under the skin ranking: nothing matches the search. When a weapon filter is on, an 'All weapons' button sits next to the list title.",
+    "x-context": "lib/features/community/ui/skins/skin_catalog_sheet.dart"
   },
-  "communityRankingCatalogUnavailable": "Chưa tải được danh mục skin. Đóng bảng và thử lại sau khi dữ liệu được đồng bộ.",
+  "communityRankingCatalogUnavailable": "Chưa tải được danh mục skin. Hãy thử lại sau.",
   "@communityRankingCatalogUnavailable": {
-    "description": "Skin ranking discovery and compact filters; actual community data only.",
-    "x-manual": true
+    "description": "Full skin list under the skin ranking: the game content (skins from valorant-api.com) is not available yet.",
+    "x-context": "lib/features/community/ui/skins/skin_catalog_sheet.dart"
   },
   "communityConsentExitAccount": "Không đồng ý · Đăng xuất tài khoản này",
   "@communityConsentExitAccount": {
@@ -5775,6 +5775,16 @@
   "@communityLfgShowAllRanks": {
     "description": "LFG empty state action: turns off the 'Matches your rank' filter to list posts of every rank.",
     "x-context": "lib/features/community/ui/lfg/lfg_section.dart"
+  },
+  "communityRankingCatalogWeaponTitle": "Tất cả skin {weapon}",
+  "@communityRankingCatalogWeaponTitle": {
+    "description": "Title of the full skin list under the skin ranking while the page's weapon filter is on (weapon = localized weapon name from valorant-api.com).",
+    "placeholders": {
+      "weapon": {
+        "type": "String"
+      }
+    },
+    "x-context": "lib/features/community/ui/skins/skin_catalog_sheet.dart"
   },
   "liveGamePlayerStatistics": "Bạn: {kda}{hasAcs, select, yes{ · ACS {acs}} other{}}",
   "@liveGamePlayerStatistics": {

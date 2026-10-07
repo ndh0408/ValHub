@@ -2069,16 +2069,13 @@ class AppLocalizationsId extends AppLocalizations {
   String get communityRankingEmptyTitle => 'Belum ada skin di peringkat ini';
 
   @override
-  String get communityRankingEmptyVotes =>
-      'Belum ada favorit yang cocok dengan cakupan dan filter yang dipilih.';
+  String get communityRankingEmptyVotes => 'Belum ada favorit.';
 
   @override
-  String get communityRankingEmptyRatings =>
-      'Belum ada rating bintang yang cocok dengan cakupan dan filter yang dipilih.';
+  String get communityRankingEmptyRatings => 'Belum ada rating bintang.';
 
   @override
-  String get communityRankingEmptyReviews =>
-      'Belum ada ulasan yang cocok dengan cakupan dan filter yang dipilih.';
+  String get communityRankingEmptyReviews => 'Belum ada ulasan.';
 
   @override
   String get communityRankingExplore => 'Cari skin untuk dilihat dan dinilai';
@@ -2088,7 +2085,7 @@ class AppLocalizationsId extends AppLocalizations {
       'Cari berdasarkan nama skin atau senjata. Hanya penilaian asli dari komunitas yang muncul di peringkat.';
 
   @override
-  String get communityRankingClear => 'Hapus filter senjata dan waktu';
+  String get communityRankingClear => 'Hapus filter senjata';
 
   @override
   String get communityRankingSort => 'Urutkan peringkat';
@@ -2098,11 +2095,11 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get communityRankingNoSearch =>
-      'Tidak ada skin yang cocok. Coba nama lain atau hapus filter senjata.';
+      'Tidak ada skin yang cocok. Coba nama lain.';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      'Gagal memuat daftar skin. Tutup panel ini dan coba lagi setelah data tersinkron.';
+      'Katalog skin belum bisa dimuat. Coba lagi nanti.';
 
   @override
   String get communityConsentExitAccount => 'Tolak · Logout dari akun ini';
@@ -3486,6 +3483,11 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => 'Lihat semua rank';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return 'Semua skin $weapon';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

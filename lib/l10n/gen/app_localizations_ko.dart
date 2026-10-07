@@ -2025,13 +2025,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityRankingEmptyTitle => '이 순위에 아직 스킨이 없습니다';
 
   @override
-  String get communityRankingEmptyVotes => '선택한 범위와 필터에 맞는 좋아요가 아직 없습니다.';
+  String get communityRankingEmptyVotes => '아직 좋아요가 없습니다.';
 
   @override
-  String get communityRankingEmptyRatings => '선택한 범위와 필터에 맞는 별점이 아직 없습니다.';
+  String get communityRankingEmptyRatings => '아직 별점이 없습니다.';
 
   @override
-  String get communityRankingEmptyReviews => '선택한 범위와 필터에 맞는 리뷰가 아직 없습니다.';
+  String get communityRankingEmptyReviews => '아직 리뷰가 없습니다.';
 
   @override
   String get communityRankingExplore => '스킨을 찾아 보고 평가하기';
@@ -2041,7 +2041,7 @@ class AppLocalizationsKo extends AppLocalizations {
       '스킨 또는 무기 이름으로 검색하세요. 커뮤니티의 실제 평가만 순위에 표시됩니다.';
 
   @override
-  String get communityRankingClear => '무기 및 기간 필터 해제';
+  String get communityRankingClear => '무기 필터 해제';
 
   @override
   String get communityRankingSort => '순위 기준';
@@ -2050,12 +2050,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get communityRankingWeapon => '무기';
 
   @override
-  String get communityRankingNoSearch =>
-      '일치하는 스킨이 없습니다. 다른 이름으로 검색하거나 무기 필터를 해제하세요.';
+  String get communityRankingNoSearch => '일치하는 스킨이 없습니다. 다른 이름으로 검색해 보세요.';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      '스킨 목록을 불러오지 못했습니다. 이 창을 닫고 데이터가 동기화된 후 다시 시도하세요.';
+      '스킨 목록을 불러오지 못했습니다. 잠시 후 다시 시도하세요.';
 
   @override
   String get communityConsentExitAccount => '동의 안 함 · 이 계정에서 로그아웃';
@@ -3407,6 +3406,11 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => '모든 랭크 보기';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return '$weapon 스킨 전체';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

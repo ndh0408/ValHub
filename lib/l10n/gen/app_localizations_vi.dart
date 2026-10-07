@@ -2067,16 +2067,13 @@ class AppLocalizationsVi extends AppLocalizations {
       'Chưa có skin trong bảng xếp hạng này';
 
   @override
-  String get communityRankingEmptyVotes =>
-      'Chưa có lượt yêu thích phù hợp với phạm vi và bộ lọc đang chọn.';
+  String get communityRankingEmptyVotes => 'Chưa có lượt yêu thích nào.';
 
   @override
-  String get communityRankingEmptyRatings =>
-      'Chưa có đánh giá sao phù hợp với phạm vi và bộ lọc đang chọn.';
+  String get communityRankingEmptyRatings => 'Chưa có đánh giá sao nào.';
 
   @override
-  String get communityRankingEmptyReviews =>
-      'Chưa có nhận xét phù hợp với phạm vi và bộ lọc đang chọn.';
+  String get communityRankingEmptyReviews => 'Chưa có nhận xét nào.';
 
   @override
   String get communityRankingExplore => 'Tìm skin để xem và đánh giá';
@@ -2086,7 +2083,7 @@ class AppLocalizationsVi extends AppLocalizations {
       'Tìm theo tên skin hoặc vũ khí. Chỉ đánh giá thực tế của cộng đồng mới xuất hiện trong bảng xếp hạng.';
 
   @override
-  String get communityRankingClear => 'Bỏ lọc vũ khí và thời gian';
+  String get communityRankingClear => 'Bỏ lọc vũ khí';
 
   @override
   String get communityRankingSort => 'Xếp hạng theo';
@@ -2096,11 +2093,11 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityRankingNoSearch =>
-      'Không tìm thấy skin phù hợp. Thử tên khác hoặc bỏ lọc vũ khí.';
+      'Không tìm thấy skin phù hợp. Thử tên khác.';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      'Chưa tải được danh mục skin. Đóng bảng và thử lại sau khi dữ liệu được đồng bộ.';
+      'Chưa tải được danh mục skin. Hãy thử lại sau.';
 
   @override
   String get communityConsentExitAccount =>
@@ -3473,6 +3470,11 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => 'Xem mọi rank';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return 'Tất cả skin $weapon';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

@@ -9,7 +9,6 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tier_colors.dart';
 import '../../../../core/ui/net_image.dart';
 import '../../../../core/ui/sub_page.dart';
-import 'skin_catalog_sheet.dart';
 import '../../../../core/util/format.dart';
 import '../../community_routes.dart';
 import '../../data/community_models.dart';
@@ -313,24 +312,7 @@ class _Filters extends ConsumerWidget {
             },
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
-          child: TextButton.icon(
-            key: const ValueKey('skins-explore'),
-            style: TextButton.styleFrom(
-              minimumSize: const Size(48, 48),
-              alignment: AlignmentDirectional.centerStart,
-              foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
-              backgroundColor: Theme.of(context)
-                  .colorScheme
-                  .surfaceContainerLow,
-            ),
-            onPressed: () =>
-                unawaited(showSkinCatalog(context, weapon: filter.weapon)),
-            icon: const Icon(Icons.search_rounded),
-            label: Text(context.l10n.communityRankingExplore),
-          ),
-        ),
+        const SizedBox(height: 6),
       ],
     );
   }

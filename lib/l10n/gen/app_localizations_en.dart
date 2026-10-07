@@ -2194,16 +2194,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityRankingEmptyTitle => 'No skins in this ranking yet';
 
   @override
-  String get communityRankingEmptyVotes =>
-      'No favorites match the selected scope and filters yet.';
+  String get communityRankingEmptyVotes => 'No favorites yet.';
 
   @override
-  String get communityRankingEmptyRatings =>
-      'No star ratings match the selected scope and filters yet.';
+  String get communityRankingEmptyRatings => 'No star ratings yet.';
 
   @override
-  String get communityRankingEmptyReviews =>
-      'No reviews match the selected scope and filters yet.';
+  String get communityRankingEmptyReviews => 'No reviews yet.';
 
   @override
   String get communityRankingExplore => 'Find skins to view and rate';
@@ -2213,7 +2210,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Search by skin or weapon name. Only real community ratings appear in the rankings.';
 
   @override
-  String get communityRankingClear => 'Clear weapon and time filters';
+  String get communityRankingClear => 'Clear weapon filter';
 
   @override
   String get communityRankingSort => 'Rank by';
@@ -2222,12 +2219,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityRankingWeapon => 'Weapon';
 
   @override
-  String get communityRankingNoSearch =>
-      'No matching skins. Try another name or clear the weapon filter.';
+  String get communityRankingNoSearch => 'No matching skins. Try another name.';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      'Couldn\'t load the skin list. Close this panel and try again once data has synced.';
+      'Couldn\'t load the skin catalog. Try again later.';
 
   @override
   String get communityConsentExitAccount =>
@@ -3680,6 +3676,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => 'Show all ranks';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return 'All $weapon skins';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

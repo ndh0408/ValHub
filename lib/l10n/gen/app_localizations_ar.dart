@@ -2267,16 +2267,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityRankingEmptyTitle => 'لا توجد مظاهر في هذا الترتيب بعد';
 
   @override
-  String get communityRankingEmptyVotes =>
-      'لا توجد تفضيلات تطابق النطاق وعوامل التصفية المحددة بعد.';
+  String get communityRankingEmptyVotes => 'لا توجد تفضيلات بعد.';
 
   @override
-  String get communityRankingEmptyRatings =>
-      'لا توجد تقييمات بالنجوم تطابق النطاق وعوامل التصفية المحددة بعد.';
+  String get communityRankingEmptyRatings => 'لا توجد تقييمات بالنجوم بعد.';
 
   @override
-  String get communityRankingEmptyReviews =>
-      'لا توجد مراجعات تطابق النطاق وعوامل التصفية المحددة بعد.';
+  String get communityRankingEmptyReviews => 'لا توجد مراجعات بعد.';
 
   @override
   String get communityRankingExplore => 'ابحث عن مظاهر لعرضها وتقييمها';
@@ -2286,7 +2283,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'ابحث باسم المظهر أو السلاح. لا تظهر في الترتيب إلا تقييمات المجتمع الحقيقية.';
 
   @override
-  String get communityRankingClear => 'مسح تصفية السلاح والوقت';
+  String get communityRankingClear => 'مسح تصفية السلاح';
 
   @override
   String get communityRankingSort => 'الترتيب حسب';
@@ -2296,11 +2293,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communityRankingNoSearch =>
-      'لا توجد مظاهر مطابقة. جرّب اسمًا آخر أو امسح تصفية السلاح.';
+      'لا توجد مظاهر مطابقة. جرّب اسمًا آخر.';
 
   @override
   String get communityRankingCatalogUnavailable =>
-      'تعذّر تحميل قائمة المظاهر. أغلق هذه اللوحة وحاول مجددًا بعد مزامنة البيانات.';
+      'تعذّر تحميل قائمة المظاهر. حاول مرة أخرى لاحقًا.';
 
   @override
   String get communityConsentExitAccount => 'رفض · تسجيل الخروج من هذا الحساب';
@@ -3799,6 +3796,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communityLfgShowAllRanks => 'عرض كل الرتب';
+
+  @override
+  String communityRankingCatalogWeaponTitle(String weapon) {
+    return 'جميع مظاهر $weapon';
+  }
 
   @override
   String liveGamePlayerStatistics(String kda, String hasAcs, String acs) {

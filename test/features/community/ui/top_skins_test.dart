@@ -61,6 +61,21 @@ Future<void> _options(WidgetTester tester) async {
   await settle(tester);
 }
 
+/// Types into the "Tất cả skin" search under the ranking.
+Future<void> _search(WidgetTester tester, String text) async {
+  final field = find.byKey(const ValueKey('skins-inline-search'));
+  await tester.ensureVisible(field);
+  await tester.pump();
+  await tester.enterText(field, text);
+  await settle(tester);
+}
+
+Future<void> _tapVisible(WidgetTester tester, Finder finder) async {
+  await tester.ensureVisible(finder);
+  await tester.pump();
+  await tester.tap(finder);
+}
+
 Future<void> _apply(WidgetTester tester) async {
   final button = find.byKey(const ValueKey('skins-apply-filters'));
   await tester.ensureVisible(button);
@@ -174,6 +189,7 @@ void main() {
     final before = env.server.calls('GET /v1/skins/top').last.query;
     expect(find.text(tl.communityRankingEmptyRatings), findsOneWidget);
     expect(find.text(CommunityStrings.skinsEmptyBody), findsNothing);
+    expect(find.text(tl.communityRankingClear), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('skins-clear-filters')));
     await settle(tester);
     final after = env.server.calls('GET /v1/skins/top').last.query;
@@ -195,16 +211,22 @@ void main() {
       ..json('GET /v1/skins/*/summary', summaryJson())
       ..json('GET /v1/skins/*/reviews', page([]));
     await _open(tester, env);
-    await tester.tap(find.byKey(const ValueKey('skins-explore')));
-    await settle(tester);
-    await tester.enterText(
-      find.byKey(const ValueKey('skins-catalog-search')),
-      'dao dac nhiem',
+    // One skin list on the page: no second search in a sheet.
+    expect(find.byKey(const ValueKey('skins-explore')), findsNothing);
+    expect(find.text(tl.communityRankingCatalogTitle), findsOneWidget);
+    await _search(tester, 'dao dac nhiem');
+    expect(
+      find.byKey(const ValueKey('inline-catalog-$knifeSkin')),
+      findsOneWidget,
     );
-    await settle(tester);
-    expect(find.byKey(const ValueKey('catalog-$knifeSkin')), findsOneWidget);
-    expect(find.byKey(const ValueKey('catalog-$reaverSkin')), findsNothing);
-    await tester.tap(find.byKey(const ValueKey('catalog-$knifeSkin')));
+    expect(
+      find.byKey(const ValueKey('inline-catalog-$reaverSkin')),
+      findsNothing,
+    );
+    await _tapVisible(
+      tester,
+      find.byKey(const ValueKey('inline-catalog-$knifeSkin')),
+    );
     await settle(tester, frames: 30);
     expect(find.byType(SkinReviewScreen), findsOneWidget);
     expect(
@@ -225,14 +247,11 @@ void main() {
         ..json('GET /v1/skins/*/reviews', page([]));
       await _open(tester, env);
       expect(find.byKey(const ValueKey('consent-gate-action')), findsNothing);
-      await tester.tap(find.byKey(const ValueKey('skins-explore')));
-      await settle(tester);
-      await tester.enterText(
-        find.byKey(const ValueKey('skins-catalog-search')),
-        'reaver',
+      await _search(tester, 'reaver');
+      await _tapVisible(
+        tester,
+        find.byKey(const ValueKey('inline-catalog-$reaverSkin')),
       );
-      await settle(tester);
-      await tester.tap(find.byKey(const ValueKey('catalog-$reaverSkin')));
       await settle(tester, frames: 30);
       expect(find.byType(SkinReviewScreen), findsOneWidget);
       expect(env.server.calls('POST /v1/auth/riot'), isEmpty);
@@ -241,26 +260,34 @@ void main() {
     },
   );
 
-  testWidgets('catalog may widen weapon locally without changing leaderboard', (
+  testWidgets('catalog follows the weapon filter, says so and offers all', (
     tester,
   ) async {
     env.server.json('GET /v1/skins/top', {'items': <Object>[]});
     await env.prefs.setString(PrefKeys.ui('community.skins.weapon'), vandal);
     await _open(tester, env);
-    final count = env.server.calls('GET /v1/skins/top').length;
-    await tester.tap(find.byKey(const ValueKey('skins-explore')));
-    await settle(tester);
-    await tester.enterText(
-      find.byKey(const ValueKey('skins-catalog-search')),
-      'dao dac nhiem',
+    final weaponName = fixtureContent.weapon(vandal)!.displayName;
+    expect(
+      find.text(tl.communityRankingCatalogWeaponTitle(weaponName)),
+      findsOneWidget,
+    );
+    expect(find.text(tl.communityRankingCatalogTitle), findsNothing);
+    await _search(tester, 'dao dac nhiem');
+    expect(find.text(tl.communityRankingNoSearch), findsOneWidget);
+
+    await _tapVisible(
+      tester,
+      find.byKey(const ValueKey('skins-catalog-all-weapons')),
     );
     await settle(tester);
-    expect(find.text(tl.communityRankingNoSearch), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('skins-catalog-all-weapons')));
-    await settle(tester);
-    expect(find.byKey(const ValueKey('catalog-$knifeSkin')), findsOneWidget);
-    expect(env.server.calls('GET /v1/skins/top').length, count);
-    expect(env.prefs.getString(PrefKeys.ui('community.skins.weapon')), vandal);
+    expect(find.text(tl.communityRankingCatalogTitle), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('inline-catalog-$knifeSkin')),
+      findsOneWidget,
+    );
+    // One filter for the page: the ranking widens with the list.
+    expect(env.server.calls('GET /v1/skins/top').last.query['weapon'], isNull);
+    expect(env.prefs.getString(PrefKeys.ui('community.skins.weapon')), isNull);
     await unmount(tester);
   });
 
@@ -288,6 +315,11 @@ void main() {
         tester,
       ) async {
         env.server.json('GET /v1/skins/top', {'items': <Object>[]});
+        // The catalog title then names the weapon next to "Tất cả vũ khí".
+        await env.prefs.setString(
+          PrefKeys.ui('community.skins.weapon'),
+          vandal,
+        );
         await _open(
           tester,
           env,
@@ -310,17 +342,9 @@ void main() {
           env.server.calls('GET /v1/skins/top').last.query['sort'],
           'rating',
         );
-        final explore = find.byKey(const ValueKey('skins-explore'));
-        await tester.ensureVisible(explore);
-        await tester.tap(explore);
-        await settle(tester);
-        await tester.enterText(
-          find.byKey(const ValueKey('skins-catalog-search')),
-          'reaver',
-        );
-        await settle(tester);
+        await _search(tester, 'reaver');
         expect(
-          find.byKey(const ValueKey('catalog-$reaverSkin')),
+          find.byKey(const ValueKey('inline-catalog-$reaverSkin')),
           findsOneWidget,
         );
         expect(tester.takeException(), isNull);
