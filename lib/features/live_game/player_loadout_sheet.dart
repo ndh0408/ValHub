@@ -33,6 +33,7 @@ Future<void> showPlayerLoadoutSheet(
   String? playerName,
 }) => showModalBottomSheet<void>(
   context: context,
+  useRootNavigator: true,
   isScrollControlled: true,
   useSafeArea: true,
   builder: (_) => PlayerLoadoutSheet(

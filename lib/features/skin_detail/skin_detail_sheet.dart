@@ -59,6 +59,7 @@ Future<void> showSkinDetailSheet(
   SkinSheetAction? ownedAction,
 }) => showModalBottomSheet<void>(
   context: context,
+  useRootNavigator: true,
   isScrollControlled: true,
   useSafeArea: true,
   showDragHandle: true,

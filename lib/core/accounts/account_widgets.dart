@@ -433,12 +433,22 @@ class AccountTile extends ConsumerWidget {
               ),
             ),
           ),
-        if (level != null)
+        // The rank takes the room it needs; the level is short and only
+        // capped so very large text cannot push the row over.
+        if (level != null && tier != null)
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 120),
+            child: Text(
+              ' · ${context.l10n.accountLevelShort(level)}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: small?.copyWith(color: muted),
+            ),
+          )
+        else if (level != null)
           Flexible(
             child: Text(
-              tier == null
-                  ? context.l10n.accountLevelShort(level)
-                  : ' · ${context.l10n.accountLevelShort(level)}',
+              context.l10n.accountLevelShort(level),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: small?.copyWith(color: muted),

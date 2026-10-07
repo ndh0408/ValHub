@@ -45,6 +45,7 @@ Future<bool> ensureCommunityConsent(
   if (state == CommunityConsent.declined && !askAgain) return false;
   final agreed = await showModalBottomSheet<bool>(
     context: context,
+    useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
     showDragHandle: true,

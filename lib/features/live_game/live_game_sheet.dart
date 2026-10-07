@@ -31,6 +31,7 @@ Future<void> showLiveGameSheet(BuildContext context) async {
   try {
     await showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
       clipBehavior: Clip.antiAlias,

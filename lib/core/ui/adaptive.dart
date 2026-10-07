@@ -198,6 +198,7 @@ Future<T?> showActionSheet<T>(
   }
   return showModalBottomSheet<T>(
     context: context,
+    useRootNavigator: true,
     useSafeArea: true,
     isScrollControlled: true,
     builder: (sheetContext) {

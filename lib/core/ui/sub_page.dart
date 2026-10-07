@@ -406,6 +406,8 @@ class SubPageBottomBar extends StatelessWidget {
 ///   of the screen) — pickers, confirmations, info.
 /// - `scrollable: true`: a draggable sheet ([initialSize]…[maxSize]); the
 ///   builder receives the [ScrollController] to hand to its list.
+///
+/// Sheets open on the root navigator so they cover the tab bar.
 Future<T?> showValSheet<T>(
   BuildContext context, {
   required String title,
@@ -418,7 +420,7 @@ Future<T?> showValSheet<T>(
   double initialSize = 0.7,
   double minSize = 0.4,
   double maxSize = 0.95,
-  bool useRootNavigator = false,
+  bool useRootNavigator = true,
 }) {
   Widget header(BuildContext context) => SheetHeader(
     title: title,
