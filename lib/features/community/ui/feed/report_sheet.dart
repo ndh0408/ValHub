@@ -19,9 +19,10 @@ import 'package:valvn/core/l10n/l10n.dart';
 /// Overflow actions of a post / comment / LFG post.
 enum ContentAction { delete, report }
 
-enum _MenuAction { delete, report, mute, block }
+enum _MenuAction { delete, report, mute }
 
-/// "⋯" button: "Xóa" on the user's own content, "Báo cáo" on others'.
+/// "⋯" button: "Xóa" on the user's own content, "Báo cáo" and "Ẩn người
+/// này" (device-only, undone in Settings) on others'.
 class ContentMenuButton extends ConsumerWidget {
   const ContentMenuButton({
     super.key,
@@ -44,7 +45,7 @@ class ContentMenuButton extends ConsumerWidget {
       tooltip: context.l10n.communityMoreActions,
       icon: Icon(Icons.more_horiz_rounded, color: muted),
       onSelected: (action) {
-        if (action == _MenuAction.mute || action == _MenuAction.block) {
+        if (action == _MenuAction.mute) {
           final target = author;
           if (account != null && target != null) {
             unawaited(
@@ -53,9 +54,7 @@ class ContentMenuButton extends ConsumerWidget {
                   .hide(
                     target.id,
                     target.riotId ?? target.id,
-                    action == _MenuAction.block
-                        ? AuthorVisibilityRule.blocked
-                        : AuthorVisibilityRule.muted,
+                    AuthorVisibilityRule.muted,
                   ),
             );
           }
@@ -85,7 +84,7 @@ class ContentMenuButton extends ConsumerWidget {
               label: context.l10n.communityReport,
             ),
           ),
-        if (!isMine && author != null && account != null) ...[
+        if (!isMine && author != null && account != null)
           PopupMenuItem(
             value: _MenuAction.mute,
             child: _MenuRow(
@@ -93,14 +92,6 @@ class ContentMenuButton extends ConsumerWidget {
               label: context.l10n.communityMuteAuthor,
             ),
           ),
-          PopupMenuItem(
-            value: _MenuAction.block,
-            child: _MenuRow(
-              icon: Icons.block,
-              label: context.l10n.communityBlockAuthor,
-            ),
-          ),
-        ],
       ],
     );
   }

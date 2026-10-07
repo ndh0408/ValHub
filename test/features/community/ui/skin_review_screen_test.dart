@@ -237,6 +237,9 @@ void main() {
 
     await tester.tap(find.byTooltip(CommunityStrings.moreActions).first);
     await settle(tester);
+    // One way to hide someone (device-only), not two that do the same.
+    expect(find.text(CommunityStrings.muteAuthor), findsOneWidget);
+    expect(find.text(CommunityStrings.blockAuthor), findsNothing);
     await tester.tap(find.text(CommunityStrings.report));
     await settle(tester);
     await tester.tap(find.text('Quấy rối, xúc phạm'));
@@ -249,6 +252,20 @@ void main() {
       'targetId': 'r1',
       'reason': 'harassment',
     });
+    await unmount(tester);
+  });
+
+  testWidgets('"Ẩn người này" hides the author on this device', (tester) async {
+    _serve(env);
+    await _pump(tester, env);
+    expect(find.text('Âm thanh bắn cực đã'), findsOneWidget);
+    await tester.tap(find.byTooltip(CommunityStrings.moreActions).first);
+    await settle(tester);
+    await tester.tap(find.text(CommunityStrings.muteAuthor));
+    await settle(tester);
+    expect(find.text('Âm thanh bắn cực đã'), findsNothing);
+    expect(find.text('Tạm ổn'), findsOneWidget);
+    expect(env.server.calls('POST /v1/reports'), isEmpty);
     await unmount(tester);
   });
 
