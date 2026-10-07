@@ -87,3 +87,9 @@ int? bestNightDiscount(StoreHistoryDay day) {
   }
   return best;
 }
+
+/// When a recorded daily rotation started: one day before the reset it
+/// announced, else when the device first saw it. A shop that resets at
+/// 07:00 and was opened at 00:03 belongs to the day before, not "today".
+DateTime rotationStart(StoreHistoryDay day) =>
+    day.resetsAt?.subtract(const Duration(days: 1)) ?? day.firstSeen;

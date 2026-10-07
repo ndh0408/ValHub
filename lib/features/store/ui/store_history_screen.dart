@@ -200,7 +200,7 @@ class _Day extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SectionLabel(
-          context.fmt.dayHeader(day.firstSeen.toLocal(), now),
+          context.fmt.dayHeader(rotationStart(day).toLocal(), now),
           trailing: total == null
               ? null
               : Text(

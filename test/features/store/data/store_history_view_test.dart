@@ -67,4 +67,23 @@ void main() {
     expect(bestNightDiscount(_day(1, [], nightPercents: [12, 40, 0])), 40);
     expect(bestNightDiscount(_day(1, [])), isNull);
   });
+
+  test('a rotation is named by the day it started, not when it was seen', () {
+    // Reset at 00:00 UTC; the shop of 6 Oct opened at 17:03 UTC (00:03 the
+    // next day in UTC+7).
+    final seen = DateTime.utc(2026, 10, 6, 17, 3);
+    final day = StoreHistoryDay(
+      key: 'utc:2026-10-06',
+      firstSeen: seen,
+      lastSeen: seen,
+      resetsAt: DateTime.utc(2026, 10, 7),
+    );
+    expect(rotationStart(day), DateTime.utc(2026, 10, 6));
+    final unknown = StoreHistoryDay(
+      key: 'utc:2026-10-06',
+      firstSeen: seen,
+      lastSeen: seen,
+    );
+    expect(rotationStart(unknown), seen);
+  });
 }
