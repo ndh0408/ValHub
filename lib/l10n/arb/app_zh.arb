@@ -1395,6 +1395,8 @@
   "settingsWelcomeKicker": "VALORANT 助手",
   "settingsCountryPriceHeader": "国家/地区与价格",
   "settingsDataHeader": "设备上的数据",
+  "settingsWelcomeBulletCommunity": "社区",
+  "settingsWelcomeBulletCommunityDetail": "寻找队友，评价并投票皮肤",
   "skinDetailCommunitySummary": "社区：{hasAverage, select, yes{★ {average}（评分：{count}）· } other{}}喜爱：{votes}",
   "skinDetailAddToWishlist": "加入心愿单",
   "skinDetailAvailableInStoreOf": "出现在以下账号的商店中：{accounts}",

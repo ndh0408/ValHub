@@ -8408,6 +8408,16 @@
     "description": "Settings section header (shown uppercase) grouping every clean-up of data stored on this device.",
     "x-context": "lib/features/settings/ui/sections/app_info_sections.dart"
   },
+  "settingsWelcomeBulletCommunity": "Cộng đồng",
+  "@settingsWelcomeBulletCommunity": {
+    "description": "Welcome screen highlight title: the Community tab.",
+    "x-context": "lib/features/settings/ui/welcome_screen.dart"
+  },
+  "settingsWelcomeBulletCommunityDetail": "Tìm đồng đội, đánh giá và bình chọn skin",
+  "@settingsWelcomeBulletCommunityDetail": {
+    "description": "Welcome screen highlight detail under 'Cộng đồng': looking for group, rating and voting on skins.",
+    "x-context": "lib/features/settings/ui/welcome_screen.dart"
+  },
   "skinDetailCommunitySummary": "Cộng đồng: {hasAverage, select, yes{★ {average} ({count} đánh giá) · } other{}}{votes} lượt thích",
   "@skinDetailCommunitySummary": {
     "description": "Explicit render-time message, preserving existing VI behavior.",

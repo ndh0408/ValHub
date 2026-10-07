@@ -4930,6 +4930,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsDataHeader => '设备上的数据';
 
   @override
+  String get settingsWelcomeBulletCommunity => '社区';
+
+  @override
+  String get settingsWelcomeBulletCommunityDetail => '寻找队友，评价并投票皮肤';
+
+  @override
   String skinDetailCommunitySummary(
     String hasAverage,
     String average,
@@ -11467,6 +11473,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsDataHeader => '裝置上的資料';
+
+  @override
+  String get settingsWelcomeBulletCommunity => '社群';
+
+  @override
+  String get settingsWelcomeBulletCommunityDetail => '尋找隊友，評價並投票造型';
 
   @override
   String skinDetailCommunitySummary(

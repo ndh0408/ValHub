@@ -5073,6 +5073,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get settingsDataHeader => 'ข้อมูลในอุปกรณ์';
 
   @override
+  String get settingsWelcomeBulletCommunity => 'ชุมชน';
+
+  @override
+  String get settingsWelcomeBulletCommunityDetail =>
+      'หาเพื่อนร่วมทีม รีวิวและโหวตสกิน';
+
+  @override
   String skinDetailCommunitySummary(
     String hasAverage,
     String average,

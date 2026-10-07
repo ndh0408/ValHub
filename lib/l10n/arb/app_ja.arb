@@ -1395,6 +1395,8 @@
   "settingsWelcomeKicker": "VALORANTパートナー",
   "settingsCountryPriceHeader": "国と価格",
   "settingsDataHeader": "端末のデータ",
+  "settingsWelcomeBulletCommunity": "コミュニティ",
+  "settingsWelcomeBulletCommunityDetail": "チームメイト探し、スキンの評価と投票",
   "skinDetailCommunitySummary": "コミュニティ：{hasAverage, select, yes{★ {average}（評価{count}件） · } other{}}いいね{votes}件",
   "skinDetailAddToWishlist": "ウィッシュリストに追加",
   "skinDetailAvailableInStoreOf": "ストアに登場中のアカウント：{accounts}",

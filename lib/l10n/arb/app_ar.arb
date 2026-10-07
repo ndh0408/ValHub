@@ -1395,6 +1395,8 @@
   "settingsWelcomeKicker": "رفيقك في VALORANT",
   "settingsCountryPriceHeader": "الدولة والأسعار",
   "settingsDataHeader": "البيانات على الجهاز",
+  "settingsWelcomeBulletCommunity": "المجتمع",
+  "settingsWelcomeBulletCommunityDetail": "ابحث عن زملاء، وقيّم المظاهر وصوّت لها",
   "skinDetailCommunitySummary": "المجتمع: {hasAverage, select, yes{★ {average} (التقييمات: {count}) · } other{}}الإعجابات: {votes}",
   "skinDetailAddToWishlist": "إضافة إلى قائمة الأمنيات",
   "skinDetailAvailableInStoreOf": "متوفر في متجر: {accounts}",

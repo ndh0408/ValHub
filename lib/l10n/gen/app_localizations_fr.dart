@@ -5499,6 +5499,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsDataHeader => 'Données sur l\'appareil';
 
   @override
+  String get settingsWelcomeBulletCommunity => 'Communauté';
+
+  @override
+  String get settingsWelcomeBulletCommunityDetail =>
+      'Trouvez des coéquipiers, notez et votez pour des skins';
+
+  @override
   String skinDetailCommunitySummary(
     String hasAverage,
     String average,

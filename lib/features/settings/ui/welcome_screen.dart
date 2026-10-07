@@ -62,82 +62,97 @@ class WelcomeScreen extends StatelessWidget {
             ),
           ),
           SafeArea(
-            child: CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
-                  sliver: SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const Align(
-                          alignment: AlignmentDirectional.centerEnd,
-                          child: AppLanguageButton(),
-                        ),
-                        Text(
-                          context.l10n.settingsWelcomeKicker,
-                          style: ValText.label.copyWith(
-                            color: scheme.primary,
-                            letterSpacing: 1.6,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        const _Logo(),
-                        const SizedBox(height: 10),
-                        Text(
-                          context.l10n.commonTagline,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 28),
-                        const _FeatureCard(),
-                        const Spacer(),
-                        const SizedBox(height: 28),
-                        const _SignInButton(),
-                        const SizedBox(height: 16),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 1),
-                              child: Icon(
-                                Icons.lock_outline,
-                                size: 16,
-                                color: scheme.onSurfaceVariant,
+            // The sign-in button and the terms line stay on screen; the
+            // introduction scrolls above them on short phones.
+            child: Column(
+              children: [
+                Expanded(
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+                        sliver: SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const Align(
+                                alignment: AlignmentDirectional.centerEnd,
+                                child: AppLanguageButton(),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                context.l10n.settingsWelcomeFootnote,
-                                style: theme.textTheme.bodySmall?.copyWith(
+                              Text(
+                                context.l10n.settingsWelcomeKicker,
+                                style: ValText.label.copyWith(
+                                  color: scheme.primary,
+                                  letterSpacing: 1.6,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              const _Logo(),
+                              const SizedBox(height: 10),
+                              Text(
+                                context.l10n.commonTagline,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              const _FeatureCard(),
+                              const SizedBox(height: 20),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 1),
+                                    child: Icon(
+                                      Icons.lock_outline,
+                                      size: 16,
+                                      color: scheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      context.l10n.settingsWelcomeFootnote,
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: scheme.onSurfaceVariant,
+                                            height: 1.4,
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                context.l10n.commonRiotDisclaimer,
+                                style: theme.textTheme.labelSmall?.copyWith(
                                   color: scheme.onSurfaceVariant,
                                   height: 1.4,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        LegalConsentText(
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                            height: 1.45,
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        Text(
-                          context.l10n.commonRiotDisclaimer,
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                            height: 1.4,
-                          ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const _SignInButton(),
+                      const SizedBox(height: 10),
+                      LegalConsentText(
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                          height: 1.45,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -200,7 +215,7 @@ class _Logo extends StatelessWidget {
   }
 }
 
-/// The three highlights on one card, each with a tinted icon tile.
+/// The four highlights on one card, each with a tinted icon tile.
 class _FeatureCard extends StatelessWidget {
   const _FeatureCard();
 
@@ -225,6 +240,12 @@ class _FeatureCard extends StatelessWidget {
         TierColors.premium,
         context.l10n.settingsWelcomeBulletWishlist,
         context.l10n.settingsWelcomeBulletWishlistDetail,
+      ),
+      (
+        Icons.forum_outlined,
+        TierColors.select,
+        context.l10n.settingsWelcomeBulletCommunity,
+        context.l10n.settingsWelcomeBulletCommunityDetail,
       ),
     ];
     return ValCard(

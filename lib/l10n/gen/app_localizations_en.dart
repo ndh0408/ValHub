@@ -5459,6 +5459,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsDataHeader => 'Data on this device';
 
   @override
+  String get settingsWelcomeBulletCommunity => 'Community';
+
+  @override
+  String get settingsWelcomeBulletCommunityDetail =>
+      'Find teammates, rate and vote on skins';
+
+  @override
   String skinDetailCommunitySummary(
     String hasAverage,
     String average,

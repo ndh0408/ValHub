@@ -1395,6 +1395,8 @@
   "settingsWelcomeKicker": "VALORANT 도우미",
   "settingsCountryPriceHeader": "국가 및 가격",
   "settingsDataHeader": "기기 데이터",
+  "settingsWelcomeBulletCommunity": "커뮤니티",
+  "settingsWelcomeBulletCommunityDetail": "팀원 찾기, 스킨 평가와 투표",
   "skinDetailCommunitySummary": "커뮤니티: {hasAverage, select, yes{★ {average} (평가 {count}개) · } other{}}좋아요 {votes}개",
   "skinDetailAddToWishlist": "위시리스트에 추가",
   "skinDetailAvailableInStoreOf": "상점에 있는 계정: {accounts}",

@@ -4996,6 +4996,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsDataHeader => '端末のデータ';
 
   @override
+  String get settingsWelcomeBulletCommunity => 'コミュニティ';
+
+  @override
+  String get settingsWelcomeBulletCommunityDetail => 'チームメイト探し、スキンの評価と投票';
+
+  @override
   String skinDetailCommunitySummary(
     String hasAverage,
     String average,

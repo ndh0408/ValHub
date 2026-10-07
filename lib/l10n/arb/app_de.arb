@@ -1395,6 +1395,8 @@
   "settingsWelcomeKicker": "VALORANT-BEGLEITER",
   "settingsCountryPriceHeader": "Land & Preise",
   "settingsDataHeader": "Daten auf dem Gerät",
+  "settingsWelcomeBulletCommunity": "Community",
+  "settingsWelcomeBulletCommunityDetail": "Mitspieler finden, Skins bewerten und abstimmen",
   "skinDetailCommunitySummary": "Community: {hasAverage, select, yes{★ {average} (Bewertungen: {count}) · } other{}}Herzen: {votes}",
   "skinDetailAddToWishlist": "Zur Wishlist hinzufügen",
   "skinDetailAvailableInStoreOf": "Im Shop von: {accounts}",

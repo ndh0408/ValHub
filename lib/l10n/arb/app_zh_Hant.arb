@@ -1395,6 +1395,8 @@
   "settingsWelcomeKicker": "VALORANT 好幫手",
   "settingsCountryPriceHeader": "國家／地區與價格",
   "settingsDataHeader": "裝置上的資料",
+  "settingsWelcomeBulletCommunity": "社群",
+  "settingsWelcomeBulletCommunityDetail": "尋找隊友，評價並投票造型",
   "skinDetailCommunitySummary": "社群：{hasAverage, select, yes{★ {average}（{count} 則評分）· } other{}}{votes} 個讚",
   "skinDetailAddToWishlist": "加入願望清單",
   "skinDetailAvailableInStoreOf": "出現在以下帳號的商店：{accounts}",

@@ -5117,6 +5117,13 @@ class AppLocalizationsId extends AppLocalizations {
   String get settingsDataHeader => 'Data di perangkat';
 
   @override
+  String get settingsWelcomeBulletCommunity => 'Komunitas';
+
+  @override
+  String get settingsWelcomeBulletCommunityDetail =>
+      'Cari rekan tim, beri nilai dan pilih skin';
+
+  @override
   String skinDetailCommunitySummary(
     String hasAverage,
     String average,

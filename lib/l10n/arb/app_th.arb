@@ -1395,6 +1395,8 @@
   "settingsWelcomeKicker": "ผู้ช่วย VALORANT",
   "settingsCountryPriceHeader": "ประเทศและราคา",
   "settingsDataHeader": "ข้อมูลในอุปกรณ์",
+  "settingsWelcomeBulletCommunity": "ชุมชน",
+  "settingsWelcomeBulletCommunityDetail": "หาเพื่อนร่วมทีม รีวิวและโหวตสกิน",
   "skinDetailCommunitySummary": "ชุมชน: {hasAverage, select, yes{★ {average} (คะแนน: {count}) · } other{}}ถูกใจ: {votes}",
   "skinDetailAddToWishlist": "เพิ่มใน wishlist",
   "skinDetailAvailableInStoreOf": "มีในร้านค้าของ: {accounts}",

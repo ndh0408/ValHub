@@ -1395,6 +1395,8 @@
   "settingsWelcomeKicker": "TOWARZYSZ W VALORANT",
   "settingsCountryPriceHeader": "Kraj i ceny",
   "settingsDataHeader": "Dane na urządzeniu",
+  "settingsWelcomeBulletCommunity": "Społeczność",
+  "settingsWelcomeBulletCommunityDetail": "Szukaj drużyny, oceniaj skiny i głosuj",
   "skinDetailCommunitySummary": "Społeczność: {hasAverage, select, yes{★ {average} (Oceny: {count}) · } other{}}Polubienia: {votes}",
   "skinDetailAddToWishlist": "Dodaj do listy życzeń",
   "skinDetailAvailableInStoreOf": "W sklepie kont: {accounts}",

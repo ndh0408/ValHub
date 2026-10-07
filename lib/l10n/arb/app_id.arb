@@ -1395,6 +1395,8 @@
   "settingsWelcomeKicker": "TEMAN SETIA VALORANT",
   "settingsCountryPriceHeader": "Negara & harga",
   "settingsDataHeader": "Data di perangkat",
+  "settingsWelcomeBulletCommunity": "Komunitas",
+  "settingsWelcomeBulletCommunityDetail": "Cari rekan tim, beri nilai dan pilih skin",
   "skinDetailCommunitySummary": "Komunitas: {hasAverage, select, yes{★ {average} ({count} penilaian) · } other{}}{votes} suka",
   "skinDetailAddToWishlist": "Tambah ke wishlist",
   "skinDetailAvailableInStoreOf": "Ada di toko: {accounts}",

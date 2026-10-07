@@ -1395,6 +1395,8 @@
   "settingsWelcomeKicker": "ПОМОЩНИК В VALORANT",
   "settingsCountryPriceHeader": "Страна и цены",
   "settingsDataHeader": "Данные на устройстве",
+  "settingsWelcomeBulletCommunity": "Сообщество",
+  "settingsWelcomeBulletCommunityDetail": "Поиск напарников, оценки и голоса за скины",
   "skinDetailCommunitySummary": "Сообщество: {hasAverage, select, yes{★ {average} (оценки: {count}) · } other{}}лайки: {votes}",
   "skinDetailAddToWishlist": "В список желаемого",
   "skinDetailAvailableInStoreOf": "Есть в магазине: {accounts}",

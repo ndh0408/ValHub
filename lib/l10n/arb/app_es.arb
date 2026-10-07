@@ -1395,6 +1395,8 @@
   "settingsWelcomeKicker": "TU COMPAÑERO DE VALORANT",
   "settingsCountryPriceHeader": "País y precios",
   "settingsDataHeader": "Datos en el dispositivo",
+  "settingsWelcomeBulletCommunity": "Comunidad",
+  "settingsWelcomeBulletCommunityDetail": "Encuentra compañeros, valora y vota skins",
   "skinDetailCommunitySummary": "Comunidad: {hasAverage, select, yes{★ {average} (valoraciones: {count}) · } other{}}Me gusta: {votes}",
   "skinDetailAddToWishlist": "Añadir a la lista de deseos",
   "skinDetailAvailableInStoreOf": "En la tienda de: {accounts}",

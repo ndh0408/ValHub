@@ -4992,6 +4992,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsDataHeader => '기기 데이터';
 
   @override
+  String get settingsWelcomeBulletCommunity => '커뮤니티';
+
+  @override
+  String get settingsWelcomeBulletCommunityDetail => '팀원 찾기, 스킨 평가와 투표';
+
+  @override
   String skinDetailCommunitySummary(
     String hasAverage,
     String average,

@@ -1395,6 +1395,8 @@
   "settingsWelcomeKicker": "VALORANT YOL ARKADAŞI",
   "settingsCountryPriceHeader": "Ülke ve fiyatlar",
   "settingsDataHeader": "Cihazdaki veriler",
+  "settingsWelcomeBulletCommunity": "Topluluk",
+  "settingsWelcomeBulletCommunityDetail": "Takım arkadaşı bul, kaplamaları puanla ve oyla",
   "skinDetailCommunitySummary": "Topluluk: {hasAverage, select, yes{★ {average} (Puan: {count}) · } other{}}Beğeni: {votes}",
   "skinDetailAddToWishlist": "İstek listesine ekle",
   "skinDetailAvailableInStoreOf": "Şu hesapların mağazasında: {accounts}",

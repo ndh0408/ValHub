@@ -5615,6 +5615,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settingsDataHeader => 'Данные на устройстве';
 
   @override
+  String get settingsWelcomeBulletCommunity => 'Сообщество';
+
+  @override
+  String get settingsWelcomeBulletCommunityDetail =>
+      'Поиск напарников, оценки и голоса за скины';
+
+  @override
   String skinDetailCommunitySummary(
     String hasAverage,
     String average,

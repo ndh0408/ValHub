@@ -8504,6 +8504,18 @@ abstract class AppLocalizations {
   /// **'Dữ liệu trên máy'**
   String get settingsDataHeader;
 
+  /// Welcome screen highlight title: the Community tab.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cộng đồng'**
+  String get settingsWelcomeBulletCommunity;
+
+  /// Welcome screen highlight detail under 'Cộng đồng': looking for group, rating and voting on skins.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm đồng đội, đánh giá và bình chọn skin'**
+  String get settingsWelcomeBulletCommunityDetail;
+
   /// Explicit render-time message, preserving existing VI behavior.
   ///
   /// In vi, this message translates to:

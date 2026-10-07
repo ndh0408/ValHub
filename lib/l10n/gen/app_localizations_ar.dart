@@ -5684,6 +5684,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsDataHeader => 'البيانات على الجهاز';
 
   @override
+  String get settingsWelcomeBulletCommunity => 'المجتمع';
+
+  @override
+  String get settingsWelcomeBulletCommunityDetail =>
+      'ابحث عن زملاء، وقيّم المظاهر وصوّت لها';
+
+  @override
   String skinDetailCommunitySummary(
     String hasAverage,
     String average,

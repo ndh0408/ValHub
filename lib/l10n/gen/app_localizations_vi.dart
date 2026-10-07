@@ -5092,6 +5092,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsDataHeader => 'Dữ liệu trên máy';
 
   @override
+  String get settingsWelcomeBulletCommunity => 'Cộng đồng';
+
+  @override
+  String get settingsWelcomeBulletCommunityDetail =>
+      'Tìm đồng đội, đánh giá và bình chọn skin';
+
+  @override
   String skinDetailCommunitySummary(
     String hasAverage,
     String average,

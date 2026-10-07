@@ -5118,6 +5118,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsDataHeader => 'Cihazdaki veriler';
 
   @override
+  String get settingsWelcomeBulletCommunity => 'Topluluk';
+
+  @override
+  String get settingsWelcomeBulletCommunityDetail =>
+      'Takım arkadaşı bul, kaplamaları puanla ve oyla';
+
+  @override
   String skinDetailCommunitySummary(
     String hasAverage,
     String average,
