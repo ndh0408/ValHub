@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../l10n/locale_controller.dart';
 import '../util/json.dart';
 import 'pvp_api.dart';
 
@@ -18,10 +19,14 @@ class StatusNotice {
     this.createdAt,
   });
 
-  static StatusNotice? fromJson(Object? json, {required bool isMaintenance}) {
+  static StatusNotice? fromJson(
+    Object? json, {
+    required bool isMaintenance,
+    String locale = 'en_US',
+  }) {
     final m = asMap(json);
     if (m == null) return null;
-    final title = localized(m['titles']);
+    final title = localized(m['titles'], locale: locale);
     if (title == null) return null;
     final updates = asMapList(m['updates']);
     return StatusNotice(
@@ -30,7 +35,7 @@ class StatusNotice {
       title: title,
       message: updates.isEmpty
           ? null
-          : localized(updates.first['translations']),
+          : localized(updates.first['translations'], locale: locale),
       severity: asString(m['incident_severity']),
       status: asString(m['maintenance_status']),
       platforms: asStringList(m['platforms']),
@@ -38,8 +43,9 @@ class StatusNotice {
     );
   }
 
-  /// Picks `vi_VN`, then `en_US`, then the first translation.
-  static String? localized(Object? translations, {String locale = 'vi_VN'}) {
+  /// Picks [locale] (Riot's `vi_VN`, `pt_BR`…: the app language), then
+  /// `en_US`, then the first translation.
+  static String? localized(Object? translations, {String locale = 'en_US'}) {
     final list = asMapList(translations);
     String? find(String l) {
       for (final t in list) {
@@ -56,10 +62,10 @@ class StatusNotice {
   final String id;
   final bool isMaintenance;
 
-  /// Vietnamese title when available.
+  /// Title in the app language when Riot has it.
   final String title;
 
-  /// Latest update text (vi when available).
+  /// Latest update text, same language rule.
   final String? message;
 
   /// `info` / `warning` / `critical` (incidents).
@@ -79,16 +85,16 @@ class PlatformStatus {
     this.incidents = const [],
   });
 
-  factory PlatformStatus.fromJson(Object? json) {
+  factory PlatformStatus.fromJson(Object? json, {String locale = 'en_US'}) {
     final m = asMap(json) ?? const <String, dynamic>{};
     return PlatformStatus(
       maintenances: [
         for (final x in asList(m['maintenances']))
-          ?StatusNotice.fromJson(x, isMaintenance: true),
+          ?StatusNotice.fromJson(x, isMaintenance: true, locale: locale),
       ],
       incidents: [
         for (final x in asList(m['incidents']))
-          ?StatusNotice.fromJson(x, isMaintenance: false),
+          ?StatusNotice.fromJson(x, isMaintenance: false, locale: locale),
       ],
     );
   }
@@ -103,12 +109,13 @@ class PlatformStatus {
 
   bool get isEmpty => maintenances.isEmpty && incidents.isEmpty;
 
-  /// Most important notice to show in a banner, if any.
+  /// The notice worth a banner on every tab: a maintenance in progress, else
+  /// a critical or warning incident. Scheduled or finished maintenance and
+  /// info incidents stay on the "Trạng thái máy chủ" screen.
   StatusNotice? get headline =>
       activeMaintenances.firstOrNull ??
       incidents.where((i) => i.severity == 'critical').firstOrNull ??
-      maintenances.firstOrNull ??
-      incidents.firstOrNull;
+      incidents.where((i) => i.severity == 'warning').firstOrNull;
 }
 
 /// X-1 status for a region (`ap`, `na`, `eu`…), cached for the provider's
@@ -116,9 +123,11 @@ class PlatformStatus {
 /// 403) yield an empty status rather than an error.
 final platformStatusProvider = FutureProvider.autoDispose
     .family<PlatformStatus, String>((ref, region) async {
+      final locale = ref.watch(appLocaleProvider).riotStatusCode;
       try {
         return PlatformStatus.fromJson(
           await ref.watch(pvpApiProvider).platformStatus(region),
+          locale: locale,
         );
       } on Object {
         return const PlatformStatus();

@@ -1,14 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../accounts/account_providers.dart';
 import '../riot/platform_status.dart';
 import '../theme/app_theme.dart';
+import '../../features/settings/settings_routes.dart';
 
 import 'package:valvn/core/l10n/l10n.dart';
 
-/// Maintenance / incident banner from the public status JSON (X-1), using
-/// the `vi_VN` title. Renders nothing when there is no notice.
+/// Maintenance / incident banner from the public status JSON (X-1), in the
+/// app language: only a maintenance in progress or a serious incident
+/// ([PlatformStatus.headline]). Tapping it opens "Trạng thái máy chủ".
+/// Renders nothing when there is no such notice.
 class MaintenanceBanner extends ConsumerWidget {
   const MaintenanceBanner({super.key, this.region});
 
@@ -30,6 +36,8 @@ class MaintenanceBanner extends ConsumerWidget {
       color: color.withValues(alpha: 0.14),
       child: ListTile(
         dense: true,
+        onTap: () => unawaited(context.push<Object?>(SettingsRoutes.status)),
+        trailing: Icon(Icons.chevron_right, color: color),
         leading: Icon(
           notice.isMaintenance
               ? Icons.construction_outlined

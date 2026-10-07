@@ -65,9 +65,8 @@ class SettingsGroup extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
             // A quiet note under the card, never body text.
             child: DefaultTextStyle.merge(
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-              ),
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: scheme.onSurfaceVariant),
               child: footer!,
             ),
           ),

@@ -63,15 +63,20 @@ class ServerNotice {
     this.updates = const [],
   });
 
-  static ServerNotice? fromJson(Object? json, ServerNoticeKind kind) {
+  static ServerNotice? fromJson(
+    Object? json,
+    ServerNoticeKind kind, {
+    String locale = 'en_US',
+  }) {
     final m = asMap(json);
     if (m == null) return null;
-    final title = StatusNotice.localized(m['titles']);
+    final title = StatusNotice.localized(m['titles'], locale: locale);
     if (title == null) return null;
     final updates = <ServerNoticeUpdate>[
       for (final u in asMapList(m['updates']))
         if (asBool(u['publish']) ?? true)
-          if (StatusNotice.localized(u['translations']) case final text?)
+          if (StatusNotice.localized(u['translations'], locale: locale)
+              case final text?)
             ServerNoticeUpdate(
               text: text,
               at: asDateTime(u['updated_at']) ?? asDateTime(u['created_at']),
@@ -153,14 +158,23 @@ class ServerStatusReport {
     Object? json, {
     required String region,
     required DateTime fetchedAt,
+    String locale = 'en_US',
   }) {
     final m = asMap(json) ?? const <String, dynamic>{};
     final notices =
         <ServerNotice>[
           for (final x in asList(m['maintenances']))
-            ?ServerNotice.fromJson(x, ServerNoticeKind.maintenance),
+            ?ServerNotice.fromJson(
+              x,
+              ServerNoticeKind.maintenance,
+              locale: locale,
+            ),
           for (final x in asList(m['incidents']))
-            ?ServerNotice.fromJson(x, ServerNoticeKind.incident),
+            ?ServerNotice.fromJson(
+              x,
+              ServerNoticeKind.incident,
+              locale: locale,
+            ),
         ]..sort((a, b) {
           final p = a.priority.compareTo(b.priority);
           return p != 0 ? p : _newestFirst(a.lastChange, b.lastChange);
